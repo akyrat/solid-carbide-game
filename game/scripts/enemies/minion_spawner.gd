@@ -276,7 +276,7 @@ func _spawn_step(dt: float) -> void:
 ## heights only minions at the same level push apart (T-207).
 func _separation() -> Array:
 	var out := []
-	var sep: float = MinionScript.SEPARATION_UNITS
+	var sep: float = MinionScript.SEPARATION_UNITS * float(_stats.get("size_scale", 1.0))
 	var pos := []
 	var hs := []
 	for m in minions:
@@ -306,11 +306,13 @@ func spawn_minion_at(units: Vector2) -> Node:
 	m.detour_side = 1.0 if rng.randf() < 0.5 else -1.0
 	m.ground = ground
 	m.follower = FollowerScript.new(rng.randf() * FollowerScript.REPATH_SECONDS)
+	m.follower.by_sight = true  # T-380: straight only while the way to the car is clear
 	bodies_root.add_child(m, true)
 	var s: Node2D = MinionSpriteScript.new()
 	s.name = "MinionSprite"
 	draw_root.add_child(s, true)
 	m.sprite = s
+	s.size_scale = m.size_scale
 	m.died.connect(_on_minion_died)
 	minions.append(m)
 	_place_sprite(m)
@@ -332,6 +334,7 @@ func spawn_coin_at(units: Vector2, value: int = 1) -> Node:
 	draw_root.add_child(s, true)
 	c.sprite = s
 	var h := EnemyHeightScript.height_at(ground, units)
+	c.ground_height = h  # T-402: picked up only from this height
 	s.position = ISO_TRANSFORM * c.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.z_index = depth.z_index_for(units, CoinScript.RADIUS_UNITS, 0.6, h)
 	s.reset_physics_interpolation()
@@ -353,6 +356,7 @@ func spawn_health_pickup_at(units: Vector2, hearts: float = -1.0) -> Node:
 	draw_root.add_child(s, true)
 	p.sprite = s
 	var h := EnemyHeightScript.height_at(ground, units)
+	p.ground_height = h  # T-402: picked up only from this height
 	s.position = ISO_TRANSFORM * p.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.z_index = depth.z_index_for(units, HealthPickupScript.RADIUS_UNITS, 0.6, h)
 	s.reset_physics_interpolation()
@@ -432,7 +436,7 @@ func pick_spawn_point():
 func is_free_spot(units: Vector2) -> bool:
 	if map == null:
 		return true
-	var rad: float = MinionScript.RADIUS_UNITS
+	var rad: float = MinionScript.BASE_RADIUS_UNITS * float(_stats.get("size_scale", 1.0))
 	var m: Rect2 = map.rect_of(map.layout.map.rect)
 	if not m.grow(-rad).has_point(units):
 		return false
@@ -455,15 +459,19 @@ func is_free_spot(units: Vector2) -> bool:
 ## A minion on its way to the car by the ramps (T-207: its follower has a
 ## path) is removed only when it is more than ON_PATH_KEEP_UNITS from the car,
 ## so it is not removed while it walks round to a ramp far from the car (a
-## proposal).
+## proposal). T-380: a minion walking by sight also has a path when it only goes
+## round something on the car's own surface (a building, or a short building's
+## platform of T-405); that one is removed as before, so the rule is "has a path
+## and is on another surface than the car" (before T-380 a path meant just that).
 func _despawn_far() -> void:
 	var v := visible_rect()
 	var keep := v.grow_individual(v.size.x, v.size.y, v.size.x, v.size.y)
 	var car_units: Vector2 = car.position / PX_PER_UNIT
+	var car_surface: int = navigation.surface_at(car_units) if navigation != null else -1
 	for m in minions.duplicate():
 		if keep.has_point(ISO_TRANSFORM * m.position):
 			continue
-		if m.follower != null and m.follower.has_path() 				and m.position_units().distance_to(car_units) <= ON_PATH_KEEP_UNITS:
+		if m.follower != null and m.follower.has_path() 				and navigation != null and navigation.surface_at(m.position_units()) != car_surface 				and m.position_units().distance_to(car_units) <= ON_PATH_KEEP_UNITS:
 			continue
 		minions.erase(m)
 		m.queue_free()
@@ -483,4 +491,4 @@ func _place_sprite(m: Node) -> void:
 	s.position = ISO_TRANSFORM * m.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(m.heading)
 	s.set_falling(m.is_falling())
-	s.z_index = depth.z_index_for(m.position_units(), MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS, h)
+	s.z_index = depth.z_index_for(m.position_units(), m.radius_units(), m.height_units(), h)

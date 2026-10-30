@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import build_creator_assets as bc  # noqa: E402
 
-KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop"}
+KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater"}  # crater: T-398
 
 
 class CatalogueTest(unittest.TestCase):
@@ -41,7 +41,22 @@ class CatalogueTest(unittest.TestCase):
         roofs = sorted(e["height"] for e in self.entries if e["kind"] == "rooftop")
         self.assertEqual(roofs, [3, 6])
         ramps = sorted(e["heights"] for e in self.entries if e["kind"] == "ramp")
-        self.assertEqual(ramps, [[0, 3], [0, 6], [3, 6]])
+        self.assertEqual(ramps, [[0, 2], [0, 3], [0, 6], [3, 5], [3, 6], [6, 8]])
+
+    def test_small_jump_ramps(self):
+        # T-400: one tile (4 units) long, rising 2 from the street or a rooftop at 3 or 6, "jump"
+        # (no rooftop at the top); the other ramps are not jump ramps.
+        by_id = {e["id"]: e for e in self.entries}
+        for eid, heights in (("ramp-0-2", [0, 2]), ("ramp-3-5", [3, 5]), ("ramp-6-8", [6, 8])):
+            e = by_id[eid]
+            self.assertEqual(e["heights"], heights)
+            self.assertIs(e["jump"], True)
+            self.assertEqual(e["length_units"], 4.0)
+            self.assertEqual(e["footprint_units"], [10.0, 4.0])
+            self.assertEqual(e["views"], ["north", "east", "south", "west"])
+            self.assertTrue(bc.res_exists(e["textures"][0]["texture"]))
+        for eid in ("ramp-0-3", "ramp-3-6", "ramp-0-6"):
+            self.assertNotIn("jump", by_id[eid])
 
     def test_rooftops_and_ramps_are_resizable(self):
         # T-251: any even size from 4 x 4 for a rooftop; a ramp in four directions, its width
@@ -56,7 +71,8 @@ class CatalogueTest(unittest.TestCase):
                 self.assertEqual(e["views"], ["iso"])
             else:
                 lo, hi = e["heights"]
-                self.assertEqual(e["length_units"], 12.0 * (hi - lo) / 3)
+                if not e.get("jump"):
+                    self.assertEqual(e["length_units"], 12.0 * (hi - lo) / 3)
                 self.assertEqual(e["min_width_units"], 4.0)
                 self.assertEqual(e["views"], ["north", "east", "south", "west"])
                 sides = {t["view"]: t["side"] for t in e["textures"]}
@@ -66,7 +82,8 @@ class CatalogueTest(unittest.TestCase):
         count = lambda k: sum(1 for e in self.entries if e["kind"] == k)
         self.assertEqual(count("building"), 6 + 4 + 2)
         self.assertEqual(count("boulder"), 2)
-        self.assertEqual(count("ground"), 3)
+        self.assertEqual(count("ground"), 3 + 47)  # T-398: the 47 sidewalk curb pieces
+        self.assertEqual(count("crater"), 3)
 
     def test_boulder_mirrors(self):
         for e in self.entries:
@@ -80,8 +97,28 @@ class CatalogueTest(unittest.TestCase):
     def test_building_textures_all_listed(self):
         sky = bc.load("art/buildings/skyscrapers.json")
         named = bc.textures_of(self.cat)
-        for p in sky["bodies"] + sky["short"]["bodies"] + sky["pavements"]:
+        for p in sky["bodies"] + sky["pavements"]:
             self.assertIn(p, named)
+        # T-405: the low-rise shows its platform art (art/buildings/platforms/), one per short body.
+        rec = bc.load("art/buildings/platforms/platforms.json")
+        for p in sky["short"]["bodies"]:
+            self.assertIn(rec["textures"][p]["full"], named)
+            self.assertNotIn(p, named)
+
+    def test_short_buildings_show_their_platform_art_with_its_anchor(self):
+        """T-405: the low-rise, small and long buildings are platforms 3 high: every texture is its platform art,
+        with the record's anchor and footprint."""
+        rec = bc.load("art/buildings/platforms/platforms.json")
+        fulls = {t["full"]: t for t in rec["textures"].values()}
+        for e in self.entries:
+            if e["id"].startswith("short-") or e["id"] in ("building-small", "building-long"):
+                self.assertEqual(e["height_units"], 3.0, e["id"])
+                for t in e["textures"]:
+                    self.assertIn(t["texture"], fulls, e["id"])
+                    self.assertEqual(t["anchor_art_px"], fulls[t["texture"]]["anchor_art_px"])
+                    self.assertEqual(t["footprint_units"], fulls[t["texture"]]["footprint_units"])
+            elif e["id"].startswith("skyscraper-"):
+                self.assertEqual(e["height_units"], 30.0)
 
     def test_road_pieces_are_2_by_2_tiles_and_come_first_among_the_roads(self):
         """T-252: one entry per piece and rotation with a 4 x 4 footprint and its four tiles
@@ -126,7 +163,7 @@ class FamilyTest(unittest.TestCase):
         groups = [f["group"] for f in self.fams]
         self.assertEqual(groups, sorted(groups, key=self.cat["groups"].index))
         self.assertEqual([f["id"] for f in self.fams], bc.FAMILY_ORDER)
-        self.assertEqual(len(self.fams), 20)
+        self.assertEqual(len(self.fams), 24)  # T-398: sidewalk, meteor crater, parked car, broken car
 
     def test_labels_are_texts(self):
         texts = bc.load("data/level/creator_texts.json")
@@ -166,7 +203,7 @@ class FamilyTest(unittest.TestCase):
         self.assertEqual(fams["boulder"]["looks"], 2)
         self.assertEqual(fams["boulder"]["mirrors"], [False, True])
         self.assertEqual(fams["platform"]["heights"], ["3", "6"])
-        self.assertEqual(fams["ramp"]["heights"], ["0-3", "3-6", "0-6"])
+        self.assertEqual(fams["ramp"]["heights"], ["0-3", "3-6", "0-6", "0-2", "3-5", "6-8"])
         self.assertEqual(fams["ramp"]["turns"], 4)
         self.assertEqual(fams["road"]["turns"], 1)
         self.assertEqual(fams["barrier"]["turns"], 4)
@@ -201,6 +238,54 @@ class FamilyTest(unittest.TestCase):
                             continue
                         self.assertIn(aid, self.by_id, (fid, a))
                         self.assertTrue(self.by_id[aid]["part"])
+
+
+class StreetPiecesTest(unittest.TestCase):
+    """T-398: sidewalks (a brush, a tile per curb piece), meteor craters and parked and broken cars."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cat = bc.build()
+        cls.by_id = {e["id"]: e for e in cls.cat["entries"]}
+        cls.fams = {f["id"]: f for f in cls.cat["families"]}
+
+    def test_sidewalk_is_a_brush_under_ground(self):
+        f = self.fams["sidewalk"]
+        self.assertEqual((f["group"], f["label"], f["brush"]), ("ground", "piece_sidewalk", "sidewalk"))
+        self.assertEqual([m["asset"] for m in f["members"]], ["sidewalk"])
+
+    def test_every_curb_piece_has_an_entry_drawn_from_the_sheet(self):
+        tiles = bc.load("art/ground/sidewalk_tiles.json")["tiles"]
+        self.assertEqual(len(tiles), 47)
+        for t in tiles:
+            e = self.by_id[t["name"]]
+            self.assertEqual(e["kind"], "ground")
+            self.assertNotIn("atlas_index", e)
+            self.assertEqual(e["sidewalk"], {"edges": t["edges"], "corners": t["corners"]})
+            self.assertEqual(e["textures"][0]["region"], t["region"])
+
+    def test_craters_are_ground_group_models(self):
+        f = self.fams["meteor-crater"]
+        self.assertEqual((f["group"], f["label"], f["looks"], f["counter"]), ("ground", "piece_meteor_crater", 3, "model_counter"))
+        for i in (1, 2, 3):
+            self.assertEqual(self.by_id["crater-%d" % i]["kind"], "crater")
+
+    def test_cars_are_obstacles_with_models_and_four_facings(self):
+        for fid, label, looks in (("parked-car", "piece_parked_car", 3), ("broken-car", "piece_broken_car", 2)):
+            f = self.fams[fid]
+            self.assertEqual((f["group"], f["label"], f["looks"], f["turns"]), ("obstacles", label, looks, 4))
+            self.assertEqual(f["counter"], "model_counter")
+            self.assertTrue(f["facing_labels"])
+        order = [f["id"] for f in self.cat["families"] if f["group"] == "obstacles"]
+        self.assertEqual(order, ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])
+        ground = [f["id"] for f in self.cat["families"] if f["group"] == "ground"]
+        self.assertEqual(ground, ["gravel", "sidewalk", "meteor-crater"])
+
+    def test_new_texts_exist(self):
+        texts = bc.load("data/level/creator_texts.json")
+        for k in ("piece_sidewalk", "piece_meteor_crater", "piece_parked_car", "piece_broken_car", "model_counter",
+                  "facing_top_right", "facing_bottom_right", "facing_bottom_left", "facing_top_left"):
+            self.assertIn(k, texts)
 
 
 if __name__ == "__main__":

@@ -85,7 +85,7 @@ func test_entering_enemy_is_hit_on_that_step_and_again_every_tick() -> void:
 	rack.upgrade("underglow")
 	var s: Dictionary = data.underglow_at(1)
 	var want: float = s["damage"] * rack.damage_multiplier()
-	assert_almost_eq(want, 1.25, 1e-9, "1 x 1.25")
+	assert_almost_eq(want, 2.5, 1e-9, "2 x 1.25")
 	var r: float = s["radius"]
 	var e := _enemy_at(_off(r + 0.5))
 	_step(5)
@@ -171,6 +171,68 @@ func test_it_kills_a_real_minion() -> void:
 	var health: float = m.health
 	_step(1)
 	assert_almost_eq(m.health, health - data.underglow_at(1)["damage"], 1e-9, "entering hit")
+
+
+## T-409: tier 1's tick is half a minion's health: the second tick kills, not the first.
+func test_a_minion_dies_on_the_second_tick_not_the_first() -> void:
+	rack.upgrade("underglow")
+	var m: Node = run.minions.spawn_minion_at(_off(1.0))
+	var health: float = m.health
+	assert_almost_eq(float(data.underglow_at(1)["damage"]), health / 2.0, 1e-9, "tick = half a minion's health")
+	_step(1)
+	assert_false(m.is_dead(), "alive after the first tick")
+	assert_almost_eq(m.health, health / 2.0, 1e-9)
+	_step(_steps_for(float(glow.stats["tick_interval"])))
+	assert_true(m.is_dead() or not is_instance_valid(m) or m.health <= 0.0, "dead on the second tick")
+
+
+## T-409: tiers 3 and 6 keep their multipliers from the new base: 3 and 4.5.
+func test_later_tiers_keep_their_multipliers_from_the_new_base() -> void:
+	assert_almost_eq(float(data.underglow_at(1)["damage"]), 2.0, 1e-9)
+	assert_almost_eq(float(data.underglow_at(2)["damage"]), 2.0, 1e-9)
+	assert_almost_eq(float(data.underglow_at(3)["damage"]), 3.0, 1e-9)
+	assert_almost_eq(float(data.underglow_at(6)["damage"]), 4.5, 1e-9)
+	assert_almost_eq(float(data.underglow_at(8)["damage"]), 4.5, 1e-9)
+
+
+## T-409: each tick pushes a surviving minion straight away from the car by the data's distance.
+func test_each_tick_pushes_a_minion_away_from_the_car() -> void:
+	rack.upgrade("underglow")
+	var dist := float(data.underglow_at(1)["knockback_distance"])
+	assert_gt(dist, 0.0)
+	var m: Node = run.minions.spawn_minion_at(_off(1.0))
+	var before: Vector2 = m.position_units()
+	var car: Vector2 = run.car.model.get_position()
+	_step(1)
+	assert_true(m.is_knocked_back(), "pushed on the tick")
+	# Let the push finish (the minion is not walked here: the spawner is off).
+	for i in 8:  # the push takes 0.15 s (Minion.KNOCKBACK_SECONDS)
+		m.walk(DT, car, Vector2.ZERO)
+	var moved: Vector2 = m.position_units() - before
+	assert_gt(moved.x, 0.0, "moved away from the car")
+	assert_almost_eq(moved.length(), dist, 0.3, "about the data's distance (the walk adds a little)")
+
+
+## T-409 (board, 2026-10-30): the kaiju is damaged and only nudged a tiny bit each tick.
+func test_the_kaiju_is_damaged_and_only_nudged() -> void:
+	rack.upgrade("underglow")
+	var k := _enemy_at(_off(1.0))
+	assert_false(glow.pushes(k), "a node without the knockback call is not pushed")
+	var kaiju: Node2D = preload("res://tests/fixtures/weapons/fake_nudgeable.gd").new()
+	kaiju.position = _off(1.0) * 16.0
+	run.add_child(kaiju)
+	assert_false(glow.pushes(kaiju), "kaiju: not knocked back")
+	assert_true(glow.nudges(kaiju))
+	_step(1)
+	assert_eq(kaiju.damage_taken.size(), 1, "still damaged")
+	assert_eq(kaiju.nudges.size(), 1, "nudged on the tick")
+	assert_almost_eq(float(kaiju.nudges[0][1]), float(data.underglow_at(1)["kaiju_nudge_distance"]), 1e-9)
+	assert_lt(float(kaiju.nudges[0][1]), float(data.underglow_at(1)["knockback_distance"]), "far less than a minion")
+	assert_gt(float(kaiju.nudges[0][0].x), 0.0, "away from the car")
+	var minion := Node.new()
+	minion.set_script(preload("res://tests/fixtures/weapons/fake_pushable.gd"))
+	add_child_autofree(minion)
+	assert_true(glow.pushes(minion), "a minion is pushed")
 
 
 # --- Pause, end of run, new run ----------------------------------------------

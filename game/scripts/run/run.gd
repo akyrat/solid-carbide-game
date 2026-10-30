@@ -128,6 +128,8 @@ var boost_effect: Node2D
 ## The wreck's smoke and flames (task T-360): on the drawn car, above it, from
 ## the last heart to the run's end. Child "WreckEffect" of the View.
 var wreck_effect: Node2D
+## The car's red flash when it loses a heart (T-403, hit_flash.gd).
+var car_flash: HitFlash = HitFlash.from_data()
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -251,6 +253,7 @@ func _ready() -> void:
 	state.crashed.connect(_on_crashed)
 	# The wreck (T-360): the last heart is gone; run_ended follows after its seconds.
 	state.wreck_started.connect(_on_wreck_started)
+	state.revived.connect(_on_revived)  # T-406: a health pickup revives the wreck
 
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -319,6 +322,8 @@ func start_run(path: String = "") -> void:
 	world_rebuilt.emit()
 	state.start_run()
 	wreck_effect.configure(RunData.new().wreck())
+	car_flash = HitFlash.from_data()
+	car_flash.apply_to(car_sprite)
 	apply_blink()
 
 
@@ -414,6 +419,10 @@ func _build_world() -> void:
 			df = func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
 		needle.build_markers(map, hf, df)
 	car.stepped.connect(_on_car_needle_step)
+	# T-405 (altitude audit): props and boulders block the car only at their own heights.
+	var the_map: Node2D = map
+	var the_car = car
+	car.stepped.connect(func() -> void: the_map.update_car_obstacles(the_car, the_car.height))
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
@@ -458,6 +467,7 @@ func _on_car_stepped() -> void:
 ## T-072: the car took damage: the drawn car shakes briefly (its drawing only).
 func _on_car_damaged(_amount: float) -> void:
 	car_sprite.shake()
+	car_flash.trigger()  # only hits that count reach here; ignored ones never do (T-403)
 
 
 ## The player levelled up: the car gives off the level-up burst (T-112).
@@ -470,6 +480,8 @@ func _on_level_up(_new_level: int) -> void:
 func _on_car_moved() -> void:
 	sync_view(false)
 	apply_blink()
+	car_flash.advance(car.model.dt)
+	car_flash.apply_to(car_sprite)
 	wreck_effect.follow(car_sprite.position)
 
 
@@ -480,6 +492,14 @@ func _on_car_moved() -> void:
 func _on_wreck_started(_seconds: float) -> void:
 	car.input_enabled = false
 	wreck_effect.start(car_sprite.position)
+
+
+## A health pickup revived the wrecked car (T-406): the controls come back and
+## the smoke and flames stop.
+func _on_revived() -> void:
+	car.input_enabled = true
+	wreck_effect.stop()
+	apply_blink()
 
 
 ## The car's blink while it is invulnerable after a hit (T-334): the drawn car

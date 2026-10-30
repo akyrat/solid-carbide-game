@@ -12996,7 +12996,7 @@
     12.0,
     12.0
    ],
-   "height_units": 4.3,
+   "height_units": 3.0,
    "views": [
     "iso"
    ],
@@ -13009,13 +13009,29 @@
      "view": "iso",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/short_body_0.png"
+     "texture": "res://art/buildings/platforms/short_body_0.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     },
     {
      "view": "iso",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/short_body_1.png"
+     "texture": "res://art/buildings/platforms/short_body_1.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     }
    ]
   },
@@ -13026,7 +13042,7 @@
     12.0,
     12.0
    ],
-   "height_units": 4.3,
+   "height_units": 3.0,
    "views": [
     "iso"
    ],
@@ -13039,13 +13055,29 @@
      "view": "iso",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/short_body_2.png"
+     "texture": "res://art/buildings/platforms/short_body_2.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     },
     {
      "view": "iso",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/short_body_3.png"
+     "texture": "res://art/buildings/platforms/short_body_3.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     }
    ]
   },
@@ -13056,7 +13088,7 @@
     12.0,
     12.0
    ],
-   "height_units": 4.3,
+   "height_units": 3.0,
    "views": [
     "iso"
    ],
@@ -13069,13 +13101,29 @@
      "view": "iso",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/short_body_4.png"
+     "texture": "res://art/buildings/platforms/short_body_4.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     },
     {
      "view": "iso",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/short_body_5.png"
+     "texture": "res://art/buildings/platforms/short_body_5.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     }
    ]
   },
@@ -13086,7 +13134,7 @@
     12.0,
     12.0
    ],
-   "height_units": 4.3,
+   "height_units": 3.0,
    "views": [
     "iso"
    ],
@@ -13099,13 +13147,29 @@
      "view": "iso",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/short_body_6.png"
+     "texture": "res://art/buildings/platforms/short_body_6.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     },
     {
      "view": "iso",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/short_body_7.png"
+     "texture": "res://art/buildings/platforms/short_body_7.png",
+     "footprint_units": [
+      12,
+      12
+     ],
+     "anchor_art_px": [
+      384,
+      480
+     ]
     }
    ]
   },
@@ -13116,7 +13180,7 @@
     6.0,
     6.0
    ],
-   "height_units": 4.3,
+   "height_units": 3.0,
    "views": [
     "iso"
    ],
@@ -13129,28 +13193,28 @@
      "view": "iso",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/creator_final/small_0.png",
+     "texture": "res://art/buildings/platforms/small_0.png",
      "footprint_units": [
       6,
       6
      ],
      "anchor_art_px": [
       192,
-      330
+      308
      ]
     },
     {
      "view": "iso",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/creator_final/small_1.png",
+     "texture": "res://art/buildings/platforms/small_1.png",
      "footprint_units": [
       6,
       6
      ],
      "anchor_art_px": [
       192,
-      330
+      308
      ]
     }
    ]
@@ -13162,7 +13226,7 @@
     12.0,
     6.0
    ],
-   "height_units": 4.3,
+   "height_units": 3.0,
    "views": [
     "ew",
     "ns"
@@ -13176,56 +13240,56 @@
      "view": "ew",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/creator_final/long_ew_0.png",
+     "texture": "res://art/buildings/platforms/long_ew_0.png",
      "footprint_units": [
       12,
       6
      ],
      "anchor_art_px": [
       384,
-      426
+      404
      ]
     },
     {
      "view": "ew",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/creator_final/long_ew_1.png",
+     "texture": "res://art/buildings/platforms/long_ew_1.png",
      "footprint_units": [
       12,
       6
      ],
      "anchor_art_px": [
       384,
-      426
+      404
      ]
     },
     {
      "view": "ns",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/creator_final/long_ns_0.png",
+     "texture": "res://art/buildings/platforms/long_ns_0.png",
      "footprint_units": [
       6,
       12
      ],
      "anchor_art_px": [
       192,
-      426
+      404
      ]
     },
     {
      "view": "ns",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/creator_final/long_ns_1.png",
+     "texture": "res://art/buildings/platforms/long_ns_1.png",
      "footprint_units": [
       6,
       12
      ],
      "anchor_art_px": [
       192,
-      426
+      404
      ]
     }
    ]
@@ -13511,6 +13575,177 @@
      "variant": "",
      "side": "east",
      "texture": "res://art/creator_pieces/icon_ramp_0_6.png"
+    }
+   ]
+  },
+  {
+   "id": "ramp-0-2",
+   "kind": "ramp",
+   "footprint_units": [
+    10.0,
+    4.0
+   ],
+   "heights": [
+    0,
+    2
+   ],
+   "jump": true,
+   "resizable": true,
+   "length_units": 4.0,
+   "width_units": 10.0,
+   "min_width_units": 4.0,
+   "style": "res://art/creator_pieces/piece_style.tres",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "side": "south",
+     "texture": "res://art/creator_pieces/icon_ramp_0_2.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "side": "west",
+     "texture": "res://art/creator_pieces/icon_ramp_0_2.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "side": "north",
+     "texture": "res://art/creator_pieces/icon_ramp_0_2.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "side": "east",
+     "texture": "res://art/creator_pieces/icon_ramp_0_2.png"
+    }
+   ]
+  },
+  {
+   "id": "ramp-3-5",
+   "kind": "ramp",
+   "footprint_units": [
+    10.0,
+    4.0
+   ],
+   "heights": [
+    3,
+    5
+   ],
+   "jump": true,
+   "resizable": true,
+   "length_units": 4.0,
+   "width_units": 10.0,
+   "min_width_units": 4.0,
+   "style": "res://art/creator_pieces/piece_style.tres",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "side": "south",
+     "texture": "res://art/creator_pieces/icon_ramp_3_5.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "side": "west",
+     "texture": "res://art/creator_pieces/icon_ramp_3_5.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "side": "north",
+     "texture": "res://art/creator_pieces/icon_ramp_3_5.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "side": "east",
+     "texture": "res://art/creator_pieces/icon_ramp_3_5.png"
+    }
+   ]
+  },
+  {
+   "id": "ramp-6-8",
+   "kind": "ramp",
+   "footprint_units": [
+    10.0,
+    4.0
+   ],
+   "heights": [
+    6,
+    8
+   ],
+   "jump": true,
+   "resizable": true,
+   "length_units": 4.0,
+   "width_units": 10.0,
+   "min_width_units": 4.0,
+   "style": "res://art/creator_pieces/piece_style.tres",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "side": "south",
+     "texture": "res://art/creator_pieces/icon_ramp_6_8.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "side": "west",
+     "texture": "res://art/creator_pieces/icon_ramp_6_8.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "side": "north",
+     "texture": "res://art/creator_pieces/icon_ramp_6_8.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "side": "east",
+     "texture": "res://art/creator_pieces/icon_ramp_6_8.png"
     }
    ]
   },
@@ -13873,6 +14108,1933 @@
      "texture": "res://art/props/roof_sign_west_art.png"
     }
    ]
+  },
+  {
+   "id": "prop-parked-car-1",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    3.0
+   ],
+   "height_units": 1.35,
+   "label": "piece_parked_car",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_1_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_1_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_1_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_1_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-parked-car-2",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    3.0
+   ],
+   "height_units": 1.35,
+   "label": "piece_parked_car",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_2_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_2_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_2_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_2_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-parked-car-3",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    3.0
+   ],
+   "height_units": 1.35,
+   "label": "piece_parked_car",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_3_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_3_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_3_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/parked_car_3_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-broken-car-1",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    3.0
+   ],
+   "height_units": 0.95,
+   "label": "piece_broken_car",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_1_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_1_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_1_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_1_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-broken-car-2",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    3.0
+   ],
+   "height_units": 0.95,
+   "label": "piece_broken_car",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_2_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_2_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_2_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/broken_car_2_west.png"
+    }
+   ]
+  },
+  {
+   "id": "sidewalk",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": []
+   },
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      0,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      128,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_se",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "se"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_se",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      256,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      384,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      512,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne_se",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne",
+     "se"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne_se",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      640,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne",
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      768,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      896,
+      0,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_se_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "se",
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_se_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      0,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_se_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "se",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_se_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      128,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_sw_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "sw",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_sw_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      256,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne_se_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne",
+     "se",
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne_se_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      384,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne_se_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne",
+     "se",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne_se_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      512,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne_sw_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne",
+     "sw",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne_sw_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      640,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_se_sw_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "se",
+     "sw",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_se_sw_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      768,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-in_ne_se_sw_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "",
+    "corners": [
+     "ne",
+     "se",
+     "sw",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-in_ne_se_sw_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      896,
+      64,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-n",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "n",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-n",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      0,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-n-in_se",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "n",
+    "corners": [
+     "se"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-n-in_se",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      128,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-n-in_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "n",
+    "corners": [
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-n-in_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      256,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-n-in_se_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "n",
+    "corners": [
+     "se",
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-n-in_se_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      384,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-e",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "e",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-e",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      512,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-e-in_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "e",
+    "corners": [
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-e-in_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      640,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-e-in_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "e",
+    "corners": [
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-e-in_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      768,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-e-in_sw_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "e",
+    "corners": [
+     "sw",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-e-in_sw_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      896,
+      128,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-ne",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "ne",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-ne",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      0,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-ne-in_sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "ne",
+    "corners": [
+     "sw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-ne-in_sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      128,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-s",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "s",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-s",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      256,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-s-in_ne",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "s",
+    "corners": [
+     "ne"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-s-in_ne",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      384,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-s-in_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "s",
+    "corners": [
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-s-in_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      512,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-s-in_ne_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "s",
+    "corners": [
+     "ne",
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-s-in_ne_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      640,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-ns",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "ns",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-ns",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      768,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-es",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "es",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-es",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      896,
+      192,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-es-in_nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "es",
+    "corners": [
+     "nw"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-es-in_nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      0,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-nes",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "nes",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-nes",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      128,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-w",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "w",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-w",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      256,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-w-in_ne",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "w",
+    "corners": [
+     "ne"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-w-in_ne",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      384,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-w-in_se",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "w",
+    "corners": [
+     "se"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-w-in_se",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      512,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-w-in_ne_se",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "w",
+    "corners": [
+     "ne",
+     "se"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-w-in_ne_se",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      640,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-nw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "nw",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-nw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      768,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-nw-in_se",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "nw",
+    "corners": [
+     "se"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-nw-in_se",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      896,
+      256,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-ew",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "ew",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-ew",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      0,
+      320,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-new",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "new",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-new",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      128,
+      320,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-sw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "sw",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-sw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      256,
+      320,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-sw-in_ne",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "sw",
+    "corners": [
+     "ne"
+    ]
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-sw-in_ne",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      384,
+      320,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-nsw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "nsw",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-nsw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      512,
+      320,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-esw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "esw",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-esw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      640,
+      320,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sidewalk-nesw",
+   "kind": "ground",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "sidewalk": {
+    "edges": "nesw",
+    "corners": []
+   },
+   "part": true,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "sidewalk-nesw",
+     "texture": "res://art/ground/sidewalk_tiles.png",
+     "region": [
+      768,
+      320,
+      128,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "id": "crater-1",
+   "kind": "crater",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "label": "piece_meteor_crater",
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/craters/crater_1.png"
+    }
+   ]
+  },
+  {
+   "id": "crater-2",
+   "kind": "crater",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "label": "piece_meteor_crater",
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/craters/crater_2.png"
+    }
+   ]
+  },
+  {
+   "id": "crater-3",
+   "kind": "crater",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "label": "piece_meteor_crater",
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/craters/crater_3.png"
+    }
+   ]
   }
  ],
  "groups": [
@@ -14117,6 +16279,74 @@
    ]
   },
   {
+   "id": "sidewalk",
+   "group": "ground",
+   "label": "piece_sidewalk",
+   "looks": 1,
+   "turns": 1,
+   "mirrors": [
+    false
+   ],
+   "heights": [],
+   "members": [
+    {
+     "asset": "sidewalk",
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    }
+   ],
+   "brush": "sidewalk"
+  },
+  {
+   "id": "meteor-crater",
+   "group": "ground",
+   "label": "piece_meteor_crater",
+   "looks": 3,
+   "turns": 1,
+   "mirrors": [
+    false
+   ],
+   "heights": [],
+   "members": [
+    {
+     "asset": "crater-1",
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "crater-2",
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "crater-3",
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "look": 2,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    }
+   ],
+   "counter": "model_counter"
+  },
+  {
    "id": "platform",
    "group": "levels",
    "label": "piece_platform",
@@ -14164,7 +16394,10 @@
    "heights": [
     "0-3",
     "3-6",
-    "0-6"
+    "0-6",
+    "0-2",
+    "3-5",
+    "6-8"
    ],
    "members": [
     {
@@ -14286,6 +16519,126 @@
      "turn": 3,
      "flip": false,
      "height": "0-6"
+    },
+    {
+     "asset": "ramp-0-2",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "0-2"
+    },
+    {
+     "asset": "ramp-0-2",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "0-2"
+    },
+    {
+     "asset": "ramp-0-2",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "0-2"
+    },
+    {
+     "asset": "ramp-0-2",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "0-2"
+    },
+    {
+     "asset": "ramp-3-5",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "3-5"
+    },
+    {
+     "asset": "ramp-3-5",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "3-5"
+    },
+    {
+     "asset": "ramp-3-5",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "3-5"
+    },
+    {
+     "asset": "ramp-3-5",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "3-5"
+    },
+    {
+     "asset": "ramp-6-8",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "6-8"
+    },
+    {
+     "asset": "ramp-6-8",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "6-8"
+    },
+    {
+     "asset": "ramp-6-8",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "6-8"
+    },
+    {
+     "asset": "ramp-6-8",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "6-8"
     }
    ]
   },
@@ -14816,6 +17169,236 @@
      "height": ""
     }
    ]
+  },
+  {
+   "id": "parked-car",
+   "group": "obstacles",
+   "label": "piece_parked_car",
+   "looks": 3,
+   "turns": 4,
+   "mirrors": [
+    false
+   ],
+   "heights": [],
+   "members": [
+    {
+     "asset": "prop-parked-car-1",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-1",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-1",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-1",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-2",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-2",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 1,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-2",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 2,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-2",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 3,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-3",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 2,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-3",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 2,
+     "turn": 1,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-3",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 2,
+     "turn": 2,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-parked-car-3",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 2,
+     "turn": 3,
+     "flip": false,
+     "height": ""
+    }
+   ],
+   "counter": "model_counter",
+   "facing_labels": true
+  },
+  {
+   "id": "broken-car",
+   "group": "obstacles",
+   "label": "piece_broken_car",
+   "looks": 2,
+   "turns": 4,
+   "mirrors": [
+    false
+   ],
+   "heights": [],
+   "members": [
+    {
+     "asset": "prop-broken-car-1",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-broken-car-1",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-broken-car-1",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-broken-car-1",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-broken-car-2",
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-broken-car-2",
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 1,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-broken-car-2",
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 2,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "prop-broken-car-2",
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 3,
+     "flip": false,
+     "height": ""
+    }
+   ],
+   "counter": "model_counter",
+   "facing_labels": true
   },
   {
    "id": "street-lamp",

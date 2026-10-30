@@ -86,7 +86,6 @@ func test_nothing_counts_during_the_wreck() -> void:
 	_lose_last_heart()
 	state.add_coins(5)
 	state.damage_car(1.0)
-	state.heal_car(3.0)
 	state.add_xp(500.0)
 	state.challenge_completed("c")
 	state.drift_step(true, 2.0)
@@ -145,6 +144,118 @@ func test_0_seconds_ends_at_once() -> void:
 	state.wreck_seconds = 0.0
 	_lose_last_heart()
 	assert_eq(ended, [["loss", 0]])
+
+
+# --- A health pickup revives the wreck (T-406) ----------------------------------------
+
+func test_a_health_pickup_revives_with_one_heart_and_no_recap() -> void:
+	var revived: Array = []
+	state.revived.connect(func() -> void: revived.append(true))
+	state.add_coins(3)
+	state.max_health = 5.0
+	state.advance(50.0)
+	_lose_last_heart()
+	state.advance(1.0)
+	assert_eq(state.heal_car(2.0), 1.0, "1 heart, whatever the pickup restores")
+	assert_eq(revived.size(), 1)
+	assert_eq(state.hearts, 1)
+	assert_false(state.is_wrecked())
+	assert_true(state.is_running(), "the run goes on")
+	assert_eq(state.result, "")
+	assert_eq(state.recap().result, "", "the recap is live again")
+	state.advance(10.0)
+	assert_eq(ended, [], "no run_ended, so no recap")
+	assert_lt(state.time_left, RunState.RUN_SECONDS - 50.0, "the clock runs again")
+	state.add_coins(2)
+	assert_eq(state.coins, 5, "coins count again")
+
+
+func test_the_revive_is_invulnerable_for_the_usual_second() -> void:
+	_lose_last_heart()
+	state.heal_car(1.0)
+	assert_true(state.is_invulnerable())
+	assert_almost_eq(state.invulnerable_left, RunData.new().invulnerability_seconds(), 0.001)
+	state.damage_car(1.0)
+	assert_eq(state.hearts, 1, "the swarm cannot finish it at once")
+	state.advance(state.invulnerable_left + 0.01)
+	state.damage_car(1.0)
+	assert_true(state.is_wrecked(), "after it, a hit wrecks it again")
+
+
+func test_the_combo_stays_cut_and_viewers_keep_their_peak() -> void:
+	state.add_trick("three_sixty")
+	var peak: float = state.recap().peak_viewers
+	_lose_last_heart()
+	var combo := state.combo
+	state.heal_car(1.0)
+	assert_eq(state.combo, combo, "the combo the fatal hit left")
+	assert_gte(float(state.recap().peak_viewers), peak, "the peak is not lost")
+
+
+func test_no_pickup_no_revive_and_the_wreck_ends_as_before() -> void:
+	_lose_last_heart()
+	assert_eq(state.revive(), 1.0)
+	assert_eq(state.revive(), 0.0, "not wrecked any more: nothing to revive")
+	state.start_run()
+	assert_eq(state.heal_car(1.0), 0.0, "full health: nothing restored")
+	_lose_last_heart()
+	state.advance(3.0)
+	assert_eq(ended, [["loss", 0]])
+	assert_eq(state.heal_car(1.0), 0.0, "after the recap starts it is too late")
+	assert_eq(state.revive(), 0.0)
+
+
+func test_in_the_run_a_sliding_wreck_picks_up_a_health_pickup_and_drives_again() -> void:
+	var run: Node2D = RunScene.instantiate()
+	add_child_autofree(run)
+	# T-424: the test is about the wreck, the slide, the pickup and the revive. The starting gun
+	# and the minions (kills drop coins and hearts, bodies hit the car) would change what it
+	# watches, so they are off before the first frame (minions.enabled, weapons.enabled).
+	run.minions.enabled = false
+	run.weapons.enabled = false
+	var run_ended: Array = []
+	run.state.run_ended.connect(func(r: String, c: int) -> void: run_ended.append([r, c]))
+	run.car.use_keyboard = false
+	run.car.scripted_input = [true, false, 0.0]
+	await wait_physics_frames(40)
+	run.state.damage_car(1000.0)
+	assert_true(run.state.is_wrecked())
+	var coin_state: int = run.state.coins
+	var p: Area2D = load("res://scripts/enemies/health_pickup.gd").new()
+	p.state = run.state
+	p.position = run.car.position + Vector2(2.0 * 16.0, 0.0)  # 2 units off: inside the magnet's reach
+	var picked: Array = []
+	p.collected.connect(func(_n: Node, restored: float) -> void: picked.append(restored))
+	run.add_child(p)
+	assert_true(2.0 <= run.state.pickup_magnet_radius_units)
+	await wait_physics_frames(90)
+	assert_eq(picked, [1.0], "picked up while wrecked")
+	assert_false(run.state.is_wrecked())
+	assert_eq(run.state.hearts, 1)
+	assert_true(run.car.input_enabled, "controls back")
+	assert_false(run.wreck_effect.is_playing(), "the smoke and flames stopped")
+	run.state.advance(10.0)
+	assert_eq(run_ended, [], "no recap")
+	assert_eq(run.state.coins, coin_state)
+
+
+func test_coins_stand_still_during_the_wreck_but_health_is_pulled() -> void:
+	var run: Node2D = RunScene.instantiate()
+	add_child_autofree(run)
+	run.state.damage_car(1000.0)
+	var at: Vector2 = run.car.position
+	var far := Node2D.new()
+	far.add_to_group("coins")
+	far.position = at + Vector2(48.0, 0.0)
+	run.add_child(far)
+	run.pickup_magnet.step(0.1)
+	assert_eq(far.position, at + Vector2(48.0, 0.0), "a coin is not pulled")
+	var h := Node2D.new()
+	h.add_to_group("health_pickups")
+	h.position = at + Vector2(48.0, 0.0)
+	run.add_child(h)
+	run.pickup_magnet.step(0.1)
+	assert_lt(h.position.distance_to(at), 48.0, "a health pickup is")
 
 
 # --- The car's controls -----------------------------------------------------------

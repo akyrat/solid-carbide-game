@@ -28,6 +28,7 @@ extends Node2D
 const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
 const GroundHeightScript := preload("res://scripts/level/ground_height.gd")
 const PlatformDrawingScript := preload("res://scripts/level/elevation_platform_drawing.gd")
+const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 
 const ISO_TRANSFORM := MvpMapScript.ISO_TRANSFORM
 const PX_PER_UNIT := MvpMapScript.PX_PER_UNIT
@@ -91,7 +92,14 @@ func _add_area(kind: String, block: Dictionary) -> void:
 	# A piece with no art piece (the level creator's rooftops and ramps of any size, T-251) is
 	# drawn from the piece style's tileable textures instead.
 	var style = piece_style_named(str(block.get("style", "")))
-	if d.art_sprite == null and style != null:
+	# T-405: a short building's platform is drawn from its own art cut to the platform's height,
+	# with no wall and no parapet where it joins something at its height (short_platforms.gd).
+	var bart := ShortPlatformsScript.art_of(str(block.get("texture", ""))) if bool(block.get("short", false)) else {}
+	if not bart.is_empty():
+		var rec := ShortPlatformsScript.art_record()
+		d.use_building_art(bart, joined_gaps(block), joined_gaps(block, true),
+			float(rec.get("edge_units", 1.0)), float(rec.get("lip_units", 0.15)))
+	elif d.art_sprite == null and style != null:
 		d.use_style(style, area_base(kind, block), edge_gaps(kind, block))
 	add_child(d)
 	areas.append(d)
@@ -158,16 +166,78 @@ func edge_gaps(kind: String, block: Dictionary) -> Dictionary:
 		var axis: int = lines[edge][0]  # the axis across the edge
 		var at: float = lines[edge][1]
 		var along := 1 - axis
+		var outward := -1.0 if edge in ["north", "west"] else 1.0
 		for p in ground_height.platforms:
 			var q: Rect2 = p.rect
-			if p.id == block.id or float(p.height) <= float(block.height):
+			if p.id == block.id:
 				continue
+			if float(p.height) <= float(block.height):
+				# T-405: a short building's platform at the same height standing across the edge (or
+				# against it from outside) joins it: no parapet there. Rooftops beside rooftops keep theirs.
+				if not bool(p.get("short", false)) or float(p.height) < float(block.height) - 0.001:
+					continue
+				var reaches_out := q.position[axis] < at - 0.001 if outward < 0.0 else q.end[axis] > at + 0.001
+				if not reaches_out:
+					continue
 			if q.position[axis] <= at + 0.001 and at <= q.end[axis] + 0.001:
 				out[edge].append([q.position[along], q.end[along]])
 		for ramp in ground_height.ramps:
 			var q: Rect2 = ramp.rect
 			if q.position[axis] - EDGE_GAP_REACH <= at and at <= q.end[axis] + EDGE_GAP_REACH:
 				out[edge].append([q.position[along] - EDGE_GAP_REACH, q.end[along] + EDGE_GAP_REACH])
+	return out
+
+
+## How far outside an edge (units) joined_gaps looks for what stands across it, and its step along it.
+const JOIN_PROBE := 0.25
+const JOIN_STEP := 0.5
+
+
+## The highest rooftop (not ramp) at a point, 0 on the street.
+func platform_height_at(point: Vector2) -> float:
+	var best := 0.0
+	for p in ground_height.platforms:
+		if GroundHeightScript._contains(p.rect, point):
+			best = maxf(best, float(p.height))
+	return best
+
+
+## T-405: where a platform's edges are joined: the runs of each edge (as edge_gaps) where a rooftop
+## or short building at its height or higher stands just across it (JOIN_PROBE outside), so the
+## platform draws no wall and no parapet there. With `with_ramps`, also where a ramp meets the edge
+## (as edge_gaps: no parapet there, the wall stays).
+func joined_gaps(block: Dictionary, with_ramps: bool = false) -> Dictionary:
+	var out := {"north": [], "east": [], "south": [], "west": []}
+	var r: Rect2 = block.rect
+	var h := float(block.height)
+	# edge: [a point of the edge at t along it, the outward direction, from, to]
+	var edges := {"north": [Vector2(0, r.position.y), Vector2(0, -1), r.position.x, r.end.x],
+		"south": [Vector2(0, r.end.y), Vector2(0, 1), r.position.x, r.end.x],
+		"west": [Vector2(r.position.x, 0), Vector2(-1, 0), r.position.y, r.end.y],
+		"east": [Vector2(r.end.x, 0), Vector2(1, 0), r.position.y, r.end.y]}
+	for edge in edges:
+		var base: Vector2 = edges[edge][0]
+		var outward: Vector2 = edges[edge][1]
+		var lo: float = edges[edge][2]
+		var hi: float = edges[edge][3]
+		var along := 0 if edge in ["north", "south"] else 1
+		var t := lo
+		while t < hi - 0.001:
+			var t2 := minf(t + JOIN_STEP, hi)
+			var p := base
+			p[along] = (t + t2) / 2.0
+			p += outward * JOIN_PROBE
+			if platform_height_at(p) >= h - 0.001:
+				var runs: Array = out[edge]
+				if not runs.is_empty() and absf(float(runs[-1][1]) - t) < 0.001:
+					runs[-1][1] = t2
+				else:
+					runs.append([t, t2])
+			t = t2
+	if with_ramps:
+		var ramp_gaps := edge_gaps("platform", block)
+		for edge in out:
+			out[edge].append_array(ramp_gaps[edge])
 	return out
 
 
@@ -301,18 +371,24 @@ func top_z_index() -> int:
 ## A boulder sprite's z_index: the map's (under the buildings that cover it),
 ## and under every raised area it is behind and overlaps on screen. A boulder
 ## nothing covers goes over every item, areas included.
+##
+## T-393: the buildings' z_index here is this layer's (restack), so a boulder no
+## building covers starts at this layer's top, never at the map's own top: that
+## one is lower than the restacked buildings, and comparing with it took a
+## covering building for none (a barrier behind a low-rise was drawn over it).
 func boulder_z(sp) -> int:
-	var z: int = map._boulder_z_buildings(sp.centre_units, sp.outline)
-	if z >= map.own_top_z_index():
-		z = top_z_index()
-	return boulder_z_under_areas(z, sp.centre_units, sp.outline)
+	var z: int = map._boulder_z_buildings(sp.centre_units, sp.outline, top_z_index())
+	var ground = sp.get("ground_units")
+	return boulder_z_under_areas(z, sp.centre_units, sp.outline, float(ground) if ground != null else 0.0)
 
 
 ## Lowers a boulder's z_index `z` under every raised area it is behind and
-## overlaps on screen (outline in the map's screen pixels).
-func boulder_z_under_areas(z: int, centre_units: Vector2, outline: PackedVector2Array) -> int:
+## overlaps on screen (outline in the map's screen pixels). `ground` (T-393) is
+## the height it stands on: an area whose top is not above it covers nothing of
+## it.
+func boulder_z_under_areas(z: int, centre_units: Vector2, outline: PackedVector2Array, ground: float = 0.0) -> int:
 	for a in areas:
-		if a.is_behind(centre_units, 0.0, 0.0) \
+		if a.is_behind(centre_units, 0.0, ground) \
 				and not Geometry2D.intersect_polygons(a.silhouette(), outline).is_empty():
 			z = mini(z, a.z_index - 1)
 	return z

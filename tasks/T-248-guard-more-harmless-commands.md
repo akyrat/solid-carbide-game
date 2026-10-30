@@ -1,10 +1,10 @@
 ---
 id: T-248
 title: The guard lets more harmless commands through (find, shell variables, Godot recording and import)
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
-lead: Coursework
+lead: Greenbull
 epic: tooling
 milestone: mvp
 goal:
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/test_guard.py, tasks/T-216-guard-read-only-false-alarms.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Started at the board's go: the guard lets a read-only find, shell variables and 
 
 Built: the guard passes a plain find, shell variables, Godot's --import and --write-movie, and Markdown ** in inline code. Sent to QA.
 
+### 2026-10-30, In QA → Done
+
+Closed: it was merged on 2026-10-22, only the status was left behind.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -80,3 +84,4 @@ Written by the agent when it finishes.
 - (5) A Bash `sleep 60; tail` to wait for the background test run was blocked by the harness; I waited for the run's notification instead.
 - `python -m unittest discover -s tools -p "test_*.py"`: 446 OK (this run was before the QA criteria case was added; `tools.test_guard` was rerun afterwards: 59 OK). `python -m unittest discover -s game/tools -p "test_*.py"`: 393 OK (1 skipped).
 - Nothing to picture: a hook change with no screen.
+- 2026-10-30, in-qa → done: Already merged into master (1390a501, 2026-10-22); status closed by Greenbull after taking it over from Coursework (board, 2026-10-30).

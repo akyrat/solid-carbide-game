@@ -25,6 +25,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/art/ground-and-props.md](docs/art/ground-and-props.md): Ground and props. The first road tile, the map's ground, the boulders.
 - [docs/art/bolder-enemy-outlines.md](docs/art/bolder-enemy-outlines.md): Bolder enemy outlines. The thicker outline on minion and kaiju sheets (T-340).
 - [docs/art/bricks-art.md](docs/art/bricks-art.md): Bricks' art. The card image and the impact wave sheets, and the script that draws the wave (T-325).
+- [docs/art/sidewalk-parked-cars.md](docs/art/sidewalk-parked-cars.md): Sidewalk and parked car art. The sample sidewalk tile with its curb, the parked car, and the script that draws, cleans and previews them (T-397).
 
 ## hud-and-menus/
 

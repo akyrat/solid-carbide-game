@@ -213,3 +213,42 @@ func test_flat_driving_unchanged_by_height() -> void:
 		assert_eq(with_h.model.get_velocity(), without.model.get_velocity(), "step %d" % i)
 		assert_eq(with_h.model.rotation, without.model.rotation, "step %d" % i)
 	assert_gt(compared, 20, "compared on the ground, up the ramp")
+
+
+# ---- T-400: the open top of a ramp that climbs to no rooftop ------------------------------------
+
+## A small jump ramp on the street climbing west: 4 x 10 at (0, -5), 0 at x = 0 up to 2 at x = 4.
+func _jump_ground():
+	var g = GroundHeightScript.new()
+	g.load_data({"platforms": [], "ramps": [{"id": "j", "platform": "", "side": "west", "x": 0, "y": -5,
+		"w": 4, "h": 10, "bottom_height": 0, "top_height": 2, "jump": true}]})
+	return g
+
+
+func test_off_an_open_ramp_top_the_car_takes_off_along_the_slope() -> void:
+	var h = CarHeight.new()
+	h.ground = _jump_ground()
+	var took := []
+	h.took_off.connect(func(from_ramp, vz): took.append([from_ramp, vz]))
+	var prev := Vector2(3.9, 0)
+	h.reset(prev)
+	var v := Vector2(10, 0)
+	h.step(prev, prev + v * 0.02, v, 0.02)
+	assert_true(h.airborne)
+	assert_eq(took.size(), 1)
+	assert_true(took[0][0], "from the ramp")
+	assert_almost_eq(took[0][1], 10.0 * 2.0 / 4.0, EPS, "the slope's vertical speed")
+
+
+func test_off_an_open_ramp_side_or_slowly_the_car_just_falls() -> void:
+	for c in [[Vector2(2, 4.9), Vector2(0, 10)], [Vector2(3.95, 0), Vector2(CarHeight.RAMP_TAKEOFF_MIN_SPEED - 1.0, 0)]]:
+		var h = CarHeight.new()
+		h.ground = _jump_ground()
+		var took := []
+		h.took_off.connect(func(from_ramp, vz): took.append([from_ramp, vz]))
+		var prev: Vector2 = c[0]
+		var v: Vector2 = c[1]
+		h.reset(prev)
+		h.step(prev, prev + v * 0.02, v, 0.02)
+		assert_true(h.airborne, str(c))
+		assert_eq(took, [[false, 0.0]], str(c))

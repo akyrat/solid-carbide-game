@@ -9,14 +9,14 @@
       The kept text is printed, written in the Style review, and written to --out if given.
 
 Each round goes into the task's `## Style review` section (the task file where it lives: its task folder while
-its branch is open). A run that stays below 8 after 3 refines flags the task (task_status.py).
+its branch is open). A run that stays below 8 after 3 refines flags the task (task_status.py); in a goal run (a `goal:` line) it only notes it.
 
 --fake FIXTURE answers from a JSON fixture with FakeClaude instead of calling Claude ({"generate": [...],
 "refine": [...], "evaluate": [...]}, fixtures/). It never touches the real task: it works in task_status.sandbox,
 a copy of the task in a new temporary folder (with its own task status record), where the archive and --out go
 too; the folder's path is printed first and kept, so the result can be opened. Only task_status.py finds and
 writes the ticket (board, 2026-10-25).
-Exit codes: 0 kept at 8 or more, 1 kept below 8 (flagged), stopped or refused, 2 usage error.
+Exit codes: 0 kept at 8 or more (or, in a goal run, kept below 8 and noted, not flagged), 1 kept below 8 (flagged), stopped or refused, 2 usage error.
 """
 
 import argparse
@@ -88,6 +88,11 @@ def main(argv=None, claude=None):
         for r in rounds:
             print(f"Round {r.n}: score {r.score}/10 ({loop.checks_summary(r.checks)})")
         print(f"Kept version {kept.n}, score {kept.score}/10: {loop.show_version(spec, kept.version)}")
+        if kept.score < loop.PASS and spec.goal:
+            print(f"Below {loop.PASS} after {loop.MAX_REFINES} refines: {args.task} is a goal run's ticket, so the version is kept "
+                  "and noted for the board's final playtest. It stays in progress; go on to QA.")
+            print(f"Style review written in {ts.find(args.task)[0]}")
+            return 0
         if kept.score < loop.PASS:
             print(f"Below {loop.PASS} after {loop.MAX_REFINES} refines: {args.task} is flagged for the board's review.")
         print(f"Style review written in {ts.find(args.task)[0]}")

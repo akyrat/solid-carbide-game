@@ -156,8 +156,38 @@ class TestCheckProps(unittest.TestCase):
         self.assertEqual(c.check_level(small_level()), [])
 
 
+class TestCheckCraters(unittest.TestCase):
+    """T-398: meteor craters name a known crater, have its footprint and lie inside the map."""
+
+    def level(self, *craters):
+        d = small_level()
+        d["craters"] = list(craters)
+        return d
+
+    def crater(self, asset="crater-1", x=0.0, y=0.0, w=2.0, h=2.0):
+        return {"id": "crater-1", "asset": asset, "x": x, "y": y, "w": w, "h": h}
+
+    def test_a_valid_crater(self):
+        self.assertEqual(c.check_level(self.level(self.crater())), [])
+
+    def test_rejects_unknown_wrong_size_and_outside(self):
+        self.assertTrue(any("unknown crater" in p for p in c.check_level(self.level(self.crater(asset="crater-x")))))
+        self.assertTrue(any("footprint" in p for p in c.check_level(self.level(self.crater(w=4.0)))))
+        self.assertTrue(any("outside the map" in p for p in c.check_level(self.level(self.crater(x=9.0)))))
+
+    def test_parked_and_broken_cars_are_props_and_obstacles(self):
+        d = small_level()
+        d["props"] = [{"id": "prop-1", "asset": "prop-parked-car-1", "rotation": "north", "x": -4.0, "y": -4.0, "w": 2.0, "h": 3.0},
+                      {"id": "prop-2", "asset": "prop-broken-car-2", "rotation": "east", "x": 0.0, "y": 0.0, "w": 3.0, "h": 2.0}]
+        d["pairs"] = [{"id": "pair-1", "a": "prop-1", "b": "prop-2"}]
+        self.assertEqual(c.check_level(d), [])
+        self.assertIn("prop-parked-car-1", c.obstacle_props())
+        self.assertIn("prop-broken-car-2", c.obstacle_props())
+
+
 class TestCheckPairs(unittest.TestCase):
-    """T-272: every pair names two different existing obstacles, each in one pair at most."""
+    """T-272: every pair names two different existing obstacles; T-394: an obstacle can be in several
+    pairs, the same two obstacles in one pair at most."""
 
     def level(self, *pairs):
         d = small_level()
@@ -175,7 +205,9 @@ class TestCheckPairs(unittest.TestCase):
         return {"id": pid, "a": a, "b": b}
 
     def test_the_obstacles_are_the_obstacles_groups_props(self):
-        self.assertEqual(c.obstacle_props(), {"prop-barrier", "prop-cones", "prop-crates"})
+        self.assertEqual(c.obstacle_props(), {"prop-barrier", "prop-cones", "prop-crates",  # T-398: the cars
+                                               "prop-parked-car-1", "prop-parked-car-2", "prop-parked-car-3",
+                                               "prop-broken-car-1", "prop-broken-car-2"})
 
     def test_valid_pairs(self):
         d = self.level(self.pair("copy-01", "prop-1"), self.pair("copy-02/0", "copy-02/1", "pair-2"))
@@ -205,11 +237,19 @@ class TestCheckPairs(unittest.TestCase):
         problems = c.check_level(self.level(self.pair("copy-02", "prop-1")))
         self.assertTrue(any("holds 2 boulders" in p for p in problems), problems)
 
-    def test_rejects_an_obstacle_with_itself_and_in_two_pairs(self):
+    def test_rejects_an_obstacle_with_itself(self):
         problems = c.check_level(self.level(self.pair("prop-1", "prop-1")))
         self.assertTrue(any("with itself" in p for p in problems), problems)
-        problems = c.check_level(self.level(self.pair("copy-01", "prop-1"), self.pair("prop-1", "prop-3", "pair-2")))
-        self.assertTrue(any("pair 'pair-2'" in p and "already in" in p for p in problems), problems)
+
+    def test_accepts_an_obstacle_in_several_pairs_a_chain(self):
+        """T-394: a row paired as a chain, A-B, B-C, C-D: the middle obstacles are in two pairs."""
+        d = self.level(self.pair("copy-01", "prop-1"), self.pair("prop-1", "prop-3", "pair-2"),
+                       self.pair("prop-3", "copy-02/0", "pair-3"), self.pair("copy-02/0", "copy-02/1", "pair-4"))
+        self.assertEqual(c.check_level(d), [])
+
+    def test_rejects_the_same_two_obstacles_paired_twice(self):
+        problems = c.check_level(self.level(self.pair("copy-01", "prop-1"), self.pair("prop-1", "copy-01", "pair-2")))
+        self.assertTrue(any("pair 'pair-2'" in p and "again" in p and "pair 'pair-1'" in p for p in problems), problems)
 
     def test_rejects_pairs_that_are_not_a_list(self):
         d = self.level()
@@ -244,6 +284,14 @@ class TestSpawn(unittest.TestCase):
     def test_a_spawn_on_a_rooftop_or_a_ramp_is_fine(self):
         self.assertEqual(self.problems(self.level(x=3.0, y=-5.0)), [])  # on the rooftop
         self.assertEqual(self.problems(self.level(x=3.0, y=-1.0)), [])  # on the ramp
+
+    def test_a_spawn_on_a_short_building_is_fine(self):
+        """T-405: a low-rise, small or long building is a platform the car can stand on; a skyscraper is not."""
+        d = self.level(x=-5.0, y=7.0)
+        d["buildings"].append({"x": -8.0, "y": 4.0, "w": 6.0, "h": 6.0, "asset": "building-small", "look": 0})
+        self.assertEqual(self.problems(d), [])
+        d["buildings"][-1]["asset"] = "skyscraper-1"
+        self.assertTrue(any("building" in p for p in self.problems(d)))
 
     def test_a_missing_spawn_is_refused(self):
         d = small_level()
@@ -280,6 +328,24 @@ class TestSpawn(unittest.TestCase):
         d = small_level()
         d["spawn"] = {"y": 1.0, "heading": 0}
         self.assertTrue(any("needs numbers" in p for p in self.problems(d)))
+
+
+
+class TestJumpRampLevel(unittest.TestCase):
+    """T-400: a level with a small jump ramp on the street and one on its rooftop passes."""
+
+    def test_a_level_with_jump_ramps_passes(self):
+        d = small_level()
+        d["ramps"].append({"id": "ramp-2", "platform": "", "side": "west", "x": -8.0, "y": 2.0, "w": 4.0,
+                           "h": 6.0, "bottom_height": 0.0, "top_height": 2.0, "arrows": "up", "jump": True})
+        d["ramps"].append({"id": "ramp-3", "platform": "", "side": "north", "x": 0.0, "y": -8.0, "w": 4.0,
+                           "h": 4.0, "bottom_height": 3.0, "top_height": 5.0, "arrows": "up", "jump": True})
+        self.assertEqual(c.check_level(d), [])
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "level.json"
+            p.write_text(json.dumps(d), encoding="utf-8")
+            res = run_tool(p)
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"))
 
 
 if __name__ == "__main__":

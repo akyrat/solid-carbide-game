@@ -50,12 +50,12 @@ func test_six_groups_one_button_per_kind_with_labels_from_the_texts() -> void:
 	var shown := e.panel.entries_by_category()
 	assert_eq(shown.keys(), GROUPS.map(func(g): return CreatorTexts.get_text("group_" + g)))
 	assert_eq(shown[CreatorTexts.get_text("group_roads")], ["road", "centre-line", "zebra-crossing", "cracked-road"])
-	assert_eq(shown[CreatorTexts.get_text("group_ground")], ["gravel"])
+	assert_eq(shown[CreatorTexts.get_text("group_ground")], ["gravel", "sidewalk", "meteor-crater"])  # T-398
 	assert_eq(shown[CreatorTexts.get_text("group_levels")], ["platform", "ramp"])
 	assert_eq(shown[CreatorTexts.get_text("group_buildings")], ["building-small", "building-long", "lowrise", "skyscraper"])
-	assert_eq(shown[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates"])
+	assert_eq(shown[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])  # T-398
 	assert_eq(shown[CreatorTexts.get_text("group_decoration")], ["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"])
-	assert_eq(e.panel.buttons.size(), 20, "one button per kind (Pavement left out: no ground tile art)")
+	assert_eq(e.panel.buttons.size(), 24, "one button per kind (T-398: sidewalk, meteor crater, parked car, broken car) (Pavement left out: no ground tile art)")
 	for fid in e.panel.buttons:
 		var f := CreatorFamilies.family(fid)
 		var b: Button = e.panel.buttons[fid]
@@ -143,6 +143,11 @@ func test_r_turns_m_mirrors_and_h_changes_height() -> void:
 	assert_eq(e.pick_view, "east", "H keeps the direction")
 	_key(e, KEY_H)
 	assert_eq(e.panel.picked, "ramp-0-6")
+	# T-400: then the small jump ramps, 0 to 2, 3 to 5 and 6 to 8, before going round.
+	for small in ["ramp-0-2", "ramp-3-5", "ramp-6-8"]:
+		_key(e, KEY_H)
+		assert_eq(e.panel.picked, small)
+		assert_eq(e.pick_view, "east", "H keeps the direction")
 	_key(e, KEY_H)
 	assert_eq(e.panel.picked, "ramp-0-3")
 	e.panel.pick("platform")

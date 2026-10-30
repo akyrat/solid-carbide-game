@@ -30,7 +30,9 @@ extends RefCounted
 ##   on a 3), as in the elevation sample map's height data.
 ## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art, arrows} in ramps (arrows, T-264: "up" or "down" the slope, a ramp of any size; none is up): side =
 ##   the side of the rooftop it climbs, from the view's art; platform = the rooftop at its top
-##   height whose side its top end touches ("" while there is none).
+##   height whose side its top end touches ("" while there is none). A small jump ramp (T-400, its
+##   entry's "jump": ramp-0-2, ramp-3-5, ramp-6-8) also writes "jump": true: it climbs to no
+##   rooftop, its tall end is open and the car flies off it (check_height_data.py accepts it so).
 ## - prop (T-253; data/level/props.json): {id, asset, rotation, x, y, w, h} in props: rotation = the
 ##   view it was placed in (north, east, south, west: the direction it faces), x, y, w, h = its
 ##   footprint turned to that rotation (east and west swap the two numbers). Placed on the ground or on
@@ -38,7 +40,12 @@ extends RefCounted
 ##   footprint would reach out of the map.
 ## - pair (T-272, thread the needle): {id: "pair-N", a, b} in pairs, two obstacles (boulders, or the
 ##   Obstacles group's props) named by their refs (ObstaclePairs); make_pair, unpair, pair_of.
-##   Deleting either obstacle removes its pair. An obstacle is in at most one pair.
+##   Deleting either obstacle removes its pair. An obstacle can be in several pairs (T-394: a row
+##   paired as a chain, make_chain); the same two obstacles make one pair at most (pair_between).
+## - sidewalk (T-398): ground tiles like the roads', painted with SidewalkBrush; every write of the
+##   cells gives each sidewalk cell the tile of its curb piece (the roads next to it).
+## - crater (T-398; data/level/craters.json): {id, asset, x, y, w, h} in craters, a meteor crater on
+##   the street: a ground decal the car drives over (no body), drawn over the ground tiles.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -51,9 +58,11 @@ const GAME_GROUND_PATH := "res://data/level/mvp_ground.json"
 ## A new level is today's map's size (elevation_sample_map.json: 240 x 240 units, centred).
 const MAP_SIZE := 240
 const CELL := 2
+## T-405: the short buildings are platforms (short_platforms.gd).
+const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
-const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop"]
+const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater"]
 const LEGEND := {"R": "road", "G": "gravel", "B": "building"}
 ## mvp_map.gd's ground tiles: cell values from here on draw the layout's "extra" textures.
 const EXTRA_BASE := 1000
@@ -323,6 +332,7 @@ func set_cells(changes: Dictionary) -> void:
 
 ## Writes `cells` into data.ground (tiles used, and an index per cell).
 func _write_cells() -> void:
+	SidewalkBrush.rejoin(self)  # T-398: the curbs follow the roads
 	var tiles: Array = []
 	var index := {}
 	var out_rows: Array = []
@@ -403,7 +413,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	mirror = valid_mirror(asset_id, mirror)
 	var foot := piece_size(asset_id, view, size, map_rect().size, mirror)
 	var resizable := is_resizable(asset_id)
-	if (resizable or kind == "prop") and not _holds(map_rect(), Rect2(corner, foot)):
+	if (resizable or kind in ["prop", "crater"]) and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
 	var tex := texture_of(asset_id, view, mirror, variant)
 	match kind:
@@ -426,6 +436,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				b["banner"] = banner
 			_list("buildings").append(b)
 			refresh_ground_rows()
+			_relink()  # T-405: a short building is a platform ramps and rooftops link to
 			return {"kind": kind, "item": b}
 		"boulder":
 			var boulder := {"x": corner.x + foot.x / 2.0, "y": corner.y + foot.y / 2.0, "diameter": foot.x,
@@ -433,6 +444,11 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			var copy := {"id": _next_id("pattern_copies", "boulder-"), "boulders": [boulder]}
 			_list("pattern_copies").append(copy)
 			return {"kind": kind, "item": boulder, "copy": copy}
+		"crater":
+			var cr := {"id": _next_id("craters", "crater-"), "asset": asset_id,
+				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
+			_list("craters").append(cr)
+			return {"kind": kind, "item": cr}
 		"prop":
 			var pr := {"id": _next_id("props", "prop-"), "asset": asset_id, "rotation": view,
 				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
@@ -460,10 +476,17 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				r["style"] = style
 			if resizable:
 				r["arrows"] = "down" if arrows == "down" else "up"
+			if is_jump_ramp(asset_id):
+				r["jump"] = true
 			_list("ramps").append(r)
 			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+## True for a small jump ramp's catalogue id (T-400; its entry's "jump"): it climbs to no rooftop.
+static func is_jump_ramp(asset_id: String) -> bool:
+	return bool(entry(asset_id).get("jump", false))
 
 
 ## True for a skyscraper's catalogue id (T-265: the only building with a banner).
@@ -500,10 +523,20 @@ func height_at(units: Vector2) -> float:
 	return g.height_at(units)
 
 
-## The highest rooftop lower than `height` that holds the whole of `r` (units), {} for none.
+## Every surface at a height a piece can stand on or a ramp climb to: the rooftops (the entries of
+## `platforms` themselves) and, since T-405, the platforms the short buildings make
+## (ShortPlatforms.platforms_of: {id: "building@x,y", x, y, w, h, height 3, short: true}).
+func surfaces() -> Array:
+	var out: Array = _list("platforms").duplicate()
+	out.append_array(ShortPlatformsScript.platforms_of(data))
+	return out
+
+
+## The highest rooftop (or short building, T-405) lower than `height` that holds the whole of `r`
+## (units), {} for none.
 func rooftop_under(r: Rect2, height: float, except: Dictionary = {}) -> Dictionary:
 	var best: Dictionary = {}
-	for p in _list("platforms"):
+	for p in surfaces():
 		if is_same(p, except) or float(p.height) >= height:
 			continue
 		if _holds(_rect(p), r) and (best.is_empty() or float(p.height) > float(best.height)):
@@ -515,7 +548,7 @@ func rooftop_under(r: Rect2, height: float, except: Dictionary = {}) -> Dictiona
 ## within it (check_height_data.py's rule); {} for none.
 func ramp_target(ramp: Dictionary) -> Dictionary:
 	var rr := _rect(ramp)
-	for p in _list("platforms"):
+	for p in surfaces():
 		if absf(float(p.height) - float(ramp.top_height)) > 0.001:
 			continue
 		if top_touches(str(ramp.side), rr, _rect(p)):
@@ -549,7 +582,7 @@ static func _holds(outer: Rect2, inner: Rect2) -> bool:
 ## on the street) and each ramp's "platform" (ramp_target). A link still right is left as it is.
 func _relink() -> void:
 	var by_id := {}
-	for p in _list("platforms"):
+	for p in surfaces():
 		by_id[str(p.get("id", ""))] = p
 	for p in _list("platforms"):
 		var on := str(p.get("on", ""))
@@ -610,6 +643,9 @@ func piece_at(units: Vector2) -> Dictionary:
 	for b in _list("buildings"):
 		if _rect(b).has_point(units):
 			return {"kind": "building", "item": b}
+	for cr in data.get("craters", []):
+		if _rect(cr).has_point(units):
+			return {"kind": "crater", "item": cr}
 	var c := cell_at(units)
 	if c.x < 0:
 		return {}
@@ -662,6 +698,7 @@ func _delete(piece: Dictionary) -> bool:
 		"building":
 			if _erase_same(_list("buildings"), piece.item):
 				refresh_ground_rows()
+				_relink()  # T-405: a short building is a platform ramps and rooftops link to
 				return true
 		"boulder":
 			var copy: Dictionary = piece.copy
@@ -679,6 +716,9 @@ func _delete(piece: Dictionary) -> bool:
 				return true
 		"prop":
 			if _erase_same(_list("props"), piece.item):
+				return true
+		"crater":
+			if _erase_same(_list("craters"), piece.item):
 				return true
 	return false
 
@@ -770,39 +810,97 @@ func piece_of_ref(ref: String) -> Dictionary:
 	return {"kind": "prop", "item": o.item}
 
 
-## The pair holding obstacle `piece`, {} for none (an obstacle is in at most one pair).
+## The first pair holding obstacle `piece`, {} for none (an obstacle can be in several: pairs_with).
 func pair_of(piece: Dictionary) -> Dictionary:
+	var l := pairs_with(piece)
+	return l[0] if not l.is_empty() else {}
+
+
+## Every pair holding obstacle `piece` (T-394: an obstacle can be in several), [] for none.
+func pairs_with(piece: Dictionary) -> Array:
 	var ref := obstacle_ref(piece)
+	var out: Array = []
 	if ref == "":
-		return {}
+		return out
 	for p in pairs():
 		if str(p.get("a", "")) == ref or str(p.get("b", "")) == ref:
+			out.append(p)
+	return out
+
+
+## The pair of obstacles `a` and `b` (either order), {} for none.
+func pair_between(a: Dictionary, b: Dictionary) -> Dictionary:
+	var ra := obstacle_ref(a)
+	var rb := obstacle_ref(b)
+	if ra == "" or rb == "" or ra == rb:
+		return {}
+	for p in pairs():
+		var pa := str(p.get("a", ""))
+		var pb := str(p.get("b", ""))
+		if (pa == ra and pb == rb) or (pa == rb and pb == ra):
 			return p
 	return {}
 
 
 ## Pairs obstacles `a` and `b` (two different obstacle pieces): written as {id: "pair-N", a, b} into
-## the level's "pairs". An obstacle is in at most one pair: a pair either was in before goes (a
-## proposal: the new pair wins). Returns the pair, {} when either is not an obstacle or both are one.
+## the level's "pairs". Their other pairs stay (T-394: an obstacle can be in several); when the two
+## are already a pair, that pair is returned and nothing is added. Returns the pair, {} when either
+## is not an obstacle or both are one.
 func make_pair(a: Dictionary, b: Dictionary) -> Dictionary:
 	var ra := obstacle_ref(a)
 	var rb := obstacle_ref(b)
 	if ra == "" or rb == "" or ra == rb:
 		return {}
-	unpair(a)
-	unpair(b)
+	var old := pair_between(a, b)
+	if not old.is_empty():
+		return old
 	var p := {"id": _next_id("pairs", "pair-"), "a": ra, "b": rb}
 	_list("pairs").append(p)
 	return p
 
 
-## Removes the pair holding obstacle `piece`. Returns true when there was one.
+## Pairs a row of obstacles picked in order (T-394): each with the next, `pieces[0]` with
+## `pieces[1]`, `pieces[1]` with `pieces[2]` and so on (make_pair: existing pairs are kept, the same
+## two never twice). Returns the chain's pairs, one per consecutive two that could be paired.
+func make_chain(pieces: Array) -> Array:
+	var out: Array = []
+	for i in range(pieces.size() - 1):
+		var p := make_pair(pieces[i], pieces[i + 1])
+		if not p.is_empty():
+			out.append(p)
+	return out
+
+
+## Removes every pair holding obstacle `piece` (T-394: all of them). Returns true when there was one.
 func unpair(piece: Dictionary) -> bool:
-	var p := pair_of(piece)
+	var l := pairs_with(piece)
+	for p in l:
+		_erase_same(_list("pairs"), p)
+	return not l.is_empty()
+
+
+## Removes only the pair of obstacles `a` and `b` (T-394). Returns true when there was one.
+func unpair_between(a: Dictionary, b: Dictionary) -> bool:
+	var p := pair_between(a, b)
 	if p.is_empty():
 		return false
 	_erase_same(_list("pairs"), p)
 	return true
+
+
+## Unpair for a pick of obstacles in order (T-394): one piece, all its pairs (unpair); two or more,
+## only the pairs between consecutive ones (unpair_between), so a chain picked again comes undone and
+## the obstacles' other pairs stay. Returns how many pairs went.
+func unpair_picked(pieces: Array) -> int:
+	if pieces.size() == 1:
+		var n := pairs_with(pieces[0]).size()
+		unpair(pieces[0])
+		return n
+	var count := 0
+	for i in range(pieces.size() - 1):
+		if unpair_between(pieces[i], pieces[i + 1]):
+			count += 1
+	return count
 
 
 ## Each pair with the obstacle items its refs name now: [[pair, item a, item b]].
@@ -910,29 +1008,10 @@ func map_layout() -> Dictionary:
 
 
 ## The ground layout mvp_map.gd draws (the format of data/level/mvp_ground.json): the game's
-## ground atlas, one atlas tile per cell; tiles outside the atlas (road_tile.png) as "extra".
+## ground atlas, one atlas tile per cell; tiles outside the atlas (road_tile.png) as "extra". Built
+## by LevelGround (T-391), the same function the run draws a saved level's ground with.
 func ground_layout() -> Dictionary:
-	var gg := game_ground()
-	var extra: Array = []
-	var value := {}
-	for e in entries():
-		if not (str(e.kind) in ["ground", "road"]) or e.has("parts"):
-			continue
-		if e.has("atlas_index"):
-			value[str(e.id)] = int(e.atlas_index)
-		else:
-			value[str(e.id)] = EXTRA_BASE + extra.size()
-			extra.append(str(e.textures[0].texture))
-	var out_rows: Array = []
-	for row in cells:
-		var out: Array = []
-		for id in row:
-			out.append(int(value.get(id, -1)))
-		out_rows.append(out)
-	var m := map_rect()
-	return {"atlas": gg.get("atlas", "res://art/ground/ground_atlas.png"), "tile_px": gg.get("tile_px", [128, 64]),
-		"atlas_columns": gg.get("atlas_columns", 8), "cell_units": CELL, "origin": [m.position.x, m.position.y],
-		"cols": cols(), "rows": rows(), "extra": extra, "cells": out_rows}
+	return LevelGround.layout_from_ids(cells, map_rect().position)
 
 
 ## Every placed piece except the ground and road tiles: [{kind, item[, copy]}].
@@ -949,4 +1028,6 @@ func placed_pieces() -> Array:
 		out.append({"kind": "ramp", "item": r})
 	for pr in data.get("props", []):
 		out.append({"kind": "prop", "item": pr})
+	for cr in data.get("craters", []):
+		out.append({"kind": "crater", "item": cr})
 	return out

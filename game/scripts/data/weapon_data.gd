@@ -19,20 +19,27 @@ func is_ok() -> bool:
 	return error == ""
 
 
-func max_tier() -> int:
+## A weapon's last tier: its own "max_tier" when its entry has one (the gun: 11,
+## T-408), otherwise the shared top-level one (8). No weapon id: the shared one.
+func max_tier(weapon: String = "") -> int:
+	if weapon != "" and _data.has(weapon) and _data[weapon] is Dictionary and _data[weapon].has("max_tier"):
+		return int(_data[weapon]["max_tier"])
 	return int(_data["max_tier"])
 
 
-## The raw tier list of "gun", "flamethrower", "underglow", "molotov", "wiper" or "bricks" (tiers 2 to 8).
+## The raw tier list of "gun", "flamethrower", "underglow", "molotov", "wiper" or "bricks"
+## (tiers 2 to that weapon's max_tier).
 func tiers(weapon: String) -> Array:
 	return _data[weapon]["tiers"]
 
 
-## What the gun does at `tier`: damage, range, fire_interval, bullets, bullet_speed,
-## bullet_hit_radius, delay_between_bullets, pierce_hits, missed_bullet_max_travel.
+## What the gun does at `tier`: damage, range, fire_interval, bullets, targets (how many
+## enemies a volley aims at, T-408), bullet_speed, bullet_hit_radius, delay_between_bullets,
+## pierce_hits, missed_bullet_max_travel.
 func gun_at(tier: int) -> Dictionary:
 	var g: Dictionary = _data["gun"]
 	var bullets := int(g["bullets_per_volley"])
+	var targets := int(g.get("targets_per_volley", 1))
 	var rate := 1.0
 	var rng := float(g["range"])
 	var pierce := 0
@@ -44,11 +51,13 @@ func gun_at(tier: int) -> Dictionary:
 			"fire_rate_multiplier": rate *= float(t["value"])
 			"range_multiplier": rng *= float(t["value"])
 			"pierce": pierce += int(t["value"])
+			"set_targets": targets = int(t["value"])
 	return {
 		"damage": float(g["damage"]),
 		"range": rng,
 		"fire_interval": float(g["base_fire_interval"]) / rate + float(g["extra_delay_between_volleys"]),
 		"bullets": bullets,
+		"targets": targets,
 		"bullet_speed": float(g["bullet_speed"]),
 		"bullet_hit_radius": float(g["bullet_hit_radius"]),
 		"delay_between_bullets": float(g["delay_between_bullets"]),
@@ -92,7 +101,7 @@ func flame_at(tier: int) -> Dictionary:
 
 
 ## What the neon underglow does at `tier`: damage (on entering and per tick), radius,
-## tick_interval, damage_on_enter.
+## tick_interval, damage_on_enter, knockback_distance, kaiju_nudge_distance (T-409: the same at every tier).
 func underglow_at(tier: int) -> Dictionary:
 	var u: Dictionary = _data["underglow"]
 	var damage := float(u["damage"])
@@ -110,6 +119,8 @@ func underglow_at(tier: int) -> Dictionary:
 		"radius": radius,
 		"tick_interval": tick,
 		"damage_on_enter": bool(u["damage_on_enter"]),
+		"knockback_distance": float(u["knockback_distance"]),
+		"kaiju_nudge_distance": float(u["kaiju_nudge_distance"]),
 	}
 
 

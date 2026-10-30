@@ -21,6 +21,8 @@ class FinalPropArtTest(unittest.TestCase):
         with open(bf.PROPS_JSON, encoding="utf-8") as f:
             data = json.load(f)
         for p in data["props"]:
+            if p["id"][len("prop-"):].replace("-", "_") not in bf.SPECS:
+                continue  # T-398: the cars stay placeholders until T-399
             self.assertEqual(sorted(p["textures"]), sorted(data["rotations"]))
             for rot, t in p["textures"].items():
                 self.assertTrue(t["texture"].endswith("_%s_art.png" % rot), t["texture"])

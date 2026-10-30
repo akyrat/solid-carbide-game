@@ -36,6 +36,9 @@ var view := "flat"
 var draw_placeholder := true
 ## The tower art of the block (building_towers.gd, task T-064), or null.
 var towers: Node2D = null
+## T-405: true for a short building, which is a platform (short_platforms.gd): this node is then an
+## empty, hidden placeholder that keeps the layout's order; it never fades or sorts.
+var platform := false
 
 var top_color := Color(0.22, 0.15, 0.38)
 var left_color := Color(0.15, 0.10, 0.27)

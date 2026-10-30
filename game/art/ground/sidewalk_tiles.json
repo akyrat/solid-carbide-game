@@ -1,0 +1,611 @@
+{
+ "about": "T-398: the level creator's sidewalk tiles, one per curb piece (placeholders drawn by game/tools/build_street_pieces.py from T-397's approved sample; T-399 swaps the art). edges: the sides with a road next to them (n -y, e +x, s +y, w -x); corners: the inner corners (a road diagonally next to it, neither side has one). Do not edit by hand.",
+ "file": "res://art/ground/sidewalk_tiles.png",
+ "tile_px": [
+  128,
+  64
+ ],
+ "cell_units": 2,
+ "tiles": [
+  {
+   "name": "sidewalk",
+   "edges": "",
+   "corners": [],
+   "region": [
+    0,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne",
+   "edges": "",
+   "corners": [
+    "ne"
+   ],
+   "region": [
+    128,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_se",
+   "edges": "",
+   "corners": [
+    "se"
+   ],
+   "region": [
+    256,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_sw",
+   "edges": "",
+   "corners": [
+    "sw"
+   ],
+   "region": [
+    384,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_nw",
+   "edges": "",
+   "corners": [
+    "nw"
+   ],
+   "region": [
+    512,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne_se",
+   "edges": "",
+   "corners": [
+    "ne",
+    "se"
+   ],
+   "region": [
+    640,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne_sw",
+   "edges": "",
+   "corners": [
+    "ne",
+    "sw"
+   ],
+   "region": [
+    768,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne_nw",
+   "edges": "",
+   "corners": [
+    "ne",
+    "nw"
+   ],
+   "region": [
+    896,
+    0,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_se_sw",
+   "edges": "",
+   "corners": [
+    "se",
+    "sw"
+   ],
+   "region": [
+    0,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_se_nw",
+   "edges": "",
+   "corners": [
+    "se",
+    "nw"
+   ],
+   "region": [
+    128,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_sw_nw",
+   "edges": "",
+   "corners": [
+    "sw",
+    "nw"
+   ],
+   "region": [
+    256,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne_se_sw",
+   "edges": "",
+   "corners": [
+    "ne",
+    "se",
+    "sw"
+   ],
+   "region": [
+    384,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne_se_nw",
+   "edges": "",
+   "corners": [
+    "ne",
+    "se",
+    "nw"
+   ],
+   "region": [
+    512,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne_sw_nw",
+   "edges": "",
+   "corners": [
+    "ne",
+    "sw",
+    "nw"
+   ],
+   "region": [
+    640,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_se_sw_nw",
+   "edges": "",
+   "corners": [
+    "se",
+    "sw",
+    "nw"
+   ],
+   "region": [
+    768,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-in_ne_se_sw_nw",
+   "edges": "",
+   "corners": [
+    "ne",
+    "se",
+    "sw",
+    "nw"
+   ],
+   "region": [
+    896,
+    64,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-n",
+   "edges": "n",
+   "corners": [],
+   "region": [
+    0,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-n-in_se",
+   "edges": "n",
+   "corners": [
+    "se"
+   ],
+   "region": [
+    128,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-n-in_sw",
+   "edges": "n",
+   "corners": [
+    "sw"
+   ],
+   "region": [
+    256,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-n-in_se_sw",
+   "edges": "n",
+   "corners": [
+    "se",
+    "sw"
+   ],
+   "region": [
+    384,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-e",
+   "edges": "e",
+   "corners": [],
+   "region": [
+    512,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-e-in_sw",
+   "edges": "e",
+   "corners": [
+    "sw"
+   ],
+   "region": [
+    640,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-e-in_nw",
+   "edges": "e",
+   "corners": [
+    "nw"
+   ],
+   "region": [
+    768,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-e-in_sw_nw",
+   "edges": "e",
+   "corners": [
+    "sw",
+    "nw"
+   ],
+   "region": [
+    896,
+    128,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-ne",
+   "edges": "ne",
+   "corners": [],
+   "region": [
+    0,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-ne-in_sw",
+   "edges": "ne",
+   "corners": [
+    "sw"
+   ],
+   "region": [
+    128,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-s",
+   "edges": "s",
+   "corners": [],
+   "region": [
+    256,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-s-in_ne",
+   "edges": "s",
+   "corners": [
+    "ne"
+   ],
+   "region": [
+    384,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-s-in_nw",
+   "edges": "s",
+   "corners": [
+    "nw"
+   ],
+   "region": [
+    512,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-s-in_ne_nw",
+   "edges": "s",
+   "corners": [
+    "ne",
+    "nw"
+   ],
+   "region": [
+    640,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-ns",
+   "edges": "ns",
+   "corners": [],
+   "region": [
+    768,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-es",
+   "edges": "es",
+   "corners": [],
+   "region": [
+    896,
+    192,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-es-in_nw",
+   "edges": "es",
+   "corners": [
+    "nw"
+   ],
+   "region": [
+    0,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-nes",
+   "edges": "nes",
+   "corners": [],
+   "region": [
+    128,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-w",
+   "edges": "w",
+   "corners": [],
+   "region": [
+    256,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-w-in_ne",
+   "edges": "w",
+   "corners": [
+    "ne"
+   ],
+   "region": [
+    384,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-w-in_se",
+   "edges": "w",
+   "corners": [
+    "se"
+   ],
+   "region": [
+    512,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-w-in_ne_se",
+   "edges": "w",
+   "corners": [
+    "ne",
+    "se"
+   ],
+   "region": [
+    640,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-nw",
+   "edges": "nw",
+   "corners": [],
+   "region": [
+    768,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-nw-in_se",
+   "edges": "nw",
+   "corners": [
+    "se"
+   ],
+   "region": [
+    896,
+    256,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-ew",
+   "edges": "ew",
+   "corners": [],
+   "region": [
+    0,
+    320,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-new",
+   "edges": "new",
+   "corners": [],
+   "region": [
+    128,
+    320,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-sw",
+   "edges": "sw",
+   "corners": [],
+   "region": [
+    256,
+    320,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-sw-in_ne",
+   "edges": "sw",
+   "corners": [
+    "ne"
+   ],
+   "region": [
+    384,
+    320,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-nsw",
+   "edges": "nsw",
+   "corners": [],
+   "region": [
+    512,
+    320,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-esw",
+   "edges": "esw",
+   "corners": [],
+   "region": [
+    640,
+    320,
+    128,
+    64
+   ]
+  },
+  {
+   "name": "sidewalk-nesw",
+   "edges": "nesw",
+   "corners": [],
+   "region": [
+    768,
+    320,
+    128,
+    64
+   ]
+  }
+ ]
+}
