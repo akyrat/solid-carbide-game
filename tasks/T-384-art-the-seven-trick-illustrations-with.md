@@ -1,7 +1,7 @@
 ---
 id: T-384
 title: Art: the seven trick illustrations with PixelLab (art cap 40)
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -47,6 +47,10 @@ The board's review: Look at the PixelLab trick illustrations on the preview shee
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-384.
 
 ## Style review
 
