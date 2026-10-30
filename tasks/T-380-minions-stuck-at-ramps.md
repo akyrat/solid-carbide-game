@@ -1,7 +1,7 @@
 ---
 id: T-380
 title: Bug: minions get stuck on walls at the bottom end of ramps
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -119,3 +119,4 @@ Refused: a hook refused `export $(grep GODOT_BIN .env | xargs)` (it can't tell `
 **Documents affected (this round):** `docs/enemies.md` (Content, "Finding the way"), `game/docs/enemies/minions.md` ("After T-405 and T-379"), `game/docs/enemies/ledges-and-rooftops.md` (`line_clear`, `off_edges`).
 - 2026-10-30, in-progress → in-qa: Fixed on top of master: line_clear checks true ground near T-405's half-unit platform edges, paths keep off them, far-off keep only on another surface. All three test sets green. test_wreck flake not touched (own ticket).
 - 2026-10-30, in-qa → needs-playtest: QA round 2 passed: ramp/corner tests, scripted chase and far-behind removal green on top of master; test_wreck flake passed on rerun alone.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board; fixed on top of master's platforms and bigger minions, QA round 2 passed
