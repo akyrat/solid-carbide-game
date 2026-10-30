@@ -1,7 +1,7 @@
 ---
 id: T-409
 title: Neon underglow: each tick deals half a minion's health (2 ticks kill), and it knocks enemies back a little from tier 1
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -68,6 +68,10 @@ Underglow tier 1 deals 2 (two ticks kill a minion), pushes minions 0.5 per tick 
 
 QA passed all six criteria (GUT 1950/1950, unittest sets green); ready for the board to play.
 
+### 2026-10-30, Needs playtest → In progress
+
+Sent back: on master the wreck-revive test fails with the underglow in. Fixing, then QA again.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -83,3 +87,7 @@ Written by the agent when it finishes.
 **GIF.** `art-archive/T-409/screenshots/underglow_swarm.gif` (fixture `tests/fixtures/weapons/underglow_push_gif.tscn`, script `game/tools/record_underglow_push_gif.sh`).
 
 Documents changed: `docs/weapons.md` (Content "Neon underglow", the built-underglow section; the comparison line mentions 1 per second still in the long form only if present), `game/docs/weapons/neon-underglow.md`.
+- 2026-10-30, needs-playtest → in-progress: Merging into master stopped (2026-10-30): on master (with T-406 revive and T-408), test_wreck test_in_the_run_a_sliding_wreck_picks_up_a_health_pickup_and_drives_again fails (line 217, and line 229: 5 expected 1). Back to the weapon-behavior agent: merge master in and fix.
+
+### Merge with master (T-406, T-379, T-408)
+Merged master into the branch with no conflicts. Tests after the merge: GUT 2053/2053 passed; game/tools unittest 579 OK; tools unittest 579 OK. The earlier test_wreck failure is a flake that is not caused by this ticket: test_wreck.gd (the T-406 run-scene test) failed in 6 of 14 runs on plain master and 2 of 14 on this branch, with different asserts each time (hearts 5 vs 1, coins 5 vs 0, pickup not collected). The underglow is not equipped in that run; the gun (T-408) kills random minions near the wreck and their drops change hearts and coins. A separate game-loop ticket fixes the test; nothing in the wreck code or test was changed here.
