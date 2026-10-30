@@ -1,5 +1,6 @@
 {
  "task": "T-339",
+ "redrawn_by": "T-430: the corners are the HUD style sheet's stepped corner of radius 2 (T-339 had radius 3); the rest is unchanged. The T-339 version and record are in art-archive/T-430/before/. Script version, 0 PixelLab generations; style loop 9/10 (art-archive/T-430/style-loop/v1.png, tasks/T-430-art-one-hud-style-sheet-and.md, Style review).",
  "what": "The sub goal square's frame: dark outline, white ring, black inside from (4, 4) to (59, 59) with rounded inner corners.",
  "size": [
   64,
