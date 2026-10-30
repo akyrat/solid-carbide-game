@@ -332,6 +332,7 @@ func spawn_coin_at(units: Vector2, value: int = 1) -> Node:
 	draw_root.add_child(s, true)
 	c.sprite = s
 	var h := EnemyHeightScript.height_at(ground, units)
+	c.ground_height = h  # T-402: picked up only from this height
 	s.position = ISO_TRANSFORM * c.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.z_index = depth.z_index_for(units, CoinScript.RADIUS_UNITS, 0.6, h)
 	s.reset_physics_interpolation()
@@ -353,6 +354,7 @@ func spawn_health_pickup_at(units: Vector2, hearts: float = -1.0) -> Node:
 	draw_root.add_child(s, true)
 	p.sprite = s
 	var h := EnemyHeightScript.height_at(ground, units)
+	p.ground_height = h  # T-402: picked up only from this height
 	s.position = ISO_TRANSFORM * p.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.z_index = depth.z_index_for(units, HealthPickupScript.RADIUS_UNITS, 0.6, h)
 	s.reset_physics_interpolation()

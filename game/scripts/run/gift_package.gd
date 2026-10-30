@@ -26,6 +26,9 @@ var level := 0
 ## isometric view's drawn pixels.
 var ground_px := Vector2.ZERO
 var drawn_ground := Vector2.ZERO
+## The height of the ground at the landing spot, units (T-402): 0 on the
+## street, a rooftop's height when it lands on one. drawn_ground is lifted by it.
+var ground_height := 0.0
 var phase := CARRIED
 ## Seconds since the drop, and the fall's length and height (gift_pack.json).
 var fall_t := 0.0
@@ -44,6 +47,15 @@ func is_falling() -> bool:
 ## The landing spot in units from the map's centre.
 func ground_units() -> Vector2:
 	return ground_px / GiftDrops.PX_PER_UNIT
+
+
+## Sets the landing spot (flat world pixels) and the ground's height there
+## (units), and the drawn spot from both (T-402): lifted by the height, as the
+## car is drawn on a rooftop.
+func set_ground(px: Vector2, height_units: float) -> void:
+	ground_px = px
+	ground_height = height_units
+	drawn_ground = GiftDrops.ISO_TRANSFORM * px + Vector2(0.0, -height_units * GiftDrops.PX_PER_UNIT)
 
 
 ## How high above the landing spot it is now, in drawn pixels.
