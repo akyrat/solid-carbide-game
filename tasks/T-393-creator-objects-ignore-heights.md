@@ -1,7 +1,7 @@
 ---
 id: T-393
 title: Bug: barriers and other objects in the level creator ignore the heights of buildings and rooftops
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -61,6 +61,10 @@ Started at once on your word: the Level/Challenge Design Agent is finding why pl
 
 QA passed all seven criteria; barriers by a rooftop now draw under it, in the editor and the run. Ready for your playtest.
 
+### 2026-10-30, Needs playtest
+
+Passed QA, ready for your playtest: open C:\solid-carbide-worktrees\T-393\game\project.godot (your levels are copied in). Root cause: on maps with rooftops the draw-order rule mistook a building for 'nothing', and boulders ignored height. Proposal: an object can't be placed across a rooftop's or building's edge.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -115,3 +119,4 @@ They come from the fixtures `game/tests/fixtures/creator_objects_heights_demo.ts
 - `game/docs/level/level-creator-pieces.md`: "Heights and depth of placed objects (T-393)"; the props placement line updated.
 
 Board review files: art-archive/T-393/screenshots/before_editor.png, art-archive/T-393/screenshots/after_editor.png, art-archive/T-393/screenshots/before_run.png, art-archive/T-393/screenshots/after_run.png
+- 2026-10-30, needs-playtest → done: Build E (Platforms & heights) LGTM by the board
