@@ -12,10 +12,11 @@ extends "res://scripts/weapons/weapon.gd"
 ## Targeting rule (T-408; Weapons, Content, "The starting gun"): the enemies in
 ## range sorted closest first, and the tier's `targets` (1, 3 from tier 6, 5 at
 ## tier 11) says how many of them a volley aims at.
-## - One target (below tier 6): the whole volley goes at the closest enemy, its
-##   bullets leaving delay_between_bullets apart. A bullet whose target has died
-##   by the time it leaves aims at the closest living enemy in range instead
-##   (none: where the target was last seen).
+## - One target (below tier 6): the volley's bullets leave delay_between_bullets
+##   apart, each at the closest enemy in range that is still alive and not
+##   already doomed (the bullets in flight at it carry at least its health), so
+##   no bullet is spent on a minion that is dead or about to be. When every enemy
+##   in range is doomed it goes at its queued target (or where it was last seen).
 ## - Several (tier 6 on): the closest `targets` enemies; bullet 1 goes to the
 ##   closest, bullet 2 to the second closest and so on, round them again when
 ##   there are more bullets than targets. The whole volley leaves at once.
@@ -46,6 +47,8 @@ var volleys := 0
 ## The rest of the current volley: [target, last seen position (units)] pairs.
 var _queue: Array = []
 var _queue_wait := 0.0
+## Bullets in flight and what they were fired at: [bullet, target] (T-408, doomed targets).
+var _in_flight: Array = []
 var _drawn_size := -1.0
 
 
@@ -70,6 +73,7 @@ func reset_for_run() -> void:
 	volleys = 0
 	_queue.clear()
 	_queue_wait = 0.0
+	_in_flight.clear()
 	super.reset_for_run()
 
 
@@ -125,15 +129,17 @@ func _fire_next() -> void:
 	var entry: Array = _queue.pop_front()
 	var target = entry[0]
 	var aim: Vector2 = entry[1]
-	if not rack.is_target(target):
-		# The target died mid-volley: the closest living enemy in range instead.
-		var others: Array = rack.enemies_within(rack.car_units(), float(stats["range"]), rack.car_level())
-		target = null
-		if not others.is_empty():
-			target = others[0]
-			for e in _queue:
-				if not rack.is_target(e[0]):
-					e[0] = target
+	if not rack.is_target(target) or is_doomed(target):
+		# Dead, or killed by bullets already flying: the closest one that is not.
+		var next = null
+		for e in rack.enemies_within(rack.car_units(), float(stats["range"]), rack.car_level()):
+			if not is_doomed(e):
+				next = e
+				break
+		if next != null:
+			target = next
+		elif not rack.is_target(target):
+			target = null
 	if target != null:
 		aim = target.position_units()
 	fire_at(aim, target)
@@ -151,5 +157,32 @@ func fire_at(aim: Vector2, target: Node = null) -> Node:
 	b.setup(rack, from, dir.normalized(), stats, rack.car_level())
 	b.weapon_id = weapon_id
 	rack.add_projectile(b)
+	if target != null:
+		_in_flight.append([b, target])
 	fired.emit(b, target)
 	return b
+
+
+## Damage the bullets still in flight at `target` will deal when they reach it.
+func damage_in_flight(target: Node) -> float:
+	var total := 0.0
+	var keep := []
+	for pair in _in_flight:
+		var b = pair[0]
+		if not is_instance_valid(b) or b.is_done() or not rack.projectiles.has(b):
+			continue
+		keep.append(pair)
+		if pair[1] == target:
+			total += float(b.damage)
+	_in_flight = keep
+	return total
+
+
+## True when the bullets in flight at `target` carry at least its health (T-408).
+func is_doomed(target) -> bool:
+	if not rack.is_target(target):
+		return false
+	var h = target.get("health")
+	if h == null:
+		return false
+	return damage_in_flight(target) >= float(h) - EPSILON

@@ -238,6 +238,34 @@ func test_below_tier_6_a_dead_target_passes_the_rest_to_the_next_closest() -> vo
 	assert_eq(third.health, 100.0, "the farther one untouched")
 
 
+## Below tier 6, a target the bullets in flight will already kill is skipped: with one-shot
+## minions each bullet of the volley goes to the next closest, so +1 bullet counts.
+func test_below_tier_6_bullets_skip_a_minion_already_doomed() -> void:
+	gun.set_tier(3)  # 3 bullets, 1 target
+	var near: Node = _minion(Vector2(3.0, 0.0))  # the data's health: one bullet kills
+	var second: Node = _minion(Vector2(0.0, -6.0))
+	var third: Node = _minion(Vector2(-9.0, 0.0))
+	watch_signals(near)
+	watch_signals(second)
+	watch_signals(third)
+	_run_for(gun.fire_interval() + 0.2)
+	assert_eq(shots.map(func(x): return x[1]), [near, second, third], "one bullet each, closest first")
+	_run_for(1.0)
+	assert_signal_emit_count(near, "died", 1)
+	assert_signal_emit_count(second, "died", 1)
+	assert_signal_emit_count(third, "died", 1)
+	assert_eq(gun.is_doomed(near), false, "a dead enemy is not counted as doomed")
+
+
+## A tough enemy (the kaiju's case) is not doomed by one bullet: the volley stays on it.
+func test_below_tier_6_a_tough_target_keeps_the_whole_volley() -> void:
+	gun.set_tier(3)
+	var tough: Node = _minion(Vector2(3.0, 0.0), 100.0)
+	_minion(Vector2(0.0, -6.0))
+	_run_for(gun.fire_interval() + 0.2)
+	assert_eq(shots.map(func(x): return x[1]), [tough, tough, tough])
+
+
 ## From tier 6 a volley aims at the 3 closest at once; tier 7's 4th bullet goes round to the closest.
 func test_from_tier_6_the_volley_spreads_over_up_to_3_at_once() -> void:
 	var a: Node = _minion(Vector2(2.0, 0.0), 1000.0)
