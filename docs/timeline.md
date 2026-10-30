@@ -2475,3 +2475,8 @@ Entry format:
 - Decision or change: The board: the neon underglow's tick deals half a minion's health at tier 1, and it knocks enemies back a little from tier 1.
 - Documents touched: docs/weapons.md
 - Tasks: T-409
+
+## 2026-10-30: Sidewalks and parked cars: art sample approved
+- Decision or change: The board approved the sample (sidewalk with curb, parked car, meteor crater); the full set (T-399) is built from it.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-397
