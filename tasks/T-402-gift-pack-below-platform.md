@@ -1,7 +1,7 @@
 ---
 id: T-402
 title: Bug: a gift pack that falls on a platform is drawn below the platform
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, tasks/T-393-creator-objects-ignore-heights.md, game/scripts/run/, game/scripts/level/]
 files_expected_to_change: [game/scripts/run/, game/scripts/level/, game/tests/unit/, docs/level-design.md, docs/game-loop-architecture.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: root cause and fix for the gift pack drawn below a platform.
 ### 2026-10-30, In progress → In QA
 
 Fixed: a pack with no street spot in reach fell back to the car's spot on a rooftop with no height; now it lands on the rooftop at its height, and every pickup is picked up only at its height. Tests 668/576/1958 green.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all criteria, tests 668/576/1958 green; play a level with platforms until a pack drops near one.
 
 ## Style review
 
