@@ -1,7 +1,7 @@
 ---
 id: T-384
 title: Art: the seven trick illustrations with PixelLab (art cap 40)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -1012,3 +1012,4 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - 2026-10-30, flagged-for-review → in-progress: Goal run: kept below 8 after the refines (scores 5-7/10), noted for the board's final playtest, as the goal-run rules say (docs/working-with-the-board.md, Goal runs; T-395). Moved back by the Project Lead so the run goes on to QA.
 - 2026-10-30, in-qa → in-progress: QA failed: The result notes list each PixelLab call and the running total: no more than 40 generations in all and at most 4 per illustration, matching the generation log. (QA: fail: paperwork - result notes say 32 of 40 and extended_drift 8 gens (Run 8 counted as 4 paid), but game/art/pixellab-generation-log.jsonl has only 28 T-384 entries (4 per illustration, extended_drift 4). Run 8's Round 2 text also says the total stays 28. Correct the notes to match the log.) Back to the agent on sonnet.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
