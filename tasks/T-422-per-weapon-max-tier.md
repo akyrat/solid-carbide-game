@@ -1,7 +1,7 @@
 ---
 id: T-422
 title: Each weapon has its own top tier
-status: in-qa
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Audit
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/weapons/weapon.gd, game/scripts/data/weapon_data.gd, game/data/weapons.json, game/scripts/weapons/starting_gun.gd]
 files_expected_to_change: [game/scripts/weapons/weapon.gd, game/scripts/data/weapon_data.gd, game/data/weapons.json, game/scripts/weapons/starting_gun.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-work
 
 Build J (Audit): the agent finished. T-408's per-weapon top tier already worked everywhere; added the gift pack check's tests and a bullets 0 error. In QA now.
 
+### 2026-10-30, In QA → Done
+
+Build J (Audit): QA passed all 4 criteria. Done; merged into playtest/audit-world, reaches master with build J after the board's playtest.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -85,3 +89,4 @@ QA round 1, 2026-10-30:
 - Criterion 3 pass: starting_gun.gd returns without firing on bullets 0 and does one push_error per run; test_no_bullets_fires_nothing asserts no volleys and exactly one error.
 - Criterion 4 pass: new tests present; qa_check ran all three test sets (GUT, game/tools, tools) on the branch and they passed, including the full GUT suite after the test fix.
 - qa_check: tests PASS, documents PASS (none listed), screenshots PASS (nothing to picture).
+- 2026-10-30, in-qa → done: QA passed; no board's review (nothing on screen); goes to master with build J
