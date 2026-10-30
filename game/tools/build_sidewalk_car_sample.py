@@ -11,7 +11,11 @@
   python game/tools/build_sidewalk_car_sample.py car --raw <pixellab png> --out <png> [--mirror] [--max-colors 30]
       Cleans a PixelLab car picture (free): alpha 0 or 255, the flat border background removed, loose specks
       and detached blobs dropped, at most 30 colours, optionally mirrored (top left <-> top right).
-  python game/tools/build_sidewalk_car_sample.py preview --sidewalk <png> --car <png> --out-dir <folder>
+  python game/tools/build_sidewalk_car_sample.py crater --out <png> [--seed 397]
+      Draws (free, no PixelLab) a meteor crater as a 128 x 64 ground decal (the road tile's diamond, transparent
+      round the crater): a hole with its far inner wall showing, lifted broken asphalt round it, a dithered
+      scorched band, glowing magenta cracks and meteor fragments on the floor (the boulders' own colours).
+  python game/tools/build_sidewalk_car_sample.py preview --sidewalk <png> [--car <png>] [--crater <png>] --out-dir <folder>
       The composed preview: a road along world y (the game's road tiles), the sidewalk beside it with its curb
       against the road, a creator small building on the sidewalk, a boulder on the road and the car parked at
       the curb; on a dark and a light background, enlarged 3x with nearest neighbour. Writes
@@ -122,6 +126,252 @@ def draw_sidewalk(curb_px=3, seed=397, curb=True):
     return img
 
 
+# --- the meteor crater (added by the board, 2026-10-30): a flat ground decal the car drives over ---
+
+# the road's asphalt (game/art/ground/road_tile.png) and the boulders' rock and glow (game/art/boulders/boulder_a.png)
+ASPH, ASPH_DARK, ASPH_LIGHT, ASPH_LIT = (48, 46, 62), (41, 39, 54), (57, 55, 69), (73, 71, 85)
+ASPH_HI, SCORCH, SCORCH_DEEP = (85, 84, 96), (30, 28, 40), (24, 23, 36)
+EARTH, EARTH_DARK, FLOOR = (52, 50, 64), (38, 36, 50), (18, 16, 28)
+EARTH_LIGHT, SLAB_HI = (74, 66, 88), (108, 106, 120)   # a lighter earth stratum; the lifted slabs' lit edges
+WALL_LIT, SLAB_MID, SLAB_TOP = (92, 84, 104), (88, 87, 98), (98, 97, 108)   # lit wall stratum; grey slab tops
+CRATER_OUTLINE = (15, 7, 22)
+ROCK, ROCK_LIGHT, ROCK_DARK = (47, 47, 97), (57, 58, 107), (22, 4, 74)
+GLOW_CORE, GLOW, GLOW_MID, GLOW_HALO, GLOW_DEEP = (251, 192, 247), (249, 22, 242), (173, 18, 177), (110, 2, 123), (64, 1, 94)
+
+
+def _wobble(a, rng, amp, terms=4):
+    """A smooth random wobble of an angle array (radians), amplitude about `amp`."""
+    out = np.zeros_like(a)
+    for k in range(1, terms + 1):
+        out += np.sin(a * (k + 1) + rng.uniform(0, 2 * np.pi)) * amp / k
+    return out
+
+
+def to_px(u, v):
+    """Ground point (units from the tile's top corner) to the tile's pixel."""
+    return int(round(TILE_W / 2 + (u - v) * U - 0.5)), int(round((u + v) * U / 2 - 0.5))
+
+
+def draw_crater(seed=397, depth_px=9, r_hole=0.52):
+    """A meteor crater as a 128 x 64 ground decal (2 x 2 units, the road tiles' diamond; transparent round it):
+    a hole whose far inner wall shows (the floor is drawn `depth_px` lower, so the near wall hides behind the
+    rim), a ring of broken, lifted asphalt, a scorched band fading into the ground by dither, glowing cracks in
+    the meteors' magenta running out over the ground, and meteor fragments glowing on the floor."""
+    rng = np.random.default_rng(seed)
+    ys, xs = np.mgrid[0:TILE_H, 0:TILE_W]
+    u, v = ground_uv(xs, ys)
+    du, dv = u - 1, v - 1
+    d, a = np.hypot(du, dv), np.arctan2(dv, du)
+    s = du + dv                                  # > 0 towards the viewer
+    r_in = r_hole + _wobble(a, rng, 0.05)
+    r_base = r_in + 0.12                         # where the slabs end and the scorch begins (smooth)
+    img = np.zeros((TILE_H, TILE_W, 4), dtype=np.uint8)
+    put = lambda m, c: img.__setitem__(m, [*c, 255])  # noqa: E731
+    noise = rng.random(d.shape)
+
+    def nb4(m):
+        """Pixels 4-adjacent to mask m (not in it)."""
+        p = np.pad(m, 1)
+        return (p[:-2, 1:-1] | p[2:, 1:-1] | p[1:-1, :-2] | p[1:-1, 2:]) & ~m
+
+    # scorched ground: three solid stepped bands, darkest at the rim, with an uneven (not dithered) outer edge,
+    # and a few solid scorch tongues reaching further out
+    # (v4: narrower, so no soft dark skirt; each band's radius is quantised so its edge steps in hard runs)
+    tongue = np.zeros_like(d)
+    for _ in range(3):
+        ta = rng.uniform(-np.pi, np.pi)
+        tongue += 0.06 * np.exp(-((np.angle(np.exp(1j * (a - ta)))) / 0.2) ** 2)
+    q = lambda r: np.round(r * 24) / 24  # noqa: E731
+    put(d < q(r_base + 0.15 + _wobble(a, rng, 0.03, terms=5) + tongue), ASPH_DARK)
+    put(d < q(r_base + 0.09 + _wobble(a, rng, 0.02) + tongue * 0.6), SCORCH)
+    put(d < q(r_base + 0.04 + _wobble(a, rng, 0.015)), SCORCH_DEEP)
+
+    # the hole: the floor (seen `depth_px` lower) where it shows, else the far inner wall
+    hole = d < r_in
+    fu, fv = ground_uv(xs, ys - depth_px)
+    fd = np.hypot(fu - 1, fv - 1)
+    fa = np.arctan2(fv - 1, fu - 1)
+    floor = hole & (fd < r_hole - 0.12 + _wobble(fa, np.random.default_rng(seed), 0.05))
+    wall = hole & ~floor
+    rows = np.zeros(wall.shape, int)             # rows down from the wall's top edge
+    for y in range(1, TILE_H):
+        rows[y] = np.where(wall[y] & wall[y - 1], rows[y - 1] + 1, 0)
+    # wall bands: the cut asphalt layer (lit), a dark seam, a lighter earth stratum, earth darkening downwards,
+    # and the floor's glow reflected on the wall's foot
+    # the far inner wall faces the viewer and the light: lit at the top, stepping down to dark at the floor
+    # (v4) a pit, not a dome: only the cut asphalt at the top catches light; the earth below steps down into
+    # shadow, darker towards both ends of the wall (it curves away), and the glow stays on the floor
+    side = np.abs(du - dv) > 0.38                # the wall's two ends, turning away from the viewer
+    put(wall, EARTH_DARK)
+    put(wall & (rows <= 4) & ~side, EARTH)
+    put(wall & (rows == 2) & ~side, EARTH_LIGHT)
+    put(wall & (rows <= 1), ASPH)
+    put(wall & (rows == 0), ASPH_LIT)
+    put(wall & (rows >= 6), FLOOR)
+    put(wall & (rows >= 2) & (rows <= 5) & (noise < 0.06), ROCK)            # meteor grit in the earth
+    put(floor, FLOOR)
+
+    # the glow, low on the floor only: small solid stepped rings round the fragments (no blur, no dither)
+    gu, gv = ground_uv(xs, ys - depth_px)
+    gd = np.hypot(gu - 1.04, gv - 1.04)
+    put(floor & (gd < 0.27), GLOW_DEEP)
+    put(floor & (gd < 0.18), GLOW_HALO)
+    put(floor & (gd < 0.09), GLOW_MID)
+
+    def chunk(cx, cy, rx, ry, crng, glow_seam, area=None):
+        """An irregular, faceted rock chunk of the meteor (navy), outlined, lit on top, with a glowing seam."""
+        dx, dy = xs - cx, ys - cy
+        ang = np.arctan2(dy, dx)
+        wob = _wobble(ang, crng, 0.18, terms=3)
+        n = 0.45 * (np.abs(dx) / rx + np.abs(dy) / ry) + 0.55 * np.hypot(dx / rx, dy / ry)
+        rock = n <= 1 + wob
+        if area is not None:
+            rock &= area
+        ring = nb4(rock)
+        put(ring, CRATER_OUTLINE)
+        put(rock, ROCK)
+        above = np.zeros_like(rock)
+        above[1:] = rock[:-1]
+        put(rock & ~above, ROCK_LIGHT)                                   # lit top facet
+        put(rock & (dx > rx * 0.3) & (dy > -ry * 0.2), ROCK_DARK)        # shaded side
+        below = np.zeros_like(rock)
+        below[:-1] = rock[1:]
+        put(rock & ~below, ROCK_DARK)
+        if glow_seam:                                                    # a crack across it, glowing
+            seam = rock & (np.abs(dy - (dx * 0.5)) < 0.6) & (np.abs(dx) < rx - 1)
+            put(nb4(seam) & rock, GLOW_HALO)
+            put(seam, GLOW)
+
+    # meteor fragments on the floor: irregular navy chunks round the glowing middle
+    cx, cy = to_px(1, 1)
+    cy += depth_px
+    for (ox, oy, rx, ry, g) in ((-6, -1, 4.2, 2.6, True), (4, 0, 3.6, 2.4, True), (0, 2, 2.6, 1.8, False)):
+        chunk(cx + ox, cy + oy, rx, ry, np.random.default_rng(seed + ox * 7 + oy), g, area=floor)
+    img[cy, cx - 1] = [*GLOW_CORE, 255]
+    img[cy + 1, cx + 1] = [*GLOW_CORE, 255]
+
+    # the rim: broken, angular asphalt slabs lifted at the hole's edge, drawn far to near; each slab has its own
+    # lift (0-2 px), width and tone, a lit top edge, a dark front face, and a gap to its neighbours
+    n_slabs = 10
+    cuts = np.sort((np.arange(n_slabs) + rng.uniform(0.2, 0.8, n_slabs)) / n_slabs * 2 * np.pi - np.pi)
+    slabs = []
+    for k in range(n_slabs):
+        a0, a1 = cuts[k], cuts[(k + 1) % n_slabs] + (2 * np.pi if k == n_slabs - 1 else 0)
+        mid = (a0 + a1) / 2
+        sm = np.cos(mid) + np.sin(mid)           # > 0 on the near side
+        # (v4) varied, broken ring: far slabs vary from flat to lifted 2 px, wide or narrow, strongly tilted;
+        # near slabs are thin and flat so the near rim stays low; some slabs are missing, leaving gaps
+        near = sm > 0.5
+        lift = 0 if near else int(rng.choice([0, 1, 1, 2]))
+        width = rng.uniform(0.03, 0.06) if near else rng.uniform(0.06, 0.19)
+        tilt = rng.uniform(-0.03, 0.03) if near else rng.uniform(-0.08, 0.08)
+        gap = rng.uniform(0.04, 0.15)
+        missing = rng.random() < 0.2
+        slabs.append((sm, a0, a1, lift, width, tilt, int(rng.integers(0, 3)), gap, missing))
+    rim = np.zeros_like(hole)
+    for (_sm, a0, a1, lift, width, tilt, tone, gap, missing) in sorted(slabs):
+        if missing:
+            continue
+        # grey broken asphalt: far slabs face the light (lighter), near slabs a step darker; two greys per side
+        tones = (SLAB_TOP, SLAB_MID, ASPH_HI) if _sm < 0.3 else (ASPH_HI, ASPH_LIT, SLAB_MID)
+        lu, lv = ground_uv(xs, ys, lift=lift)
+        ld, la = np.hypot(lu - 1, lv - 1), np.arctan2(lv - 1, lu - 1)
+        rel = np.mod(la - a0, 2 * np.pi)
+        span = np.mod(a1 - a0, 2 * np.pi)
+        lr_in = r_hole + _wobble(la, np.random.default_rng(seed + 1), 0.05)
+        # straight-edged outer side: radius changes linearly across the slab (a tilted, broken plate)
+        r_out = lr_in + 0.02 + width + tilt * (rel / max(span, 1e-6) - 0.5) * 2
+        top = (rel > gap) & (rel < span - gap * 0.7) & (ld >= lr_in - 0.03) & (ld < r_out)
+        face = np.zeros_like(top)
+        for k in range(1, lift + 1):
+            sh = np.zeros_like(top)
+            sh[k:] = top[:-k]
+            face |= sh
+        face &= ~top
+        put(face, ASPH_DARK)
+        fb = np.zeros_like(face)
+        fb[:-1] = face[1:]
+        put(face & ~fb, CRATER_OUTLINE)          # the face's foot, where the slab sits on the ground
+        put(top, tones[tone])
+        above = np.zeros_like(top)
+        above[1:] = top[:-1]
+        put(top & ~above, SLAB_HI if lift else ASPH_HI)   # lit upper edge
+        put(top & (noise < 0.06), ASPH_LIT)      # grit
+        put(top & (ld < lr_in + 0.035), SCORCH)  # the scorched band on the slab's inner edge, between slab and pit
+        put(top & (ld < lr_in + 0.035) & (noise < 0.3), SCORCH_DEEP)
+        rim |= top | face
+
+    # the outline: near-black where the rim drops into the hole, all round the lip; on the far side, under the
+    # wall's lit cut edge, a 1-pixel dark line so the lip still separates
+    # (v4) the whole hole's edge, slabs or gaps, gets the near-black line; on the near side it is 2 px, the drop
+    # under the near rim; on the far slabs it is broken by lit chips
+    open_hole = hole & ~rim
+    lip = open_hole & nb4(~open_hole)
+    put(lip, CRATER_OUTLINE)
+    lip2 = open_hole & nb4(lip) & ~lip & (s > 0.15)
+    lip2[1:] &= lip[:-1]                         # the second row only straight under the first
+    put(lip2, CRATER_OUTLINE)
+    put(lip & (s <= -0.35) & (xs % 5 == 1), SLAB_HI)
+    put(lip & (s > -0.35) & (s < 0.0) & (xs % 7 == 3), ASPH_LIT)
+    # the rim's outer edge on the near half, so the slabs stand off the scorched ground
+    outer = ~hole & ~rim & nb4(rim) & (d > r_in) & (s > 0.1)
+    put(outer, CRATER_OUTLINE)
+
+    # (v4) asphalt rubble in the scorch round the rim: small grey chips, lit top, near-black foot
+    rrng = np.random.default_rng(seed + 5)
+    for _ in range(14):
+        ra = rrng.uniform(-np.pi, np.pi)
+        rr = r_hole + 0.13 + rrng.uniform(0.0, 0.12)
+        x, y = to_px(1 + rr * np.cos(ra), 1 + rr * np.sin(ra))
+        w = int(rrng.integers(1, 4))
+        if 0 <= y < TILE_H - 1 and 0 <= x and x + w < TILE_W and not rim[y, x:x + w].any() and not hole[y:y + 2, x:x + w].any():
+            img[y, x:x + w] = [*rrng.choice([SLAB_MID, ASPH_HI, SLAB_TOP]), 255]
+            img[y + 1, x:x + w] = [*CRATER_OUTLINE, 255]
+
+    # meteor chunks thrown on the rim and the scorched ground (the boulders' navy rock)
+    for (cu, cv, rx, ry, g) in ((0.42, 0.95, 3.0, 1.9, True), (1.62, 1.25, 2.4, 1.6, False)):   # sparse
+        px, py = to_px(cu, cv)
+        chunk(px, py, rx, ry, np.random.default_rng(seed + int(cu * 100)), g)
+
+    # glowing cracks: a few connected fissures running from inside the lip, across the rim, into the scorch;
+    # a bright core with a stepped halo of darker purples (no blur)
+    def line(p0, p1):
+        (x0, y0), (x1, y1) = p0, p1
+        n = max(abs(x1 - x0), abs(y1 - y0), 1)
+        return [(int(round(x0 + (x1 - x0) * i / n)), int(round(y0 + (y1 - y0) * i / n))) for i in range(n + 1)]
+
+    # (v4) short: each starts in the lip and stops just past the rim slabs, in the scorch
+    for ang0, length in ((-2.6, 0.1), (2.35, 0.12), (0.15, 0.13), (-0.95, 0.08)):
+        ang, r = ang0, float(r_hole) - 0.04
+        pts = [to_px(1 + r * np.cos(ang), 1 + r * np.sin(ang))]
+        while r < r_hole + 0.12 + length:
+            ang += rng.uniform(-0.25, 0.25)
+            r += 0.04
+            pts.append(to_px(1 + r * np.cos(ang), 1 + r * np.sin(ang)))
+        path = []
+        for p0, p1 in zip(pts, pts[1:]):
+            for p in line(p0, p1):
+                if (not path or path[-1] != p) and 0 <= p[0] < TILE_W and 0 <= p[1] < TILE_H and not floor[p[1], p[0]]:
+                    path.append(p)
+        core = np.zeros_like(hole)
+        for x, y in path:
+            core[y, x] = True
+        n = len(path)
+        head = np.zeros_like(hole)
+        for x, y in path[: max(3, int(n * 0.45))]:
+            head[y, x] = True
+        halo = nb4(core)
+        put(nb4(core | halo) & nb4(head | nb4(head)) & ~halo & ~floor, GLOW_DEEP)   # second step, near the rim
+        put(halo & ~floor, GLOW_HALO)
+        for i, (x, y) in enumerate(path):
+            img[y, x] = [*(GLOW_CORE if i < 2 else GLOW if i < n * 0.65 else GLOW_MID), 255]
+
+    # keep it inside the tile's diamond
+    u0, v0 = ground_uv(xs, ys)
+    img[~((u0 >= 0) & (u0 < 2) & (v0 >= 0) & (v0 < 2))] = 0
+    return img
+
+
 def load_rgba(path):
     return np.array(Image.open(path).convert("RGBA"))
 
@@ -223,7 +473,7 @@ def screen(u, v, ox, oy):
     return int(round(ox + (u - v) * U)), int(round(oy + (u + v) * U / 2))
 
 
-def compose(sidewalk, car, bg):
+def compose(sidewalk, car, bg, crater=None):
     """Road along y at u in [4, 8), sidewalk at u in [0, 4) (curb tiles at u in [2, 4)), v in [0, 12)."""
     W, H = 860, 640
     ox, oy = 440, 210
@@ -236,6 +486,10 @@ def compose(sidewalk, car, bg):
         for i, tile in enumerate([plain, side, road_r, road_l, gravel]):
             x, y = screen(2 * i, 2 * j, ox, oy)
             canvas.alpha_composite(tile, (x - TILE_W // 2, y))
+    # the meteor crater, a ground decal, on the road tile at u in [6, 8), v in [6, 8)
+    if crater is not None:
+        x, y = screen(6, 6, ox, oy)
+        canvas.alpha_composite(Image.fromarray(crater, "RGBA"), (x - TILE_W // 2, y))
     # the small creator building (6 x 6 units, with its own pavement) behind the sidewalk: footprint u in [-6, 0),
     # v in [0, 6), its front corner (anchor_art_px 192, 330) at (u, v) = (0, 6)
     bld = Image.open(REPO / "game/art/buildings/creator_final/small_0.png").convert("RGBA")
@@ -260,13 +514,14 @@ def enlarge(im, k=3):
     return im.resize((im.width * k, im.height * k), Image.NEAREST)
 
 
-def preview(sidewalk_png, car_png, out_dir):
+def preview(sidewalk_png, car_png, out_dir, crater_png=None):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     side = load_rgba(sidewalk_png)
     car = load_rgba(car_png) if car_png else np.zeros((8, 8, 4), np.uint8)
-    dark = enlarge(compose(side, car, (20, 20, 30)))
-    light = enlarge(compose(side, car, (225, 225, 230)))
+    crater = load_rgba(crater_png) if crater_png else None
+    dark = enlarge(compose(side, car, (20, 20, 30), crater))
+    light = enlarge(compose(side, car, (225, 225, 230), crater))
     dark.save(out_dir / "preview_dark.png")
     light.save(out_dir / "preview_light.png")
     both = Image.new("RGBA", (dark.width * 2 + 24, dark.height), (128, 128, 128, 255))
@@ -274,12 +529,22 @@ def preview(sidewalk_png, car_png, out_dir):
     both.alpha_composite(light, (dark.width + 24, 0))
     both.save(out_dir / "preview_side_by_side.png")
     # a close-up of one curb tile's edge against the road (curb tile i = 1, j = 2), 8x, so the curb can be judged
-    base = compose(side, car, (20, 20, 30))
+    base = compose(side, car, (20, 20, 30), crater)
     enlarge(base.crop((330, 296, 470, 386)), 8).save(out_dir / "preview_curb_zoom.png")
     # and the tile's own curb corner on its own, 10x, on the dark background
     tile = Image.new("RGBA", (72, 40), (20, 20, 30, 255))
     tile.alpha_composite(Image.fromarray(side, "RGBA").crop((56, 24, 128, 64)))
     enlarge(tile, 10).save(out_dir / "tile_curb_zoom.png")
+    if crater is not None:   # the crater on the road and on the sidewalk, 6x, so it can be judged up close
+        road = ground_tile("y_plain_a0")
+        walk = Image.fromarray(draw_sidewalk(curb=False), "RGBA")
+        cr = Image.fromarray(crater, "RGBA")
+        strip = Image.new("RGBA", (TILE_W * 3 + 16, TILE_H), (20, 20, 30, 255))
+        for n, ground in enumerate((road, walk, None)):
+            if ground is not None:
+                strip.alpha_composite(ground, (n * (TILE_W + 8), 0))
+            strip.alpha_composite(cr, (n * (TILE_W + 8), 0))
+        enlarge(strip, 6).save(out_dir / "crater_zoom.png")
     return out_dir / "preview_side_by_side.png"
 
 
@@ -290,6 +555,9 @@ def main(argv=None):
     s.add_argument("--out", required=True)
     s.add_argument("--curb-px", type=int, default=3)
     s.add_argument("--seed", type=int, default=397)
+    k = sub.add_parser("crater")
+    k.add_argument("--out", required=True)
+    k.add_argument("--seed", type=int, default=397)
     c = sub.add_parser("car")
     c.add_argument("--raw", required=True)
     c.add_argument("--out", required=True)
@@ -297,11 +565,17 @@ def main(argv=None):
     c.add_argument("--max-colors", type=int, default=30)
     p = sub.add_parser("preview")
     p.add_argument("--sidewalk", required=True)
+    p.add_argument("--crater", help="the crater PNG (optional)")
     p.add_argument("--car", help="the car PNG; left out, the preview has no car")
     p.add_argument("--out-dir", required=True)
     a = ap.parse_args(argv)
     if a.cmd == "sidewalk":
         img = draw_sidewalk(a.curb_px, a.seed)
+        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Image.fromarray(img, "RGBA").save(a.out)
+        print(f"{a.out}: {len(colours(img))} colours")
+    elif a.cmd == "crater":
+        img = draw_crater(a.seed)
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         Image.fromarray(img, "RGBA").save(a.out)
         print(f"{a.out}: {len(colours(img))} colours")
@@ -311,7 +585,7 @@ def main(argv=None):
         Image.fromarray(img, "RGBA").save(a.out)
         print(f"{a.out}: {len(colours(img))} colours, bbox {Image.fromarray(img).getbbox()}")
     else:
-        print(preview(a.sidewalk, a.car, a.out_dir))
+        print(preview(a.sidewalk, a.car, a.out_dir, a.crater))
     return 0
 
 

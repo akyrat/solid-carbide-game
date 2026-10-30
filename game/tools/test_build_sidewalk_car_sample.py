@@ -50,6 +50,29 @@ class SidewalkTests(unittest.TestCase):
         self.assertTrue(np.array_equal(self.tile, b.draw_sidewalk()))
 
 
+class CraterTests(unittest.TestCase):
+    def setUp(self):
+        self.crater = b.draw_crater()
+
+    def test_ground_decal_in_the_road_tiles_diamond(self):
+        self.assertEqual(self.crater.shape, (64, 128, 4))
+        self.assertTrue(set(np.unique(self.crater[..., 3])) <= {0, 255})
+        road = np.array(b.ground_tile("y_plain_a0"))
+        self.assertFalse(((self.crater[..., 3] > 0) & (road[..., 3] == 0)).any())   # never outside the diamond
+        self.assertEqual(self.crater[0:6, 0:20, 3].max(), 0)                         # transparent round it
+        self.assertGreater((self.crater[..., 3] > 0).mean(), 0.25)
+
+    def test_meteor_and_city_colours_only(self):
+        cs = colours(self.crater)
+        self.assertLessEqual(len(cs), 30)
+        self.assertIn(b.GLOW, cs)            # the boulders' own magenta glow
+        self.assertTrue({b.ASPH, b.ASPH_LIT} & cs)   # the road's own asphalt
+        self.assertFalse([c for c in cs if style_rules.greenbull_colour(c)])
+
+    def test_same_input_same_pixels(self):
+        self.assertTrue(np.array_equal(self.crater, b.draw_crater()))
+
+
 class CarCleanTests(unittest.TestCase):
     def test_background_specks_and_mirror(self):
         a = np.zeros((40, 60, 4), np.uint8)

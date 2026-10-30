@@ -1,0 +1,45 @@
+{
+  "file": "car_v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a plain boring compact four-door city sedan car, parked, dull pale silver-grey paint, dark blue-grey tinted windows, unlit headlights, small black tyres, slightly dusty, an ordinary everyday commuter car, no stripes, no spoiler, isometric view seen from above, facing up and to the right, night city, cool blue-grey steel colours, retro pixel art game sprite, a single object",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": true,
+    "isometric": true,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "view": "high top-down",
+    "direction": "north-east",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a plain boring compact four-door city sedan car, parked, dull pale silver-grey paint, dark blue-grey tinted windows, unlit headlights, small black tyres, slightly dusty, an ordinary everyday commuter car, no stripes, no spoiler, isometric view seen from above, facing up and to the right, night city, cool blue-grey steel colours, retro pixel art game sprite, a single object",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:38:11+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "docs/extended-narrative.md",
+    "game/art/ground/ground_atlas.png",
+    "game/art/boulders/boulder_a.png",
+    "game/art/buildings/creator_final/small_0.png"
+  ],
+  "task": "T-397",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}
