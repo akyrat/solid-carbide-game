@@ -1,7 +1,7 @@
 ---
 id: T-398
 title: Level creator: sidewalks painted with automatic curbs, and parked and broken cars as obstacles at four facings (placeholders)
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -59,6 +59,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Build G (street) started: the level-challenge agent is on it in C:\solid-carbide-worktrees\T-398.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -66,3 +70,25 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Done (level-challenge, 2026-10-30).** Placeholders only, no PixelLab call (0 generations). Everything the board places is in the creator and plays in a run.
+
+- **Sidewalk (Ground):** painted like a road (left-drag paints, right-drag erases, Del erases under the mouse), one ground tile (2 x 2 units) at a time (proposal, so a sidewalk can be one tile wide). It never paints over a road, building, platform or ramp. The curb is added by itself on every edge where it meets a road: straights, outer corners (two edges) and inner corners (road only diagonal), 47 curb pieces. The curbs follow the roads: painting or erasing a road next to a sidewalk changes its curb (`SidewalkBrush.rejoin`, run on every write of the ground cells).
+- **In the run** the sidewalk is ground at the street's height, with the curb drawn on the tile (T-397's approved look, the surface drawn 3 art px raised). The car drives over both curbs with no crash, no slowing and no height change, which is the 0.1-unit curb rule with a 0 step. **For the playtest:** the car doesn't visibly lift onto the sidewalk. A real 0.1 step would need sidewalks in the height data, so I didn't add one. Say if the board wants it.
+- **Parked car (3 models) and Broken car (2 models), under Obstacles:** V steps the model ("Model {n} of {count}"). R turns through the four facings, and the top bar names them ("Facing top right", bottom right, bottom left, top left: north, east, south, west). They are props, so they are solid like boulders: the car crashes, the combo is cut, enemies go round them, they stand at the height under them and respect edges (T-393), and they pair and chain for thread the needle. Proposals: footprint 2 x 3 units (3 along the facing), 1.35 high (broken 0.95), rect collision. Placeholder boxes from `build_prop_art.py` with a pale facing arrow, in muted city colours, no red.
+- **Meteor crater (Ground, 3 models):** placed with a click, one ground tile each, drawn as a decal over the ground under everything else. No body: the car drives over it, enemies cross it, and it never blocks the start. Proposal: it goes on the street only and is refused where it would reach onto a building, platform or ramp. The placeholder is T-397's crater script with three seeds and hole sizes. As T-397 said, it reads small on the road.
+- **Names** from T-396 and T-401 are copied into `creator_texts.json` (9 keys, every earlier key unchanged). The sidewalk shows no top-bar hint, because no sidewalk hint text exists and no placeholder text is used.
+- **Saving:** sidewalks are ground tiles like the roads, cars are props, and craters go in a new `craters` list. `check_level.py` checks the craters. Levels saved before open unchanged (test). The game's own map has none of these pieces. Read-only check of the board's levels in the main checkout: the results are the same as master's checker (the kaiju_city and mynewlevel ramp messages and level_01's missing spawn were already there).
+- **Tools:** `game/tools/build_street_pieces.py` (build/check) draws the sidewalk sheet and the craters from T-397's sample functions. `build_prop_final_art.py` now skips props without a SPECS entry (the cars, until T-399). T-399 swaps the art by replacing `art/ground/sidewalk_tiles.png` (+json), `art/craters/*` (+`data/level/craters.json`) and the car textures in `props.json`.
+- **Tests:** new `game/tests/unit/level_creator/test_creator_street_pieces.gd` (18 tests), `game/tools/test_build_street_pieces.py`, `StreetPiecesTest` in `test_build_creator_assets.py`, `TestCheckCraters` in `test_check_level.py`. Earlier tests were updated for the 4 new buttons, the 5 new props and the new kind `crater` (test_creator_families, test_creator_props, test_creator_assets, test_build_prop_art, test_build_prop_final_art, test_check_level).
+- **Test counts:** `python -m unittest discover -s game/tools -p "test_*.py"` 715 tests OK (1 skipped). `python -m unittest discover -s tools -p "test_*.py"` 579 tests OK. `bash game/tools/run_tests.sh` 2041/2041 passed.
+- **Screenshots** (`art-archive/T-398/screenshots/`):
+  - `editor_sidewalks.png`: two roads crossing with sidewalks and their curbs (straights and corners), three craters, the cars.
+  - `editor_cars_facings.png`: every car model at each of the four facings, a parked car picked, top bar "Facing bottom right".
+  - `curb_drive.gif`: a run, the car driving east off the road, up over the curb, across the sidewalk, down the far curb and over a crater, with no crash.
+  - `run_on_sidewalk.png`: a frame of that drive.
+  - Fixtures: `game/tests/fixtures/t398_street_editor.tscn` and `t398_curb_drive.tscn`.
+
+Board review files: art-archive/T-398/screenshots/editor_sidewalks.png, art-archive/T-398/screenshots/editor_cars_facings.png, art-archive/T-398/screenshots/curb_drive.gif
+
+**Documents affected:** `docs/level-design.md` (Content, new "Level creator: sidewalks, parked cars and meteor craters"), `game/docs/level/level-creator-pieces.md` (new "Sidewalks, parked cars and meteor craters (T-398)").

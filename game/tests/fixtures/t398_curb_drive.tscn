@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/t398_curb_drive.gd" id="1_demo"]
+
+[node name="T398CurbDrive" type="Node"]
+script = ExtResource("1_demo")

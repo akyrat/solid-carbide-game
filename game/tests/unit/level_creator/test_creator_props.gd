@@ -10,6 +10,8 @@ const RunScene := preload("res://scenes/run/run.tscn")
 const NavScript := preload("res://scripts/enemies/enemy_navigation.gd")
 const PROP_IDS := ["prop-barrier", "prop-cones", "prop-crates", "prop-ac-unit", "prop-water-tank",
 	"prop-roof-vent", "prop-street-lamp", "prop-roof-sign"]
+## T-398: the parked and broken cars, props too (tested in test_creator_street_pieces.gd).
+const CAR_IDS := ["prop-parked-car-1", "prop-parked-car-2", "prop-parked-car-3", "prop-broken-car-1", "prop-broken-car-2"]
 const ROTATIONS := ["north", "east", "south", "west"]
 const LABELS := {"prop-barrier": "prop_barrier", "prop-cones": "prop_cones", "prop-crates": "prop_crates",
 	"prop-ac-unit": "prop_ac_unit", "prop-water-tank": "prop_water_tank", "prop-roof-vent": "prop_roof_vent",
@@ -60,7 +62,7 @@ func test_the_catalogue_has_the_eight_props_in_four_rotations() -> void:
 		if str(en.kind) == "prop":
 			ids.append(str(en.id))
 			assert_eq(LevelDocument.views_of(str(en.id)), ROTATIONS, str(en.id))
-	assert_eq(ids, PROP_IDS)
+	assert_eq(ids, PROP_IDS + CAR_IDS)
 
 
 func test_each_prop_is_described_in_one_data_file_with_art_per_rotation() -> void:
@@ -80,7 +82,7 @@ func test_the_panel_lists_the_props_under_obstacles_and_decoration_with_creator_
 	# T-262: the props are families under Obstacles and Decoration, one button each, named piece_*.
 	var e := _editor()
 	var by_cat := e.panel.entries_by_category()
-	assert_eq(by_cat[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates"])
+	assert_eq(by_cat[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])
 	assert_eq(by_cat[CreatorTexts.get_text("group_decoration")],
 		["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"])
 	for id in PROP_IDS:

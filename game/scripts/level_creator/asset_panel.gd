@@ -50,6 +50,13 @@ const RAMP_DIR_KEYS := {
 	"south": "ramp_dir_south",
 	"west": "ramp_dir_west",
 }
+## A car's view is the direction it faces (T-398): the top bar's label for each (T-396's texts).
+const FACING_KEYS := {
+	"north": "facing_top_right",
+	"east": "facing_bottom_right",
+	"south": "facing_bottom_left",
+	"west": "facing_top_left",
+}
 ## A family button (icon over its name), two to a row; a look in the strip.
 const BUTTON_SIZE := Vector2(136, 64)
 const LOOK_SIZE := Vector2(40, 40)
@@ -218,7 +225,9 @@ func _update_strip() -> void:
 		b.pressed.connect(func(): member_picked.emit(m))
 		looks_row.add_child(b)
 		look_buttons.append(b)
-	look_counter.text = CreatorTexts.get_text("look_counter").format({"n": at + 1, "count": all.size()})
+	# T-398: the cars and craters count models ("model_counter", the family's "counter").
+	var counter_key := str(CreatorFamilies.family(picked_family).get("counter", "look_counter"))
+	look_counter.text = CreatorTexts.get_text(counter_key).format({"n": at + 1, "count": all.size()})
 	looks_strip.visible = true
 
 

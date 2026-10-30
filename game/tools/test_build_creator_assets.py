@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import build_creator_assets as bc  # noqa: E402
 
-KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop"}
+KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater"}  # crater: T-398
 
 
 class CatalogueTest(unittest.TestCase):
@@ -82,7 +82,8 @@ class CatalogueTest(unittest.TestCase):
         count = lambda k: sum(1 for e in self.entries if e["kind"] == k)
         self.assertEqual(count("building"), 6 + 4 + 2)
         self.assertEqual(count("boulder"), 2)
-        self.assertEqual(count("ground"), 3)
+        self.assertEqual(count("ground"), 3 + 47)  # T-398: the 47 sidewalk curb pieces
+        self.assertEqual(count("crater"), 3)
 
     def test_boulder_mirrors(self):
         for e in self.entries:
@@ -162,7 +163,7 @@ class FamilyTest(unittest.TestCase):
         groups = [f["group"] for f in self.fams]
         self.assertEqual(groups, sorted(groups, key=self.cat["groups"].index))
         self.assertEqual([f["id"] for f in self.fams], bc.FAMILY_ORDER)
-        self.assertEqual(len(self.fams), 20)
+        self.assertEqual(len(self.fams), 24)  # T-398: sidewalk, meteor crater, parked car, broken car
 
     def test_labels_are_texts(self):
         texts = bc.load("data/level/creator_texts.json")
@@ -237,6 +238,54 @@ class FamilyTest(unittest.TestCase):
                             continue
                         self.assertIn(aid, self.by_id, (fid, a))
                         self.assertTrue(self.by_id[aid]["part"])
+
+
+class StreetPiecesTest(unittest.TestCase):
+    """T-398: sidewalks (a brush, a tile per curb piece), meteor craters and parked and broken cars."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cat = bc.build()
+        cls.by_id = {e["id"]: e for e in cls.cat["entries"]}
+        cls.fams = {f["id"]: f for f in cls.cat["families"]}
+
+    def test_sidewalk_is_a_brush_under_ground(self):
+        f = self.fams["sidewalk"]
+        self.assertEqual((f["group"], f["label"], f["brush"]), ("ground", "piece_sidewalk", "sidewalk"))
+        self.assertEqual([m["asset"] for m in f["members"]], ["sidewalk"])
+
+    def test_every_curb_piece_has_an_entry_drawn_from_the_sheet(self):
+        tiles = bc.load("art/ground/sidewalk_tiles.json")["tiles"]
+        self.assertEqual(len(tiles), 47)
+        for t in tiles:
+            e = self.by_id[t["name"]]
+            self.assertEqual(e["kind"], "ground")
+            self.assertNotIn("atlas_index", e)
+            self.assertEqual(e["sidewalk"], {"edges": t["edges"], "corners": t["corners"]})
+            self.assertEqual(e["textures"][0]["region"], t["region"])
+
+    def test_craters_are_ground_group_models(self):
+        f = self.fams["meteor-crater"]
+        self.assertEqual((f["group"], f["label"], f["looks"], f["counter"]), ("ground", "piece_meteor_crater", 3, "model_counter"))
+        for i in (1, 2, 3):
+            self.assertEqual(self.by_id["crater-%d" % i]["kind"], "crater")
+
+    def test_cars_are_obstacles_with_models_and_four_facings(self):
+        for fid, label, looks in (("parked-car", "piece_parked_car", 3), ("broken-car", "piece_broken_car", 2)):
+            f = self.fams[fid]
+            self.assertEqual((f["group"], f["label"], f["looks"], f["turns"]), ("obstacles", label, looks, 4))
+            self.assertEqual(f["counter"], "model_counter")
+            self.assertTrue(f["facing_labels"])
+        order = [f["id"] for f in self.cat["families"] if f["group"] == "obstacles"]
+        self.assertEqual(order, ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])
+        ground = [f["id"] for f in self.cat["families"] if f["group"] == "ground"]
+        self.assertEqual(ground, ["gravel", "sidewalk", "meteor-crater"])
+
+    def test_new_texts_exist(self):
+        texts = bc.load("data/level/creator_texts.json")
+        for k in ("piece_sidewalk", "piece_meteor_crater", "piece_parked_car", "piece_broken_car", "model_counter",
+                  "facing_top_right", "facing_bottom_right", "facing_bottom_left", "facing_top_left"):
+            self.assertIn(k, texts)
 
 
 if __name__ == "__main__":

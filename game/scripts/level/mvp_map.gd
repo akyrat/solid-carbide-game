@@ -1186,7 +1186,15 @@ class _GroundTiles extends Node2D:
 			atlas = load(str(map.ground_layout.atlas))
 			extras = []
 			for p in map.ground_layout.get("extra", []):
-				extras.append(load(str(p)))
+				if p is Dictionary:
+					# T-398: a tile cut from a sheet (the sidewalk curb pieces).
+					var at := AtlasTexture.new()
+					at.atlas = load(str(p.texture))
+					var r: Array = p.region
+					at.region = Rect2(float(r[0]), float(r[1]), float(r[2]), float(r[3]))
+					extras.append(at)
+				else:
+					extras.append(load(str(p)))
 		return atlas != null
 
 	func _draw() -> void:
@@ -1213,6 +1221,9 @@ class _GroundTiles extends Node2D:
 					continue
 				var src := Rect2((k % cols) * tw, (k / cols) * th, tw, th)
 				draw_texture_rect_region(atlas, Rect2(top - Vector2(size.x / 2.0, 0.0), size), src)
+		# T-398: the meteor craters, ground decals over the tiles (under everything else).
+		for d in LevelCraters.decals_of(map.layout):
+			draw_texture_rect(d.texture, d.rect, false)
 
 
 ## Holds the building nodes (map_building.gd, flat placeholder colours) and
