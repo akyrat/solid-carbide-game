@@ -1,7 +1,7 @@
 ---
 id: T-427
 title: Pause screen sliders save once, on release
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md, game/scripts/ui/pause_screen.gd, game/scripts/ui/game_settings.gd, game/tests/unit/test_pause_screen.gd, game/tests/unit/test_music_volume_slider.gd, game/tests/unit/test_sfx_volume.gd]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd, game/scripts/ui/game_settings.gd, game/tests/unit/test_pause_slider_saves.gd, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -53,6 +53,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-427.
 
 Goal runner (G-008): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Done
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -70,3 +74,4 @@ UI Agent, T-427.
 - Screenshots: none; a slider write-count change shows nothing new on screen.
 
 QA round 1 (sonnet): all five criteria pass. New test_pause_slider_saves.gd 8/8 pass alone. Full GUT: 2153 tests, first full run 2152 passing; test_run_likes.gd `test_run_scene_drift_pays_its_combo_once_when_it_ends` failed (a frame-timing test, unrelated to the pause screen, under load); rerun alone, test_run_likes 18/18 pass. game/tools unittest 736 OK (1 skipped); tools unittest 582 OK. Docs: both state save on release and on close. No screenshots needed (nothing to picture). `python tools/qa_check.py` was refused (needs approval, not on the allow list), so not run; criteria checked by hand.
+- 2026-10-30, in-qa → done: QA passed every criterion (goal G-008).
