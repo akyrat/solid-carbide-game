@@ -2640,3 +2640,8 @@ Entry format:
 - Decision or change: Enemies flash red when they take damage.
 - Documents touched: none
 - Tasks: T-404
+
+## 2026-10-30: Bug fixed: minions stuck at ramps
+- Decision or change: Minions go straight at the car only with a clear line, and the path grid reads the half-unit edges of the new platforms; no minion stuck in the scripted chase.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-380
