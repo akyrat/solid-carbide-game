@@ -1,7 +1,7 @@
 ---
 id: T-417
 title: A broken save never wipes progress
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -63,3 +63,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Written by the agent when it finishes.
 
 Done. New `game/scripts/data/safe_save.gd` (`SafeSave`), used by `PlayerProgress` and `RunHistory`: save = write `<file>.tmp`, check it reads back, copy the last good file to `<file>.bak`, rename the temp over the file. Load = main file; if it fails it is renamed to `<file>.broken-<unix time>` (never overwritten, numbered if the name is taken) and `<file>.bak` loads; neither = new player / empty history. Every save holds `"version"` (1); a file without one loads as version 1 (`loaded_version`); `loaded_from` says main, backup or none. `PlayerProgress.ID_RENAMES` (version -> {old id: new id}, empty today) maps old ids on load; a rename means raising `SafeSave.CURRENT_VERSION` and adding the mapping. Existing tests' cleanup now also removes the .bak and .broken files (`SafeSave.remove_all`, in test_save.gd, test_player_progress.gd, test_run_history.gd). New `tests/unit/test_safe_save.gd` (16 tests: truncated main loads backup, broken kept aside with and without a backup, wrong shape, two broken files, temp file used, save cut off before the rename, stale temp, broken never becomes the backup, versions, id mapping, history equivalents). Tests: GUT 2141/2141 pass (the first full run had 2 failures from leftover .bak files in old tests' cleanup, fixed); game/tools Python 722 OK (1 skipped); tools Python 582 OK. Only temp test paths used. Docs updated: docs/garage-design.md, game/docs/data/game-data.md. Untracked .uid files in the worktree are Godot noise, not committed (except safe_save's and its test's).
+- 2026-10-30, in-progress → in-qa: Safe saves done: temp file+rename, .bak backup, broken file kept aside, version 1, ID_RENAMES; 16 new tests; all three sets pass.
