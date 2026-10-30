@@ -1,7 +1,7 @@
 ---
 id: T-408
 title: Gun: one-shots a minion from tier 1; upgrades are +1 bullet x2, faster x2, 3 targets, +1 bullet x2, faster x2, 5 targets
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/docs/weapons/starting-gun.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, game/docs/weapons/starting-gun.md, game/docs/weapons/shared.md, game/data/weapons.json, game/data/enemies.json]
 files_expected_to_change: [game/scripts/weapons/, game/data/weapons.json, game/tests/unit/, game/docs/weapons/, docs/weapons.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -69,6 +69,10 @@ T-412's card text is in; building the gun now.
 ### 2026-10-30, In progress → In QA
 
 Gun built: 4 damage one-shots minions; tiers 2-11 in the board's order up to 5 targets; per-weapon last tier (gun 11); all three test sets pass; GIF in art-archive.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all 7 criteria; tests green (GUT all passed, python sets OK). Gun card text matches T-412. Ready for your playtest.
 
 ## Style review
 
