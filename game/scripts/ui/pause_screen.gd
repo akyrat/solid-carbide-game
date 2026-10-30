@@ -29,13 +29,14 @@ const TEXT_RESTART := "Restart"
 const TEXT_EXIT := "Exit"
 ## The strip's background. Nearly opaque, so the controls read over any ground,
 ## the run's bright asphalt included (T-124, QA round 1).
-const STRIP_COLOR := Color(0, 0, 0, 0.85)
+## The colours and font sizes are HudStyle's (T-428).
+const STRIP_COLOR := HudStyle.PAUSE_STRIP_COLOR
 ## Placeholder look for the checkboxes and buttons (T-124): a light frame on a
 ## dark fill, so they show on the strip whatever the ground behind it.
-const CONTROL_FRAME := Color(0.85, 0.85, 0.85)
-const CONTROL_FILL := Color(0.16, 0.16, 0.16)
-const CONTROL_FILL_HOVER := Color(0.28, 0.28, 0.28)
-const CONTROL_FILL_PRESSED := Color(0.08, 0.08, 0.08)
+const CONTROL_FRAME := HudStyle.PAUSE_CONTROL_FRAME
+const CONTROL_FILL := HudStyle.PAUSE_CONTROL_FILL
+const CONTROL_FILL_HOVER := HudStyle.PAUSE_CONTROL_FILL_HOVER
+const CONTROL_FILL_PRESSED := HudStyle.PAUSE_CONTROL_FILL_PRESSED
 const CHECK_ICON_SIZE := 16
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
 const LABEL_WIDTH := 170.0
@@ -87,7 +88,7 @@ func setup(t: Node) -> void:
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_root)
 	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.2)  # light, so the zoom shows behind it
+	dim.color = HudStyle.PAUSE_DIM  # light, so the zoom shows behind it
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(dim)
 	# The panel sits at the top, over a dark strip, so the map behind stays clear.
@@ -111,16 +112,16 @@ func setup(t: Node) -> void:
 	title_label = Label.new()
 	title_label.text = TEXT_TITLE
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_label.add_theme_font_size_override("font_size", 28)
+	HudStyle.apply(title_label, "pause_title")
 	box.add_child(title_label)
 	hint_label = Label.new()
 	hint_label.text = TEXT_HINT
 	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint_label.add_theme_font_size_override("font_size", 16)
+	HudStyle.apply(hint_label, "pause_text")
 	box.add_child(hint_label)
 	zoom_label = Label.new()
 	zoom_label.text = TEXT_ZOOM_LABEL
-	zoom_label.add_theme_font_size_override("font_size", 16)
+	HudStyle.apply(zoom_label, "pause_text")
 	zoom_label.custom_minimum_size.x = LABEL_WIDTH  # the SFX row uses the same, so the sliders line up
 	var row := HBoxContainer.new()
 	box.add_child(row)
@@ -168,7 +169,7 @@ func _build_trick_panel() -> void:
 	trick_panel.add_child(col)
 	trick_list = (load("res://scenes/menu/trick_list.tscn") as PackedScene).instantiate()
 	trick_list.name = "TrickList"
-	trick_list.name_font_size = 18
+	trick_list.name_font_size = HudStyle.PAUSE_TRICK_NAME_SIZE
 	trick_list.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(trick_list)
 	trick_back_button = _make_button("TrickBackButton", TrickList.text("button.back"))
@@ -225,7 +226,7 @@ func _build_sfx_slider(box: VBoxContainer) -> void:
 	box.add_child(row)
 	sfx_label = Label.new()
 	sfx_label.text = TEXT_SFX_LABEL
-	sfx_label.add_theme_font_size_override("font_size", 16)
+	HudStyle.apply(sfx_label, "pause_text")
 	sfx_label.custom_minimum_size.x = LABEL_WIDTH
 	row.add_child(sfx_label)
 	sfx_slider = HSlider.new()
@@ -260,7 +261,7 @@ func _build_music_slider(box: VBoxContainer) -> void:
 	box.add_child(row)
 	music_label = Label.new()
 	music_label.text = TEXT_MUSIC_LABEL
-	music_label.add_theme_font_size_override("font_size", 16)
+	HudStyle.apply(music_label, "pause_text")
 	music_label.custom_minimum_size.x = LABEL_WIDTH
 	row.add_child(music_label)
 	music_slider = HSlider.new()
@@ -325,7 +326,7 @@ func _make_check(node_name: String, text: String) -> CheckBox:
 	var c := CheckBox.new()
 	c.name = node_name
 	c.text = text
-	c.add_theme_font_size_override("font_size", 16)
+	HudStyle.apply(c, "pause_text")
 	c.add_theme_icon_override("unchecked", check_icon(false))
 	c.add_theme_icon_override("checked", check_icon(true))
 	c.add_theme_icon_override("unchecked_disabled", check_icon(false))
@@ -365,14 +366,14 @@ func _make_button(node_name: String, text: String) -> Button:
 	var b := Button.new()
 	b.name = node_name
 	b.text = text
-	b.add_theme_font_size_override("font_size", 16)
+	HudStyle.apply(b, "pause_text")
 	b.add_theme_stylebox_override("normal", button_style(CONTROL_FILL))
 	b.add_theme_stylebox_override("hover", button_style(CONTROL_FILL_HOVER))
 	b.add_theme_stylebox_override("pressed", button_style(CONTROL_FILL_PRESSED))
 	b.add_theme_stylebox_override("hover_pressed", button_style(CONTROL_FILL_PRESSED))
-	var focus := button_style(Color(0, 0, 0, 0), 3)
+	var focus := button_style(HudStyle.NO_GLOW, 3)
 	focus.draw_center = false
-	focus.border_color = Color(1, 1, 1)
+	focus.border_color = HudStyle.PAUSE_FOCUS
 	b.add_theme_stylebox_override("focus", focus)
 	return b
 
@@ -381,7 +382,7 @@ func _make_value_label(node_name: String) -> Label:
 	var l := Label.new()
 	l.name = node_name
 	l.custom_minimum_size.x = 50.0
-	l.add_theme_font_size_override("font_size", 16)
+	HudStyle.apply(l, "pause_text")
 	return l
 
 
