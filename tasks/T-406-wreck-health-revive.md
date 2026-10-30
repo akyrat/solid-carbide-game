@@ -1,7 +1,7 @@
 ---
 id: T-406
 title: A wrecked car that slides into a health pickup's range picks it up and revives with 1 heart
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -52,6 +52,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Started in build F (Hits, enemies & weapons).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -59,3 +63,15 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built (game-loop agent). During the wreck a health pickup is pulled by the magnet and picked up on touch; `RunState.heal_car()` while wrecked calls the new `RunState.revive()` (1 heart, `REVIVE_HEARTS`), which clears the wreck, the result and the recap summary, restarts the run (no `run_ended`, no recap) and sends `revived`; `run.gd` gives the controls back, stops the smoke and flames and refreshes the blink. Pickups' code is untouched (their existing `heal_car` path is used). `pickup_magnet.gd` runs while wrecked but pulls only health pickups. No data change (the invulnerability uses `car.invulnerability_seconds`).
+
+Proposals for the playtest:
+- Invulnerability: yes, the usual 1 second after the revive, with the blink, so the swarm cannot finish the car at once.
+- Combo: stays cut as the fatal hit left it (no restore); live viewers follow the combo as always; the recap's peak viewers are kept.
+- Other pickups: coins and gift packs stay still during the wreck (not pulled, not collected); only health pickups revive. A pickup restoring 2 hearts still gives 1 on a revive.
+- Clock and counting: the clock runs on from where it stopped; coins, likes, tricks and kills count again.
+
+Tests: `test_wreck.gd` 23 of 23 (6 new: revive with 1 heart and no recap, invulnerability, combo and viewers, no revive after the recap starts / without a pickup, a sliding wreck in the run scene picking up a pickup and driving again, the magnet pulling only health pickups; the old "heal_car during the wreck does nothing" line was removed). Three sets: GUT 1945 of 1945 passed; `game/tools` unittest 668 (OK, 1 skipped); `tools` unittest 579 OK.
+GIF and screenshot: `art-archive/T-406/screenshots/revive.gif`, `revive.png` (`bash game/tools/record_revive.sh`, fixture `tests/fixtures/revive_demo.tscn`).
+Docs: Game loop architecture (Content, "Wrecked", new bullet) and `game/docs/game-loop/the-run.md`.
