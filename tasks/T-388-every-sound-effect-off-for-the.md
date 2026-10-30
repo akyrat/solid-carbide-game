@@ -57,4 +57,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+**The switch:** `"sfx_enabled": false` in `game/data/sfx.json`, read by `GameSettings.sfx_enabled()` (`game_settings.gd`). Off: `apply_sfx_volume` always mutes the SFX bus, and `RunSounds.play()` and loop starts (`_set_loop`) start no player. Missing key = on. Music untouched. Nothing deleted.
+
+**Changes:** `sfx.json`, `game_settings.gd`, `run_sounds.gd`; new `tests/unit/run/test_sfx_off.gd` (7 tests: data switch off, bus muted at saved volume 100, every id in sfx.json does not start/play with volume 100, no loops in a run, switch on brings sounds back, music plays in menu and in a run at saved volume 65, nothing deleted). Older tests (`test_run_sounds`, `test_sfx_volume`, `test_music_volume_slider`, `test_music`) set the test hook `GameSettings.sfx_enabled_override = 1`. Doc: `game/docs/sound/sound-effects.md`.
+
+**Tests:** GUT 1972/1972 passed (162 scripts); `python -m unittest discover -s game/tools` 675 tests OK (1 skipped); `python -m unittest discover -s tools` 573 tests OK.
+
+**Screenshots:** none; audio-only change, nothing on screen.
+
+**Refusals:** none.

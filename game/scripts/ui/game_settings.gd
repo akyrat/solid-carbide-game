@@ -151,12 +151,30 @@ static func ensure_sfx_bus() -> int:
 	return i
 
 
+## Test hook: -1 = read "sfx_enabled" from data/sfx.json, 0 = force off, 1 = force on.
+static var sfx_enabled_override := -1
+
+
+## THE SWITCH (task T-388, board 2026-10-29): "sfx_enabled" in data/sfx.json. False = every
+## sound effect is off for the MVP, whatever the saved SFX volume: the SFX bus stays muted and
+## RunSounds starts no player. Missing = true. The music is not affected.
+static func sfx_enabled() -> bool:
+	if sfx_enabled_override >= 0:
+		return sfx_enabled_override == 1
+	var data = GameData.unwrap(GameData.load_file("sfx"))
+	if data == null or not data is Dictionary:
+		return true
+	var v = data.get("sfx_enabled", true)
+	return v if v is bool else true
+
+
 ## Sets the SFX bus to `volume` (0 to 100): 0 is muted, 100 leaves the per-sound volumes
 ## (data/sfx.json) as they are, in between it scales the loudness (a straight 0..1 gain).
+## With the switch off (sfx_enabled()) the bus is always muted.
 static func apply_sfx_volume(volume: float) -> void:
 	var i := ensure_sfx_bus()
 	var gain := clampf(volume, 0.0, 100.0) / 100.0
-	AudioServer.set_bus_mute(i, gain <= 0.0)
+	AudioServer.set_bus_mute(i, gain <= 0.0 or not sfx_enabled())
 	AudioServer.set_bus_volume_db(i, linear_to_db(maxf(gain, 0.0001)))
 
 
