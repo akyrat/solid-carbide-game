@@ -109,6 +109,7 @@ func test_music_setting_does_not_touch_the_sfx_volume() -> void:
 
 
 func test_music_bus_is_separate_and_moves_only_the_music() -> void:
+	GameSettings.sfx_enabled_override = 1  # the bus maths, not the MVP switch (T-388)
 	GameSettings.apply_sfx_volume(100.0)
 	var sfx := AudioServer.get_bus_index(GameSettings.SFX_BUS)
 	var music := AudioServer.get_bus_index(GameSettings.MUSIC_BUS)
@@ -125,6 +126,7 @@ func test_music_bus_is_separate_and_moves_only_the_music() -> void:
 	GameSettings.apply_sfx_volume(0.0)
 	GameSettings.apply_music_volume(70.0)
 	assert_false(AudioServer.is_bus_mute(music), "muting the SFX leaves the music")
+	GameSettings.sfx_enabled_override = -1
 
 
 func test_the_saved_volume_is_applied_at_launch() -> void:

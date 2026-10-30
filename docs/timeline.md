@@ -2650,3 +2650,8 @@ Entry format:
 - Decision or change: The underglow deals half a minion's health per tick and pushes enemies a little from tier 1.
 - Documents touched: `docs/weapons.md`
 - Tasks: T-409
+
+## 2026-10-30: Goal G-007, the last MVP round, merged after the board's playtest
+- Decision or change: The board played goal G-007's build and approved it ("g007 also lgtm"). Merged: tutorial slides before a run (with "Don't show again" on the last slide, unticked; Restart doesn't show them; no early skip), a trick list button on the pause screen, the seven trick illustrations (both sets made; the script-drawn set chosen over PixelLab's, 7.0 vs 5.9), every sound effect off for the MVP with one switch (the music stays), and the SFX volume slider hidden on the pause screen. Noted from the playtest: the pause screen's trick list panel is see-through.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/visual-style.md`
+- Tasks: T-381, T-382, T-383, T-384, T-385, T-386, T-387, T-388, T-389, T-390 (goal G-007)

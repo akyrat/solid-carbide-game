@@ -1,0 +1,11 @@
+{
+  "description": "isometric 3/4 pixel art, a closed neon pink tire trail loop drawn as an isometric ellipse on the ground with a 1 pixel darker purple stepped halo, the trail overlapping a little where it closes, the middle empty, pale grey lilac tire smoke puffs around the loop, a small dark forest green 1967 Mustang fastback car drifting on the loop, deep dark green body color, two bold white racing stripes with a gap along hood roof and trunk, sloped fastback roof, roof and one side of the car clearly visible, dark windows, black wheels, near black outline, light highlight pixels on roof and hood edges, navy purple shadow under the car, no background",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, lime, bright green, teal car, navy car, blue car, purple car, flat car, filled ellipse, background, ground tiles, road, sky, gradient, photo",
+  "image_size": {"width": 64, "height": 48},
+  "view": "low top-down",
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 12,
+  "no_background": true
+}

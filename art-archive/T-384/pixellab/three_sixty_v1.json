@@ -1,0 +1,41 @@
+{
+  "file": "three_sixty_v1.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric pixel art seen from above at an angle, a tiny dark forest green 1967 Mustang fastback car with two white racing stripes, drifting in a full 360 spin, its glowing neon pink tire trail drawing one big closed circle loop on the ground around the frame, the car sitting on the circle, a ring of grey purple tire smoke puffs along the circle, stepped darker pink glow pixels beside the trail, black outline with white highlight pixels, top and side of the car visible, synthwave night colours, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, bright green, lime, teal car, background, ground, road, sky, gradient, photo, open arc, straight lines",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "medium detail",
+    "text_guidance_scale": 10,
+    "no_background": true
+  },
+  "prompt": "isometric pixel art seen from above at an angle, a tiny dark forest green 1967 Mustang fastback car with two white racing stripes, drifting in a full 360 spin, its glowing neon pink tire trail drawing one big closed circle loop on the ground around the frame, the car sitting on the circle, a ring of grey purple tire smoke puffs along the circle, stepped darker pink glow pixels beside the trail, black outline with white highlight pixels, top and side of the car visible, synthwave night colours, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:07:18+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/three_sixty.md",
+    "art-archive/T-384/briefs/common.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v1 for three_sixty, transparent background",
+  "generator": "game/tools/pixellab_client.py"
+}

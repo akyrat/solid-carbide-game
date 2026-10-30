@@ -1,0 +1,1 @@
+Tutorial slide 2 of 3, second of two lines under the list of the seven tricks (the first says tricks bring viewers, viewers bring subs). Says only: each sub goal brings a gift pack with a weapon that helps you survive and keeps enemies away. Use "sub goal" and "gift pack". One short line.

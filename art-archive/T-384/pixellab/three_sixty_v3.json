@@ -1,0 +1,41 @@
+{
+  "file": "three_sixty_v3.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric pixel art icon, a large thin neon pink tire trail ring, a 2 pixel wide glowing line forming one closed circle loop on the ground filling the image, 1 pixel darker purple halo beside the line, the middle of the circle empty, a few small pale grey lilac tire smoke puffs spaced around the ring, one tiny dark forest green 1967 Mustang fastback car, only 14 pixels long, sitting on the bottom right edge of the circle drifting sideways, very dark green body, two white racing stripes, black outline, white highlight on roof, top and side visible, night synthwave colours, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, lime, bright green, teal car, purple car, big car, car in the middle, filled ellipse, filled disc, glowing fill, background, ground, road, sky, gradient, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "basic shading",
+    "detail": "medium detail",
+    "text_guidance_scale": 12,
+    "no_background": true
+  },
+  "prompt": "isometric pixel art icon, a large thin neon pink tire trail ring, a 2 pixel wide glowing line forming one closed circle loop on the ground filling the image, 1 pixel darker purple halo beside the line, the middle of the circle empty, a few small pale grey lilac tire smoke puffs spaced around the ring, one tiny dark forest green 1967 Mustang fastback car, only 14 pixels long, sitting on the bottom right edge of the circle drifting sideways, very dark green body, two white racing stripes, black outline, white highlight on roof, top and side visible, night synthwave colours, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:10:03+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/three_sixty.md",
+    "art-archive/T-384/briefs/common.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v3 for three_sixty: tiny car on ring edge, thin ring with empty middle, smoke puffs",
+  "generator": "game/tools/pixellab_client.py"
+}
