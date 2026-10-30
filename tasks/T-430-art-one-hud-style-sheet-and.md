@@ -1,7 +1,7 @@
 ---
 id: T-430
 title: Art: one HUD style sheet, and script redraws of the HUD pieces that break it
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-008
@@ -48,6 +48,10 @@ The board's review: Compare the before and after screenshots in art-archive/<id>
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-430.
 
 ## Style review
 
