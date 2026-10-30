@@ -1,7 +1,7 @@
 ---
 id: T-390
 title: The chosen trick illustrations in slide 2 and the pause trick list, placeholders retired
-status: blocked
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [game/docs/hud-and-menus/tutorial-slides.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/tutorial-slides.md, game/scripts/menu/trick_list.gd, game/tests/unit/test_trick_list.gd, game/docs/setup/screenshots.md]
 files_expected_to_change: [game/scripts/menu/trick_list.gd, game/tests/unit/test_trick_list.gd, game/docs/hud-and-menus/tutorial-slides.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,15 +37,27 @@ The board's review: Check the trick illustrations on slide 2 and in the pause sc
 
 ## Acceptance criteria
 
-- [ ] Slide 2 and the pause trick list panel both show the seven PNGs from game/art/tutorial/tricks/ with no placeholder drawn; a test checks each trick's texture is loaded from its file. (QA: pass / fail)
-- [ ] The illustrations use nearest filtering and a whole-number scale; a test checks the filter and scale. (QA: pass / fail)
-- [ ] The placeholder drawing code is removed or no longer reached, and game/docs/hud-and-menus/tutorial-slides.md documents the illustration files. (QA: pass / fail)
-- [ ] Screenshots of slide 2 and the open pause trick list panel are saved in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] Slide 2 and the pause trick list panel both show the seven PNGs from game/art/tutorial/tricks/ with no placeholder drawn; a test checks each trick's texture is loaded from its file. (QA: pass)
+- [ ] The illustrations use nearest filtering and a whole-number scale; a test checks the filter and scale. (QA: pass)
+- [ ] The placeholder drawing code is removed or no longer reached, and game/docs/hud-and-menus/tutorial-slides.md documents the illustration files. (QA: pass)
+- [ ] Screenshots of slide 2 and the open pause trick list panel are saved in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-390.
+
+### 2026-10-30, In progress → In QA
+
+Goal runner (G-007): the agent is done; QA is checking it.
+
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
 
 ## Style review
 
@@ -53,4 +65,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (UI Agent, sonnet). No PixelLab generations used.
+
+- `game/scripts/menu/trick_list.gd`: the placeholder (`_make_placeholder`, `PLACEHOLDER_BG/FG`, `is_placeholder`) is deleted. Each trick loads `res://art/tutorial/tricks/<id>.png`; `is_loaded(id)` says so; a missing file leaves the picture empty and logs a warning. Nearest filter on the list and each picture, scale 3 (192 x 144), unchanged. Slide 2 and the pause panel share this one scene, so both show the seven PNGs.
+- `game/tests/unit/test_trick_list.gd`: new test for all seven textures loaded from their files (and size 64 x 48), a test that the placeholder methods are gone, and the filter and scale test now covers every trick. Missing-file test now expects an empty picture.
+- `game/docs/hud-and-menus/tutorial-slides.md`: placeholder section replaced by the list of the seven files shown.
+- `game/tests/fixtures/pause_trick_list_demo.gd`: was broken since T-389 (Start opens the slides); now calls `game.start_run()`.
+- Tests: GUT 162 scripts, 1974 tests, 1974 passing; `python -m unittest discover -s tools` 573 OK; `game/tools` Python tests OK.
+- Screenshots: `art-archive/T-390/screenshots/slide2.png`, `art-archive/T-390/screenshots/pause_trick_list.png`.
+- Refusals: a heredoc python script I tried was refused; I did the edits with the edit tool instead.
+
+### QA round 1
+All five criteria pass. GUT 162 scripts / 1974 tests / 1974 passing; `python -m unittest discover -s tools` 573 OK; `game/tools` 675 OK (1 skipped). Tests test_every_trick_texture_loads_from_its_file, test_no_placeholder_code_left and test_illustration_is_drawn_nearest_at_a_whole_scale exist; the placeholder code is gone from trick_list.gd; both screenshots exist in art-archive/T-390/screenshots/ and the seven PNGs are in game/art/tutorial/tricks/. Refused: `python tools/qa_check.py T-390 --no-marks` (needs approval), so I ran the test sets and checks by hand.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
