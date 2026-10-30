@@ -2630,3 +2630,8 @@ Entry format:
 - Decision or change: The in-run wreck-revive test switches off minions and weapons, so it no longer fails at random.
 - Documents touched: none
 - Tasks: T-424
+
+## 2026-10-30: The task board shows the audit epic
+- Decision or change: The task board has an Audit bubble for the audit epic's tickets.
+- Documents touched: none
+- Tasks: T-410
