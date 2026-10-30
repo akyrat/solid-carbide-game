@@ -1,7 +1,7 @@
 ---
 id: T-394
 title: Level creator: an obstacle in several pairs, and a row paired as a chain, so a row can be threaded gap after gap
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -60,6 +60,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Started: an obstacle in several pairs, a row paired as a chain in one go, and each gap paying its own thread the needle.
 
 ## Style review
 

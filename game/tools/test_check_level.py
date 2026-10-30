@@ -157,7 +157,8 @@ class TestCheckProps(unittest.TestCase):
 
 
 class TestCheckPairs(unittest.TestCase):
-    """T-272: every pair names two different existing obstacles, each in one pair at most."""
+    """T-272: every pair names two different existing obstacles; T-394: an obstacle can be in several
+    pairs, the same two obstacles in one pair at most."""
 
     def level(self, *pairs):
         d = small_level()
@@ -205,11 +206,19 @@ class TestCheckPairs(unittest.TestCase):
         problems = c.check_level(self.level(self.pair("copy-02", "prop-1")))
         self.assertTrue(any("holds 2 boulders" in p for p in problems), problems)
 
-    def test_rejects_an_obstacle_with_itself_and_in_two_pairs(self):
+    def test_rejects_an_obstacle_with_itself(self):
         problems = c.check_level(self.level(self.pair("prop-1", "prop-1")))
         self.assertTrue(any("with itself" in p for p in problems), problems)
-        problems = c.check_level(self.level(self.pair("copy-01", "prop-1"), self.pair("prop-1", "prop-3", "pair-2")))
-        self.assertTrue(any("pair 'pair-2'" in p and "already in" in p for p in problems), problems)
+
+    def test_accepts_an_obstacle_in_several_pairs_a_chain(self):
+        """T-394: a row paired as a chain, A-B, B-C, C-D: the middle obstacles are in two pairs."""
+        d = self.level(self.pair("copy-01", "prop-1"), self.pair("prop-1", "prop-3", "pair-2"),
+                       self.pair("prop-3", "copy-02/0", "pair-3"), self.pair("copy-02/0", "copy-02/1", "pair-4"))
+        self.assertEqual(c.check_level(d), [])
+
+    def test_rejects_the_same_two_obstacles_paired_twice(self):
+        problems = c.check_level(self.level(self.pair("copy-01", "prop-1"), self.pair("prop-1", "copy-01", "pair-2")))
+        self.assertTrue(any("pair 'pair-2'" in p and "again" in p and "pair 'pair-1'" in p for p in problems), problems)
 
     def test_rejects_pairs_that_are_not_a_list(self):
         d = self.level()

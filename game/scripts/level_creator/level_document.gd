@@ -38,7 +38,8 @@ extends RefCounted
 ##   footprint would reach out of the map.
 ## - pair (T-272, thread the needle): {id: "pair-N", a, b} in pairs, two obstacles (boulders, or the
 ##   Obstacles group's props) named by their refs (ObstaclePairs); make_pair, unpair, pair_of.
-##   Deleting either obstacle removes its pair. An obstacle is in at most one pair.
+##   Deleting either obstacle removes its pair. An obstacle can be in several pairs (T-394: a row
+##   paired as a chain, make_chain); the same two obstacles make one pair at most (pair_between).
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -770,39 +771,97 @@ func piece_of_ref(ref: String) -> Dictionary:
 	return {"kind": "prop", "item": o.item}
 
 
-## The pair holding obstacle `piece`, {} for none (an obstacle is in at most one pair).
+## The first pair holding obstacle `piece`, {} for none (an obstacle can be in several: pairs_with).
 func pair_of(piece: Dictionary) -> Dictionary:
+	var l := pairs_with(piece)
+	return l[0] if not l.is_empty() else {}
+
+
+## Every pair holding obstacle `piece` (T-394: an obstacle can be in several), [] for none.
+func pairs_with(piece: Dictionary) -> Array:
 	var ref := obstacle_ref(piece)
+	var out: Array = []
 	if ref == "":
-		return {}
+		return out
 	for p in pairs():
 		if str(p.get("a", "")) == ref or str(p.get("b", "")) == ref:
+			out.append(p)
+	return out
+
+
+## The pair of obstacles `a` and `b` (either order), {} for none.
+func pair_between(a: Dictionary, b: Dictionary) -> Dictionary:
+	var ra := obstacle_ref(a)
+	var rb := obstacle_ref(b)
+	if ra == "" or rb == "" or ra == rb:
+		return {}
+	for p in pairs():
+		var pa := str(p.get("a", ""))
+		var pb := str(p.get("b", ""))
+		if (pa == ra and pb == rb) or (pa == rb and pb == ra):
 			return p
 	return {}
 
 
 ## Pairs obstacles `a` and `b` (two different obstacle pieces): written as {id: "pair-N", a, b} into
-## the level's "pairs". An obstacle is in at most one pair: a pair either was in before goes (a
-## proposal: the new pair wins). Returns the pair, {} when either is not an obstacle or both are one.
+## the level's "pairs". Their other pairs stay (T-394: an obstacle can be in several); when the two
+## are already a pair, that pair is returned and nothing is added. Returns the pair, {} when either
+## is not an obstacle or both are one.
 func make_pair(a: Dictionary, b: Dictionary) -> Dictionary:
 	var ra := obstacle_ref(a)
 	var rb := obstacle_ref(b)
 	if ra == "" or rb == "" or ra == rb:
 		return {}
-	unpair(a)
-	unpair(b)
+	var old := pair_between(a, b)
+	if not old.is_empty():
+		return old
 	var p := {"id": _next_id("pairs", "pair-"), "a": ra, "b": rb}
 	_list("pairs").append(p)
 	return p
 
 
-## Removes the pair holding obstacle `piece`. Returns true when there was one.
+## Pairs a row of obstacles picked in order (T-394): each with the next, `pieces[0]` with
+## `pieces[1]`, `pieces[1]` with `pieces[2]` and so on (make_pair: existing pairs are kept, the same
+## two never twice). Returns the chain's pairs, one per consecutive two that could be paired.
+func make_chain(pieces: Array) -> Array:
+	var out: Array = []
+	for i in range(pieces.size() - 1):
+		var p := make_pair(pieces[i], pieces[i + 1])
+		if not p.is_empty():
+			out.append(p)
+	return out
+
+
+## Removes every pair holding obstacle `piece` (T-394: all of them). Returns true when there was one.
 func unpair(piece: Dictionary) -> bool:
-	var p := pair_of(piece)
+	var l := pairs_with(piece)
+	for p in l:
+		_erase_same(_list("pairs"), p)
+	return not l.is_empty()
+
+
+## Removes only the pair of obstacles `a` and `b` (T-394). Returns true when there was one.
+func unpair_between(a: Dictionary, b: Dictionary) -> bool:
+	var p := pair_between(a, b)
 	if p.is_empty():
 		return false
 	_erase_same(_list("pairs"), p)
 	return true
+
+
+## Unpair for a pick of obstacles in order (T-394): one piece, all its pairs (unpair); two or more,
+## only the pairs between consecutive ones (unpair_between), so a chain picked again comes undone and
+## the obstacles' other pairs stay. Returns how many pairs went.
+func unpair_picked(pieces: Array) -> int:
+	if pieces.size() == 1:
+		var n := pairs_with(pieces[0]).size()
+		unpair(pieces[0])
+		return n
+	var count := 0
+	for i in range(pieces.size() - 1):
+		if unpair_between(pieces[i], pieces[i + 1]):
+			count += 1
+	return count
 
 
 ## Each pair with the obstacle items its refs name now: [[pair, item a, item b]].
