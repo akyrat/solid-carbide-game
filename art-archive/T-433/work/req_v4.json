@@ -1,0 +1,9 @@
+{
+  "description": "isometric pixel art, deep dark night, downtown Tokyo street seen from high above at a 3/4 angle between dark blue-grey steel and glass towers. Left third: a large detailed 1967 Mustang fastback muscle car painted very dark forest green, almost black-green, with exactly two parallel white racing stripes down the centre of hood, roof and trunk with a thin gap between them, sloping fastback roof, 3/4 isometric view from above, drifting sideways, a bright curving pink and cyan neon drift trail with stepped glow and white-grey tyre smoke behind it. Right third: a giant dark grey Godzilla-like reptile kaiju with pale jagged back plates, near-black outline, grey highlights on its body. Sky and upper corners: four alien meteors, chunks of dark navy and purple rock with glowing magenta cracks and stepped magenta glow halos, falling diagonally, one bursting on a rooftop. Towers with windows lit pale white and pale blue, small amber lamps, small muted vertical signs with abstract marks, a few broken dark windows, cracks and grey rubble. Plain dark grey asphalt with no road markings, no lines, no letters. The centre of the image is dark, calm and empty. Retro pixel art, hard edges, selective outline. No text, no words, no logos, no yellow.",
+  "image_size": {"width": 320, "height": 180},
+  "text_guidance_scale": 8,
+  "view": "high top-down",
+  "outline": "selective outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed"
+}

@@ -1,0 +1,40 @@
+{
+  "file": "splash_v2_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric pixel art night city scene seen from high above at a 3/4 angle, a diagonal street crossing in downtown Tokyo between steel and glass towers. Left third: a large dark green 1967 Mustang fastback muscle car with two centred white racing stripes along hood and roof, seen in 3/4 isometric view from above, sliding sideways in a wide drift arc, glowing pink and cyan neon drift trails curving behind it and grey tyre smoke. Right third: a giant dark grey Godzilla-like reptile kaiju with jagged pale back plates, near-black outline and highlights, standing in the street. Several big alien meteors of dark navy rock with glowing magenta cracks and purple glow falling, one bursting on the road. Cool blue-grey towers with pale white and pale blue windows, some dark broken windows, small cracks and rubble, small amber lights, small muted vertical signs with abstract glyph strokes. The centre of the image is dark, calm and empty night street. Retro pixel art, hard edges, selective outline. No text, no letters, no words, no logos.",
+    "image_size": {
+      "width": 320,
+      "height": 180
+    },
+    "text_guidance_scale": 8,
+    "view": "high top-down",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed"
+  },
+  "prompt": "isometric pixel art night city scene seen from high above at a 3/4 angle, a diagonal street crossing in downtown Tokyo between steel and glass towers. Left third: a large dark green 1967 Mustang fastback muscle car with two centred white racing stripes along hood and roof, seen in 3/4 isometric view from above, sliding sideways in a wide drift arc, glowing pink and cyan neon drift trails curving behind it and grey tyre smoke. Right third: a giant dark grey Godzilla-like reptile kaiju with jagged pale back plates, near-black outline and highlights, standing in the street. Several big alien meteors of dark navy rock with glowing magenta cracks and purple glow falling, one bursting on the road. Cool blue-grey towers with pale white and pale blue windows, some dark broken windows, small cracks and rubble, small amber lights, small muted vertical signs with abstract glyph strokes. The centre of the image is dark, calm and empty night street. Retro pixel art, hard edges, selective outline. No text, no letters, no words, no logos.",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T20:57:27+00:00",
+  "image": {
+    "width": 320,
+    "height": 180,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "game/art/car/car_iso.png",
+    "art-archive/T-433/brief.md"
+  ],
+  "task": "T-433",
+  "job_status": null,
+  "notes": "Style loop refine 1 (version 2): high top-down 3/4 view, larger car, meteors, trails, damage, glyph-only signs",
+  "generator": "game/tools/pixellab_client.py"
+}
