@@ -72,7 +72,7 @@ func _expected_available() -> Array:
 		var w: Node = rack.get_weapon(id)
 		if not w.is_owned():
 			out.append("get_" + id)
-		elif w.tier < 8:
+		elif w.tier < w.max_tier():  # 8, the gun 11 (T-408)
 			out.append("upgrade_" + id)
 	return out
 
@@ -168,8 +168,8 @@ func test_seeded_level_ups_draw_two_different_available_ids_and_cover_them_all()
 				seen[id] = true
 			assert_true(offers.choose(ids[pick.randi_range(0, ids.size() - 1)]))
 			assert_false(state.is_waiting_for_choice())
-	# 7 gun tiers + 5 weapons x 8 tiers.
-	assert_eq(level_ups, SEEDS * 47, "every run takes every tier before the choices run out")
+	# 10 gun tiers (T-408: its last tier is 11) + 5 weapons x 8 tiers.
+	assert_eq(level_ups, SEEDS * 50, "every run takes every tier before the choices run out")
 	for id in OffersScript.ALL_IDS:
 		assert_true(seen.has(id), "%s offered at least once" % id)
 
@@ -209,10 +209,10 @@ func test_choices_are_shown_in_the_weapons_order() -> void:
 		offers.choose(ids[0])
 
 
-func test_a_weapon_at_tier_8_is_never_offered() -> void:
+func test_a_weapon_at_its_last_tier_is_never_offered() -> void:
 	for s in SEEDS:
 		_new_run(s)
-		rack.gun.set_tier(8)
+		rack.gun.set_tier(11)  # the gun's own last tier (T-408)
 		rack.molotov.set_tier(8)
 		_open_choice()
 		var ids: Array = shown[0][1]

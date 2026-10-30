@@ -2600,3 +2600,8 @@ Entry format:
 - Decision or change: Minions are drawn twice as big.
 - Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`
 - Tasks: T-379
+
+## 2026-10-30: The gun one-shots minions and grows in bullets, speed and targets
+- Decision or change: The gun kills a minion in one hit; its upgrades add bullets and attack speed, and up to 3 then 5 targets.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-408

@@ -9,13 +9,19 @@ extends "res://scripts/weapons/weapon.gd"
 ## check, one interval later (the gun looks only once per interval, as in the
 ## prototype). Some: it fires a volley.
 ##
-## Targeting rule (report, "How it chooses and aims at a target"): the enemies
-## in range sorted closest first; bullet 1 goes to the closest, bullet 2 to the
-## second closest and so on, going round them again, closest first, when there
-## are more bullets than enemies. Bullets in a volley leave delay_between_bullets
-## apart. Each is aimed from the car's centre at that moment at its target's
-## centre at that moment (no leading); a target that died before its bullet
-## left is aimed at where it was last seen.
+## Targeting rule (T-408; Weapons, Content, "The starting gun"): the enemies in
+## range sorted closest first, and the tier's `targets` (1, 3 from tier 6, 5 at
+## tier 11) says how many of them a volley aims at.
+## - One target (below tier 6): the volley's bullets leave delay_between_bullets
+##   apart, each at the closest enemy in range that is still alive and not
+##   already doomed (the bullets in flight at it carry at least its health), so
+##   no bullet is spent on a minion that is dead or about to be. When every enemy
+##   in range is doomed it goes at its queued target (or where it was last seen).
+## - Several (tier 6 on): the closest `targets` enemies; bullet 1 goes to the
+##   closest, bullet 2 to the second closest and so on, round them again when
+##   there are more bullets than targets. The whole volley leaves at once.
+## Each bullet is aimed from the car's centre at its target's centre at that
+## moment (no leading).
 ##
 ## Numbers: WeaponData.gun_at(tier), from res://data/weapons.json. Nothing here
 ## changes them.
@@ -29,7 +35,7 @@ const EPSILON := 0.000001
 signal fired(bullet: Node, target: Node)
 
 ## The current tier's values (WeaponData.gun_at): damage, range, fire_interval,
-## bullets, bullet_speed, bullet_hit_radius, delay_between_bullets,
+## bullets, targets, bullet_speed, bullet_hit_radius, delay_between_bullets,
 ## pierce_hits, missed_bullet_max_travel.
 var stats: Dictionary = {}
 ## Seconds since the last target check.
@@ -41,6 +47,8 @@ var volleys := 0
 ## The rest of the current volley: [target, last seen position (units)] pairs.
 var _queue: Array = []
 var _queue_wait := 0.0
+## Bullets in flight and what they were fired at: [bullet, target] (T-408, doomed targets).
+var _in_flight: Array = []
 var _drawn_size := -1.0
 
 
@@ -65,6 +73,7 @@ func reset_for_run() -> void:
 	volleys = 0
 	_queue.clear()
 	_queue_wait = 0.0
+	_in_flight.clear()
 	super.reset_for_run()
 
 
@@ -83,14 +92,27 @@ func step(dt: float) -> void:
 	# T-326: only enemies on the car's level are aimed at, so no volley is wasted
 	# on one on another level.
 	var targets: Array = rack.enemies_within(rack.car_units(), float(stats["range"]), rack.car_level())
-	if targets.is_empty():
+	var bullets := int(stats["bullets"])
+	if targets.is_empty() or bullets <= 0:
 		return
 	volleys += 1
 	_queue.clear()
-	for i in int(stats["bullets"]):
-		var t = targets[i % targets.size()]
-		_queue.append([t, t.position_units()])
-	_fire_next()
+	var aimed := targets.slice(0, maxi(1, targets_per_volley()))
+	if aimed.size() == 1 and targets_per_volley() <= 1:
+		# One target: a stream at the closest, delay_between_bullets apart.
+		for i in bullets:
+			_queue.append([aimed[0], aimed[0].position_units()])
+		_fire_next()
+		return
+	# Several targets: the whole volley at once, round the closest ones.
+	for i in bullets:
+		var t = aimed[i % aimed.size()]
+		fire_at(t.position_units(), t)
+
+
+## How many enemies a volley aims at, at the current tier (1, 3 or 5).
+func targets_per_volley() -> int:
+	return int(stats.get("targets", 1))
 
 
 func _step_volley(dt: float) -> void:
@@ -102,13 +124,24 @@ func _step_volley(dt: float) -> void:
 
 
 func _fire_next() -> void:
+	if _queue.is_empty():
+		return
 	var entry: Array = _queue.pop_front()
 	var target = entry[0]
 	var aim: Vector2 = entry[1]
-	if rack.is_target(target):
+	if not rack.is_target(target) or is_doomed(target):
+		# Dead, or killed by bullets already flying: the closest one that is not.
+		var next = null
+		for e in rack.enemies_within(rack.car_units(), float(stats["range"]), rack.car_level()):
+			if not is_doomed(e):
+				next = e
+				break
+		if next != null:
+			target = next
+		elif not rack.is_target(target):
+			target = null
+	if target != null:
 		aim = target.position_units()
-	else:
-		target = null
 	fire_at(aim, target)
 	_queue_wait = float(stats["delay_between_bullets"])
 
@@ -124,5 +157,32 @@ func fire_at(aim: Vector2, target: Node = null) -> Node:
 	b.setup(rack, from, dir.normalized(), stats, rack.car_level())
 	b.weapon_id = weapon_id
 	rack.add_projectile(b)
+	if target != null:
+		_in_flight.append([b, target])
 	fired.emit(b, target)
 	return b
+
+
+## Damage the bullets still in flight at `target` will deal when they reach it.
+func damage_in_flight(target: Node) -> float:
+	var total := 0.0
+	var keep := []
+	for pair in _in_flight:
+		var b = pair[0]
+		if not is_instance_valid(b) or b.is_done() or not rack.projectiles.has(b):
+			continue
+		keep.append(pair)
+		if pair[1] == target:
+			total += float(b.damage)
+	_in_flight = keep
+	return total
+
+
+## True when the bullets in flight at `target` carry at least its health (T-408).
+func is_doomed(target) -> bool:
+	if not rack.is_target(target):
+		return false
+	var h = target.get("health")
+	if h == null:
+		return false
+	return damage_in_flight(target) >= float(h) - EPSILON
