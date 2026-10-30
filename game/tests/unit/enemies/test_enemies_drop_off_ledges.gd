@@ -290,7 +290,7 @@ func test_a_falling_minion_is_drawn_at_its_height_in_the_air_with_the_falling_an
 		var want: Vector2 = ISO * m.position + Vector2(0.0, -h * 16.0)
 		if s.position.distance_to(want) > 0.01:
 			bad_draw += 1
-		if s.z_index != spawner.depth.z_index_for(m.position_units(), MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS, h):
+		if s.z_index != spawner.depth.z_index_for(m.position_units(), (MinionScript.BASE_RADIUS_UNITS * float(EnemyData.new().minion().size_scale)), (MinionScript.BASE_HEIGHT_UNITS * float(EnemyData.new().minion().size_scale)), h):
 			bad_depth += 1
 		var a: String = s.animation()
 		anims[a] = true

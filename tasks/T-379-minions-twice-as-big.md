@@ -1,7 +1,7 @@
 ---
 id: T-379
 title: Minions twice as big, hitbox included
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -50,6 +50,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Started in build F.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -57,3 +61,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done by the Enemy Behavior Agent, 2026-10-30.
+
+- Number: `minion.size_scale` 2 in `game/data/enemies.json` (read by `EnemyData.minion()`; whole number, so the art is drawn at 1 screen pixel per art pixel, hard edges). The kaiju is untouched.
+- Drawing: `minion_sprite.gd` has `size_scale` (set by the spawner); art size and lift scale with it (placeholder shape too).
+- Hits: `minion.gd` has `size_scale`, `radius_units()` (0.5 x scale = 1.0: collision circle, `touches_car` reach, spawner free-spot clearance, depth order, separation distance) and `hit_radius_units()`, which the weapons' target-radius checks (bullets, molotov, underglow, burn flames) already ask for.
+- Navigation: `enemy_navigation.gd` `building_margin` (0.5 x scale) round buildings and boulders, so paths keep the bigger body off them.
+- Finding worth knowing: with the full radius off rooftop/ramp edges, a minion jammed at a rooftop's corner (the navigation's 2-unit cells put path corners exactly 1 unit from an edge). So the body keeps the old 0.5 off ground edges (`BASE_RADIUS_UNITS` in `_move()`); the edges are not physics walls. Checked over 6 random seeds of the 4-minion climb to the nw height-6 car: all reach it (before the fix 3 of 6 seeds jammed).
+- Tests added: size from data and whole number, collision circle, `touches_car` reach (1.5), weapon radius, navigation margin (`test_minions.gd`), art scale (`test_minion_sprite.gd`). Updated for the new size: `test_enemy_data.gd` (size_scale key is not time growth), `test_starting_gun.gd` (hit radius 2.0), tests that used the old `RADIUS_UNITS`/`HEIGHT_UNITS` constants, and one start point inside a building in `test_enemies_on_heights.gd`. The elevation tests (both rooftop climbs, descents, drops) pass with the bigger minions.
+- Test counts: GUT 158 scripts, 1951 tests, 1951 passing (one earlier full run had a flaky `test_run_scene_drift_pays_its_combo_once_when_it_ends` fail, unrelated; it passed on the final run); `python -m unittest discover -s game/tools` 678 tests OK (1 skipped); `python -m unittest discover -s tools` 579 tests OK.
+- Screenshot: `art-archive/T-379/screenshots/minions_twice_as_big.png` (the minions demo: bigger minions around the car).
+- Documents updated: `docs/enemies.md` (Decisions note, Look line), `game/docs/enemies/minions.md` (Size section, minion.gd line).
+- Not done / for the playtest: crowd density looks heavier with the same count (12 to 20); the board judges the feel.
