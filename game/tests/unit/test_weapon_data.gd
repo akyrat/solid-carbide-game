@@ -123,12 +123,12 @@ func test_five_weapons_each_with_eight_tiers() -> void:
 func test_underglow_tiers() -> void:
 	var w := WeaponData.new()
 	var u1 := w.underglow_at(1)
-	assert_eq(u1.damage, 1.0)
+	assert_eq(u1.damage, 2.0)
 	assert_eq(u1.radius, 2.5)
 	assert_eq(u1.tick_interval, 1.0)
 	assert_true(u1.damage_on_enter)
 	var u8 := w.underglow_at(8)
-	assert_almost_eq(u8.damage, 2.25, 0.0001)
+	assert_almost_eq(u8.damage, 4.5, 0.0001)
 	assert_almost_eq(u8.radius, 2.5 * 1.2 * 1.25 * 1.3, 0.0001)
 	assert_almost_eq(u8.tick_interval, 0.75 * 0.67, 0.0001)
 

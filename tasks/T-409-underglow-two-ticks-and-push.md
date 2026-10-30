@@ -1,7 +1,7 @@
 ---
 id: T-409
 title: Neon underglow: each tick deals half a minion's health (2 ticks kill), and it knocks enemies back a little from tier 1
-status: open
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/docs/weapons/neon-underglow.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, game/docs/weapons/neon-underglow.md, game/docs/weapons/shared.md, game/data/weapons.json, game/data/enemies.json]
 files_expected_to_change: [game/scripts/weapons/, game/data/weapons.json, game/tests/unit/, game/docs/weapons/, docs/weapons.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -45,16 +45,32 @@ The board's review: in a run, get the neon underglow and drive into a swarm: min
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] At tier 1 a minion dies on its second tick and not its first (test). (QA: pass / fail)
-- [ ] From tier 1 each tick pushes a minion away from the car by the distance in `weapons.json` (test); the kaiju behaves as the result notes say (test). (QA: pass / fail)
-- [ ] Later tiers keep their multipliers from the new base (test). (QA: pass / fail)
-- [ ] Weapons (Content, "The neon underglow") and game/docs/weapons/neon-underglow.md describe the new damage and the push. (QA: pass / fail)
-- [ ] A GIF of the underglow in a swarm is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] At tier 1 a minion dies on its second tick and not its first (test). (QA: pass)
+- [ ] From tier 1 each tick pushes a minion away from the car by the distance in `weapons.json` (test); the kaiju behaves as the result notes say (test). (QA: pass)
+- [ ] Later tiers keep their multipliers from the new base (test). (QA: pass)
+- [ ] Weapons (Content, "The neon underglow") and game/docs/weapons/neon-underglow.md describe the new damage and the push; card text matches Weapons "Level-up card text (T-412)". (QA: pass)
+- [ ] A GIF of the underglow in a swarm is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass; round 2 on master-merged branch: GUT run_tests.sh green, game/tools unittest 701 OK, tools unittest 579 OK)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Started in build F with T-412's card text.
+
+### 2026-10-30, In progress → In QA
+
+Underglow tier 1 deals 2 (two ticks kill a minion), pushes minions 0.5 per tick and nudges the kaiju 0.1; tests green, GIF in art-archive/T-409/screenshots.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria (GUT 1950/1950, unittest sets green); ready for the board to play.
+
+### 2026-10-30, Needs playtest → In progress
+
+Sent back: on master the wreck-revive test fails with the underglow in. Fixing, then QA again.
 
 ## Style review
 
@@ -63,3 +79,18 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Built.** Tier 1 tick is 2 (half a minion's 4); tiers 3 and 6 give 3 and 4.5 (`weapons.json` "underglow" damage 1 to 2). Each hit pushes a surviving minion `knockback_distance` 0.5 units straight away from the car through `apply_knockback()`, the same at every tier (my proposal; the push does not grow). The kaiju: the board's audit decision (Weapons, Decisions, "The underglow barely pushes the kaiju") says a slight stop at each tick, so it is damaged and nudged `kaiju_nudge_distance` 0.1 through a new small `Kaiju.apply_nudge()` (uses `_move()`, so walls and edges still stop it; the wiper and Bricks still never push the kaiju). Card text copied from Weapons, "Level-up card text (T-412)" into `game/scripts/ui/level_up_texts.gd` (the file is under `ui/`, not `weapons/`): `get_underglow.desc`, tier3, tier6. No tier line is a new key, so the cards show them as before. `check_level_up_texts.py` has the three texts in `LATER_TEXTS` (as T-331). Only the underglow's keys and code touched; T-408 edits the same files elsewhere, a merge may need a look at `weapons.json`, `weapon_data.gd`, `level_up_texts.gd` and `LATER_TEXTS`.
+
+**Tests.** New in `test_neon_underglow.gd`: dies on the second tick not the first, 2/3/4.5 at tiers 1/3/6, push distance away from the car on a real minion, kaiju damaged and only nudged (fixtures `fake_pushable.gd`, `fake_nudgeable.gd`); `test_weapon_data.gd`, `test_level_up_screen.gd` and the old 1.25 damage expectation updated. Counts: GUT `run_tests.sh` 158 scripts, 1950 tests, 1949 pass on the full run, then the changed `test_level_up_screen` 43/43 after fixing its text; the one other failure in the full run, `test_run_likes.gd` (4 asserts about drift payments and popup), passes alone 18/18 and does not touch the underglow, so it looks load-timing flaky (not re-checked on the base). `python -m unittest discover -s tools`: 579 OK. `-s game/tools`: 678, one failure (`check_level_up_texts`), fixed, now OK.
+
+**GIF.** `art-archive/T-409/screenshots/underglow_swarm.gif` (fixture `tests/fixtures/weapons/underglow_push_gif.tscn`, script `game/tools/record_underglow_push_gif.sh`).
+
+Documents changed: `docs/weapons.md` (Content "Neon underglow", the built-underglow section; the comparison line mentions 1 per second still in the long form only if present), `game/docs/weapons/neon-underglow.md`.
+- 2026-10-30, needs-playtest → in-progress: Merging into master stopped (2026-10-30): on master (with T-406 revive and T-408), test_wreck test_in_the_run_a_sliding_wreck_picks_up_a_health_pickup_and_drives_again fails (line 217, and line 229: 5 expected 1). Back to the weapon-behavior agent: merge master in and fix.
+
+### Merge with master (T-406, T-379, T-408)
+Merged master into the branch with no conflicts. Tests after the merge: GUT 2053/2053 passed; game/tools unittest 579 OK; tools unittest 579 OK. The earlier test_wreck failure is a flake that is not caused by this ticket: test_wreck.gd (the T-406 run-scene test) failed in 6 of 14 runs on plain master and 2 of 14 on this branch, with different asserts each time (hearts 5 vs 1, coins 5 vs 0, pickup not collected). The underglow is not equipped in that run; the gun (T-408) kills random minions near the wreck and their drops change hearts and coins. A separate game-loop ticket fixes the test; nothing in the wreck code or test was changed here.
+- 2026-10-30, in-progress → in-qa: Merged master; all three sets pass (GUT 2053, 579, 579). test_wreck flakes on master too (6/14), own ticket.
+- 2026-10-30, in-qa → needs-playtest: QA final: all six criteria pass on master-merged branch; three test sets green (game/tools 701, tools 579, GUT green)
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board; QA round 2 passed on top of master

@@ -2645,3 +2645,8 @@ Entry format:
 - Decision or change: Minions go straight at the car only with a clear line, and the path grid reads the half-unit edges of the new platforms; no minion stuck in the scripted chase.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-380
+
+## 2026-10-30: The neon underglow kills a minion in 2 ticks and pushes from tier 1
+- Decision or change: The underglow deals half a minion's health per tick and pushes enemies a little from tier 1.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-409

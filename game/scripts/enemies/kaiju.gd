@@ -175,6 +175,16 @@ func _move(motion: Vector2) -> KinematicCollision2D:
 	return null
 
 
+## A very small shove (T-409: the neon underglow's tick, "a slight stop at each
+## damage tick"): moves `distance` units along `direction` through _move(), so
+## obstacles and ground edges still stop it. Not a knockback: the wiper and
+## Bricks never push the kaiju (they look for apply_knockback(), which it lacks).
+func apply_nudge(direction: Vector2, distance: float) -> void:
+	if _dead or direction.length() < 0.000001 or distance <= 0.0:
+		return
+	_move(direction.normalized() * distance * PX_PER_UNIT)
+
+
 ## The kaiju's body on the ground, as a radius in units (its collision
 ## circle). Weapons read it for their hits: the flamethrower counts any
 ## overlap with this circle as a hit (board, 2026-10-14; minions keep the

@@ -101,7 +101,7 @@ func flame_at(tier: int) -> Dictionary:
 
 
 ## What the neon underglow does at `tier`: damage (on entering and per tick), radius,
-## tick_interval, damage_on_enter.
+## tick_interval, damage_on_enter, knockback_distance, kaiju_nudge_distance (T-409: the same at every tier).
 func underglow_at(tier: int) -> Dictionary:
 	var u: Dictionary = _data["underglow"]
 	var damage := float(u["damage"])
@@ -119,6 +119,8 @@ func underglow_at(tier: int) -> Dictionary:
 		"radius": radius,
 		"tick_interval": tick,
 		"damage_on_enter": bool(u["damage_on_enter"]),
+		"knockback_distance": float(u["knockback_distance"]),
+		"kaiju_nudge_distance": float(u["kaiju_nudge_distance"]),
 	}
 
 
