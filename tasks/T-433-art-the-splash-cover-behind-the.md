@@ -37,12 +37,12 @@ The board's review: Open the main menu with the splash cover behind it, and look
 
 ## Acceptance criteria
 
-- [ ] game/art/menu/splash.png exists with its record, and a screenshot shows the main menu with it behind the title and buttons, which stay readable. (QA: pass / fail)
-- [ ] The planned PixelLab calls and their cost are in the result notes before the first call's log line; at most 20 generations were used, all listed. (QA: pass / fail)
-- [ ] It went through the style loop, with every round in the Style review, scoring at least 8 or noted below 8 after 3 refines; python game/tools/style_rules.py finds no Greenbull colour outside Greenbull's things. (QA: pass / fail)
-- [ ] docs/visual-style.md and the art docs under game/docs/ record it; rejected generations are in art-archive/<id>/. (QA: pass / fail)
-- [ ] The image enlarged, the sampled compositions, and a screenshot of the main menu with it are in art-archive/<id>/screenshots/. (QA: pass / fail)
-- [ ] python -m unittest discover -s game/tools -p "test_*.py" passes, with the count in the result notes. (QA: pass / fail)
+- [ ] game/art/menu/splash.png exists with its record, and a screenshot shows the main menu with it behind the title and buttons, which stay readable. (QA: pass)
+- [ ] The planned PixelLab calls and their cost are in the result notes before the first call's log line; at most 20 generations were used, all listed. (QA: pass)
+- [ ] It went through the style loop, with every round in the Style review, scoring at least 8 or noted below 8 after 3 refines; python game/tools/style_rules.py finds no Greenbull colour outside Greenbull's things. (QA: pass)
+- [ ] docs/visual-style.md and the art docs under game/docs/ record it; rejected generations are in art-archive/<id>/. (QA: pass)
+- [ ] The image enlarged, the sampled compositions, and a screenshot of the main menu with it are in art-archive/<id>/screenshots/. (QA: pass)
+- [ ] python -m unittest discover -s game/tools -p "test_*.py" passes, with the count in the result notes. (QA: pass)
 
 ## Updates
 
@@ -230,5 +230,7 @@ Total at most 6 calls (cap 8, only if a call fails). Cost: 1 generation each, so
 ## Result notes
 
 **Summary (agent, 2026-10-30).** `game/art/menu/splash.png` (+ `splash.json`) is in place and the menu shows it. 4 PixelLab generations used (all pixflux, listed in the call log above; under the plan's 6 and the goal's 20), balance 4715 before. Style loop: 5, 6, 5, 4; kept version 2 at 6/10, below 8 after 3 refines, noted for the board's playtest. `style_rules.py` finds no Greenbull colour; its "transparent background" check fails by design for an opaque cover (told to the evaluator in the brief). Rejected versions and raw generations: `art-archive/T-433/style-loop/`, `generations/`. Docs updated: `docs/visual-style.md` ("The splash cover (T-433)") and `game/docs/hud-and-menus/main-menu.md`. Tests: `python -m unittest discover -s game/tools -p "test_*.py"`: 737 tests, OK (1 skipped), including the new `test_splash_sheets.py`. Screenshots in `art-archive/T-433/screenshots/`: `main_menu_with_splash.png` (the menu with the cover; title and buttons readable), `splash_enlarged.png` (4x), `compositions.png` (the four versions, v2 first). Honest quality: weak. The car is right but small, there are no meteors or drift trails, and the car sits behind the buttons. Cheapest next step: a free composite of v4's car and trail into v2's scene (a script in `game/tools/`), or one more loop run on the board's go. Refused (not worked around): the loop agent's own script `make_init.py` and other free fixes from `art-archive/`, and my inline `python -c`; I used `game/tools/splash_sheets.py` instead.
+
+**QA round 1 (2026-10-30):** all 6 criteria pass. Unit tests 737 OK (1 skipped), rerun by QA. style_rules on splash.png: only the by-design opaque-background check fails; no Greenbull colour. Screenshots and docs present; menu screenshot shows title and buttons readable. Quality is weak (6/10, kept below 8 after 3 refines, noted for the board's playtest). `python tools/qa_check.py` was refused (not pre-approved), so skipped.
 
 - 2026-10-30, style loop: version 2 kept at 6/10, still below 8 after 3 refines; noted for the board's final playtest (goal run, not flagged)
