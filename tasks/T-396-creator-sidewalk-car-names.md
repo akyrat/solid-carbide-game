@@ -1,7 +1,7 @@
 ---
 id: T-396
 title: Text: the level creator's names for the sidewalk and the parked and broken cars
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/extended-narrative.md, game/data/level/creator_texts.json]
 files_expected_to_change: [docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -71,3 +71,4 @@ Run by `tools/style_loop/run.py` on 2026-10-30: text, kind label, brief `C:/User
 ## Result notes
 
 Names written in Level design, Content, "Level creator text" (new block "Added for sidewalks and parked cars"): Sidewalk (Ground), Parked car and Broken car (Obstacles), "Model {n} of {count}", and "Facing top right / bottom right / bottom left / top left" for the looks strip. Style loop round 1: 9/10, kept (the script's one-line and sentence-case flags came from the eight labels being checked as one block). Documents changed: docs/level-design.md.
+- 2026-10-30, in-qa → done: QA passed
