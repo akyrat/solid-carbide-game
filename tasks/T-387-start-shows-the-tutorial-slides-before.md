@@ -37,12 +37,12 @@ The board's review: Press Start from the main menu, go through the slides, tick 
 
 ## Acceptance criteria
 
-- [ ] With tutorial_hidden false, the main menu's Start shows the slides screen and no running run; a test checks the clock reads 8:00 and does not tick over several seconds of frames while the slides are up, and that the run starts when the slides' Start is pressed. (QA: pass / fail)
-- [ ] Pressing the slides' Start with the checkbox ticked saves tutorial_hidden as true; a test reloads the settings (as after a restart) and checks the next Start goes straight into the run; another test checks the checkbox unticked leaves it false and shows the slides again. (QA: pass / fail)
-- [ ] The pause screen's Restart starts a fresh run directly without the slides; a test covers it. (QA: pass / fail)
-- [ ] A screenshot of the slides shown after the main menu's Start is saved in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] docs/game-loop-architecture.md, Decisions and its flow diagram, and game/docs/game-loop/screen-flow.md show the slides step between Start and the run. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] With tutorial_hidden false, the main menu's Start shows the slides screen and no running run; a test checks the clock reads 8:00 and does not tick over several seconds of frames while the slides are up, and that the run starts when the slides' Start is pressed. (QA: pass)
+- [ ] Pressing the slides' Start with the checkbox ticked saves tutorial_hidden as true; a test reloads the settings (as after a restart) and checks the next Start goes straight into the run; another test checks the checkbox unticked leaves it false and shows the slides again. (QA: pass)
+- [ ] The pause screen's Restart starts a fresh run directly without the slides; a test covers it. (QA: pass)
+- [ ] A screenshot of the slides shown after the main menu's Start is saved in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] docs/game-loop-architecture.md, Decisions and its flow diagram, and game/docs/game-loop/screen-flow.md show the slides step between Start and the run. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -93,3 +93,5 @@ Game Loop Agent, 2026-10-30. Done.
 - `game/docs/game-loop/screen-flow.md`: Start, `start_run()`, `tutorial_enabled`, the screens and signals, and the tutorial tests.
 
 PixelLab: 0 generations. No player-facing text was added. No refusals.
+
+**QA round 1 (qa-integration):** all six criteria pass. Reran: GUT full run exit 0, TESTS PASSED, test_tutorial_flow.gd 8/8; tools unittest 573 OK; game/tools unittest 675 OK (1 skipped). Both screenshots exist; docs mention the slides step (flow diagram lines 83-84). `python tools/qa_check.py` was refused (not pre-approved), so skipped.
