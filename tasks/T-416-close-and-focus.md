@@ -1,7 +1,7 @@
 ---
 id: T-416
 title: Closing the game mid-run, and pausing when the window loses focus
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -50,10 +50,21 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Started in build I: the game-loop agent is on it.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (game-loop agent).
+
+- `GameFlow._notification`: NOTIFICATION_WM_CLOSE_REQUEST calls the new `RunState.abandon()` when a run is on screen, then `quit_game`; outside a run it only quits. `abandon()` ends a running run as a loss (loss reason "closed", new `LOSS_CLOSED`), decides the loss on the spot during the wreck, sends the time's up loss during the time's up screen, and does nothing once the run has ended (no double log). run_ended banks the coins and adds the runs-list entry through the existing handlers.
+- NOTIFICATION_APPLICATION_FOCUS_OUT calls `pause_screen.toggle()` while a run is on screen, undecided and not already paused; toggle() already refuses during the level-up choice and the time's up screen.
+- Files: game/scripts/game/game_flow.gd, game/scripts/run/run_state.gd (one small addition beyond the listed file), game/tests/unit/game/test_close_and_focus.gd (9 tests), game/tests/fixtures/focus_out_demo.gd/.tscn (screenshot fixture).
+- Doc: docs/game-loop-architecture.md, Decisions, "Closing the game mid-run": the how, with a proposal for the playtest (no auto-resume on focus return).
+- Tests: game/tools python 722 OK (1 skipped); tools python 582 OK; GUT 2160 tests, 2159 passing; the one failure is the known test_run_likes drift-timing flake, rerun alone: 37/37 pass. New file alone: 9/9.
+- Screenshot: art-archive/T-416/screenshots/focus_out_pauses.png (pause screen after focus out).
