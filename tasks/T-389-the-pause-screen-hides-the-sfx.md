@@ -37,12 +37,12 @@ The board's review: Pause a run and check the SFX slider is gone and the music s
 
 ## Acceptance criteria
 
-- [ ] The SFX volume slider row is not visible in the pause screen, and the rows below it move up so no gap is left; a test checks the row is hidden and the layout. (QA: pass / fail)
-- [ ] The music volume slider still shows and moving it changes the music bus volume; a test covers it. (QA: pass / fail)
-- [ ] The SFX slider's code is still in pause_screen.gd (hidden, not deleted). (QA: pass / fail)
-- [ ] A pause screen screenshot is saved in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md, Content, 'Pause screen' and the 'No sound effects in the MVP' decision note, and game/docs/hud-and-menus/pause-screen.md, record that the SFX are off and the slider hidden for the MVP. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] The SFX volume slider row is not visible in the pause screen, and the rows below it move up so no gap is left; a test checks the row is hidden and the layout. (QA: pass)
+- [ ] The music volume slider still shows and moving it changes the music bus volume; a test covers it. (QA: pass)
+- [ ] The SFX slider's code is still in pause_screen.gd (hidden, not deleted). (QA: pass)
+- [ ] A pause screen screenshot is saved in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] docs/hud-and-menus.md, Content, 'Pause screen' and the 'No sound effects in the MVP' decision note, and game/docs/hud-and-menus/pause-screen.md, record that the SFX are off and the slider hidden for the MVP. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -71,3 +71,5 @@ Done (UI Agent).
 - Test counts: GUT 1973/1973 passed; `game/tools` Python 675 tests OK (1 skipped); `tools` Python 573 tests OK.
 - Screenshot: `art-archive/T-389/screenshots/pause.png` (pause screen: zoom and music rows only, no gap).
 - Documents affected: docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md. No PixelLab generations; no refusals.
+
+QA round 1 (QA agent): all six criteria pass. Re-ran GUT 1973/1973, game/tools Python 675 OK (1 skipped), tools Python 573 OK. Row hidden via `sfx_enabled()` in pause_screen.gd (code kept), screenshot and both docs present. `tools/qa_check.py` was refused (not pre-approved), so its paperwork lines were checked by hand.
