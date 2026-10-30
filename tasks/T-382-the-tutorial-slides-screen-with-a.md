@@ -1,7 +1,7 @@
 ---
 id: T-382
 title: The tutorial slides screen, with a reusable trick list scene (placeholder illustrations)
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -85,3 +85,4 @@ Done (UI Agent). No PixelLab used (0 generations); placeholders are code-made. T
 
 All 9 criteria pass. Re-ran: GUT 1951/1951 (159 scripts; new tests 10 + 5 + 3 pass), `unittest -s tools` 573 OK, `-s game/tools` 668 OK (1 skipped). Screenshots slide1-3.png present. Code search found no on-screen literals in the two scripts. Docs and README link present. Refusal: `python tools/qa_check.py` needed approval and was not run; checked by hand.
 - 2026-10-29, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
