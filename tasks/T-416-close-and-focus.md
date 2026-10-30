@@ -1,7 +1,7 @@
 ---
 id: T-416
 title: Closing the game mid-run, and pausing when the window loses focus
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -41,10 +41,11 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A close request during a run banks its coins and adds a loss to the runs list before quitting (test sends NOTIFICATION_WM_CLOSE_REQUEST). (QA: pass / fail)
-- [ ] A close request outside a run quits as today. (QA: pass / fail)
-- [ ] Focus out during a run opens the pause screen; during the level-up choice or the time's up screen it does nothing. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] A close request during a run banks its coins and adds a loss to the runs list before quitting (test sends NOTIFICATION_WM_CLOSE_REQUEST). (QA: pass)
+- [ ] A close request outside a run quits as today. (QA: pass)
+- [ ] Focus out during a run opens the pause screen; during the level-up choice or the time's up screen it does nothing. (QA: pass)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass; 9 new tests, three sets green, tests use RunPaths files and restore the real save)
+- QA note (QA: fail: paperwork - docs/game-loop-architecture.md "Closing the game mid-run" states as fact the open choices: closing during the wreck decides the loss on the spot with reason health, closing in the time's up screen sends the time loss. Label them "proposals for the playtest".)
 
 ## Updates
 
@@ -68,3 +69,4 @@ Done (game-loop agent).
 - Doc: docs/game-loop-architecture.md, Decisions, "Closing the game mid-run": the how, with a proposal for the playtest (no auto-resume on focus return).
 - Tests: game/tools python 722 OK (1 skipped); tools python 582 OK; GUT 2160 tests, 2159 passing; the one failure is the known test_run_likes drift-timing flake, rerun alone: 37/37 pass. New file alone: 9/9.
 - Screenshot: art-archive/T-416/screenshots/focus_out_pauses.png (pause screen after focus out).
+- 2026-10-30, in-progress → in-qa: Close request banks coins and logs a loss; focus out pauses; 9 new tests pass.
