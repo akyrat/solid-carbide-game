@@ -1,7 +1,7 @@
 ---
 id: T-372
 title: The board's level from the level creator becomes the game's map
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -102,3 +102,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
     - `game/docs/level/level-creator.md`.
     - `game/docs/game-loop/the-run.md`.
     - `game/README.md` (index).
+- 2026-10-30, in-progress → in-qa: Start plays game/data/level/kaiju_city_map.json (byte copy of the board's kaiju_city.json). check_level and check_height_data OK. Tests: game/tools 752 OK, tools 582 OK, GUT 2201/2201. Findings: roof-13 has no ramp up; no minion spawns round some rooftops; the kaiju alert signs sit at the sample map's places.
