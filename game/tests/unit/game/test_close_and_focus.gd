@@ -1,6 +1,6 @@
 extends GutTest
-## Task T-416: closing the window mid-run ends the run as a loss (coins banked, runs-list
-## entry) before the game quits; losing focus pauses the run, except during the level-up
+## Task T-416: closing the window mid-run cancels the run (coins lost, nothing logged; board,
+## 2026-10-30) and the game quits; losing focus pauses the run, except during the level-up
 ## choice and the time's up screen. Game loop architecture, Decisions, "Closing the game mid-run".
 
 const GameScene := preload("res://scenes/game/game.tscn")
@@ -40,47 +40,24 @@ func _start() -> RunState:
 	return game.run.state
 
 
-func test_close_during_a_run_banks_coins_logs_a_loss_and_quits() -> void:
+func test_close_during_a_run_cancels_it_and_quits() -> void:
 	var s := await _start()
 	s.add_coins(7)
 	game.notification(NOTIFICATION_WM_CLOSE_REQUEST)
-	assert_eq(s.result, "loss")
-	assert_eq(game.progress.get_coins(), 7, "the coins were banked")
-	assert_eq(game.history.count(), 1, "one run in the runs list")
-	assert_eq(game.history.runs()[0]["result"], "loss")
-	assert_eq(game.history.runs()[0]["coins"], 7)
+	assert_eq(game.progress.get_coins(), 0, "the cancelled run's coins are lost (board, 2026-10-30)")
+	assert_eq(game.history.count(), 0, "nothing in the runs list")
+	assert_eq(s.result, "", "no result was decided")
 	assert_eq(quit_calls, 1)
 
 
-func test_close_during_the_wreck_loses_the_run_and_keeps_coins() -> void:
+func test_close_during_the_wreck_cancels_it_too() -> void:
 	var s := await _start()
 	s.add_coins(3)
 	s.damage_car(s.max_health)
 	assert_true(s.is_wrecked())
 	game.notification(NOTIFICATION_WM_CLOSE_REQUEST)
-	assert_eq(s.result, "loss")
-	assert_eq(game.progress.get_coins(), 3)
-	assert_eq(game.history.count(), 1)
-	assert_eq(quit_calls, 1)
-
-
-func test_close_during_the_time_up_screen_logs_the_run_once() -> void:
-	var s := await _start()
-	s.add_coins(2)
-	s.advance(s.time_left + 1.0)
-	assert_true(s.is_timed_out())
-	game.notification(NOTIFICATION_WM_CLOSE_REQUEST)
-	assert_eq(game.history.count(), 1)
-	assert_eq(game.progress.get_coins(), 2)
-	assert_eq(quit_calls, 1)
-
-
-func test_close_after_the_run_ended_does_not_log_it_twice() -> void:
-	var s := await _start()
-	s.kaiju_killed()
-	game.notification(NOTIFICATION_WM_CLOSE_REQUEST)
-	assert_eq(s.result, "win", "a won run stays won")
-	assert_eq(game.history.count(), 1)
+	assert_eq(game.progress.get_coins(), 0)
+	assert_eq(game.history.count(), 0)
 	assert_eq(quit_calls, 1)
 
 

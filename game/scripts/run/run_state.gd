@@ -35,7 +35,6 @@ const RESULT_LOSS := "loss"
 ## Why a run was lost (the recap's "loss_reason"): the clock ran out, or the last heart went.
 const LOSS_TIME := "time"
 const LOSS_HEALTH := "health"
-const LOSS_CLOSED := "closed"  # the window was closed mid-run (T-416)
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 
@@ -811,21 +810,6 @@ func _finish_wreck() -> void:
 	wrecked = false
 	wreck_left = 0.0
 	_end(RESULT_LOSS, LOSS_HEALTH)
-
-
-## Ends the run as a loss because the game is closing (T-416): run_ended follows at once,
-## so the coins are banked and the run goes in the runs list. During the wreck the loss
-## is decided now; during the time's up hold its own loss (time) is sent now. Does nothing
-## when the run has already ended or never started.
-func abandon() -> void:
-	if wrecked:
-		wrecked = false
-		wreck_left = 0.0
-		_end(RESULT_LOSS, LOSS_HEALTH)
-	elif timed_out:
-		_finish_time_up()
-	elif running:
-		_end(RESULT_LOSS, LOSS_CLOSED)
 
 
 ## The clock ran out (T-317): the run is lost now (nothing more counts) and

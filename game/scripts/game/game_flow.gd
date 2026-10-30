@@ -179,41 +179,26 @@ func _on_run_ended(_result: String, _coins: int) -> void:
 	show_recap.call_deferred(run.state.recap())
 
 
-## Restart from the pause screen (T-327): keeps the coins collected so far, then a fresh run.
-## During the wreck it cancels the run instead (T-413): no coins kept, no runs-list entry.
+## Restart from the pause screen: cancels the run (board, 2026-10-30, T-416): its coins are
+## lost, nothing goes into the runs list, no recap. Then a fresh run.
 func _on_pause_restart() -> void:
-	bank_left_run(progress, run)
 	start_run()
 
 
-## Exit from the pause screen (T-327): keeps the coins collected so far, then the main menu.
-## During the wreck it cancels the run instead (T-413).
+## Exit from the pause screen: cancels the run the same way, then the main menu.
 func _on_pause_exit() -> void:
-	bank_left_run(progress, run)
 	show_menu()
 
 
-## Banks the coins of run `r` left from the pause screen into `progress`, unless the car is
-## wrecked (T-413; Game loop architecture, Decisions, "The wreck decides the loss at its end":
-## leaving during the wreck cancels the run, no coins kept). A run left this way never sends
-## run_ended, so it never goes into the runs list either way. The level creator's Play uses it too.
-static func bank_left_run(progress: PlayerProgress, r: Node) -> void:
-	if r.state.is_wrecked():
-		return
-	progress.bank_run("loss", r.state.coins)
-
-
-## The window's close request (T-416; Game loop architecture, Decisions, "Closing the game
-## mid-run"): a run still going ends as a loss, so its coins are banked and it goes in the
-## runs list, then the game quits. Outside a run it just quits.
+## The window's close request (T-416; Game loop architecture, Decisions, "Restart, Exit or
+## closing cancels the run"): a run still going is cancelled, so its coins are lost and
+## nothing goes into the runs list; the game just quits. Losing focus (switching to another
+## window) pauses the run, except during the level-up choice and the time's up screen
+## (toggle() refuses there) and once the run has ended.
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		if run != null:
-			run.state.abandon()
 		quit_game.call()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		# Switching to another window pauses the run (not during the level-up choice or
-		# the time's up screen: toggle() refuses there too).
 		if run != null and run.state.result == "" and pause_screen != null and not pause_screen.is_paused():
 			pause_screen.toggle()
 

@@ -216,13 +216,15 @@ func test_pause_exit_during_the_wreck_banks_nothing_and_adds_no_run() -> void:
 	await _cleanup_game()
 
 
-func test_pause_exit_outside_the_wreck_still_banks() -> void:
+func test_pause_exit_outside_the_wreck_cancels_too() -> void:
 	var game := _game()
 	game.run.state.add_coins(6)
 	var coins: int = game.progress.coins
+	var runs: int = game.history.count()
 	game.pause_screen.pause()
 	game.pause_screen.exit_button.pressed.emit()
-	assert_eq(game.progress.coins, coins + 6, "unchanged outside the wreck (T-327)")
+	assert_eq(game.progress.coins, coins, "cancelled outside the wreck too: coins lost (board, 2026-10-30)")
+	assert_eq(game.history.count(), runs, "no runs-list entry")
 	await _cleanup_game()
 
 
