@@ -37,7 +37,12 @@ extends Node
 
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
 
+const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
+
 const PX_PER_UNIT := 16.0
+## The shortest gap between attacks the clock accepts (T-418): a gap of 0 or less in the data
+## would start an attack every step.
+const MIN_ATTACK_GAP := 0.1
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## Tries per meteor to find a landing spot; a meteor with no spot found is
 ## left out of that attack.
@@ -167,6 +172,19 @@ func _physics_process(delta: float) -> void:
 	step(delta)
 
 
+## The run's minion spawner, or null (T-418).
+func _spawner():
+	if _run == null or not is_instance_valid(_run):
+		return null
+	return _run.get("minions")
+
+
+## The map's ground heights (GroundHeight), or null on a flat map (T-418).
+func _ground():
+	var sp = _spawner()
+	return sp.ground if sp != null else null
+
+
 func _kaiju() -> Node:
 	if boss == null:
 		return null
@@ -192,7 +210,7 @@ func step(dt: float) -> void:
 		fight_time += dt
 		if enabled and windup_left < 0.0 and fight_time >= next_attack_at:
 			start_attack()
-			next_attack_at += stat("seconds_between_attacks")
+			next_attack_at += maxf(stat("seconds_between_attacks"), MIN_ATTACK_GAP)
 	if windup_left >= 0.0:
 		windup_left -= dt
 		if windup_left <= 0.0:
@@ -296,9 +314,12 @@ func is_good_spot(units: Vector2) -> bool:
 func land(units: Vector2) -> bool:
 	var hit := false
 	var car_units: Vector2 = car.position / PX_PER_UNIT
+	# T-418: a car more than the contact rule's tolerance above the landing (jumping over it) is missed.
+	var ground_here: float = EnemyHeightScript.height_at(_ground(), units)
+	var at_level: bool = EnemyHeightScript.at_car_level(ground_here, EnemyHeightScript.car_height(car))
 	# The car's invulnerability after a hit (T-334): a meteor landing on it then does nothing.
 	var invulnerable: bool = state != null and state.has_method("is_invulnerable") and state.is_invulnerable()
-	if not invulnerable and car_units.distance_to(units) <= stat("impact_radius_units"):
+	if at_level and not invulnerable and car_units.distance_to(units) <= stat("impact_radius_units"):
 		hit = true
 		if state != null:
 			state.damage_car(stat("impact_damage"))
@@ -306,6 +327,10 @@ func land(units: Vector2) -> bool:
 		if away.length() < 0.001:
 			away = Vector2.RIGHT.rotated(car.rotation + PI)  # straight on: backwards
 		car.apply_knockback(away, stat("knockback"))
+	# T-418: minions under the meteor are hurt (Enemies, Decisions, "Meteors hit minions...").
+	var spawner = _spawner()
+	if spawner != null:
+		spawner.damage_minions_at(units, stat("impact_radius_units"), stat("minion_damage"))
 	dust.append({"units": units, "age": 0.0})  # the impact animation (T-070): plays once, then goes
 	meteor_landed.emit(units, hit)
 	pending_boulders.append(units)
@@ -323,6 +348,9 @@ func _place_waiting_boulders() -> void:
 		placed.append(p)
 		if map.can_place_meteor_boulder(p):
 			var body: Node = map.add_meteor_boulder(p)
+			var spawner = _spawner()
+			if spawner != null:  # T-418: coins and health pickups on the spot are pushed out
+				spawner.push_pickups_out(p, map.boulder_diameter() / 2.0)
 			standing_boulders.append({"body": body, "age": 0.0})
 			boulder_placed.emit(p, body)
 	for p in placed:

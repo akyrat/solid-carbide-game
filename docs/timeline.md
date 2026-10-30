@@ -2690,3 +2690,8 @@ Entry format:
 - Decision or change: The board, after playing build I: Restart or Exit on the pause screen and closing the game window cancel the run at any point, the wreck included; its coins are lost, nothing goes into the run history and no recap shows. Replaces T-327's coins kept on Restart and Exit, and the audit's loss with coins kept on closing. The board also pointed out there is no runs list screen yet (T-364, parked for the final release): the Project Lead's build I checklist wrongly asked it to check one.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
 - Tasks: T-416
+
+## 2026-10-30: Meteors hit minions and push pickups aside
+- Decision or change: Built and merged (audit epic, build J): a meteor landing on minions damages them (minion_damage 2, the agent's proposal, played by the board), coins and health pickups on a new boulder's spot are pushed out, a car more than 1 unit above a landing is missed; data guards for seconds_between_attacks and spawn_interval_seconds.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-418
