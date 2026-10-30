@@ -2560,3 +2560,8 @@ Entry format:
 - Decision or change: The level creator's name for the meteor crater: Meteor crater (Level design, Content).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-401
+
+## 2026-10-30: Bug fixed: creator objects respect heights
+- Decision or change: Objects sit and draw at the height they stand on; none across an edge (the board's playtest of build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-393

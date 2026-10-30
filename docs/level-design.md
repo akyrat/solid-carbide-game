@@ -383,13 +383,26 @@ Task T-251 (Decisions, "Level creator piece set"). Every number here is the Leve
 Task T-253 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. How it works and how to rebuild the placeholder art: `game/docs/level/level-creator-pieces.md`, "Level creator", "Props (T-253)".
 
 - **The set** (category "Props", names from T-250): concrete barrier, traffic cones, crate stack, AC unit, water tank, roof vent, street lamp, rooftop sign. Footprints (north-facing, units): barrier 4 by 1, rooftop sign 4 by 1, water tank 4 by 4, the rest 2 by 2. Heights drawn: barrier 1.2, cones 0.9, crates 2.2, AC unit 1.5, roof vent 1.45, sign 3.3, tank 3.3, lamp 5.35.
-- **Four rotations** (R steps north, east, south, west; the facing is the direction a small pale arrow on the placeholder points). East and west swap the footprint's two numbers. A prop goes on the 2 by 2 tile grid like the other pieces, is not refused for overlapping, and is refused only where its footprint would leave the map.
+- **Four rotations** (R steps north, east, south, west; the facing is the direction a small pale arrow on the placeholder points). East and west swap the footprint's two numbers. A prop goes on the 2 by 2 tile grid like the other pieces, is not refused for overlapping other objects, and is refused where its footprint would leave the map, reach into a building or stand across a rooftop's or ramp's edge (T-393, below).
 - **Ground or rooftop:** a prop stands at the height under the centre of its footprint (the street, a rooftop, a ramp's slope), drawn lifted by it.
 - **Solid obstacles:** each is a static body like a boulder: the car crashes into it (the combo is cut as for a boulder) and the minions and the kaiju are stopped by it; the enemies' paths close the cells it takes. Collision: a rectangle (the footprint) for the barrier, crates, AC unit and sign, a circle for the cones (radius 0.9), tank (1.8), roof vent (0.9) and lamp (0.4). Proposal: the physics is flat, so a car in the air above a rooftop prop crashes into it too.
 - **Placeholder look:** code-drawn boxes and cylinders (a top and two visible faces, a dark outline, none of Greenbull's colours), one sprite per prop and rotation. Everything about a prop is in `game/data/level/props.json` (footprint, collision, height, the sprite of each rotation and its anchor), so T-256's art changes only that file and the PNGs.
 - **Saved levels** keep their props in a `props` list; `check_level.py` checks that each names a known prop and rotation, has the right turned footprint and lies inside the map.
 
 ![Every prop in its four rotations on the street, in the level creator](../art-archive/T-253/screenshots/creator_street.png)
+
+### Level creator: objects, heights and depth
+
+Task T-393 (Decisions, "Obstacles and decorations respect the buildings' and rooftops' heights"). How it works in the code: `game/docs/level/level-creator-pieces.md`, "Props (T-253)", "Heights and depth of placed objects (T-393)".
+
+- **Heights:** every placed object, the boulders and the eight props, stands at the height under the centre of its footprint: the street (0), a rooftop (3 or 6) or a ramp's slope, in the editor and in the run. Boulders used to stand on the street even on a rooftop; now they are lifted like the props.
+- **Depth:** an object behind a building or a rooftop and overlapping it on screen is drawn under it; one in front of it, or standing on it, is drawn over it. The board's barriers by the low-rise were drawn over it on any level with rooftops, because the buildings' order there was read wrongly; that is fixed for every kind of object.
+- **Edges (the Level/Challenge Design Agent's proposal for the board's playtest):** an object stands wholly on one surface. One whose footprint would reach into a building, or across the edge of a rooftop or a ramp, is not placed, with the same message as a piece that overlaps another ("Can't place here: it overlaps another piece."); touching a building or an edge is fine. The other way round, a building placed over an object, or a rooftop or ramp whose edge would cut through one, is not placed either; a rooftop or ramp placed wholly over an object lifts it to its height. Levels saved before keep what they have (the board's Kaiju City barrier inside its low-rise stays, drawn under the low-rise).
+- **As before:** the game's own map and levels without rooftops draw their objects exactly as before.
+
+![Before: the board's barriers drawn over the low-rise in the editor](../art-archive/T-393/screenshots/before_editor.png)
+
+![After: the barrier behind the low-rise is hidden by it](../art-archive/T-393/screenshots/after_editor.png)
 
 ### Elevation test scene
 
