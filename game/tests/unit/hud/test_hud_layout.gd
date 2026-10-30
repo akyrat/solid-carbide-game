@@ -81,11 +81,13 @@ func _font_size(l: Label) -> int:
 
 
 func _assert_health(hud: Hud, where: String) -> void:
+	# T-431: the layout page's pixels times the HUD's scale (1 at 1152 x 648).
+	var s := hud.hud_scale()
 	var row := hud.heart_row.get_global_rect()
-	assert_almost_eq(row.position, Vector2(36, 24), Vector2(0.5, 0.5), "%s: the hearts at x36 y24" % where)
-	assert_almost_eq(row.size, Vector2(220, 40), Vector2(0.5, 0.5), "%s: the hearts 220 x 40" % where)
+	assert_almost_eq(row.position, Vector2(36, 24) * s, Vector2(0.5, 0.5), "%s: the hearts at x36 y24" % where)
+	assert_almost_eq(row.size, Vector2(220, 40) * s, Vector2(0.5, 0.5), "%s: the hearts 220 x 40" % where)
 	var icons := hud.weapon_icons.get_global_rect()
-	assert_almost_eq(icons.position, Vector2(12, 88), Vector2(0.5, 0.5), "%s: weapon icons at x12 y88" % where)
+	assert_almost_eq(icons.position, Vector2(12, 88) * s, Vector2(0.5, 0.5), "%s: weapon icons at x12 y88" % where)
 	assert_true(hud.get_node_or_null("Left/HealthLabel") == null, "%s: no Car Health label" % where)
 	assert_null(hud.get("health_bar"), "%s: the health bar is gone" % where)
 
@@ -93,11 +95,12 @@ func _assert_health(hud: Hud, where: String) -> void:
 func _assert_sub_goal(hud: Hud, where: String) -> void:
 	var view := hud.get_viewport().get_visible_rect().size
 	var sg := hud.sub_goal
+	var s := hud.hud_scale()
 	var r := sg.get_global_rect()
-	assert_almost_eq(r.size, Vector2(128, 180), Vector2(0.5, 0.5), "%s: the sub goal is 128 x 180" % where)
-	assert_almost_eq(view.x - r.end.x, 1152.0 - 988.0 - 128.0, 0.5, "%s: anchored to the right edge" % where)
+	assert_almost_eq(r.size, Vector2(128, 180) * s, Vector2(0.5, 0.5), "%s: the sub goal is 128 x 180" % where)
+	assert_almost_eq(view.x - r.end.x, (1152.0 - 988.0 - 128.0) * s, 0.5, "%s: anchored to the right edge" % where)
 	assert_almost_eq(r.position.y, roundf(view.y * 340.0 / 648.0), 1.0, "%s: about two thirds down" % where)
-	var square := Rect2(r.position, sg.square_size)
+	var square := Rect2(r.position, sg.square_size * s)
 	assert_almost_eq(sg.square_size, Vector2(128, 128), Vector2(0.5, 0.5), "%s: the square is 128 x 128" % where)
 	var label := sg.label_row.get_global_rect()
 	assert_gte(label.position.y, square.end.y, "%s: the label is under the square" % where)

@@ -275,7 +275,9 @@ func test_the_hud_draws_them_under_every_other_piece() -> void:
 	var hud: Hud = r.hud
 	assert_eq(hud.reactions.get_index(), 0, "the first child, so drawn first")
 	assert_eq(hud.reactions.mouse_filter, Control.MOUSE_FILTER_IGNORE)
-	assert_eq(hud.reactions.get_parent(), hud)
+	# T-431: in the HUD's scaled area, the HUD's first child, which holds every piece.
+	assert_eq(hud.reactions.get_parent(), hud.root)
+	assert_eq(hud.root.get_index(), 0, "the scaled area is the HUD's first child")
 
 
 func test_reaching_the_sub_goal_bursts_once_per_goal() -> void:

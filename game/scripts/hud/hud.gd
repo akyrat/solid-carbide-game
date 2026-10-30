@@ -48,6 +48,19 @@ const AIRTIME_OFFSET := Vector2(70, -10)
 ## the airtime counter, at the same x.
 const DRIFT_OFFSET := Vector2(70, 30)
 
+## T-431: the HUD scales with the window. Every piece is laid out at the board's layout page
+## size (1152 x 648) inside `root`, a Control as big as the window divided by the HUD's
+## scale and scaled by it, so each piece keeps its corner or edge and a size in proportion to
+## the window. The scale is the smaller of the window's width and height over the layout
+## page's, times the HUD size slider's share (hud_size / 100). Textures under the root are
+## drawn with nearest filtering, so the pixel art stays hard-edged at any scale. The world
+## camera is never touched (HUD and menus, Content, "The HUD scales with the window").
+const LAYOUT_SIZE := Vector2(1152, 648)
+
+## The scaled area every HUD piece is in (T-431).
+var root: Control
+## The HUD size slider's value in percent (GameSettings.DEFAULT_HUD_SIZE until set).
+var hud_size := 100.0
 var timer_label: Label
 ## The digital clock panel holding timer_label (T-335), bottom left.
 var timer_clock: TimerClock
@@ -93,6 +106,7 @@ var _popups: Node
 func _ready() -> void:
 	layer = 10
 	_combo_data = ComboData.new()
+	_build_root()
 	_build_reactions()
 	_build_timer()
 	_build_left()
@@ -101,6 +115,53 @@ func _ready() -> void:
 	_build_viewers()
 	_build_airtime()
 	_build_drift()
+	_layout_root()
+	get_viewport().size_changed.connect(_layout_root)
+
+
+## The scaled area (T-431): nearest filtering, passed on to every piece inside it.
+func _build_root() -> void:
+	root = Control.new()
+	root.name = "Scaled"
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(root)
+
+
+## The HUD's scale for a window of `view` pixels at a HUD size of `size_percent` (T-431).
+static func scale_for(view: Vector2, size_percent: float) -> float:
+	var fit := minf(view.x / LAYOUT_SIZE.x, view.y / LAYOUT_SIZE.y)
+	return maxf(fit, 0.01) * clampf(size_percent, GameSettings.MIN_HUD_SIZE, GameSettings.MAX_HUD_SIZE) / 100.0
+
+
+## The HUD's scale now: screen pixels per layout page pixel.
+func hud_scale() -> float:
+	return root.scale.x
+
+
+## Sets the HUD size (the pause screen's slider, in percent) and scales the HUD at once,
+## paused or not. It does not save: the slider saves on release (T-427's rule).
+func set_hud_size(size_percent: float) -> void:
+	hud_size = clampf(size_percent, GameSettings.MIN_HUD_SIZE, GameSettings.MAX_HUD_SIZE)
+	if root != null and is_inside_tree():
+		_layout_root()
+
+
+func _layout_root() -> void:
+	var view := get_viewport().get_visible_rect().size
+	var s := scale_for(view, hud_size)
+	root.position = Vector2.ZERO
+	root.scale = Vector2(s, s)
+	root.size = view / s
+	if sub_goal != null and viewers_counter != null:
+		sub_goal.keep_above(root.size.y + viewers_counter.offset_top - MARGIN, root.size.y)
+	_layout_airtime()
+	_layout_drift()
+
+
+## A point in screen (canvas) pixels as a point in the scaled area's own pixels.
+func to_layout(screen_point: Vector2) -> Vector2:
+	return root.get_global_transform().affine_inverse() * screen_point
 
 
 ## The reaction icons (T-351): under every other HUD piece, fed the viewers counter's step.
@@ -108,7 +169,7 @@ func _build_reactions() -> void:
 	reactions = Reactions.new()
 	reactions.step_source = func() -> int:
 		return viewers_counter.step if viewers_counter != null else 0
-	add_child(reactions)
+	root.add_child(reactions)
 
 
 ## The airtime counter (T-243): hidden until the car is airborne. It sits right
@@ -118,15 +179,15 @@ func _build_reactions() -> void:
 func _build_airtime() -> void:
 	airtime_counter = AirtimeCounter.new()
 	airtime_counter.name = "AirtimeCounter"
-	add_child(airtime_counter)
+	root.add_child(airtime_counter)
 	airtime_counter.resized.connect(_layout_airtime)
-	_layout_airtime()
-	get_viewport().size_changed.connect(_layout_airtime)
 
 
+## Placed in the scaled area's pixels (T-431): _layout_root calls it on every resize.
 func _layout_airtime() -> void:
-	var view := get_viewport().get_visible_rect().size
-	airtime_counter.position = (view / 2.0 + AIRTIME_OFFSET).round()
+	if airtime_counter == null:
+		return
+	airtime_counter.position = (root.size / 2.0 + AIRTIME_OFFSET).round()
 
 
 ## The drift counter (T-247): hidden until the car drifts; under the airtime
@@ -134,15 +195,14 @@ func _layout_airtime() -> void:
 func _build_drift() -> void:
 	drift_counter = DriftCounter.new()
 	drift_counter.name = "DriftCounter"
-	add_child(drift_counter)
+	root.add_child(drift_counter)
 	drift_counter.resized.connect(_layout_drift)
-	_layout_drift()
-	get_viewport().size_changed.connect(_layout_drift)
 
 
 func _layout_drift() -> void:
-	var view := get_viewport().get_visible_rect().size
-	drift_counter.position = (view / 2.0 + DRIFT_OFFSET).round()
+	if drift_counter == null:
+		return
+	drift_counter.position = (root.size / 2.0 + DRIFT_OFFSET).round()
 
 
 ## Follows the car's airborne state from now on (T-243): counts its airtime
@@ -163,7 +223,7 @@ func _on_car_stepped() -> void:
 
 func _build_timer() -> void:
 	timer_clock = TimerClock.new()
-	add_child(timer_clock)
+	root.add_child(timer_clock)
 	timer_label = timer_clock.label
 
 
@@ -171,7 +231,7 @@ func _build_left() -> void:
 	left_column = Control.new()
 	left_column.name = "Left"
 	left_column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(left_column)
+	root.add_child(left_column)
 	heart_row = HeartRow.new()
 	left_column.add_child(heart_row)
 	weapon_icons = WeaponIcons.new()
@@ -195,9 +255,9 @@ func _build_bottom() -> void:
 	bottom_area.name = "Bottom"
 	bottom_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bottom_area.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bottom_area)
+	root.add_child(bottom_area)
 	sub_goal = SubGoal.new()
-	add_child(sub_goal)
+	root.add_child(sub_goal)
 	# On the square's top edge, over the frame and the gift (T-131, T-337).
 	likes_fire = LikesFire.new()
 	sub_goal.add_child(likes_fire)
@@ -215,7 +275,7 @@ func _build_bottom() -> void:
 ## The live viewers counter (T-336), anchored to the bottom-right corner (hud.json).
 func _build_viewers() -> void:
 	viewers_counter = ViewersCounter.new()
-	add_child(viewers_counter)
+	root.add_child(viewers_counter)
 
 
 func _build_coins() -> void:
@@ -230,7 +290,7 @@ func _build_coins() -> void:
 	box.offset_right = COINS_POS.x + COINS_SIZE.x
 	box.offset_top = COINS_POS.y - 648.0
 	box.offset_bottom = COINS_POS.y + COINS_SIZE.y - 648.0
-	add_child(box)
+	root.add_child(box)
 	coins_label = _make_label("CoinsLabel", TEXT_COINS)
 	box.add_child(coins_label)
 	coins_value_label = _make_label("CoinsValue", "0")
@@ -356,7 +416,7 @@ func settle_likes() -> void:
 ## at the moment it fills, whatever the run does next.
 func _on_level_up(_new_level: int) -> void:
 	sub_goal.celebrate()
-	reactions.burst(sub_goal.get_global_rect().get_center())
+	reactions.burst(to_layout(sub_goal.get_global_rect().get_center()))
 
 
 func _on_coins_changed(coins: int) -> void:
@@ -372,7 +432,7 @@ func _on_combo_changed(multiplier: float) -> void:
 func _on_combo_broken() -> void:
 	viewers_counter.crash(viewers_counter.last_loss())
 	# T-356: the stream reacts badly, from the counter's lane.
-	reactions.bad_burst(viewers_counter.get_global_rect().get_center().y)
+	reactions.bad_burst(to_layout(viewers_counter.get_global_rect().get_center()).y)
 
 
 ## Flies the trick popups' "+viewers" into the viewers counter from now on (T-336):

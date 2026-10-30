@@ -57,8 +57,11 @@ func test_anchored_to_the_bottom_right_corner() -> void:
 		var hud := _hud(size)
 		await get_tree().process_frame
 		var r := hud.viewers_counter.get_global_rect()
-		assert_eq(r.size, Vector2(240, 72), "%s: same size" % size)
-		assert_eq(Vector2(size) - r.end, Vector2(16, 16), "%s: 16 px from the right and bottom edges" % size)
+		# T-431: the layout page's size and margins, times the HUD's scale.
+		var s := hud.hud_scale()
+		assert_almost_eq(r.size, Vector2(240, 72) * s, Vector2(0.01, 0.01), "%s: same size" % size)
+		assert_almost_eq(Vector2(size) - r.end, Vector2(16, 16) * s, Vector2(0.01, 0.01),
+			"%s: 16 px from the right and bottom edges" % size)
 
 
 func test_the_live_badge_eye_and_unit() -> void:
