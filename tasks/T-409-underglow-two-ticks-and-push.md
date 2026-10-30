@@ -1,7 +1,7 @@
 ---
 id: T-409
 title: Neon underglow: each tick deals half a minion's health (2 ticks kill), and it knocks enemies back a little from tier 1
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -45,12 +45,12 @@ The board's review: in a run, get the neon underglow and drive into a swarm: min
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] At tier 1 a minion dies on its second tick and not its first (test). (QA: pass / fail)
-- [ ] From tier 1 each tick pushes a minion away from the car by the distance in `weapons.json` (test); the kaiju behaves as the result notes say (test). (QA: pass / fail)
-- [ ] Later tiers keep their multipliers from the new base (test). (QA: pass / fail)
-- [ ] Weapons (Content, "The neon underglow") and game/docs/weapons/neon-underglow.md describe the new damage and the push. (QA: pass / fail)
-- [ ] A GIF of the underglow in a swarm is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] At tier 1 a minion dies on its second tick and not its first (test). (QA: pass)
+- [ ] From tier 1 each tick pushes a minion away from the car by the distance in `weapons.json` (test); the kaiju behaves as the result notes say (test). (QA: pass)
+- [ ] Later tiers keep their multipliers from the new base (test). (QA: pass)
+- [ ] Weapons (Content, "The neon underglow") and game/docs/weapons/neon-underglow.md describe the new damage and the push; card text matches Weapons "Level-up card text (T-412)". (QA: pass)
+- [ ] A GIF of the underglow in a swarm is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass; GUT 158 scripts, 1950 tests, 1950 pass; unittest sets green)
 
 ## Updates
 
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started in build F with T-412's card text.
+
+### 2026-10-30, In progress → In QA
+
+Underglow tier 1 deals 2 (two ticks kill a minion), pushes minions 0.5 per tick and nudges the kaiju 0.1; tests green, GIF in art-archive/T-409/screenshots.
 
 ## Style review
 
