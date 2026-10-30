@@ -1,7 +1,7 @@
 ---
 id: T-429
 title: The HUD's code follows the HUD style sheet (fonts, colours, outlines)
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-008

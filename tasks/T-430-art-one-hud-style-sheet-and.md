@@ -1,7 +1,7 @@
 ---
 id: T-430
 title: Art: one HUD style sheet, and script redraws of the HUD pieces that break it
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-008

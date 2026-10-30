@@ -1,0 +1,15 @@
+{
+ "image_size": {
+  "width": 128,
+  "height": 128
+ },
+ "no_background": true,
+ "isometric": true,
+ "outline": "single color black outline",
+ "shading": "detailed shading",
+ "detail": "highly detailed",
+ "view": "high top-down",
+ "direction": "north-east",
+ "text_guidance_scale": 8,
+ "description": "a wrecked abandoned compact four-door sedan car, faded dusty beige-grey paint, crushed dented bonnet, shattered broken windows, a flat tyre, black scorch marks and grime, dents and scratches, unlit, no fire, no smoke, no stripes, isometric view seen from above, facing up and to the right, night city, cool blue-grey steel colours, retro pixel art game sprite, a single object"
+}

@@ -4,7 +4,7 @@ title: Each weapon has its own top tier
 status: open
 from: project-lead
 to: weapon-behavior
-lead: Greenbull
+lead: Audit
 epic: audit
 milestone: mvp
 goal:
@@ -31,7 +31,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-Code hole. weapon.gd uses data.max_tier(), one weapons.json max_tier (8) for every weapon, but Weapons, Decisions now gives the gun tiers 2 to 11 (T-408); raising the shared number gives every weapon empty tiers. Give each weapon its own top tier, from its own data. Also a data guard: starting_gun.gd _fire_next() pops an empty queue and crashes when bullets is 0. Runs after T-408 (another session), which reworks the gun.
+Code hole. weapon.gd uses data.max_tier(), one weapons.json max_tier (8) for every weapon, but Weapons, Decisions now gives the gun tiers 2 to 11 (T-408); raising the shared number gives every weapon empty tiers. Give each weapon its own top tier, from its own data. Also a data guard: starting_gun.gd _fire_next() pops an empty queue and crashes when bullets is 0. Runs after T-408 (another session), which reworks the gun. Note (Project Lead, 2026-10-30): T-408 already added WeaponData.max_tier(weapon) and the gun's own max_tier 11 in weapons.json; check it, keep it, and add what is missing (tests, the gift pack check, the bullets 0 guard). The player meets nothing here beyond what T-408's playtest covered, so it merges after QA without a board's review.
 
 Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit of the game and its docs looked for situations the game can reach whose behaviour no doc decides, and for code holes, so they are fixed before they become bugs. Every ticket from it carries epic: audit.
 

@@ -1,7 +1,7 @@
 ---
 id: T-433
 title: Art: the splash cover behind the main menu (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-008
