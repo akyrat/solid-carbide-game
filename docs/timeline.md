@@ -2380,3 +2380,8 @@ Entry format:
 - Decision or change: The board: barriers (and maybe other objects) in the level creator ignore buildings' and rooftops' heights. Bug ticket, root cause and fix, started at once.
 - Documents touched: docs/level-design.md
 - Tasks: T-393
+
+## 2026-10-30: Thread the needle through a row
+- Decision or change: The board wants to thread a row of obstacles gap after gap; the Project Lead's design: an obstacle in several pairs, a row paired as a chain in one go, each gap paying its own trick.
+- Documents touched: docs/level-design.md
+- Tasks: T-394

@@ -519,6 +519,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **The board's own level becomes the game's map** (board, 2026-10-29): the board builds a level by hand in the level creator over several hours, then hands it over; that level becomes the map the game's Start plays, in place of the elevation sample map. Until the board names the file, nothing changes. (T-372)
 - **Roads painted in the creator show in the run** (board, 2026-10-29; a bug, fixed at once): roads the board places on the ground in the level creator don't show up when the level is played. What is painted in the editor must be what the run draws. (T-391)
 - **Obstacles and decorations respect the buildings' and rooftops' heights** (board, 2026-10-29; a bug, fixed at once): in the level creator, barriers placed by a building or a rooftop ignore its height (they draw over it as if it weren't there), and the board suspects other objects do the same. Every placed object must sit at the height of what it stands on and be drawn in front of or behind buildings and rooftops correctly, in the editor and in the run. (T-393)
+- **A row of obstacles can be threaded gap after gap** (board, 2026-10-29): the board wants to thread the needle through every gap in a row of obstacles, one after another, but an obstacle can be in only one pair today (pairing it again unpairs it from the other). The board asked the Project Lead for an intuitive way that works both ways; the Project Lead's design: an obstacle can be in several pairs (pairing B with C keeps A with B), several obstacles can be picked in order and paired in one go as a chain (A with B, B with C, C with D), Unpair removes only the pair it is aimed at, and in the run each gap pays its own thread the needle, so a row threaded gap after gap pays each one. The board judges it in the playtest. (T-394)
 
 ### Content
 
@@ -1636,7 +1637,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `4faf337de125919ad6f0876d4be08f98a44b0da85cd65639657e0598f54d885d` |
 | `drifting.md` | `9ba4b029c7b6d02d38bd17161e8158ba72e3105b63af8d7df37ca57c58a03b22` |
-| `level-design.md` | `ab6fd86b08c67915d416020f80fb86cc9dc425442fe2359811acd97f98a59041` |
+| `level-design.md` | `2f2ab015144d8f9b2ef256865dc61b11926063e8151b50db7a3bcf07a091a7d6` |
 | `enemies.md` | `c1b835099f5495781686713fa8bb1c0a03b3af302316fbeadf18ce709a31099c` |
 | `weapons.md` | `c4cfed2009e9920760b091106cac32fe91e76f0a4c98854e238e10d2adb3a913` |
 | `garage-design.md` | `502e17a5ab2ec68190e79bbe2d5b5b671bd3db476e63526750cc306a6efed0e9` |
