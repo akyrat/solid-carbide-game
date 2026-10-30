@@ -2395,3 +2395,23 @@ Entry format:
 - Decision or change: The task board reads a merged goal ticket from its goal's build folder, so goal tickets no longer show in To do.
 - Documents touched: `docs/README.md`
 - Tasks: T-392
+
+## 2026-10-30: Sidewalks and parked cars: names
+- Decision or change: The board wants sidewalks (with curbs) and parked and broken cars at four facings in the level creator; text ticket for the pieces' names.
+- Documents touched: docs/level-design.md
+- Tasks: T-396
+
+## 2026-10-30: Sidewalks and parked cars: art sample
+- Decision or change: Sample first: one sidewalk tile with its curb and one parked car facing, for the board's review (PixelLab up to 50 for the whole set).
+- Documents touched: docs/visual-style.md
+- Tasks: T-397
+
+## 2026-10-30: Sidewalks and parked cars: the pieces
+- Decision or change: Sidewalks painted with automatic curbs the car drives over; parked and broken cars as solid, pairable obstacles at four facings; placeholders first.
+- Documents touched: docs/level-design.md
+- Tasks: T-398
+
+## 2026-10-30: Sidewalks and parked cars: the full art
+- Decision or change: The full sidewalk, curb and parked and broken car set from the approved sample, swapped into the creator.
+- Documents touched: docs/visual-style.md
+- Tasks: T-399
