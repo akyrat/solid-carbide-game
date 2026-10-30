@@ -535,8 +535,9 @@ func can_place_meteor_boulder(centre: Vector2) -> bool:
 ## any boulder on the map (the pattern copies', meteor challenges' or meteor
 ## boulders'): open ground the car can drive on. Touching is allowed. Used by
 ## the meteor boulders' placement check and by the gift pack (T-144) to land
-## its package on open road.
-func is_open_spot(centre: Vector2, radius: float) -> bool:
+## its package on open road. street_only false (the gift pack on a rooftop,
+## T-402) leaves out the street-level check: the caller checks the heights.
+func is_open_spot(centre: Vector2, radius: float, street_only: bool = true) -> bool:
 	var r := radius
 	var m := rect_of(layout.map.rect)
 	if centre.x - r < m.position.x or centre.x + r > m.end.x:
@@ -552,7 +553,7 @@ func is_open_spot(centre: Vector2, radius: float) -> bool:
 	if prop_blocks_spot(centre, r):
 		return false
 	# T-206: with elevation, open ground is street level only (no rooftop or ramp).
-	if elevation != null and not elevation.is_street(centre, r):
+	if street_only and elevation != null and not elevation.is_street(centre, r):
 		return false
 	return true
 

@@ -25,10 +25,20 @@ extends Node2D
 ## same as the run's View). Helicopters, carried and falling packages are
 ## drawn over the whole world (SKY_Z); a landed package takes the depth order
 ## a car would have on that spot (map.car_z_index), under the car's drawing.
+##
+## Heights (T-402; Level design, Content, "Elevation sample map"): on a map
+## with rooftops the package lands on street level when it can. Only when no
+## street spot is open within the search (the car well inside a large rooftop)
+## does it land on open ground of the rooftop the car is on. Either way it is
+## drawn at the height of the ground it lands on (GiftPackage.ground_height),
+## in the depth order the car has at that height (elevation_layer.gd z_for),
+## and the car picks it up only from that height or above.
 
 const HelicopterScene := preload("res://scenes/run/gift_helicopter.tscn")
 const PackageScene := preload("res://scenes/run/gift_package.tscn")
 const ArrowsScript := preload("res://scripts/run/gift_arrows.gd")
+## T-407: the car's air shadow (car_shadow.gd), reused for a falling package's landing spot.
+const ShadowScript := preload("res://scripts/driving/car_shadow.gd")
 
 const PX_PER_UNIT := 16.0
 ## Same 2:1 isometric projection as the run and the map.
@@ -42,6 +52,13 @@ const STILL_SPEED := 1.0
 ## spot of open road is found.
 const SEARCH_ANGLES := [0.0, 20.0, -20.0, 40.0, -40.0, 60.0, -60.0, 90.0, -90.0, 120.0, -120.0, 150.0, -150.0, 180.0]
 const SEARCH_SHARES := [1.0, 0.75, 1.25, 0.5, 1.5, 0.25]
+## T-402: the car picks a package up when its height (units) is at least the
+## package's ground height less this, so a car on the street beside a rooftop
+## does not pick up a package lying on it, and a car jumping over one still does.
+const PickupHeightScript := preload("res://scripts/run/pickup_height.gd")
+const PICKUP_HEIGHT_TOLERANCE := PickupHeightScript.TOLERANCE
+## Tolerance (units) for "the same height" when checking a rooftop spot.
+const SAME_HEIGHT := 0.01
 
 ## A helicopter set off for the level-up of `level`.
 signal helicopter_sent(helicopter: Node2D)
@@ -88,6 +105,9 @@ func _on_level_up(new_level: int) -> void:
 
 ## Removes every helicopter and package (a new run).
 func clear() -> void:
+	for pkg in packages:
+		if is_instance_valid(pkg):
+			_remove_shadow(pkg)
 	for n in helicopters + packages:
 		if is_instance_valid(n):
 			n.queue_free()
@@ -114,8 +134,7 @@ func send_helicopter(level: int) -> GiftHelicopter:
 	var pkg: GiftPackage = PackageScene.instantiate()
 	pkg.name = "GiftPackage%d" % level
 	pkg.level = level
-	pkg.ground_px = spot_units * PX_PER_UNIT
-	pkg.drawn_ground = ISO_TRANSFORM * pkg.ground_px
+	pkg.set_ground(spot_units * PX_PER_UNIT, ground_height_at(spot_units))
 	pkg.fall_seconds = data.fall_seconds()
 	pkg.z_index = SKY_Z
 	var heli: GiftHelicopter = HelicopterScene.instantiate()
@@ -192,6 +211,11 @@ func visible_rect() -> Rect2:
 ## with clearance_units). When straight ahead is blocked it tries other ways
 ## and distances, nearest to straight ahead first; if none is open it uses the
 ## car's own spot.
+##
+## T-402: on a map with rooftops, open road is street level only. When the
+## search finds none and the car is on a flat rooftop, it searches the same
+## ways again for open ground on that rooftop (is_open_rooftop). Only then the
+## car's own spot. The package is drawn at the ground's height there.
 func landing_spot() -> Vector2:
 	var car: Node2D = run.car
 	var centre: Vector2 = car.position / PX_PER_UNIT
@@ -199,12 +223,79 @@ func landing_spot() -> Vector2:
 	if car is CharacterBody2D and car.velocity.length() > STILL_SPEED:
 		dir = car.velocity.normalized()
 	var ahead := data.land_ahead_units()
+	var tries: Array = []
 	for a in SEARCH_ANGLES:
 		for share in SEARCH_SHARES:
-			var p: Vector2 = centre + dir.rotated(deg_to_rad(a)) * ahead * share
-			if is_open_road(p):
+			tries.append(centre + dir.rotated(deg_to_rad(a)) * ahead * share)
+	for p in tries:
+		if is_open_road(p):
+			return p
+	var roof := ground_height_at(centre)
+	if roof > SAME_HEIGHT:
+		for p in tries:
+			if is_open_rooftop(p, roof):
 				return p
 	return centre
+
+
+## The ground's height at `units` (units): a rooftop's or ramp's, 0 on the
+## street and on maps without rooftops (T-402).
+func ground_height_at(units: Vector2) -> float:
+	var gh = _ground()
+	return gh.height_at(units) if gh != null else 0.0
+
+
+## The map's ground heights (ground_height.gd), or null without rooftops.
+func _ground():
+	var map: Node = run.map if run != null else null
+	if map == null:
+		return null
+	var elev = map.get("elevation")
+	return elev.ground_height if elev != null else null
+
+
+## True when the package can land at `units` on a rooftop of `height` (T-402):
+## no building, boulder, prop or map edge within clearance_units (the map's
+## is_open_spot without its street-only check), and the whole clearance square
+## around it lies on flat rooftop of that same height (no ramp, no edge, no
+## higher rooftop standing on it).
+func is_open_rooftop(units: Vector2, height: float) -> bool:
+	var gh = _ground()
+	var map: Node = run.map
+	if gh == null or map == null or not map.has_method("is_open_spot") or height <= SAME_HEIGHT:
+		return false
+	var r := data.clearance_units()
+	if not map.is_open_spot(units, r, false):
+		return false
+	for ox in [-r, 0.0, r]:
+		for oy in [-r, 0.0, r]:
+			var q: Vector2 = units + Vector2(ox, oy)
+			if gh.is_ramp(q) or absf(gh.height_at(q) - height) > SAME_HEIGHT:
+				return false
+	return true
+
+
+## Moves a landed package's spot to `px` (flat world pixels; the pickup magnet
+## pulls it, T-222): its height follows the ground there and its depth order
+## is worked out again (T-402).
+func move_package(pkg: GiftPackage, px: Vector2) -> void:
+	pkg.set_ground(px, ground_height_at(px / PX_PER_UNIT))
+	pkg.position = pkg.drawn_ground
+	pkg.z_index = landed_z(pkg)
+
+
+## The depth order of a landed package: the car's at that spot and height,
+## under every building, boulder, prop and raised area that covers it there
+## (T-402: elevation_layer.gd z_for at the package's ground height; on a map
+## without rooftops the map's car_z_index, as before).
+func landed_z(pkg: GiftPackage) -> int:
+	var map: Node = run.map
+	if map == null:
+		return 0
+	var elev = map.get("elevation")
+	if elev != null:
+		return elev.z_for(pkg.ground_units(), 0.0, pkg.ground_height)
+	return map.car_z_index(pkg.ground_units(), 0.0) if map.has_method("car_z_index") else 0
 
 
 ## True when the package can land at `units`: open road with the clearance
@@ -259,7 +350,41 @@ func _drop(heli: GiftHelicopter) -> void:
 	var room := pkg.drawn_ground.y - (visible_rect().position.y + data.screen_margin() + art_height(pkg.sprite()))
 	pkg.drop_height = clampf(wanted, 0.0, maxf(room, 0.0))
 	pkg.position = pkg.drawn_ground + Vector2(0, -pkg.drop_height)
+	_add_shadow(pkg)
 	package_dropped.emit(pkg)
+
+
+## T-407 (Game loop architecture, Decisions, "A falling gift pack shows its
+## shadow"): while `pkg` falls, the car's shadow (car_shadow.gd, no new art)
+## lies at its landing spot, at the height of the ground it lands on, in the
+## depth order the car's shadow has there. Removed when it lands.
+func _add_shadow(pkg: GiftPackage) -> void:
+	_remove_shadow(pkg)
+	var sh: Node2D = ShadowScript.new()
+	sh.name = "Shadow" + pkg.name
+	sh.view_basis = ISO_TRANSFORM
+	add_child(sh)
+	sh.place(pkg.ground_units(), pkg.ground_height)
+	sh.z_index = shadow_z(pkg)
+	pkg.shadow = sh
+
+
+func _remove_shadow(pkg: GiftPackage) -> void:
+	if pkg.shadow != null and is_instance_valid(pkg.shadow):
+		pkg.shadow.queue_free()
+	pkg.shadow = null
+
+
+## The depth order of a falling package's shadow: the car's shadow rule at the
+## landing spot (on a map without rooftops, just under the car's order).
+func shadow_z(pkg: GiftPackage) -> int:
+	var map: Node = run.map
+	if map == null:
+		return 0
+	var elev = map.get("elevation")
+	if elev != null:
+		return elev.shadow_z_for(pkg.ground_units(), 0.0, pkg.ground_height, pkg.ground_height)
+	return (map.car_z_index(pkg.ground_units(), 0.0) - 1) if map.has_method("car_z_index") else 0
 
 
 ## Floats down under its parachute at a steady speed and lands after
@@ -274,23 +399,25 @@ func _fall(pkg: GiftPackage, delta: float) -> void:
 
 func _land(pkg: GiftPackage) -> void:
 	pkg.phase = GiftPackage.LANDED
+	_remove_shadow(pkg)
 	pkg.position = pkg.drawn_ground
 	pkg.refresh_look()
-	var map: Node = run.map
-	pkg.z_index = map.car_z_index(pkg.ground_units(), 0.0) if map != null and map.has_method("car_z_index") else 0
+	pkg.z_index = landed_z(pkg)
 	package_landed.emit(pkg)
 
 
 ## Picks up every landed package whose centre is within pickup_radius_units of
-## the car's centre.
+## the car's centre, with the car at the package's height or above (T-402).
 func check_pickups() -> void:
 	var car: Node2D = run.car
 	if car == null or not state.is_running():
 		return
 	var at: Vector2 = car.position / PX_PER_UNIT
 	var reach := data.pickup_radius_units()
+	var h := PickupHeightScript.height_of(car)
 	for pkg in landed_packages():
-		if at.distance_to(pkg.ground_units()) <= reach + RunState.EPSILON:
+		if at.distance_to(pkg.ground_units()) <= reach + RunState.EPSILON \
+				and PickupHeightScript.car_reaches(h, pkg.ground_height):
 			pick_up(pkg)
 
 
@@ -301,6 +428,7 @@ func pick_up(pkg: GiftPackage) -> void:
 	if not packages.has(pkg):
 		return
 	packages.erase(pkg)
+	_remove_shadow(pkg)
 	pkg.queue_free()
 	package_picked_up.emit(pkg)
 	state.open_choice(pkg.level)

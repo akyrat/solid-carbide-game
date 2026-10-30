@@ -2580,3 +2580,8 @@ Entry format:
 - Decision or change: Low-rise, small and long buildings are connectable platforms at height 3; colliders work at their height (build E).
 - Documents touched: `docs/level-design.md`, `docs/visual-style.md`
 - Tasks: T-405
+
+## 2026-10-30: A falling gift pack's shadow
+- Decision or change: A falling gift pack shows its landing shadow (build E).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/level-design.md`
+- Tasks: T-407
