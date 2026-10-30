@@ -95,6 +95,11 @@
     "flame_flickers_per_second": 12.0,
     "pixel_px": 2.0
   },
+  "hit_flash": {
+    "_comment": "Red hit flash (Game loop architecture, Decisions, 'A red flash when the car takes damage', board, 2026-10-30; T-403, scripts/run/hit_flash.gd, reused for enemies by T-404). Proposals for the playtest. seconds: how long the flash lasts after a hit that counts. 0.4 s covers the first two visible phases of the 0.1 s invulnerability blink (the car is hidden 0 to 0.1, red 0.1 to 0.2, hidden, red 0.3 to 0.4), then the plain blink goes on. color: the multiply tint [r, g, b].",
+    "seconds": 0.4,
+    "color": [1.0, 0.25, 0.25]
+  },
   "time_up": {
     "_comment": "Time's up (Game loop architecture, Decisions, 'Time's up screen', board, 2026-10-28; T-317): when the 8-minute timer runs out with the kaiju alive, the run is lost and frozen at 0:00 while the time's up screen plays for seconds (3 s, the board's number), then the run ends. 0 ends the run at once, as before T-317.",
     "seconds": 3.0
