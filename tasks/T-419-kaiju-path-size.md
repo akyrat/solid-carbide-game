@@ -1,7 +1,7 @@
 ---
 id: T-419
 title: The kaiju only takes paths it fits through
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -41,10 +41,10 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] On the board's level, every waypoint of the kaiju's planned path is at least its radius from every building (test over 50 start/target pairs). (QA: pass / fail)
-- [ ] A gap narrower than the kaiju's diameter is never on its path; minions still use it. (QA: pass / fail)
-- [ ] In a scripted run, the kaiju reaches a target behind two buildings within 30 s without stopping for more than 2 s. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] On the board's level, every waypoint of the kaiju's planned path is at least its radius from every building (test over 50 start/target pairs). (QA: pass - 50 pairs, 3094 waypoints, nearest building 2.00, none over an edge (test_kaiju_path_size).)
+- [ ] A gap narrower than the kaiju's diameter is never on its path; minions still use it. (QA: pass - synthetic 3 and 3.5-unit gaps: minions cross, kaiju goes round; 6-unit gap still used by kaiju.)
+- [ ] In a scripted run, the kaiju reaches a target behind two buildings within 30 s without stopping for more than 2 s. (QA: pass - see report: car on a rooftop, two buildings on the straight line (own roof excluded), reached 20.7 s, longest stop 0.72 s.)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass - new test file (6 tests) covers 1 to 3; qa_check: three test sets pass.)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-worktrees\T-419, Enemy Behavior Agent.
+
+### 2026-10-30, In progress → In QA
+
+Build J (Audit): the agent finished; each enemy plans for its own size. Beyond the ticket: the kaiju's grid also keeps its body off rooftop and ramp edges (drops start 3 units back), and enemy_path_follower.gd keeps a drop's path for up to 1 s. In QA now.
 
 ## Style review
 
@@ -85,3 +89,9 @@ Test runs (all three sets, on this branch): Godot GUT 2131/2131 passed (173 scri
 Screenshots: `art-archive/T-419/screenshots/kaiju_nav_roof.png`, drawn from the data by `bash game/tools/draw_kaiju_nav.sh` (Kaiju City, 4 px per unit, the car on roof-1 as the white square): orange cells are open to minions and closed to the kaiju; red lines are the kaiju's paths on the old (minions') grid, hugging walls and edges; cyan the paths now, at least 2 units off.
 
 Board review files: art-archive/T-419/screenshots/kaiju_nav_roof.png
+
+**QA round 1, 2026-10-30: pass.** qa_check (--base playtest/audit-world): tests PASS (three sets), documents PASS (1 changed), screenshots PASS (1 file). All four criteria pass.
+- Criterion 3: the test's start is a street spot, the target a car on a rooftop; _buildings_between samples the straight line and counts distinct building rects it passes over, excluding the one the car stands in, and the search requires at least 2. So two buildings do lie between start and target and the path must go round them, but it is a rooftop target, not the literal street-to-street case (the level has none). Accepted as the reported case.
+- Beyond the ticket: minions' test coverage unchanged (criterion 2 test shows they still use 3 and 3.5-unit gaps; minion grid edge_radius 0, drop_span 1). The kaiju drop and ledge tests in test_enemies_on_heights pass in the full run (one test renamed to match the kaiju's own navigation). enemy_path_follower.gd change is a drop commitment, covered by that existing drop test.
+- Level file in game/data/levels/ was only read.
+- Test counts (QA rerun of the GUT set alone): 173 scripts, 2131/2131 passing, exit 0. The first qa_check run passed all three sets; the second run's set 3 exited 1 only on an exit-time message ('1 resources still in use at exit', also printed by the passing rerun), no test failed; the rerun alone passed. Python sets passed in both qa_check runs (agent reported 722 and 582).
