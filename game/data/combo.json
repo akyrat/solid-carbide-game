@@ -29,6 +29,8 @@
   },
   "_crash_pays_trick_first_comment": "T-315 (Game loop architecture, Decisions, \"A crash pays the trick in progress\"): a crash pays the trick in progress (a drift so far, an airtime and air spins so far). true: the trick pays first, then the crash cuts the combo, so its popup shows just before COMBO BROKEN! (the board approved this order for the playtest). false: the cut comes first, then the trick is added to the cut combo (worth more to the player).",
   "crash_pays_trick_first": true,
+  "_collision_window_comment": "T-415 (Game loop architecture, Decisions, \"Hits close together cut the combo once\"): a collision within this many seconds of the one that cut the combo does not cut it again. 0.5 s is a proposal for the playtest; 0 turns the window off.",
+  "collision_window_seconds": 0.5,
   "collision_cut": 0.5,
   "collision_cut_applies_to": "above_start",
   "drain_wait_seconds": 2.0,

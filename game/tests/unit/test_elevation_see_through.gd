@@ -17,6 +17,9 @@ var _interp_before := false
 var _hits := 0
 
 
+## T-411: how far the drawn car's farthest corner is from its centre, plus one walk piece.
+const _DRAWN_REACH := 1.5811 + 0.05
+
 func before_each() -> void:
 	_interp_before = get_tree().physics_interpolation
 	scene = SCENE.instantiate()
@@ -198,9 +201,10 @@ func _drive_into_back_side(start: Vector2, rot: float, steer: float, side_line: 
 func _assert_hit(result: Dictionary, what: String) -> void:
 	assert_true(result.under, "%s: under the platform on every step" % what)
 	assert_gt(result.hits, 0, "%s: the car hit the side" % what)
-	# The hit brought the car's 1 x 1 footprint into the platform's rectangle:
+	# The hit brought the car's drawn outline to the platform's side (T-411; before it, its 1 x 1 footprint into the rectangle):
 	# the moment the old footprint rule drew it over the platform.
-	assert_lt(result.closest, scene.DEPTH_RADIUS, "%s: the footprint reached the side" % what)
+	# T-411: the drawn outline (3 x 1) stops at the side, so the centre waits up to its corner's reach out.
+	assert_lt(result.closest, _DRAWN_REACH, "%s: the drawn car reached the side" % what)
 	assert_gte(result.closest, 0.0, "%s: the centre stayed outside" % what)
 
 

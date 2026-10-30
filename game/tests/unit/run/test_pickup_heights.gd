@@ -87,6 +87,7 @@ func test_a_coin_on_a_rooftop_is_drawn_at_its_height() -> void:
 func test_a_coin_and_a_health_pickup_on_a_rooftop_are_not_picked_up_from_below() -> void:
 	var c = run.minions.spawn_coin_at(ROOF_EDGE)
 	var hp = run.minions.spawn_health_pickup_at(ROOF_EDGE)
+	run.state.health = run.state.max_health - 1.0  # T-415: at full hearts it stays
 	_place(ROOF_EDGE)
 	run.car.height_model.height = 0.0  # as from the street below, at the wall
 	c._on_body_entered(run.car)

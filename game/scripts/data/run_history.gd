@@ -4,7 +4,7 @@ extends RefCounted
 ## file under user://, one entry per run, for the runs list screen (T-364).
 ## Game loop architecture, Decisions, "The runs list"; fields: game/docs/data/game-data.md.
 ##
-## A missing or broken file is an empty history. The history keeps the newest MAX_RUNS
+## A missing file is an empty history; a broken one is kept aside and the backup loads (T-417). The history keeps the newest MAX_RUNS
 ## runs (a proposal, for the board to change).
 
 const DEFAULT_PATH := "user://run_history.json"
@@ -18,6 +18,9 @@ const MAX_RUNS := 200
 signal changed
 
 var _runs: Array = []  # oldest first, as saved
+## Where the last load came from: "main", "backup" or "none"; and the save's version (T-417).
+var loaded_from: String = "none"
+var loaded_version: int = 1
 var _path: String
 
 
@@ -26,19 +29,15 @@ func _init(save_path: String = "") -> void:
 	load_from_disk()
 
 
-## Reads the file. Missing or broken: an empty history. Returns true if a file was read.
+## Reads the file (SafeSave: a broken file is kept aside and the backup is loaded;
+## neither: an empty history). Returns true if a save was read.
 func load_from_disk() -> bool:
 	_runs = []
-	if not FileAccess.file_exists(_path):
-		return false
-	var f := FileAccess.open(_path, FileAccess.READ)
-	if f == null:
-		return false
-	var json := JSON.new()
-	if json.parse(f.get_as_text()) != Error.OK:
-		return false
-	var parsed: Variant = json.data
-	if typeof(parsed) != TYPE_DICTIONARY or typeof(parsed.get("runs", null)) != TYPE_ARRAY:
+	var res := SafeSave.read(_path, "runs")
+	loaded_from = res["source"]
+	loaded_version = res["version"]
+	var parsed: Dictionary = res["data"]
+	if loaded_from == "none" or typeof(parsed.get("runs", null)) != TYPE_ARRAY:
 		return false
 	for entry in parsed["runs"]:
 		if typeof(entry) == TYPE_DICTIONARY:
@@ -46,14 +45,9 @@ func load_from_disk() -> bool:
 	return true
 
 
-## Writes the file. Returns true on success.
+## Writes the file safely (temp file, rename, backup; SafeSave). Returns true on success.
 func save() -> bool:
-	var f := FileAccess.open(_path, FileAccess.WRITE)
-	if f == null:
-		push_error("Could not write the run history %s" % _path)
-		return false
-	f.store_string(JSON.stringify({"runs": _runs}, "\t"))
-	return true
+	return SafeSave.write(_path, {"runs": _runs}, "runs")
 
 
 ## Adds a finished run: its recap (RunState.recap()) plus "ended_at" (the local date
