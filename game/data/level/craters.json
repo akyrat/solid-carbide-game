@@ -1,0 +1,33 @@
+{
+ "about": "T-398: the level creator's meteor craters (Level design, Decisions, \"Sidewalks and parked cars in the level creator\", Meteor craters): ground decals the car drives over, no crash. Placeholders drawn by game/tools/build_street_pieces.py from T-397's approved crater; T-399 swaps the art by changing the textures here and the PNGs. The footprint is a square of whole ground cells; the texture is its diamond (128 x 64 art px per 2 x 2 units, drawn at draw_scale). Do not edit by hand.",
+ "draw_scale": 0.5,
+ "craters": [
+  {
+   "id": "crater-1",
+   "label": "piece_meteor_crater",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "texture": "res://art/craters/crater_1.png"
+  },
+  {
+   "id": "crater-2",
+   "label": "piece_meteor_crater",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "texture": "res://art/craters/crater_2.png"
+  },
+  {
+   "id": "crater-3",
+   "label": "piece_meteor_crater",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "texture": "res://art/craters/crater_3.png"
+  }
+ ]
+}

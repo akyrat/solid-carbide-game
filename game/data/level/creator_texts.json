@@ -103,5 +103,14 @@
   "spawn_hint": {"text": "Start: drag to move. R: turn.", "where": "Editor top bar (T-279): hint while the spawn point is selected; R turns the car's starting heading, the same key as turning a piece."},
   "spawn_blocked": {"text": "Can't start here: it's blocked.", "where": "Editor top bar (T-279): message when the spawn point is dropped inside a building, on an obstacle or off the map; it goes back to where it was."},
   "spawn_no_delete": {"text": "The start can't be deleted.", "where": "Editor top bar (T-279): message when the board tries to delete the spawn point; a level always has one."},
-  "controls_hint_spawn": {"text": "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete.", "where": "Editor: hint line along the screen edge with moving the start added (T-279). Replaces controls_hint_pairs, which is kept unchanged."}
+  "controls_hint_spawn": {"text": "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete.", "where": "Editor: hint line along the screen edge with moving the start added (T-279). Replaces controls_hint_pairs, which is kept unchanged."},
+  "piece_sidewalk": {"text": "Sidewalk", "where": "Editor side panel, Ground (T-396): button for the sidewalk, painted by dragging; the curb is added where it meets a road (T-398)."},
+  "piece_meteor_crater": {"text": "Meteor crater", "where": "Editor side panel, Ground (T-401): button for the meteor crater, after Sidewalk; the car drives over it (T-398)."},
+  "piece_parked_car": {"text": "Parked car", "where": "Editor side panel, Obstacles (T-396): button for the parked car, after Crates (T-398)."},
+  "piece_broken_car": {"text": "Broken car", "where": "Editor side panel, Obstacles (T-396): button for the broken car, after Parked car (T-398)."},
+  "model_counter": {"text": "Model {n} of {count}", "where": "Editor side panel, looks strip under a picked parked car, broken car or meteor crater (T-396, T-401): which model is chosen; {n} and {count} are filled in by the creator (T-398)."},
+  "facing_top_right": {"text": "Facing top right", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."},
+  "facing_bottom_right": {"text": "Facing bottom right", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."},
+  "facing_bottom_left": {"text": "Facing bottom left", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."},
+  "facing_top_left": {"text": "Facing top left", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."}
 }

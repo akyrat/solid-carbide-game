@@ -195,6 +195,8 @@ def build(raw_dir=RAW, out_dir=OUT, props_json=PROPS_JSON, write_json=True):
     os.makedirs(out_dir, exist_ok=True)
     for prop in data["props"]:
         name = prop["id"][len("prop-"):].replace("-", "_")
+        if name not in SPECS:
+            continue  # T-398: a prop still on its placeholder (the cars, until T-399's art)
         spec = SPECS[name]
         raw = np.array(Image.open(os.path.join(raw_dir, spec["raw"] + "_raw.png")).convert("RGBA"))
         if spec.get("keep"):
@@ -245,6 +247,8 @@ def check():
         data = json.load(f)
     ok = True
     for prop in data["props"]:
+        if prop["id"][len("prop-"):].replace("-", "_") not in SPECS:
+            continue  # T-398: still a placeholder (build_prop_art.py checks it)
         for rot in ROTATIONS:
             t = prop["textures"][rot]
             png = os.path.join(GAME, t["texture"].replace("res://", ""))

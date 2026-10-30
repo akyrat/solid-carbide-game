@@ -150,6 +150,30 @@ def ground_entries(atlas, road_tile):
     return out
 
 
+def sidewalk_entries(sheet):
+    """T-398: one ground entry per sidewalk curb piece (art/ground/sidewalk_tiles.json, built by
+    build_street_pieces.py). Not in the ground atlas: the run draws each from the sheet's region (a ground
+    layout's "extra", LevelGround). "sidewalk" names its curbs: {edges, corners}."""
+    out = []
+    for t in sheet["tiles"]:
+        out.append({"id": t["name"], "kind": "ground", "footprint_units": [GROUND_CELL, GROUND_CELL],
+                    "views": ["iso"], "mirrors": [False],
+                    "sidewalk": {"edges": t["edges"], "corners": list(t["corners"])},
+                    **({} if t["name"] == "sidewalk" else {"part": True}),
+                    "textures": [{"view": "iso", "mirror": False, "variant": t["name"], "texture": sheet["file"],
+                                  "region": list(t["region"])}]})
+    return out
+
+
+def crater_entries(craters):
+    """T-398: the meteor craters (data/level/craters.json): ground decals placed on the street, kind
+    "crater"; the car drives over them."""
+    return [{"id": c["id"], "kind": "crater", "footprint_units": [float(v) for v in c["footprint_units"]],
+             "label": c["label"], "views": ["iso"], "mirrors": [False],
+             "textures": [{"view": "iso", "mirror": False, "variant": "", "texture": c["texture"]}]}
+            for c in craters["craters"]]
+
+
 PIECE_DIR = "art/creator_pieces/"
 PIECE_STYLE = "res://" + PIECE_DIR + "piece_style.tres"
 # T-251 (proposals for the board's playtest): a rooftop is dragged to any even size from
@@ -265,12 +289,20 @@ SIMPLE_FAMILIES = [
     ("barrier", "obstacles", "piece_barrier", ["prop-barrier"]),
     ("cones", "obstacles", "piece_cones", ["prop-cones"]),
     ("crates", "obstacles", "piece_crates", ["prop-crates"]),
+    # T-398: the parked and broken cars, each model a look (V), the four facings its turns (R).
+    ("parked-car", "obstacles", "piece_parked_car", ["prop-parked-car-1", "prop-parked-car-2", "prop-parked-car-3"]),
+    ("broken-car", "obstacles", "piece_broken_car", ["prop-broken-car-1", "prop-broken-car-2"]),
+    ("meteor-crater", "ground", "piece_meteor_crater", ["crater-1", "crater-2", "crater-3"]),
     ("street-lamp", "decoration", "piece_street_lamp", ["prop-street-lamp"]),
     ("ac-unit", "decoration", "piece_ac_unit", ["prop-ac-unit"]),
     ("water-tank", "decoration", "piece_water_tank", ["prop-water-tank"]),
     ("roof-vent", "decoration", "piece_roof_vent", ["prop-roof-vent"]),
     ("roof-sign", "decoration", "piece_roof_sign", ["prop-roof-sign"]),
 ]
+# T-398: the families whose looks strip counts models ("Model {n} of {count}", model_counter, T-396)
+# and whose turns the top bar names as facings (facing_*, T-396).
+MODEL_FAMILIES = ["parked-car", "broken-car", "meteor-crater"]
+FACING_FAMILIES = ["parked-car", "broken-car"]
 # Families stepped by height (H): the entry for each height, in order.
 HEIGHT_FAMILIES = [
     ("platform", "levels", "piece_platform", [("3", "rooftop-3"), ("6", "rooftop-6")]),
@@ -278,9 +310,9 @@ HEIGHT_FAMILIES = [
                                          ("0-2", "ramp-0-2"), ("3-5", "ramp-3-5"), ("6-8", "ramp-6-8")]),
 ]
 # The panel's order: by group, buildings smallest to tallest.
-FAMILY_ORDER = ["road", "centre-line", "zebra-crossing", "cracked-road", "gravel", "platform", "ramp",
-                "building-small", "building-long", "lowrise", "skyscraper", "boulder", "barrier", "cones",
-                "crates", "street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"]
+FAMILY_ORDER = ["road", "centre-line", "zebra-crossing", "cracked-road", "gravel", "sidewalk", "meteor-crater",
+                "platform", "ramp", "building-small", "building-long", "lowrise", "skyscraper", "boulder", "barrier",
+                "cones", "crates", "parked-car", "broken-car", "street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"]
 # Pavement (piece_pavement) is left out: the only pavement art is the 30-unit block pavements drawn
 # under buildings (cityB_pavement_*.png, 960 x 486 px), not a 2 x 2 unit ground tile.
 
@@ -361,6 +393,17 @@ def family_entries(entries):
         for look, aid in enumerate(ids):
             ms += entry_members(by_id[aid], look)
         fams.append(summarise(fid, group, label, ms))
+    # T-398: the sidewalk is a brush ("sidewalk", scripts/level_creator/sidewalk_brush.gd): painted cell by
+    # cell, its curbs picked by the editor. Its picture is the plain tile.
+    if "sidewalk" in by_id:
+        sw = summarise("sidewalk", "ground", "piece_sidewalk", [member("sidewalk", "iso", False, 0, 0)])
+        sw["brush"] = "sidewalk"
+        fams.append(sw)
+    for f in fams:
+        if f["id"] in MODEL_FAMILIES:
+            f["counter"] = "model_counter"
+        if f["id"] in FACING_FAMILIES:
+            f["facing_labels"] = True
     fams.sort(key=lambda f: FAMILY_ORDER.index(f["id"]))
     return fams
 
@@ -376,6 +419,8 @@ def build():
     entries += boulder_entries(load("art/boulders/boulders.json"))
     entries += elevation_entries(load("data/level/elevation_sample_map.json"))
     entries += prop_entries(load("data/level/props.json"))
+    entries += sidewalk_entries(load("art/ground/sidewalk_tiles.json"))
+    entries += crater_entries(load("data/level/craters.json"))
     return {
         "about": "T-232: every placeable asset already in the game, built by game/tools/build_creator_assets.py "
                  "from the art data. Do not edit by hand; rebuild with the script.",

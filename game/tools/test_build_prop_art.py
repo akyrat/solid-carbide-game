@@ -15,7 +15,9 @@ import build_creator_assets as bc  # noqa: E402
 import build_prop_art as bp  # noqa: E402
 
 PROP_IDS = ["prop-barrier", "prop-cones", "prop-crates", "prop-ac-unit", "prop-water-tank",
-            "prop-roof-vent", "prop-street-lamp", "prop-roof-sign"]
+            "prop-roof-vent", "prop-street-lamp", "prop-roof-sign",
+            # T-398: the parked and broken cars (placeholders until T-399)
+            "prop-parked-car-1", "prop-parked-car-2", "prop-parked-car-3", "prop-broken-car-1", "prop-broken-car-2"]
 
 
 class PropsDataTest(unittest.TestCase):
@@ -23,7 +25,7 @@ class PropsDataTest(unittest.TestCase):
     def setUpClass(cls):
         cls.data = bp.load()
 
-    def test_the_eight_props_in_four_rotations(self):
+    def test_the_props_in_four_rotations(self):
         self.assertEqual([p["id"] for p in self.data["props"]], PROP_IDS)
         self.assertEqual(self.data["rotations"], ["north", "east", "south", "west"])
         for p in self.data["props"]:

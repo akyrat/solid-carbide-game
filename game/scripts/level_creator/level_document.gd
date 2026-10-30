@@ -42,6 +42,10 @@ extends RefCounted
 ##   Obstacles group's props) named by their refs (ObstaclePairs); make_pair, unpair, pair_of.
 ##   Deleting either obstacle removes its pair. An obstacle can be in several pairs (T-394: a row
 ##   paired as a chain, make_chain); the same two obstacles make one pair at most (pair_between).
+## - sidewalk (T-398): ground tiles like the roads', painted with SidewalkBrush; every write of the
+##   cells gives each sidewalk cell the tile of its curb piece (the roads next to it).
+## - crater (T-398; data/level/craters.json): {id, asset, x, y, w, h} in craters, a meteor crater on
+##   the street: a ground decal the car drives over (no body), drawn over the ground tiles.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -58,7 +62,7 @@ const CELL := 2
 const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
-const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop"]
+const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater"]
 const LEGEND := {"R": "road", "G": "gravel", "B": "building"}
 ## mvp_map.gd's ground tiles: cell values from here on draw the layout's "extra" textures.
 const EXTRA_BASE := 1000
@@ -328,6 +332,7 @@ func set_cells(changes: Dictionary) -> void:
 
 ## Writes `cells` into data.ground (tiles used, and an index per cell).
 func _write_cells() -> void:
+	SidewalkBrush.rejoin(self)  # T-398: the curbs follow the roads
 	var tiles: Array = []
 	var index := {}
 	var out_rows: Array = []
@@ -408,7 +413,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	mirror = valid_mirror(asset_id, mirror)
 	var foot := piece_size(asset_id, view, size, map_rect().size, mirror)
 	var resizable := is_resizable(asset_id)
-	if (resizable or kind == "prop") and not _holds(map_rect(), Rect2(corner, foot)):
+	if (resizable or kind in ["prop", "crater"]) and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
 	var tex := texture_of(asset_id, view, mirror, variant)
 	match kind:
@@ -439,6 +444,11 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			var copy := {"id": _next_id("pattern_copies", "boulder-"), "boulders": [boulder]}
 			_list("pattern_copies").append(copy)
 			return {"kind": kind, "item": boulder, "copy": copy}
+		"crater":
+			var cr := {"id": _next_id("craters", "crater-"), "asset": asset_id,
+				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
+			_list("craters").append(cr)
+			return {"kind": kind, "item": cr}
 		"prop":
 			var pr := {"id": _next_id("props", "prop-"), "asset": asset_id, "rotation": view,
 				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
@@ -633,6 +643,9 @@ func piece_at(units: Vector2) -> Dictionary:
 	for b in _list("buildings"):
 		if _rect(b).has_point(units):
 			return {"kind": "building", "item": b}
+	for cr in data.get("craters", []):
+		if _rect(cr).has_point(units):
+			return {"kind": "crater", "item": cr}
 	var c := cell_at(units)
 	if c.x < 0:
 		return {}
@@ -703,6 +716,9 @@ func _delete(piece: Dictionary) -> bool:
 				return true
 		"prop":
 			if _erase_same(_list("props"), piece.item):
+				return true
+		"crater":
+			if _erase_same(_list("craters"), piece.item):
 				return true
 	return false
 
@@ -1012,4 +1028,6 @@ func placed_pieces() -> Array:
 		out.append({"kind": "ramp", "item": r})
 	for pr in data.get("props", []):
 		out.append({"kind": "prop", "item": pr})
+	for cr in data.get("craters", []):
+		out.append({"kind": "crater", "item": cr})
 	return out
