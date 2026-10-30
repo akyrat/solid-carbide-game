@@ -37,6 +37,8 @@ extends Node2D
 const HelicopterScene := preload("res://scenes/run/gift_helicopter.tscn")
 const PackageScene := preload("res://scenes/run/gift_package.tscn")
 const ArrowsScript := preload("res://scripts/run/gift_arrows.gd")
+## T-407: the car's air shadow (car_shadow.gd), reused for a falling package's landing spot.
+const ShadowScript := preload("res://scripts/driving/car_shadow.gd")
 
 const PX_PER_UNIT := 16.0
 ## Same 2:1 isometric projection as the run and the map.
@@ -103,6 +105,9 @@ func _on_level_up(new_level: int) -> void:
 
 ## Removes every helicopter and package (a new run).
 func clear() -> void:
+	for pkg in packages:
+		if is_instance_valid(pkg):
+			_remove_shadow(pkg)
 	for n in helicopters + packages:
 		if is_instance_valid(n):
 			n.queue_free()
@@ -345,7 +350,41 @@ func _drop(heli: GiftHelicopter) -> void:
 	var room := pkg.drawn_ground.y - (visible_rect().position.y + data.screen_margin() + art_height(pkg.sprite()))
 	pkg.drop_height = clampf(wanted, 0.0, maxf(room, 0.0))
 	pkg.position = pkg.drawn_ground + Vector2(0, -pkg.drop_height)
+	_add_shadow(pkg)
 	package_dropped.emit(pkg)
+
+
+## T-407 (Game loop architecture, Decisions, "A falling gift pack shows its
+## shadow"): while `pkg` falls, the car's shadow (car_shadow.gd, no new art)
+## lies at its landing spot, at the height of the ground it lands on, in the
+## depth order the car's shadow has there. Removed when it lands.
+func _add_shadow(pkg: GiftPackage) -> void:
+	_remove_shadow(pkg)
+	var sh: Node2D = ShadowScript.new()
+	sh.name = "Shadow" + pkg.name
+	sh.view_basis = ISO_TRANSFORM
+	add_child(sh)
+	sh.place(pkg.ground_units(), pkg.ground_height)
+	sh.z_index = shadow_z(pkg)
+	pkg.shadow = sh
+
+
+func _remove_shadow(pkg: GiftPackage) -> void:
+	if pkg.shadow != null and is_instance_valid(pkg.shadow):
+		pkg.shadow.queue_free()
+	pkg.shadow = null
+
+
+## The depth order of a falling package's shadow: the car's shadow rule at the
+## landing spot (on a map without rooftops, just under the car's order).
+func shadow_z(pkg: GiftPackage) -> int:
+	var map: Node = run.map
+	if map == null:
+		return 0
+	var elev = map.get("elevation")
+	if elev != null:
+		return elev.shadow_z_for(pkg.ground_units(), 0.0, pkg.ground_height, pkg.ground_height)
+	return (map.car_z_index(pkg.ground_units(), 0.0) - 1) if map.has_method("car_z_index") else 0
 
 
 ## Floats down under its parachute at a steady speed and lands after
@@ -360,6 +399,7 @@ func _fall(pkg: GiftPackage, delta: float) -> void:
 
 func _land(pkg: GiftPackage) -> void:
 	pkg.phase = GiftPackage.LANDED
+	_remove_shadow(pkg)
 	pkg.position = pkg.drawn_ground
 	pkg.refresh_look()
 	pkg.z_index = landed_z(pkg)
@@ -388,6 +428,7 @@ func pick_up(pkg: GiftPackage) -> void:
 	if not packages.has(pkg):
 		return
 	packages.erase(pkg)
+	_remove_shadow(pkg)
 	pkg.queue_free()
 	package_picked_up.emit(pkg)
 	state.open_choice(pkg.level)

@@ -30,6 +30,8 @@ var drawn_ground := Vector2.ZERO
 ## street, a rooftop's height when it lands on one. drawn_ground is lifted by it.
 var ground_height := 0.0
 var phase := CARRIED
+## T-407: the car's air shadow at the landing spot while it falls (gift_drops.gd); null otherwise.
+var shadow: Node2D = null
 ## Seconds since the drop, and the fall's length and height (gift_pack.json).
 var fall_t := 0.0
 var fall_seconds := 0.0

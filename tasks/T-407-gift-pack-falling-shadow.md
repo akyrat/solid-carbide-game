@@ -1,7 +1,7 @@
 ---
 id: T-407
 title: A falling gift pack casts a shadow where it will land, like the car's shadow in the air
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -52,10 +52,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Started in build E, on top of T-402 (pickups at their height).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built. `GiftDrops._drop()` adds the car's own air shadow (`car_shadow.gd`, no new art) at the landing spot, at the ground's height there (street or rooftop), in the car's shadow depth order (`elevation.shadow_z_for`; `car_z_index - 1` without rooftops). It is kept in `GiftPackage.shadow` and removed on landing (also on pickup and a new run). Like the car's, it does not grow or darken as the package nears (the car's shadow does not change with height). Not shown while the helicopter still carries the package. Kept to the falling shadow: T-405's colliders are untouched.
+
+Tests: new `game/tests/unit/run/test_gift_drops_shadow.gd` (4 tests: the car's shadow script at the landing spot on the ground; at the platform's height with the right depth order; still while falling and freed on landing; none while carried, cleared by `clear()`). Counts: Godot 162 scripts, 2007 tests, all passing; `game/tools` Python 686 (1 skipped) OK; `tools` Python 579 OK.
+
+Docs: `docs/game-loop-architecture.md` (the falling shadow, under "The gift pack drop"), `game/docs/game-loop/gift-pack-and-pickups.md` ("Falling shadow (T-407)").
+
+GIFs (fixture `game/tests/fixtures/gift_pack_shadow_demo.tscn`): `art-archive/T-407/screenshots/gift_shadow_street.gif` (ground) and `gift_shadow_roof.gif` (rooftop, height 6). A contact sheet of the roof one shows the shadow under the parachute on the rooftop.
