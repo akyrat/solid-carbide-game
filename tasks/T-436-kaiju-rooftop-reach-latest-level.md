@@ -1,7 +1,7 @@
 ---
 id: T-436
 title: The kaiju reaches a rooftop car on the board's latest level
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/enemies.md, tasks/T-419-kaiju-path-size.md, game/tests/unit/enemies/test_kaiju_path_size.gd, game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/enemy_path_follower.gd, game/docs/enemies/ledges-and-rooftops.md]
 files_expected_to_change: [game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/enemy_path_follower.gd, game/tests/unit/enemies/test_kaiju_path_size.gd]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Audit: started from master in C:\solid-carbide-worktrees\T-436 with T-419's Enem
 ### 2026-10-30, In progress → In QA
 
 Audit: the agent finished. Cause: the kaiju looped re-planning at the foot of ramp-12 near (-79, 46), not cut off; fixed in enemy_navigation.gd through_ramps(). Also changed T-380's reproduction test, which reproduced the same loop (now stricter). In QA now.
+
+### 2026-10-30, In QA → Needs playtest
+
+Audit: QA passed all 5 criteria and the three test sets (twice). Waiting for the board to play it in C:\solid-carbide-worktrees\T-436, or to say it may merge now to unblock master.
 
 ## QA report (round 1)
 
