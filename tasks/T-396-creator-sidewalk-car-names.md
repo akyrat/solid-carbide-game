@@ -1,7 +1,7 @@
 ---
 id: T-396
 title: Text: the level creator's names for the sidewalk and the parked and broken cars
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -39,8 +39,8 @@ The board's decision (Level design, Decisions, "Sidewalks and parked cars in the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Level design, Content, "Level creator text" lists the names for the sidewalk, the parked car and the broken car, with where each appears. (QA: pass / fail)
-- [ ] Each name went through the style loop, with its score in the Style review. (QA: pass / fail)
+- [ ] Level design, Content, "Level creator text" lists the names for the sidewalk, the parked car and the broken car, with where each appears. (QA: pass)
+- [ ] Each name went through the style loop, with its score in the Style review. (QA: pass)
 
 ## Updates
 
@@ -49,6 +49,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: the narrative agent writes the names for the sidewalk and the parked and broken cars.
+
+### 2026-10-30, In progress → In QA
+
+Names written in Level design (Sidewalk, Parked car, Broken car, model and facing labels), style loop 9/10.
 
 ## Style review
 
