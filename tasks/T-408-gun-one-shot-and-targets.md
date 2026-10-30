@@ -1,7 +1,7 @@
 ---
 id: T-408
 title: Gun: one-shots a minion from tier 1; upgrades are +1 bullet x2, faster x2, 3 targets, +1 bullet x2, faster x2, 5 targets
-status: open
+status: blocked
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -58,6 +58,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Started in build F: the gun one-shots minions and grows in bullets, speed and targets.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -65,3 +69,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+### 2026-10-30, Weapon Behavior Agent: stopped before building (a tier line shows on the level-up card)
+
+The description says: "The level-up card shows the weapon, not per-tier text (check `screen_texts.json`); if a tier line does show, stop and tell the Project Lead (a text ticket comes first)." A tier line does show, so no code or data was changed.
+
+- **Where:** `game/scripts/ui/level_up_screen.gd` `card_text(id)` builds the key `upgrade_<weapon>.tier<N>` (N = the weapon's tier now + 1) and the card draws its `.title` and `.desc` (lines 450, 506, 512). The text lives in `game/scripts/ui/level_up_texts.gd` (not in `screen_texts.json`, which has no gun lines).
+- **The gun's lines today** (`level_up_texts.gd` lines 13 to 26), tiers 2 to 8 only: tier 2 "Bonus Bullets" ("Two extra bullets per volley, 3 in all"), 3 "Quicker Trigger" (20% faster), 4 "Quicker Trigger II", 5 "Long Reach" (range 12 to 18), 6 "More Bonus Bullets" ("5 in all"), 7 "Quicker Trigger III", 8 "Through and Through" (pierce).
+- **What the new tiers would show:** tier 2 would claim two extra bullets (now one), tier 5 a range that no longer grows, tier 6 more bullets (now targets up to 3), tier 8 pierce (now +1 bullet), and tiers 9, 10 and 11 would have empty cards (no keys). The UI test `test_level_up_screen.gd` `test_every_choice_and_tier_the_offers_can_produce_has_text` would also fail once the gun reaches 11 (it checks every offerable tier has a title, and counts `7 + 5 * 8` choices).
+- **The text ticket needs** ten gun card lines (title and description each) for `upgrade_gun.tier2` to `upgrade_gun.tier11`, in the order the description gives: 2 and 3 "+1 bullet" (2, then 3 bullets per volley), 4 and 5 "fires faster", 6 "aims at up to 3 enemies at once", 7 and 8 "+1 bullet" (4, then 5), 9 and 10 "fires faster", 11 "aims at up to 5 enemies at once". The exact intervals are still my proposal; if the text should quote numbers, I propose a tier 1 interval of 1.26 s as today, then each "faster" tier multiplying the fire rate by 1.25: 1.02 and 0.83 s at tiers 4 and 5, 0.68 and 0.55 s at tiers 9 and 10 (base 1.2 / rate + 0.06). Safer for the text to say "faster" without a number.
+- After the text is in, this ticket's build is unchanged in scope: a per-weapon last tier in `weapons.json` (gun 11, the others stay 8) read by `WeaponData`/`weapon.gd` so the level-ups offer the gun to 11; tier 1 damage at least the minion's 4 health (today 2); the new tier effects and targeting rule; the UI test's count; tests, docs and the GIF.
+
+Tests: none run (nothing changed). Documents affected: none yet.
+- 2026-10-30, in-progress → blocked: Stopped: the level-up card shows per-tier gun text (level_up_texts.gd); a text ticket for upgrade_gun.tier2-11 comes first.
