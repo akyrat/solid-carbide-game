@@ -1,7 +1,7 @@
 ---
 id: T-428
 title: The HUD reads its fonts, colours and outlines from one shared HUD style (looks unchanged)
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -49,6 +49,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-428.
+
+### 2026-10-30, In progress → In QA
+
+Goal runner (G-008): the agent is done; QA is checking it.
 
 ## Style review
 
