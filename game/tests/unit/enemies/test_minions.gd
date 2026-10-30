@@ -405,10 +405,10 @@ func test_a_damaged_minion_is_tinted_briefly_then_back_to_normal() -> void:
 	var m := _live_minion()
 	assert_eq(m.sprite.modulate, Color.WHITE)
 	m.take_damage(1.0)
-	assert_eq(m.sprite.modulate, HitTint.TINT, "tinted at once")
-	m.hit_tint._process(HitTint.DURATION * 0.5)
-	assert_eq(m.sprite.modulate, HitTint.TINT, "still tinted halfway")
-	m.hit_tint._process(HitTint.DURATION)
+	assert_eq(m.sprite.modulate, HitTint.proto().color, "tinted at once")
+	m.hit_tint._process(HitTint.proto().seconds * 0.5)
+	assert_eq(m.sprite.modulate, HitTint.proto().color, "still tinted halfway")
+	m.hit_tint._process(HitTint.proto().seconds)
 	assert_eq(m.sprite.modulate, Color.WHITE, "back to normal")
 	assert_false(m.hit_tint.is_active())
 
@@ -427,15 +427,40 @@ func test_hit_tint_leaves_another_tint_alone() -> void:
 	assert_eq(m.sprite.modulate, orange)
 
 
-func test_the_kill_hit_does_not_tint_and_the_tint_is_not_heart_red() -> void:
+func test_the_kill_hit_does_not_flash_and_the_flash_is_the_cars() -> void:
 	var m := _live_minion()
 	m.take_damage(1000.0)
-	assert_false(m.hit_tint.is_active())
-	var t: Color = HitTint.TINT
-	var heart_red := Color(0.86, 0.1, 0.16)
-	var sat := (t.get_luminance() * 0.0) + (maxf(t.r, maxf(t.g, t.b)) - minf(t.r, minf(t.g, t.b))) / maxf(t.r, 0.001)
-	assert_gt(Vector3(t.r, t.g, t.b).distance_to(Vector3(heart_red.r, heart_red.g, heart_red.b)), 0.5, "far from the heart's red")
-	assert_lt(sat, 0.4, "a slight hue, not a saturated red")
+	assert_false(m.hit_tint.is_active(), "T-404 proposal: a kill skips the flash")
+	var d := RunData.new()
+	assert_eq(HitTint.proto().color, d.hit_flash_color(), "the car's red, from run.json")
+	assert_eq(HitTint.proto().seconds, d.hit_flash_seconds(), "the car's length")
+
+
+func test_many_minions_flash_with_one_shared_proto_and_stop_processing() -> void:
+	var list: Array = []
+	for i in 30:
+		list.append(spawner.spawn_minion_at(run.car.position / 16.0 + Vector2(4 + i, 0)))
+	var proto_before := HitTint.proto()
+	for m in list:
+		m.take_damage(1.0)
+	for m in list:
+		assert_eq(m.sprite.modulate, proto_before.color)
+		assert_true(m.hit_tint.is_processing())
+	for m in list:
+		m.hit_tint._process(proto_before.seconds + 0.1)
+		m.hit_tint._process(0.0)
+		assert_eq(m.sprite.modulate, Color.WHITE)
+		assert_false(m.hit_tint.is_processing(), "idle: no per-frame cost")
+	assert_same(HitTint.proto(), proto_before, "the numbers are read once")
+
+
+func test_a_new_hit_restarts_the_flash() -> void:
+	var m := _live_minion()
+	m.take_damage(1.0)
+	m.hit_tint._process(HitTint.proto().seconds * 0.9)
+	m.take_damage(1.0)
+	m.hit_tint._process(HitTint.proto().seconds * 0.9)
+	assert_eq(m.sprite.modulate, HitTint.proto().color, "restarted, still red")
 
 
 func test_coin_art_has_no_heart_red() -> void:
