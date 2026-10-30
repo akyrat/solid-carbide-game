@@ -194,6 +194,50 @@ func test_a_minion_with_a_clear_line_walks_straight_on_any_surface() -> void:
 	assert_eq(f.sight_checks, checks, "one sight check per SIGHT_SECONDS")
 
 
+## After T-405: a short building's platform (block@66,12, x 82.5..94.5, y 28.5..40.5,
+## height 3) has its edges on half units, inside cells whose centres are on the
+## street. The line past its south-east corner, one body's half width beside
+## it, is not clear (the true ground is checked in those rough cells); a line
+## that keeps clear of it still is.
+func test_line_clear_sees_a_short_platforms_corner_off_the_grid() -> void:
+	assert_eq(ground.height_at(Vector2(94.2, 40.2)), 3.0, "the platform's corner, in a street cell")
+	assert_eq(nav.heights[nav.cell_at(Vector2(94.2, 40.2))], 0.0, "whose centre is on the street")
+	assert_false(nav.line_clear(Vector2(95.0, 40.2), Vector2(81, 46), 0.5), "past the corner: not clear")
+	assert_true(nav.line_clear(Vector2(95.0, 42.0), Vector2(81, 46), 0.5), "south of it: clear")
+
+
+## The path round that platform keeps its points a body's reach off its edges
+## (enemy_navigation.gd, off_edges): before, the cells beside it put points 0.5
+## units off its edge, where the body (0.5 off an edge) could not pass.
+func test_a_path_round_a_short_platform_keeps_off_its_edges() -> void:
+	var plat := Rect2(82.5, 28.5, 12, 12)
+	var path: PackedVector2Array = nav.find_path(Vector2(99.4, 27.6), Vector2(81, 46))
+	assert_gt(path.size(), 2)
+	for p in path:
+		var dx := maxf(maxf(plat.position.x - p.x, p.x - plat.end.x), 0.0)
+		var dy := maxf(maxf(plat.position.y - p.y, p.y - plat.end.y), 0.0)
+		assert_gte(Vector2(dx, dy).length(), 0.99, "point %s off the platform" % p)
+	# Grid-aligned edges (the elevation map's rooftops) leave a path as it was.
+	var ids: PackedInt64Array = nav.astar.get_id_path(nav.cell_at(Vector2(-100, -50)), nav.cell_at(Vector2(-60, -50)))
+	var plain := PackedVector2Array()
+	for k in ids:
+		plain.append(nav.cell_centre(k))
+	assert_eq(nav.off_edges(plain.duplicate()), plain, "along the street past ramp-nw-0-3")
+
+
+## T-380 widened what a path means (a minion by sight also detours on the car's
+## own surface), so the far-off removal keeps only minions on another surface.
+func test_a_far_minion_detouring_on_the_cars_surface_is_still_removed() -> void:
+	_place_car(Vector2(81, 46))
+	var m: Node = spawner.spawn_minion_at(Vector2(99.4, 27.6))
+	m.follower.by_sight = true
+	m.follower.target(nav, m.position_units(), _car_units(), DT, false)
+	assert_true(m.follower.has_path(), "going round the platform on the street")
+	spawner.visible_rect_override = Rect2(-100000, -100000, 1, 1)  # everything is far off screen
+	spawner.enabled = true
+	spawner.step(DT)
+	assert_false(spawner.minions.has(m), "same surface as the car: removed")
+
 # --- The scripted chase (AC 2) -----------------------------------------------------
 
 ## A run's chase on the elevation map: the car stops in turn beside, at the foot

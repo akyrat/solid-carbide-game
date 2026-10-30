@@ -1,7 +1,7 @@
 ---
 id: T-380
 title: Bug: minions get stuck on walls at the bottom end of ramps
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -60,6 +60,10 @@ Fixed: minions now walk straight only when the way to the car is clear, otherwis
 
 QA passed: stuck minions 8 to 0 in the scripted chase, all three test sets green. Play the elevation map and watch minions round ramps.
 
+### 2026-10-30, Needs playtest → In progress
+
+Sent back: fails on top of master's platforms and bigger minions (2 minions stuck at a building corner). Fixing, then QA again.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -96,3 +100,20 @@ The fix works on any map with heights, levels from the level creator included, s
 **Refused.** A hook refused one `python -` heredoc for the doc edits, because its text named the ticket's art-archive folder. I made those edits with the Edit tool instead. Nothing else was refused.
 
 **Documents affected:** `docs/enemies.md` (Decisions, "Minions don't get stuck on ramps": built in T-380; Content, "Finding the way": the cause and the fix), `game/docs/enemies/minions.md` ("Round ramps and corners (T-380)"), `game/docs/enemies/ledges-and-rooftops.md` (`enemy_path_follower.gd`: `by_sight`, `line_clear`).
+- 2026-10-30, needs-playtest → in-progress: Merging into master stopped (2026-10-30): with master's T-405 platforms, T-379 bigger minions and T-406 revive, test_minions_round_ramps test_no_longer_stuck_on_a_building_side_or_its_corner and test_scripted_chase (2 stuck at 94.57,40.55 near the south-east building's corner), test_minions test_minions_far_behind_are_removed and test_wreck test_in_the_run_a_sliding_wreck_picks_up_a_health_pickup_and_drives_again fail. Back to the enemy-behavior agent: merge master in and fix.
+
+### 2026-10-30, the fix on top of master (T-405, T-379, T-406, T-408)
+
+Merged master into the branch (no conflicts). Causes and fixes:
+
+- **Stuck at the south-east short platform's corner** (test_no_longer_stuck_on_a_building_side_or_its_corner, the scripted chase: 2 stuck at (94.57, 40.55)). T-405 turned the short building block@66,12 into a height-3 platform at x 82.5..94.5, y 28.5..40.5. The navigation grid (2-unit cells) assumed every edge lies on even units, so the cells beside this platform have street heights at their centres while the platform reaches 0.5 into them. Two effects: `line_clear` saw a clear line past the corner, which the body (0.5 off an edge) could not walk; and a path's points sat 0.5 off the edge, where the body did not fit, and `walk()`'s detour side pointed it back north along the wall into the corner. Fix in `enemy_navigation.gd`: `rough` cells (an area's edge within BASE_MARGIN), where `line_clear` also samples the true ground every 0.25 units; and `off_edges()` on every found path, which moves a point in a rough cell 0.5 units away from higher ground found within 0.9 units (never a drop's landing point). Grid-aligned edges are 1 unit off every cell centre, so their paths are unchanged (tested).
+- **test_minions_far_behind_are_removed.** Walking by sight, a far minion on the street gets a path just to go round a T-405 platform, and `_despawn_far()` kept every minion with a path (meant for minions on their way to a ramp: before T-380 a path meant "on another surface"). Fix in `minion_spawner.gd`: kept only with a path and on another surface than the car. The test's assumption is still right, unchanged.
+- **test_wreck (sliding wreck picks up a health pickup):** not caused by this ticket. It failed once in my runs and passed on reruns (2 of 2, and in the full run); the Project Lead found it flaky on plain master (the gun kills minions near the wreck) and is giving it its own ticket. Not touched.
+
+New tests in `test_minions_round_ramps.gd`: the line past the platform's corner is not clear, the path round it keeps its points 1 unit off, grid-aligned paths are unchanged, a far minion detouring on the car's surface is removed. No existing test was loosened.
+
+Tests: game/tools 701 OK (1 skipped), tools 579 OK, GUT 2062 of 2062 passing.
+
+Refused: a hook refused `export $(grep GODOT_BIN .env | xargs)` (it can't tell `export $SUB` won't write a ticket). I passed the path as `GODOT_BIN='...' bash game/tools/run_tests.sh` instead, which runs only the test script.
+
+**Documents affected (this round):** `docs/enemies.md` (Content, "Finding the way"), `game/docs/enemies/minions.md` ("After T-405 and T-379"), `game/docs/enemies/ledges-and-rooftops.md` (`line_clear`, `off_edges`).

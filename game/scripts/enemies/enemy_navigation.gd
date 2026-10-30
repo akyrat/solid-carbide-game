@@ -9,8 +9,8 @@ extends RefCounted
 ## (3 or 6 units) and the high part of a ramp's sides are never linked, so the
 ## only ways between the street and a rooftop are the ramps. Why AStar2D on a
 ## grid: the map's heights are rectangles in the map file (ground_height.gd),
-## so a grid built from them is exact at CELL = 2 (every edge on the map lies
-## on even units), it needs no baking or navigation regions, and a link that
+## so a grid built from them is exact at CELL = 2 (every edge in the map file
+## lies on even units; T-405's short-building platforms do not, see rough), it needs no baking or navigation regions, and a link that
 ## exists only where the height allows is what an edge that blocks "like a
 ## wall" means. AStarGrid2D cannot leave out a link between two open cells,
 ## which is why it is AStar2D.
@@ -51,6 +51,16 @@ const META_KEY := "enemy_navigation"
 const PATHS_PER_STEP := 4
 ## line_clear's samples along a line, units (half a cell).
 const SIGHT_SAMPLE := 1.0
+## off_edges: how far round a path point higher ground is looked for, and how
+## far the point is moved away from each direction it is found in (units).
+const EDGE_PROBE := 0.9
+const EDGE_PUSH := 0.5
+const _EDGE_DIRS := [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1),
+	Vector2(0.70710678, 0.70710678), Vector2(-0.70710678, 0.70710678),
+	Vector2(0.70710678, -0.70710678), Vector2(-0.70710678, -0.70710678)]
+## line_clear's samples of the true ground in a rough cell, units (a ramp
+## climbs 0.25 units per unit, well under MAX_STEP over this step).
+const SIGHT_FINE := 0.25
 
 ## T-379: the margin grows with the minion's size (BASE_MARGIN times
 ## enemies.json minion.size_scale), so a bigger minion still fits the gaps it is
@@ -66,6 +76,12 @@ var rows := 0
 var heights := PackedFloat32Array()
 var open := PackedByteArray()
 var ramp_of := PackedInt32Array()
+## T-380, after T-405: 1 for a rough cell, one that an area's edge (a rooftop's,
+## a platform's or a ramp's) passes through or passes within BASE_MARGIN of.
+## The short buildings' platforms (T-405, short_platforms.gd) lie on half units,
+## so their edges cut through cells whose centre (and so whose height) is on the
+## street: line_clear checks the true ground in these cells.
+var rough := PackedByteArray()
 ## Microseconds the last build took (for the result notes and the soak).
 var build_usec := 0
 ## Paths found since the last new_step(), and in all.
@@ -132,6 +148,8 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], dro
 	open.fill(1)
 	ramp_of.resize(n)
 	ramp_of.fill(-1)
+	rough.resize(n)
+	rough.fill(0)
 	# Heights: only cells inside an area can be above 0.
 	var areas: Array = []
 	for p in ground.platforms:
@@ -140,6 +158,8 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], dro
 		areas.append(r.rect)
 	for rect in areas:
 		_for_cells_in(rect, func(k: int, c: Vector2) -> void: heights[k] = ground.height_at(c))
+	for rect in areas:
+		_mark_rough(rect)
 	for i in ground.ramps.size():
 		var ri: int = i
 		_for_cells_in(ground.ramps[i].rect, func(k: int, _c: Vector2) -> void: ramp_of[k] = ri)
@@ -222,6 +242,21 @@ func _square_level(a: int, b: int, c: int, d: int) -> bool:
 	return hi - lo <= EnemyHeightScript.MAX_STEP
 
 
+## Marks rough every cell whose square, grown by BASE_MARGIN, the edge of
+## `rect` passes through (it overlaps `rect` without lying wholly inside it).
+func _mark_rough(rect: Rect2) -> void:
+	var r := rect.grow(BASE_MARGIN + CELL)
+	var i0 := maxi(0, int(floor((r.position.x - origin.x) / CELL)))
+	var i1 := mini(cols - 1, int(floor((r.end.x - origin.x) / CELL)))
+	var j0 := maxi(0, int(floor((r.position.y - origin.y) / CELL)))
+	var j1 := mini(rows - 1, int(floor((r.end.y - origin.y) / CELL)))
+	for j in range(j0, j1 + 1):
+		for i in range(i0, i1 + 1):
+			var sq := Rect2(origin + Vector2(i, j) * CELL, Vector2(CELL, CELL)).grow(BASE_MARGIN)
+			if sq.intersects(rect) and not rect.encloses(sq):
+				rough[j * cols + i] = 1
+
+
 ## Calls f(cell index, cell centre) for every cell whose centre is inside `rect`.
 func _for_cells_in(rect: Rect2, f: Callable) -> void:
 	var i0 := maxi(0, int(ceil((rect.position.x - origin.x) / CELL - 0.5)))
@@ -290,6 +325,14 @@ func _cell_near(units: Vector2, h: float) -> int:
 ## rooftop edge and no ramp side where the ramp is high (it may cross a ramp's
 ## low foot, and climb along a ramp). The same rule as the grid's links, so a
 ## line that is not clear has a path round.
+##
+## After T-405 the grid is no longer exact (a short building's platform has
+## its edges on half units): where a line runs through a rough cell, the true
+## ground under it is also sampled every SIGHT_FINE units and must not change
+## by more than MAX_STEP between two samples. Before, a minion of T-379's size
+## saw the car clear past a platform's corner that lay in a street cell, walked
+## straight into the corner and stood there (its detour side pointed back
+## along the platform's long side).
 func line_clear(a: Vector2, b: Vector2, half_width: float = 0.0) -> bool:
 	var d := b - a
 	var length := d.length()
@@ -302,10 +345,15 @@ func line_clear(a: Vector2, b: Vector2, half_width: float = 0.0) -> bool:
 	var offsets := [Vector2.ZERO, side, -side] if half_width > 0.0 else [Vector2.ZERO]
 	for off in offsets:
 		var prev := -1
+		var prev_p := Vector2.ZERO
 		for s in n + 1:
-			var k := cell_at(a + off + d * (float(s) / float(n)))
+			var p: Vector2 = a + off + d * (float(s) / float(n))
+			var k := cell_at(p)
 			if k < 0:
 				return false
+			if prev >= 0 and (rough[k] == 1 or rough[prev] == 1) and not _ground_level(prev_p, p):
+				return false
+			prev_p = p
 			if k == prev:
 				continue
 			if open[k] == 0 and k != ka and k != kb:
@@ -313,6 +361,19 @@ func line_clear(a: Vector2, b: Vector2, half_width: float = 0.0) -> bool:
 			if prev >= 0 and absf(heights[k] - heights[prev]) > EnemyHeightScript.MAX_STEP:
 				return false
 			prev = k
+	return true
+
+
+## True when the true ground from `a` to `b` (sampled every SIGHT_FINE units)
+## changes by MAX_STEP at most between two samples: no edge on the way.
+func _ground_level(a: Vector2, b: Vector2) -> bool:
+	var m := maxi(1, ceili(a.distance_to(b) / SIGHT_FINE))
+	var h: float = ground.height_at(a)
+	for i in range(1, m + 1):
+		var g: float = ground.height_at(a.lerp(b, float(i) / float(m)))
+		if absf(g - h) > EnemyHeightScript.MAX_STEP:
+			return false
+		h = g
 	return true
 
 
@@ -339,7 +400,33 @@ func find_path(from: Vector2, to: Vector2) -> PackedVector2Array:
 	var ids := astar.get_id_path(a, b)
 	if ids.is_empty():
 		return PackedVector2Array()
-	return through_ramps(ids)
+	return off_edges(through_ramps(ids))
+
+
+## T-380, after T-405: moves each path point in a rough cell that is less than
+## EDGE_PROBE units from higher ground (more than MAX_STEP higher) EDGE_PUSH
+## units away from it. A short building's platform has its edges on half
+## units, so a cell centre beside it can be 0.5 units off its edge, where a
+## body that keeps BASE_MARGIN off an edge cannot stand: a minion sent there
+## stood at the platform's corner, its detour side pointing back along the
+## wall. Grid-aligned edges are a whole unit off every cell centre, out of
+## EDGE_PROBE, so those points stay where they were. A drop's landing point
+## (the point before it is higher) is left as it is (is_drop).
+func off_edges(points: PackedVector2Array) -> PackedVector2Array:
+	for q in points.size():
+		var p := points[q]
+		var k := cell_at(p)
+		if k < 0 or rough[k] == 0:
+			continue
+		var h: float = ground.height_at(p)
+		if q > 0 and ground.height_at(points[q - 1]) - h > EnemyHeightScript.MAX_STEP:
+			continue
+		var push := Vector2.ZERO
+		for dir in _EDGE_DIRS:
+			if ground.height_at(p + dir * EDGE_PROBE) - h > EnemyHeightScript.MAX_STEP:
+				push -= dir * EDGE_PUSH
+		points[q] = p + push
+	return points
 
 
 ## The path's points for the cell ids, with every climb along a ramp replaced
