@@ -1,7 +1,7 @@
 ---
 id: T-411
 title: The car's height uses its whole footprint, not its centre
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -103,3 +103,4 @@ Written by the agent when it finishes.
 **Documents affected:** `docs/drifting.md` (Content, "The car's footprint (task T-411)", with the open questions); `game/docs/level/elevation-test-scene.md` ("The car's footprint (T-411)", and the T-191 depth-rule note).
 
 **Files changed:** `game/scripts/driving/car_height.gd`, `car.gd`, `drift_marks.gd`, `game/scripts/level/ground_height.gd`, `elevation_platform_drawing.gd` (comment only), the tests and fixtures above.
+- 2026-10-30, in-progress → in-qa: Done: the car's whole drawn 1x3 outline meets raised sides (turning too); tyres over a roof edge lay no marks. Root cause and failing-before test in the result notes. All three test sets green. Open board questions (a)-(d) in drifting.md.
