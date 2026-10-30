@@ -12,6 +12,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	GameSettings.sfx_enabled_override = -1
 	get_tree().paused = false
 	DirAccess.remove_absolute(TEST_PATH)
 	TestSave.restore_settings()
@@ -141,3 +142,25 @@ func test_slider_zooms_the_view_at_once_while_paused_in_the_prototype() -> void:
 	await wait_physics_frames(5)
 	assert_true(get_tree().paused)
 	assert_eq(p.car.position, pos, "the car stays paused")
+
+
+## Task T-389: with the SFX switch off (the MVP) the SFX row is hidden, kept in the code, and the
+## rows below it close the gap; with the switch on it shows again.
+func test_sfx_row_hidden_with_the_switch_off_and_layout_closes_up() -> void:
+	GameSettings.sfx_enabled_override = 0
+	var p := _scene()
+	p.pause_screen.pause()
+	await wait_process_frames(3)
+	var ps = p.pause_screen
+	assert_not_null(ps.sfx_slider, "the slider's code still builds it")
+	assert_false(ps.sfx_slider.get_parent().visible, "SFX row hidden")
+	assert_false(ps.sfx_slider.is_visible_in_tree())
+	assert_true(ps.music_slider.is_visible_in_tree(), "music slider shows")
+	assert_almost_eq(ps.music_slider.get_global_rect().position.y, ps.zoom_slider.get_parent().get_global_rect().end.y + 4.0, 1.5, "music row directly under the zoom row, no gap")
+	GameSettings.sfx_enabled_override = 1
+	var q := _scene()
+	q.pause_screen.pause()
+	await wait_process_frames(3)
+	assert_true(q.pause_screen.sfx_slider.is_visible_in_tree(), "back with the switch on")
+	assert_gt(q.pause_screen.music_slider.get_global_rect().position.y, ps.music_slider.get_global_rect().position.y + 10.0, "music row lower when SFX shows")
+	GameSettings.sfx_enabled_override = -1

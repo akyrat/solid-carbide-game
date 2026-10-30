@@ -219,6 +219,9 @@ func _build_run_buttons(box: VBoxContainer) -> void:
 func _build_sfx_slider(box: VBoxContainer) -> void:
 	var row := HBoxContainer.new()
 	row.name = "SfxRow"
+	# Hidden, not deleted, while the SFX switch is off (T-389, MVP); a hidden row takes no
+	# room in the strip, so the rows below move up.
+	row.visible = GameSettingsScript.sfx_enabled()
 	box.add_child(row)
 	sfx_label = Label.new()
 	sfx_label.text = TEXT_SFX_LABEL
