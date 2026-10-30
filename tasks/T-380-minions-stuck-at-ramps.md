@@ -39,10 +39,10 @@ The board's review: play a run on the elevation map and watch minions chase you 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test reproduces a minion stuck at the bottom end of a ramp before the fix (named in the result notes) and passes after it. (QA: pass / fail)
-- [ ] Over a scripted chase on the elevation map, no minion stays stuck against a wall for more than 2 seconds (test). (QA: pass / fail)
-- [ ] Enemies, Content and the game docs describe the cause and the fix. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the fix has its own tests. (QA: pass / fail)
+- [ ] A test reproduces a minion stuck at the bottom end of a ramp before the fix (named in the result notes) and passes after it. (QA: pass)
+- [ ] Over a scripted chase on the elevation map, no minion stays stuck against a wall for more than 2 seconds (test). (QA: pass)
+- [ ] Enemies, Content and the game docs describe the cause and the fix. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the fix has its own tests. (QA: pass: 159 scripts, 1961/1961 Godot tests; 678 OK in game/tools; 579 OK in tools)
 
 ## Updates
 
