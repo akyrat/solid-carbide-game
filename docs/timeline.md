@@ -2635,3 +2635,8 @@ Entry format:
 - Decision or change: The task board has an Audit bubble for the audit epic's tickets.
 - Documents touched: none
 - Tasks: T-410
+
+## 2026-10-30: A red flash when an enemy takes damage
+- Decision or change: Enemies flash red when they take damage.
+- Documents touched: none
+- Tasks: T-404
