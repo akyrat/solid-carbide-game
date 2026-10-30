@@ -1,7 +1,7 @@
 ---
 id: T-385
 title: QA: compare the script and PixelLab trick illustrations, and copy the better set into game/art
-status: needs-playtest
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-007
@@ -93,3 +93,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 **QA round 1:** all six criteria pass. `python tools/qa_check.py` was refused again (needs approval), so I checked by hand: comparison sheet viewed (7 rows, both sets, dark and light); seven PNGs in game/art/tutorial/tricks (one byte-compared with the script set, `cmp` clean; the others by name); the PixelLab set is still in art-archive/T-384; slide2.png shows the script set; both docs name the choice. Tests rerun: Godot GUT 159 scripts, 1951 tests, 1951 passing; game/tools unittest 675 OK (1 skipped); tools unittest 573 OK. Screenshots rule met.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
