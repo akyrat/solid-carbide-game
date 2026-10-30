@@ -2445,3 +2445,8 @@ Entry format:
 - Decision or change: The board: enemies flash red when they take damage, the same flash as the car.
 - Documents touched: docs/enemies.md
 - Tasks: T-404
+
+## 2026-10-30: The style loop in goal runs
+- Decision or change: In a goal run the style loop keeps a version below 8 as a note for the final playtest and leaves the task in progress, instead of flagging it and pausing the goal.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-395

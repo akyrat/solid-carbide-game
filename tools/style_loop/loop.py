@@ -84,6 +84,7 @@ class Spec:
     greenbull: bool = False        # art: one of Greenbull's own things (rule 6 allows its light green and yellow)
     allow_red: list = field(default_factory=list)
     max_colors: int = 30
+    goal: bool = False             # the task has a `goal:` line (a goal run's ticket): below 8 is noted, not flagged (T-395)
     earlier: tuple = None          # (text, runs) of the Style review's earlier runs, read on the first write (T-296)
 
 
@@ -132,7 +133,8 @@ def live_run(spec, state_dir=None):
 def run(claude, spec, flag=None):
     """Runs the loop; returns (the kept round, every round). `flag(spec, kept)` is called when the kept
     version is still below PASS (default: task_status.move to flagged-for-review)."""
-    flag = flag or flag_task
+    spec.goal = bool(ts.header(ts.find(spec.task)[0]).get("goal"))
+    flag = flag or (note_task if spec.goal else flag_task)
     with live_run(spec):   # T-292: PixelLab generates only while this is live
         rounds = rounds_until_kept(claude, spec)
     kept = max(rounds, key=lambda r: (r.score, -r.n))
@@ -235,6 +237,14 @@ def flag_task(spec, kept):
     return ts.move(spec.task, "flagged-for-review", note=note, by="style-loop")
 
 
+def note_task(spec, kept):
+    """In a goal run (T-395): the version below PASS is kept and noted in the result notes for the board's final
+    playtest; the status stays in-progress, so the goal runner goes on to QA."""
+    return ts.add_result_note(spec.task, f"- {date.today().isoformat()}, style loop: version {kept.n} kept at "
+                              f"{kept.score}/10, still below {PASS} after {MAX_REFINES} refines; noted for the "
+                              "board's final playtest (goal run, not flagged)")
+
+
 # --- the prompts ---
 
 def what(spec):
@@ -318,8 +328,10 @@ def record(spec, rounds, kept=None):
         if r.refused:
             lines.append(f"- Refused: {'; '.join(r.refused)}")
     if kept:
-        tail = (f"still below {PASS} after {MAX_REFINES} refines, so the task is flagged for the board's review."
-                if kept.score < PASS else f"it reached {PASS} or more.")
+        below = ("kept below %d after %d refines and noted for the board's final playtest (goal run, not flagged)."
+                 % (PASS, MAX_REFINES) if spec.goal else
+                 f"still below {PASS} after {MAX_REFINES} refines, so the task is flagged for the board's review.")
+        tail = below if kept.score < PASS else f"it reached {PASS} or more."
         lines += ["", f"**Kept:** version {kept.n}, score {kept.score}/10 ({show_version(spec, kept.version)}"
                   + (f", copied to `{spec.out.as_posix()}`" if spec.out else "") + f"): {tail}"]
     return "\n".join(lines)
