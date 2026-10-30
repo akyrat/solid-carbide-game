@@ -1,7 +1,7 @@
 ---
 id: T-389
 title: The pause screen hides the SFX volume slider for the MVP
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -78,3 +78,4 @@ Done (UI Agent).
 
 QA round 1 (QA agent): all six criteria pass. Re-ran GUT 1973/1973, game/tools Python 675 OK (1 skipped), tools Python 573 OK. Row hidden via `sfx_enabled()` in pause_screen.gd (code kept), screenshot and both docs present. `tools/qa_check.py` was refused (not pre-approved), so its paperwork lines were checked by hand.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
