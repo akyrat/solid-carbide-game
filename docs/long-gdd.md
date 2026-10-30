@@ -713,6 +713,13 @@ Added for the creator rework (task T-261; same file, every earlier key unchanged
 - **Road brush (top bar):** "Drag to paint a road" (`road_brush_hint`).
 - **Controls hint:** "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. T: style. Del: delete." (`controls_hint_rework`; the older hints stay; the creator should show this one, same keys).
 
+Added for sidewalks and parked cars (task T-396; same file, every earlier key unchanged; Decisions, "Sidewalks and parked cars in the level creator"; T-398 copies them into `creator_texts.json`):
+
+- **Ground (side panel):** "Sidewalk", next to "Gravel" (`piece_sidewalk`).
+- **Obstacles (side panel):** "Parked car", "Broken car", after "Crates" (`piece_parked_car`, `piece_broken_car`).
+- **Looks strip under a selected car:** model counter "Model {n} of {count}" (`model_counter`), shown only if T-398 gives the cars several models; the facing labels "Facing top right", "Facing bottom right", "Facing bottom left", "Facing top left" (`facing_top_right`, `facing_bottom_right`, `facing_bottom_left`, `facing_top_left`), shown only if T-398 shows the facing.
+- Style loop: score 9/10 in round 1 (Style review, T-396). The script's complaints about one line and sentence case came from checking all eight labels as one block; each label alone is short, plain and in the existing voice.
+
 #### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
@@ -1639,7 +1646,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `4faf337de125919ad6f0876d4be08f98a44b0da85cd65639657e0598f54d885d` |
 | `drifting.md` | `9ba4b029c7b6d02d38bd17161e8158ba72e3105b63af8d7df37ca57c58a03b22` |
-| `level-design.md` | `1161254c0c22b50ca61ebd3a9dbf529e78ea74e1536a8c378c8d02f1e869190b` |
+| `level-design.md` | `14ba8d2f1604a652fa13b8a4fd2681e77127f41b3069407f4df93bb6032bc101` |
 | `enemies.md` | `c1b835099f5495781686713fa8bb1c0a03b3af302316fbeadf18ce709a31099c` |
 | `weapons.md` | `c4cfed2009e9920760b091106cac32fe91e76f0a4c98854e238e10d2adb3a913` |
 | `garage-design.md` | `502e17a5ab2ec68190e79bbe2d5b5b671bd3db476e63526750cc306a6efed0e9` |

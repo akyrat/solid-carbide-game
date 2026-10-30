@@ -2420,3 +2420,8 @@ Entry format:
 - Decision or change: The board wants a small ramp, one tile long and about 2 units high, for small jumps, besides the 0-3, 3-6 and 0-6 ramps.
 - Documents touched: docs/level-design.md
 - Tasks: T-400
+
+## 2026-10-30: Sidewalks and parked cars: names
+- Decision or change: The level creator's names for the sidewalk, the parked and broken cars, and their model and facing labels (Level design, Content).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-396
