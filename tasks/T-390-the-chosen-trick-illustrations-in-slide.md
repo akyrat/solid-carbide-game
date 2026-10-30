@@ -1,7 +1,7 @@
 ---
 id: T-390
 title: The chosen trick illustrations in slide 2 and the pause trick list, placeholders retired
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-007
