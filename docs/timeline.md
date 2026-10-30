@@ -2555,3 +2555,53 @@ Entry format:
 - Decision or change: Level-up card text for the gun's tiers 2 to 11 and the stronger neon underglow (Weapons, Content).
 - Documents touched: `docs/weapons.md`
 - Tasks: T-412
+
+## 2026-10-30: Meteor craters: the name
+- Decision or change: The level creator's name for the meteor crater: Meteor crater (Level design, Content).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-401
+
+## 2026-10-30: Bug fixed: creator objects respect heights
+- Decision or change: Objects sit and draw at the height they stand on; none across an edge (the board's playtest of build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-393
+
+## 2026-10-30: Thread the needle through a row
+- Decision or change: An obstacle in several pairs; a row chained in one go; each gap pays (build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-394
+
+## 2026-10-30: A small jump ramp
+- Decision or change: A one-tile jump ramp, 2 high, in three height steps (build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-400
+
+## 2026-10-30: Short buildings become platforms
+- Decision or change: Low-rise, small and long buildings are connectable platforms at height 3; colliders work at their height (build E).
+- Documents touched: `docs/level-design.md`, `docs/visual-style.md`
+- Tasks: T-405
+
+## 2026-10-30: A falling gift pack's shadow
+- Decision or change: A falling gift pack shows its landing shadow (build E).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/level-design.md`
+- Tasks: T-407
+
+## 2026-10-30: Bug fixed: pickups on platforms
+- Decision or change: Every pickup is drawn and picked up at its own height; a gift pack that falls on a platform shows on it, and the magnet pulls only on the car's level.
+- Documents touched: none
+- Tasks: T-402
+
+## 2026-10-30: A health pickup revives a wrecked car
+- Decision or change: A wrecked car still rolling that reaches a health pickup picks it up and revives with 1 heart.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-406
+
+## 2026-10-30: Minions twice as big
+- Decision or change: Minions are drawn twice as big.
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`
+- Tasks: T-379
+
+## 2026-10-30: The gun one-shots minions and grows in bullets, speed and targets
+- Decision or change: The gun kills a minion in one hit; its upgrades add bullets and attack speed, and up to 3 then 5 targets.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-408

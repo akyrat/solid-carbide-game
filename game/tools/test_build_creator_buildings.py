@@ -43,7 +43,8 @@ class BuildingPiecesTest(unittest.TestCase):
         entries = {e["id"]: e for e in bc.build()["entries"]}
         self.assertEqual(entries["building-small"]["footprint_units"], [6.0, 6.0])
         self.assertEqual(entries["building-long"]["views"], ["ew", "ns"])
-        self.assertEqual(entries["building-long"]["height_units"], 4.3)
+        # T-405: in the catalogue they are platforms 3 high (their data file keeps the art's own 4.3).
+        self.assertEqual(entries["building-long"]["height_units"], 3.0)
         for t in entries["building-long"]["textures"]:
             self.assertIn("footprint_units", t)
             self.assertIn("anchor_art_px", t)

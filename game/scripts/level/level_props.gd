@@ -158,6 +158,12 @@ static func build(map: Node2D) -> void:
 		var body := StaticBody2D.new()
 		body.name = "Prop_%s" % str(it.get("id", k)).replace("-", "_")
 		body.set_meta("prop_id", str(it.get("id", "")))
+		# T-405: the heights it blocks the car at (mvp_map.gd update_car_obstacles): from the ground
+		# under its centre (a rooftop's, a short building's, a ramp's) up by its own height.
+		var foot_h := ground.height_at(rect_of(it).get_center())
+		var pdata := prop(str(it.get("asset", "")))
+		body.set_meta("base_units", foot_h)
+		body.set_meta("top_units", foot_h + float(pdata.get("height_units", 1.0)) if not pdata.is_empty() else foot_h + 1.0)
 		map.physics_root.add_child(body)
 		var cs := CollisionShape2D.new()
 		cs.name = "Shape"
@@ -179,6 +185,7 @@ static func build(map: Node2D) -> void:
 		sp.name = "Prop%03d" % k
 		sp.prop_id = str(it.get("id", ""))
 		sp.centre_units = centre
+		sp.ground_units = h
 		sp.outline = outline_of(it, h)
 		sp.box = _bounds(sp.outline)
 		var s := sprite_of(str(it.get("asset", "")), str(it.get("rotation", "north")))
@@ -188,7 +195,7 @@ static func build(map: Node2D) -> void:
 			sp.scale = Vector2(scale, scale)
 			sp.position = MvpMapScript.ISO_TRANSFORM * (centre * PX_PER_UNIT) - s.anchor_px * scale \
 				- Vector2(0.0, h * PX_PER_UNIT)
-		sp.z_index = map._boulder_z(sp.centre_units, sp.outline)
+		sp.z_index = map._boulder_z(sp.centre_units, sp.outline, h)
 		root.add_child(sp)
 		map.prop_sprites.append(sp)
 
@@ -208,6 +215,8 @@ class PropSprite extends Sprite2D:
 	var prop_id := ""
 	## The prop's centre on the ground, in units.
 	var centre_units := Vector2.ZERO
+	## The height it stands on, units (a rooftop's, a ramp's; T-393).
+	var ground_units := 0.0
 	## The outline of the prop on screen (convex), and its box.
 	var outline := PackedVector2Array()
 	var box := Rect2()

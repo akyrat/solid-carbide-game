@@ -287,8 +287,9 @@ func test_on_a_height_3_rooftop_the_side_of_a_height_6_area_is_a_wall() -> void:
 ## An obstacle of the map: {"kind", "rect" (its bounds), "centre", "radius" (boulders)}.
 func _obstacles(data: Dictionary) -> Array:
 	var out := []
-	for b in data.buildings:
-		var r := MvpMapScript.rect_of(b)
+	# T-405: the walls (skyscrapers and the blocks' skyscraper slots); the short buildings are platforms.
+	for w in load("res://scripts/level/short_platforms.gd").wall_rects(data):
+		var r: Rect2 = w.rect
 		out.append({"kind": "building", "rect": r, "centre": r.get_center(), "radius": 0.0})
 	for copy in data.pattern_copies:
 		for b in copy.boulders:
@@ -383,16 +384,25 @@ func test_in_the_sample_map_buildings_and_boulders_block_the_car_at_every_height
 				# cruise speed towards the obstacle, as if it had jumped.
 				car.model.set_velocity(Vector2.from_angle(car.model.rotation) * car.tuning.forward_speed)
 			assert_almost_eq(car.height, h, EPS, "%s %s: starts at its height" % [o.kind, level])
+			# T-405 (Level design, Decisions, "Short buildings become platforms": every collider works at
+			# the height it is at): a boulder on the street blocks only a car at its height; one above
+			# it (on a rooftop over it, or in the air) passes over. The walls block at every height.
+			var passes: bool = o.kind == "boulder" and level != "street"
 			hits.clear()
 			car.scripted_input = [true, false, 0.0]
 			var blocked := false
 			for i in 40:
 				car.physics_step()
 				var pos: Vector2 = car.model.get_position()
-				if _inside_obstacle(o, pos):
+				if _inside_obstacle(o, pos) and not passes:
 					fail_test("%s at %s, %s: the car drove into it (%s)" % [o.kind, o.centre, level, pos])
 					break
 				var body_hits := hits.filter(func(c) -> bool: return c != ground)
+				if passes:
+					assert_true(body_hits.is_empty(), "boulder at %s, %s: the car passes over it" % [o.centre, level])
+					if not body_hits.is_empty():
+						break
+					continue
 				if not body_hits.is_empty():
 					var c = body_hits[0]
 					var expected_body: bool = c == scene.map.walls if o.kind == "building" \
@@ -407,11 +417,14 @@ func test_in_the_sample_map_buildings_and_boulders_block_the_car_at_every_height
 						assert_almost_eq(car.height, h, EPS, "%s: on the ground at %s" % [o.kind, h])
 					blocked = true
 					break
-			assert_true(blocked, "%s at %s, %s: blocked" % [o.kind, o.centre, level])
+			if passes:
+				blocked = hits.filter(func(c) -> bool: return c != ground).is_empty()
+			assert_true(blocked, "%s at %s, %s: blocked (or, above a boulder, passed)" % [o.kind, o.centre, level])
 			if blocked:
 				by_height[level] += 1
 	gut.p("Obstacles tested: %s; blocks per height: %s" % [tested, by_height])
-	assert_eq(tested.building, data.buildings.size(), "every tall building")
+	# T-405: the walls are the blocks' skyscraper slots now; the ones with a free approach (at least one per block).
+	assert_gte(tested.building, data.buildings.size(), "the walls with a free approach")
 	assert_gt(tested.boulder, 10, "many boulders")
 	for level in by_height:
-		assert_eq(by_height[level], tested.building + tested.boulder, "every obstacle blocks at %s" % level)
+		assert_eq(by_height[level], tested.building + tested.boulder, "every obstacle blocks (or is passed) at %s" % level)

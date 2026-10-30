@@ -1,7 +1,7 @@
 ---
 id: T-406
 title: A wrecked car that slides into a health pickup's range picks it up and revives with 1 heart
-status: open
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/docs/game-loop/]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/the-run.md, game/scripts/run/wreck_effect.gd, game/scripts/run/]
 files_expected_to_change: [game/scripts/run/, game/data/run.json, game/tests/unit/, game/docs/game-loop/, docs/game-loop-architecture.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,16 +41,28 @@ The board's review: lose the last heart while sliding towards a health pickup, a
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A wrecked, sliding car within a health pickup's range picks it up and revives with 1 heart: controls return, the wreck effect stops and the recap does not show (tests). (QA: pass / fail)
-- [ ] Without a health pickup in range, the wreck ends with the recap after 3 seconds as before (existing tests). (QA: pass / fail)
-- [ ] The proposals (invulnerability, combo and viewers, other pickups) are in the result notes and behave as written (tests). (QA: pass / fail)
-- [ ] Game loop architecture (Content) and game/docs/game-loop/ describe it. (QA: pass / fail)
-- [ ] A GIF of a wreck revived by a health pickup is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] A wrecked, sliding car within a health pickup's range picks it up and revives with 1 heart: controls return, the wreck effect stops and the recap does not show (tests). (QA: pass)
+- [ ] Without a health pickup in range, the wreck ends with the recap after 3 seconds as before (existing tests). (QA: pass)
+- [ ] The proposals (invulnerability, combo and viewers, other pickups) are in the result notes and behave as written (tests). (QA: pass)
+- [ ] Game loop architecture (Content) and game/docs/game-loop/ describe it. (QA: pass)
+- [ ] A GIF of a wreck revived by a health pickup is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; GUT 1945/1945, game/tools 668 OK, tools 579 OK)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Started in build F (Hits, enemies & weapons).
+
+### 2026-10-30, In progress → In QA
+
+Built: a wrecked, sliding car that touches a health pickup revives with 1 heart (controls back, smoke off, no recap, 1 s invulnerability); GIF in art-archive/T-406/screenshots; all three test sets pass.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria; lose the last heart while sliding towards a health pickup and see the car revive.
 
 ## Style review
 
@@ -59,3 +71,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built (game-loop agent). During the wreck a health pickup is pulled by the magnet and picked up on touch; `RunState.heal_car()` while wrecked calls the new `RunState.revive()` (1 heart, `REVIVE_HEARTS`), which clears the wreck, the result and the recap summary, restarts the run (no `run_ended`, no recap) and sends `revived`; `run.gd` gives the controls back, stops the smoke and flames and refreshes the blink. Pickups' code is untouched (their existing `heal_car` path is used). `pickup_magnet.gd` runs while wrecked but pulls only health pickups. No data change (the invulnerability uses `car.invulnerability_seconds`).
+
+Proposals for the playtest:
+- Invulnerability: yes, the usual 1 second after the revive, with the blink, so the swarm cannot finish the car at once.
+- Combo: stays cut as the fatal hit left it (no restore); live viewers follow the combo as always; the recap's peak viewers are kept.
+- Other pickups: coins and gift packs stay still during the wreck (not pulled, not collected); only health pickups revive. A pickup restoring 2 hearts still gives 1 on a revive.
+- Clock and counting: the clock runs on from where it stopped; coins, likes, tricks and kills count again.
+
+Tests: `test_wreck.gd` 23 of 23 (6 new: revive with 1 heart and no recap, invulnerability, combo and viewers, no revive after the recap starts / without a pickup, a sliding wreck in the run scene picking up a pickup and driving again, the magnet pulling only health pickups; the old "heal_car during the wreck does nothing" line was removed). Three sets: GUT 1945 of 1945 passed; `game/tools` unittest 668 (OK, 1 skipped); `tools` unittest 579 OK.
+GIF and screenshot: `art-archive/T-406/screenshots/revive.gif`, `revive.png` (`bash game/tools/record_revive.sh`, fixture `tests/fixtures/revive_demo.tscn`).
+Docs: Game loop architecture (Content, "Wrecked", new bullet) and `game/docs/game-loop/the-run.md`.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board

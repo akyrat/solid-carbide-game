@@ -37,6 +37,9 @@ var outline := PackedVector2Array()
 var pavement_root: Node2D
 ## The slots' fade nodes (map_building.gd), back to front.
 var slot_nodes: Array = []
+## T-405: set before setup() on a map with heights: a whole block's short slots are platforms
+## (short_platforms.gd, drawn by the elevation layer), so they get no slot node here (their pavement stays).
+var skip_short := false
 
 var _art: Dictionary = {}
 
@@ -243,6 +246,8 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2, single: D
 		else:
 			pv.free()
 		var foot_rect := Rect2(origin + Vector2(margin, margin), Vector2(foot, foot))
+		if skip_short and bool(e.short) and single.is_empty():
+			continue
 		var is_short: bool = e.short and not short_texs.is_empty()
 		var short_tex: Texture2D = short_texs[e.short_body] if is_short else null
 		var sz := Vector2(short_tex.get_width(), short_tex.get_height()) if is_short else bsize

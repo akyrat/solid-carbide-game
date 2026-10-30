@@ -106,7 +106,7 @@ func test_repeated_level_ups_take_three_weapons_to_tier_8_with_valid_offers() ->
 			seen[id] = true
 			var w: Node = rack.get_weapon(OffersScript.weapon_of(id))
 			assert_not_null(w, id)
-			assert_lt(w.tier, 8, "%s is not offered at tier 8" % id)
+			assert_lt(w.tier, w.max_tier(), "%s is not offered at its last tier" % id)
 		assert_true(offers.choose(ids[pick.randi_range(0, ids.size() - 1)]))
 		assert_false(get_tree().paused, "the run resumes after the choice")
 	assert_gte(at_tier_8.call(), 3, "at least three weapons reached tier 8")

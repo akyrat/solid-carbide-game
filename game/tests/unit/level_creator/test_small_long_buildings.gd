@@ -1,13 +1,16 @@
 extends GutTest
 ## Task T-254: the level creator's small (6 x 6) and long (12 x 6, rotated 6 x 12) buildings can be
-## placed, saved, reopened and pass check_level.py; they stop the car (a wall of their footprint),
-## fade like other buildings, and the enemies path round them. Their art per rotation and mirror is
-## in data/level/creator_buildings.json; labels come from creator_texts.json.
+## placed, saved, reopened and pass check_level.py; since T-405 they are platforms at height 3 (no
+## wall: the car from the street meets their sides, and it can drive on them), they fade like the
+## rooftops, and the enemies on the street path round them. Their art per rotation and mirror is in
+## data/level/creator_buildings.json (the catalogue shows its platform cut, T-405); labels come
+## from creator_texts.json.
 
 const EDITOR_SCENE := preload("res://scenes/level_creator/editor.tscn")
 const NavScript := preload("res://scripts/enemies/enemy_navigation.gd")
 const PIECES := "res://data/level/creator_buildings.json"
 const BuildingTowers := preload("res://scripts/level/building_towers.gd")
+const ShortPlatforms := preload("res://scripts/level/short_platforms.gd")
 
 var dir: String
 
@@ -50,7 +53,7 @@ func test_the_catalogue_lists_both_with_their_views_and_footprints() -> void:
 	assert_eq(LevelDocument.footprint_of("building-long", "ew", false), Vector2(12, 6))
 	assert_eq(LevelDocument.footprint_of("building-long", "ns", true), Vector2(6, 12))
 	assert_eq(str(small.kind), "building")
-	assert_eq(float(long_b.height_units), 4.3)
+	assert_eq(float(long_b.height_units), 3.0, "T-405: a platform 3 high")
 
 
 func test_the_data_file_names_every_view_and_mirror_texture() -> void:
@@ -60,8 +63,9 @@ func test_the_data_file_names_every_view_and_mirror_texture() -> void:
 		for t in p.textures:
 			assert_true(ResourceLoader.exists(str(t.texture)), str(t.texture) + " exists")
 			assert_true(str(p.views).contains(str(t.view)))
-			# The catalogue carries the same textures.
-			assert_eq(LevelDocument.texture_of(str(p.id), str(t.view), bool(t.mirror)).texture, t.texture)
+			# The catalogue carries their platform art (T-405), cut from these textures.
+			assert_eq(LevelDocument.texture_of(str(p.id), str(t.view), bool(t.mirror)).texture,
+				ShortPlatforms.art_of(str(t.texture)).full)
 
 
 func test_the_panel_buttons_carry_the_labels_from_the_texts() -> void:
@@ -104,33 +108,35 @@ func test_a_mirrored_long_building_keeps_its_footprint_and_writes_its_look() -> 
 	assert_ne(BuildingTowers.piece_of(piece.item).texture, BuildingTowers.piece_of(other).texture)
 
 
-func test_the_car_is_stopped_by_each_footprint() -> void:
+func test_each_footprint_is_a_platform_at_3_with_no_wall() -> void:
+	# T-405: no wall; the footprint is a platform at 3 (the car on the street meets its sides as a
+	# rooftop's, tests/unit/level_creator/test_short_platforms.gd drives on them).
 	var e := _editor()
 	var pieces: Array = [_place(e, "building-small", Vector2(-40.0, -40.0)),
 		_place(e, "building-long", Vector2(-20.0, -40.0)), _place(e, "building-long", Vector2(10.0, -40.0), 1)]
-	var shapes: Array = []
 	for child in e.map.walls.get_children():
-		if child is CollisionShape2D and child.name.begins_with("Building"):
-			shapes.append(Rect2((child.position - child.shape.size / 2.0) / e.map.PX_PER_UNIT, child.shape.size / e.map.PX_PER_UNIT))
-	assert_eq(shapes.size(), 3)
+		assert_false(str(child.name).begins_with("Building"), "no building wall: %s" % child.name)
 	for p in pieces:
-		var want := Rect2(float(p.item.x), float(p.item.y), float(p.item.w), float(p.item.h))
-		var found := false
-		for s in shapes:
-			found = found or (s.position.distance_to(want.position) < 0.01 and s.size.is_equal_approx(want.size))
-		assert_true(found, "a wall of %s" % [want])
+		var r := Rect2(float(p.item.x), float(p.item.y), float(p.item.w), float(p.item.h))
+		assert_eq(e.elevation.ground_height.height_at(r.get_center()), 3.0, "a platform at 3 on %s" % [r])
+		assert_eq(e.elevation.ground_height.height_at(r.position - Vector2(1, 1)), 0.0, "the street round it")
 
 
-func test_they_fade_as_buildings_do() -> void:
+func test_they_fade_as_rooftops_do() -> void:
+	# T-405: a raised area (a platform at 3) that fades while it covers the car behind it.
 	var e := _editor()
 	_place(e, "building-long", Vector2(0.0, 0.0))
-	assert_eq(e.map.slots.size(), 1)
-	var node = e.map.slots[0]
-	assert_eq(float(node.height_units), 4.3)
+	assert_eq(e.map.slots.size(), 0, "no building slot")
+	var node: Node2D = null
+	for a in e.elevation.areas:
+		if bool(a.block.get("short", false)):
+			node = a
+	assert_eq(float(node.block.height), 3.0)
 	assert_false(node.silhouette().is_empty())
-	# A car just behind the building (north-west of its front corner) is covered, one in front is not.
-	assert_true(node.is_behind(node.footprint.position + Vector2(1, 1)))
-	assert_false(node.is_behind(node.footprint.end + Vector2(1, 1)))
+	var r: Rect2 = node.rect()
+	assert_true(node.is_behind(r.position - Vector2(1, 1), 0.5, 0.0), "a car on the street behind it")
+	assert_false(node.is_behind(r.end + Vector2(1, 1), 0.5, 0.0), "one in front")
+	assert_false(node.is_behind(r.get_center(), 0.5, 3.0), "one on it")
 
 
 func test_enemies_path_round_them() -> void:

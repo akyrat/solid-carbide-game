@@ -98,9 +98,10 @@ func test_level_up_opens_two_cards_with_the_approved_text() -> void:
 
 func test_exact_text_for_known_cards() -> void:
 	assert_eq(Texts.TEXTS["get_flamethrower.title"], "Hot Take Exhaust")
-	assert_eq(Texts.TEXTS["upgrade_gun.tier4.desc"], "Fires 20% faster again. Engagement waits for no one.")
+	assert_eq(Texts.TEXTS["upgrade_gun.tier5.desc"], "Fires 20% faster again. Engagement waits for no one.")
+	assert_eq(Texts.TEXTS["upgrade_gun.tier11.title"], "Everyone Gets Exposure")
 	assert_eq(Texts.TEXTS["levelup.take"], "Take it")
-	assert_eq(Texts.TEXTS.size(), 32 + 48 + 16, "T-051's 32 rows, T-171's 24 cards (T-173) and T-322's 8 Bricks cards")
+	assert_eq(Texts.TEXTS.size(), 32 + 48 + 16 + 6, "T-051's 32 rows, T-171's 24 cards (T-173), T-322's 8 Bricks cards and T-412's 3 more gun cards")
 
 
 func test_upgrade_card_shows_the_next_tier_text() -> void:
@@ -564,7 +565,7 @@ func test_closing_during_the_animation_stops_it() -> void:
 
 
 ## Every choice the offers can produce, as [weapon id, tier now, choice id]: "get_<w>"
-## at tier 0 (not the gun, which is always owned), "upgrade_<w>" at tiers 1 to 7.
+## at tier 0 (not the gun, which is always owned), "upgrade_<w>" at tiers 1 to its last but one.
 func _every_choice() -> Array:
 	var out := []
 	for w in offers.WEAPON_ORDER:
@@ -581,7 +582,7 @@ func _set_tier(w: String, tier: int) -> void:
 
 func test_every_choice_and_tier_the_offers_can_produce_has_text() -> void:
 	var choices := _every_choice()
-	assert_eq(choices.size(), 7 + 5 * 8, "gun tiers 1-7, the others 0-7")
+	assert_eq(choices.size(), 10 + 5 * 8, "gun tiers 1-10 (T-408: last tier 11), the others 0-7")
 	var seen_ids := {}
 	for c in choices:
 		_set_tier(c[0], c[1])

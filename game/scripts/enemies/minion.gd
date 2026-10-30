@@ -38,9 +38,14 @@ const EnemyFallScript := preload("res://scripts/enemies/enemy_fall.gd")
 
 ## The placeholder's body radius on the ground, in units (the collision
 ## circle, and the reach for touching the car). A size, not a balancing number.
-const RADIUS_UNITS := 0.5
-## How tall the drawn minion is, in units (for the depth order).
-const HEIGHT_UNITS := 0.8
+const BASE_RADIUS_UNITS := 0.5
+## T-379: the body keeps BASE_RADIUS_UNITS (the old radius, not the grown one)
+## off a rooftop's or ramp's edge. The edges are not walls in the physics world,
+## and the navigation's cells (2 units wide) put path corners 1 unit from an
+## edge, where a body of 1 unit is held and jams at a rooftop's corner.
+## Buildings and boulders (real colliders) use the grown radius.
+## How tall the drawn minion is at size_scale 1, in units (for the depth order).
+const BASE_HEIGHT_UNITS := 0.8
 ## Minions closer than this (units, centre to centre) push apart a little, so
 ## a crowd spreads around the car instead of stacking on one point.
 const SEPARATION_UNITS := 1.2
@@ -59,6 +64,9 @@ var last_hit_by := ""
 ## end of the frame), `position_units` where it died (flat world, units).
 signal died(minion: Node, position_units: Vector2)
 
+## T-379: how many times its old size it is (enemies.json minion.size_scale);
+## its drawing, body, hits and navigation margin all follow it.
+var size_scale := 1.0
 var max_health := 1.0
 var health := 1.0
 var move_speed := 0.0
@@ -99,6 +107,7 @@ var _drop_now := false
 
 ## Sets the numbers from EnemyData.minion().
 func setup(stats: Dictionary) -> void:
+	size_scale = float(stats.get("size_scale", 1.0))
 	max_health = float(stats.get("health", 1.0))
 	health = max_health
 	move_speed = float(stats.get("move_speed", 0.0))
@@ -114,7 +123,7 @@ func _ready() -> void:
 	collision_layer = LAYER_ENEMIES
 	collision_mask = LAYER_OBSTACLES
 	var shape := CircleShape2D.new()
-	shape.radius = RADIUS_UNITS * PX_PER_UNIT
+	shape.radius = radius_units() * PX_PER_UNIT
 	var col := CollisionShape2D.new()
 	col.name = "Body"
 	col.shape = shape
@@ -126,6 +135,21 @@ func _exit_tree() -> void:
 	if sprite != null and is_instance_valid(sprite):
 		sprite.queue_free()
 	sprite = null
+
+
+## The body radius in units (T-379: BASE_RADIUS_UNITS times size_scale).
+func radius_units() -> float:
+	return BASE_RADIUS_UNITS * size_scale
+
+
+## The same, for the weapons' hit checks (they ask any enemy with this).
+func hit_radius_units() -> float:
+	return radius_units()
+
+
+## How tall the drawn minion is, in units.
+func height_units() -> float:
+	return BASE_HEIGHT_UNITS * size_scale
 
 
 ## The minion's centre in units (flat world).
@@ -172,7 +196,7 @@ func _move(motion: Vector2) -> KinematicCollision2D:
 	_edge_normal = Vector2.ZERO
 	if ground == null:
 		return move_and_collide(motion)
-	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, position_units(), motion / PX_PER_UNIT, RADIUS_UNITS,
+	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, position_units(), motion / PX_PER_UNIT, BASE_RADIUS_UNITS,
 		body_height(), _drop_now or fall.falling)
 	_edge_normal = lim.normal
 	for seg in lim.segments:
@@ -312,7 +336,7 @@ func _knockback_step(dt: float) -> void:
 func touches_car(car_centre_units: Vector2, car_rotation: float) -> bool:
 	var local := (position_units() - car_centre_units).rotated(-car_rotation)
 	var nearest := Vector2(clampf(local.x, -0.5, 0.5), clampf(local.y, -0.5, 0.5))
-	return local.distance_to(nearest) <= RADIUS_UNITS
+	return local.distance_to(nearest) <= radius_units()
 
 
 ## One physics step of contact damage: while touching the car, it hits it

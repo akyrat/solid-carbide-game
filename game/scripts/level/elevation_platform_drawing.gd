@@ -136,9 +136,145 @@ func use_style(the_style: Resource, the_base: float, gaps: Dictionary = {}) -> v
 	queue_redraw()
 
 
+## Building mode (task T-405): a short building that is a platform (short_platforms.gd) is drawn
+## from its own art cut to the platform's height (art/buildings/platforms/, made by
+## game/tools/build_short_platform_art.py): {full, clean, ns, ew: Texture2D, anchor: Vector2 (the
+## art pixel on the footprint's front corner)}. Empty: not in building mode.
+var building_art: Dictionary = {}
+## Where the building's edges are joined (wall_gaps: something at its height or higher stands
+## across the edge, so no wall and no parapet; band_gaps: that, plus where a ramp meets the edge, so
+## no parapet), as edge_gaps: {"north": [[from, to], ...], "east", "south", "west"}.
+var wall_gaps: Dictionary = {}
+var band_gaps: Dictionary = {}
+## The art's parapet band and the lit lip line outside the back edges, units (the art record's).
+var art_edge_units := 1.0
+var art_lip_units := 0.15
+
+
+## Switches to building mode (T-405) with `art` (ShortPlatforms.art_of, paths) and the joins.
+func use_building_art(art: Dictionary, the_wall_gaps: Dictionary, the_band_gaps: Dictionary,
+		edge_units: float = 1.0, lip_units: float = 0.15) -> void:
+	building_art = {"anchor": art.anchor}
+	for k in ["full", "clean", "ns", "ew"]:
+		building_art[k] = load(str(art[k])) as Texture2D
+	wall_gaps = the_wall_gaps
+	band_gaps = the_band_gaps
+	art_edge_units = edge_units
+	art_lip_units = lip_units
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	queue_redraw()
+
+
+## True in building mode (T-405).
+func is_building() -> bool:
+	return not building_art.is_empty() and not block.is_empty()
+
+
+## The runs [from, to] of `edge` between lo and hi that no gap of `gaps` covers.
+static func open_runs_of(gaps: Dictionary, edge: String, lo: float, hi: float) -> Array:
+	var runs: Array = [[lo, hi]]
+	for g in gaps.get(edge, []):
+		var next: Array = []
+		for run in runs:
+			var a: float = run[0]
+			var b: float = run[1]
+			var ga := maxf(a, float(g[0]))
+			var gb := minf(b, float(g[1]))
+			if ga >= gb:
+				next.append(run)
+				continue
+			if ga > a:
+				next.append([a, ga])
+			if gb < b:
+				next.append([gb, b])
+		runs = next
+	return runs.filter(func(run) -> bool: return float(run[1]) - float(run[0]) > 0.001)
+
+
+## Building mode's faces, in drawing order, each {name, points, uvs, texture}: the roof without
+## parapets (and what stands above its back edges), each edge's parapet where the edge is open, the
+## corners where both edges are open, and the two front walls where open. For the drawing and the tests.
+func building_faces() -> Array:
+	var out: Array = []
+	if not is_building():
+		return out
+	var r := rect()
+	var h := float(block.height)
+	var e := art_edge_units
+	var lip := art_lip_units
+	var full: Texture2D = building_art.full
+	var top_px := (drawn(r.end, 0.0) - (building_art.anchor as Vector2) * ART_SCALE).y
+	var w := Vector2(r.position.x, r.end.y)
+	var ne := Vector2(r.end.x, r.position.y)
+	var pw := drawn(w, h)
+	var pe := drawn(ne, h)
+	out.append(_art_face("roof", [pw, drawn(r.end, h), pe, Vector2(pe.x, top_px), Vector2(pw.x, top_px)], building_art.clean))
+	var x0 := r.position.x
+	var x1 := r.end.x
+	var y0 := r.position.y
+	var y1 := r.end.y
+	var open := {}
+	for edge in ["north", "south"]:
+		var y := y0 if edge == "north" else y1
+		var ya := y - lip if edge == "north" else y1 - e
+		var yb := y0 + e if edge == "north" else y1
+		open[edge] = open_runs_of(band_gaps, edge, x0, x1)
+		for run in open[edge]:
+			out.append(_art_face("parapet_" + edge, _roof_quad(Vector2(run[0], ya), Vector2(run[1], yb), h), building_art.ns))
+	for edge in ["west", "east"]:
+		var xa := x0 - lip if edge == "west" else x1 - e
+		var xb := x0 + e if edge == "west" else x1
+		open[edge] = open_runs_of(band_gaps, edge, y0, y1)
+		for run in open[edge]:
+			out.append(_art_face("parapet_" + edge, _roof_quad(Vector2(xa, run[0]), Vector2(xb, run[1]), h), building_art.ew))
+	# The corners where both edges are open: the art's own corner piece.
+	var corners := [["nw", "north", x0, "west", y0, Vector2(x0 - lip, y0 - lip)],
+		["ne", "north", x1, "east", y0, Vector2(x1 - e, y0 - lip)],
+		["sw", "south", x0, "west", y1, Vector2(x0 - lip, y1 - e)],
+		["se", "south", x1, "east", y1, Vector2(x1 - e, y1 - e)]]
+	for c in corners:
+		if _covers(open[c[1]], float(c[2])) and _covers(open[c[3]], float(c[4])):
+			var a: Vector2 = c[5]
+			var size := Vector2(e + (lip if str(c[0]).contains("w") else 0.0), e + (lip if str(c[0]).contains("n") else 0.0))
+			out.append(_art_face("corner_" + str(c[0]), _roof_quad(a, a + size, h), full))
+	# The front walls where open, from the street up.
+	for run in open_runs_of(wall_gaps, "south", x0, x1):
+		out.append(_art_face("wall_south", [drawn(Vector2(run[0], y1), h), drawn(Vector2(run[1], y1), h),
+			drawn(Vector2(run[1], y1), 0.0), drawn(Vector2(run[0], y1), 0.0)], full))
+	for run in open_runs_of(wall_gaps, "east", y0, y1):
+		out.append(_art_face("wall_east", [drawn(Vector2(x1, run[0]), h), drawn(Vector2(x1, run[1]), h),
+			drawn(Vector2(x1, run[1]), 0.0), drawn(Vector2(x1, run[0]), 0.0)], full))
+	return out
+
+
+static func _covers(runs: Array, at: float) -> bool:
+	for run in runs:
+		if at >= float(run[0]) - 0.001 and at <= float(run[1]) + 0.001:
+			return true
+	return false
+
+
+## A rectangle of the roof plane (flat units, corners a and b) at height h, as drawn points.
+func _roof_quad(a: Vector2, b: Vector2, h: float) -> Array:
+	return [drawn(a, h), drawn(Vector2(b.x, a.y), h), drawn(b, h), drawn(Vector2(a.x, b.y), h)]
+
+
+## A face of building mode: the drawn points and the texture's UVs (the art stands with its anchor on
+## the footprint's front corner, at ART_SCALE).
+func _art_face(face_name: String, pts: Array, tex: Texture2D) -> Dictionary:
+	var origin := drawn(rect().end, 0.0) - (building_art.anchor as Vector2) * ART_SCALE
+	var size := tex.get_size() * ART_SCALE
+	var points := PackedVector2Array()
+	var uvs := PackedVector2Array()
+	for p in pts:
+		points.append(p)
+		uvs.append(((p as Vector2) - origin) / size)
+	return {"name": face_name, "points": points, "uvs": uvs, "texture": tex}
+
+
 ## True when the area is drawn from the style's textures.
 func is_textured() -> bool:
-	return style != null and art_sprite == null and not block.is_empty()
+	return style != null and art_sprite == null and not block.is_empty() and building_art.is_empty()
 
 
 ## A ramp's top end, the edge where it meets the rooftop it climbs (the opposite of `side`, the
@@ -468,6 +604,10 @@ func south_face() -> PackedVector2Array:
 
 func _draw() -> void:
 	if block.is_empty() or art_sprite != null:
+		return
+	if is_building():
+		for f in building_faces():
+			draw_polygon(f.points, PackedColorArray([Color.WHITE]), f.uvs, f.texture)
 		return
 	if style != null:
 		_draw_textured()

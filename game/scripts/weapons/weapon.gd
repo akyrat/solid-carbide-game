@@ -4,8 +4,9 @@ extends Node
 ## (weapons.gd, `run.weapons`) owns one node of each weapon, steps the owned
 ## ones once per physics step and resets them at the start of every run.
 ##
-## A weapon's tier is 0 (not owned), 1 (just got it) up to the data's
-## max_tier (8): tiers 2 to 8 are its upgrades, from res://data/weapons.json
+## A weapon's tier is 0 (not owned), 1 (just got it) up to its last tier in
+## the data (WeaponData.max_tier(weapon_id): 8, the gun 11, T-408): the tiers
+## above 1 are its upgrades, from res://data/weapons.json
 ## through WeaponData. Change tiers from code with set_tier() or upgrade();
 ## offering them at a level-up is the level-up task's (T-043).
 ##
@@ -40,7 +41,7 @@ func is_owned() -> bool:
 
 
 func max_tier() -> int:
-	return data.max_tier()
+	return data.max_tier(weapon_id)
 
 
 func is_max_tier() -> bool:

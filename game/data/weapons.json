@@ -1,12 +1,15 @@
 {
-  "_comment": "The five MVP weapons: the gun and the flamethrower, copied from the Unity prototype (docs/weapons/unity-weapons-report.md, sections 2 to 5) with the board's fixes (docs/weapons.md, Decisions): damage is never rounded, the flame area is the same size in every direction, missed bullets are removed once past the gun's range. Distances in units (1 unit = the car's width), times in seconds. A tier is 'effect' plus 'value'; effects add up in tier order. Tier 1 is getting the weapon; tiers 2 to 8 are the 7 upgrades. The gun and the flamethrower never push enemies; of the five only the wiper pushes (knockback_distance, minions only, never the kaiju). The underglow, molotov and wiper entries are the Game Data Agent's proposal (T-166) for the board's playtest; wiper sweep_arc_degrees is the semicircle, sweep_degrees_per_second how fast the arm turns, hit_cooldown the seconds before the same enemy can be hit again.",
+  "_comment": "The five MVP weapons: the gun and the flamethrower, copied from the Unity prototype (docs/weapons/unity-weapons-report.md, sections 2 to 5) with the board's fixes (docs/weapons.md, Decisions): damage is never rounded, the flame area is the same size in every direction, missed bullets are removed once past the gun's range. Distances in units (1 unit = the car's width), times in seconds. A tier is 'effect' plus 'value'; effects add up in tier order. Tier 1 is getting the weapon; tiers 2 to max_tier are its upgrades (max_tier: 8 for every weapon without its own; the gun's own is 11, T-408). The gun and the flamethrower never push enemies; of the five only the wiper pushes (knockback_distance, minions only, never the kaiju). The underglow, molotov and wiper entries are the Game Data Agent's proposal (T-166) for the board's playtest; wiper sweep_arc_degrees is the semicircle, sweep_degrees_per_second how fast the arm turns, hit_cooldown the seconds before the same enemy can be hit again.",
   "max_tier": 8,
   "gun": {
-    "damage": 2,
+    "_comment": "The gun (Weapons, Decisions, 'The gun one-shots minions and grows in bullets, speed and targets', 2026-10-30; T-408). damage 4 = a minion's health (enemies.json minion.health), so one bullet kills one. max_tier is the gun's own last tier (11; the other weapons use the top-level max_tier, 8). targets_per_volley is how many enemies a volley aims at: 1 until tier 6 (the whole volley at the closest enemy, bullets delay_between_bullets apart, a bullet whose target died aims at the closest living one instead), then set_targets 3 at tier 6 and 5 at tier 11 (the bullets split round the closest targets, closest first, and leave at the same moment). fire_rate_multiplier 1.2 is the '20% faster' of the level-up cards (T-412). The old range and pierce tiers are gone; range stays 12.",
+    "max_tier": 11,
+    "damage": 4,
     "range": 12,
     "base_fire_interval": 1.2,
     "extra_delay_between_volleys": 0.06,
     "bullets_per_volley": 1,
+    "targets_per_volley": 1,
     "delay_between_bullets": 0.05,
     "bullet_speed": 15,
     "bullet_hit_radius": 1,
@@ -14,13 +17,16 @@
     "targets_checked": "once per fire interval, closest enemy first",
     "missed_bullet_max_travel": "range",
     "tiers": [
-      { "tier": 2, "effect": "add_bullets", "value": 2 },
-      { "tier": 3, "effect": "fire_rate_multiplier", "value": 1.2 },
+      { "tier": 2, "effect": "add_bullets", "value": 1 },
+      { "tier": 3, "effect": "add_bullets", "value": 1 },
       { "tier": 4, "effect": "fire_rate_multiplier", "value": 1.2 },
-      { "tier": 5, "effect": "range_multiplier", "value": 1.5 },
-      { "tier": 6, "effect": "add_bullets", "value": 2 },
-      { "tier": 7, "effect": "fire_rate_multiplier", "value": 1.2 },
-      { "tier": 8, "effect": "pierce", "value": 1 }
+      { "tier": 5, "effect": "fire_rate_multiplier", "value": 1.2 },
+      { "tier": 6, "effect": "set_targets", "value": 3 },
+      { "tier": 7, "effect": "add_bullets", "value": 1 },
+      { "tier": 8, "effect": "add_bullets", "value": 1 },
+      { "tier": 9, "effect": "fire_rate_multiplier", "value": 1.2 },
+      { "tier": 10, "effect": "fire_rate_multiplier", "value": 1.2 },
+      { "tier": 11, "effect": "set_targets", "value": 5 }
     ]
   },
   "flamethrower": {
