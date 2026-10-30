@@ -75,6 +75,9 @@ func test_the_run_is_frozen_while_the_screen_plays() -> void:
 	_run_out_the_clock(state)
 	assert_true(get_tree().paused, "the scene tree is paused: enemies, car and pickups stand still")
 	assert_eq(state.process_mode, Node.PROCESS_MODE_ALWAYS, "only the state counts the seconds")
+	# T-413: a kaiju kill on the very step the clock reaches 0:00 still wins (a tie
+	# goes to the player); from the next step on nothing counts.
+	await get_tree().process_frame
 	var hearts := state.health
 	state.damage_car(1.0)
 	state.add_coins(5)

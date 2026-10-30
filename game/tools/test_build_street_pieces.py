@@ -55,3 +55,37 @@ class StreetPiecesTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StreetPiecesPreviewTest(unittest.TestCase):
+    """T-399: the style loop's versions and previews."""
+
+    def test_curb_names_round_the_crossroads(self):
+        cells = bs.preview_map()
+        names = {t["name"] for t in bs.build_sheet()[1]["tiles"]}
+        for (cx, cy), kind in cells.items():
+            if kind == "sidewalk":
+                self.assertIn(bs.curb_name(cells, cx, cy), names)
+        # next to the road along y (columns 5, 6) on its west side: a curb on the east edge
+        self.assertEqual(bs.curb_name(cells, 4, 1), "sidewalk-e")
+        # diagonal to the crossing's corner only: an inner corner
+        self.assertEqual(bs.curb_name(cells, 4, 4), "sidewalk-es")
+        self.assertEqual(bs.curb_name(cells, 3, 3), "sidewalk")
+
+    def test_crater_strip_is_one_row_of_the_looks(self):
+        strip = bs.crater_strip()
+        self.assertEqual(strip.shape, (bs.TILE_H, bs.TILE_W * len(bs.CRATER_LOOKS), 4))
+
+    def test_previews_are_written(self):
+        import tempfile
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as d:
+            sheet = os.path.join(d, "sheet.png")
+            self.assertEqual(bs.main(["sheet", "--out", sheet]), 0)
+            self.assertTrue(os.path.isfile(bs.preview_sidewalks(sheet, os.path.join(d, "sw"))))
+            self.assertTrue(os.path.isfile(os.path.join(d, "sw", "zoom_corner_s.png")))
+            strip = os.path.join(d, "craters.png")
+            self.assertEqual(bs.main(["crater-strip", "--out", strip]), 0)
+            self.assertEqual(Image.open(strip).size, (bs.TILE_W * len(bs.CRATER_LOOKS), bs.TILE_H))
+            self.assertTrue(os.path.isfile(bs.preview_craters(strip, os.path.join(d, "cr"))))
+        self.assertEqual(bs.main(["nonsense"]), 2)

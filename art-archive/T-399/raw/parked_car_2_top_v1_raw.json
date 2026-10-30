@@ -1,0 +1,45 @@
+{
+  "file": "parked_car_2_top_v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": true,
+    "isometric": true,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "view": "high top-down",
+    "direction": "north-east",
+    "text_guidance_scale": 8,
+    "description": "a plain boring small boxy five-door city hatchback car, parked, dull muted slate grey-blue paint, dark tinted windows, unlit headlights, small black tyres, slightly dusty, an ordinary everyday commuter car, no stripes, no spoiler, isometric view seen from above, facing up and to the right, night city, cool blue-grey steel colours, retro pixel art game sprite, a single object"
+  },
+  "prompt": "a plain boring small boxy five-door city hatchback car, parked, dull muted slate grey-blue paint, dark tinted windows, unlit headlights, small black tyres, slightly dusty, an ordinary everyday commuter car, no stripes, no spoiler, isometric view seen from above, facing up and to the right, night city, cool blue-grey steel colours, retro pixel art game sprite, a single object",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T14:02:48+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-397/parked_car_ne.png",
+    "game/art/ground/ground_atlas.png",
+    "game/art/boulders/boulder_a.png"
+  ],
+  "task": "T-399",
+  "job_status": null,
+  "notes": "parked car 2 v1: first picture, plain slate grey-blue hatchback, base for the 8 rotations",
+  "generator": "game/tools/pixellab_client.py"
+}
