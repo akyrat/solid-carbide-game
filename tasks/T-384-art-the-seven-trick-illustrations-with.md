@@ -1,7 +1,7 @@
 ---
 id: T-384
 title: Art: the seven trick illustrations with PixelLab (art cap 40)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Blocked → In progress
 
 Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-384.
+
+### 2026-10-30, In progress → In QA
+
+Goal runner (G-007): the agent is done; QA is checking it.
 
 ## Style review
 
