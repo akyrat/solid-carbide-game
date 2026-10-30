@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: yes
 changes_visuals: yes
-depends_on: [T-396, T-393, T-394]
+depends_on: [T-396, T-393, T-394, T-401]
 documents_affected: [docs/level-design.md, game/docs/level/]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/scripts/level_creator/, game/scripts/level/, game/scripts/run/, game/data/level/creator_texts.json]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/scripts/run/, game/data/level/, game/tools/check_level.py, game/tests/unit/, game/docs/level/, docs/level-design.md, art-archive/]
@@ -36,7 +36,9 @@ Build the pieces with code-drawn placeholders in the city's palette; T-399 swaps
 2. **Parked car** and **broken car** (Obstacles): a few looks each (chosen by key, like other pieces' looks), each at four facings, top right, bottom right, bottom left, top left (turned by key). Solid obstacles like boulders: the car crashes into them, they cut the combo, and they can be paired (and chained) for thread the needle. They respect what they stand on (T-393's fix).
 3. Names from T-396 into `creator_texts.json`. Saved levels keep the new pieces; levels saved before open unchanged; `check_level.py` accepts them. The game's own map is unchanged.
 
-The board's review: paint sidewalks along roads and place parked and broken cars at each facing in the creator, then press Play and drive over the curbs and into the cars.
+4. **Meteor crater** (Ground; board, 2026-10-30, added after this ticket was written; Level design, Decisions): holes the meteors left in the ground, a few looks chosen by key, placed on the ground (not painted). Not an obstacle: the car drives over it with no crash, and enemies cross it. Its name comes from T-401, so this ticket also depends on T-401.
+
+The board's review: paint sidewalks along roads, place parked and broken cars at each facing and a few craters in the creator, then press Play, drive over the curbs and the craters and into the cars.
 
 The board's decision (Level design, Decisions, "Sidewalks and parked cars in the level creator", 2026-10-30). The board: "add sidewalk assets that fit with the road ... and the buildings and other assets that we have, and make sure that it works well, consider the curb as well. And I also want a few different car assets that are just sitting parked, just normal, boring kind of cars. Generate some broken ones as well. And make it so that they sit at four rotations: top right, bottom right, bottom left, top left. This is for the level creator." The board's answers: parked cars are solid obstacles like boulders (crash into them, pairable for thread the needle); sidewalks are painted like roads with the curb added automatically where they meet a road, and the car drives up over the curb; PixelLab up to 50 generations for the whole set (T-397 and T-399 together), sample first. The tickets: T-396 (piece names), T-397 (art sample), T-398 (the pieces in the creator and the run, placeholders), T-399 (the full art set, swapped in). The board's levels are in the main checkout's `C:\solid-carbide-game\game\data\levels\` (untracked): read copies only, never write or commit them.
 
