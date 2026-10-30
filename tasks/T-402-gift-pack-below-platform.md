@@ -43,13 +43,13 @@ The board's review: play a level with platforms until a gift pack drops near one
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The root cause is written in the result notes, with a test that fails before the fix (named). (QA: pass / fail)
-- [ ] A gift pack is never drawn below a platform: it lands on a street spot or on the platform as the result notes propose, drawn at the height of what it lands on (tests). (QA: pass / fail)
-- [ ] If it can land on a platform, the car picks it up there (test). (QA: pass / fail)
-- [ ] Widened by the board, 2026-10-30: every pickup (gift package, coin, health pickup) is drawn and picked up at the height it is at; on a platform the car picks it up there and not from the street below (tests). (QA: pass / fail)
-- [ ] Level design (Content) and Game loop architecture describe the behaviour. (QA: pass / fail)
-- [ ] Screenshots of a gift pack by a platform before and after are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The root cause is written in the result notes, with a test that fails before the fix (named). (QA: pass: root cause and two named failing-before tests in result notes)
+- [ ] A gift pack is never drawn below a platform: it lands on a street spot or on the platform as the result notes propose, drawn at the height of what it lands on (tests). (QA: pass: test_gift_drops_heights green, screenshots show pack on the rooftop)
+- [ ] If it can land on a platform, the car picks it up there (test). (QA: pass: rooftop pickup test green)
+- [ ] Widened by the board, 2026-10-30: every pickup (gift package, coin, health pickup) is drawn and picked up at the height it is at; on a platform the car picks it up there and not from the street below (tests). (QA: pass: test_pickup_heights green)
+- [ ] Level design (Content) and Game loop architecture describe the behaviour. (QA: pass: both docs changed per qa_check)
+- [ ] Screenshots of a gift pack by a platform before and after are in `art-archive/<id>/screenshots/`. (QA: pass: 4 before/after images; viewed, pack drawn on the rooftop after)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass: qa_check ran all 3 sets green; counts 668/576/1958 in notes)
 
 ## Updates
 
