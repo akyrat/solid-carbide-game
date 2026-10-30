@@ -1,7 +1,7 @@
 ---
 id: T-409
 title: Neon underglow: each tick deals half a minion's health (2 ticks kill), and it knocks enemies back a little from tier 1
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/docs/weapons/neon-underglow.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, game/docs/weapons/neon-underglow.md, game/docs/weapons/shared.md, game/data/weapons.json, game/data/enemies.json]
 files_expected_to_change: [game/scripts/weapons/, game/data/weapons.json, game/tests/unit/, game/docs/weapons/, docs/weapons.md, art-archive/]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -50,7 +50,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] Later tiers keep their multipliers from the new base (test). (QA: pass)
 - [ ] Weapons (Content, "The neon underglow") and game/docs/weapons/neon-underglow.md describe the new damage and the push; card text matches Weapons "Level-up card text (T-412)". (QA: pass)
 - [ ] A GIF of the underglow in a swarm is in `art-archive/<id>/screenshots/`. (QA: pass)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass; GUT 158 scripts, 1950 tests, 1950 pass; unittest sets green)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass; round 2 on master-merged branch: GUT run_tests.sh green, game/tools unittest 701 OK, tools unittest 579 OK)
 
 ## Updates
 
@@ -91,3 +91,5 @@ Documents changed: `docs/weapons.md` (Content "Neon underglow", the built-underg
 
 ### Merge with master (T-406, T-379, T-408)
 Merged master into the branch with no conflicts. Tests after the merge: GUT 2053/2053 passed; game/tools unittest 579 OK; tools unittest 579 OK. The earlier test_wreck failure is a flake that is not caused by this ticket: test_wreck.gd (the T-406 run-scene test) failed in 6 of 14 runs on plain master and 2 of 14 on this branch, with different asserts each time (hearts 5 vs 1, coins 5 vs 0, pickup not collected). The underglow is not equipped in that run; the gun (T-408) kills random minions near the wreck and their drops change hearts and coins. A separate game-loop ticket fixes the test; nothing in the wreck code or test was changed here.
+- 2026-10-30, in-progress → in-qa: Merged master; all three sets pass (GUT 2053, 579, 579). test_wreck flakes on master too (6/14), own ticket.
+- 2026-10-30, in-qa → needs-playtest: QA final: all six criteria pass on master-merged branch; three test sets green (game/tools 701, tools 579, GUT green)
