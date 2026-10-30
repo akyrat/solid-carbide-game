@@ -37,12 +37,12 @@ The board's review: Look at the script-drawn trick illustrations on the preview 
 
 ## Acceptance criteria
 
-- [ ] A script in game/tools/ draws seven PNGs, art-archive/<task id>/script/<trick id>.png, one per trick id in game/docs/driving/tricks.md, each showing the car's movement as a path; a pytest for the script passes. (QA: pass / fail)
-- [ ] Each PNG passes game/tools/style_rules.py art (Visual style, Rules 1 and 6): hard edges, every pixel fully opaque or fully transparent, transparent background, at most 30 colours, no Greenbull light green or yellow. (QA: pass / fail)
-- [ ] All seven PNGs are the same size, the illustration size in game/docs/hud-and-menus/tutorial-slides.md, and the result notes record it. (QA: pass / fail)
-- [ ] The ticket's Style review records the style loop rounds for each illustration. (QA: pass / fail)
-- [ ] A preview sheet of all seven, enlarged with nearest filtering on dark and light backgrounds, and a screenshot of the trick list scene showing this set are saved in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] docs/visual-style.md, Decisions records the script-drawn trick illustrations and where they are. (QA: pass / fail)
+- [ ] A script in game/tools/ draws seven PNGs, art-archive/<task id>/script/<trick id>.png, one per trick id in game/docs/driving/tricks.md, each showing the car's movement as a path; a pytest for the script passes. (QA: pass)
+- [ ] Each PNG passes game/tools/style_rules.py art (Visual style, Rules 1 and 6): hard edges, every pixel fully opaque or fully transparent, transparent background, at most 30 colours, no Greenbull light green or yellow. (QA: pass)
+- [ ] All seven PNGs are the same size, the illustration size in game/docs/hud-and-menus/tutorial-slides.md, and the result notes record it. (QA: pass)
+- [ ] The ticket's Style review records the style loop rounds for each illustration. (QA: pass)
+- [ ] A preview sheet of all seven, enlarged with nearest filtering on dark and light backgrounds, and a screenshot of the trick list scene showing this set are saved in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] docs/visual-style.md, Decisions records the script-drawn trick illustrations and where they are. (QA: pass)
 
 ## Updates
 
@@ -694,4 +694,5 @@ The picture reads as one long sweeping curve with a long trail, which fits the b
 - **Documents affected:** `docs/visual-style.md` (Decisions: the script-drawn trick illustrations).
 - **Refusals:** none for me. The earlier `python - <<EOF` edit script was refused for approval; I did the edits with the Edit tool instead.
 - 2026-10-29, in-progress → flagged-for-review: the style loop kept version 3 (score 6/10), still below 8 after 3 refines; every version is in its Style review
+- QA round 1 (2026-10-30): all six criteria pass. `python -m unittest discover game/tools -p test_build_trick_illustrations.py`: 7 tests OK. `style_rules.py art --size 64x48` on each of the seven PNGs: all checks ok (17 to 27 colours, 0 semi-transparent, transparent corners, no Greenbull colours). Seven files present in art-archive/T-383/script/, all 64 x 48 (matches tutorial-slides.md); three screenshots present; visual-style.md Decisions entry present; Style review has 8 runs covering all seven. Not run: `python tools/qa_check.py` (needs an approval not in the pre-approved list; refused, not worked around); its checks were done by hand above, including the three test sets only for this ticket's test file.
 - 2026-10-29, flagged-for-review → in-progress: Goal run G-007 (board, 2026-10-29: one goal, reviewed at the end): the script set kept at 6 to 7/10 after 3 refines is noted for the board's final playtest and compared with the PixelLab set by QA (T-385); the run carries on.
