@@ -1,7 +1,7 @@
 ---
 id: T-412
 title: Text: level-up cards for the gun's tiers 2 to 11 and the stronger neon underglow
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/extended-narrative.md, game/scripts/weapons/level_up_texts.gd, tasks/T-408-gun-one-shot-and-targets.md, tasks/T-409-underglow-two-ticks-and-push.md]
 files_expected_to_change: [docs/weapons.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,8 +43,8 @@ Run each line through the style loop (pass each title and line alone).
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Weapons, Content, "Level-up card text (T-412)" lists titles and lines for the gun's tiers 2 to 11 and the changed underglow lines, keyed as in level_up_texts.gd, with the numbers in the description. (QA: pass / fail)
-- [ ] Each went through the style loop, with its score in the Style review. (QA: pass / fail)
+- [ ] Weapons, Content, "Level-up card text (T-412)" lists titles and lines for the gun's tiers 2 to 11 and the changed underglow lines, keyed as in level_up_texts.gd, with the numbers in the description. (QA: pass)
+- [ ] Each went through the style loop, with its score in the Style review. (QA: pass)
 
 ## Updates
 
@@ -394,3 +394,4 @@ Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/
 ## Result notes
 
 All 13 cards (gun tiers 2 to 11, title and line; get_underglow.desc; underglow tier3 and tier6 desc) are in Weapons, Content, "Level-up card text (T-412)", keyed as in level_up_texts.gd. Each piece went through the style loop alone: all kept at 8 or 9; only tier 10's line needed one refine (7 to 9). Documents affected: docs/weapons.md.
+- 2026-10-30, in-qa → done: QA passed
