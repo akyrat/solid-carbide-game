@@ -37,12 +37,12 @@ The board's review: Open the main menu: the pixel-art title, the styled '(work i
 
 ## Acceptance criteria
 
-- [ ] The title 'SOLID CARBIDE' uses a pixel-art font whose licence file and record are in game/fonts/<font>/; '(work in progress)' is unchanged word for word and styled to match (screenshot). (QA: pass / fail)
-- [ ] Tests show the menu fills the screen with game/art/menu/splash.png (cropped, aspect kept, nearest filtering) when it exists, and with a plain dark placeholder when it doesn't, at 1152 x 648 and 3440 x 1440. (QA: pass / fail)
-- [ ] Tests show Start, Garage and Exit keep their texts, still send start_pressed, garage_pressed and exit_pressed, and focus starts on Start. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md, Content, 'Main menu' and game/docs/hud-and-menus/main-menu.md describe the title font, the line's style and the splash slot. (QA: pass / fail)
-- [ ] Screenshots of the menu with the placeholder and with a test image are in art-archive/<id>/screenshots/. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] The title 'SOLID CARBIDE' uses a pixel-art font whose licence file and record are in game/fonts/<font>/; '(work in progress)' is unchanged word for word and styled to match (screenshot). (QA: pass)
+- [ ] Tests show the menu fills the screen with game/art/menu/splash.png (cropped, aspect kept, nearest filtering) when it exists, and with a plain dark placeholder when it doesn't, at 1152 x 648 and 3440 x 1440. (QA: pass)
+- [ ] Tests show Start, Garage and Exit keep their texts, still send start_pressed, garage_pressed and exit_pressed, and focus starts on Start. (QA: pass)
+- [ ] docs/hud-and-menus.md, Content, 'Main menu' and game/docs/hud-and-menus/main-menu.md describe the title font, the line's style and the splash slot. (QA: pass)
+- [ ] Screenshots of the menu with the placeholder and with a test image are in art-archive/<id>/screenshots/. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -71,3 +71,5 @@ Done (UI Agent). 0 PixelLab generations; no style loop (a free font, no new text
 - Docs updated: docs/hud-and-menus.md (Main menu), game/docs/hud-and-menus/main-menu.md.
 - Screenshots: art-archive/T-432/screenshots/menu_placeholder.png and menu_test_image.png (test image from `game/tools/menu_splash_shots.py`, removed again; no splash.png is committed).
 - Refusals: none.
+
+QA round 1: all six criteria pass. `python tools/qa_check.py` needed an approval QA doesn't have (skipped); checked by hand. test_main_menu 9/9; unittest game/tools OK; unittest tools 582 OK. GUT full run: 2144/2145 on first run, one timing-sensitive failure in test_run_likes.gd (unrelated to the menu; it failed on a different test in a second rerun and passed 18/18 on a third), so treated as flaky. Screenshots present and show the pixel title, styled line, test image cover. Docs mention the font and splash.
