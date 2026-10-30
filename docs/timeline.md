@@ -2490,3 +2490,8 @@ Entry format:
 - Decision or change: The board asked for a bug ticket on the car's height being judged from its centre point only, and for an agent to assess the root cause and the best approach before it is built.
 - Documents touched: tasks
 - Tasks: T-411
+
+## 2026-10-30: Weapon card text for the new tiers
+- Decision or change: Text ticket for the gun's tiers 2 to 11 and the stronger underglow's cards, ahead of T-408 and T-409 (the level-up cards show a line per tier).
+- Documents touched: docs/weapons.md
+- Tasks: T-412
