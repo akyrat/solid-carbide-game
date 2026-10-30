@@ -521,6 +521,8 @@ func drawn(point: Vector2, height: float) -> Vector2:
 ## wall hit from behind the car's 1 by 1 footprint reaches into the rectangle
 ## while its centre stays just outside. Judged by the footprint, the car was
 ## "not behind" there and popped over the area for the hit.
+## (Since T-411 the car's whole drawn outline stops at a side, so its centre
+## waits further out; judging by the centre still holds.)
 func is_behind(centre: Vector2, radius: float, height: float) -> bool:
 	var r := rect()
 	var behind := centre.x <= r.position.x or centre.y <= r.position.y
