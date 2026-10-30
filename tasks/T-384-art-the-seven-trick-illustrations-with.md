@@ -202,6 +202,29 @@ Brief and rule 5: the tire smoke ring the brief asks for is missing or unreadabl
 Rule 4: the dusk feel comes only from the colours. Strengthen the navy and purple night tones on the shadow and props.
 - Rules broken: 2, 3, 10
 
+#### Round 4
+
+- Version 4: `art-archive/T-384/style-loop/v4-2.png`
+- What changed: Version 4 is the last paid PixelLab refine for the 360 (create-image-pixflux, 64x48, no_background true). It is call 8 of the goal's 40, and the 360 has now used all 4 of its generations. No free script can redraw the car, and my own pixel-edit scripts were refused earlier in this ticket, so I skipped the script fix. A script still cut the colours to 30. The prompt combined v3's ring with v2's low 3/4 view, and asked for a deep dark green fastback with bold white stripes and a gap, a near-black outline and highlights, a purple shadow, and lilac smoke puffs. All 6 style_rules.py checks pass. What improved: this is the best car of the four versions. It clearly shows its top and one side, with a black outline, white stripe and highlight pixels, and a purple shadow. The smoke puffs finally appear. What is still wrong: the body is teal-green, not 12,76,44, and the car is big, not tiny. The loop has also broken into scattered dotted pink arcs, where v3 had a clean closed ring. On my own look, v3 shows the trick better and v4 shows the car better; neither has both. The raw output, request and record are in art-archive/T-384/pixellab/three_sixty_v4*, and the preview is style-loop/v4-2_preview.png. The result notes are updated and the work is committed (6812dd1e).
+- Script checks: 6 of 6 pass
+- Score: 6/10
+- Reason: I could only see the image at 64x48, so these notes are approximate. The script checks pass (size, transparent corners, no semi-transparent pixels, 30 colours, no Greenbull light green or yellow).
+
+Rule 10: the car reads as a green fastback with a cyan trail ring around it. The body looks teal or cyan-tinted rather than the dark green (12,76,44). The two centred white stripes with a gap between them are not clearly legible. Fix: keep the body dark green and draw the two white stripes as distinct, separated pixel bands.
+
+Rule 2: the outline and highlight pixels are weak at this size, and the shading looks flat. Fix: add a near-black selective outline and a few lighter highlight pixels on the roof and hood.
+
+Rule 5: the cyan trail is a plain ring with no clear stepped darker halo around it. Fix: draw a bright core line with one or two stepped darker cyan or purple halo rows.
+
+Brief: the ring looks like a ring around the car, not a path that closes at the car. The tire smoke ring is not visible. Fix: show the trail as a ground-plane ellipse that closes at the car, and add a pale-grey or purple pixel smoke ring.
+
+Rule 4: the dusk or night feel is weak. Fix: add navy and purple shadow tones.
+
+Rule 3: the view is roughly 3/4 isometric, which is acceptable.
+- Rules broken: 2, 5, 10, 4
+
+**Kept:** version 4, score 6/10 (`art-archive/T-384/style-loop/v4-2.png`, copied to `art-archive/T-384/pixellab/three_sixty.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -227,3 +250,5 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Call 7: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v3.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v3-2.png (preview v3-2_preview.png). Script checks: all 6 pass. Running total: 7 / 40; three_sixty has used 3 of its 4, so one refine is left. My own look: the ring is back to a bold closed neon pink loop with stepped bands (as in v1), and two trail lines lead out of it to the top right like an exit path. The middle is no longer a glowing fill. The car is a little smaller and more clearly dark green with white highlight and stripe pixels, but PixelLab still puts it in the middle of the loop, not on the edge. There is still no visible smoke ring.
 - Call 8 (planned): three_sixty v4, last refine (v3 scored 5: car not dark green, flat, no stripes, no smoke ring). The car can't be redrawn by a free script, so this is a paid refine: create-image-pixflux 64x48 with v3's ring, v2's low top-down 3/4 view, and a stronger dark green fastback with stripes plus smoke puffs. 1 generation. Loop output: art-archive/T-384/style-loop/v4-2.png.
 - Call 8: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v4.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v4-2.png (preview v4-2_preview.png). Script checks: all 6 pass. Running total: 8 / 40; three_sixty has used all 4 of its generations (1 + 3 refines). My own look: the best car of the four. It shows a clear 3/4 top and side, a black outline, white stripe and highlight pixels, a purple shadow, and pale lilac smoke puffs at last. But the body is teal-green rather than 12,76,44, the car is big rather than tiny, and the loop has broken into scattered dotted pink arcs instead of v3's clean closed ring.
+- Call 9 (planned): alternate_drift v1, create-image-pixflux 64x48, no_background true, high top-down view (which gave the clean curve for extended_drift v2/v4), an S-shaped neon pink trail with stepped halo, a small dark forest green fastback with white stripes at the S bend. 1 generation. Loop output: art-archive/T-384/style-loop/v1-3.png.
+- Call 9: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v1.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v1-3.png. Script checks: all 6 pass (transparent corners included). Running total: 9 / 40; alternate_drift has used 1 of its 4. The enlarged preview (v1-3_preview.png) and the palette dump were refused by the permission system, so they were not made; I did not work around it. My own look at actual size: neon pink curved trail strokes with purple halos sweep past a sliding car, but the car is large and reads blue-navy rather than dark green 12,76,44, and the S shape is only partly readable.
