@@ -264,6 +264,16 @@ static func object_problem(doc: LevelDocument, rect: Rect2) -> String:
 	return ""
 
 
+## T-398 (proposal): a meteor crater lies on the street, so it is not placed where its footprint
+## would reach onto a building (short ones too), a rooftop or a ramp: "" when it may go.
+static func crater_problem(doc: LevelDocument, rect: Rect2) -> String:
+	for key in ["buildings", "platforms", "ramps"]:
+		for a in doc.data.get(key, []):
+			if _overlap(rect, _rect(a)):
+				return "the crater reaches onto %s" % str(a.get("id", key))
+	return ""
+
+
 ## The same rule seen from the other side: a building placed over an object, or a rooftop or ramp
 ## whose edge would cut through one (`item` is the piece just placed, of `kind`), is not placed.
 ## A rooftop or ramp placed wholly over an object lifts it (the object stands at its height).

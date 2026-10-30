@@ -504,6 +504,8 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 	var why := ""
 	if str(piece.kind) in ["boulder", "prop"]:
 		why = LevelSnapping.object_problem(document, document.piece_rect(piece))
+	elif str(piece.kind) == "crater":
+		why = LevelSnapping.crater_problem(document, document.piece_rect(piece))  # T-398: on the street
 	elif str(piece.kind) in ["building", "rooftop", "ramp"]:
 		why = LevelSnapping.cuts_object_problem(document, str(piece.kind), piece.item)
 	if why != "":
@@ -814,6 +816,9 @@ func begin_road_stroke(units: Vector2, erase: bool = false) -> void:
 ## Carries the stroke on to `units`: every block between the last one and this (next to each
 ## other, no gaps), painted with the picked road kind and asphalt or erased.
 func continue_road_stroke(units: Vector2) -> void:
+	if brush_mode() == "sidewalk":
+		_continue_sidewalk_stroke(units)
+		return
 	var b := RoadBrush.block_at(document, units)
 	if b.x < 0 or b == road_stroke_last:
 		return
@@ -823,6 +828,29 @@ func continue_road_stroke(units: Vector2) -> void:
 		else RoadBrush.paint(document, blocks, panel.picked_family, brush_asphalt())
 	if not changed.is_empty():
 		_refresh_after("road")
+
+
+## The sidewalk brush (T-398, sidewalk_brush.gd): the same stroke, cell by cell (one ground tile),
+## painting sidewalk or erasing it; the curbs follow by themselves.
+func _continue_sidewalk_stroke(units: Vector2) -> void:
+	var c := SidewalkBrush.cell_at(document, units)
+	if c.x < 0 or c == road_stroke_last:
+		return
+	var cells: Array = [c] if road_stroke_last.x < 0 else RoadBrush.blocks_between(road_stroke_last, c)
+	road_stroke_last = c
+	var changed: Array = SidewalkBrush.erase(document, cells) if road_erasing else SidewalkBrush.paint(document, cells)
+	if not changed.is_empty():
+		_refresh_after("ground")
+
+
+## Paints sidewalk along a drag through `points` (with Sidewalk picked; for tests and fixtures).
+func paint_sidewalk(points: Array) -> void:
+	_stroke(points, false)
+
+
+## Erases sidewalk along a drag through `points` (a right-drag with Sidewalk picked).
+func erase_sidewalk(points: Array) -> void:
+	_stroke(points, true)
 
 
 func end_road_stroke() -> void:
@@ -1118,6 +1146,8 @@ func _update_pose_controls() -> void:
 	height_label.text = CreatorTexts.get_text(key) if key != "" else ""
 	var dir_key: String = LevelCreatorAssetPanel.RAMP_DIR_KEYS.get(pick_view, "") \
 		if str(LevelDocument.entry(id).get("kind", "")) == "ramp" else ""
+	if dir_key == "" and panel != null and bool(CreatorFamilies.family(panel.picked_family).get("facing_labels", false)):
+		dir_key = LevelCreatorAssetPanel.FACING_KEYS.get(pick_view, "")  # T-398: a car's facing
 	direction_label.text = CreatorTexts.get_text(dir_key) if dir_key != "" else ""
 	# T-264: the S, M, L and Any size buttons show with a rooftop picked, Arrows up and down with a ramp.
 	var kind := str(LevelDocument.entry(id).get("kind", ""))
@@ -1458,7 +1488,11 @@ class _Overlay extends Node2D:
 			# The road brush (T-263): the block it paints or erases, or the crossing's row of tiles.
 			var r: Rect2 = RoadBrush.zebra_rect(doc, editor.hover_units) if brush == "zebra" \
 				else RoadBrush.block_rect(doc, RoadBrush.block_at(doc, editor.hover_units))
-			if r.size != Vector2.ZERO and (brush == "zebra" or RoadBrush.block_at(doc, editor.hover_units).x >= 0):
+			var ok: bool = brush == "zebra" or RoadBrush.block_at(doc, editor.hover_units).x >= 0
+			if brush == "sidewalk":  # T-398: one cell
+				r = SidewalkBrush.cell_rect(doc, editor.hover_cell)
+				ok = true
+			if r.size != Vector2.ZERO and ok:
 				var col := Color(1.0, 0.55, 0.45, 0.9) if editor.road_erasing else Color(0.55, 0.85, 1.0, 0.9)
 				_outline(r, col, w)
 		elif editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:

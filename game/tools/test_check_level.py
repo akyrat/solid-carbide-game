@@ -156,6 +156,35 @@ class TestCheckProps(unittest.TestCase):
         self.assertEqual(c.check_level(small_level()), [])
 
 
+class TestCheckCraters(unittest.TestCase):
+    """T-398: meteor craters name a known crater, have its footprint and lie inside the map."""
+
+    def level(self, *craters):
+        d = small_level()
+        d["craters"] = list(craters)
+        return d
+
+    def crater(self, asset="crater-1", x=0.0, y=0.0, w=2.0, h=2.0):
+        return {"id": "crater-1", "asset": asset, "x": x, "y": y, "w": w, "h": h}
+
+    def test_a_valid_crater(self):
+        self.assertEqual(c.check_level(self.level(self.crater())), [])
+
+    def test_rejects_unknown_wrong_size_and_outside(self):
+        self.assertTrue(any("unknown crater" in p for p in c.check_level(self.level(self.crater(asset="crater-x")))))
+        self.assertTrue(any("footprint" in p for p in c.check_level(self.level(self.crater(w=4.0)))))
+        self.assertTrue(any("outside the map" in p for p in c.check_level(self.level(self.crater(x=9.0)))))
+
+    def test_parked_and_broken_cars_are_props_and_obstacles(self):
+        d = small_level()
+        d["props"] = [{"id": "prop-1", "asset": "prop-parked-car-1", "rotation": "north", "x": -4.0, "y": -4.0, "w": 2.0, "h": 3.0},
+                      {"id": "prop-2", "asset": "prop-broken-car-2", "rotation": "east", "x": 0.0, "y": 0.0, "w": 3.0, "h": 2.0}]
+        d["pairs"] = [{"id": "pair-1", "a": "prop-1", "b": "prop-2"}]
+        self.assertEqual(c.check_level(d), [])
+        self.assertIn("prop-parked-car-1", c.obstacle_props())
+        self.assertIn("prop-broken-car-2", c.obstacle_props())
+
+
 class TestCheckPairs(unittest.TestCase):
     """T-272: every pair names two different existing obstacles; T-394: an obstacle can be in several
     pairs, the same two obstacles in one pair at most."""
@@ -176,7 +205,9 @@ class TestCheckPairs(unittest.TestCase):
         return {"id": pid, "a": a, "b": b}
 
     def test_the_obstacles_are_the_obstacles_groups_props(self):
-        self.assertEqual(c.obstacle_props(), {"prop-barrier", "prop-cones", "prop-crates"})
+        self.assertEqual(c.obstacle_props(), {"prop-barrier", "prop-cones", "prop-crates",  # T-398: the cars
+                                               "prop-parked-car-1", "prop-parked-car-2", "prop-parked-car-3",
+                                               "prop-broken-car-1", "prop-broken-car-2"})
 
     def test_valid_pairs(self):
         d = self.level(self.pair("copy-01", "prop-1"), self.pair("copy-02/0", "copy-02/1", "pair-2"))

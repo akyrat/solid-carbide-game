@@ -903,6 +903,22 @@ Task T-393 (Decisions, "Obstacles and decorations respect the buildings' and roo
 
 ![After: the barrier behind the low-rise is hidden by it](../art-archive/T-393/screenshots/after_editor.png)
 
+#### Level creator: sidewalks, parked cars and meteor craters
+
+Task T-398 (Decisions, "Sidewalks and parked cars in the level creator"; names from T-396 and T-401, "Level creator text" above). Placeholder art until T-399. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest. How it works in the code: `game/docs/level/level-creator-pieces.md`, "Sidewalks, parked cars and meteor craters (T-398)".
+
+- **Sidewalk (Ground):** pick it, press the left button on the map and drag, as with a road; a right-drag erases it, and Del erases the tile under the mouse. A proposal: it paints one ground tile (2 x 2 units) at a time, so a sidewalk can be one tile wide beside a road. It is never painted over a road, a building, a platform or a ramp. **The curb comes by itself** on every side where a sidewalk tile meets a road: straight curbs, outer corners (two sides) and inner corners (a road only diagonally next to it), and it follows the roads: painting or erasing a road next to a sidewalk changes its curb. 47 curb pieces in all.
+- **In a run** the sidewalk is ground at the street's height; the curb is drawn on the tile, so the car drives up over it and back down with no crash and no slowing (a step under the 0.1-unit curb rule, Drifting, Decisions, "Curbs"). Enemies cross it like any ground.
+- **Parked car and Broken car (Obstacles):** three parked models and two broken ones (a proposal); V steps the model ("Model {n} of {count}" under the looks), R turns the car through its four facings, top right, bottom right, bottom left, top left, named on the top bar ("Facing top right" ...). Each is a solid obstacle like a boulder: the car crashes into it and the combo is cut, the enemies go round it, and it can be paired or chained for thread the needle. It stands at the height under it (on a rooftop too) and is refused where it would reach into a building or across an edge (T-393). Proposals: a footprint of 2 by 3 units (3 along the way it faces), 1.35 units high (the broken ones 0.95), collision the whole footprint.
+- **Meteor crater (Ground):** three models (V, "Model {n} of {count}"), placed with a click like a piece, one ground tile (2 x 2 units) each, drawn on the ground under everything else. Not an obstacle: the car drives over it with no crash, enemies cross it, and it never blocks the start. A proposal: it lies on the street only, so it is refused where it would reach onto a building, a platform or a ramp.
+- **Saved levels:** a sidewalk is ground tiles like the roads (a tile per cell), the cars are props, and the craters a new `craters` list; `check_level.py` checks the craters (a known crater, its footprint, inside the map). Levels saved before open unchanged, and the game's own map has none of these pieces.
+
+![Two roads crossing with sidewalks along them, the curbs added by themselves, three meteor craters on the road, and the parked and broken cars](../art-archive/T-398/screenshots/editor_sidewalks.png)
+
+![The parked and broken cars at each of the four facings, a parked car picked: "Facing bottom right"](../art-archive/T-398/screenshots/editor_cars_facings.png)
+
+![A run: the car on the sidewalk after driving up over the curb, the crater on the road beyond](../art-archive/T-398/screenshots/run_on_sidewalk.png)
+
 #### Short buildings as platforms
 
 Task T-405 (Decisions, "Short buildings become platforms"). How it works in the code: `game/docs/level/level-creator-pieces.md`, "Short buildings as platforms (T-405)". The art: Visual style, Content, "Short buildings as platforms".
@@ -1782,7 +1798,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `69f426025992d649607f4392f0ccc72e6ca05a169cd7920f7e5d0b3272e5b31d` |
 | `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
-| `level-design.md` | `44fb277d6be543e617e7e3fd24a98be14483dfbd08654aa1b7ec79ab02e20032` |
+| `level-design.md` | `3b73540e8b6bb0a28db528eae92a29b4cb28fc5a1f23264127f86d975c9e8f58` |
 | `enemies.md` | `42b2e497195cba218f44b56083a55f4ad20cd8c7507f8147461b779091617e03` |
 | `weapons.md` | `c12f34e94460fa409fcd1a1a5a8e89db8ad0a922cd44b0005c058eb3069d184c` |
 | `garage-design.md` | `697e864f36365a62d2303425a6c209e9fadeb40d797455bd53021907369cb4df` |

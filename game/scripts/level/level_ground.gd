@@ -50,11 +50,18 @@ static func values() -> Dictionary:
 				_values[str(e.id)] = int(e.atlas_index)
 			else:
 				_values[str(e.id)] = EXTRA_BASE + _extra.size()
-				_extra.append(str(e.textures[0].texture))
+				var t: Dictionary = e.textures[0]
+				# T-398: a tile drawn from a region of a sheet (the sidewalk curb pieces) is
+				# {texture, region}; a whole-file tile (road_tile.png) stays its path.
+				if t.get("region") is Array:
+					_extra.append({"texture": str(t.texture), "region": t.region})
+				else:
+					_extra.append(str(t.texture))
 	return _values
 
 
-## The textures of the tiles outside the atlas, in the order their cell values count them.
+## The textures of the tiles outside the atlas, in the order their cell values count them: a path,
+## or {texture, region} for a tile cut from a sheet (T-398).
 static func extra() -> Array:
 	values()
 	return _extra.duplicate()

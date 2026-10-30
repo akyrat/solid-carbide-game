@@ -2605,3 +2605,8 @@ Entry format:
 - Decision or change: The gun kills a minion in one hit; its upgrades add bullets and attack speed, and up to 3 then 5 targets.
 - Documents touched: `docs/weapons.md`
 - Tasks: T-408
+
+## 2026-10-30: Sidewalks, parked cars and craters in the level creator
+- Decision or change: Sidewalks are painted like roads with curbs drawn automatically (drawn only, no step: the board, 2026-10-30); parked and broken cars are solid obstacles at four facings and can be paired; meteor craters are ground pieces the car drives over. Placeholder art.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-398

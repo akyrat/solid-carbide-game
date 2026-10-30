@@ -9,6 +9,8 @@ also checks that:
 - the edges of buildings, rooftops and ramps lie on even units (enemy_navigation.gd's CELL = 2);
 - every prop (props: {id, asset, rotation, x, y, w, h}, T-253) names a prop of data/level/props.json and
   one of its rotations, has the footprint of that prop turned to that rotation, and lies inside the map;
+- every meteor crater (craters: {id, asset, x, y, w, h}, T-398) names a crater of data/level/craters.json,
+  has its footprint and lies inside the map (a sidewalk is ground tiles, like the roads: nothing to check);
 - every pair (pairs: {id, a, b}, T-272, thread the needle) names two different obstacles that exist:
   a boulder by its pattern copy's id (a copy of one boulder) or "<copy id>/<index>", or a prop of the
   Obstacles group (data/level/creator_assets.json's families in group "obstacles") by its id; an
@@ -101,6 +103,40 @@ def check_props(data, map_rect):
             if abs((r[2] - r[0]) - want[0]) > EPS or abs((r[3] - r[1]) - want[1]) > EPS:
                 problems.append("%s: its footprint is %g x %g, a %s facing %s is %g x %g"
                                 % (name, r[2] - r[0], r[3] - r[1], asset, rot, want[0], want[1]))
+        if map_rect is not None and not _inside(r, map_rect):
+            problems.append("%s: lies outside the map" % name)
+    return problems
+
+
+CRATERS_JSON = Path(__file__).resolve().parent.parent / "data" / "level" / "craters.json"
+
+
+def check_craters(data, map_rect):
+    """Problems with the level's meteor craters (T-398: craters: {id, asset, x, y, w, h}): a known
+    crater (data/level/craters.json) with its footprint, inside the map."""
+    problems = []
+    try:
+        kinds = {c["id"]: c for c in json.loads(CRATERS_JSON.read_text(encoding="utf-8"))["craters"]}
+    except (OSError, ValueError, KeyError):
+        kinds = {}
+    craters = data.get("craters", [])
+    if not isinstance(craters, list):
+        return ["craters: must be a list"]
+    for i, it in enumerate(craters):
+        name = "crater %r" % it.get("id") if isinstance(it, dict) and it.get("id") else "crater #%d" % i
+        try:
+            r = _rect(it)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            problems.append("%s: needs numbers x, y, w, h" % name)
+            continue
+        kind = kinds.get(it.get("asset"))
+        if kind is None:
+            problems.append("%s: unknown crater %r" % (name, it.get("asset")))
+        else:
+            fw, fh = (float(v) for v in kind["footprint_units"])
+            if abs((r[2] - r[0]) - fw) > EPS or abs((r[3] - r[1]) - fh) > EPS:
+                problems.append("%s: its footprint is %g x %g, a %s is %g x %g"
+                                % (name, r[2] - r[0], r[3] - r[1], it.get("asset"), fw, fh))
         if map_rect is not None and not _inside(r, map_rect):
             problems.append("%s: lies outside the map" % name)
     return problems
@@ -266,6 +302,7 @@ def check_level(data, require_spawn=True):
                     problems.append("boulder #%d of copy %r: lies outside the map" % (j, cid))
 
     problems.extend(check_props(data, map_rect))
+    problems.extend(check_craters(data, map_rect))
     problems.extend(check_pairs(data))
     problems.extend(check_spawn(data, map_rect, require_spawn))
 
