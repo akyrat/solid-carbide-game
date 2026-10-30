@@ -1,7 +1,7 @@
 ---
 id: T-408
 title: Gun: one-shots a minion from tier 1; upgrades are +1 bullet x2, faster x2, 3 targets, +1 bullet x2, faster x2, 5 targets
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -65,6 +65,10 @@ Started in build F: the gun one-shots minions and grows in bullets, speed and ta
 ### 2026-10-30, Blocked → In progress
 
 T-412's card text is in; building the gun now.
+
+### 2026-10-30, In progress → In QA
+
+Gun built: 4 damage one-shots minions; tiers 2-11 in the board's order up to 5 targets; per-weapon last tier (gun 11); all three test sets pass; GIF in art-archive.
 
 ## Style review
 
