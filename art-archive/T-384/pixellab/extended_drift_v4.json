@@ -1,0 +1,40 @@
+{
+  "file": "extended_drift_v4.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric pixel art at night seen from above at an angle, dark navy and purple asphalt, a wide curved neon pink tire trail bending in a big smooth U-shaped curve from the bottom left edge, around, and ending in the middle right, grey purple tire smoke clouds puffing along the curve, at the end of the curve a dark forest green 1967 Mustang fastback car drifting sideways, very dark green body almost black green, two white racing stripes along its roof and hood, black outline with white highlight pixels, top and side of the car visible, synthwave",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, bright green, teal, cyan car, full circle, closed ring, straight road, straight lines, photo, gradient",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "medium detail",
+    "text_guidance_scale": 10,
+    "no_background": false
+  },
+  "prompt": "isometric pixel art at night seen from above at an angle, dark navy and purple asphalt, a wide curved neon pink tire trail bending in a big smooth U-shaped curve from the bottom left edge, around, and ending in the middle right, grey purple tire smoke clouds puffing along the curve, at the end of the curve a dark forest green 1967 Mustang fastback car drifting sideways, very dark green body almost black green, two white racing stripes along its roof and hood, black outline with white highlight pixels, top and side of the car visible, synthwave",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:05:51+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/extended_drift.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v4, last refine: v2 curve + v3 car, dark forest green",
+  "generator": "game/tools/pixellab_client.py"
+}

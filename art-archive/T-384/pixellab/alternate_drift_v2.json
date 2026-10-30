@@ -1,0 +1,41 @@
+{
+  "file": "alternate_drift_v2.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art, a thin neon pink tire trail on the ground forming a clear S shape from the top left to the bottom right: first a curve bending left, then an opposite curve bending right, the trail a 1 pixel bright pink core line with a 1 pixel darker magenta stepped halo and a 1 pixel dark purple outer band, a small deep dark forest green 1967 Mustang fastback car sliding sideways exactly at the middle bend of the S, two white racing stripes along hood and roof, sloped fastback roof, roof and one side of the car visible, dark windows, black wheels, near black outline, light highlight pixels on roof edge, small navy shadow under the car, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, soft glow, gradient, swirl, spiral, closed ring, circle, loop, yellow, orange, lime, bright green, teal car, blue car, purple car, navy car, grey car, big car, background, ground tiles, road, sky, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "low top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 12,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art, a thin neon pink tire trail on the ground forming a clear S shape from the top left to the bottom right: first a curve bending left, then an opposite curve bending right, the trail a 1 pixel bright pink core line with a 1 pixel darker magenta stepped halo and a 1 pixel dark purple outer band, a small deep dark forest green 1967 Mustang fastback car sliding sideways exactly at the middle bend of the S, two white racing stripes along hood and roof, sloped fastback roof, roof and one side of the car visible, dark windows, black wheels, near black outline, light highlight pixels on roof edge, small navy shadow under the car, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:13:46+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/alternate_drift.md",
+    "art-archive/T-384/pixellab/three_sixty_v4_req.json"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v2-3, alternate drift refine after 4/10",
+  "generator": "game/tools/pixellab_client.py"
+}

@@ -1,0 +1,11 @@
+{
+  "description": "isometric 3/4 pixel art tutorial diagram of a car spinning a full 360 in mid-air, a 1967 Mustang fastback car in the middle of the image, deep dark pine forest green body, lighter green roof plane and darker green side plane, two bold white racing stripes with a gap running along hood and roof, sloping fastback roofline, near black outline, white highlight pixels on roof and hood edges, a full closed glowing neon pink ellipse ring around the car, the front half of the ring passing in front of the car and the back half behind it, bright pale pink core with 2 pixel stepped hot pink, magenta and dark purple halo, a small separate dark navy ellipse shadow on the ground well below the ring, empty space between ring and shadow, no background",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, brown, lime, bright green, mint, teal, turquoise, blue-green, cyan car, blue car, spiral, swirl, open ring, broken ring, blob, pedestal, platform, block, large shadow, car on the ground, background, ground tiles, road, sky, gradient, photo, buildings",
+  "image_size": {"width": 64, "height": 48},
+  "view": "low top-down",
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 14,
+  "no_background": true
+}

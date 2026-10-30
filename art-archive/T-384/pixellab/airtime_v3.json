@@ -1,0 +1,41 @@
+{
+  "file": "airtime_v3.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art night scene icon on a transparent background with lots of empty space. ONE single car only: a dark forest green 1967 Mustang fastback seen from above at an angle, deep green body, two parallel white racing stripes down the middle of hood and roof, near black selective outline, light green highlight pixels, flying high in the air at the top center of the image. a thin neon pink jump trail line with a 1 pixel dark magenta stepped glow rises from a tiny navy steel ramp at the left edge up to the car and arcs down to the bottom right. at the very bottom right corner a small low navy blue-grey steel and glass rooftop with rows of pale lit windows, a crack and one tiny amber light. a tiny dark purple oval shadow on the rooftop far below the car. navy and purple dusk shadows",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, lime, two cars, many cars, parked cars, grey car, black car, background, filled background, sky, mint, pastel, arch, thick band, large block, gradient, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "low top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 14,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art night scene icon on a transparent background with lots of empty space. ONE single car only: a dark forest green 1967 Mustang fastback seen from above at an angle, deep green body, two parallel white racing stripes down the middle of hood and roof, near black selective outline, light green highlight pixels, flying high in the air at the top center of the image. a thin neon pink jump trail line with a 1 pixel dark magenta stepped glow rises from a tiny navy steel ramp at the left edge up to the car and arcs down to the bottom right. at the very bottom right corner a small low navy blue-grey steel and glass rooftop with rows of pale lit windows, a crack and one tiny amber light. a tiny dark purple oval shadow on the rooftop far below the car. navy and purple dusk shadows",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:30:19+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-384/briefs/airtime.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop run 6, version 3 (refine 2): one green striped car high up, navy steel rooftop with windows far below, tiny shadow, stepped halo",
+  "generator": "game/tools/pixellab_client.py"
+}

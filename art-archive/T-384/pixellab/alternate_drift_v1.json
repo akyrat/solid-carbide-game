@@ -1,0 +1,42 @@
+{
+  "file": "alternate_drift_v1.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "pixel art, a neon pink tire trail on the ground shaped like a big letter S across the whole image, one smooth drift curve to the left then a second curve to the right, the trail a thick bright pink line with a darker purple stepped halo band on each side, a small dark forest green 1967 Mustang fastback car sliding sideways in the middle of the S where the curve changes direction, deep dark green body, two white racing stripes along hood and roof, roof and one side visible, near black outline, light highlight pixels, navy purple shadow under the car, small pale lilac tire smoke puffs near the car, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, lime, bright green, teal car, blue car, closed ring, circle, loop, straight line, background, ground tiles, road, sky, gradient, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 12,
+    "no_background": true
+  },
+  "prompt": "pixel art, a neon pink tire trail on the ground shaped like a big letter S across the whole image, one smooth drift curve to the left then a second curve to the right, the trail a thick bright pink line with a darker purple stepped halo band on each side, a small dark forest green 1967 Mustang fastback car sliding sideways in the middle of the S where the curve changes direction, deep dark green body, two white racing stripes along hood and roof, roof and one side visible, near black outline, light highlight pixels, navy purple shadow under the car, small pale lilac tire smoke puffs near the car, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:12:37+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-384/briefs/alternate_drift.md",
+    "art-archive/T-384/pixellab/extended_drift_v4_req.json"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v1-3, alternate drift S trail",
+  "generator": "game/tools/pixellab_client.py"
+}

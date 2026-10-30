@@ -1,0 +1,11 @@
+{
+  "description": "isometric 3/4 pixel art night tutorial icon on a transparent background. two medium round boulders of very dark navy and purple rock with bright glowing magenta cracks, one boulder on the left and one boulder on the right, separated by a narrow gap in the center of the image. inside the narrow gap, squeezed between the two boulders: one tiny car sprite about 10 pixels long, a 1967 fastback muscle car with a long hood and sloping roof, very dark forest green body, two thin white stripes down the middle, near black outline, a few white highlight pixels. a straight bright neon hot pink trail line with a pale pink core and stepped darker magenta and purple halo pixels runs from the bottom left corner straight into the gap to the back of the car. small dark navy shadows under the boulders and the car. dusk navy and purple colours with pink neon accents",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, lime, light green, teal, cyan car, blue car, large car, hatchback, boxy car, close-up, two cars, car on rock, car on top of boulder, background, filled background, ground plate, platform, base, floor, sky, pastel, orange, gradient, photo, curved trail, grey shadow",
+  "image_size": {"width": 64, "height": 48},
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 14,
+  "no_background": true
+}
