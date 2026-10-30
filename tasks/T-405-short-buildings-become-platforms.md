@@ -1,7 +1,7 @@
 ---
 id: T-405
 title: Short buildings (low-rise, small, long) become connectable platforms at height 3, and everything on platforms works at its height
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started in build E (Platforms & heights), on top of T-393 and T-394.
+
+### 2026-10-30, In progress → In QA
+
+Short buildings are now platforms at 3 that join seamlessly, plus the altitude audit; all three test sets green apart from the known timing flake. Ready for QA.
 
 ## Style review
 
