@@ -1,7 +1,7 @@
 ---
 id: T-400
 title: Level creator: a small jump ramp, one tile long and about 2 units high
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/docs/level/]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/scripts/level_creator/, game/scripts/level/, game/tests/unit/level_creator/test_creator_ramps.gd]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/data/level/, game/tools/check_level.py, game/tests/unit/, game/docs/level/, docs/level-design.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the level agent builds the small jump ramp.
 ### 2026-10-30, In progress → In QA
 
 Small jump ramp built: Ramp 0 to 2 / 3 to 5 / 6 to 8 (key H), 4 units long, top open so the car flies off; all three test sets pass, screenshots and GIF in art-archive/T-400.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria (all three test sets green, car height tests included); play it from the ticket's folder: place the small ramp on ground and rooftop and jump off it.
 
 ## Style review
 
