@@ -37,11 +37,11 @@ The board's review: Read the HUD size slider's label in game/data/pause_text.jso
 
 ## Acceptance criteria
 
-- [ ] game/data/pause_text.json exists, is valid JSON and holds the HUD size slider's label (and its value format, if any); the file is named in the result notes. (QA: pass / fail)
-- [ ] The same text is in docs/hud-and-menus.md, Content, 'Pause screen', and in game/docs/hud-and-menus/pause-screen.md. (QA: pass / fail)
-- [ ] Each new line scored at least 8 in the style loop (or is noted below 8 after 3 refines in a goal run), with every round in the ticket's Style review. (QA: pass / fail)
-- [ ] The label follows Extended narrative's Text rules and has the same form as 'Camera zoom level' and 'Music volume' (short noun phrase, sentence case, no end punctuation). (QA: pass / fail)
-- [ ] python -m unittest discover -s game/tools -p "test_*.py" passes, with the count in the result notes. (QA: pass / fail)
+- [ ] game/data/pause_text.json exists, is valid JSON and holds the HUD size slider's label (and its value format, if any); the file is named in the result notes. (QA: pass)
+- [ ] The same text is in docs/hud-and-menus.md, Content, 'Pause screen', and in game/docs/hud-and-menus/pause-screen.md. (QA: pass)
+- [ ] Each new line scored at least 8 in the style loop (or is noted below 8 after 3 refines in a goal run), with every round in the ticket's Style review. (QA: pass)
+- [ ] The label follows Extended narrative's Text rules and has the same form as 'Camera zoom level' and 'Music volume' (short noun phrase, sentence case, no end punctuation). (QA: pass)
+- [ ] python -m unittest discover -s game/tools -p "test_*.py" passes, with the count in the result notes. (QA: pass)
 
 ## Updates
 
@@ -78,3 +78,5 @@ Label: "HUD size", scored 9/10 in round 1 of the style loop (see Style review; b
 - Tests: `python -m unittest discover -s game/tools -p "test_*.py"`: 736 tests, OK (1 skipped).
 - Screenshots: none, text-only work (nothing on screen until the slider's UI ticket).
 - PixelLab generations: 0. Refusals: none.
+
+QA round 1: all 5 criteria pass. JSON valid with hud_size_label "HUD size"; text present in both docs; style loop 9/10 round 1 recorded; form matches siblings; unittest 736 OK (1 skipped), re-run by QA. No screenshots needed (text only). `python tools/qa_check.py` was refused (not pre-approved), so checks were done by hand.
