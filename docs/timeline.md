@@ -2435,3 +2435,13 @@ Entry format:
 - Decision or change: The board: a gift pack that falls on a platform is drawn below it. Bug ticket, root cause and fix, started at once.
 - Documents touched: docs/level-design.md
 - Tasks: T-402
+
+## 2026-10-30: A red flash on damage
+- Decision or change: The board: the car flashes red when it takes damage, and the enemies the same.
+- Documents touched: docs/game-loop-architecture.md, docs/enemies.md
+- Tasks: T-403
+
+## 2026-10-30: Enemies flash red on damage
+- Decision or change: The board: enemies flash red when they take damage, the same flash as the car.
+- Documents touched: docs/enemies.md
+- Tasks: T-404

@@ -41,6 +41,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Health drops 1.5 times as often** (board, 2026-10-29): "increase the drop rate of health items by enemies by 1.5 times of what it is now": a killed minion drops a health pickup with a chance of 22.5% instead of 15%. The coins, the heal (1 heart) and the kaiju (none) are unchanged. (T-371)
 - **Minions twice as big** (board, 2026-10-29, an MVP nice-to-have): the minions are drawn twice as big, and the size they hit and get hit with grows to match, so what the player sees is what touches the car. The kaiju stays as it is.
 - **Minions don't get stuck on ramps** (board, 2026-10-29, an MVP nice-to-have; a bug): chasing the car, minions sometimes get stuck on walls as they try to go round a corner, mostly at the bottom end of a ramp. They should find their way round.
+- **A red flash when an enemy takes damage** (board, 2026-10-30): every enemy (minions and the kaiju) flashes red when a weapon or the car hits it, the same red flash the car shows when it loses a heart (Game loop architecture, Decisions). Its length and shade match the car's; for the kaiju, whether it flashes on every hit or only in its vulnerable window is a proposal. (T-404)
 
 ## Content
 
