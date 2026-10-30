@@ -1,7 +1,7 @@
 ---
 id: T-386
 title: A trick list button in the pause screen, opening a panel with the trick list
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -48,6 +48,10 @@ The board's review: Pause a run, open the trick list and go back.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-386.
 
 ## Style review
 
