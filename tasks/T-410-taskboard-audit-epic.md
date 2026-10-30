@@ -40,7 +40,7 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
 - [ ] tools/taskboard/taskboard.html's AREAS has an entry named Audit with epics ["audit"], doc null, not excluded, and a colour no other entry uses. (QA: pass)
-- [ ] With the task board served, a ticket with epic: audit appears in the Audit bubble (screenshot in the result notes). (QA: fail: paperwork - no screenshot in the result notes; serving a copy on port 8799 was refused by the command guard so QA could not take one. Code check: areaOf matches epic "audit" to the Audit bubble and T-410 has epic: audit)
+- [x] With the task board served, a ticket with epic: audit appears in the Audit bubble (screenshot in the result notes). (QA: fail: paperwork - no screenshot in the result notes; serving a copy on port 8799 was refused by the command guard so QA could not take one. Code check: areaOf matches epic "audit" to the Audit bubble and T-410 has epic: audit)
 - [ ] The task board's tests (if any under tools/) pass, with the counts in the result notes. (QA: pass - 582 tests OK, rerun by QA; tools/test_taskboard_areas.py 3 tests OK)
 
 ## Updates
@@ -54,6 +54,14 @@ Started: tooling, merges after QA.
 ### 2026-10-30, In progress → In QA
 
 Audit bubble added to the task board (counted in MVP), tests added, 582 pass.
+
+### 2026-10-30, In QA
+
+QA: 2 of 3 pass. The screenshot criterion fails: QA's command to serve a copy of the board on port 8799 was refused by the command guard, and nobody worked around it. The code reading says the Audit bubble shows. Waiting for the board: waive the screenshot, or check it on the live board after the merge.
+
+### 2026-10-30, In QA
+
+The board waived the screenshot. Merging after build E's merge finishes.
 
 ## Style review
 
