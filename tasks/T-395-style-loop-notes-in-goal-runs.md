@@ -1,7 +1,7 @@
 ---
 id: T-395
 title: In a goal run, the style loop notes a score below 8 instead of flagging the ticket and pausing the goal
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -62,3 +62,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done. In loop.py, `run` sets `spec.goal` from the ticket's `goal:` line; with it, the default step is the new `note_task` (a dated line in the result notes through the new `task_status.add_result_note`) instead of the flag, and the Style review's Kept line says "kept below 8 ... noted for the board's final playtest (goal run, not flagged)". Status stays in-progress. run.py exits 0 in that case with a message (still 1 when flagged outside goal runs). The goal runner needed no change: the ticket is in-progress with a Style review round, so the existing in-qa path applies; covered by a fake-team test (fake agent option `_style_score`) where the art ticket goes through QA to needs-playtest and only the art cap pauses. New tests: style loop in a goal run (stays in-progress, notes in review and result notes), CLI exit 0 in a goal run, goal runner test. Non-goal flagging tests unchanged and pass. tasks/README.md (exit codes) and docs/working-with-the-board.md ("Goal runs") updated; "The style loop" already described it. Full suite: 576 tests OK.
