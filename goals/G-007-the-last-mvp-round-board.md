@@ -4,7 +4,7 @@ title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
 status: building
 art_cap: 40
 art_used: 28
-iteration: 6
+iteration: 7
 max_iterations: 20
 created: 2026-10-29
 lead: Goal-G-007
@@ -53,7 +53,7 @@ The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'The last MVP r
 | 4 | S3 | PixelLab trick illustrations, one set of seven (art cap 40) | unblocks 2, value 4 | This is the second candidate set the board asked for, made with PixelLab. | covered | T-384 |
 | 5 | S4 | QA compares the two sets and the better one goes into game/art | unblocks 1, value 5 | The board asked QA to compare which set reads better and to use the better one. | covered | T-385, T-383, T-384 |
 | 6 | S7 | Trick list button and sub-panel in the pause screen (UI) | unblocks 1, value 4 | This is part (3): the same trick list, reachable from the pause screen, with a way back. | covered | T-386 |
-| 7 | S6 | Start shows the slides before the run (Game Loop) | unblocks 0, value 5 | The slides must sit between the main menu's Start and the run, before the clock and everything else begins, and must respect 'Don't show again'. | in-flight | T-387 |
+| 7 | S6 | Start shows the slides before the run (Game Loop) | unblocks 0, value 5 | The slides must sit between the main menu's Start and the run, before the clock and everything else begins, and must respect 'Don't show again'. | covered | T-387 |
 | 8 | S8 | Sound effects off for the MVP and the SFX slider hidden (SFX / UI) | unblocks 0, value 5 | This is part (4): every sound effect silent and the slider hidden, with the music and the sound code kept. | in-flight | T-388, T-389 |
 | 9 | S9 | Swap the chosen illustrations into the slides and the pause trick list | unblocks 0, value 5 | The functional work starts with placeholders, so the chosen art has to replace them in both places. | in-flight | T-390 |
 
@@ -187,6 +187,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-30, iteration 5: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-30, iteration 5: resumed by the session Greenbull.
 - 2026-10-30, iteration 6: T-386 (S7, ui, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-386 done: "Trick list" button and Back panel in the pause screen. Escape in the panel goes back, not resume. 6 new tests; all three sets pass (GUT 1957/1957). Screenshots and docs done, committed. Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-386 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_019PpFyVRouw2h6eqQQNupJp"} / QA: python tools/qa_check.py T-386 --no-marks: requires approval, not pre-approved; skipped, checked docs and screenshots manually. Rescan: S7 covered, S6 in-flight, S8 in-flight, S9 in-flight.
+- 2026-10-30, iteration 7: T-387 (S6, game-loop, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-387 done. Start shows the tutorial slides, and the slides' Start begins the run; a ticked box saves tutorial_hidden; Restart skips the slides. 8 new tests; GUT 1965/1965, Python 675 OK and 573 OK. Screenshots and both docs done. PL: older screenshot fixtures now show the slides unless hidden is saved (result notes). Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-387 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_01MFBGNtuktsiP6cpa941v8d"} / QA: python tools/qa_check.py T-387 --no-marks: requires approval (not in pre-approved list); skipped, checked criteria by hand. Rescan: S6 covered, S8 in-flight, S9 in-flight.
 
 ## Pauses
 
