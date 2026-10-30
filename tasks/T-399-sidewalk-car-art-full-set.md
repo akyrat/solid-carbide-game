@@ -1,7 +1,7 @@
 ---
 id: T-399
 title: Art: the full sidewalk and curb set and the parked and broken cars at four facings, swapped into the creator
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 T-398 is approved and merged; the asset-generation agent starts the full art set (PixelLab within the board's cap of 50, 1 used so far).
+
+### 2026-10-30, Flagged for review → In progress
+
+Back in progress: keep the PixelLab facings you liked, a script turns the front lights grey, then the other four cars the same way.
 
 ## Style review
 
@@ -338,6 +342,377 @@ The muted tail-light red the evaluator asked for also needs a recolour option, w
 
 **Kept:** version 2, score 6/10 (`art-archive/T-399/style-loop/v2-3.png`, copied to `art-archive/T-399/parked_car_1_facings.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
 
+### Run 5
+
+Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-399/briefs/parked_car_1_board.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-399/style-loop/v1-5.png`
+- Script checks: 21 of 21 pass
+- Score: 8/10
+- Reason: No rule is clearly broken. I looked at the strip and at its 4x enlargement (parked_car_1_v1-5_preview/strip_4x.png). I did not open the in-place previews. The script checks pass: 128x128 frames, transparent corners, no semi-transparent pixels, 28 or 29 colours per frame, and nothing of Greenbull's colours. Rules 1, 3 and 6 hold.
+
+Facings match their keys:
+- Frame 0 (north) has its rear lamps at the lower left and its nose up and to the right.
+- Frame 1 (east) has its windscreen and bonnet at the lower right.
+- Frame 2 (south) has them at the lower left.
+- Frame 3 (west) has its rear lamps at the lower right and its nose up and to the left.
+
+The front lamps on frames 1 and 2 are now grey or white, with no red left. The rear lamps are still reddish.
+
+Rules 2, 4, 7 and 9: the car has a dark selective outline and detailed shading with pale highlights. The paint is dull silver-grey in the city's cool colours, with no glow. There are no readable words or badges. It is clearly a plain sedan, not the Mustang, with no stripes and no green (rule 10).
+
+Minor points, none needed for a pass:
+1. The rear lamps are a very dark maroon, so they barely read as red at game size. A slightly brighter red on the rear-lamp pixels in frames 0 and 3 would make "only the rear is red" clearer.
+2. The window glass is deep navy. It reads as glass, but keep it away from the boulders' navy if it is pushed any darker.
+3. Frames 0 and 3 are mirrors of each other, and so are frames 1 and 2. The top and bottom pairs differ slightly in how their roof and boot are drawn, because they come from two different PixelLab rotations. The board accepted this.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "T=game/tools/build_street_cars.py; A=art-archive/T-399; for n in 0 4; do python $T clean --raw $A/raw/parked_car_1_rot8_v1_$n.png --out $A/cars/parked_car_1_rot8_v1_${n}_clean.png || exit 1; done && python $T repaint-front --in $A/cars/parked_car_1_rot8_v1_4_clean.png --out $A/cars/parked_car_1_rot8_v1_4_front_grey.png --nose bottom-left && python $T strip --out $A/style-loop/v1-5.png --top-left $A/cars/parked_car_1_rot8_v1_0_clean.png --bottom-left $A/cars/parked_car_1_rot8_v1_4_front_grey.png && python $T preview --strip $A/style-loop/v1-5.png --out-dir $A/style-loop/parked_car_1_v1-5_preview", "description": "Clean, repaint front lamps, build strip and preview"}, "tool_name": "Bash", "tool_use_id": "toolu_01FfuJ2Z7atYiejAWEAkegir"}; {"tool_input": {"command": "python -c \"\nfrom PIL import Image;im=Image.open('art-archive/T-399/style-loop/v1-5.png');print(im.mode,im.size)\npx=im.getdata();print(sorted(set(p[3] for p in px)),len(set(px)))\nfor i in range(4):\n  f=im.crop((i*128,0,i*128+128,128));print(i,f.getbbox(), f.split()[3].getbbox())\n\"", "description": "Check mode, size, alpha and frame extents"}, "tool_name": "Bash", "tool_use_id": "toolu_01GKBryrc8dGmqdbZxGg9rTV"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-399/style-loop/v1-5.png`, copied to `art-archive/T-399/parked_car_1_facings.png`): it reached 8 or more.
+
+### Run 6
+
+Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-399/briefs/parked_car_3.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-399/style-loop/v1-6.png`
+- Script checks: 21 of 21 pass
+- Score: 7/10
+- Reason: The strip passes the script checks (128x128 frames, 27 to 28 colours, alpha 0 or 255, transparent background). All four facings point the way their keys say. North is nose up-right, with the rear at the lower left. East is nose down-right. South is nose down-left. West is nose up-left, with the rear at the lower right. It is the same van in one palette, the front lamps are grey with no red at the front, and it shows no glow, Greenbull colours or stripes. It reads as a plain, boring kei van, and the size is close to T-397's.
+
+Faults, small to moderate:
+- Rule 2: the outline is weak on the pale body. The roof and upper panels are almost one flat cream with a soft, light edge instead of a dark, almost black selective outline. The shading on the cream is thin, so the vans look slightly washed out. Fix: add or darken the outline on the roof and body edges, and add a mid-tone step on the body. Do this with a free palette or outline script pass.
+- Brief: the rear lamps (frames 0 and 3) look dark grey or black at this size, not red. Check that the repaint or strip step did not grey out the rear lamps. Only the rear lamps should be red.
+- Brief, "dull off-white": the paint is a warm yellowish cream, a bit saturated and bright. Fix: nudge the body ramp toward a duller, greyer off-white with a free palette adjustment.
+- Rule 9: the small grille badge on the front and the licence plates carry tiny scribble marks. They are unreadable, so I'm not counting them, but keep them from becoming a real badge. Fix: flatten the badge to plain pixels.
+- Scale: the van looks a little tall and boxy against T-397's footprint. It is acceptable and needs no action unless the footprints preview shows an overflow.
+- Rules broken: 2
+- Refused: {"tool_input": {"command": "python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-399/cars/parked_car_3_top_v1_raw_clean.png').convert('RGBA')\nbg=Image.new('RGBA',im.size,(60,60,70,255));bg.alpha_composite(im)\nbg.resize((512,512),Image.NEAREST).save('art-archive/T-399/scratch/car3_top_v1_4x.png')\"", "description": "Enlarge first picture for viewing"}, "tool_name": "Bash", "tool_use_id": "toolu_01NAZZZT4CJjGTLTLRmcU7sv"}; {"tool_input": {"command": "python art-archive/T-399/contact_sheet.py art-archive/T-399/scratch/car3_rot8_v1_sheet.png 2 art-archive/T-399/raw/parked_car_3_rot8_v1_{0,1,2,3,4,5,6,7}.png", "description": "Make contact sheet of 8 rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01UqRE3t2BELojA6QQyNqVcS"}; {"tool_input": {"command": "python art-archive/T-399/contact_sheet.py art-archive/T-399/scratch/car3_rot8_v1_sheet.png 2 art-archive/T-399/raw/parked_car_3_rot8_v1_0.png art-archive/T-399/raw/parked_car_3_rot8_v1_1.png art-archive/T-399/raw/parked_car_3_rot8_v1_2.png art-archive/T-399/raw/parked_car_3_rot8_v1_3.png art-archive/T-399/raw/parked_car_3_rot8_v1_4.png art-archive/T-399/raw/parked_car_3_rot8_v1_5.png art-archive/T-399/raw/parked_car_3_rot8_v1_6.png art-archive/T-399/raw/parked_car_3_rot8_v1_7.png", "description": "Make contact sheet of 8 rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01JLDzvQwzuCURP6L6MaeJaU"}; {"tool_input": {"command": "for n in 0 3 7; do python game/tools/build_street_cars.py clean --raw art-archive/T-399/raw/parked_car_3_rot8_v1_$n.png --out art-archive/T-399/cars/parked_car_3_rot8_v1_${n}_clean.png; done && python game/tools/build_street_cars.py repaint-front --in art-archive/T-399/cars/parked_car_3_rot8_v1_7_clean.png --out art-archive/T-399/cars/parked_car_3_rot8_v1_7_front_grey.png --nose bottom-left && python game/tools/build_street_cars.py strip --out art-archive/T-399/style-loop/v1-6.png --top-right art-archive/T-399/cars/parked_car_3_rot8_v1_3_clean.png --bottom-left art-archive/T-399/cars/parked_car_3_rot8_v1_7_front_grey.png && python game/tools/build_street_cars.py preview --strip art-archive/T-399/style-loop/v1-6.png --out-dir art-archive/T-399/style-loop/parked_car_3_v1_preview", "description": "Clean picks, repaint front, build strip and preview"}, "tool_name": "Bash", "tool_use_id": "toolu_015FCZ9MiRDusTGc2f13RUVG"}
+
+#### Round 2
+
+- Version 2: `art-archive/T-399/style-loop/v2-4.png`
+- What changed: Version 2 makes no new PixelLab call; it was all free script fixes. It uses the same two rotations as version 1: rotation 3 for the top picture (nose top right) and rotation 7 with its grey front for the bottom picture (nose bottom left). The strip is 512 x 128 RGBA with 30 colours, alpha 0 or 255, frames in the order N, E, S, W. The total for this car is still 3 generations.
+
+What I changed:
+1. **The rear lamps are red now.** I painted the tail lamps on the top picture in three reds, dark to light (boxes 49,84-53,91 and 18,70-20,76). They show at the lower end of the N and W facings. Version 1's rear lamps were never red: PixelLab drew them unlit and grey. While rebuilding I found that the strip's cut to 30 colours merged the few red pixels into grey. `strip`'s shared palette now keeps the lamp reds exactly and spends the rest of the 30-colour budget on everything else. The front lamps stay grey, so there is no red at the front of any facing.
+2. **The paint is a duller off-white.** The pale paint is about 65% less saturated, about 10% darker and slightly cooler, moving the warm yellow cream toward a dull grey-white.
+3. **The body has a clearer mid-tone.** I spread the paint's light and dark steps apart by 1.45 around its middle, so the roof, side panels and shadowed lower panels separate more. The roof itself is still one light tone.
+4. **Outline:** silhouette pixels lighter than the outline now become near-black (22,24,34). Only 2 px needed it, because PixelLab's silhouette outline was already dark. The evaluator's weak-edge complaint about the roof is about the light pixels just inside that outline, and this pass does not change them.
+5. **The grille badge and the front plate are flattened** to plain pixels with no marks. On the rear plate a few faint lines remain at the plate's edge; they are unreadable.
+
+Tool changes in `game/tools/build_street_cars.py`:
+- `touch-up --in --out [--rear-lamp x0,y0,x1,y1]... [--flatten box]... [--no-dull] [--no-outline]` makes the fixes above.
+- `grid` writes an enlarged picture with coordinates, used for reading the boxes.
+- `strip`'s palette now keeps the lamp reds.
+
+I added 5 tests to `test_build_street_cars.py`, and all 15 pass. The preview is in `art-archive/T-399/style-loop/parked_car_3_v2_preview/`. The touched-up pictures are `cars/parked_car_3_rot8_v1_3_touched_v2.png` and `cars/parked_car_3_rot8_v1_7_touched_v2.png`.
+- Script checks: 21 of 21 pass
+- Score: 9/10
+- Reason: No rule is clearly broken. The four facings match their keys: north (frame 0) has its nose up-right with the rear and red lamps showing, east (frame 1) has its nose down-right, south (frame 2) has its nose down-left, and west (frame 3) has its nose up-left with the rear showing. Red appears only on the rear lamps. The front lamps are grey and white and unlit with no glow, which meets rule 5. The script checks pass: 128x128 frames, a transparent background, no semi-transparent pixels, and 27 to 29 colours (rules 1, 3). The outline is dark and selective, and the shading is detailed (rule 2). The van is a dull off-white with grey and blue-grey bumpers and nothing of Greenbull, so it is not the player's car and not an alien colour (rules 6, 7, 8, 10). It has no readable words or brands: the plates and the faint side decals are only blurry marks (rule 9). It is a plain, boring kei van at the same 3/4 isometric angle in all four facings (rule 3). The only small caveats are that the van reads slightly smaller than T-397's roughly 110 px car, and that the bumpers lean blue-grey. Neither is serious.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "python -m unittest game/tools/test_build_street_cars.py 2>&1 | tail -15", "description": "Run build_street_cars tests"}, "tool_name": "Bash", "tool_use_id": "toolu_01VT4zod3LQEsfccWYoYeqt1"}
+
+**Kept:** version 2, score 9/10 (`art-archive/T-399/style-loop/v2-4.png`, copied to `art-archive/T-399/parked_car_3_facings.png`): it reached 8 or more.
+
+### Run 7
+
+Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-399/briefs/broken_car_1.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-399/style-loop/v1-7.png`
+- Script checks: 21 of 21 pass
+- Score: 3/10
+- Reason: The technical rules pass. The sheet is 4 frames of 128x128, with 26 to 28 colours each, no semi-transparent pixels, a transparent background and no Greenbull colours. The pixel art is well shaded and uses a dark selective outline (rules 1 to 3). The facings match their keys: north has its nose up-right, east down-right, south down-left and west up-left. The front lamps are pale or white, so there is no red at the nose, and the car has no stripes and no Mustang shape. The brief is not met, though. It asked for a wrecked car from the kaiju attack, and this one reads as an intact, clean parked sedan. The bonnet is not crushed or dented, and the windscreen and side windows are whole, dark and tinted instead of shattered. All four tyres look inflated, with no flat one. I can see no scorch marks, grime, rust or dents on the body. The only damage I can see is a small dark spot on the roof/boot of the east facing and one on the front of the north facing. The paint is a bright pale mint-cream, not the faded dusty beige-grey the brief asks for. That conflicts with the dull city colours in rule 7 and the Decisions, "City colours", and it is the brightest object in the scene. Fixes: (1) get the damage into the car. The simplest way is a free script overlay, applied to the same pixels in all four facings and before the strip's palette step, that adds a crushed bonnet with dark dents, cracks and shards on the glass, a sagging flat front tyre, scorch patches and rust or grime streaks. Failing that, use one of the 3 PixelLab refines, with a prompt that stresses the damage. (2) Desaturate and darken the body ramp toward dusty beige-grey. Keep one shared palette of at most 30 colours.
+- Rules broken: 7
+- Refused: {"tool_input": {"command": "C=\"--consulted docs/visual-style.md --consulted docs/level-design.md --consulted docs/extended-narrative.md --consulted art-archive/T-397/parked_car_ne.png --consulted game/art/ground/ground_atlas.png --consulted game/art/boulders/boulder_a.png\" && python game/tools/pixellab_client.py generate --endpoint create-image-pixflux --params-file art-archive/T-399/requests/broken_car_1_top_v1.json --out-dir art-archive/T-399/raw --name broken_car_1_top_v1_raw $C --task T-399 --notes \"Broken car 1 v1: first picture (wrecked beige-grey compact sedan, nose up-right) for the 8 rotations\" && python game/tools/build_street_cars.py clean --raw art-archive/T-399/raw/broken_car_1_top_v1_raw.png --out art-archive/T-399/cars/broken_car_1_top_v1_raw_clean.png", "description": "Generate first picture and clean it", "timeout": 660000}, "tool_name": "Bash", "tool_use_id": "toolu_01WrbVYVfNdd2NZnfrjHc7Cf"}; {"tool_input": {"command": "cat art-archive/T-399/contact_sheet.py | head -30; python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-399/cars/broken_car_1_top_v1_raw_clean.png').convert('RGBA')\nbg=Image.new('RGBA',im.size,(40,40,48,255));bg.alpha_composite(im);bg.resize((512,512),Image.NEAREST).save('art-archive/T-399/scratch/broken1_top_v1_4x.png')\"", "description": "Make enlarged view of first picture"}, "tool_name": "Bash", "tool_use_id": "toolu_01RW1uYcA9TBbMbbeF4bezre"}; {"tool_input": {"command": "cd /c/solid-carbide-worktrees/T-399/art-archive/T-399 && python contact_sheet.py scratch/broken_car_1_rot8_v1_sheet_a.png 3 raw/broken_car_1_rot8_v1_0.png raw/broken_car_1_rot8_v1_1.png raw/broken_car_1_rot8_v1_2.png raw/broken_car_1_rot8_v1_3.png && python contact_sheet.py scratch/broken_car_1_rot8_v1_sheet_b.png 3 raw/broken_car_1_rot8_v1_4.png raw/broken_car_1_rot8_v1_5.png raw/broken_car_1_rot8_v1_6.png raw/broken_car_1_rot8_v1_7.png", "description": "Make contact sheets of 8 rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01BPxkW9yHCTgSASZ8hptTYC"}; {"tool_input": {"command": "for i in 0 2 5 7; do python game/tools/build_street_cars.py grid --in art-archive/T-399/raw/broken_car_1_rot8_v1_$i.png --out art-archive/T-399/scratch/broken_car_1_rot8_v1_${i}_grid.png; done", "description": "Enlarge four diagonal rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01NXYwtep6RpDhQw93ZZhu6p"}
+
+#### Round 2
+
+- Version 2: `art-archive/T-399/style-loop/v2-5.png`
+- What changed: Version 2 of broken car 1. It is the same car and facings as version 1 (top picture is rotation 5, nose top-left; bottom picture is rotation 0, nose bottom-left), with the damage and paint fixed by a free script. There were no new PixelLab calls in this version: 3 generations used so far, 3 refine generations still unused.
+
+What I added: a seeded `wreck` command in game/tools/build_street_cars.py, with 3 new tests in game/tools/test_build_street_cars.py. All 18 tests pass; the FAIL lines in the output come from the `check` test's expected-failure case. The command works on one cleaned picture before the strip and does this:
+- **Paint:** turns the body to faded, dusty beige-grey (darker and warmer), and leaves the glass alone.
+- **Bonnet:** crushes it with jagged dark creases with lit ridges, plus small dents.
+- **Glass:** shatters the windscreen and the side or rear windows, with cracks running out from an impact point and loose shards.
+- **Scorch:** adds black scorch blotches on the roof and on the door side (bottom picture) or the boot (top picture).
+- **Rust and grime:** adds specks along the lower body.
+- **Flat tyre:** darkens the hub of the near front tyre and makes its lowest two rows bulge outward.
+
+I applied it to both pictures and saved the results as cars/broken_car_1_rot8_v1_0_wreck_v2.png and cars/broken_car_1_rot8_v1_5_wreck_v2.png. Then I rebuilt the strip with `strip --top-left 5_wreck_v2 --bottom-left 0_wreck_v2`. The result is 512x128 in the order north, east, south, west, with one shared palette of 29 colours, alpha 0 or 255 and a transparent background.
+
+Preview: style-loop/broken_car_1_v2_preview/.
+
+What I kept from version 1:
+- Each facing's nose points the way its key says.
+- No red at the front.
+- The outline and shading are unchanged.
+
+Possible weak points:
+- The paint may read slightly tan rather than grey.
+- The flat tyre is subtle at game scale.
+- The damage marks are drawn by the script, not by PixelLab, so they are a little noisier than the base shading.
+- Script checks: 21 of 21 pass
+- Score: 4/10
+- Reason: Rules 1, 2, 7, 9 and 6 pass: 28 or 29 colours, hard alpha, transparent background, dark selective outline with detailed shading, dull beige-grey with no Greenbull colours, no stripes, and no readable words or badges. The front lamps are no longer red, and the damage reads as a wreck: scorch, rust, shattered glass.
+
+The main fault is the facings, which are the brief's key requirement.
+- Frame 0 (north = top right) must have its nose pointing up and to the right. In the picture its bonnet, grille and lamps are at the lower left and its boot is at the upper right, so it is a nose-down-left car.
+- Frame 3 (west = top left) must have its nose pointing up and to the left. It is a mirror of frame 0, with the bonnet and lamps at the lower right, so it is a nose-down-right car.
+- Frames 0 and 3 have identical pixel counts (4709). The strip therefore holds only nose-down views, and the top picture, the one with its nose up the screen and red rear lamps at the lower end, was not used or was picked wrongly.
+- Frames 1 and 2 (east, south) are correct: their noses point down-right and down-left.
+- No rear red lamps are visible on any facing, because no rear-facing view is present.
+- The frame 0 and 3 views are also a different, steeper angle from frames 1 and 2, so they do not read as the same car at the game's 2:1 angle (rule 3).
+
+Fix: choose a real nose-up picture from the 8 rotations (the pose nearest the up-right diagonal) with clean rear lamps still red. Pass it as --top-left or --top-right to the strip, matching its real nose direction, so north and west mirror to nose-up facings. Keep the repainted bottom picture for east and south. If no top picture is usable, change the script's pairing or the pair choice first, since both are free.
+
+Minor: the flat tyre is not clearly readable, because all the wheels look inflated. The bonnet crush is only mild.
+- Rules broken: 3, 2
+- Refused: {"tool_input": {"command": "python -m pytest -q game/tools/test_build_street_cars.py 2>&1 | tail -15", "description": "Run the car script tests"}, "tool_name": "Bash", "tool_use_id": "toolu_01RPQcxrp5pxVZzednDvNeJ1"}
+
+#### Round 3
+
+- Version 3: `art-archive/T-399/style-loop/v3-4.png`
+- What changed: Version 3 fixes the facings. Version 2's "top" picture (rotation 5) was a nose-down-right view, and none of the 8 rotations faces nose-up: PixelLab drew a front or side in every one. Free choices could not fix that, so this version spent 1 paid generation: `/rotate` of the bottom picture (rot8 v1_0, nose bottom-left, front lamps already grey) from south-west to north-east. The request is requests/broken_car_1_top_v3.json and the result is raw/broken_car_1_top_v3_raw.png, cleaned to cars/broken_car_1_top_v3_raw_clean.png. The new picture is the same car with its nose up-right: bonnet and grille at the upper right; boot, rear bumper and plate at the lower left. 4 of the 6 allowed generations are now used (3 for version 1, 1 here), leaving 1 for the last refine.
+
+How the frames were made:
+- **Top picture:** the same `wreck` damage as version 2 (dusty beige-grey paint, crushed bonnet, shattered glass, roof and side scorch, rust and grime, flat near front tyre), boxes fitted to this picture, seed 3. Then `touch-up --rear-lamp` painted the two rear lamps red at the rear corners: cars/broken_car_1_top_v3_wreck_lamps.png.
+- **Bottom picture:** the same as version 2, redone with the stronger fixes (cars/broken_car_1_rot8_v1_0_wreck_v3.png).
+- **Script changes:** in game/tools/build_street_cars.py, the bonnet crush is stronger (5 darker creases, more dents) and the flat tyre's bulge is wider (3, 2 and 1 px over its lowest three rows). The 18 tests in test_build_street_cars.py pass.
+
+The strip is `strip --top-right top_v3_wreck_lamps --bottom-left 0_wreck_v3`:
+- north: nose up-right, red rear lamps at the lower-left end
+- east: nose down-right
+- south: nose down-left
+- west: nose up-left, red rear lamps at the lower-right end
+
+North and east are mirrors of west and south, so all four are the same car at the same 2:1 angle in one 30-colour palette, with alpha 0 or 255. The only red is at the rear, and the front lamps are grey. Preview: style-loop/broken_car_1_v3_preview/.
+
+Possible weak points:
+- The rear lamps are plain red blocks painted by the script.
+- The rust on the rear deck is dense.
+- The flat tyre is still subtle at game scale.
+- Script checks: 21 of 21 pass
+- Score: 7/10
+- Reason: Rules 1, 3, 6 and 9 pass. The script checks are all green: 128x128 frames, 26 to 28 colours, alpha 0 or 255, transparent corners, no Greenbull colours. The four noses match their keys. North (top right) and west (top left) show the rear with red lamps and the nose pointing up the screen. East (bottom right) and south (bottom left) show the front with the nose pointing down. Only the rear lamps are red, and the front lamps are grey or dark. It reads clearly as a car, not the Mustang, with no stripes and no green. The palette is dull beige-grey, and no words or brands are readable. The outline is dark and selective, and the shading is detailed.
+
+Faults, all against the brief's damage list (rule 2 detail and rule 7-style 'light to medium damage' mood):
+1. The damage is weak. The bonnet looks intact rather than crushed or dented, with only faint crease lines. The flat tyre isn't visible: all wheels look inflated and identical. To fix: use the free scripts to lower or flatten one wheel, or add a dent shape on the bonnet.
+2. Shattered windows read mostly as dark blue panes with a few white dots. Add a clearer crack pattern.
+3. The orange rust speckle is scattered and noisy across the sides and bonnet. It looks like dithering, not distinct dents, scorch or grime. Only the black roof scorch blotch is clear.
+4. The north and west frames (rear views) show less of the damage than the front views, and their rear ends look slightly lumpy.
+
+None of this breaks a hard rule. It is a mostly clean wreck-lite car that needs stronger, more readable damage (a crushed bonnet and a flat tyre).
+- Rules broken: 2
+
+#### Round 4
+
+- Version 4: `art-archive/T-399/style-loop/v4-3.png`
+- What changed: Version 4 is a free script refine with no new PixelLab call. The PixelLab pictures are the same as in version 3 (bottom: rot8 v1_0; top: the `/rotate` result top_v3), so 4 of the 6 allowed generations are still used and 2 are unused. The facings are unchanged: north nose up-right and west nose up-left, both with red rear lamps at the lower end; east nose down-right and south nose down-left, front lamps grey. The damage was redone from the clean pictures so it reads more clearly. game/tools/build_street_cars.py changes, with 3 new tests in test_build_street_cars.py (21 pass):
+- **Flat tyre** (`flat_tyre`, rewritten): the box over the near front wheel and the wing above it is squashed down onto the tyre's lowest row, so the wheel is lower and squatter and the wing sags onto it. The lowest three rows bulge outward in the dark outline colour, so the wheel no longer looks like the inflated ones.
+- **Bonnet** (`dent`, new): a large hollow, dark on its upper-left side and lit on its lower-right rim, with a crumpled dark top edge and short folds running out of it. It goes on the bonnet in both pictures and on the boot lid in the rear view, on top of the crease lines.
+- **Glass** (`crack_glass`, rewritten): a spider-web crack in each pane, with 8 nearly straight radial cracks and two rings in pale glass-grey around a dark impact hole. Each pane gets its own web: the windscreen and two side panes in the front view, the rear window and two side panes in the rear view.
+- **Rust** (`rust`, rewritten): a few distinct rust and grime patches with a dark rim and lighter middle, instead of an all-over dithered speckle. The rear view's rust is cut to one area along the lower side.
+- **Rear views:** they now carry the boot dent, cracked rear and side glass, roof and side scorch, a crumpled bonnet at the far end, and the flat front tyre. The rear lamp boxes are smaller (5x5 and 6x4), so the rear end is less blocky.
+- **Unchanged:** dusty beige-grey paint and the scorch marks.
+
+The new pictures are cars/broken_car_1_rot8_v1_0_wreck_v4.png and cars/broken_car_1_top_v4_wreck_lamps.png. The strip is `strip --top-right top_v4_wreck_lamps --bottom-left 0_wreck_v4`: 512x128, 30 shared colours, alpha 0 or 255, transparent background. Preview: style-loop/broken_car_1_v4_preview/. The flat tyre is clearest on east and south; on north and west the squashed wheel is the far front one and is smaller on screen.
+- Script checks: 21 of 21 pass
+- Score: 8/10
+- Reason: The strip meets the rules and the brief. The script checks all pass: four 128x128 frames, alpha 0 or 255, 26 to 28 colours each, a transparent background, no Greenbull colours.
+
+Facings: the nose of each frame matches its key.
+- North: nose up and to the right, red rear lamps at the lower left.
+- East: nose down and to the right.
+- South: nose down and to the left.
+- West: nose up and to the left, red rear lamps at the right.
+
+Lamps: the front lamps are grey or unlit, and red appears only on the rear lamps. No glow.
+
+Style: the outline is dark and selective, and the shading is detailed. The view is isometric 3/4 and the size is consistent. The paint is dull beige-grey with scorch, grime and rust. The windows are shattered. There is no fire, smoke or gore, and nothing of the Mustang or Greenbull. The plate shows only tiny unreadable marks. The palette is the same in all four frames.
+
+Minor weaknesses against the brief (not rule faults):
+- A flat tyre is not clearly visible. All the tyres look round and full.
+- The crushed or dented bonnet is mostly shown as a dark scorch patch, not as a crushed shape.
+- The damage is a little light.
+These are optional refinements: a free palette or pixel touch-up could flatten one tyre and add a dent highlight on the bonnet.
+- Rules broken: none
+
+**Kept:** version 4, score 8/10 (`art-archive/T-399/style-loop/v4-3.png`, copied to `art-archive/T-399/broken_car_1_facings.png`): it reached 8 or more.
+
+### Run 8
+
+Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-399/briefs/broken_car_2.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-399/style-loop/v1-8.png`
+- Script checks: 21 of 21 pass
+- Score: 4/10
+- Reason: The script checks pass (rules 1 and 3, 28–29 colours, alpha 0 or 255, transparent background). The four noses also match their keys: north is top right with the nose up-right, east is bottom right, south is bottom left, west is top left. The outline and shading are good, and there is no Greenbull colour, no Mustang shape and no readable text. The version fails the brief in these ways:
+1. It does not read as a wreck. The roof is intact and clean, with no cave-in. All four wheels are present, so it doesn't sit tilted. The glass is mostly whole. There are no visible rust or scorch marks and almost no dents. The only damage cues are a few grey rubble chunks beside the car and a brown patch on the windscreen. It looks like a normal parked hatchback with stones around it, so it is not clearly a "broken" car. Fix by choosing another rotation pair, or by regenerating the base car within the remaining budget, with the damage drawn on the car body (caved roof, missing wheel, scorch, rust). Rubble on the ground alone doesn't count.
+2. The colour is wrong. The brief asks for dull dark grey paint. The car is a light, fairly saturated teal-blue with bright pale-blue roof and bonnet highlights, so it is not dull or dark and it looks clean. A free palette fix is to desaturate and darken the body ramp toward dark grey, and to add rust-brown and near-black scorch pixels.
+3. Lights (rules 5 and 4, minor). In frames 2 and 3 the front lamps are bright white-cream dots with a small halo. That reads as lit, but the brief says unlit lamps with no glow, and the repaint-front script was meant to turn them dull grey. They should be dark grey with no bright highlight. The rear lamps in frames 1 and 4 look dull brown or dark, not clearly red. The brief wants the rear lamps red, so check that the red survived the palette merge.
+4. The roof has small dark knobs and white specks (the unexplained round bump on the roof) that don't read as damage or as part of a car. Remove them.
+5. The strip needs the damage and the dark grey colour before it is a good wreck. The scale, facing order and mirroring are fine.
+- Rules broken: 5, 2
+- Refused: {"tool_input": {"command": "python game/tools/pixellab_client.py generate --endpoint create-image-pixflux --params-file art-archive/T-399/requests/broken_car_2_top_v1.json --out-dir art-archive/T-399/raw --name broken_car_2_top_v1_raw --consulted docs/visual-style.md --consulted docs/level-design.md --consulted docs/extended-narrative.md --consulted art-archive/T-397/parked_car_ne.png --consulted game/art/ground/ground_atlas.png --consulted game/art/boulders/boulder_a.png --task T-399 --notes \"broken car 2 (wrecked dark grey hatchback), first picture for the 8 rotations, v1\"", "description": "Generate broken car 2 first picture via PixelLab", "timeout": 660000}, "tool_name": "PowerShell", "tool_use_id": "toolu_01PASzLCzdf2BfygKq3de6Fp"}; {"tool_input": {"command": "python art-archive/T-399/contact_sheet.py art-archive/T-399/scratch/broken_car_2_rot8_v1_sheet.png 2 art-archive/T-399/raw/broken_car_2_rot8_v1_{0,1,2,3,4,5,6,7}.png", "description": "Make contact sheet of the 8 rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01AqWzwWhijBetcTZvZ1nbCA"}; {"tool_input": {"command": "python art-archive/T-399/contact_sheet.py art-archive/T-399/scratch/broken_car_2_rot8_v1_sheet.png 2 art-archive/T-399/raw/broken_car_2_rot8_v1_0.png art-archive/T-399/raw/broken_car_2_rot8_v1_1.png art-archive/T-399/raw/broken_car_2_rot8_v1_2.png art-archive/T-399/raw/broken_car_2_rot8_v1_3.png art-archive/T-399/raw/broken_car_2_rot8_v1_4.png art-archive/T-399/raw/broken_car_2_rot8_v1_5.png art-archive/T-399/raw/broken_car_2_rot8_v1_6.png art-archive/T-399/raw/broken_car_2_rot8_v1_7.png", "description": "Make contact sheet of the 8 rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01Q58NDeVTjDe7myoD6aYHBQ"}; {"tool_input": {"command": "for n in 0 2 4 6; do python game/tools/build_street_cars.py clean --raw art-archive/T-399/raw/broken_car_2_rot8_v1_$n.png --out art-archive/T-399/cars/broken_car_2_rot8_v1_${n}_clean.png || exit 1; done", "description": "Clean four candidate rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01GvHZEPf9uTksdDpyWrhtBb"}
+
+#### Round 2
+
+- Version 2: `art-archive/T-399/style-loop/v2-6.png`
+- What changed: Version 2 of broken car 2. It uses free script fixes only: no PixelLab calls, so the remaining budget is still 3 generations. It keeps version 1's facings and car, the picked rotations #2 (nose up-right) and #6 (nose down-left), with the same scale, facing order and mirroring. All of the damage is now drawn on the car body itself.
+
+What changed, by the evaluator's points:
+1. **It reads as a wreck.** I ran `build_street_cars.py wreck` on both pictures with seeds 21 and 26.
+   - The roof is caved in: crush creases plus a large dent across the middle of the roof.
+   - The bonnet is crushed on the bottom facing.
+   - The rear glass, the side glass and the windscreen are cracked.
+   - There are black scorch marks on the side (top facing) and the bonnet (bottom facing), and rust patches on the sides and the rear.
+   - A flat tyre is squashed low: the rear wheel on the top facing, the front wheel on the bottom facing. The car sags on that corner.
+   - The wheel is not literally missing. The flat tyre stands in for it.
+2. **The colour is dull dark grey.**
+   - I added a `--paint dark-grey` option to `wreck` (new `dark_grey_paint` in `game/tools/build_street_cars.py`). It drains nearly all colour, darkens the body and caps its lightest step, so the pale-blue highlights are gone.
+   - Only the dark window panes and the red lamps stay as they were. The old blue-tinted glass test also caught the teal paint and the navy shadow, so this step uses a tighter one.
+   - The rubble is now grey, not lilac, so nothing is in the boulders' navy or purple.
+3. **The lights.**
+   - The front lamps on east and south are now dull grey with no bright dot or halo. `repaint-front` also turned 9 reddish rust pixels at the front grey.
+   - The rear lamps on north and west are painted red with the existing `touch-up --rear-lamp` boxes, and that red survives the shared palette.
+4. **The roof knobs are gone.** The two dark knobs and white specks on the roof were flattened with `touch-up --flatten`.
+
+The strip has 29 colours, alpha 0 or 255, and a transparent background. The preview is in `art-archive/T-399/style-loop/broken_car_2_v2_preview/`. Every in-between picture is kept in `art-archive/T-399/cars/` (`*_touched_v2`, `*_wreck_v2`, `*_wreck_v2b`, `*_front_grey`). A first try with a looser glass test, which left some navy on the rear, is in `art-archive/T-399/scratch/broken_car_2_v2_try1*`.
+
+I added tests in `game/tools/test_build_street_cars.py`. They check that the dark-grey paint is dull and dark and stays grey, that the glass and red lamps are kept, that navy shadow gets painted, and that the paint option works. All 23 tests pass.
+- Script checks: 21 of 21 pass
+- Score: 7/10
+- Reason: The strip passes the script checks (rules 1, 3 and 6). Its look matches the board's accepted PixelLab rotations, and the four facings point the way their keys say: north is nose up-right, east is nose down-right, south is nose down-left, west is nose up-left. Only the rear lamps are red, on the two top-view facings. The front lamps on the bottom-view facings are grey, with no red left. The palette is dull grey, with rust and scorch marks, no glow, no Greenbull colours, and no stripes or Mustang shape. It has a dark outline, detailed shading, and it is a night, retro 3/4 isometric view, so rules 2, 4, 7 and 9 are met. It reads as a car.
+
+Weaknesses against the brief:
+1. The 'roof caved in by falling rubble' damage reads weakly. The roof is mostly a dark smudge and a crack pattern, not a visibly crushed roof. The rubble is a few small grey cubes scattered at ground level around the wheels, not lying on the roof.
+2. The 'missing wheel, sits tilted' damage is barely visible. All wheels look present, with rubble blocks beside them, and no tilt is clear. This mostly follows from the accepted rotations, so it is a minor fault.
+3. The two top-view facings (north and west) look like a longer-cabin, van-like body. The bottom-view facings (east and south) show a shorter hatchback with a visible bonnet. They read as slightly different cars, so 'same car in all four' is only loosely met.
+4. The small number-plate marks should stay unreadable. They are, so this is not a fault.
+
+To fix: if a free script fix is possible, pick a top and bottom rotation pair whose body length matches. If a new PixelLab call is allowed, ask for a clearer caved roof and a visibly missing wheel.
+- Rules broken: 2
+- Refused: {"tool_input": {"command": "python -m unittest test_build_street_cars.WreckTest.test_dark_grey_paint_is_dull_dark_and_leaves_glass_and_red_lamps 2>&1 | tail -8", "description": "Show the failing test's message"}, "tool_name": "Bash", "tool_use_id": "toolu_013PtYYsdB6vJvcLJK3ZEjmR"}
+
+#### Round 3
+
+- Version 3: `art-archive/T-399/style-loop/v3-5.png`
+- What changed: Version 3 of broken car 2. It uses free script fixes only, with no PixelLab calls. Spend on this car is still 3 generations, all from version 1, with 3 left for refines.
+
+What changed, by the evaluator's points:
+1. **Same car in all four facings.** I switched to the other pair from the same 8 rotations: #4 for the top picture (nose up-left) and #0 for the bottom picture (nose down-right). Both read as the same short, boxy hatchback with the same body length. The #2 top used before looked like a longer, van-like cabin.
+   - The strip is built with `--top-left #4 --bottom-right #0`, so it still runs north = top right, east = bottom right, south = bottom left, west = top left.
+   - `repaint-front --nose bottom-right` was run on #0. Its headlights come out dull grey, and the 4 reddish pixels at the front were made grey.
+   - The rear lamps on north and west are painted red with `touch-up --rear-lamp`.
+2. **Roof caved in by falling rubble.** I added a new `--rubble` step to `wreck` (new `paste` in `game/tools/build_street_cars.py`). It copies two of the car's own concrete lumps from the ground onto the roof. The roof under them is also crushed: crease folds plus a large dent. The roof knob specks were flattened first.
+3. **A missing wheel, so the car sits tilted.** I added a new `--missing` step (new `missing_wheel`). It runs after `--flat` on the same near corner, which sags that corner low. The wheel is then removed, leaving a dark, empty wheel arch with a small rusty brake drum where the hub was. This is the rear-left wheel on the top facing and the front-left wheel on the bottom facing.
+4. **Kept from version 2:**
+   - Dull dark-grey paint (`--paint dark-grey`).
+   - Cracked glass, a scorched bonnet and side, rust patches on the side and rear, a crushed bonnet.
+   - Grey rubble, with no navy, purple or Greenbull colours.
+   - Unlit lamps, unreadable plates.
+   - 29 colours, alpha 0 or 255, a transparent background, 512 x 128.
+   - The same scale as T-397's car in the preview.
+
+The preview is in `art-archive/T-399/style-loop/broken_car_2_v3_preview/`. The in-between pictures are in `art-archive/T-399/cars/` (`*_4_touched_v3`, `*_4_wreck_v3`, `*_0_touched_v3`, `*_0_wreck_v3`, `*_0_wreck_v3_front_grey`). The pair comparison and the trial strip are in `art-archive/T-399/scratch/` (`broken_car_2_pair_4_0*`, `broken_car_2_v3_try1*`).
+
+I added tests for `missing_wheel`, `paste` and the new `wreck` options in `game/tools/test_build_street_cars.py`. All 25 tests pass.
+- Script checks: 21 of 21 pass
+- Score: 7/10
+- Reason: The strip passes the script checks and reads as a wrecked grey hatchback. Each facing matches its key: north is the nose up-right with red rear lamps at the lower left, east is bottom right, south is bottom left and west is top left. The front lamps are grey and only the rear lamps are red. The outline is dark and the shading is detailed, with rust, scorch marks, cracked glass and rubble on the roof. There is no fire, smoke or gore, and nothing of the Mustang or Greenbull. Faults to fix: (1) Rule 2/7, grey rubble blocks are scattered around the wheels and body, and they look like loose boulders or floating debris more than a missing wheel or a car sitting tilted. The missing-wheel brief is not clearly shown, so tidy or reduce the blocks near the wheel positions. (2) Rule 7, the ground shadow under the car is tinted purple. This is slight, but the city palette should not use the boulders' purple, so make it a neutral dark blue-grey. (3) Rule 2, the north and west facings are rear three-quarter views that mostly show the roof rubble and the rear window. The damage reads less clearly there than on the east and south facings, so improve the shading and detail contrast on those facings if the free script fixes allow it.
+- Rules broken: 2, 7
+
+#### Round 4
+
+- Version 4: `art-archive/T-399/style-loop/v4-4.png`
+- What changed: Version 4 of broken car 2. It is the same car and pair as version 3 (rotation #4 for the top, #0 for the bottom) and uses free script fixes only, with no PixelLab calls. Spend on this car is still 3 generations, all from version 1.
+
+What changed, by the evaluator's points:
+1. **No loose rubble on the ground.** I added a new `--clear` step to `wreck` (new `clear_rubble` in `game/tools/build_street_cars.py`). It removes the lilac rubble lumps around the wheels and body: 5 lumps on #4 and 3 on #0.
+   - Only the rubble's own pixels are taken out, detected by their colour in the picture before painting. The car body is untouched.
+   - Lumps lying over the car's shadow are filled with the shadow colour.
+   - The only rubble left is on the crushed roof.
+   - With the blocks gone, the empty dark wheel arch and the sag on that corner (from the flat tyre) carry the missing wheel and the tilt on their own.
+2. **No purple shadow.** I added a new `--neutral-shadow` step (new `neutral_shadow`). It turns the dark purple pixels (the ground shadow and the purple-black window panes) into a neutral dark blue-grey of the same lightness, so none of the boulders' purple is left.
+3. **More damage contrast on north and west.** On the rear three-quarter picture (#4) I added a large dent on the side panel and a second scorch mark on the rear hatch. The roof cave-in, roof rubble, cracked rear and side glass, and the rust are as before.
+
+Kept from version 3:
+- Every nose matches its key.
+- Only the rear lamps are red (north and west). The front lamps on east and south are dull grey.
+- Dull dark-grey paint, no glow, no Greenbull colours, no stripes or Mustang shape, unreadable plates.
+- 29 colours, alpha 0 or 255, a transparent background, 512 x 128, and the same scale in the preview.
+
+The preview is in `art-archive/T-399/style-loop/broken_car_2_v4_preview/`. The in-between pictures are `art-archive/T-399/cars/broken_car_2_rot8_v1_4_wreck_v4.png`, `*_0_wreck_v4.png` and `*_0_wreck_v4_front_grey.png`, and the trial strip is `art-archive/T-399/scratch/broken_car_2_v4_try1*`.
+
+I added a test for `clear_rubble`, `neutral_shadow` and the new `wreck` options in `game/tools/test_build_street_cars.py`. All 26 tests pass.
+- Script checks: 21 of 21 pass
+- Score: 8/10
+- Reason: The strip meets the rules and the brief. The four facings are in key order: north = nose up-right, east = nose down-right, south = nose down-left, west = nose up-left. Only the rear lamps on the top-facing frames are red, and the front lamps on the bottom-facing frames are grey and unlit. The script checks pass: 128x128 frames, 26 to 29 colours, alpha 0 or 255, transparent background, no Greenbull colours. The car is dull dark grey with a dark outline and detailed shading, and it has none of the player car's features. It shows rubble on the roof, cracked glass, rust and scorch patches, and it still reads as a car. No fire, smoke or gore, no glow, and no readable words or brands. Weaknesses, all minor: (1) The brief's missing wheel and tilt are hard to see. The car looks level and the missing wheel is not obvious, so the wreck reads as light damage with a roof pile. The visible wheel on the bottom-facing frames looks intact. (2) The top-facing frames show the car at a steeper, more top-down angle than the bottom-facing frames, so the pair is not at a perfectly matched 2:1 angle (rule 3 view). The board accepted PixelLab's rotations, so this is only a note.
+- Rules broken: 3
+
+**Kept:** version 4, score 8/10 (`art-archive/T-399/style-loop/v4-4.png`, copied to `art-archive/T-399/broken_car_2_facings.png`): it reached 8 or more.
+
+### Run 9
+
+Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-399/briefs/parked_car_2.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-399/style-loop/v1-9.png`
+- Script checks: 21 of 21 pass
+- Score: 6/10
+- Reason: The strip passes the script checks for rules 1, 3 and 6: 128x128 frames, 23 to 25 colours, hard edges, transparent background. It also meets rule 2, with a dark outline, shading and detail, and rule 4, since it reads as night and retro. The car is plain slate grey-blue, with no stripes, no Greenbull colours, no readable words and no glow, so rules 6, 9 and 10 hold. The bottom facings (east, south) have the front lamps repainted grey/white, and their rear lamps are red. The nose of each facing matches its key.
+
+The fault is a red lamp left at the front end of the top-picture facings. In north (frame 1, top right) the car's far end, upper right, shows a small red pixel cluster at about x=420, y=190 on the 4x strip. In west (frame 4, top left) the same appears at about x=1575, y=190. Both are the nose's far-side lamp, which the brief says must not be red at a car's front end. The repaint only ran on the bottom picture. To fix it, run repaint-front on the top picture as well, or add a nose-end lamp repaint inside the strip step, so that only the tail-end lamps (lower-left in north and west, with the lamp on the hatch face) stay red.
+
+Smaller points:
+- North and west show the rear hatch face and the rear lamps at the near end, while east and south show the front. The car reads as two different ends, but the board accepted PixelLab's rotations, so this is not a fault.
+- The headlights read white-grey, which is acceptable as unlit.
+- Rules broken: 2
+- Refused: {"tool_input": {"command": "python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-399/cars/parked_car_2_top_v1_raw_clean.png').convert('RGBA')\nbg=Image.new('RGBA',im.size,(40,40,48,255));bg.alpha_composite(im)\nbg.resize((512,512),Image.NEAREST).save('art-archive/T-399/scratch/pc2_top_v1_4x.png')\"", "description": "Enlarge the cleaned first picture"}, "tool_name": "Bash", "tool_use_id": "toolu_01EzFUiSsViqXJscNNgsP9nU"}; {"tool_input": {"command": "cd /c/solid-carbide-worktrees/T-399/art-archive/T-399 && python contact_sheet.py scratch/pc2_rot8_a.png 3 raw/parked_car_2_rot8_v1_0.png raw/parked_car_2_rot8_v1_1.png raw/parked_car_2_rot8_v1_2.png raw/parked_car_2_rot8_v1_3.png && python contact_sheet.py scratch/pc2_rot8_b.png 3 raw/parked_car_2_rot8_v1_4.png raw/parked_car_2_rot8_v1_5.png raw/parked_car_2_rot8_v1_6.png raw/parked_car_2_rot8_v1_7.png", "description": "Make enlarged contact sheets of the 8 rotations"}, "tool_name": "Bash", "tool_use_id": "toolu_01HNQjwXAwgov4eM1wsLK1Pr"}; {"tool_input": {"command": "for n in 0 3 5 7; do python game/tools/build_street_cars.py clean --raw art-archive/T-399/raw/parked_car_2_rot8_v1_$n.png --out art-archive/T-399/cars/parked_car_2_rot8_v1_${n}_clean.png; done", "description": "Clean candidate rotation pictures"}, "tool_name": "Bash", "tool_use_id": "toolu_01QaV6UebNNJU3Vv19oUjVE3"}
+
+#### Round 2
+
+- Version 2: `art-archive/T-399/style-loop/v2-7.png`
+- What changed: Version 2 is the same car and the same two facings from the 8 rotations (top = rotation 0, bottom = rotation 7). It fixes the red lamp the evaluator found at the nose end of the top facings. This was a free script fix: no new PixelLab calls in version 2, so 3 generations in total so far and up to 3 left for refines.
+
+What changed:
+- I ran `repaint-front --nose top-right` on the top picture as well. It turned the 4 red front-lamp pixels at the far, upper-right nose end grey (`cars/parked_car_2_rot8_v1_0_front_grey.png`; the original stays in `cars/parked_car_2_rot8_v1_0_clean.png`).
+- I rebuilt the strip with `--top-right` set to that repainted picture and `--bottom-left` set to the already repainted rotation 7.
+- The strip has 29 colours and one palette, in frame order north (top right), east (bottom right), south (bottom left), west (top left).
+
+Result: north and west now have no red at the nose end; that lamp is grey at about x=420 and x=1575, y=190 on the 4x strip. Their rear lamps on the hatch face, at the near lower-left end, stay red. East and south are unchanged: grey headlights at the nose, red tail lamps at the far end.
+
+The preview is in `art-archive/T-399/style-loop/parked_car_2_v2_preview/`. Version 1 is kept.
+- Script checks: 21 of 21 pass
+- Score: 8/10
+- Reason: Script checks pass: 128x128 frames, transparent background, no semi-transparent pixels, 23 to 25 colours (rules 1, 3, 6). Looked at the strip and the v2 preview.
+
+Facings match their keys:
+- North (top right): nose up and to the right, red rear lamp at the lower left.
+- East (bottom right): nose at the lower right, rear at the upper left.
+- South (bottom left): nose at the lower left, long axis along the lower-left to upper-right diagonal.
+- West (top left): nose up and to the left, red rear lamp at the lower right.
+
+Red lamps appear only at the rear ends. The front lamps are repainted to pale grey, with no red left at the front.
+
+It is one car in one palette. It is a plain boxy five-door hatchback in dull slate grey-blue, with no stripes, no green, no Mustang shape, no readable words and no brand badge. It has a dark selective outline, a lighter edge highlight and layered shading (rules 2, 4, 7, 9), at night-scene value. The size is about the same as T-397's parked car.
+
+Minor faults, which keep it from a 9 or 10:
+1. The front lamps on east and south are near-white grey, with a bright pale pixel. Next to the dark grille they could read as lit. Use a darker, flatter grey, closer to the body's mid-tone (rules 2 and 5, unlit with no glow).
+2. The shading on the hood and roof is soft and fairly flat, with few lighter edge-highlight pixels breaking the outline (rule 2). This is PixelLab's accepted rendering, so it is a small deduction only.
+- Rules broken: 2, 5
+
+**Kept:** version 2, score 8/10 (`art-archive/T-399/style-loop/v2-7.png`, copied to `art-archive/T-399/parked_car_2_facings.png`): it reached 8 or more.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -382,3 +757,9 @@ Written by the agent when it finishes.
 **Refused:** nothing refused to me. The loop records two refused read-only commands of the generator in Run 3 (reading the loop log); it did not work around them.
 
 **Documents affected:** `docs/visual-style.md` (Decisions, "Sidewalks, parked cars and meteor craters": the full set, and the cars' open problem), `game/docs/art/sidewalk-parked-cars.md` (new section "The full set (T-399)").
+- 2026-10-30, flagged-for-review → in-progress: The board (2026-10-30), after looking at car1_pixellab_8_rotations_x3.png: "I really like the car rotations that I see. ... the only issue with the car is that both its headlights and its rear lights are red. Only its rear lights are supposed to be red, and its front lights ... gray because it turned off. ... using a free script repaint might be good to fix the headlights in the front to not be red. That is the main issue." So: keep PixelLab's 8-rotation facings; a free script repaints the front lights grey (off); the other cars the same way, within the cap (42 left).
+
+**Planned PixelLab calls after the board's decision (written before any call, 2026-10-30).** Cap left: **42** (T-397 1, T-399 7 so far).
+- Parked car 1: **0** (the board accepted its 8 rotations; the free `repaint-front` script greys the front lamps). At most 2 if a refine truly needs a new set.
+- Parked cars 2 and 3, broken cars 1 and 2: **3 each** (pixflux for the first picture, 1; `generate-8-rotations-v3` from it, 2), then the same pick, repaint and strip, free = **12**. Refines free first; at most 3 more per car.
+- **Planned 12; worst case 2 + 12 + 12 = 26** (running total at most 34 for T-399, 35 with T-397, of 50). If a call would take the total past 49, I stop and ask.
