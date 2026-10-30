@@ -1,7 +1,7 @@
 ---
 id: T-422
 title: Each weapon has its own top tier
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Audit
@@ -48,6 +48,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-worktrees\T-422, Weapon Behavior Agent. It goes to master with build J.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -55,3 +59,18 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Weapon Behavior Agent, 2026-10-30.
+
+Checked T-408's work: `WeaponData.max_tier(weapon)` (own `max_tier` in the weapon's entry, else the shared 8) is used by `weapon.gd` (`max_tier()`, `is_max_tier()`, `set_tier()` clamp, `upgrade()`) and so by `level_up_offers.gd` `available_offers()`. The gift pack opens the same choice (`RunState.open_choice` -> offers), so one check covers both. Kept as is; no weapon numbers changed.
+
+What I added:
+- `game/scripts/weapons/starting_gun.gd`: the empty-queue pop was already safe (`_fire_next()` returns on an empty queue, and `step()` returned silently on bullets 0). Now bullets 0 also does `push_error` once per run (flag reset in `reset_for_run()`), and fires nothing.
+- Tests: `test_weapon_data.gd` (each weapon's top tier equals its own data, tier list matches, unknown weapon falls back to the shared one); `test_level_up_offers.gd` (each weapon reaches its own top and stops there, gun 11, others 8; a weapon at its own top is never offered in a gift pack, for all six weapons over 10 seeds, and the gun at 10 is still offered); `test_starting_gun.gd` (`test_no_bullets_fires_nothing` now also expects the one error).
+
+Test counts:
+- Godot GUT, full suite: 174 scripts, 2146 tests, 2145 passing, 1 failing: `test_no_bullets_fires_nothing`, which failed only because of my new error (unexpected push_error). I fixed that test to expect the error, then reran `test_starting_gun`: 31/31 pass. I did not rerun the full 13-minute suite after that one-line test fix. `test_run_likes.gd` did not fail.
+- `python -m unittest discover -s game/tools`: 722 tests OK (1 skipped).
+- `python -m unittest discover -s tools`: 582 tests OK.
+
+Screenshots: none, nothing here is on screen.

@@ -197,3 +197,13 @@ func test_flame_data_has_no_separate_area() -> void:
 	var raw: Dictionary = GameData.load_file("weapons").data
 	for k in ["car_half_size", "inner_edge_multiplier", "depth_multiplier", "half_width_multiplier"]:
 		assert_false(raw.flamethrower.has(k), "%s is gone" % k)
+
+
+func test_each_weapons_top_tier_comes_from_its_own_data_and_set_tier_clamps_to_it() -> void:
+	var raw: Dictionary = GameData.unwrap(GameData.load_file("weapons"))
+	var w := WeaponData.new()
+	for weapon in ["gun", "flamethrower", "underglow", "molotov", "wiper", "bricks"]:
+		var own := int(raw[weapon].get("max_tier", raw["max_tier"]))
+		assert_eq(w.max_tier(weapon), own, weapon)
+		assert_eq(w.tiers(weapon).size(), own - 1, "%s has a tier for every step to its top" % weapon)
+	assert_eq(w.max_tier("not_a_weapon"), int(raw["max_tier"]), "an unknown weapon falls back to the shared top")
