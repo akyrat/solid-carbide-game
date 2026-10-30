@@ -1,7 +1,7 @@
 ---
 id: T-419
 title: The kaiju only takes paths it fits through
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -99,3 +99,4 @@ Board review files: art-archive/T-419/screenshots/kaiju_nav_roof.png
 - Beyond the ticket: minions' test coverage unchanged (criterion 2 test shows they still use 3 and 3.5-unit gaps; minion grid edge_radius 0, drop_span 1). The kaiju drop and ledge tests in test_enemies_on_heights pass in the full run (one test renamed to match the kaiju's own navigation). enemy_path_follower.gd change is a drop commitment, covered by that existing drop test.
 - Level file in game/data/levels/ was only read.
 - Test counts (QA rerun of the GUT set alone): 173 scripts, 2131/2131 passing, exit 0. The first qa_check run passed all three sets; the second run's set 3 exited 1 only on an exit-time message ('1 resources still in use at exit', also printed by the passing rerun), no test failed; the rerun alone passed. Python sets passed in both qa_check runs (agent reported 722 and 582).
+- 2026-10-30, needs-playtest → done: The board played build J: lgtm; keep the kaiju edge rule (2026-10-30)
