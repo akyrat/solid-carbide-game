@@ -39,7 +39,18 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Criteria to be written by the Project Lead from the assessment, before the ticket leaves planning. (QA: pass - no concrete criteria were written; checked against the assessment's proposed criteria: test_car_footprint_height (11) and test_drift_marks_overhang (4) pass, the named existing suites are green, step cost 0.128 ms; three test sets re-run by QA all pass)
+QA round 1 (2026-10-30) ran with no concrete criteria written (the Project Lead's miss: the placeholder line below). Its mark is kept as the record; the criteria after it were written by the Project Lead from the assessment's proposed criteria (Result notes) after round 1, and QA round 2 checks them.
+
+- [x] ~~Criteria to be written by the Project Lead from the assessment, before the ticket leaves planning.~~ (QA: pass - no concrete criteria were written; checked against the assessment's proposed criteria: test_car_footprint_height (11) and test_drift_marks_overhang (4) pass, the named existing suites are green, step cost 0.128 ms; three test sets re-run by QA all pass)
+- [ ] The root cause is written in the result notes, with a named test that fails before the fix (checked by running it with the fix stashed or on the base commit).
+- [ ] Headless tests on the real `car.gd` with a GroundHeight: driving into a height-3 side head-on and at 45°, no outline point of the 1 by 3 car ends more than 0.05 inside the side, with exactly one `hit_obstacle`; the same when steering into a side from standing.
+- [ ] Ramps: the 0-to-3 ramp and the T-400 small ramp at 4, 11 and 16.5 u/s give no false wall, and the car follows the slope within 0.01; a free-standing ramp's top launches (`from_ramp=true`, vz > 0), higher at 16.5 than at 11, and its long side still lets the car fall.
+- [ ] Platforms: touching T-405 platforms are crossed with no wall at height 3 ± 0.01; a height-3 platform next to a height-6 one bounces at the bumper.
+- [ ] Roof edges: a car at 2 u/s takes off at the edge as today (open question (a), today's choice kept); tyre marks along a roof edge never drop below the car's height minus 0.1, and the overhanging line ends.
+- [ ] Existing suites stay green: `test_car_height`, `test_car_height_layers`, `test_elevation_edges`, `test_run_elevation_map` and the T-195 drive inside GUT; `CarHeight.step` averages under 0.5 ms on the largest saved map.
+- [ ] `docs/drifting.md` records the change and open questions (a) to (d) for the board, and the three test sets pass.
+
+The board's review: in the build, drive into rooftop and ramp sides head-on, at an angle and while turning, cross joined platforms, drift along a roof edge and roll off one slowly.
 
 ## Updates
 
