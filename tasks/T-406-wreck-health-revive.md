@@ -1,7 +1,7 @@
 ---
 id: T-406
 title: A wrecked car that slides into a health pickup's range picks it up and revives with 1 heart
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -41,12 +41,12 @@ The board's review: lose the last heart while sliding towards a health pickup, a
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A wrecked, sliding car within a health pickup's range picks it up and revives with 1 heart: controls return, the wreck effect stops and the recap does not show (tests). (QA: pass / fail)
-- [ ] Without a health pickup in range, the wreck ends with the recap after 3 seconds as before (existing tests). (QA: pass / fail)
-- [ ] The proposals (invulnerability, combo and viewers, other pickups) are in the result notes and behave as written (tests). (QA: pass / fail)
-- [ ] Game loop architecture (Content) and game/docs/game-loop/ describe it. (QA: pass / fail)
-- [ ] A GIF of a wreck revived by a health pickup is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] A wrecked, sliding car within a health pickup's range picks it up and revives with 1 heart: controls return, the wreck effect stops and the recap does not show (tests). (QA: pass)
+- [ ] Without a health pickup in range, the wreck ends with the recap after 3 seconds as before (existing tests). (QA: pass)
+- [ ] The proposals (invulnerability, combo and viewers, other pickups) are in the result notes and behave as written (tests). (QA: pass)
+- [ ] Game loop architecture (Content) and game/docs/game-loop/ describe it. (QA: pass)
+- [ ] A GIF of a wreck revived by a health pickup is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; GUT 1945/1945, game/tools 668 OK, tools 579 OK)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started in build F (Hits, enemies & weapons).
+
+### 2026-10-30, In progress → In QA
+
+Built: a wrecked, sliding car that touches a health pickup revives with 1 heart (controls back, smoke off, no recap, 1 s invulnerability); GIF in art-archive/T-406/screenshots; all three test sets pass.
 
 ## Style review
 
