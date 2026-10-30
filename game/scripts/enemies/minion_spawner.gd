@@ -306,6 +306,7 @@ func spawn_minion_at(units: Vector2) -> Node:
 	m.detour_side = 1.0 if rng.randf() < 0.5 else -1.0
 	m.ground = ground
 	m.follower = FollowerScript.new(rng.randf() * FollowerScript.REPATH_SECONDS)
+	m.follower.by_sight = true  # T-380: straight only while the way to the car is clear
 	bodies_root.add_child(m, true)
 	var s: Node2D = MinionSpriteScript.new()
 	s.name = "MinionSprite"

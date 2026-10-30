@@ -49,6 +49,8 @@ const META_KEY := "enemy_navigation"
 ## a crowd that needs paths at the same moment (the car drives up a ramp) asks
 ## for them over a few steps instead of in one.
 const PATHS_PER_STEP := 4
+## line_clear's samples along a line, units (half a cell).
+const SIGHT_SAMPLE := 1.0
 
 ## T-379: the margin grows with the minion's size (BASE_MARGIN times
 ## enemies.json minion.size_scale), so a bigger minion still fits the gaps it is
@@ -276,6 +278,40 @@ func _cell_near(units: Vector2, h: float) -> int:
 				best_d = d
 				best = kk
 	return best
+
+
+## T-380: true when an enemy can walk straight from `a` to `b`: the grid's
+## cells under the line (sampled every SIGHT_SAMPLE units), and under two lines
+## beside it `half_width` units to either side, are open (not a building's,
+## a boulder's or a prop's, other than the cells at the two ends) and each
+## cell's ground is within MAX_STEP of the one before, so the line crosses no
+## rooftop edge and no ramp side where the ramp is high (it may cross a ramp's
+## low foot, and climb along a ramp). The same rule as the grid's links, so a
+## line that is not clear has a path round.
+func line_clear(a: Vector2, b: Vector2, half_width: float = 0.0) -> bool:
+	var d := b - a
+	var length := d.length()
+	if length < 0.001:
+		return true
+	var ka := cell_at(a)
+	var kb := cell_at(b)
+	var side := d.orthogonal() / length * half_width
+	var n := maxi(1, ceili(length / SIGHT_SAMPLE))
+	var offsets := [Vector2.ZERO, side, -side] if half_width > 0.0 else [Vector2.ZERO]
+	for off in offsets:
+		var prev := -1
+		for s in n + 1:
+			var k := cell_at(a + off + d * (float(s) / float(n)))
+			if k < 0:
+				return false
+			if k == prev:
+				continue
+			if open[k] == 0 and k != ka and k != kb:
+				return false
+			if prev >= 0 and absf(heights[k] - heights[prev]) > EnemyHeightScript.MAX_STEP:
+				return false
+			prev = k
+	return true
 
 
 ## A new step: the path budget (PATHS_PER_STEP) starts again.
