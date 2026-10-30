@@ -2475,3 +2475,83 @@ Entry format:
 - Decision or change: The board: the neon underglow's tick deals half a minion's health at tier 1, and it knocks enemies back a little from tier 1.
 - Documents touched: docs/weapons.md
 - Tasks: T-409
+
+## 2026-10-30: Sidewalks and parked cars: art sample approved
+- Decision or change: The board approved the sample (sidewalk with curb, parked car, meteor crater); the full set (T-399) is built from it.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-397
+
+## 2026-10-30: The audit epic
+- Decision or change: The board asked for every ticket from the preemptive bug bash (session Preemptive-bug-bash) to be grouped under one epic, so it is clear they come from the same process. A new epic, audit, in tasks/README.md; this ticket gives it a bubble on the task board. Also from the audit: Game loop architecture no longer says a run ends with no win or loss message (the recap shows).
+- Documents touched: tasks/README.md, docs/game-loop-architecture.md
+- Tasks: T-410
+
+## 2026-10-30: Bug: the car hangs over roof edges
+- Decision or change: The board asked for a bug ticket on the car's height being judged from its centre point only, and for an agent to assess the root cause and the best approach before it is built.
+- Documents touched: tasks
+- Tasks: T-411
+
+## 2026-10-30: Weapon card text for the new tiers
+- Decision or change: Text ticket for the gun's tiers 2 to 11 and the stronger underglow's cards, ahead of T-408 and T-409 (the level-up cards show a line per tier).
+- Documents touched: docs/weapons.md
+- Tasks: T-412
+
+## 2026-10-30: The audit's answers (the run)
+- Decision or change: The board answered the bug bash's questions on the run: the wreck is a 3-second window and the loss is decided at its end; a kaiju kill during it wins, coins and health pickups count, Restart or Exit during it cancels the run with no coins; a kaiju kill at 0:00 wins; closing the window mid-run is a loss with coins kept, and switching windows pauses; a health pickup at full hearts stays; hits within 0.5 s cut the combo once.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-413
+
+## 2026-10-30: Audit ticket: Weapons during the wreck, and molotovs land where enemies can be
+- Decision or change: From the preemptive bug bash (audit epic): weapons during the wreck, and molotovs land where enemies can be. The board's answer is in docs/weapons.md.
+- Documents touched: docs/weapons.md
+- Tasks: T-414
+
+## 2026-10-30: Audit ticket: Pickups at full hearts, the combo's hit window, and the run's base values
+- Decision or change: From the preemptive bug bash (audit epic): pickups at full hearts, the combo's hit window, and the run's base values. The board's answer is in docs/game-loop-architecture.md.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-415
+
+## 2026-10-30: Audit ticket: Closing the game mid-run, and pausing when the window loses focus
+- Decision or change: From the preemptive bug bash (audit epic): closing the game mid-run, and pausing when the window loses focus. The board's answer is in docs/game-loop-architecture.md.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-416
+
+## 2026-10-30: Audit ticket: A broken save never wipes progress
+- Decision or change: From the preemptive bug bash (audit epic): a broken save never wipes progress. The board's answer is in docs/garage-design.md.
+- Documents touched: docs/garage-design.md
+- Tasks: T-417
+
+## 2026-10-30: Audit ticket: Meteors hit minions and push pickups aside
+- Decision or change: From the preemptive bug bash (audit epic): meteors hit minions and push pickups aside. The board's answer is in docs/enemies.md.
+- Documents touched: docs/enemies.md
+- Tasks: T-418
+
+## 2026-10-30: Audit ticket: The kaiju only takes paths it fits through
+- Decision or change: From the preemptive bug bash (audit epic): the kaiju only takes paths it fits through. The board's answer is in docs/enemies.md.
+- Documents touched: docs/enemies.md
+- Tasks: T-419
+
+## 2026-10-30: Audit ticket: Thread the needle while scraping, and level data guards
+- Decision or change: From the preemptive bug bash (audit epic): thread the needle while scraping, and level data guards. A code hole or doc fix the audit found; no new decision.
+- Documents touched: tasks
+- Tasks: T-420
+
+## 2026-10-30: Audit ticket: Settings sliders save once, on release
+- Decision or change: From the preemptive bug bash (audit epic): settings sliders save once, on release. A code hole or doc fix the audit found; no new decision.
+- Documents touched: tasks
+- Tasks: T-421
+
+## 2026-10-30: Audit ticket: Each weapon has its own top tier
+- Decision or change: From the preemptive bug bash (audit epic): each weapon has its own top tier. A code hole or doc fix the audit found; no new decision.
+- Documents touched: tasks
+- Tasks: T-422
+
+## 2026-10-30: Audit ticket: The board slims the docs and fixes what the audit found
+- Decision or change: From the preemptive bug bash (audit epic): the board slims the docs and fixes what the audit found. A code hole or doc fix the audit found; no new decision.
+- Documents touched: docs/game-loop-architecture.md, docs/enemies.md, docs/weapons.md, docs/hud-and-menus.md, docs/drifting.md, docs/level-design.md, docs/garage-design.md, docs/visual-style.md, docs/extended-narrative.md
+- Tasks: T-423
+
+## 2026-10-30: Weapon card text for the new tiers
+- Decision or change: Level-up card text for the gun's tiers 2 to 11 and the stronger neon underglow (Weapons, Content).
+- Documents touched: `docs/weapons.md`
+- Tasks: T-412

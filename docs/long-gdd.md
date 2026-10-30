@@ -44,7 +44,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can be damaged at any time (Enemies, Decisions).
 - Win: defeat the kaiju within the final 60 seconds. Loss: the car's HP reaches 0 at any point, or the kaiju survives the timer.
 - Between runs, coins are spent in the Garage on permanent car upgrades that improve the car in the next run (which upgrades: Garage design, Decisions).
-- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Exit. When a run ends, win or loss, the player returns straight to the main menu, with no win or loss message in the MVP.
+- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Exit. When a run ends, win or loss, the player returns to the main menu (through the recap screen, below).
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu.
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
 - **Music** (board, 2026-10-20): the board's own two tracks, "DEMO BEAT 1 (ANDY GAME)" and "DEMO BEAT 2 (ANDY GAME)" (made by the board; the music is human-made), play through the whole game, menus and runs alike, without stopping between screens: one track, then the other, alternating and looping. Its volume is the pause screen's music volume slider (HUD and menus, Decisions). Built in T-209: one music player, a child of the game flow, so the screens changing never restarts it; it plays on its own "Music" bus, and the setting is `music_volume` in `game_settings.gd` (0 to 100, saved with the SFX volume, starting at 40 as a proposal for the playtest). (tasks T-209, T-210)
@@ -64,6 +64,11 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **Subs instead of likes** (board, 2026-10-28): what the player earns toward the next gift pack is **subs** (the stream's subscribers), not likes: drifting brings subs, the viewers multiply them, each full **sub goal** sends a gift pack, and the drain is people unsubscribing when the stream gets dull. Only the name and the look change; the numbers and rules of the likes stay (the likes bar becomes the sub goal: HUD and menus, Decisions). Extended narrative, Decisions, "Subs". (T-331, T-337)
 - **Hearts instead of health points** (board, 2026-10-28): the car has **5 hearts**. A minion's hit and a meteor take 1 heart, the kaiju's 2. After any hit the car is invulnerable for **1 second**, blinking, so the player can escape a swarm; hits during that second do nothing and don't cut the combo. A health pickup heals 1 heart, and drops at half today's chance (15%, Enemies). The garage's car health upgrade adds 1 heart per level (Garage design). (T-333, T-334, T-338) Numbers (T-333, `game/data/run.json` `car`): `starting_hearts` 5, `invulnerability_seconds` 1.0, `blink_interval_seconds` 0.1 (a proposal: each on or off phase of the blink). The old `starting_health` 100 is gone. Built in T-334 ([game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "Hearts and the invulnerability (T-334)"); proposals for the playtest: a hit during the second also gives **no knockback** (so the car drives out of the swarm), a hit ignored during it does not restart the second, and the blink starts with the car hidden, so the hit shows at once.
 - **A red flash when the car takes damage** (board, 2026-10-30): when the car loses a heart, it flashes red, so the hit reads at once. How it fits with the invulnerability blink, its length and its shade of red are proposals for the playtest. The same red flash shows on enemies when they take damage (Enemies, Decisions). (T-403)
+- **The wreck decides the loss at its end** (board, 2026-10-30, audit; replaces "The loss is decided at once" and "a kaiju kill can no longer turn it into a win" in Content, "Wrecked"): the run is lost only when the wreck's 3 seconds end and the recap shows. Until then a health pickup revives the car (T-406): the clock runs again, the controls return and the loss is undone; a trick in progress at the wreck is dropped, not paid. A kaiju kill during the wreck wins the run. Coins and health pickups are pulled in and count as usual. Restart or Exit from the pause screen during the wreck cancels the run: no coins kept, no runs-list entry. Which weapons keep working during the wreck: Weapons, Decisions.
+- **A tie goes to the player** (board, 2026-10-30, audit): if the kaiju dies on the same step the clock reaches 0:00, the run is won.
+- **Closing the game mid-run** (board, 2026-10-30, audit): closing the window during a run ends it as a loss: its coins are kept and it goes in the runs list. Switching to another window pauses the game.
+- **A health pickup at full hearts stays** (board, 2026-10-30, audit): with full hearts the car doesn't pick a health pickup up, and the magnet doesn't pull it.
+- **Hits close together cut the combo once** (board, 2026-10-30, audit): a collision within 0.5 seconds of the one that cut the combo doesn't cut it again (0.5 s is a proposal for the playtest).
 
 ### Content
 
@@ -264,6 +269,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
   - **A round shadow.** The shadow is a circle right under the centre of the car, in the same colour and feel as now, instead of the rectangle, so the player sees where the car is on the ground when it is in the air.
 - **No sprite shadow in the air** (board, 2026-10-20, from the elevation sample map's screenshots): the car's sprite has a drop shadow drawn into most of its 16 frames, which travels up with the car when it is in the air, beside the round shadow. In the air the car is drawn without it, so only the round shadow shows; on the ground it keeps the sprite's own shadow, as now. The shadowless frames are made by a free script, not PixelLab (Visual style, Decisions, "The car without its shadow").
 - **No drift smoke or tyre marks in the air** (board, 2026-10-21, after playing the full game on the elevation map): while the car is airborne it leaves no drift smoke and no tyre marks, even if the drift keys are held; both come back when it lands (tyre marks: board, 2026-10-21, same day). (T-206)
+- **Every ramp launches the car off its top** (board, 2026-10-30, audit): leaving a ramp through its top end launches the car, whether or not anything stands at the top, and the faster the car, the higher it flies, so a fast car reaches roofs it couldn't before. Leaving a ramp over its long side is still a fall. (T-411)
 
 ### Content
 
@@ -953,6 +959,8 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Minions twice as big** (board, 2026-10-29, an MVP nice-to-have): the minions are drawn twice as big, and the size they hit and get hit with grows to match, so what the player sees is what touches the car. The kaiju stays as it is.
 - **Minions don't get stuck on ramps** (board, 2026-10-29, an MVP nice-to-have; a bug): chasing the car, minions sometimes get stuck on walls as they try to go round a corner, mostly at the bottom end of a ramp. They should find their way round.
 - **A red flash when an enemy takes damage** (board, 2026-10-30): every enemy (minions and the kaiju) flashes red when a weapon or the car hits it, the same red flash the car shows when it loses a heart (Game loop architecture, Decisions). Its length and shade match the car's; for the kaiju, whether it flashes on every hit or only in its vulnerable window is a proposal. (T-404)
+- **Meteors hit minions and push pickups aside** (board, 2026-10-30, audit): a meteor that lands on minions damages them; coins and health pickups where a boulder appears are pushed out of its way. A meteor misses a car more than 1 unit above it, the same rule as contact damage.
+- **The kaiju only takes paths it fits through** (board, 2026-10-30, audit; a bug): the kaiju plans its way round buildings for its own size, so it never heads into a gap too narrow for it.
 
 ### Content
 
@@ -1069,6 +1077,9 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 - **Weapons hit only enemies on the car's own level** (board, 2026-10-28; replaces "Their damage areas are unchanged" in "The underglow and the wiper at height" above, for damage): on a map with rooftops and ramps, a weapon damages only the enemies on the same height level as the weapon's hit: the car's level for the gun, the flamethrower, the underglow, the wiper and Bricks, and the fire's level for a molotov. An enemy on the street is not hit from a rooftop above it, and the other way round. How a ramp's in-between heights and the kaiju count are the agents' proposals for the playtest. (T-326)
 - **The gun one-shots minions and grows in bullets, speed and targets** (board, 2026-10-30; replaces the gun's tier plan in "The starting gun" below and answers the open question on upgrading how often it fires): from tier 1 one bullet kills a minion. Its upgrades go to how many bullets it fires and how fast, in this order: **+1 bullet** twice, **faster attack** twice, then at the halfway upgrade it **targets up to 3 enemies at once** (it has 3 bullets by then); then **+1 bullet** twice and **faster attack** twice, and at its last upgrade it **targets up to 5 enemies at once**. That makes 10 upgrades (tiers 2 to 11) against today's 7; the range and pass-through tiers go. What "targets up to N" means against today's closest-first spread, and the speeds, are the agents' proposals for the playtest. (T-408)
 - **The neon underglow kills a minion in 2 ticks and pushes from tier 1** (board, 2026-10-30): each tick deals half a minion's maximum health at tier 1, so 2 ticks kill it, and from tier 1 it knocks enemies back a little (today it never pushes). How far, and whether the push grows with the tiers, are proposals. (T-409)
+- **Weapons during the wreck** (board, 2026-10-30, audit): while the car is wrecked (Game loop architecture, Decisions, "The wreck decides the loss at its end"), damage already on the map keeps going (molotov fires, burning enemies) and the neon underglow keeps ticking; the bricks still go off if the wrecked car lands from the air. Nothing new is fired: no gun, no molotov throws, no wiper, no exhaust flamethrower.
+- **Molotovs land where enemies can be** (board, 2026-10-30, audit): a molotov whose landing spot is inside a building or off the map picks another spot.
+- **The underglow barely pushes the kaiju** (board, 2026-10-30, audit; answers T-409's open point): the kaiju is pushed very little, just a slight stop at each damage tick. Minions are pushed as T-409 says.
 
 ### Content
 
@@ -1233,6 +1244,24 @@ What the built level-up offers do. It follows Decisions ("Level-up flow in the M
 - A weapon at its last tier is not offered. If only one choice is left, the level-up offers just that one (the docs say nothing here; the simplest case was taken). If none is left, the choice is skipped and the run goes on, as Decisions says.
 - **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car every weapon (all six) at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
 
+#### Level-up card text (T-412)
+
+Titles and lines for the gun's tiers 2 to 11 (replacing today's tiers 2 to 8) and the changed neon underglow lines, keyed as in `game/scripts/ui/level_up_texts.gd`; T-408 and T-409 copy them. Numbers are the Project Lead's, for the playtest. Style loop scores in brackets.
+
+- `upgrade_gun.tier2`: "Extra Bullet" [9] / "+1 bullet per volley, 2 in all. A free sample, courtesy of Greenbull." [8]
+- `upgrade_gun.tier3`: "Another Extra Bullet" [9] / "+1 bullet per volley, 3 in all. Greenbull feels generous on camera." [8]
+- `upgrade_gun.tier4`: "Quicker Trigger" [9] / "Fires 20% faster. The audience is getting restless." [9]
+- `upgrade_gun.tier5`: "Quicker Trigger II" [9] / "Fires 20% faster again. Engagement waits for no one." [8]
+- `upgrade_gun.tier6`: "Multi-Target Mode" [8] / "Aims at up to 3 enemies at once. Multitasking is a brand value." [8]
+- `upgrade_gun.tier7`: "Bullet Bundle" [9] / "+1 bullet per volley, 4 in all. Buy more, shoot more." [8]
+- `upgrade_gun.tier8`: "Bulk Bullets" [9] / "+1 bullet per volley, 5 in all. Terms and conditions apply to enemies." [9]
+- `upgrade_gun.tier9`: "Quicker Trigger III" / "Fires 20% faster. Content never sleeps." [8]
+- `upgrade_gun.tier10`: "Quicker Trigger IV" [9] / "Fires 20% faster again. Viewers blink less, so we sell more ads." [9, after 1 refine]
+- `upgrade_gun.tier11`: "Everyone Gets Exposure" [9] / "Aims at up to 5 enemies at once. Nobody is left unengaged." [8]
+- `get_underglow.desc`: "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic." [8]
+- `upgrade_underglow.tier3.desc`: "Glow damage up 50%, to 3. Looks expensive." [9]
+- `upgrade_underglow.tier6.desc`: "Glow damage up another 50%, to 4.5. Peak aesthetic." [9]
+
 ### References
 
 - Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
@@ -1256,6 +1285,7 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - **Air turn upgrade** (board, 2026-10-22): a fifth garage upgrade raises how fast the car spins in the air (Drifting, Decisions, "Slower air turn, upgradable"), from the new base of 1.25 times the ground rate. Its levels, prices and how much each level adds are the Game Data Agent's proposals (the Project Lead's suggestion: back up to today's 2.5 at the top level). Built in T-270 (proposal): 10 levels, the value is the air turn's total multiplier of the ground rate, 1.25 at level 0 and +0.125 per level, 2.5 (today's old value) at level 10 (1.375, 1.5, 1.625, 1.75, 1.875, 2.0, 2.125, 2.25, 2.375, 2.5); prices 40, 50, 60, 80, 100, 120, 155, 190, 240, 300, the same curve as the acceleration and magnet upgrades. Reasons: an eighth of the ground rate per level is the old 2.5 split into ten even steps, so the top level gives back what T-269 took away; an air 360 off the tallest rooftop needs a total of about 1.9 (Drifting, T-269's notes), so it becomes reachable at level 6 (2.0, with a margin; level 5 gives 1.875, just short), and the air 180 is there from level 0; one shared price curve keeps the five upgrades comparable until the playtest. The run takes the bought level's value minus the base and passes it to the car's `apply_air_turn_bonus()` at every run's start (`CarTuning.apply_air_turn_upgrade`, called in `GameFlow.start_run()`); the drift prototype never gets it. The numbers live in `game/data/garage.json`. Its name and description: T-268. (T-270)
 - **The car health upgrade adds hearts** (board, 2026-10-28): with hearts (Game loop architecture, Decisions, "Hearts instead of health points"), each level of the car health upgrade adds 1 heart to the 5 the car starts with. Its description names no number, so it stays as it is. (T-333) Data: `car_health` in `game/data/garage.json`, unit `hearts`, base 5, +1 per level to 15 at level 10; the 10 levels and their prices (40 to 300) are unchanged, they still make sense.
 - **Pixel art icons for the upgrades** (board, 2026-10-29): each garage upgrade gets a small pixel art icon, shown beside its row in the garage. One art ticket per upgrade (acceleration, car health, damage bonus, pickup magnet, air turn), each icon its own PNG in `game/art/garage/<upgrade key>.png`, which the garage picks up on its own; placeholders drawn in code until then. Script-drawn first (no PixelLab go yet), in the bold comic look of the HUD's reaction icons. (T-365, T-366 to T-370)
+- **A broken save never wipes progress** (board, 2026-10-30, audit): a save file that fails to load is never overwritten; the game keeps a backup of the last good save and loads it. Each save records its version, so a renamed upgrade keeps its level. The same goes for the runs list.
 
 ### Content
 
@@ -1366,6 +1396,11 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **The air turn garage icon** (T-370; Garage design, Decisions, "Pixel art icons for the upgrades"): `game/art/garage/air_turn.png` with a json record, 16 x 16, shown at 3x beside the air turn row in the garage. A blue car under a thin white curved spin arrow, drawn like the reaction icons (1 pixel dark outline, flat fills, highlights, one dominant colour plus white, no Greenbull colours). Script-drawn (`game/tools/build_garage_icon_air_turn.py`), 0 PixelLab generations. The other garage icons follow the same rules (`game/docs/art/garage-icons.md`).
 - **The cruise boost** (the short effect when W makes the car jump to cruise speed, Drifting, Decisions) is discreet: a few motion lines that show briefly. The first placeholder, five streaks behind the car, was too much. (board, 2026-10-15) The motion lines are animated, made with PixelLab, and judged by the board in the game only, without a separate sample review (board, 2026-10-16).
 - **The splash cover** (board, 2026-10-29, an MVP nice-to-have): an AI-generated pixel art image behind the main menu, the game's cover for now. It must be very consistent with the game's style, its colours and the actual car; it doesn't have to match the game one to one and can be more cinematic: for example the car drifting round the kaiju while meteors fall and it dodges them, with drift trails and trick popups. The rest is the Asset Generation Agent's composition (the board: "I trust you"). PixelLab, up to 20 generations, through the style loop. (HUD and menus, Decisions, "Main menu polish")
+- **Sidewalks, parked cars and meteor craters** (board, 2026-10-30, for the level creator; Level design, Decisions, "Sidewalks and parked cars in the level creator"; the sample T-397, for the board's review, the full set T-399). Proposals for the board's review:
+  - **Sidewalk:** a ground tile at the road tiles' size (128 x 64, 2 x 2 units), in the same pavement greys as the pavement round the creator buildings (palette B): 1 x 1 unit slabs as a checker of two cool greys, thin joints, light speckle and a few light cracks, repeating every 2 units so tiles join without a seam. Where it meets a road it has a **curb**: a low raised stone (under 0.1 unit, about 3 art px, so the car drives up over it) with a lighter stone top, a lit lip broken by highlight pixels, a darker front face and a near-black gutter line against the asphalt. Script-drawn, no PixelLab.
+  - **Parked cars:** plain, boring everyday city cars (the sample: a pale silver-grey four-door sedan), clearly not the player's car: no Mustang shape, no stripes, never dark green or any of Greenbull's colours; dull paint in the city's colours, unlit lights, no glow; in the player car's 128 x 128 frame at the same scale. Four facings (top right, bottom right, bottom left, top left); a facing and its mirror come from one picture (top right is top left mirrored). PixelLab, then cleaned by script.
+  - **Meteor crater** (added by the board, 2026-10-30): a flat ground decal at the road tiles' size, transparent round it, so it lies on asphalt, gravel or sidewalk; a hole seen at the road's angle (its far inner wall shows, the near wall hides under the rim), with broken, lifted asphalt round the rim, a dithered scorched band, glowing magenta cracks running out over the ground and meteor fragments glowing on the floor: the road's own asphalt with the boulders' own rock and glow colours. The car drives over it. Script-drawn, no PixelLab.
+  - How they are made: `game/docs/art/sidewalk-parked-cars.md`; every version and its score: T-397's Style review.
 
 ### Content
 
@@ -1652,12 +1687,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `e645a047b90c2c32888d08c24fd01b0b6093d65a5461129b5b8ffa438b1eb8f6` |
-| `drifting.md` | `9ba4b029c7b6d02d38bd17161e8158ba72e3105b63af8d7df37ca57c58a03b22` |
+| `game-loop-architecture.md` | `c657d4ae23f9862f3db6f5113e856db9415d13d0dc521b81038d1c3df6acc135` |
+| `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
 | `level-design.md` | `d166f2e16d32166f6c2c33b7e8b603fc6e1fb4d77836cd0338e7165d834a742c` |
-| `enemies.md` | `2557fde2424ca879e58957e9958f0f5055b8d42eb6b2fb2a3291b4f9dfaee8f6` |
-| `weapons.md` | `c90c804b902bee42acbac87b861b9a9958520d2e71da204e45db9261a6207c35` |
-| `garage-design.md` | `502e17a5ab2ec68190e79bbe2d5b5b671bd3db476e63526750cc306a6efed0e9` |
-| `visual-style.md` | `eb1001527ae65a573329c5a12642ef76d4266838747aee3d6810172edde9eea6` |
+| `enemies.md` | `08ba68f792b4ebeaa83534c6e7e82dd5ddb9920dba2598427f59acfdb502b24d` |
+| `weapons.md` | `eeef070f50a7e5635d3ebb1b18c4ae51fdd3aef8044cc61424620ae1703b52cc` |
+| `garage-design.md` | `697e864f36365a62d2303425a6c209e9fadeb40d797455bd53021907369cb4df` |
+| `visual-style.md` | `83a9f16fc5def7d4ee935d0aad41b1b81c0194d438b411e7e6eb352b5ae6e512` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
 | `hud-and-menus.md` | `22dbcd48e153b3d345ab29dbb4de87a87a76fd2da69d1fd22c25c981c460cb92` |
