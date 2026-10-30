@@ -27,7 +27,8 @@ extends Node
 ## and ramps the kaiju follows the minions' rules (minion_spawner.gd,
 ## enemy_height.gd): it arrives on the street, stands on the ground under it,
 ## rooftop edges stop it, it finds its way to the car by the ramps (the same
-## navigation as the minions, enemy_navigation.gd), it is drawn lifted by the
+## navigation as the minions, enemy_navigation.gd, but planned for its own
+## 2-unit body, T-419), it is drawn lifted by the
 ## ground's height, and its contact damage only hits the car at its level.
 
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
@@ -162,7 +163,8 @@ func _on_world_rebuilt() -> void:
 	var elevation = map.get("elevation") if map != null else null
 	if heights_enabled and elevation != null:
 		ground = elevation.ground_height
-		navigation = EnemyNavigationScript.for_map(map)
+		# T-419: planned for its own body, off buildings and edges, so it never heads where it does not fit.
+		navigation = EnemyNavigationScript.for_map(map, KaijuScript.RADIUS_UNITS, true)
 	clear()
 
 
