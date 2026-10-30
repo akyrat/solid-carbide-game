@@ -1,7 +1,7 @@
 ---
 id: T-389
 title: The pause screen hides the SFX volume slider for the MVP
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -47,6 +47,10 @@ The board's review: Pause a run and check the SFX slider is gone and the music s
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-389.
 
 ## Style review
 
