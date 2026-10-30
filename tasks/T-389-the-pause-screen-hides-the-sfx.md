@@ -1,7 +1,7 @@
 ---
 id: T-389
 title: The pause screen hides the SFX volume slider for the MVP
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/pause-screen.md, game/docs/sound/sound-effects.md, game/scripts/ui/pause_screen.gd, game/tests/unit/test_pause_screen.gd, game/tests/unit/test_music_volume_slider.gd, game/docs/setup/screenshots.md]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd, game/tests/unit/test_pause_screen.gd, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-389.
 
 Goal runner (G-007): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,4 @@ Done (UI Agent).
 - Documents affected: docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md. No PixelLab generations; no refusals.
 
 QA round 1 (QA agent): all six criteria pass. Re-ran GUT 1973/1973, game/tools Python 675 OK (1 skipped), tools Python 573 OK. Row hidden via `sfx_enabled()` in pause_screen.gd (code kept), screenshot and both docs present. `tools/qa_check.py` was refused (not pre-approved), so its paperwork lines were checked by hand.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
