@@ -1,7 +1,7 @@
 ---
 id: G-007
 title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
-status: building
+status: paused
 art_cap: 40
 art_used: 0
 iteration: 3
@@ -178,9 +178,11 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-29, iteration 2: resumed: its last pause (command: a command the runner ran was refused or failed) can't be checked by the runner; --force.
 - 2026-10-29, iteration 2: resumed by the session Greenbull.
 - 2026-10-30, iteration 3: T-383 (S2, asset-generation, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-383 done and committed: script draws seven 64x48 trick PNGs, 7 tests pass, previews and trick-list screenshot saved. The style loop kept each at 6–7/10 (below 8); the full report is in the ticket's result notes. Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-383 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_013JeU9qdpPuBDUoQpr83NU5"} / QA: `python tools/qa_check.py T-383 --no-marks` was refused (needs approval; not in the pre-approved list). I did not work around it and did the checks by hand. The final `qa_check.py` run was skipped too.. Rescan: S2 covered, S3 in-flight, S4 in-flight, S7 in-flight, S6 in-flight, S8 in-flight, S9 in-flight.
+- 2026-10-30, iteration 3: paused (see Pauses).
 
 ## Pauses
 
 - 2026-10-29 [command]: A command the runner ran was refused or failed: C:\Users\andre\AppData\Local\Programs\Python\Python313\python.exe C:\solid-carbide-game\tools\task_status.py T-381 in-qa --reply Goal runner (G-007): the agent is done; QA is checking it.: Refused. T-381 can't move flagged-for-review → in-qa: flagged-for-review can't move to in-qa. Allowed now: in-progress, open, done, cancelled.
 - 2026-10-29 [command]: A command the runner ran was refused or failed: C:\Users\andre\AppData\Local\Programs\Python\Python313\python.exe C:\solid-carbide-game\tools\task_status.py T-383 in-qa --reply Goal runner (G-007): the agent is done; QA is checking it.: Refused. T-383 can't move flagged-for-review → in-qa: flagged-for-review can't move to in-qa. Allowed now: in-progress, open, done, cancelled.
+- 2026-10-30 [command]: A command the runner ran was refused or failed: C:\Users\andre\AppData\Local\Programs\Python\Python313\python.exe C:\solid-carbide-game\tools\task_status.py T-384 in-qa --reply Goal runner (G-007): the agent is done; QA is checking it.: Refused. T-384 can't move flagged-for-review → in-qa: flagged-for-review can't move to in-qa. Allowed now: in-progress, open, done, cancelled.
 
