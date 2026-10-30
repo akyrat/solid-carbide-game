@@ -1,7 +1,7 @@
 ---
 id: T-414
 title: Weapons during the wreck, and molotovs land where enemies can be
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -52,6 +52,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+T-413 approved; the weapon-behavior agent starts.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -59,3 +63,11 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built (T-414). The rack (weapons.gd) now has three modes, checked before every projectile and weapon (not once per step): running, wrecked, stopped. Wrecked: projectiles (fire areas, bullets, bottles in flight) keep stepping; each weapon's new `step_wrecked(dt)` runs: the underglow and Bricks run their normal step (ticks, and a wave on a landing), the flamethrower only ages its burn tints, the gun drops a queued volley, the molotovs and the wiper do nothing. Stopped (run over): nothing steps, even mid-step, so after a kaiju kill ends the run no later weapon or projectile damages anything. Molotovs: `random_landing()` retries up to 30 spots, rejecting off-map and inside a non-platform building (`is_valid_landing`), else lands at the car.
+
+Proposals for the playtest (written in docs/weapons.md): bullets and bottles already in the air carry on; a queued gun volley is dropped; burn tints run out; short buildings count as ground for landings; 30 tries, then the car's spot.
+
+Tests: new tests/unit/weapons/test_weapons_wreck.gd (12 tests: fire and burning keep damaging, underglow ticks, bricks on a wrecked landing, no gun/throw/wiper/flame, burn tint ends, bullets fly, run ends mid-step for weapons and for projectiles, 1000 landings none in a building or off the map, validity checks). Three older tests (bricks, molotovs, underglow "nothing after the run") ended the run by wrecking the car, which is now not over; they now end it with kaiju_killed(). Results: GUT 2151 tests, the 3 that failed were those and pass now (rerun by file); python game/tools 582 OK; tools set OK.
+
+Screenshots: art-archive/T-414/screenshots/wreck_fires_20.png and wreck_fires_90.png (wrecked car, fires and underglow; made with tests/fixtures/weapons/wreck_shot.tscn). Documents: docs/weapons.md (built notes and proposals). docs/game-loop-architecture.md line 191 still says "T-414's"; left for the Project Lead.
