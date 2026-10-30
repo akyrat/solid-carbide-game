@@ -1,7 +1,7 @@
 ---
 id: T-380
 title: Bug: minions get stuck on walls at the bottom end of ramps
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/docs/enemies/]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/level-design.md, game/docs/level/elevation-sample-map.md, game/scripts/enemies/]
 files_expected_to_change: [game/scripts/enemies/, game/scripts/level/, game/data/, game/tests/unit/, game/docs/enemies/, docs/enemies.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Started in build F, on top of T-379's bigger minions.
 ### 2026-10-30, In progress → In QA
 
 Fixed: minions now walk straight only when the way to the car is clear, otherwise by a path round ramps and corners; stuck minions in a scripted chase went from 8 to 0. GIF in art-archive/T-380/screenshots.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed: stuck minions 8 to 0 in the scripted chase, all three test sets green. Play the elevation map and watch minions round ramps.
 
 ## Style review
 
