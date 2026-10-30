@@ -77,6 +77,8 @@ var trick_list: TrickList
 var _root: Control
 var strip: PanelContainer
 var _saved_cam: Array = []
+## Sliders changed since their last save (T-427): "zoom", "sfx", "music".
+var _dirty: Array = []
 
 
 func setup(t: Node) -> void:
@@ -135,6 +137,7 @@ func setup(t: Node) -> void:
 	zoom_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	zoom_slider.focus_mode = Control.FOCUS_NONE
 	zoom_slider.value_changed.connect(_on_zoom_changed)
+	_wire_save_on_release(zoom_slider, "zoom")
 	row.add_child(zoom_slider)
 	_value_label = Label.new()
 	_value_label.custom_minimum_size.x = 50.0
@@ -208,10 +211,14 @@ func _build_run_buttons(box: VBoxContainer) -> void:
 	trick_list_button.pressed.connect(open_trick_list)
 	row.add_child(trick_list_button)
 	restart_button = _make_button("RestartButton", TEXT_RESTART)
-	restart_button.pressed.connect(func(): restart_pressed.emit())
+	restart_button.pressed.connect(func():
+		save_pending()
+		restart_pressed.emit())
 	row.add_child(restart_button)
 	exit_button = _make_button("ExitButton", TEXT_EXIT)
-	exit_button.pressed.connect(func(): exit_pressed.emit())
+	exit_button.pressed.connect(func():
+		save_pending()
+		exit_pressed.emit())
 	row.add_child(exit_button)
 
 
@@ -238,6 +245,7 @@ func _build_sfx_slider(box: VBoxContainer) -> void:
 	sfx_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	sfx_slider.focus_mode = Control.FOCUS_NONE
 	sfx_slider.value_changed.connect(_on_sfx_changed)
+	_wire_save_on_release(sfx_slider, "sfx")
 	row.add_child(sfx_slider)
 	_sfx_value_label = Label.new()
 	_sfx_value_label.custom_minimum_size.x = 50.0
@@ -248,7 +256,7 @@ func _build_sfx_slider(box: VBoxContainer) -> void:
 
 
 func _on_sfx_changed(v: float) -> void:
-	GameSettingsScript.save_sfx_volume(v)
+	_mark_dirty("sfx")
 	GameSettingsScript.apply_sfx_volume(v)
 	_sfx_value_label.text = "%d" % int(v)
 
@@ -273,6 +281,7 @@ func _build_music_slider(box: VBoxContainer) -> void:
 	music_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	music_slider.focus_mode = Control.FOCUS_NONE
 	music_slider.value_changed.connect(_on_music_changed)
+	_wire_save_on_release(music_slider, "music")
 	row.add_child(music_slider)
 	_music_value_label = Label.new()
 	_music_value_label.custom_minimum_size.x = 50.0
@@ -283,7 +292,7 @@ func _build_music_slider(box: VBoxContainer) -> void:
 
 
 func _on_music_changed(v: float) -> void:
-	GameSettingsScript.save_music_volume(v)
+	_mark_dirty("music")
 	GameSettingsScript.apply_music_volume(v)
 	_music_value_label.text = "%d" % int(v)
 
@@ -466,6 +475,7 @@ func pause() -> void:
 
 
 func resume() -> void:
+	save_pending()
 	if is_trick_list_open():
 		close_trick_list()
 	_camera_follows_while_paused(false)
@@ -492,9 +502,38 @@ func _camera_follows_while_paused(on: bool) -> void:
 		_saved_cam = []
 
 
+## The slider rule (T-427): a slider applies its value live on value_changed and saves only
+## when the drag ends (drag_ended with value_changed true) and once more when the screen closes,
+## so a drag writes the settings file once, not once per value. The HUD size slider follows it.
+func _wire_save_on_release(slider: HSlider, key: String) -> void:
+	slider.drag_ended.connect(func(value_changed: bool):
+		if value_changed:
+			_save_slider(key))
+
+
+func _mark_dirty(key: String) -> void:
+	if not _dirty.has(key):
+		_dirty.append(key)
+
+
+func _save_slider(key: String) -> void:
+	_dirty.erase(key)
+	match key:
+		"zoom": GameSettingsScript.save_zoom(zoom_slider.value)
+		"sfx": GameSettingsScript.save_sfx_volume(sfx_slider.value)
+		"music": GameSettingsScript.save_music_volume(music_slider.value)
+
+
+## Saves every slider that changed since its last save: the screen closing (Escape, Restart,
+## Exit) calls it, so a keyboard or click change is not lost.
+func save_pending() -> void:
+	for key in _dirty.duplicate():
+		_save_slider(key)
+
+
 func _on_zoom_changed(v: float) -> void:
 	target.set_zoom(v)
-	GameSettingsScript.save_zoom(v)
+	_mark_dirty("zoom")
 	_update_value_label()
 	if target.panel != null:
 		target.panel.refresh()

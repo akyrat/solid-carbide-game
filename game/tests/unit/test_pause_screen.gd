@@ -99,6 +99,7 @@ func test_tuning_panel_change_shows_in_pause_slider() -> void:
 func test_zoom_is_saved_and_read_back_by_a_new_instance() -> void:
 	var p := _scene()
 	p.pause_screen.zoom_slider.value = 9.5
+	p.pause_screen.zoom_slider.drag_ended.emit(true)  # saved on release (T-427)
 	assert_true(FileAccess.file_exists(TEST_PATH))
 	var q := _scene()
 	assert_almost_eq(q.zoom, 9.5, 1e-6)
