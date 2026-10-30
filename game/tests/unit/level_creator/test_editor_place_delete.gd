@@ -257,7 +257,9 @@ func test_opening_the_sample_map_draws_it_and_leaves_its_data_alone() -> void:
 	assert_eq(opened, original, "opening changes nothing else")
 	assert_true(LevelSpawn.has_spawn(e.level_data))
 	assert_eq(e.map.buildings.size(), original.buildings.size())
-	assert_eq(e.elevation.areas.size(), original.platforms.size() + original.ramps.size())
+	# T-405: and the platforms its blocks' short buildings make.
+	assert_eq(e.elevation.areas.size(), original.platforms.size() + original.ramps.size()
+		+ load("res://scripts/level/short_platforms.gd").platforms_of(original).size())
 	# The game's own ground tiles.
 	var game_ground := LevelDocument.game_ground()
 	assert_eq(e.map.ground_layout.cells[10][10], int(game_ground.cells[10][10]))

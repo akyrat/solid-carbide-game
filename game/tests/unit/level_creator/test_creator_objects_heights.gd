@@ -80,16 +80,16 @@ func _low_rise_level(e: LevelCreatorEditor) -> Dictionary:
 
 
 func _check_barrier_by_the_low_rise(map: Node2D, where: String) -> void:
-	var nodes := _building_nodes(map, Rect2(20, 20, 12, 12))
-	assert_false(nodes.is_empty(), where)
+	# T-405: the low-rise is a platform (a raised area), no longer a building slot.
+	var b: Node2D = _area(map, "building@20,20")
+	assert_not_null(b, where)
 	var behind: Node2D = _prop_sprite(map, "prop-1")
 	var front: Node2D = _prop_sprite(map, "prop-2")
-	for b in nodes:
-		assert_true(b.is_behind(behind.centre_units), "%s: the barrier is behind the low-rise" % where)
-		assert_false(Geometry2D.intersect_polygons(b.iso_silhouette(), behind.outline).is_empty(),
-			"%s: and overlaps it on screen" % where)
-		assert_lt(behind.z_index, b.z_index, "%s: the barrier behind the low-rise is drawn under it" % where)
-		assert_gt(front.z_index, b.z_index, "%s: the barrier in front of the low-rise is drawn over it" % where)
+	assert_true(b.is_behind(behind.centre_units, 0.0, 0.0), "%s: the barrier is behind the low-rise" % where)
+	assert_false(Geometry2D.intersect_polygons(b.silhouette(), behind.outline).is_empty(),
+		"%s: and overlaps it on screen" % where)
+	assert_lt(behind.z_index, b.z_index, "%s: the barrier behind the low-rise is drawn under it" % where)
+	assert_gt(front.z_index, b.z_index, "%s: the barrier in front of the low-rise is drawn over it" % where)
 
 
 ## The board's case (its screenshot): a barrier on the street just behind (west of) a low-rise,
@@ -110,10 +110,10 @@ func test_a_boulder_behind_a_low_rise_is_drawn_under_it() -> void:
 	_low_rise_level(e)
 	assert_false(_place(e, "boulder-a", Vector2(16, 24)).is_empty())
 	var sp: Node2D = e.map.boulder_sprites[0]
-	var nodes := _building_nodes(e.map, Rect2(20, 20, 12, 12))
-	for b in nodes:
-		if not Geometry2D.intersect_polygons(b.iso_silhouette(), sp.outline).is_empty():
-			assert_lt(sp.z_index, b.z_index, "the boulder behind the low-rise is drawn under it")
+	# T-405: the low-rise is a platform (a raised area).
+	var b: Node2D = _area(e.map, "building@20,20")
+	assert_false(Geometry2D.intersect_polygons(b.silhouette(), sp.outline).is_empty(), "they overlap on screen")
+	assert_lt(sp.z_index, b.z_index, "the boulder behind the low-rise is drawn under it")
 
 
 ## The heights level: rooftop 3 at x -60..-20, y -60..-20, a 6 standing on it at x -50..-30,
@@ -251,7 +251,9 @@ func test_a_building_rooftop_or_ramp_that_would_cut_through_an_object_is_not_pla
 	var tank := _place(e, "prop-water-tank", Vector2(0, 0))  # x 0..4, y 0..4
 	assert_false(tank.is_empty())
 	var before := e.document.placed_pieces().size()
-	assert_true(_place(e, "short-0", Vector2(-4, -4)).is_empty(), "a low-rise over the tank")
+	assert_true(_place(e, "skyscraper-1", Vector2(-4, -4)).is_empty(), "a skyscraper over the tank")
+	# T-405: a low-rise is a platform: one whose edge cuts the tank is refused like a rooftop.
+	assert_true(_place(e, "short-0", Vector2(2, -8)).is_empty(), "a low-rise whose edge cuts the tank")
 	assert_true(_place(e, "rooftop-3", Vector2(2, -10), Vector2(16, 16)).is_empty(), "a rooftop whose edge cuts the tank")
 	assert_true(_place(e, "ramp-0-3", Vector2(-8, 2)).is_empty(), "a ramp whose edge cuts the tank")
 	assert_eq(e.document.placed_pieces().size(), before, "nothing added")

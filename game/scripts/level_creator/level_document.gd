@@ -52,6 +52,8 @@ const GAME_GROUND_PATH := "res://data/level/mvp_ground.json"
 ## A new level is today's map's size (elevation_sample_map.json: 240 x 240 units, centred).
 const MAP_SIZE := 240
 const CELL := 2
+## T-405: the short buildings are platforms (short_platforms.gd).
+const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
 const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop"]
@@ -427,6 +429,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				b["banner"] = banner
 			_list("buildings").append(b)
 			refresh_ground_rows()
+			_relink()  # T-405: a short building is a platform ramps and rooftops link to
 			return {"kind": kind, "item": b}
 		"boulder":
 			var boulder := {"x": corner.x + foot.x / 2.0, "y": corner.y + foot.y / 2.0, "diameter": foot.x,
@@ -501,10 +504,20 @@ func height_at(units: Vector2) -> float:
 	return g.height_at(units)
 
 
-## The highest rooftop lower than `height` that holds the whole of `r` (units), {} for none.
+## Every surface at a height a piece can stand on or a ramp climb to: the rooftops (the entries of
+## `platforms` themselves) and, since T-405, the platforms the short buildings make
+## (ShortPlatforms.platforms_of: {id: "building@x,y", x, y, w, h, height 3, short: true}).
+func surfaces() -> Array:
+	var out: Array = _list("platforms").duplicate()
+	out.append_array(ShortPlatformsScript.platforms_of(data))
+	return out
+
+
+## The highest rooftop (or short building, T-405) lower than `height` that holds the whole of `r`
+## (units), {} for none.
 func rooftop_under(r: Rect2, height: float, except: Dictionary = {}) -> Dictionary:
 	var best: Dictionary = {}
-	for p in _list("platforms"):
+	for p in surfaces():
 		if is_same(p, except) or float(p.height) >= height:
 			continue
 		if _holds(_rect(p), r) and (best.is_empty() or float(p.height) > float(best.height)):
@@ -516,7 +529,7 @@ func rooftop_under(r: Rect2, height: float, except: Dictionary = {}) -> Dictiona
 ## within it (check_height_data.py's rule); {} for none.
 func ramp_target(ramp: Dictionary) -> Dictionary:
 	var rr := _rect(ramp)
-	for p in _list("platforms"):
+	for p in surfaces():
 		if absf(float(p.height) - float(ramp.top_height)) > 0.001:
 			continue
 		if top_touches(str(ramp.side), rr, _rect(p)):
@@ -550,7 +563,7 @@ static func _holds(outer: Rect2, inner: Rect2) -> bool:
 ## on the street) and each ramp's "platform" (ramp_target). A link still right is left as it is.
 func _relink() -> void:
 	var by_id := {}
-	for p in _list("platforms"):
+	for p in surfaces():
 		by_id[str(p.get("id", ""))] = p
 	for p in _list("platforms"):
 		var on := str(p.get("on", ""))
@@ -663,6 +676,7 @@ func _delete(piece: Dictionary) -> bool:
 		"building":
 			if _erase_same(_list("buildings"), piece.item):
 				refresh_ground_rows()
+				_relink()  # T-405: a short building is a platform ramps and rooftops link to
 				return true
 		"boulder":
 			var copy: Dictionary = piece.copy

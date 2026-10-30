@@ -254,6 +254,14 @@ class TestSpawn(unittest.TestCase):
         self.assertEqual(self.problems(self.level(x=3.0, y=-5.0)), [])  # on the rooftop
         self.assertEqual(self.problems(self.level(x=3.0, y=-1.0)), [])  # on the ramp
 
+    def test_a_spawn_on_a_short_building_is_fine(self):
+        """T-405: a low-rise, small or long building is a platform the car can stand on; a skyscraper is not."""
+        d = self.level(x=-5.0, y=7.0)
+        d["buildings"].append({"x": -8.0, "y": 4.0, "w": 6.0, "h": 6.0, "asset": "building-small", "look": 0})
+        self.assertEqual(self.problems(d), [])
+        d["buildings"][-1]["asset"] = "skyscraper-1"
+        self.assertTrue(any("building" in p for p in self.problems(d)))
+
     def test_a_missing_spawn_is_refused(self):
         d = small_level()
         del d["spawn"]

@@ -98,6 +98,12 @@ The visual style guide: every generated or script-drawn asset is checked against
 
 Greenbull's logo (emblem and wordmark) is flat brand art: exempt from rule 2's shading and detail, but it follows rule 1 (Decisions, "Greenbull's look").
 
+### Short buildings as platforms
+
+Task T-405 (Level design, Decisions, "Short buildings become platforms": the same art, its walls trimmed by script to height 3, no new generations): `game/tools/build_short_platform_art.py` cuts each short building's art to a platform 3 units high, with no PixelLab call: the 8 low-rise bodies (T-129) and the 6 small and long textures (T-257) into `game/art/buildings/platforms/`, four images each (the platform alone; its roof with no parapet; with only the north and south parapets; with only the west and east ones) and a record, `platforms.json`. Each wall loses a band of rows under its lit top lip (134 or 138 rows become 96), keeping its ground floor; the small and long buildings, which stood half a unit inside their footprint, are widened to fill it by repeating one unit in the middle of each roof and wall, and lose their pavement; the parapets come out by reading the roof one unit further in. The rooftop props are never cut: the art is built again without them from the PixelLab pieces in `art-archive/T-129/raw/` and `art-archive/T-257/raw/` (the rebuild is checked to equal today's files pixel for pixel), the box is cut from that, and the props' own pixels are put back whole. Every pixel is moved whole, never resampled. In the game a platform is drawn from those pieces so that two side by side, or one beside a rooftop, show no wall or roof edge along the join (`game/docs/level/level-creator-pieces.md`, "Short buildings as platforms (T-405)"). The originals stay in place (the old MVP map still draws them) and are copied in `art-archive/T-405/originals/`.
+
+![Short buildings joined, in the level creator](../art-archive/T-405/screenshots/editor_joined.png)
+
 ### See-through buildings
 
 Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).

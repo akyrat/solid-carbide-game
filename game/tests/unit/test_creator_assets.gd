@@ -68,8 +68,12 @@ func test_rooftop_and_ramp_heights() -> void:
 func test_buildings_the_map_draws_are_listed() -> void:
 	var named := _named()
 	var art := _json(BUILDING_ART)
-	for p in art.bodies + art.short.bodies + art.pavements:
+	for p in art.bodies + art.pavements:
 		assert_true(named.has(str(p)), "%s in the catalogue" % p)
+	# T-405: the low-rise is listed with its platform art.
+	var rec := _json("res://art/buildings/platforms/platforms.json")
+	for p in art.short.bodies:
+		assert_true(named.has(str(rec.textures[p].full)), "%s's platform art in the catalogue" % p)
 
 
 func test_boulders_the_map_draws_are_listed() -> void:

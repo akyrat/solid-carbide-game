@@ -80,8 +80,28 @@ class CatalogueTest(unittest.TestCase):
     def test_building_textures_all_listed(self):
         sky = bc.load("art/buildings/skyscrapers.json")
         named = bc.textures_of(self.cat)
-        for p in sky["bodies"] + sky["short"]["bodies"] + sky["pavements"]:
+        for p in sky["bodies"] + sky["pavements"]:
             self.assertIn(p, named)
+        # T-405: the low-rise shows its platform art (art/buildings/platforms/), one per short body.
+        rec = bc.load("art/buildings/platforms/platforms.json")
+        for p in sky["short"]["bodies"]:
+            self.assertIn(rec["textures"][p]["full"], named)
+            self.assertNotIn(p, named)
+
+    def test_short_buildings_show_their_platform_art_with_its_anchor(self):
+        """T-405: the low-rise, small and long buildings are platforms 3 high: every texture is its platform art,
+        with the record's anchor and footprint."""
+        rec = bc.load("art/buildings/platforms/platforms.json")
+        fulls = {t["full"]: t for t in rec["textures"].values()}
+        for e in self.entries:
+            if e["id"].startswith("short-") or e["id"] in ("building-small", "building-long"):
+                self.assertEqual(e["height_units"], 3.0, e["id"])
+                for t in e["textures"]:
+                    self.assertIn(t["texture"], fulls, e["id"])
+                    self.assertEqual(t["anchor_art_px"], fulls[t["texture"]]["anchor_art_px"])
+                    self.assertEqual(t["footprint_units"], fulls[t["texture"]]["footprint_units"])
+            elif e["id"].startswith("skyscraper-"):
+                self.assertEqual(e["height_units"], 30.0)
 
     def test_road_pieces_are_2_by_2_tiles_and_come_first_among_the_roads(self):
         """T-252: one entry per piece and rotation with a 4 x 4 footprint and its four tiles
