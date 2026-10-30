@@ -25,7 +25,7 @@ func after_each() -> void:
 func test_level_0_changes_nothing() -> void:
 	var p := PlayerProgress.new(null, PATH)
 	rack.set_damage_bonus(p.current_value("damage_bonus"))
-	assert_eq(float(rack.gun.stats["damage"]), 2.0)
+	assert_eq(float(rack.gun.stats["damage"]), WeaponData.new().gun_at(1)["damage"])
 	assert_eq(float(rack.flamethrower.stats["damage"]), 2.0)
 
 
@@ -36,7 +36,7 @@ func test_higher_level_raises_both_weapons() -> void:
 	var pct := p.current_value("damage_bonus")
 	assert_gt(pct, 0.0)
 	rack.set_damage_bonus(pct)
-	assert_almost_eq(float(rack.gun.stats["damage"]), 2.0 * (1.0 + pct / 100.0), 0.0001)
+	assert_almost_eq(float(rack.gun.stats["damage"]), WeaponData.new().gun_at(1)["damage"] * (1.0 + pct / 100.0), 0.0001)
 	assert_almost_eq(float(rack.flamethrower.stats["damage"]), 2.0 * (1.0 + pct / 100.0), 0.0001)
 
 
@@ -48,4 +48,4 @@ func test_bonus_stacks_with_tiers_and_survives_new_run() -> void:
 	rack.flamethrower.set_tier(5)
 	assert_almost_eq(float(rack.flamethrower.stats["damage"]), base * 1.5, 0.0001)
 	rack.reset_for_run()
-	assert_almost_eq(float(rack.gun.stats["damage"]), 3.0, 0.0001)
+	assert_almost_eq(float(rack.gun.stats["damage"]), WeaponData.new().gun_at(1)["damage"] * 1.5, 0.0001)
