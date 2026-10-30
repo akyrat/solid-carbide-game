@@ -1,7 +1,7 @@
 ---
 id: T-397
 title: Art sample: one sidewalk tile with its curb and one parked car facing, for the board's review
-status: flagged-for-review
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: the art sample, one sidewalk tile with its curb and one parked car facing, for your review.
+
+### 2026-10-30, Flagged for review → Done
+
+Approved by you; merging the sample. The full set (T-399) follows once build G starts.
 
 ## Style review
 
@@ -272,3 +276,4 @@ Running total: 0 before the car; **1 after the car's round 1** (the only PixelLa
 **For T-399:** the curb is only drawn on the south-east edge; the other three edges and corner pieces need the same face (on the north-west and north-east edges the face is hidden, so only the lit top edge and a dark seam show). Car facings: one picture per car gives two facings by mirror (top left/top right from one, bottom left/bottom right from another), so about 2 generations per car plus refines.
 
 - 2026-10-30, in-progress → flagged-for-review: the style loop kept version 3 (score 7/10), still below 8 after 3 refines; every version is in its Style review
+- 2026-10-30, flagged-for-review → done: The board OK'd the sample (2026-10-30): sidewalk + curb, parked car, meteor crater (the crater's 7/10 accepted). T-399 builds the full set from it.
