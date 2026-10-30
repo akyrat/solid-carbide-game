@@ -1,7 +1,7 @@
 ---
 id: T-406
 title: A wrecked car that slides into a health pickup's range picks it up and revives with 1 heart
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/docs/game-loop/]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/the-run.md, game/scripts/run/wreck_effect.gd, game/scripts/run/]
 files_expected_to_change: [game/scripts/run/, game/data/run.json, game/tests/unit/, game/docs/game-loop/, docs/game-loop-architecture.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started in build F (Hits, enemies & weapons).
 ### 2026-10-30, In progress → In QA
 
 Built: a wrecked, sliding car that touches a health pickup revives with 1 heart (controls back, smoke off, no recap, 1 s invulnerability); GIF in art-archive/T-406/screenshots; all three test sets pass.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria; lose the last heart while sliding towards a health pickup and see the car revive.
 
 ## Style review
 
