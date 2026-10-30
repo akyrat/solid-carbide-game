@@ -58,4 +58,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (UI Agent).
+
+- `game/scripts/ui/pause_screen.gd`: `_build_sfx_slider()` still builds the whole row (`SfxRow`, `sfx_slider`, `sfx_label`, saved value, bus apply), but sets `row.visible = GameSettings.sfx_enabled()` (the switch from T-388, off for the MVP). A hidden row takes no room in the strip's VBox, so the music row and the rows below move up. Music slider unchanged.
+- Tests: new `test_sfx_row_hidden_with_the_switch_off_and_layout_closes_up` in `test_pause_screen.gd` (row hidden, music slider visible and directly under the zoom row with no gap, row back and music lower with the switch on). The existing music slider tests already run with the switch forced on and cover moving the slider changing the Music bus (`test_moving_it_changes_the_music_only_and_saves`); I did not add music-bus tests for the switch-off case beyond the visibility check. Two tests in `test_screen_flow.gd` that look at the SFX row now force the switch on (`sfx_enabled_override = 1`, reset in `after_each`).
+- Fixture fix: `tests/fixtures/pause_from_menu_demo.gd` pressed the menu's Start, which now opens the tutorial slides, so it errored; it now calls `game.start_run()`. `pause_trick_list_demo.gd` has the same stale call (not touched, not in scope).
+- Docs: `docs/hud-and-menus.md` (Content, new "SFX volume slider, hidden for the MVP" entry, and the 'No sound effects in the MVP' decision note marked done by T-389); `game/docs/hud-and-menus/pause-screen.md` (new T-389 entry).
+- Test counts: GUT 1973/1973 passed; `game/tools` Python 675 tests OK (1 skipped); `tools` Python 573 tests OK.
+- Screenshot: `art-archive/T-389/screenshots/pause.png` (pause screen: zoom and music rows only, no gap).
+- Documents affected: docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md. No PixelLab generations; no refusals.

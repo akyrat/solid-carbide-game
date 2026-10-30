@@ -26,6 +26,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	GameSettings.sfx_enabled_override = -1
 	get_tree().paused = false
 	await wait_process_frames(1)  # let screens freed with queue_free() go
 	DirAccess.remove_absolute(TEST_PATH)
@@ -342,6 +343,7 @@ func test_the_camera_settings_come_back_on_resume() -> void:
 
 ## T-077 (board's tweak, 2026-10-16): the "SFX volume" row is laid out like the zoom row.
 func test_the_sfx_slider_is_as_wide_as_the_zoom_slider_on_its_own_row() -> void:
+	GameSettings.sfx_enabled_override = 1  # the row's layout, not the MVP switch (T-389)
 	_press(game.menu.start_button)
 	game.pause_screen.pause()
 	await wait_process_frames(3)
@@ -356,6 +358,7 @@ func test_the_sfx_slider_is_as_wide_as_the_zoom_slider_on_its_own_row() -> void:
 
 
 func test_a_real_mouse_drag_changes_the_sfx_volume() -> void:
+	GameSettings.sfx_enabled_override = 1  # the slider's code, not the MVP switch (T-389)
 	var win := get_window()
 	var old_size := win.size
 	win.size = Vector2i(1152, 648)
