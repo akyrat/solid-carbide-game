@@ -1,7 +1,7 @@
 ---
 id: T-405
 title: Short buildings (low-rise, small, long) become connectable platforms at height 3, and everything on platforms works at its height
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -132,3 +132,4 @@ Jumping off a platform lands on the ground (test: off the rooftop over a barrier
 **Documents affected:** `docs/level-design.md` (Content, "Short buildings as platforms" with the audit table; the Props and T-393 bullets updated); `docs/visual-style.md` (Content, "Short buildings as platforms"); `game/docs/level/level-creator-pieces.md` ("Short buildings as platforms (T-405)"); `game/docs/level/level-creator.md` (pointer).
 
 Board review files: art-archive/T-405/screenshots/editor_joined.png, art-archive/T-405/screenshots/run_joined.png, art-archive/T-405/screenshots/game_map_block.png, art-archive/T-405/screenshots/drive_across_and_jump_off.gif
+- 2026-10-30, needs-playtest → done: Build E (Platforms & heights) LGTM by the board
