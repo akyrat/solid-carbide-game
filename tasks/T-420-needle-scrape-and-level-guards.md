@@ -1,7 +1,7 @@
 ---
 id: T-420
 title: Thread the needle while scraping, and level data guards
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Audit
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/scripts/level/thread_the_needle.gd, game/scripts/driving/car.gd, game/scripts/level/ground_height.gd, game/scripts/level/level_spawn.gd, game/scripts/run/run.gd]
 files_expected_to_change: [game/scripts/level/thread_the_needle.gd, game/scripts/level/ground_height.gd, game/scripts/run/run.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,10 +43,10 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Crossing the gap line while still in contact with a paired obstacle pays nothing, however long the contact. (QA: pass / fail)
-- [ ] A level file with a missing key, an unknown ramp side or a zero-size ramp loads with a clear error naming the piece, and no NaN height (test with bad level files). (QA: pass / fail)
-- [ ] A level with no spawn starts the car where level_spawn.gd says; a spawn inside geometry is reported. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] Crossing the gap line while still in contact with a paired obstacle pays nothing, however long the contact. (QA: pass)
+- [ ] A level file with a missing key, an unknown ramp side or a zero-size ramp loads with a clear error naming the piece, and no NaN height (test with bad level files). (QA: pass)
+- [ ] A level with no spawn starts the car where level_spawn.gd says; a spawn inside geometry is reported. (QA: pass)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -55,6 +55,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Build J (Audit): started on playtest/audit-world (with T-418 in), worktree C:\solid-carbide-worktrees\T-420, Level/Challenge Design Agent.
+
+### 2026-10-30, In progress → In QA
+
+Build J (Audit): the agent finished. Scraping a paired obstacle voids the pass, bad level files load with a clear error and no NaN, a level without a spawn starts at the map's centre. Beyond the listed files: car.gd and thread_the_needle.gd. In QA now.
+
+### 2026-10-30, In QA → Needs playtest
+
+Build J (Audit): QA passed all 4 criteria and the tests; screenshots in art-archive/T-420/screenshots/. Merged into playtest/audit-world, waiting for the board's playtest of build J.
 
 ## Style review
 
@@ -87,3 +95,12 @@ Done by the Level/Challenge Design Agent, in the task's folder. No docs needed c
 Board review files: art-archive/T-420/screenshots/scrape_2_crossing.png, art-archive/T-420/screenshots/scrape_3_after.png, art-archive/T-420/screenshots/clean_3_after.png
 
 **Not done / notes**: a `rm` of old screenshot files was refused by the safety check, so nothing was removed (not needed). The scrape demo's barrier geometry is a test setup, not a level.
+
+### QA report (round 1)
+
+- qa_check (base playtest/audit-world): PASS tests (3 test sets, full GUT suite green after the test_creator_spawn fix), PASS documents (none listed), PASS screenshots (8 files).
+- Criterion 1 pass: car.held_contacts() + needle.touching() called each step in run.gd; the new run test scrapes a paired barrier and pays nothing.
+- Criterion 2 pass: 7 fixtures in game/tests/fixtures/t420/; ground_height.gd validates and names the piece, flat ground on error, no NaN.
+- Criterion 3 pass: the changed test_creator_spawn assertion matches Level design ("a level saved before this has it [at the map's centre] too") and LevelSpawn.centre_of; the game's own map still asserted at (0, 0). Spawn problem reported (blocked / off_map). Not a bent test.
+- Criterion 4 pass: new file 15 of 15 (rerun alone: 69 asserts); driving and combo tests are in the green full suite. Nothing in game/data/levels/ changed (git diff, 0 files).
+- Test counts: qa_check does not print them; its full Godot run exited 0. Agent reported 2151 tests; unittest 722 (game/tools) and 582 (tools).
