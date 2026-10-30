@@ -1,7 +1,7 @@
 ---
 id: T-385
 title: QA: compare the script and PixelLab trick illustrations, and copy the better set into game/art
-status: blocked
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-007
@@ -47,6 +47,10 @@ The board's review: Compare the two sets on the comparison sheet and check QA's 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-385.
 
 ## Style review
 
