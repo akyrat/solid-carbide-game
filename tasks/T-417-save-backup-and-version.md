@@ -1,7 +1,7 @@
 ---
 id: T-417
 title: A broken save never wipes progress
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, game/scripts/data/player_progress.gd, game/scripts/data/run_history.gd]
 files_expected_to_change: [game/scripts/data/player_progress.gd, game/scripts/data/run_history.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,12 +39,12 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A truncated progress.json loads the backup's coins and levels. (QA: pass / fail)
-- [ ] After a failed load with no backup, the broken file is kept (renamed aside), not overwritten. (QA: pass / fail)
-- [ ] A save writes a temp file and renames it (a save interrupted before the rename leaves the old file intact). (QA: pass / fail)
-- [ ] Saves carry a version; a file without one loads as version 1. (QA: pass / fail)
-- [ ] run_history.gd follows the same rules (same tests). (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] A truncated progress.json loads the backup's coins and levels. (QA: pass)
+- [ ] After a failed load with no backup, the broken file is kept (renamed aside), not overwritten. (QA: pass)
+- [ ] A save writes a temp file and renames it (a save interrupted before the rename leaves the old file intact). (QA: pass)
+- [ ] Saves carry a version; a file without one loads as version 1. (QA: pass)
+- [ ] run_history.gd follows the same rules (same tests). (QA: pass)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -64,3 +64,4 @@ Written by the agent when it finishes.
 
 Done. New `game/scripts/data/safe_save.gd` (`SafeSave`), used by `PlayerProgress` and `RunHistory`: save = write `<file>.tmp`, check it reads back, copy the last good file to `<file>.bak`, rename the temp over the file. Load = main file; if it fails it is renamed to `<file>.broken-<unix time>` (never overwritten, numbered if the name is taken) and `<file>.bak` loads; neither = new player / empty history. Every save holds `"version"` (1); a file without one loads as version 1 (`loaded_version`); `loaded_from` says main, backup or none. `PlayerProgress.ID_RENAMES` (version -> {old id: new id}, empty today) maps old ids on load; a rename means raising `SafeSave.CURRENT_VERSION` and adding the mapping. Existing tests' cleanup now also removes the .bak and .broken files (`SafeSave.remove_all`, in test_save.gd, test_player_progress.gd, test_run_history.gd). New `tests/unit/test_safe_save.gd` (16 tests: truncated main loads backup, broken kept aside with and without a backup, wrong shape, two broken files, temp file used, save cut off before the rename, stale temp, broken never becomes the backup, versions, id mapping, history equivalents). Tests: GUT 2141/2141 pass (the first full run had 2 failures from leftover .bak files in old tests' cleanup, fixed); game/tools Python 722 OK (1 skipped); tools Python 582 OK. Only temp test paths used. Docs updated: docs/garage-design.md, game/docs/data/game-data.md. Untracked .uid files in the worktree are Godot noise, not committed (except safe_save's and its test's).
 - 2026-10-30, in-progress → in-qa: Safe saves done: temp file+rename, .bak backup, broken file kept aside, version 1, ID_RENAMES; 16 new tests; all three sets pass.
+- 2026-10-30, in-qa → done: QA pass: all 6 criteria, three test sets green (GUT 2141 pass in builder run; qa_check green)
