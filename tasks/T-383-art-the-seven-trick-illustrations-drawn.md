@@ -1,7 +1,7 @@
 ---
 id: T-383
 title: Art: the seven trick illustrations, drawn by script
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -701,3 +701,4 @@ The picture reads as one long sweeping curve with a long trail, which fits the b
 - QA round 1 (2026-10-30): all six criteria pass. `python -m unittest discover game/tools -p test_build_trick_illustrations.py`: 7 tests OK. `style_rules.py art --size 64x48` on each of the seven PNGs: all checks ok (17 to 27 colours, 0 semi-transparent, transparent corners, no Greenbull colours). Seven files present in art-archive/T-383/script/, all 64 x 48 (matches tutorial-slides.md); three screenshots present; visual-style.md Decisions entry present; Style review has 8 runs covering all seven. Not run: `python tools/qa_check.py` (needs an approval not in the pre-approved list; refused, not worked around); its checks were done by hand above, including the three test sets only for this ticket's test file.
 - 2026-10-29, flagged-for-review → in-progress: Goal run G-007 (board, 2026-10-29: one goal, reviewed at the end): the script set kept at 6 to 7/10 after 3 refines is noted for the board's final playtest and compared with the PixelLab set by QA (T-385); the run carries on.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
