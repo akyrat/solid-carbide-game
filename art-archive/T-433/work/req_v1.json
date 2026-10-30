@@ -1,0 +1,8 @@
+{
+  "description": "wide cinematic night street in downtown Tokyo, retro pixel art. On the left third a dark green 1967 Mustang fastback muscle car with two white racing stripes, seen in 3/4 isometric view from above, drifting sideways in a wide arc, pink and cyan neon drift trails and grey tyre smoke behind it. On the right third a giant dark grey reptilian kaiju monster with jagged back plates standing among skyscrapers. Alien meteors of dark rock with glowing magenta and purple cracks falling from a navy night sky, one bursting into a magenta glow. Steel and glass towers in cool blue-grey with pale white and pale blue lit windows, small amber lights, small vertical signs. The middle of the image is calm, dark and empty. No text, no letters, no logos.",
+  "image_size": {"width": 320, "height": 180},
+  "text_guidance_scale": 8,
+  "outline": "selective outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed"
+}

@@ -1,0 +1,39 @@
+{
+  "file": "splash_v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "wide cinematic night street in downtown Tokyo, retro pixel art. On the left third a dark green 1967 Mustang fastback muscle car with two white racing stripes, seen in 3/4 isometric view from above, drifting sideways in a wide arc, pink and cyan neon drift trails and grey tyre smoke behind it. On the right third a giant dark grey reptilian kaiju monster with jagged back plates standing among skyscrapers. Alien meteors of dark rock with glowing magenta and purple cracks falling from a navy night sky, one bursting into a magenta glow. Steel and glass towers in cool blue-grey with pale white and pale blue lit windows, small amber lights, small vertical signs. The middle of the image is calm, dark and empty. No text, no letters, no logos.",
+    "image_size": {
+      "width": 320,
+      "height": 180
+    },
+    "text_guidance_scale": 8,
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed"
+  },
+  "prompt": "wide cinematic night street in downtown Tokyo, retro pixel art. On the left third a dark green 1967 Mustang fastback muscle car with two white racing stripes, seen in 3/4 isometric view from above, drifting sideways in a wide arc, pink and cyan neon drift trails and grey tyre smoke behind it. On the right third a giant dark grey reptilian kaiju monster with jagged back plates standing among skyscrapers. Alien meteors of dark rock with glowing magenta and purple cracks falling from a navy night sky, one bursting into a magenta glow. Steel and glass towers in cool blue-grey with pale white and pale blue lit windows, small amber lights, small vertical signs. The middle of the image is calm, dark and empty. No text, no letters, no logos.",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T20:56:14+00:00",
+  "image": {
+    "width": 320,
+    "height": 180,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "game/art/car/car_iso.png",
+    "art-archive/T-433/brief.md"
+  ],
+  "task": "T-433",
+  "job_status": null,
+  "notes": "Style loop version 1, prompt only (init mock-up script refused by permissions)",
+  "generator": "game/tools/pixellab_client.py"
+}
