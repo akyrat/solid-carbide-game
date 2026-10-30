@@ -46,13 +46,13 @@ The board's review: in the creator, place short buildings side by side and next 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The low-rise, small and long pieces are platforms at height 3: the car drives on them, reaches them by a 0-to-3 ramp and falls off their edges; enemies follow it there (tests). (QA: pass / fail)
-- [ ] Two placed side by side, or one next to a 3-high rooftop, join with no wall or roof edge drawn between them and no bump crossing the join (tests, screenshots). (QA: pass / fail)
-- [ ] The result notes list every collider and how it works at height; nothing below a platform stops the car on top of it, a jump off a platform lands on the ground or a lower platform, and a skyscraper blocks at any height (a test each). (QA: pass / fail)
-- [ ] Saved levels with short buildings and the game's own map load them as platforms; check_level.py and the drivability check accept them (tests); the board's level files are unchanged and uncommitted. (QA: pass / fail)
-- [ ] Level design (Content), Visual style and game/docs/level/ describe the platforms, the joins and the audit; the original art is kept in `art-archive/<id>/`. (QA: pass / fail)
-- [ ] Screenshots of joined short platforms in the editor and the run, and a GIF of driving across them and jumping off, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The low-rise, small and long pieces are platforms at height 3: the car drives on them, reaches them by a 0-to-3 ramp and falls off their edges; enemies follow it there (tests). (QA: pass: platform tests and audit cover height, ramps, falling, enemies)
+- [ ] Two placed side by side, or one next to a 3-high rooftop, join with no wall or roof edge drawn between them and no bump crossing the join (tests, screenshots). (QA: pass: screenshots show no seam; join tests present)
+- [ ] The result notes list every collider and how it works at height; nothing below a platform stops the car on top of it, a jump off a platform lands on the ground or a lower platform, and a skyscraper blocks at any height (a test each). (QA: pass: audit table in notes, tests for each)
+- [ ] Saved levels with short buildings and the game's own map load them as platforms; check_level.py and the drivability check accept them (tests); the board's level files are unchanged and uncommitted. (QA: pass: levels untracked, not in the diff; check_level tests green)
+- [ ] Level design (Content), Visual style and game/docs/level/ describe the platforms, the joins and the audit; the original art is kept in `art-archive/<id>/`. (QA: pass: docs edited, originals in art-archive/T-405/originals)
+- [ ] Screenshots of joined short platforms in the editor and the run, and a GIF of driving across them and jumping off, are in `art-archive/<id>/screenshots/`. (QA: pass: 3 PNGs and the GIF present)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass: both Python sets green in qa_check; game set 1985/1985 passing)
 
 ## Updates
 
