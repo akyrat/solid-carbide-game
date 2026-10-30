@@ -1,7 +1,7 @@
 ---
 id: T-415
 title: Pickups at full hearts, the combo's hit window, and the run's base values
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/scripts/run/run_state.gd, game/scripts/enemies/health_pickup.gd, game/scripts/run/pickup_magnet.gd, game/data/run.json, game/data/garage.json]
 files_expected_to_change: [game/scripts/run/run_state.gd, game/scripts/enemies/health_pickup.gd, game/scripts/run/pickup_magnet.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,12 +41,12 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] At full hearts a health pickup is not collected and not pulled by the magnet; below full it is. (QA: pass / fail)
-- [ ] Two collisions 0.3 s apart cut the combo once; two 0.7 s apart cut it twice. (QA: pass / fail)
-- [ ] Changing run.json's starting hearts changes max health in a run with a saved garage (test with a progress object); the garage's car health level adds to it. (QA: pass / fail)
-- [ ] The magnet radius follows the same rule (run.json base plus the garage level). (QA: pass / fail)
-- [ ] The starting hearts and the base magnet radius are each stored in one data file only. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] At full hearts a health pickup is not collected and not pulled by the magnet; below full it is. (QA: pass)
+- [ ] Two collisions 0.3 s apart cut the combo once; two 0.7 s apart cut it twice. (QA: pass)
+- [ ] Changing run.json's starting hearts changes max health in a run with a saved garage (test with a progress object); the garage's car health level adds to it. (QA: pass)
+- [ ] The magnet radius follows the same rule (run.json base plus the garage level). (QA: pass)
+- [ ] The starting hearts and the base magnet radius are each stored in one data file only. (QA: pass)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -71,3 +71,5 @@ Done (game-loop agent). Tests: unittest game/tools 722 (OK, 1 skipped), unittest
 - Screenshot: art-archive/T-415/screenshots/full_hearts_pickup_stays.png (two pickups beside the car at 5 of 5 hearts, not pulled); fixture tests/fixtures/full_hearts_pickup_demo.tscn.
 - Documents updated: docs/game-loop-architecture.md (the two Decisions plus a new "The garage adds to run.json's base"), game/docs/data/game-data.md. The long GDD is regenerated at merge.
 - All six criteria are covered by the tests.
+- 2026-10-30, in-progress → in-qa: Ready for QA: all three test sets green, screenshot in art-archive/T-415/screenshots.
+- 2026-10-30, in-qa → needs-playtest: QA passed: all 6 criteria, three test sets green
