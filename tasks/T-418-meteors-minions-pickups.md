@@ -1,7 +1,7 @@
 ---
 id: T-418
 title: Meteors hit minions and push pickups aside
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -51,6 +51,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-worktrees\T-418, Enemy Behavior Agent.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -58,3 +62,17 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Enemy Behavior Agent, 2026-10-30.
+
+What changed
+- A meteor landing damages every minion at the landing's level within impact_radius_units (+ the minion's radius): new `minion_damage` in enemies.json `meteor_attack` = 2 health points (a proposed number; minion health is 4). kaiju_meteors.gd `land()` calls the spawner.
+- When a meteor's boulder is placed, coins and health pickups within the boulder's radius (+0.5) are moved just outside it (0.1 clear, along the way out from the centre, first of 16 directions that is free ground), sprite, height and z follow; still in the coins/health_pickups lists and groups, so still collectable.
+- A car more than 1 unit (EnemyHeight.LEVEL_TOLERANCE, the contact-damage rule) above the landing is missed.
+- Guards: EnemyData.meteor_attack_times() with seconds_between_attacks <= 0 pushes an error and counts only the first attack; the attack clock in kaiju_meteors.gd step() adds at least MIN_ATTACK_GAP (0.1 s); minion_spawner.spawn_interval() uses DEFAULT_SPAWN_INTERVAL 0.5 when spawn_interval_seconds is missing, and replaces a value <= 0 with it and an error.
+
+Files: game/scripts/enemies/kaiju_meteors.gd, game/scripts/enemies/minion_spawner.gd, game/scripts/data/enemy_data.gd (the ticket listed enemy_data.gd under enemies/; it is in data/), game/data/enemies.json, docs/enemies.md (detail lines in "The kaiju's meteor attack"; the decision unchanged), game/tests/unit/test_enemy_data.gd (key list), new game/tests/unit/enemies/test_meteors_minions_pickups.gd (11 tests, one per behaviour criterion).
+
+Pickup files and functions changed: none of coin.gd, health_pickup.gd, or their sprites. All pickup changes are in minion_spawner.gd: new push_pickups_out(), _pickup_spot_free(), _move_pickup() (they read spawn_coin_at / spawn_health_pickup_at's conventions but do not edit those functions). Nothing in game/data/levels/.
+
+Tests: GUT 2136 tests, first full run 2134 passing, 2 failing: test_enemy_data.gd key list (mine, fixed, rerun alone: 10/10) and test_run_likes.gd drift timing (known under load; rerun alone: 37/37 pass). New file 11/11. Python game/tools: 722 tests OK (1 skipped). Python tools: 582 tests OK. No full GUT rerun after the test_enemy_data fix (only that file).
