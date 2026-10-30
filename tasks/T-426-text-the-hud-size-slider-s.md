@@ -1,7 +1,7 @@
 ---
 id: T-426
 title: Text: the HUD size slider's label
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Goal-G-008
@@ -46,6 +46,10 @@ The board's review: Read the HUD size slider's label in game/data/pause_text.jso
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-426.
 
 ## Style review
 
