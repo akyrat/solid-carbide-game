@@ -2465,3 +2465,13 @@ Entry format:
 - Decision or change: The board: a falling gift pack shows a shadow where it will land, the same as the car's shadow in the air.
 - Documents touched: docs/game-loop-architecture.md
 - Tasks: T-407
+
+## 2026-10-30: The gun one-shots and grows
+- Decision or change: The board: the gun kills a minion in one hit from tier 1; its upgrades become +1 bullet x2, faster x2, 3 targets at the halfway, +1 bullet x2, faster x2, 5 targets at the last.
+- Documents touched: docs/weapons.md
+- Tasks: T-408
+
+## 2026-10-30: The underglow kills in 2 ticks and pushes
+- Decision or change: The board: the neon underglow's tick deals half a minion's health at tier 1, and it knocks enemies back a little from tier 1.
+- Documents touched: docs/weapons.md
+- Tasks: T-409
