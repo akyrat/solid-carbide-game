@@ -1,7 +1,7 @@
 ---
 id: T-413
 title: The wreck decides the loss at its end
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd, game/scripts/game/game_flow.gd, game/scripts/run/pickup_magnet.gd, game/scripts/enemies/coin.gd, tasks/T-406-wreck-health-revive.md]
 files_expected_to_change: [game/scripts/run/run_state.gd, game/scripts/run/run.gd, game/scripts/game/game_flow.gd, game/scripts/run/pickup_magnet.gd]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,13 +41,13 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Losing the last heart doesn't set the result; the result is set when the wreck's 3 seconds end (test reads the result before and after). (QA: pass / fail)
-- [ ] A kaiju kill during the wreck gives a win, the win recap, and no loss. (QA: pass / fail)
-- [ ] Coins and health pickups within the magnet during the wreck are pulled and counted (coin total rises). (QA: pass / fail)
-- [ ] Pause Restart or Exit during the wreck banks no coins and adds no runs-list entry (progress coins and history length unchanged). (QA: pass / fail)
-- [ ] The kaiju dying on the same physics step the clock reaches 0:00 gives a win. (QA: pass / fail)
-- [ ] The result notes say how T-406 undoes the wreck through this ticket's code. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] Losing the last heart doesn't set the result; the result is set when the wreck's 3 seconds end (test reads the result before and after). (QA: pass - test_wreck_decides_loss)
+- [ ] A kaiju kill during the wreck gives a win, the win recap, and no loss. (QA: pass - tests)
+- [ ] Coins and health pickups within the magnet during the wreck are pulled and counted (coin total rises). (QA: pass - run-scene test)
+- [ ] Pause Restart or Exit during the wreck banks no coins and adds no runs-list entry (progress coins and history length unchanged). (QA: pass - tests)
+- [ ] The kaiju dying on the same physics step the clock reaches 0:00 gives a win. (QA: pass - tests)
+- [ ] The result notes say how T-406 undoes the wreck through this ticket's code. (QA: pass - revive() explained)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass - GUT 2139/2139 on rerun; first run only the exit-time resource-leak message)
 
 ## Updates
 
@@ -91,3 +91,4 @@ Screenshots, in `art-archive/T-413/screenshots/` (made with `bash game/tools/rec
 
 Documents: `docs/game-loop-architecture.md` (Content, "Wrecked": the loss is decided at the wreck's end; the T-406 bullet updated for coins). Code docs: `game/docs/game-loop/the-run.md`, `game/docs/game-loop/screen-flow.md`, `game/docs/hud-and-menus/time-up-screen.md`.
 - 2026-10-30, in-progress → in-qa: Wreck decides the loss at its end; kaiju kill in wreck wins; coins pulled and count; pause Restart/Exit in wreck cancels; tie at 0:00 wins. GUT 2139/2139, tools 582, game/tools 722 OK. Screenshots in art-archive/T-413/screenshots.
+- 2026-10-30, in-qa → needs-playtest: QA pass: all 7 criteria; GUT 2139/2139, tools and game/tools OK. Minor: kills-count, no-tricks-while-wrecked and level-creator rule are stated as fact in Content, not labelled as proposals.
