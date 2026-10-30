@@ -57,4 +57,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (UI Agent, sonnet). No PixelLab generations used.
+
+- `game/scripts/menu/trick_list.gd`: the placeholder (`_make_placeholder`, `PLACEHOLDER_BG/FG`, `is_placeholder`) is deleted. Each trick loads `res://art/tutorial/tricks/<id>.png`; `is_loaded(id)` says so; a missing file leaves the picture empty and logs a warning. Nearest filter on the list and each picture, scale 3 (192 x 144), unchanged. Slide 2 and the pause panel share this one scene, so both show the seven PNGs.
+- `game/tests/unit/test_trick_list.gd`: new test for all seven textures loaded from their files (and size 64 x 48), a test that the placeholder methods are gone, and the filter and scale test now covers every trick. Missing-file test now expects an empty picture.
+- `game/docs/hud-and-menus/tutorial-slides.md`: placeholder section replaced by the list of the seven files shown.
+- `game/tests/fixtures/pause_trick_list_demo.gd`: was broken since T-389 (Start opens the slides); now calls `game.start_run()`.
+- Tests: GUT 162 scripts, 1974 tests, 1974 passing; `python -m unittest discover -s tools` 573 OK; `game/tools` Python tests OK.
+- Screenshots: `art-archive/T-390/screenshots/slide2.png`, `art-archive/T-390/screenshots/pause_trick_list.png`.
+- Refusals: a heredoc python script I tried was refused; I did the edits with the edit tool instead.
