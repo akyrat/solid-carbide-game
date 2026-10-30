@@ -284,6 +284,30 @@ Rule 2: the outline and shading are weak. I see no dark, almost black selective 
 Rule 4: the neon is muted, so the night and retro feel is weak. Use brighter pink or cyan accents on the trail.
 - Rules broken: 2, 4, 5, 10
 
+#### Round 3
+
+- Version 3: `art-archive/T-384/style-loop/v3-3.png`
+- What changed: Version 3 is a paid PixelLab refine (create-image-pixflux, 64x48, no_background true). It is call 11 of the goal's 40, and alternate_drift has now used 3 of its 4, so one refine is left.
+
+I skipped the free fix, a script that would recolour the trail into a pink core and halo and the car into a dark green ramp. My own pixel-edit scripts have been refused in this ticket. Moving such a script somewhere else just to get it run would be getting around that refusal, so I didn't. The plan is written in the result notes. A script still cut the colours to 30.
+
+The new prompt kept v2's S composition and asked for:
+- a hot neon pink trail with a 1 px very bright core, a magenta step and a dark purple outer step, and no muted or dull purple;
+- a very dark bottle-green car with bold white stripes with a gap, a black outline and white roof highlights;
+- detailed shading, with the guidance raised to 14.
+
+All 6 style_rules.py checks pass.
+
+What I saw at actual size and in the palette dump: the neon is now bright hot pink (254,6,131 and similar), with pale pink core pixels, magenta and dark purple steps, a near-black outline (3,1,4) and white stripe and highlight pixels.
+
+What is wrong: the car came out large and steel-blue (hues 199 to 210, for example 10,66,92) with no green at all. It also covers much of the trail, so the S reads less clearly than in v2. On my own look, v2 shows the trick better and v3 shows the neon and the outline better.
+
+The raw output and its request are at art-archive/T-384/pixellab/alternate_drift_v3*. The ticket's result notes have the call and the running total. Committed as d38505aa.
+- Script checks: 6 of 6 pass
+- Score: 4/10
+- Reason: Rule 10 (main fault): the car body reads navy or blue-grey, not Greenbull dark green (12,76,44). I can't make out the two centred white stripes with a gap between them, and the fastback shape isn't clearly a 1967 Mustang. Fix: repaint the body in the dark green ramp and add two white stripes. Rule 2: the outline and highlights are weak at this size. The car is a muddy blob, with no clear dark outline broken by highlight pixels. Rule 5: the pink trail is a closed oval ring around the car, not an S shape with the car at the bend. Its halo is thin and doesn't show clear stepped darker shades. Redraw the trail as an S, with a stepped glow of 2 or 3 darker pink pixel bands. Rule 4: the dusk feel is faint, because the car is a pale grey-blue. Use a navy and purple night base with cyan and pink accents. The script checks pass (rules 1, 3 and 6), so no change is needed there.
+- Rules broken: 2, 5, 10, 4
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -315,3 +339,5 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Call 10: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v2.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v2-3.png. Script checks: all 6 pass. Running total: 10 / 40; alternate_drift has used 2 of its 4. My own look at actual size: the trail is now a clear S (a curve one way, then the other) with the car sitting at the bend, and the car is darker and greener than v1. Still wrong: the trail reads violet-purple rather than bright neon pink, and the car still leans teal and is fairly large.
 - Call 11 (planned): alternate_drift v3 refine (v2 scored 6: S and car at the bend read correctly; car teal not 12,76,44, no clear stripes; trail flat purple bands with no bright core; weak outline; muted neon). The free fix would be a recolour script (trail purples to a pink core/halo ramp by distance from the trail edge, car teals to a dark green ramp), but my own pixel-edit scripts are refused in this ticket and I don't work around that; placing such a script elsewhere to get it run would be a workaround. So this is a paid refine: create-image-pixflux 64x48 keeping v2's prompt and S composition, with a hot pink core line, stepped magenta and purple halos, a deeper dark green car with bold white stripes and a black outline. 1 generation. Loop output: art-archive/T-384/style-loop/v3-3.png.
 - Call 11: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v3.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v3-3.png. Script checks: all 6 pass. Running total: 11 / 40; alternate_drift has used 3 of its 4, so one refine is left. My own look (actual size plus game/tools/palette_dump.py): the neon is now bright hot pink (254,6,131 and similar) with pale pink core pixels, magenta and dark purple steps, a near-black outline (3,1,4) and white stripe and highlight pixels (249,248,250). But the car came out large and steel-blue (hues 199-210, e.g. 10,66,92 and 93,137,167) with no green at all, and it covers much of the trail, so the S reads less clearly than in v2. On my own look v2 shows the trick better and v3 shows the neon and outline better.
+- Call 12 (planned): alternate_drift v4, last refine (v3 scored 4: car navy/blue-grey, trail read as a closed oval around a big car, thin halo). The recolour script fix is still not available (my pixel-edit scripts are refused), so this is a paid refine: create-image-pixflux 64x48 going back to v2's prompt and S composition (which scored best), with a tiny car about 16 px long so the S stays visible, v3's hot pink stepped neon wording, and a forest/olive green body with blue, navy and grey banned. 1 generation. Loop output: art-archive/T-384/style-loop/v4-3.png.
+- Call 12: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v4.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v4-3.png. Script checks: all 6 pass. Running total: 12 / 40; alternate_drift has used all 4 of its generations (1 + 3 refines). My own look (actual size plus palette_dump): the best of the four on my own look. An open hot neon pink wavy trail runs across the frame, with pale pink core pixels and stepped hot pink, magenta (178,10,97) and dark purple (44,24,72) bands. A small, dark car sits at the middle bend, with no blue in it this time. Still wrong: the car's greens are greyish (45,59,50; 55,82,65; 61,105,92), not 12,76,44; the stripes are not clearly readable at this size; and the S reads more as a wave with two bends than as a crisp S.
