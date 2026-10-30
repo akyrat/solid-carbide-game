@@ -248,6 +248,42 @@ Rule 4: the dusk feel comes only from the pink and blue colours, and there is no
 - Rules broken: 2, 3, 5, 10
 - Refused: {"tool_input": {"command": "sed -n 249,300p tasks/T-384*.md; echo \"LOOP=$SOLID_CARBIDE_STYLE_LOOP_RUN\"; cat art-archive/T-384/pixellab/three_sixty_v4_req.json; python game/tools/pixellab_client.py --help 2>&1 | head -40; grep -c T-384 game/art/pixellab-generation-log.jsonl", "description": "Read call log tail and client usage"}, "tool_name": "Bash", "tool_use_id": "toolu_01DPGu9EHbhRmejiwC5T4VZj"}; {"tool_input": {"command": "sed -n 249,300p tasks/T-384*.md; printenv SOLID_CARBIDE_STYLE_LOOP_RUN; cat art-archive/T-384/pixellab/three_sixty_v4_req.json; grep -c T-384 game/art/pixellab-generation-log.jsonl", "description": "Read call log tail, loop marker, last request"}, "tool_name": "Bash", "tool_use_id": "toolu_01MUGzY3GgC4nT2ZFpnN9oMv"}; {"tool_input": {"command": "printenv SOLID_CARBIDE_STYLE_LOOP_RUN", "description": "Show style loop run marker"}, "tool_name": "Bash", "tool_use_id": "toolu_016AMyzn1L6qAVtgmSLgHKXs"}; {"tool_input": {"command": "python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-384/style-loop/v1-3.png').convert('RGBA'); print(im.mode, im.size)\nbig=im.resize((384,288),Image.NEAREST)\nout=Image.new('RGBA',(784,288),(20,20,30,255)); out.paste((235,235,235,255),(400,0,784,288))\nout.alpha_composite(big,(0,0)); out.alpha_composite(big,(400,0)); out.save('art-archive/T-384/style-loop/v1-3_preview.png')\"", "description": "Build enlarged dark/light preview of v1-3"}, "tool_name": "Bash", "tool_use_id": "toolu_01LfuLGLso3wdrJWJ7gHMVAz"}; {"tool_input": {"command": "python art-archive/T-384/scripts/palette_dump.py art-archive/T-384/style-loop/v1-3.png", "description": "List v1-3 colours with counts and extents"}, "tool_name": "Bash", "tool_use_id": "toolu_01A9zizS3UeUocuRpQ81Coz7"}
 
+#### Round 2
+
+- Version 2: `art-archive/T-384/style-loop/v2-3.png`
+- What changed: Version 2 is a paid PixelLab refine: create-image-pixflux, 64x48, no_background true. It is call 10 of the goal's 40, and alternate_drift has now used 2 of its 4, so 2 refines are left.
+
+I skipped the free script fix. The biggest faults are the trail shape and the view, which are composition problems, and my own pixel-edit scripts have been refused in this ticket. A script still cut the colours to 30.
+
+The new prompt asked for:
+- a low top-down 3/4 view, the view that gave a readable car in three_sixty v4;
+- a thin S trail made of two opposite curves, with a 1 px bright core and two 1 px darker stepped halo bands;
+- a small, deep dark green fastback with two white stripes, a near-black outline and roof highlights, sliding at the S bend;
+- a small navy shadow under the car.
+
+It bans soft glow, gradients, swirls, rings and blue, purple, teal or grey cars.
+
+All 6 style_rules.py checks pass.
+
+On my own look at actual size, the trail is now a clean, readable S with the car at the bend, which is the trick itself, and the car is darker and greener than in v1. Still wrong:
+- the trail reads violet-purple rather than bright neon pink;
+- the car still leans teal rather than 12,76,44 and is fairly large;
+- I couldn't confirm the stripes, outline and shadow at 64x48, because the enlarged preview was refused earlier.
+
+The raw output and its request are at art-archive/T-384/pixellab/alternate_drift_v2*. The ticket's result notes have the call and the running total. Committed as ab1c74db.
+- Script checks: 6 of 6 pass
+- Score: 6/10
+- Reason: The script checks pass (64x48, transparent corners, no semi-transparent pixels, 30 colours, no Greenbull light green or yellow), so rule 1 and rule 6 are fine. The image is tiny, so some of this is hard to judge. The S-shaped trail and the car at the bend read correctly. Three things are off:
+
+Rule 10: the car reads teal or cyan, not Greenbull dark green (12,76,44). I can't make out two centred white stripes with a gap between them. Recolour the body to the exact dark green and draw two clear white stripes along the hood and roof. The fastback silhouette also needs to read more clearly.
+
+Rule 5: the trail looks like flat purple bands. I see no bright core pixels with small stepped halos of darker shades. Draw a bright pink or cyan core with 1 to 2 px stepped darker halo bands outside it, and no soft gradient.
+
+Rule 2: the outline and shading are weak. I see no dark, almost black selective outline around the car and trail, and few lighter highlight pixels. Add the near-black outline, broken by highlight pixels, and more shading on the car.
+
+Rule 4: the neon is muted, so the night and retro feel is weak. Use brighter pink or cyan accents on the trail.
+- Rules broken: 2, 4, 5, 10
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -277,3 +313,5 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Call 9: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v1.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v1-3.png. Script checks: all 6 pass (transparent corners included). Running total: 9 / 40; alternate_drift has used 1 of its 4. The enlarged preview (v1-3_preview.png) and the palette dump were refused by the permission system, so they were not made; I did not work around it. My own look at actual size: neon pink curved trail strokes with purple halos sweep past a sliding car, but the car is large and reads blue-navy rather than dark green 12,76,44, and the S shape is only partly readable.
 - Call 10 (planned): alternate_drift v2 refine (v1 scored 4: car blue not dark green, no stripes/outline, trail a soft swirl not an S, too top-down, no shadow). The trail shape and the view are composition, and my own pixel-edit scripts are refused in this ticket, so this is a paid refine: create-image-pixflux 64x48, low top-down 3/4 view (which gave the readable car in three_sixty v4), a thin S trail of two opposite curves, a smaller dark green car at the bend. 1 generation. Loop output: art-archive/T-384/style-loop/v2-3.png.
 - Call 10: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v2.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v2-3.png. Script checks: all 6 pass. Running total: 10 / 40; alternate_drift has used 2 of its 4. My own look at actual size: the trail is now a clear S (a curve one way, then the other) with the car sitting at the bend, and the car is darker and greener than v1. Still wrong: the trail reads violet-purple rather than bright neon pink, and the car still leans teal and is fairly large.
+- Call 11 (planned): alternate_drift v3 refine (v2 scored 6: S and car at the bend read correctly; car teal not 12,76,44, no clear stripes; trail flat purple bands with no bright core; weak outline; muted neon). The free fix would be a recolour script (trail purples to a pink core/halo ramp by distance from the trail edge, car teals to a dark green ramp), but my own pixel-edit scripts are refused in this ticket and I don't work around that; placing such a script elsewhere to get it run would be a workaround. So this is a paid refine: create-image-pixflux 64x48 keeping v2's prompt and S composition, with a hot pink core line, stepped magenta and purple halos, a deeper dark green car with bold white stripes and a black outline. 1 generation. Loop output: art-archive/T-384/style-loop/v3-3.png.
+- Call 11: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v3.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v3-3.png. Script checks: all 6 pass. Running total: 11 / 40; alternate_drift has used 3 of its 4, so one refine is left. My own look (actual size plus game/tools/palette_dump.py): the neon is now bright hot pink (254,6,131 and similar) with pale pink core pixels, magenta and dark purple steps, a near-black outline (3,1,4) and white stripe and highlight pixels (249,248,250). But the car came out large and steel-blue (hues 199-210, e.g. 10,66,92 and 93,137,167) with no green at all, and it covers much of the trail, so the S reads less clearly than in v2. On my own look v2 shows the trick better and v3 shows the neon and outline better.
