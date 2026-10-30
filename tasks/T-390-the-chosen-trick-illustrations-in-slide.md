@@ -1,7 +1,7 @@
 ---
 id: T-390
 title: The chosen trick illustrations in slide 2 and the pause trick list, placeholders retired
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -78,3 +78,4 @@ Done (UI Agent, sonnet). No PixelLab generations used.
 ### QA round 1
 All five criteria pass. GUT 162 scripts / 1974 tests / 1974 passing; `python -m unittest discover -s tools` 573 OK; `game/tools` 675 OK (1 skipped). Tests test_every_trick_texture_loads_from_its_file, test_no_placeholder_code_left and test_illustration_is_drawn_nearest_at_a_whole_scale exist; the placeholder code is gone from trick_list.gd; both screenshots exist in art-archive/T-390/screenshots/ and the seven PNGs are in game/art/tutorial/tricks/. Refused: `python tools/qa_check.py T-390 --no-marks` (needs approval), so I ran the test sets and checks by hand.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
