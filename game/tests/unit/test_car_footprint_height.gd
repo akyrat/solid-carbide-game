@@ -99,7 +99,15 @@ func test_at_45_degrees_no_corner_enters() -> void:
 		car.physics_step()
 		assert_true(_deepest(car, PLATFORM) <= TOLERANCE, "step %d: %.3f inside" % [i, _deepest(car, PLATFORM)])
 		assert_eq(car.height, 0.0)
-	assert_eq(_hits.size(), 1)
+	# One hit on the platform's north side. Task T-435: the car now really
+	# bounces off it with W held, so further east it meets the ramp's north side
+	# too (a second, different wall); no other hits.
+	assert_between(_hits.size(), 1, 2)
+	assert_eq(_hits[0][1], 0, "first, the platform's side")
+	if _hits.size() == 2:
+		assert_eq(_hits[1][1], 1, "then the ramp's side")
+	for h in _hits:
+		assert_eq(h[2], Vector2.UP, "north sides only")
 
 
 func test_steering_into_a_side_from_standing_never_sweeps_the_nose_in() -> void:

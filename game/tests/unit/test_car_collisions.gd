@@ -120,14 +120,16 @@ func test_car_bounces_off_a_boulder_3_units_across() -> void:
 	_check_straight_bounce(car, 10.0)
 
 
-func test_bounce_at_top_speed_is_still_small() -> void:
+## Task T-435: the bounce grows with the hit speed only up to
+## wall_bounce_max_hit_speed (16.5), so a hit at 33 bounces like one at 16.5.
+func test_bounce_at_top_speed_is_capped() -> void:
 	_wall(Rect2(-10, -70, 20, 2))
 	var car = _car()
 	car.tuning.top_speed_multiplier = 3.0  # pinned at the pre-experiment top speed, 33
 	await _settle()
 	var impact := _drive_until_hit(car, 400)
 	assert_gt(impact, 30.0, "hit near top speed (33)")
-	assert_almost_eq(car.model.get_velocity().length(), impact * 0.25, 1e-3, "default bounce 0.25")
+	assert_almost_eq(car.model.get_velocity().length(), 16.5 * 0.4, 1e-3, "default bounce 0.4 x the 16.5 cap")
 
 
 func test_glancing_hit_keeps_the_speed_along_the_wall() -> void:
@@ -175,10 +177,14 @@ func test_bounce_zero_slides_and_one_bounces_fully() -> void:
 	_drive_until_hit(car, 200)
 	assert_almost_eq(car.model.get_velocity().length(), 0.0, 1e-6, "0 = no bounce")
 	car.tuning.wall_bounce = 1.0
-	_drive(car, 10, true, false, 0.0)
-	# Still pressed against the wall with W: W snaps forward to cruise each step,
-	# so the full bounce sends it back at cruise speed.
+	_drive(car, 1, true, false, 0.0)
+	# Still against the wall with W: W snaps forward to cruise (no bounce ran,
+	# 0 bounced nothing), so the full bounce sends it back at cruise speed.
 	assert_almost_eq(car.model.get_velocity().y, 11.0, 1e-3, "1 = bounces back at full speed")
+	# Task T-435: and it really leaves the wall with W still held.
+	var y_at_hit: float = car.position.y
+	_drive(car, 10, true, false, 0.0)
+	assert_gt(car.position.y, y_at_hit + 0.5 * U, "W held: the car bounced away from the wall")
 
 
 # --- Enemies ------------------------------------------------------------------------------
@@ -362,10 +368,26 @@ func test_bounce_slider_and_reset() -> void:
 	var sl: HSlider = p.panel.collision_sliders["wall_bounce"]
 	assert_eq(sl.min_value, 0.0)
 	assert_eq(sl.max_value, 1.0)
-	assert_almost_eq(sl.value, 0.25, 1e-9, "starts at the proposed default")
+	assert_almost_eq(sl.value, 0.4, 1e-9, "starts at the proposed default (T-435)")
 	assert_ne(sl.tooltip_text, "")
 	sl.value = 0.8
 	assert_almost_eq(p.car.tuning.wall_bounce, 0.8, 1e-9, "applies at once")
 	p.panel.reset_button.pressed.emit()
-	assert_almost_eq(p.car.tuning.wall_bounce, 0.25, 1e-12, "reset restores the default")
-	assert_almost_eq(sl.value, 0.25, 1e-9, "slider follows")
+	assert_almost_eq(p.car.tuning.wall_bounce, 0.4, 1e-12, "reset restores the default")
+	assert_almost_eq(sl.value, 0.4, 1e-9, "slider follows")
+
+
+## Task T-435: the bounce's cap and W's pull-back are on the Collisions group too.
+func test_bounce_cap_and_pull_sliders() -> void:
+	var p := _prototype()
+	for pair in [["wall_bounce_max_hit_speed", 16.5], ["wall_bounce_pull", 12.0]]:
+		assert_true(p.panel.collision_sliders.has(pair[0]), "%s has a slider" % pair[0])
+		if not p.panel.collision_sliders.has(pair[0]):
+			continue
+		var sl: HSlider = p.panel.collision_sliders[pair[0]]
+		assert_almost_eq(sl.value, float(pair[1]), 1e-9, "%s starts at its proposed default" % pair[0])
+		assert_ne(sl.tooltip_text, "")
+		sl.value = float(pair[1]) + 2.0
+		assert_almost_eq(float(p.car.tuning.get(pair[0])), float(pair[1]) + 2.0, 1e-9, "applies at once")
+		p.panel.reset_button.pressed.emit()
+		assert_almost_eq(float(p.car.tuning.get(pair[0])), float(pair[1]), 1e-9, "reset restores the default")
