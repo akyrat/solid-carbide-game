@@ -1,7 +1,7 @@
 ---
 id: T-412
 title: Text: level-up cards for the gun's tiers 2 to 11 and the stronger neon underglow
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: the gun's tier 2-11 card text and the stronger underglow's lines.
+
+### 2026-10-30, In progress → In QA
+
+Card text for the gun's tiers 2 to 11 and the underglow is in Weapons, Content; all pieces scored 8 or 9.
 
 ## Style review
 
