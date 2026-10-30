@@ -1,7 +1,7 @@
 ---
 id: T-409
 title: Neon underglow: each tick deals half a minion's health (2 ticks kill), and it knocks enemies back a little from tier 1
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -93,3 +93,4 @@ Documents changed: `docs/weapons.md` (Content "Neon underglow", the built-underg
 Merged master into the branch with no conflicts. Tests after the merge: GUT 2053/2053 passed; game/tools unittest 579 OK; tools unittest 579 OK. The earlier test_wreck failure is a flake that is not caused by this ticket: test_wreck.gd (the T-406 run-scene test) failed in 6 of 14 runs on plain master and 2 of 14 on this branch, with different asserts each time (hearts 5 vs 1, coins 5 vs 0, pickup not collected). The underglow is not equipped in that run; the gun (T-408) kills random minions near the wreck and their drops change hearts and coins. A separate game-loop ticket fixes the test; nothing in the wreck code or test was changed here.
 - 2026-10-30, in-progress → in-qa: Merged master; all three sets pass (GUT 2053, 579, 579). test_wreck flakes on master too (6/14), own ticket.
 - 2026-10-30, in-qa → needs-playtest: QA final: all six criteria pass on master-merged branch; three test sets green (game/tools 701, tools 579, GUT green)
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board; QA round 2 passed on top of master
