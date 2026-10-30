@@ -203,6 +203,21 @@ static func bank_left_run(progress: PlayerProgress, r: Node) -> void:
 	progress.bank_run("loss", r.state.coins)
 
 
+## The window's close request (T-416; Game loop architecture, Decisions, "Closing the game
+## mid-run"): a run still going ends as a loss, so its coins are banked and it goes in the
+## runs list, then the game quits. Outside a run it just quits.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if run != null:
+			run.state.abandon()
+		quit_game.call()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		# Switching to another window pauses the run (not during the level-up choice or
+		# the time's up screen: toggle() refuses there too).
+		if run != null and run.state.result == "" and pause_screen != null and not pause_screen.is_paused():
+			pause_screen.toggle()
+
+
 func _on_exit_pressed() -> void:
 	quit_game.call()
 
