@@ -1,7 +1,7 @@
 ---
 id: T-401
 title: Text: the level creator's name for the meteor crater
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/extended-narrative.md, tasks/T-396-creator-sidewalk-car-names.md]
 files_expected_to_change: [docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,8 +37,8 @@ The board's decision (Level design, Decisions, "Sidewalks and parked cars in the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Level design, Content, "Level creator text" lists the crater's name, with where it appears. (QA: pass / fail)
-- [ ] The name went through the style loop, with its score in the Style review. (QA: pass / fail)
+- [ ] Level design, Content, "Level creator text" lists the crater's name, with where it appears. (QA: pass)
+- [ ] The name went through the style loop, with its score in the Style review. (QA: pass)
 
 ## Updates
 
@@ -69,3 +69,4 @@ Run by `tools/style_loop/run.py` on 2026-10-30: text, kind label, brief `C:/User
 ## Result notes
 
 Name: "Meteor crater" (13 characters, under Ground, key `piece_meteor_crater`). Style loop: 10/10 in round 1, label passed alone. Listed in Level design, Content, "Level creator text" (new T-401 block, after T-396's), with where it appears; the looks strip reuses `model_counter`. Documents changed: docs/level-design.md.
+- 2026-10-30, in-qa → done: QA passed
