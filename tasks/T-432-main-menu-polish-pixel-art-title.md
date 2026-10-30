@@ -1,7 +1,7 @@
 ---
 id: T-432
 title: Main menu polish: pixel-art title, styled work-in-progress line, splash cover slot (placeholder)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/main-menu.md
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/main-menu.md, game/scripts/menu/main_menu.gd, game/scenes/menu/main_menu.tscn, game/tests/unit/test_main_menu.gd, game/fonts/bangers/bangers.json]
 files_expected_to_change: [game/scripts/menu/main_menu.gd, game/scenes/menu/main_menu.tscn, game/fonts/, game/tests/unit/test_main_menu.gd, docs/hud-and-menus.md, game/docs/hud-and-menus/main-menu.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-432.
 
 Goal runner (G-008): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,4 @@ Done (UI Agent). 0 PixelLab generations; no style loop (a free font, no new text
 - Refusals: none.
 
 QA round 1: all six criteria pass. `python tools/qa_check.py` needed an approval QA doesn't have (skipped); checked by hand. test_main_menu 9/9; unittest game/tools OK; unittest tools 582 OK. GUT full run: 2144/2145 on first run, one timing-sensitive failure in test_run_likes.gd (unrelated to the menu; it failed on a different test in a second rerun and passed 18/18 on a third), so treated as flaky. Screenshots present and show the pixel title, styled line, test image cover. Docs mention the font and splash.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
