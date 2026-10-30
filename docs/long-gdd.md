@@ -1244,6 +1244,24 @@ What the built level-up offers do. It follows Decisions ("Level-up flow in the M
 - A weapon at its last tier is not offered. If only one choice is left, the level-up offers just that one (the docs say nothing here; the simplest case was taken). If none is left, the choice is skipped and the run goes on, as Decisions says.
 - **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car every weapon (all six) at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
 
+#### Level-up card text (T-412)
+
+Titles and lines for the gun's tiers 2 to 11 (replacing today's tiers 2 to 8) and the changed neon underglow lines, keyed as in `game/scripts/ui/level_up_texts.gd`; T-408 and T-409 copy them. Numbers are the Project Lead's, for the playtest. Style loop scores in brackets.
+
+- `upgrade_gun.tier2`: "Extra Bullet" [9] / "+1 bullet per volley, 2 in all. A free sample, courtesy of Greenbull." [8]
+- `upgrade_gun.tier3`: "Another Extra Bullet" [9] / "+1 bullet per volley, 3 in all. Greenbull feels generous on camera." [8]
+- `upgrade_gun.tier4`: "Quicker Trigger" [9] / "Fires 20% faster. The audience is getting restless." [9]
+- `upgrade_gun.tier5`: "Quicker Trigger II" [9] / "Fires 20% faster again. Engagement waits for no one." [8]
+- `upgrade_gun.tier6`: "Multi-Target Mode" [8] / "Aims at up to 3 enemies at once. Multitasking is a brand value." [8]
+- `upgrade_gun.tier7`: "Bullet Bundle" [9] / "+1 bullet per volley, 4 in all. Buy more, shoot more." [8]
+- `upgrade_gun.tier8`: "Bulk Bullets" [9] / "+1 bullet per volley, 5 in all. Terms and conditions apply to enemies." [9]
+- `upgrade_gun.tier9`: "Quicker Trigger III" / "Fires 20% faster. Content never sleeps." [8]
+- `upgrade_gun.tier10`: "Quicker Trigger IV" [9] / "Fires 20% faster again. Viewers blink less, so we sell more ads." [9, after 1 refine]
+- `upgrade_gun.tier11`: "Everyone Gets Exposure" [9] / "Aims at up to 5 enemies at once. Nobody is left unengaged." [8]
+- `get_underglow.desc`: "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic." [8]
+- `upgrade_underglow.tier3.desc`: "Glow damage up 50%, to 3. Looks expensive." [9]
+- `upgrade_underglow.tier6.desc`: "Glow damage up another 50%, to 4.5. Peak aesthetic." [9]
+
 ### References
 
 - Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
@@ -1673,7 +1691,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
 | `level-design.md` | `d166f2e16d32166f6c2c33b7e8b603fc6e1fb4d77836cd0338e7165d834a742c` |
 | `enemies.md` | `08ba68f792b4ebeaa83534c6e7e82dd5ddb9920dba2598427f59acfdb502b24d` |
-| `weapons.md` | `dbe2b74f1ac5d46e95028bab073077e91af530e865c88a2561974976b193258d` |
+| `weapons.md` | `eeef070f50a7e5635d3ebb1b18c4ae51fdd3aef8044cc61424620ae1703b52cc` |
 | `garage-design.md` | `697e864f36365a62d2303425a6c209e9fadeb40d797455bd53021907369cb4df` |
 | `visual-style.md` | `83a9f16fc5def7d4ee935d0aad41b1b81c0194d438b411e7e6eb352b5ae6e512` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |

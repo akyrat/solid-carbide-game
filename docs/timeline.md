@@ -2550,3 +2550,8 @@ Entry format:
 - Decision or change: From the preemptive bug bash (audit epic): the board slims the docs and fixes what the audit found. A code hole or doc fix the audit found; no new decision.
 - Documents touched: docs/game-loop-architecture.md, docs/enemies.md, docs/weapons.md, docs/hud-and-menus.md, docs/drifting.md, docs/level-design.md, docs/garage-design.md, docs/visual-style.md, docs/extended-narrative.md
 - Tasks: T-423
+
+## 2026-10-30: Weapon card text for the new tiers
+- Decision or change: Level-up card text for the gun's tiers 2 to 11 and the stronger neon underglow (Weapons, Content).
+- Documents touched: `docs/weapons.md`
+- Tasks: T-412
