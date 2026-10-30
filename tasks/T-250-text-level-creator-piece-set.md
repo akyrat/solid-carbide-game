@@ -1,10 +1,10 @@
 ---
 id: T-250
 title: "Text: the level creator's new pieces and controls"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
-lead: Coursework
+lead: Greenbull
 epic: narrative
 milestone: mvp
 goal:
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/data/level/creator_texts.json, tasks/T-233-text-the-level-creator-s-screens.md]
 files_expected_to_change: [game/data/level/creator_texts.json, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started at the board's go: labels for the creator's new pieces and controls.
 
 Text written: 23 new labels (sizing, ramp directions, road pieces, props, buildings, hint). Sent to QA.
 
+### 2026-10-30, In QA → Done
+
+Closed: merged with the creator-set build you played; only the status was left behind.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -68,3 +72,4 @@ Narrative Theme Agent, 2026-10-22: wrote 23 new keys at the end of `game/data/le
 Tests: `python -m unittest discover -s game/tools -p "test_*.py"` 416 tests OK (1 skipped); `bash game/tools/run_tests.sh -gselect=test_creator_texts_only` 4 of 4 passing (it scans scripts for hard-coded labels; no test checks the JSON's keys).
 
 Refusal note: my first attempt, one inline `python -` heredoc to write both files, was refused by the status-script guard (it saw `**` as task files). A second attempt to append these notes with a shell variable and heredoc was refused too. I did not work around either; the Project Lead told me to use Edit and Write for the non-task files, and I used Edit for these notes.
+- 2026-10-30, in-qa → done: Already merged into master with playtest/creator-set (67996a22), after the board's playtest; status closed by Greenbull after taking it over from Coursework (board, 2026-10-30).
