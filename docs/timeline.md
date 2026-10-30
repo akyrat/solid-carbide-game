@@ -2655,3 +2655,8 @@ Entry format:
 - Decision or change: The board played goal G-007's build and approved it ("g007 also lgtm"). Merged: tutorial slides before a run (with "Don't show again" on the last slide, unticked; Restart doesn't show them; no early skip), a trick list button on the pause screen, the seven trick illustrations (both sets made; the script-drawn set chosen over PixelLab's, 7.0 vs 5.9), every sound effect off for the MVP with one switch (the music stays), and the SFX volume slider hidden on the pause screen. Noted in the goal run (not yet a ticket): the pause screen's trick list panel is see-through.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/visual-style.md`
 - Tasks: T-381, T-382, T-383, T-384, T-385, T-386, T-387, T-388, T-389, T-390 (goal G-007)
+
+## 2026-10-30: A broken save never wipes progress
+- Decision or change: Saves are written to a temp file and swapped in, with a backup of the last good save; a file that fails to load is kept aside and the backup loads; every save carries a version.
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-417
