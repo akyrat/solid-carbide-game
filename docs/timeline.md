@@ -2625,3 +2625,8 @@ Entry format:
 - Decision or change: merge_batch.py no longer crashes on the Windows console, and the command-line elevation drive works again.
 - Documents touched: tools/merge_batch.py, game/tools/drive_elevation_sample.gd
 - Tasks: T-425
+
+## 2026-10-30: The flaky wreck-revive test
+- Decision or change: The in-run wreck-revive test switches off minions and weapons, so it no longer fails at random.
+- Documents touched: none
+- Tasks: T-424
