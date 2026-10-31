@@ -30,6 +30,8 @@ var rules: Dictionary = {}
 ## Seconds since the run's map was built (the sum of observe's dt).
 var time := 0.0
 var last_position = null
+## The markers build_markers made, by pair id (NeedleFlash flashes them).
+var markers: Dictionary = {}
 var _layout: Dictionary = {}
 
 
@@ -126,6 +128,8 @@ func ref_of_body(collider: Object, shape_index: int) -> String:
 const MARKER_COLOR := Color(0.95, 0.95, 0.88, 0.35)
 const MARKER_WIDTH_UNITS := 0.25
 const MARKER_DASH_UNITS := 0.75
+## T-451: the dashed line at the brightest of the flash: opaque white, twice as thick.
+const FLASH_MARKER_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 
 
 ## Draws a marker per gate into `map` (an mvp_map.gd node): one Node2D per pair under
@@ -137,8 +141,10 @@ func build_markers(map: Node2D, height_at := Callable(), depth_for := Callable()
 	root.name = "NeedleMarkers"
 	map.view_root.add_child(root)
 	map.view_root.move_child(root, map.ground_tiles.get_index() + 1)
+	markers = {}
 	for g in gates:
 		var m := _Marker.new()
+		markers[str(g.id)] = m
 		m.name = "Needle_" + str(g.id).replace("-", "_")
 		var px: float = map.PX_PER_UNIT
 		var mid: Vector2 = (g.gap_a + g.gap_b) / 2.0
@@ -161,8 +167,16 @@ class _Marker extends Node2D:
 	var to := Vector2.ZERO
 	var width := 4.0
 	var dash := 12.0
+	## T-451: 0 at rest, up to 1 at the brightest of the flash (NeedleFlash).
+	var flash := 0.0
+
+	func set_flash(v: float) -> void:
+		if not is_equal_approx(v, flash):
+			flash = v
+			queue_redraw()
 
 	func _draw() -> void:
 		if Perf.on: Perf.each_begin(&"draw.needle")
-		draw_dashed_line(from, to, MARKER_COLOR, width, dash)
+		var col := MARKER_COLOR.lerp(FLASH_MARKER_COLOR, flash)
+		draw_dashed_line(from, to, col, width * (1.0 + flash), dash)
 		if Perf.on: Perf.each_end(&"draw.needle")

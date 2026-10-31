@@ -1,10 +1,10 @@
 ---
 id: G-009
 title: Mission packs and driving power-ups, as decided by the board on 202...
-status: planned
+status: building
 art_cap: 40
 art_used: 0
-iteration: 0
+iteration: 2
 max_iterations: 20
 created: 2026-10-31
 lead: Goal-G-009
@@ -43,19 +43,19 @@ Mission packs and driving power-ups, as decided by the board on 2026-10-31 (Game
 
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
-| 1 | S2 | Mission and power-up data (Game Data, numbers proposed by Driving & Drift) | unblocks 12, value 5 | The mission tracker, the generator, the overlay and each power-up read their rules and tier numbers from data. | missing | T-455 |
-| 2 | S3 | Mission tracker and generator in the run (Game Loop) | unblocks 6, value 5 | This is the core of the goal: missions progress from tricks, complete one at a time, reset every run and trigger the gift. | missing | T-457 |
-| 3 | S1 | Text for missions and driving power-ups (Narrative Theme) | unblocks 5, value 5 | The rule is that player-facing text comes first and is never a placeholder. The notebook, the overlay and the power-up cards all need it. | missing | T-456 |
-| 4 | S5 | Driving power-up gift overlay (UI + Game Loop) | unblocks 3, value 5 | A completed mission must pause the run and offer 2 power-ups on an overlay that is clearly distinct from the weapons' gift menu. | missing | T-459 |
-| 5 | S4 | Notebook mission page on the HUD, placeholder art (UI) | unblocks 2, value 5 | The board asked for the current mission to show on a notebook page on the left with checkboxes, progress and crossing off. | missing | T-458 |
-| 6 | S6 | Rev Charge power-up, with a placeholder charge/boost effect (Driving & Drift) | unblocks 2, value 4 | This is one of the four power-ups, and the board asked for its visible effect. | missing | T-460 |
-| 7 | S7 | Jump power-up (Driving & Drift) | unblocks 1, value 4 | This is one of the four power-ups, and the board said its airtime counts towards the airtime and air-trick goals. | missing | T-461 |
-| 8 | S8 | Bouncy Bumpers power-up (Driving & Drift) | unblocks 1, value 3 | This is one of the four power-ups: a longer bounce off obstacles. | missing | T-462 |
-| 9 | S9 | Rusty Overcoat power-up (Enemy Behavior) | unblocks 1, value 3 | This is one of the four power-ups: the car damages enemies on contact. | missing | T-463 |
-| 10 | S10 | Art: notebook page and power-up overlay (Asset Generation, style loop) | unblocks 0, value 4 | The board asked for a pixel-art notebook page, and the overlay must look clearly distinct. Both replace S4/S5's placeholders. | missing | T-464 |
-| 11 | S11 | Art: four power-up icons (Asset Generation, style loop) | unblocks 0, value 4 | Each power-up must have an icon. | missing | T-465 |
-| 12 | S13 | Integration check of a whole run (QA/Integration) | unblocks 0, value 4 | Confirms the missions, the overlay, the power-ups and the existing level-up gift work together in one run. | missing | T-467 |
-| 13 | S12 | Art: Rev Charge charge and boost effect (Asset Generation, style loop) | unblocks 0, value 3 | The board asked for a visible charging and boost effect for Rev Charge. | missing | T-466 |
+| 1 | S2 | Mission and power-up data (Game Data, numbers proposed by Driving & Drift) | unblocks 12, value 5 | The mission tracker, the generator, the overlay and each power-up read their rules and tier numbers from data. | covered | T-455 |
+| 2 | S3 | Mission tracker and generator in the run (Game Loop) | unblocks 6, value 5 | This is the core of the goal: missions progress from tricks, complete one at a time, reset every run and trigger the gift. | covered | T-457, T-455 |
+| 3 | S1 | Text for missions and driving power-ups (Narrative Theme) | unblocks 5, value 5 | The rule is that player-facing text comes first and is never a placeholder. The notebook, the overlay and the power-up cards all need it. | in-flight | T-456 |
+| 4 | S5 | Driving power-up gift overlay (UI + Game Loop) | unblocks 3, value 5 | A completed mission must pause the run and offer 2 power-ups on an overlay that is clearly distinct from the weapons' gift menu. | in-flight | T-459 |
+| 5 | S4 | Notebook mission page on the HUD, placeholder art (UI) | unblocks 2, value 5 | The board asked for the current mission to show on a notebook page on the left with checkboxes, progress and crossing off. | in-flight | T-458 |
+| 6 | S6 | Rev Charge power-up, with a placeholder charge/boost effect (Driving & Drift) | unblocks 2, value 4 | This is one of the four power-ups, and the board asked for its visible effect. | in-flight | T-460 |
+| 7 | S7 | Jump power-up (Driving & Drift) | unblocks 1, value 4 | This is one of the four power-ups, and the board said its airtime counts towards the airtime and air-trick goals. | in-flight | T-461 |
+| 8 | S8 | Bouncy Bumpers power-up (Driving & Drift) | unblocks 1, value 3 | This is one of the four power-ups: a longer bounce off obstacles. | in-flight | T-462 |
+| 9 | S9 | Rusty Overcoat power-up (Enemy Behavior) | unblocks 1, value 3 | This is one of the four power-ups: the car damages enemies on contact. | in-flight | T-463 |
+| 10 | S10 | Art: notebook page and power-up overlay (Asset Generation, style loop) | unblocks 0, value 4 | The board asked for a pixel-art notebook page, and the overlay must look clearly distinct. Both replace S4/S5's placeholders. | in-flight | T-464 |
+| 11 | S11 | Art: four power-up icons (Asset Generation, style loop) | unblocks 0, value 4 | Each power-up must have an icon. | in-flight | T-465 |
+| 12 | S13 | Integration check of a whole run (QA/Integration) | unblocks 0, value 4 | Confirms the missions, the overlay, the power-ups and the existing level-up gift work together in one run. | in-flight | T-467 |
+| 13 | S12 | Art: Rev Charge charge and boost effect (Asset Generation, style loop) | unblocks 0, value 3 | The board asked for a visible charging and boost effect for Rev Charge. | in-flight | T-466 |
 
 ### S2: Mission and power-up data (Game Data, numbers proposed by Driving & Drift)
 
@@ -182,6 +182,9 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-31, iteration 0: started: planning, by the session Greenbull.
 - 2026-10-31, iteration 0: priority scoring: 13 sub-goals ranked, 7 goal criteria, 11 open questions.
 - 2026-10-31, iteration 0: gap detection: 0 covered, 0 in flight, 13 missing; wrote 13 tickets.
+- 2026-10-31, iteration 0: building.
+- 2026-10-31, iteration 1: T-455 (S2, game-data, sonnet): passed (done, QA rounds 1), merged into playtest/G-009; art 0; agent: T-455 done and committed: missions.json, power_ups.json, MissionData/PowerUpData loaders, 5 GUT tests, and docs updated. GUT 2319/2319 and game/tools Python 767 pass. The tools/ unittest set wasn't finished (over 10 min, stopped); the ticket doesn't touch tools/, so QA should run it. No screenshots: nothing is on screen. Refused, got past and not blocking: game-data: {"tool_input": {"command": "tail -c 400 /c/Users/andre/.claude/projects/C--solid-carbide-worktrees-T-455/5e829cba-4f5c-4edc-8410-8fe664b072ec/tool-results/bp20wf3sw.txt"}, "tool_name": "Bash", "tool_use_id": "toolu_019QqsBxWwz7ktBBVWPrmJCN"} / game-data: {"tool_input": {"command": "f=\"/c/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-worktrees-T-455/5e829cba-4f5c-4edc-8410-8fe664b072ec/tasks/bwcginh4q.output\"; until grep -q -E \"^(OK|FAILED|Ran )\" \"$f\" 2>/dev/null; do sleep 5; done; grep -E \"^(OK|FAILED|Ran )\" \"$f\"", "description": "tools unittest set finishing", "timeout_ms": 600000}, "tool_name": "Monitor", "tool_use_id": "toolu_01Juw96wdZAFE1Swj3MR3sbM"} / game-data: Monitor with a grep/until loop to wait on the tools test output file: refused as a multi-part command; I did not work around it. / QA: {"tool_input": {"command": "python tools/qa_check.py T-455 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_017hQbVdY8PHkBGCKidnh1Bk"} / QA: python tools/qa_check.py T-455 --no-marks was refused (not in the pre-approved list). I skipped it and checked each criterion by hand; I did not run the final qa_check.py confirmation either.. Rescan: S2 covered, S1 in-flight, S3 in-flight, S5 in-flight, S4 in-flight, S6 in-flight, S7 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight, S13 in-flight, S12 in-flight.
+- 2026-10-31, iteration 2: T-457 (S3, game-loop, opus): passed (done, QA rounds 1), merged into playtest/G-009; art 0; agent: T-457 done: the 30-mission tracker (5 fixed, 25 seeded per run, unbroken-drift goal) and the car's power-up tiers are in RunState with their signals, documented in the-run.md and Game loop architecture. All tests pass (GUT 2335/2335, game/tools 767, tools 614), full report in the result notes; ready for QA. Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-457 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_01DpcpjLo9Y4WJsXzDE5Y8ac"} / QA: python tools/qa_check.py T-457 --no-marks was refused (needs approval; not on the pre-approved list), so I checked each criterion by hand instead.. Rescan: S3 covered, S1 in-flight, S5 in-flight, S4 in-flight, S6 in-flight, S7 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight, S13 in-flight, S12 in-flight.
 
 ## Pauses
 

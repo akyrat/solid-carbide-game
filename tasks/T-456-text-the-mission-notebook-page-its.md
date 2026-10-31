@@ -1,7 +1,7 @@
 ---
 id: T-456
 title: Text: the mission notebook page, its goal phrasings, and the driving power-up overlay with the four power-ups' names and tier descriptions
-status: blocked
+status: open
 from: project-lead
 to: narrative-theme
 lead: Goal-G-009

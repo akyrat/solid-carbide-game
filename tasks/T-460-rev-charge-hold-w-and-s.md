@@ -1,7 +1,7 @@
 ---
 id: T-460
 title: Rev Charge: hold W and S to charge a boost that fires when S is released, with a placeholder charge and boost effect
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-009

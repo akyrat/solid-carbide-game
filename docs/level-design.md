@@ -382,10 +382,12 @@ Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it 
 - **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles (since T-394 an obstacle can be in several pairs, but the same two obstacles make one pair at most).
 - **In a run on the level:** when the car's centre crosses the line between the two obstacles' centres without touching either, it is the **thread the needle** trick: the combo goes up and THREAD THE NEEDLE! "+{amount}" pops. Proposals: worth **0.5**, like ALT DRIFT! and AIR 360!; the same pair pays again on a later pass in either direction once **3 seconds** have gone by since it last paid; it **counts in the air** (a jump through the gap); a touch of either obstacle from half a second before the crossing until a quarter second after it voids the pass, and the crash cuts the combo as always. The trick pops a quarter second after the crossing, once the car is clear.
 - **How a pair shows in the run (a proposal):** a faint dashed chalk-white line on the ground across the gap, under the car and the obstacles, drawn in code.
+- **The flash when a pair pays (T-451, board, 2026-10-31; the look is a proposal for the playtest):** on the step the trick pays, the two obstacles of the threaded pair and the dashed line between them flash: two quick white pulses over **0.6 seconds** (bright at once, dark at 0.15 s, bright again at 0.3 s, at rest from 0.6 s). The obstacles' pixels mix up to 75 percent towards white (alpha kept), the line goes opaque white and twice as thick. Only the pair just threaded flashes: in a chained row the other gaps stay still, and the next gap flashes when it pays. A pass that doesn't thread (going round, or a touch that voids it) makes no flash. Code only, no new art (`game/scripts/level/needle_flash.gd`).
 - **The game's own map** has no pairs and is unchanged.
 
 ![Two pairs in the editor, a boulder pair across a road and a barrier with cones, with a crate stack held as the first of a new pair](../art-archive/T-272/screenshots/pair_in_editor.png)
 ![The car threading the boulder pair in a run, with the popup](../art-archive/T-272/screenshots/popup.png)
+![The boulder pair and the dashed line at the first pulse of the flash](../art-archive/T-451/screenshots/flash_030.png)
 
 ### Level creator: a row paired as a chain
 

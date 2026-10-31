@@ -50,6 +50,7 @@ extends RefCounted
 ## out over the edge between them and falls (enemy_fall.gd).
 
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
+const GroundIndexScript := preload("res://scripts/enemies/enemy_ground_index.gd")
 
 ## Cell size, units. Every edge in the map file lies on even units.
 const CELL := 2.0
@@ -111,6 +112,11 @@ var ramp_of := PackedInt32Array()
 var rough := PackedByteArray()
 ## Microseconds the last build took (for the result notes and the soak).
 var build_usec := 0
+## T-444: surface_at's last question and answer (and the lookup, and its build, it came from).
+var _surface_units := Vector2(INF, INF)
+var _surface_index = null
+var _surface_builds := -1
+var _surface_value := -1
 ## Paths found since the last new_step(), and in all.
 var paths_this_step := 0
 var paths_total := 0
@@ -212,7 +218,7 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], dro
 	for r in ground.ramps:
 		areas.append(r.rect)
 	for rect in areas:
-		_for_cells_in(rect, func(k: int, c: Vector2) -> void: heights[k] = ground.height_at(c))
+		_for_cells_in(rect, func(k: int, c: Vector2) -> void: heights[k] = _gi().height_at(c))
 	for rect in areas:
 		_mark_rough(rect)
 	for i in ground.ramps.size():
@@ -322,7 +328,7 @@ func _add_drops() -> void:
 ## ramp's two points (top, then foot) are much farther apart (a ramp is 12
 ## units long), so going down a ramp is not a drop.
 func is_drop(a: Vector2, b: Vector2) -> bool:
-	return a.distance_to(b) <= CELL * drop_span * 1.01 		and ground.height_at(a) - ground.height_at(b) > EnemyHeightScript.MAX_STEP
+	return a.distance_to(b) <= CELL * drop_span * 1.01 		and _gi().height_at(a) - _gi().height_at(b) > EnemyHeightScript.MAX_STEP
 
 
 ## True when the four cells are open and their heights within MAX_STEP of each
@@ -381,7 +387,16 @@ func cell_at(units: Vector2) -> int:
 ## area_index_at: a rooftop or a ramp), -1 for the street. Two places on the
 ## same surface are joined without a ramp.
 func surface_at(units: Vector2) -> int:
-	return ground.area_index_at(units)
+	# T-444: every minion asks for the car's surface each step; the last answer is kept.
+	var gi = _gi()
+	var builds: int = gi.get("builds") if gi.get("builds") != null else -1
+	if units == _surface_units and is_same(gi, _surface_index) and builds == _surface_builds:
+		return _surface_value
+	_surface_units = units
+	_surface_index = gi
+	_surface_builds = builds
+	_surface_value = gi.area_index_at(units)
+	return _surface_value
 
 
 ## An open cell near `units` whose ground is at height `h` (within MAX_STEP):
@@ -461,13 +476,24 @@ func line_clear(a: Vector2, b: Vector2, half_width: float = 0.0) -> bool:
 ## changes by MAX_STEP at most between two samples: no edge on the way.
 func _ground_level(a: Vector2, b: Vector2) -> bool:
 	var m := maxi(1, ceili(a.distance_to(b) / SIGHT_FINE))
-	var h: float = ground.height_at(a)
+	var h: float = _gi().height_at(a)
 	for i in range(1, m + 1):
-		var g: float = ground.height_at(a.lerp(b, float(i) / float(m)))
+		var g: float = _gi().height_at(a.lerp(b, float(i) / float(m)))
 		if absf(g - h) > EnemyHeightScript.MAX_STEP:
 			return false
 		h = g
 	return true
+
+
+## T-444: the ground's quick lookup (enemy_ground_index.gd): the same heights and surfaces as
+## `ground`, without testing every area of the map each time.
+func _gi():
+	return GroundIndexScript.of(ground)
+
+
+## The ground's height at `units` (the same as ground.height_at), through the quick lookup.
+func ground_height_at(units: Vector2) -> float:
+	return _gi().height_at(units)
 
 
 ## A new step: the path budget (PATHS_PER_STEP) starts again.
@@ -487,8 +513,8 @@ func find_path(from: Vector2, to: Vector2) -> PackedVector2Array:
 	Perf.begin(&"nav.find_path")
 	paths_this_step += 1
 	paths_total += 1
-	var a := _cell_near(from, ground.height_at(from))
-	var b := _cell_near(to, ground.height_at(to))
+	var a := _cell_near(from, _gi().height_at(from))
+	var b := _cell_near(to, _gi().height_at(to))
 	if a < 0 or b < 0:
 		var _perf_r = PackedVector2Array()
 		Perf.end(&"nav.find_path")
@@ -518,12 +544,12 @@ func off_edges(points: PackedVector2Array) -> PackedVector2Array:
 		var k := cell_at(p)
 		if k < 0 or rough[k] == 0:
 			continue
-		var h: float = ground.height_at(p)
-		if q > 0 and ground.height_at(points[q - 1]) - h > EnemyHeightScript.MAX_STEP:
+		var h: float = _gi().height_at(p)
+		if q > 0 and _gi().height_at(points[q - 1]) - h > EnemyHeightScript.MAX_STEP:
 			continue
 		var push := Vector2.ZERO
 		for dir in _EDGE_DIRS:
-			if ground.height_at(p + dir * EDGE_PROBE) - h > EnemyHeightScript.MAX_STEP:
+			if _gi().height_at(p + dir * EDGE_PROBE) - h > EnemyHeightScript.MAX_STEP:
 				push -= dir * EDGE_PUSH
 		points[q] = p + push
 	return points

@@ -2920,3 +2920,33 @@ Entry format:
 - Decision or change: Fixed the garage layout so every Buy button and Back stay on screen at any window size.
 - Documents touched: docs/garage-design.md
 - Tasks: T-470
+
+## 2026-10-31: Minions spawn on a timer, and 30% slower
+- Decision or change: Minions spawn on a timer from the screen's edges however many are alive, every 1.2 s at the run's start down to 0.3 s at 7:00, shortened by the combo, with a safety ceiling of 100 alive; they move 30% slower (4.2 units per second). The board played it: "LGTM", and saw frame drops at some points (T-468 records a run to find them). The board accepted the agent's Edit-tool workaround after a hook refused its result notes edit (2026-10-31).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-443
+
+## 2026-10-31: The itch.io build ignores the board's level files
+- Decision or change: publish_itch.py ignores the board's untracked level files in game/data/levels/ and the web build leaves them out.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-471
+
+## 2026-10-31: Threading the needle flashes the pair
+- Decision or change: When the car threads the needle, the two paired obstacles and their dashed line flash white, two pulses over 0.6 s; in a chained row only the threaded pair flashes. The board: "LGTM" (from the screenshots).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-451
+
+## 2026-10-31: Text for the HUD layout editor
+- Decision or change: Labels for the pause screen's HUD layout editor (open, hint, reset, done) in pause_text.json, style loop 8 to 9.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-452
+
+## 2026-10-31: The guard trusts task_notes.py
+- Decision or change: The command guard trusts tools/task_notes.py like the status script, so agents can write their result notes without refusals or workarounds.
+- Documents touched: tasks/README.md
+- Tasks: T-472
+
+## 2026-10-31: The game stays fast with a crowd of minions
+- Decision or change: Enemy code optimised with the same behaviour: the minion step is about 4.5 times faster (100 minions: 37 to 8 ms a frame; 300: 119 to 25 ms). A repeatable benchmark, game/tools/minion_crowd_bench.sh. The ceiling stays at 100 alive; the agent proposes 150. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-444

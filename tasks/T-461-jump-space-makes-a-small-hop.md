@@ -1,7 +1,7 @@
 ---
 id: T-461
 title: Jump: Space makes a small hop on the car's real height, and its airtime counts for missions
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
