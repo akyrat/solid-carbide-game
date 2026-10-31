@@ -1,7 +1,7 @@
 ---
 id: T-470
 title: The garage's Buy buttons are on screen at every window size
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -69,3 +69,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 **QA round 1 (2026-10-31): all six criteria pass.** qa_check: three test sets passed, documents changed (garage-design.md has the new section), 4 screenshots present, test_garage_fit covers the four sizes, game/data/levels unchanged.
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, swipe review)
