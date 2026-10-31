@@ -1,7 +1,7 @@
 ---
 id: T-448
 title: Publish a browser build of master to the board's private itch.io page with one script
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -79,3 +79,4 @@ Built by the QA/Integration Agent (build task), 2026-10-31.
 - Godot's export writes .uid/.import files; I removed the generated ones and committed none.
 - Docs: docs/working-with-the-board.md has "Publishing to itch.io" (target jerry-of-rivia/solid-carbide:html5, per the board). No real push made.
 - Tests: tools/test_publish_itch.py, 15 tests (off master, dirty, untracked, merge in progress, missing key/target, exact butler command with a stub butler, key redacted, dry run). tools suite 606 tests OK (incl. these); game/tools suite OK. Nothing under game/data/levels/ touched.
+- 2026-10-31, in-progress → in-qa: Script, Web preset, docs and tests done; real export verified; no push
