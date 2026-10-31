@@ -109,6 +109,10 @@ func hud_rects() -> Array:
 			var cr: Rect2 = (c as Control).get_global_rect()
 			if key == "coins_label" and c.get_parent() is Control:
 				cr = (c.get_parent() as Control).get_global_rect()  # the coins' whole row
+			if key == "sub_goal" and c.get("label_row") is Control:
+				# The subs label row can be a little wider than the square (T-453: kept clear
+				# wherever the player moves the sub goal).
+				cr = cr.merge((c.label_row as Control).get_global_rect())
 			if cr.size.x <= 0.0 and cr.size.y <= 0.0:
 				continue
 			r = cr if not any else r.merge(cr)

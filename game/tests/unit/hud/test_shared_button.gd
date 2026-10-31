@@ -89,8 +89,9 @@ func test_level_up_and_pause_buttons_are_shared() -> void:
 	screen.skip_animation()
 	assert_gt(screen.cards.size(), 0)
 	assert_eq(_all_shared(screen, "level-up"), screen.cards.size(), "one Take it per card")
-	# Pause: Trick list, Restart, Exit, the trick list's Back and the two camera checkboxes.
-	assert_eq(_all_shared(pause, "pause"), 6)
+	# Pause: Trick list, Edit HUD layout (T-453), Restart, Exit, the trick list's Back, the two
+	# camera checkboxes, and the HUD layout editor's Reset layout and Done (T-453).
+	assert_eq(_all_shared(pause, "pause"), 9)
 
 
 func test_recap_buttons_are_shared() -> void:
