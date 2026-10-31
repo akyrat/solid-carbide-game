@@ -1,7 +1,7 @@
 ---
 id: T-461
 title: Jump: Space makes a small hop on the car's real height, and its airtime counts for missions
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -50,6 +50,10 @@ The board's review: play a run with Jump at each tier: the hop's height and feel
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-461.
 
 ## Style review
 
