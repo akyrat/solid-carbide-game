@@ -87,7 +87,7 @@ func _ready() -> void:
 	back_button.name = "BackButton"
 	back_button.text = BACK_TEXT
 	back_button.custom_minimum_size = Vector2(280, 56)
-	back_button.add_theme_font_size_override("font_size", 28)
+	HudStyle.style_button(back_button)  # the shared button (T-446)
 	back_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	back_button.pressed.connect(func(): back_pressed.emit())
 	column.add_child(back_button)
@@ -145,7 +145,7 @@ func _build_row(id: String) -> Control:
 	buy.name = "BuyButton"
 	buy.text = BUY_TEXT
 	buy.custom_minimum_size = Vector2(110, 48)
-	buy.add_theme_font_size_override("font_size", 24)
+	HudStyle.style_button(buy)  # the shared button (T-446); "Not enough coins" shows its disabled look
 	buy.pressed.connect(_on_buy.bind(id))
 	line.add_child(buy)
 

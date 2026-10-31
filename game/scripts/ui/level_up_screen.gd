@@ -38,7 +38,6 @@ const INK := HudStyle.BLACK
 const TITLE_CREAM := HudStyle.LEVEL_UP_TITLE_CREAM
 const TITLE_OUTLINE := HudStyle.LEVEL_UP_TITLE_OUTLINE
 const TITLE_OUTLINE_SIZE := HudStyle.LEVEL_UP_TITLE_OUTLINE_SIZE
-const HOVER_TINT := HudStyle.LEVEL_UP_HOVER_TINT
 ## T-173: 74 px taller than T-141's 360 x 300 to make room for the weapon image
 ## (64 px and its 10 px gap), so the texts keep the room they had.
 const CARD_SIZE := Vector2(360, 374)
@@ -521,11 +520,7 @@ func _add_card(id: String) -> void:
 	button.focus_mode = Control.FOCUS_NONE
 	button.custom_minimum_size = BUTTON_PLATE_SIZE
 	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	HudStyle.apply(button, "level_up_button")
-	button.add_theme_stylebox_override("normal", _plate("button_plate.png"))
-	button.add_theme_stylebox_override("hover", _plate("button_plate.png", HOVER_TINT))
-	button.add_theme_stylebox_override("pressed", _plate("button_plate_pressed.png"))
-	button.add_theme_stylebox_override("hover_pressed", _plate("button_plate_pressed.png"))
+	HudStyle.style_button(button)  # the shared button (T-446)
 	button.pressed.connect(take.bind(id))
 	v.add_child(button)
 	_row.add_child(panel)
@@ -549,13 +544,6 @@ func _art_rect(file: String, node_name: String, size: Vector2) -> TextureRect:
 	r.size = size
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return r
-
-
-func _plate(file: String, tint := Color.WHITE) -> StyleBoxTexture:
-	var st := StyleBoxTexture.new()
-	st.texture = load(ART + file)
-	st.modulate_color = tint
-	return st
 
 
 ## A label in a HudStyle role's look (T-428).

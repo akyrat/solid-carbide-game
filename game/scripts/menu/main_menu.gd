@@ -125,6 +125,6 @@ func _make_button(node_name: String, text: String, parent: Node) -> Button:
 	button.name = node_name
 	button.text = text
 	button.custom_minimum_size = Vector2(280, 56)
-	button.add_theme_font_size_override("font_size", 28)
+	HudStyle.style_button(button)  # the shared button (T-446)
 	parent.add_child(button)
 	return button

@@ -2975,3 +2975,8 @@ Entry format:
 - Decision or change: One shared size curve drives the shadows of the car, gift packs, falling enemies and molotov bottles: smaller the higher they are, the sprite's size at the surface. The board: "LGTM" (swipe review).
 - Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/visual-style.md`
 - Tasks: T-454
+
+## 2026-10-31: One button style across the game
+- Decision or change: Every player-facing button (main menu, garage, tutorial slides, level-up, pause, recap) is one shared button with five states (normal, hover, keyboard-selected, pressed, disabled) from the HUD style sheet; placeholder plates until T-447. The level-up Take it button is steel. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-446
