@@ -24,6 +24,7 @@ extends CanvasLayer
 ## {slots} are the offered tier's numbers from power_ups.json.
 
 const TEXTS_PATH := "res://data/screen_texts.json"
+const FRAME_ART := "res://art/ui/power_up_frame.png"
 
 ## Over the HUD (layer 10), under the pause screen (layer 20); never shown together with
 ## the level-up screen (same layer).
@@ -366,7 +367,7 @@ func _add_card(id: String) -> void:
 	body.add_child(glow)
 	var frame := Panel.new()
 	frame.name = "Frame"
-	frame.add_theme_stylebox_override("panel", _box(STEEL, AMBER, CARD_BORDER))
+	frame.add_theme_stylebox_override("panel", frame_box())
 	frame.size = CARD_SIZE
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body.add_child(frame)
@@ -474,6 +475,16 @@ func _tier_pips(id: String, tier: int) -> HBoxContainer:
 func _refresh() -> void:
 	for i in cards.size():
 		cards[i].highlight_frame.visible = i == highlight
+
+
+## The card's frame: the art (T-464, 170 x 170 shown at exactly 2x = CARD_SIZE, hard pixel
+## edges), or the code-drawn steel box with its amber border when the file is missing.
+static func frame_box() -> StyleBox:
+	if ResourceLoader.exists(FRAME_ART):
+		var b := StyleBoxTexture.new()
+		b.texture = load(FRAME_ART) as Texture2D
+		return b
+	return _box(STEEL, AMBER, CARD_BORDER)
 
 
 ## A flat box with hard corners (pixel look): fill, border colour and width.

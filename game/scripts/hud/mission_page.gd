@@ -26,7 +26,23 @@ const RULE_STEP := 20
 const ROW_GAP := 6.0
 const HEADER_H := 28.0
 
+## The final art (T-464), drawn at 2x with nearest filtering; the code drawing is the
+## fallback when a file is missing.
+const PAGE_ART := "res://art/hud/mission_page.png"
+const CHECKBOX_ART := "res://art/hud/mission_checkbox.png"
+const TICK_ART := "res://art/hud/mission_tick.png"
+const CROSS_ART := "res://art/hud/mission_cross.png"
+
 static var _texts: Dictionary = {}
+static var _art_cache: Dictionary = {}
+
+
+## A piece of the page's art, or null when its file is missing. Loaded once and kept: a
+## texture loaded inside `_draw` was drawn as flat white in a real run (T-464).
+static func art(path: String) -> Texture2D:
+	if not _art_cache.has(path):
+		_art_cache[path] = (load(path) as Texture2D) if ResourceLoader.exists(path) else null
+	return _art_cache[path]
 
 ## The rows of the mission on show, top to bottom.
 var rows: Array = []
@@ -46,9 +62,18 @@ class Row extends Control:
 
 	func _draw() -> void:
 		var box := Rect2(0, 3, MissionPage.BOX_SIZE, MissionPage.BOX_SIZE)
-		draw_rect(box, HudStyle.MISSION_PAPER)
-		draw_rect(box, HudStyle.MISSION_INK, false, 2.0)
-		if ticked:
+		var box_art := MissionPage.art(MissionPage.CHECKBOX_ART)
+		var tick_art := MissionPage.art(MissionPage.TICK_ART)
+		var cross_art := MissionPage.art(MissionPage.CROSS_ART)
+		if box_art != null:
+			draw_texture_rect(box_art, box, false)
+		else:
+			draw_rect(box, HudStyle.MISSION_PAPER)
+			draw_rect(box, HudStyle.MISSION_INK, false, 2.0)
+		if ticked and tick_art != null:
+			draw_texture_rect(tick_art, Rect2(box.position,
+				tick_art.get_size() * float(HudStyle.HUD_ART_SCALE)), false)
+		elif ticked:
 			var a := box.position + Vector2(3, 7)
 			var b := box.position + Vector2(6, 10)
 			var c := box.position + Vector2(12, 1)
@@ -59,9 +84,31 @@ class Row extends Control:
 			var lh := font.get_height(fs)
 			var y := label.position.y + lh * 0.55
 			for l in _wrapped_widths():
-				draw_line(Vector2(label.position.x, y), Vector2(label.position.x + l, y),
-					HudStyle.MISSION_INK, 2.0)
+				if cross_art != null:
+					_draw_strike(cross_art, label.position.x, y, l)
+				else:
+					draw_line(Vector2(label.position.x, y), Vector2(label.position.x + l, y),
+						HudStyle.MISSION_INK, 2.0)
 				y += lh
+
+	## The pen stroke across a width: its two end caps, the plain middle repeated.
+	func _draw_strike(tex: Texture2D, x: float, y: float, width: float) -> void:
+		var s := float(HudStyle.HUD_ART_SCALE)
+		var cap := 8.0 * s
+		var h := tex.get_height() * s
+		var top := y - h * 0.5
+		var th := tex.get_height()
+		if width <= 2.0 * cap:
+			draw_texture_rect_region(tex, Rect2(x, top, width, h), Rect2(0, 0, width / s, th))
+			return
+		draw_texture_rect_region(tex, Rect2(x, top, cap, h), Rect2(0, 0, 8, th))
+		var mid := x + cap
+		var end := x + width - cap
+		while mid < end:
+			var w := minf(cap, end - mid)
+			draw_texture_rect_region(tex, Rect2(mid, top, w, h), Rect2(8, 0, w / s, th))
+			mid += cap
+		draw_texture_rect_region(tex, Rect2(end, top, cap, h), Rect2(16, 0, 8, th))
 
 	## The widths of the label's wrapped lines (the stroke runs along each).
 	func _wrapped_widths() -> Array:
@@ -203,6 +250,10 @@ func _on_mission_started(_index: int) -> void:
 
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
+	var page := art(PAGE_ART)
+	if page != null:
+		draw_texture_rect(page, r, false)
+		return
 	draw_rect(r.grow(2.0), HudStyle.MISSION_EDGE)
 	draw_rect(r, HudStyle.MISSION_PAPER)
 	var y := PAD.y + HEADER_H + RULE_STEP - 4

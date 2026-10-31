@@ -9,11 +9,21 @@ extends Node
 @export var rng_seed: int = 3
 @export var weapons_gift: bool = false
 @export var highlight_moves: int = 0
+## A light backdrop over the world and under the HUD and overlay (T-464's light-ground shot).
+@export var light: bool = false
 
 
 func _ready() -> void:
 	var game: Node = preload("res://scenes/game/game.tscn").instantiate()
 	add_child(game)
+	if light:
+		var back := CanvasLayer.new()
+		back.layer = 1
+		var rect := ColorRect.new()
+		rect.color = Color(0.86, 0.89, 0.92)
+		rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+		back.add_child(rect)
+		add_child(back)
 	game.start_run()  # straight into a run, without the tutorial slides
 	await get_tree().process_frame
 	await get_tree().process_frame

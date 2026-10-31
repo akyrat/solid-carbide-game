@@ -135,9 +135,14 @@ func test_the_look_differs_from_the_weapons_gift_screen() -> void:
 			"none of the Greenbull gift screen's art")
 	assert_ne(screen.title_label.text, level_up.title_label.text)
 	var frame: Panel = screen.cards[0].body.get_node("Frame")
-	var box: StyleBoxFlat = frame.get_theme_stylebox("panel")
-	assert_eq(box.bg_color, PowerUpScreen.STEEL)
-	assert_eq(box.border_color, PowerUpScreen.AMBER)
+	var box: StyleBox = frame.get_theme_stylebox("panel")
+	if box is StyleBoxTexture:
+		# The final art (T-464): the steel plate with its amber frame, at exactly 2x.
+		assert_eq((box as StyleBoxTexture).texture.resource_path, PowerUpScreen.FRAME_ART)
+		assert_eq((box as StyleBoxTexture).texture.get_size() * 2.0, PowerUpScreen.CARD_SIZE)
+	else:
+		assert_eq((box as StyleBoxFlat).bg_color, PowerUpScreen.STEEL)
+		assert_eq((box as StyleBoxFlat).border_color, PowerUpScreen.AMBER)
 
 
 func test_keys_move_the_highlight_and_enter_takes_it() -> void:
