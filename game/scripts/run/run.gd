@@ -132,7 +132,7 @@ var drift_smoke: Node2D
 var boost_effect: Node2D
 ## The Rev Charge placeholder effect (task T-460, rev_charge_effect.gd): a glow at
 ## the rear while charging, speed lines while boosting. Child "RevChargeEffect" of
-## the View, under the car.
+## the View, drawn over the car.
 var rev_charge_effect: Node2D
 ## The wreck's smoke and flames (task T-360): on the drawn car, above it, from
 ## the last heart to the run's end. Child "WreckEffect" of the View.
@@ -244,7 +244,8 @@ func _ready() -> void:
 	rev_charge_effect.name = "RevChargeEffect"
 	rev_charge_effect.view_transform = ISO_TRANSFORM
 	view_root.add_child(rev_charge_effect)
-	view_root.move_child(rev_charge_effect, car_sprite.get_index())  # under the car
+	# Over the car: under it, the car's own sprite hides most of the rear glow.
+	view_root.move_child(rev_charge_effect, car_sprite.get_index() + 1)
 
 	level_up_burst = LevelUpBurstScene.instantiate()
 	level_up_burst.name = "LevelUpBurst"

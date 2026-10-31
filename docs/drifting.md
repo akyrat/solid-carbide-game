@@ -255,6 +255,23 @@ The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers 
 - **Rusty Overcoat:** contact damage 2 / 3 / 4 / 5 (a minion has 4 health, T-408), a per-enemy repeat cooldown of 0.5 / 0.5 / 0.4 / 0.3 s, and the kaiju is hit only at tier 4. **Open questions for the board:** the repeat cooldown (so a crowd does not melt each frame) and whether the kaiju is hit.
 - **When every power-up is at its last tier** (`offer_when_exhausted`): the mission gift is skipped, with no overlay and no pause, and the run goes on. Reason: an overlay with nothing to choose would only interrupt the run.
 
+### Rev Charge (task T-460)
+
+The decision is in Decisions ("Driving power-ups"); the tier numbers are above. How it is built: `game/docs/driving/drift.md`, "Rev Charge (T-460)".
+
+- **What it does:** with Rev Charge owned, holding W and S together charges a boost; releasing S fires it. The charge fills in the tier's charge time (1.6 / 1.3 / 1.0 / 0.7 s). The boost lifts the car at once to its top speed × the tier's multiplier (×1.5 / 1.6 / 1.75 / 1.9; from a top speed of 16.5 units/s that is 24.8 / 26.4 / 28.9 / 31.4) and holds it there for the tier's boost time (0.8 / 1.0 / 1.2 / 1.5 s); then the car slows back to its top speed on its own over a second or two. The top speed it multiplies includes the hype speed boost, so a hot car boosts harder.
+- **Without it:** W+S drives exactly as before (W wins over S).
+- **The proposals for the playtest** (Driving & Drift Agent's calls):
+  - **While charging, the car slows to cruise speed** (brakes from top speed at the normal ramp rate, about 0.8 s, then holds cruise, 11 units/s) **and keeps driving**: steering and drifting work as with W alone. Reason: the car is never parked in the middle of a run full of enemies, and a charge can be built inside a drift (the tiers' reasons count on charging mid-drift); the slowdown is the price of the charge and makes the release feel like a kick.
+  - **A partial charge fires a partial boost:** the boost's extra speed and its length both scale with how full the charge was. Below a quarter of a full charge nothing fires, so a brief W+S overlap while switching keys never boosts.
+  - **Letting go of W first** (S still held) drops the charge with no boost: the car then brakes or reverses on S as usual.
+  - **Drifting:** charging works mid-drift (above), and the boost holds its speed through a drift; it is the same forward push as W's, so the drift's grip and the tricks are unchanged.
+  - **The air:** the charge does not grow in the air but is kept; releasing S in the air drops it (no boost: in the air the car keeps its takeoff speed, Decisions, "No drifting in the air"). A boost already running keeps its clock in the air and holds its speed again on landing if time is left.
+  - **Walls:** a wall, building, boulder or ground-side hit ends a running boost (as it ends the drift since T-438); a charge in progress is kept.
+  - **The wreck:** the controls go dead, so the charge and any running boost are dropped, with no boost.
+- **The placeholder effect** (drawn in code until the art ticket replaces it): while charging, a round glow at the car's rear, in the heat yellows and oranges, that grows with the charge and pulses once it is full; while boosting, five light blue-grey speed lines streaming back from the rear, fading as the boost runs out. Both stop when the charge or boost ends; nothing shows without the power-up.
+- Screenshots and GIF: `art-archive/T-460/screenshots/`.
+
 ### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.

@@ -63,4 +63,35 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Driving & Drift Agent, 2026-10-31 (goal G-009). Done.
+
+**What was built**
+- `game/scripts/driving/rev_charge.gd` (new): `car.rev_charge`. At tier 0 (not owned) it returns at once, so the car is the same as before. With a tier, W+S charges (`charge_seconds` from power_ups.json via `PowerUpData.at`). Releasing S fires a boost: the forward speed is held at least at top speed × the multiplier for `boost_seconds`. Signals: `charge_started`, `charge_cancelled`, `fired(fraction, boost_speed, seconds)`, `boost_ended`.
+- `game/scripts/driving/car.gd`: calls `rev_charge.before_step()` and `step()` around `model.update_velocity()`. A wall or ground-side hit (`_end_drift_on_hit`) ends a running boost. With `input_enabled` off (the wreck), `rev_charge.reset()` is called.
+- `game/scripts/driving/rev_charge_effect.gd` (new): the placeholder drawn in code. While charging, a glow at the rear grows with the charge and pulses when full (heat yellows and oranges). While boosting, 5 light blue-grey speed lines fade out. Nothing shows without the power-up.
+- `game/scripts/run/run.gd` (not in files_expected_to_change; needed for the board's playtest in a run): adds a "RevChargeEffect" child to the View, drawn over the car (under the car, the sprite hid the glow), lifted on raised ground like the boost effect. It also sets the car's tier from `RunState.power_up_tier("rev_charge")` on each new car and on `power_ups_changed` (`_apply_rev_charge_tier`).
+- Fixtures: `game/tests/fixtures/rev_charge_demo.tscn` (tier 4, stepped once per frame) and `rev_charge_demo_record.tscn` (also saves frames for the GIF; this one is not in files_expected_to_change).
+
+**Proposals for the playtest** (written in Drifting, Content, "Rev Charge (task T-460)")
+- While charging, the car brakes to cruise speed at the ramp rate, then holds there. Steering and drifting still work.
+- A partial charge fires a partial boost: the extra speed and the length both scale with the charge. Below 25% nothing fires.
+- Letting go of W first drops the charge.
+- In the air, the charge doesn't grow, and releasing S drops it. A boost that is already running keeps its clock in the air.
+- A wall hit ends the boost but keeps the charge.
+- The wreck drops both the charge and the boost.
+
+**Tests:** `game/tests/unit/test_rev_charge.gd` has 16 tests: tier numbers, charge time per tier, boost strength and length per tier, higher tier is stronger and faster, slowing to cruise while charging, partial charge, short overlap, W released first, the wreck, a wall hit, no power-up matches `CarModel.step` step for step, effect visibility and stop, and the run sets the tier.
+- GUT full suite: 2395/2395 passed (931 s).
+- `python -m unittest discover -s game/tools`: 767 tests OK (1 skipped).
+- `python -m unittest discover -s tools`: 614 tests OK.
+
+**Screenshots** (`art-archive/T-460/screenshots/`): `rev_charge_t4_charging.png` (the glow while charging), `rev_charge_t4_boosting.png` (the speed lines after release), `rev_charge_t4_after.png` (the effect gone after the boost), `rev_charge_t4.gif` (a full charge and release, tier 4, real time).
+- The GIF's source frames are in `art-archive/T-460/frames/`, not committed (90 PNGs). I didn't delete them, since deleting needs a command that isn't pre-approved. The fixture rebuilds them.
+
+**Documents affected:** `docs/drifting.md` (Content, "Rev Charge (task T-460)"). Also `game/docs/driving/drift.md` ("Rev Charge (T-460)").
+
+**PixelLab:** 0 generations. Refusals: none.
+
+**Housekeeping notes:**
+- I ran one harmless no-op heredoc command by mistake (not refused).
+- The GUT run went past the 10-minute foreground limit and finished in the background with exit 0. No background jobs are left.

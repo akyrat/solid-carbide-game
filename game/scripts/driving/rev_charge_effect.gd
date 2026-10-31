@@ -1,6 +1,6 @@
 extends Node2D
 ## The Rev Charge placeholder effect (task T-460), drawn in code until the art
-## ticket replaces it. Two parts, both behind the car:
+## ticket replaces it. The run draws it over the car. Two parts, at the car's rear:
 ## - while charging: a glow at the car's rear that grows with the charge
 ##   (heat yellows and oranges, Visual style, HUD palette "for heat and fire")
 ##   and pulses once the charge is full;
@@ -20,9 +20,9 @@ const GLOW_HOT := Color8(255, 250, 209, 255)
 const LINE_COLOUR := Color8(235, 242, 255, 230)
 
 ## How far behind the car's centre the rear is, in units (the car is 3 long).
-@export var behind_units := 1.4
+@export var behind_units := 1.6
 ## Glow radius at a full charge, in view pixels.
-@export var glow_radius_px := 14.0
+@export var glow_radius_px := 18.0
 ## Speed lines: count, length (px) and how far back they reach (units).
 @export var line_count := 5
 @export var line_length_px := 22.0
