@@ -59,4 +59,11 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (Enemy Behavior, 2026-10-31).
+
+- `game/scripts/enemies/overcoat_contact.gd` (new, `OvercoatContact`): reads the owned tier from `RunState.power_up_tier("rusty_overcoat")` and `PowerUpData`, calls `take_damage(contact_damage, "rusty_overcoat")` (red flash, death and drops as for any damage), returns the per-enemy repeat cooldown. `minion.gd` and `kaiju.gd` call it in `contact_step()` after the touch and level checks, before the car's invulnerability test; new `overcoat_cooldown` field on each. The kaiju is skipped unless the tier's `hits_kaiju` is true (tier 4). The enemy still hits the car as before. No power-up: no change.
+- Proposals as in power_ups.json: cooldown 0.5 / 0.5 / 0.4 / 0.3 s per enemy; kaiju only at tier 4. Written in `docs/enemies.md` (Content, "Rusty Overcoat", and Open questions) and `game/docs/enemies/minions.md`.
+- Tests: `game/tests/unit/enemies/test_rusty_overcoat.gd`, 8 tests (each tier's damage and red flash, car still hit, kills at tier 2 and 3, per-enemy cooldown, not touching, without the power-up, kaiju per tier, kaiju without it): 8/8 pass.
+- Test sets: Godot (GUT) full suite 2418/2418 passing, 200 scripts. The Python and docs sets were not run by me (no pre-approved command for them); QA/merge runs them.
+- Screenshot: `art-archive/T-463/screenshots/overcoat_flash.png` (fixture `game/tests/fixtures/t463_overcoat_demo.tscn`: tier 2, four minions touching the car, all tinted red).
+- Documents affected: docs/enemies.md. No art, no PixelLab (0 generations). Refusals: none.

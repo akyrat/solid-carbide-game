@@ -124,8 +124,17 @@ What the game does on the elevation map, following the decision "Enemies jump do
 - **The kaiju (proposal):** it drops off edges too, with the same rules and the same fall.
 - **Numbers (proposal):** the gravity (the car's), the animation's speeds, tilt and squash are in the code, not balancing data.
 
+### Rusty Overcoat: the car damages what it touches (built in task T-463)
+
+Following Drifting, Decisions, "Driving power-ups". Numbers: `game/data/power_ups.json`, `rusty_overcoat` (all proposals for the board's playtest). How it is built: `game/docs/enemies/minions.md`, "Rusty Overcoat".
+
+- **The rule:** with Rusty Overcoat owned, a minion whose body touches the car's takes the owned tier's `contact_damage` (2 / 3 / 4 / 5; a minion has 4 health), with the usual red hit flash, and dies and drops coins as from any damage. The same level rule as the minion's own contact damage applies (the car within 1 unit of the minion's height). The minion still hits the car as before. Without the power-up, contact deals the minion no damage.
+- **Repeat (proposal, open question for the board):** each enemy can be hit again only after the tier's `repeat_cooldown_seconds` (0.5 / 0.5 / 0.4 / 0.3 s), counted per enemy, so driving through a crowd hits each minion once per cooldown and a minion stuck to the car does not melt in one frame. The car's invulnerability after a hit does not stop it (that only protects the car).
+- **The kaiju (proposal, open question for the board):** hit only when the tier's `hits_kaiju` is true, which is tier 4 only; it then takes the tier's damage on the same repeat cooldown.
+
 ## Open questions
 
+- Rusty Overcoat: is the per-enemy repeat cooldown right (0.5 / 0.5 / 0.4 / 0.3 s), and should the car hit the kaiju (tier 4 only now)? Both are proposals, judged in the board's playtest.
 
 ## References
 
