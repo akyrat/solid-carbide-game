@@ -43,13 +43,13 @@ The board's review: drift into walls, head-on and glancing, and see the drift en
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test drives the real car into a wall while drifting and asserts the drift ends on the hit step: the drift stops counting time, it pays once for the time up to the hit, and the hit's combo cut is still applied once. (QA: pass / fail)
-- [ ] A test shows a drift that never touches a wall behaves as before (ends and pays when the player ends it). (QA: pass / fail)
-- [ ] A test shows the player can start a new drift after the bounce. (QA: pass / fail)
-- [ ] The T-435 wall bounce tests still pass unchanged. (QA: pass / fail)
-- [ ] docs/drifting.md (Content) and game/docs/driving/collisions.md describe that a wall hit ends the drift. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test drives the real car into a wall while drifting and asserts the drift ends on the hit step: the drift stops counting time, it pays once for the time up to the hit, and the hit's combo cut is still applied once. (QA: pass)
+- [ ] A test shows a drift that never touches a wall behaves as before (ends and pays when the player ends it). (QA: pass)
+- [ ] A test shows the player can start a new drift after the bounce. (QA: pass)
+- [ ] The T-435 wall bounce tests still pass unchanged. (QA: pass)
+- [ ] docs/drifting.md (Content) and game/docs/driving/collisions.md describe that a wall hit ends the drift. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -81,3 +81,7 @@ Built. `car.gd`: new `_end_drift_on_hit(impact)`, called in `_bounce()` and `_bo
 - 2026-10-31, in-progress → in-qa: Built; all three test sets pass; ready for QA.
 
 Screenshots (added before QA): `art-archive/T-438/screenshots/wall_hit_ends_drift_frame1.png` (1 frame after the hit: the drift has ended, the car bounced off the boulder, LONG DRIFT! and COMBO BROKEN! both shown) and `wall_hit_ends_drift_frame10.png` (10 frames after the hit, popups stacked, tyre marks of the drift stop at the hit). Fixture: `game/tests/fixtures/wall_hit_drift.tscn` (the T-315 crash fixture with the tutorial slides off); the log shows the LONG DRIFT! payment (1.72 s) and COMBO BROKEN on the same step as the hit.
+
+### QA, 2026-10-31
+
+All seven criteria pass. qa_check: tests (3 sets, GUT_TIME_LIMIT=1500, fixture included), documents, screenshots all PASS. test_wall_hit_ends_drift.gd covers the hit, the unchanged drift and the new drift after the bounce; test_wall_bounce.gd passes unchanged; docs/drifting.md and collisions.md describe the rule; game/data/levels untouched.
