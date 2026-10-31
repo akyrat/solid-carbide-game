@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/height_shadow_demo.gd" id="1"]
+
+[node name="HeightShadowCarLow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+what = "car"
+at = Vector2(0, 0)
+above = 2.0
+zoom = 6.0

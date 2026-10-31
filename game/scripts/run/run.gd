@@ -569,7 +569,7 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	car_sprite.place(at_ground, car.height)
 	car_sprite.set_in_air(CarSpriteScript.is_in_air(car.height, ground_h))
 	car_sprite.set_heading(car.rotation)
-	shadow.place(units, ground_h)
+	shadow.place(units, ground_h, car.height)  # T-454: smaller the higher the car
 	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
 	drift_smoke.position = lift
 	boost_effect.position = lift

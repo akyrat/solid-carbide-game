@@ -216,7 +216,7 @@ func sync_view(snap_camera: bool = true) -> void:
 	car_sprite.place(at_ground, car.height)
 	car_sprite.set_in_air(car_sprite.is_in_air(car.height, ground_height.height_at(units)))
 	car_sprite.set_heading(car.rotation)
-	shadow.place(units, ground_height.height_at(units))
+	shadow.place(units, ground_height.height_at(units), car.height)  # T-454
 	update_depth()
 	update_see_through(car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
