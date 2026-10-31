@@ -1,7 +1,7 @@
 ---
 id: T-452
 title: Text: the HUD layout editor's labels
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -122,3 +122,4 @@ Texts in `game/data/pause_text.json` (valid JSON), each through the style loop (
 Docs: `docs/hud-and-menus.md` (Content, Pause screen) lists the four keys and texts.
 Tests: `python -m unittest discover -s game/tools -p "test_*.py"`: Ran 767 tests, OK (skipped=1). Some tests print "FAIL parked_car_..." lines as expected-failure scenarios; the run result is OK.
 Nothing under game/data/levels/ touched. Note for the UI ticket: the sentence-case script flags "HUD"; if that matters, "Edit screen layout" is the alternative.
+- 2026-10-31, in-progress → in-qa: Four texts in pause_text.json, scores 8/9/9/9, 767 tests OK
