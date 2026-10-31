@@ -1,7 +1,7 @@
 ---
 id: T-425
 title: merge_batch.py crashes printing on the Windows console, and drive_elevation_sample.sh stops before driving
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/merge_batch.py, game/tools/drive_elevation_sample.sh, game/tools/drive_elevation_sample.gd]
 files_expected_to_change: [tools/merge_batch.py, tools/, game/tools/drive_elevation_sample.gd, game/tools/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Started: tooling, merges after QA.
 
 Merge script no longer crashes on special characters; the elevation drive reaches height 3. QA running now.
 
+### 2026-10-30, In QA
+
+QA passed (3/3). Tooling only, so it merges as soon as master is free.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -72,3 +76,4 @@ Agent notes (builder):
 - Drive output now: layers 0, 3 at 1.82 s, 6 at 5.40 s, 0 at 7.28 s; max height 6.85; "PASS: the street, height 3 and height 6 reached, and the car landed off the height-6 edge", exit 0.
 - Tests (after merging master): `game/tools` python 752 OK (1 skipped); `tools` python 585 OK; `run_tests.sh` 2172/2172 passing, TESTS PASSED.
 - 2026-10-30, in-progress → in-qa: Both fixed: merge_batch/qa_check console-safe with tests; drive script prepares the car after the scene is ready and passes. All three test sets green.
+- 2026-10-31, in-qa → done: QA passed (tooling, merges straight after QA)
