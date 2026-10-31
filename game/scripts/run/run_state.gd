@@ -201,6 +201,8 @@ var _slain := {}  # enemy type -> kills
 var _tricks_done := {}  # trick id -> times completed
 var _weapon_kills := {}  # weapon id -> kills
 var _highest_combo := 1.0
+## When the combo was last cut by a collision, in seconds into the run (T-415).
+var _last_cut_at := -1000.0
 var _likes_total := 0.0
 ## Set by the weapon rack (weapons.gd bind): returns {weapon id: tier} for the
 ## weapons the car owns now. Empty Callable when no rack is bound.
@@ -227,9 +229,12 @@ func start_run() -> void:
 	pickup_magnet_radius_units = _run_data.pickup_magnet_radius_units()
 	pickup_pull_speed = _run_data.pickup_pull_speed_units_per_second()
 	if progress != null:
-		max_health = progress.current_value("car_health")
-		pickup_magnet_radius_units = progress.current_value("pickup_magnet")  # garage upgrade (T-224)
+		# T-415: the garage adds to run.json's base (read here, not the garage's copy).
+		var g: GarageData = progress.garage
+		max_health += g.bonus("car_health", progress.level("car_health"))
+		pickup_magnet_radius_units += g.bonus("pickup_magnet", progress.level("pickup_magnet"))  # garage upgrade (T-224)
 	health = max_health
+	_last_cut_at = -1000.0
 	invulnerable_left = 0.0
 	invulnerable_total = 0.0
 	time_left = RUN_SECONDS
@@ -559,10 +564,17 @@ func collision() -> void:
 
 
 ## The collision's cut of the combo, without paying the trick in progress.
+##
+## T-415 (Decisions, "Hits close together cut the combo once"): a collision within
+## combo.json's collision_window_seconds of the one that cut the combo does not cut it again
+## (the crash still pays its trick). The window runs on the run's clock.
 func _cut_combo() -> void:
+	if time_elapsed() - _last_cut_at < _combo_data.collision_window_seconds():
+		return
 	var before := combo
 	_set_combo(_combo_data.after_collision(combo))
 	if before - combo > EPSILON:
+		_last_cut_at = time_elapsed()
 		combo_broken.emit()
 
 

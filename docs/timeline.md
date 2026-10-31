@@ -2750,3 +2750,8 @@ Entry format:
 - Decision or change: Build I: weapons keep firing during the wreck, and molotovs land only where enemies can be. The board played it: "LGTM".
 - Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`
 - Tasks: T-414
+
+## 2026-10-31: Closing the game mid-run, and pausing when the window loses focus
+- Decision or change: Build I: closing the game mid-run is handled, and the game pauses when its window loses focus. The board played it: "LGTM".
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-416
