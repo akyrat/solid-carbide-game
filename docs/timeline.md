@@ -2810,3 +2810,93 @@ Entry format:
 - Decision or change: The arrows pointing to off-screen gift packs become 3 times as big and wear the gift box's dark and light green instead of the placeholder pale cyan.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-442
+
+## 2026-10-31: Minions spawn on a timer, and 30% slower
+- Decision or change: Minions spawn on a constant timer from the screen's edges, faster as the run goes on, instead of topping up to a wanted count; the combo still raises spawning; minions move 30% slower.
+- Documents touched: docs/enemies.md
+- Tasks: T-443
+
+## 2026-10-31: The game stays fast with a crowd of minions
+- Decision or change: Enemy code is measured and optimised so a crowd of minions doesn't slow the game down much, with a repeatable measurement script.
+- Documents touched: game/docs/enemies/minions.md
+- Tasks: T-444
+
+## 2026-10-31: The board's own splash art behind the main menu
+- Decision or change: The main menu's splash cover is the board's own picture, replacing T-433's 6/10 cover (archived).
+- Documents touched: docs/visual-style.md
+- Tasks: T-445
+
+## 2026-10-31: One button style across the game
+- Decision or change: Every player-facing button (menu, garage, slides, level-up, pause, recap) uses one shared button with one look and feel from the HUD style sheet; the board's tools keep theirs.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-446
+
+## 2026-10-31: Art: the shared button's plates
+- Decision or change: Script-drawn button plates for each state, in the HUD style sheet's look, replace the shared button's placeholder.
+- Documents touched: docs/visual-style.md
+- Tasks: T-447
+
+## 2026-10-31: A browser build on a private itch.io page
+- Decision or change: The game is published as a browser build to the board's private, password-protected itch.io page with one script (tools/publish_itch.py, butler), run by the Project Lead only when the board asks.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-448
+
+## 2026-10-31: The board's own splash art behind the main menu
+- Decision or change: The main menu's splash cover is the board's own picture (made with PixelLab outside the studio), byte for byte; T-433's 6/10 cover is archived in art-archive/T-445/. The first ticket under the board's rule that approved art skips QA and the tests. The board: "LGTM".
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-445
+
+## 2026-10-31: Board-approved art skips QA in the status script
+- Decision or change: A board_approved_art ticket field lets art the board has already approved go from the agent straight to the playtest and merge with no QA marks and no test sets.
+- Documents touched: tasks/README.md
+- Tasks: T-449
+
+## 2026-10-31: The splash record is valid JSON again
+- Decision or change: Fixed game/art/menu/splash.json (unescaped Windows path) after T-445 merged without tests and turned master's Godot tests red.
+- Documents touched: game/art/menu/splash.json
+- Tasks: T-450
+
+## 2026-10-31: The splash record is valid JSON again
+- Decision or change: Fixed game/art/menu/splash.json (unescaped Windows path, written by T-445) after T-445 merged without tests and turned master's Godot tests red. Lesson: board-approved art still needs its records checked.
+- Documents touched: none
+- Tasks: T-450
+
+## 2026-10-31: Text for the alert sign pieces in the level creator
+- Decision or change: Names for the level creator's standing alert sign and alert banner pieces, their head and body designs and the banner's wall and height hints, in creator_texts.json (style loop 8/10).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-440
+
+## 2026-10-31: A browser build on a private itch.io page
+- Decision or change: tools/publish_itch.py exports master as a browser (Web) build and pushes it with butler to the board's private itch.io page (jerry-of-rivia/solid-carbide:html5); the Project Lead runs it only when the board asks. QA passed; merged straight after QA.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-448
+
+## 2026-10-31: Board-approved art skips QA in the status script
+- Decision or change: A board_approved_art ticket field lets art the board has already approved go from the agent straight to the playtest and merge with no QA marks and no test sets. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-449
+
+## 2026-10-31: Threading the needle flashes the pair
+- Decision or change: When the car threads the needle, the two paired obstacles and their dashed line flash.
+- Documents touched: docs/level-design.md
+- Tasks: T-451
+
+## 2026-10-31: Text for the HUD layout editor
+- Decision or change: Labels for the pause screen's HUD layout editor: open, hint, reset and done.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-452
+
+## 2026-10-31: The player moves the HUD's pieces
+- Decision or change: A HUD layout editor on the pause screen lets the player drag HUD pieces, reset them, and keep the layout between sessions.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-453
+
+## 2026-10-31: Shadows shrink with height
+- Decision or change: Every object in the air casts a shadow that is smaller the higher it is, up to its sprite's size at the surface, through one shared helper.
+- Documents touched: docs/visual-style.md
+- Tasks: T-454
+
+## 2026-10-31: Mission packs and driving power-ups
+- Decision or change: The board defined mission packs: one mission at a time on a pixel-art notebook page on the left side, each with one or more checkbox goals (quantity goals show progress), 30 missions a run, for that run only; the first 5 fixed (drift 4 s, 10 alt drifts, 3 s airtime, 3 air 180s, an air 360), missions 6 to 30 generated at random each run from trick combinations. A completed mission offers 2 driving power-ups on an overlay distinct from the weapons' gift menu: Rev Charge (W+S charges a boost released with S), Jump (Space hops; its airtime counts for missions), Bouncy Bumpers (bigger wall bounces) and Rusty Overcoat (contact damage to enemies), each with tiers and an icon; tiers, numbers and the generator's rules are the agents' proposals. Built as goal G-009, PixelLab cap 40.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/drifting.md`
+- Tasks: goal G-009

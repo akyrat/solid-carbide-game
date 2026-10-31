@@ -125,6 +125,16 @@ def ticket_status(r, branch, tid):
     return ""
 
 
+def board_approved_art(r, branch, tid):
+    """T-449: True when the ticket's header on its branch says `board_approved_art: yes` (art the board already approved:
+    no QA round and no test sets, tasks/README.md, "QA")."""
+    for name in r.out("ls-tree", "--name-only", branch, "--", "tasks/").splitlines():
+        if re.fullmatch(rf"tasks/{tid}-.*\.md", name):
+            head = r.out("show", f"{branch}:{name}").split("\n---", 1)[0]
+            return bool(re.search(r"^board_approved_art:\s*yes\s*$", head, re.M | re.I))
+    return False
+
+
 def generated_added(r, branch):
     """Godot-generated files (*.import, *.uid) the branch added that master does not track."""
     names = r.out("diff", "--name-only", "--diff-filter=A", f"HEAD...{branch}").splitlines()
@@ -188,8 +198,11 @@ def merge_one(r, tid, opts, tests, ours=None):
             r.git("commit", "-q", "-m", f"{tid}: marked done", cwd=wt, check=True)
             marked = r.out("rev-parse", "HEAD", cwd=wt).strip()
 
+    approved = board_approved_art(r, branch, tid)
+    if approved:   # T-449: no test sets for art the board already approved
+        tests = []
     info = {"tid": tid, "branch": branch, "wt": wt, "prev": prev, "marked": marked, "left_out": left_out,
-            "already_done": already_done}
+            "already_done": already_done, "approved_art": approved}
 
     def unmark():
         unmark_branch(r, info)
@@ -267,6 +280,8 @@ def finish(r, info):
     extras = ""
     if already_done:
         extras += " (already done)"
+    if info.get("approved_art"):
+        extras += " (board-approved art: no test sets run)"
     if left_out:
         extras += f" (left out {len(left_out)} Godot-generated .import/.uid files the branch added)"
     return f"merged{extras}{note}"
@@ -353,6 +368,10 @@ def merge_batch(r, tickets, opts, tests):
                 lines[info["tid"]] = "merged, NOT tested (the batch stopped first); worktree and branch kept"
                 print(f"{info['tid']}: {lines[info['tid']]}", flush=True)
             return lines, True
+        if merged and all(i["approved_art"] for i in merged):
+            # only board-approved art in this round: nothing for the test sets to check
+            accepted += merged
+            break
         if not merged or not tests:
             accepted += merged
             break
