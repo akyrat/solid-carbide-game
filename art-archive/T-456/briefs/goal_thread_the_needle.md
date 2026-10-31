@@ -1,0 +1,1 @@
+A goal line on the mission notebook page (small, left of the HUD): the goal "thread the needle N times" (drive through a tight gap between obstacles). It is a quantity goal and MUST contain the slots {done}/{total} exactly, like the board's example "2/4 Alt drifts". Short, one line, sentence case, no end punctuation, plain label. No "Greenbull says".

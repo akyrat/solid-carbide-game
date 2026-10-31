@@ -1,0 +1,1 @@
+Bounce {bounce_multiplier}x farther off walls and obstacles. Crashes are content too.
