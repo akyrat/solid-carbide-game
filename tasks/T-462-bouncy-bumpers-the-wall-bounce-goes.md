@@ -57,4 +57,23 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Driving & Drift Agent, 2026-10-31.
+
+**What changed**
+- `game/scripts/driving/car.gd`: `set_bouncy_bumpers_tier(tier)` reads `bounce_distance_multiplier` from `power_ups.json` (tier 0 = 1.0). `_reflect()` scales the bounce speed, cap included, by `sqrt(multiplier)`, and the re-arm reach in `_update_bounce_rearm()` uses the same scaled bounce. Without the power-up the code path is numerically the old one.
+- `game/scripts/run/run.gd`: `_apply_rev_charge_tier()` also gives the car the owned `bouncy_bumpers` tier (same place as Jump and Rev Charge).
+- `game/tests/unit/test_bouncy_bumpers.gd` (3 tests): no power-up is repeatable and a reset to tier 0 restores 1.0; distance grows tier by tier and the ratio to the plain bounce matches the data factor within 12%; a hit over the cap also scales by the factor, and above the scaled cap every hit bounces the same.
+- Docs: `docs/drifting.md` (Content, "Bouncy Bumpers (task T-462)", with the proposals), `game/docs/driving/collisions.md`.
+
+**Proposals (for the playtest)**: the factor multiplies distance, so speed gets sqrt(factor) (distance goes with speed squared); the bounce's maximum scales the same way; everything else (drift ends on a hit, combo cut, W pull-back) is unchanged.
+
+**Measured** (head-on, cruise speed 11, W held, units): none 0.869; tier 1 1.226 (x1.41); tier 2 1.585 (x1.82); tier 3 1.944 (x2.24); tier 4 2.305 (x2.65). Data: 1.4 / 1.8 / 2.2 / 2.6.
+
+**Tests**
+- Godot (full suite, run before a debug print was added to the new test): 199 scripts, 2410 tests, 2410 passing, 0 failing. The new file re-run alone after the print: 3/3.
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 767 tests, OK (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: 614 tests, OK.
+
+**Screenshots**: `art-archive/T-462/screenshots/bounce_distance_per_tier.png`, a bar plot of the measured distance per tier against base x factor, drawn by `game/tools/plot_bouncy_bumpers.py` from the test's printed numbers.
+
+**Documents affected**: `docs/drifting.md` (updated), `game/docs/driving/collisions.md` (updated). No PixelLab generations; no refusals.

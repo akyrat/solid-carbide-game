@@ -87,6 +87,13 @@ var rev_charge = RevCharge.new()
 ## small hop through height_model.hop(). Does nothing until jump.set_tier()
 ## gives it a tier > 0 (the run sets it from RunState.power_up_tier("jump")).
 var jump = JumpPowerUp.new()
+## Bouncy Bumpers (task T-462): the owned tier (0 = not owned) and its
+## bounce_distance_multiplier from power_ups.json (1.0 when not owned). A wall
+## bounce carries the car that many times further: the bounce speed (and its
+## maximum) is scaled by sqrt(multiplier), as the distance goes with the speed
+## squared (Drifting, Content, "Bouncy Bumpers (task T-462)").
+var bouncy_tier := 0
+var bounce_distance_multiplier := 1.0
 ## A Space press waiting for the next physics step (_unhandled_input with the
 ## keyboard; tests call press_jump()).
 var _jump_pressed := false
@@ -297,6 +304,24 @@ func pending_knockback() -> Vector2:
 	return _pending_knockback
 
 
+## Gives the car the owned Bouncy Bumpers tier (0 = not owned: the bounce is
+## unchanged). data: a PowerUpData, or null to read power_ups.json.
+func set_bouncy_bumpers_tier(tier: int, data = null) -> void:
+	bouncy_tier = maxi(tier, 0)
+	bounce_distance_multiplier = 1.0
+	if bouncy_tier == 0:
+		return
+	if data == null:
+		data = preload("res://scripts/data/power_up_data.gd").new()
+	var t: Dictionary = data.at("bouncy_bumpers", bouncy_tier)
+	bounce_distance_multiplier = maxf(float(t.get("bounce_distance_multiplier", 1.0)), 1.0)
+
+
+## The factor on the bounce speed and its maximum (T-462): sqrt of the distance multiplier.
+func _bounce_speed_scale() -> float:
+	return sqrt(bounce_distance_multiplier)
+
+
 ## Reflects the part of the velocity going into the obstacle, scaled by
 ## tuning.wall_bounce (0 = slide along it, 1 = full bounce). The part along the
 ## surface is kept. Emits hit_obstacle for a new hit.
@@ -337,7 +362,7 @@ func _reflect(n: Vector2) -> float:
 	var impact := maxf(0.0, -into)
 	if into < 0.0:
 		var e := clampf(float(tuning.wall_bounce), 0.0, 1.0)
-		var bounce := e * minf(impact, maxf(0.0, float(tuning.wall_bounce_max_hit_speed)))
+		var bounce := e * minf(impact, maxf(0.0, float(tuning.wall_bounce_max_hit_speed))) * _bounce_speed_scale()
 		model.set_velocity(v - into * n + bounce * n)
 		model.bounce_normal = n if bounce > 0.0 else Vector2.ZERO
 	velocity = model.get_velocity() * PX_PER_UNIT
@@ -364,7 +389,7 @@ func _update_bounce_rearm(w: bool) -> void:
 		return
 	var nose := Vector2(cos(model.rotation), sin(model.rotation))
 	var e := clampf(float(tuning.wall_bounce), 0.0, 1.0)
-	var top_bounce := e * maxf(0.0, float(tuning.wall_bounce_max_hit_speed))
+	var top_bounce := e * maxf(0.0, float(tuning.wall_bounce_max_hit_speed)) * _bounce_speed_scale()
 	var reach := REARM_GAP_UNITS + top_bounce * top_bounce / (2.0 * maxf(0.1, float(tuning.wall_bounce_pull)))
 	if not w or height_model.airborne or nose.dot(_bounce_normal) >= 0.0 			or (model.get_position() - _bounce_point).dot(_bounce_normal) > reach:
 		_bounce_key = ""

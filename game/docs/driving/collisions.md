@@ -33,6 +33,8 @@ When the car's 1 by 1 unit body hits anything on layer 1 (or the drawn car meets
 | Wall bounce: hardest hit | `wall_bounce_max_hit_speed` | **16.5 units/s** (the top speed) |
 | Wall bounce: W pull-back | `wall_bounce_pull` | **12 units/s per second** |
 
+**Bouncy Bumpers (T-462).** With the power-up owned, `car.gd`'s `set_bouncy_bumpers_tier(tier)` (the run calls it from `RunState.power_up_tier("bouncy_bumpers")`, next to Jump and Rev Charge) reads the tier's `bounce_distance_multiplier` from `power_ups.json`. `_reflect()` multiplies the bounce speed (which already includes the hardest-hit cap, so the maximum scales too) by `sqrt(multiplier)`, so the distance grows by the multiplier itself; the re-arm reach uses the same scaled bounce. Tier 0 leaves the multiplier at 1.0, and the bounce is today's. Tests: `tests/unit/test_bouncy_bumpers.gd`.
+
 With these, holding W, a head-on hit at cruise speed (11 units/s) bounces back at 4.4 units/s and travels about 0.9 units from the wall before W brings it back; one at top speed (16.5) or faster bounces back at 6.6 units/s, about 1.75 units. A faster hit (the hype speed bonus, a knockback into a wall) bounces no further. With W let go the car rolls away with its normal coasting. The Unity prototype has no bounce (report, section 3). The drawn car (1 by 3 units) may overlap a wall or boulder: only the body collides. Tests: `tests/unit/test_wall_bounce.gd`.
 
 ### Collision signal

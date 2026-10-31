@@ -639,6 +639,7 @@ func _apply_rev_charge_tier() -> void:
 	if car != null and is_instance_valid(car):
 		car.rev_charge.set_tier(state.power_up_tier("rev_charge"))
 		car.jump.set_tier(state.power_up_tier("jump"))
+		car.set_bouncy_bumpers_tier(state.power_up_tier("bouncy_bumpers"))
 
 
 ## Reads the saved camera options (task T-123) and applies them at once.
