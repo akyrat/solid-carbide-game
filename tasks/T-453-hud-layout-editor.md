@@ -1,7 +1,7 @@
 ---
 id: T-453
 title: The player moves the HUD's pieces from the pause screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -110,3 +110,4 @@ Documents affected:
 - `game/docs/hud-and-menus/pause-screen.md`: new bullet, "HUD layout editor".
 
 Nothing under `game/data/levels/` was touched. The new scripts' `.uid` files and Godot's `.import` noise were not committed.
+- 2026-10-31, in-progress → in-qa: Built: HUD layout editor from the pause screen (drag, snap, Reset, Done saves to settings.cfg hud_layout). All three test sets pass (GUT 2362/2362). Screenshots in art-archive/T-453/screenshots/.
