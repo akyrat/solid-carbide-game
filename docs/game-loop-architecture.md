@@ -205,6 +205,17 @@ The data is `game/data/missions.json` (read through `MissionData`; [game/docs/da
 - **Goals per mission:** 1 for missions 6 to 14, 2 for 15 to 24, 3 for 25 to 30, never the same trick twice in a mission. Reason: a new mission stays quick to read early; later ones take longer.
 - **Amounts** grow in a straight line from mission 6 to a cap (`base + growth × (mission − 6)`, capped; seconds rounded to 0.5): drift 5 s (+0.2, cap 10); alt drifts 12 (+0.8, cap 32); ground 360s 2 (+0.2, cap 7); airtime 4 s (+0.25, cap 10); air 180s 4 (+0.3, cap 11); air 360s 2 (+0.12, cap 5); thread the needle 3 (+0.25, cap 9). Reason: each starts just above the fixed mission of its kind and ends at about 2.5 times, still doable inside a run; the hardest tricks have the lowest caps.
 
+### Missions in the run (task T-457)
+
+The run keeps its missions and the car's driving power-ups (Decisions, "Mission packs"; how to use it: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "Missions and the car's power-ups (T-457)"). Nothing in this shows on screen by itself: the notebook page and the power-up gift overlay are separate tickets that read it.
+
+- **A fresh set every run:** a new run (Start, or Restart from the pause screen) starts at mission 1 with 30 missions: the 5 fixed ones, then missions 6 to 30 generated from the rules above with a new random seed each run (a test can give the seed).
+- **One mission at a time:** every goal of the current mission counts at once; when all are done the mission is completed and the next one is current.
+- **What counts:** the car's tricks as the combo gets them (alt drifts, 360s, air 180s and 360s, thread the needle), every landing's airtime added up (also a hop too short to raise the combo), and, for the drift goal, **one unbroken drift**: it is ticked off the moment the drift reaches its seconds, and a drift that ends, by letting go or hitting something, starts over from 0. How tricks pay in the combo and likes does not change.
+- **Signals** for the HUD page and the gift overlay: a goal's progress (done out of total), a goal completed, a mission completed, and a mission started.
+- **The car's driving power-ups:** the run keeps which power-ups the car owns and at which tier (0 = not owned); a gift gives a new one at tier 1 or the next tier of one owned, never past its last tier; a signal fires when they change; a new run clears them.
+- **Proposals for the playtest** (T-457, not the board's yet): after mission 30 nothing more is offered; a trick that completes a mission does not count for the next one too; a new mission's drift goal counts only drifting done after it appeared.
+
 ### Screen flow
 
 One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):

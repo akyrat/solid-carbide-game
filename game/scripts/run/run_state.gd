@@ -37,6 +37,7 @@ const LOSS_TIME := "time"
 const LOSS_HEALTH := "health"
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
+const RunMissionsScript := preload("res://scripts/run/missions.gd")
 
 ## A fresh run has started (start_run). Every value is back at its start.
 signal run_started
@@ -112,6 +113,20 @@ const REVIVE_HEARTS := 1.0
 ## is paused) while the time's up screen plays for `seconds`; run_ended follows
 ## when they are over.
 signal time_up_started(seconds: float)
+## The car's owned driving power-ups changed (T-457): one was granted, or a new run cleared
+## them. Read them with power_up_tier() or owned_power_ups().
+signal power_ups_changed
+
+## The run's missions (T-457; RunMissions in missions.gd): the same object for every run of
+## this state, so connect its signals once (goal_progress, goal_completed, mission_completed,
+## mission_started). start_run() gives it a fresh set; the tricks below feed it.
+var missions: RunMissions
+## The seed for the next run's generated missions; negative (the default) picks a new one
+## each run. Tests set it.
+var mission_seed := -1
+## Owned driving power-ups (T-457): id -> tier (1 to the power-up's last tier).
+var _power_ups := {}
+var _power_up_data: PowerUpData = null
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -217,6 +232,7 @@ var _combo_data: ComboData
 func _init(run_data: RunData = null, combo_data: ComboData = null) -> void:
 	_run_data = run_data
 	_combo_data = combo_data
+	missions = RunMissionsScript.new()
 
 
 ## Starts a fresh run from the start: full health, 8:00, 0 coins.
@@ -269,7 +285,10 @@ func start_run() -> void:
 	if was_waiting:
 		_set_paused(false)
 	running = true
+	missions.start(mission_seed)  # T-457: back to mission 1, a fresh set
+	_power_ups = {}
 	run_started.emit()
+	power_ups_changed.emit()
 	time_left_changed.emit(time_left)
 	health_changed.emit(health, max_health)
 	coins_changed.emit(coins)
@@ -471,6 +490,7 @@ func challenge_completed(challenge_id: String = "") -> void:
 func drift_step(drifting: bool, delta: float) -> void:
 	if not running:
 		return
+	missions.on_drift_step(drifting, delta)  # T-457: the unbroken-drift goal
 	if not drifting:
 		drift_seconds = 0.0
 		drift_seconds_paid = 0
@@ -492,6 +512,7 @@ func drift_step(drifting: bool, delta: float) -> void:
 func add_trick(trick_id: String, seconds := 0.0) -> void:
 	if not running or not TrickDetector.TRICK_IDS.has(trick_id):
 		return
+	missions.on_trick(trick_id, seconds)  # T-457
 	var before := combo
 	combo = _combo_data.after_trick(combo, trick_id, seconds)
 	_record_trick(trick_id)
@@ -510,6 +531,7 @@ func add_trick(trick_id: String, seconds := 0.0) -> void:
 func add_airtime_trick(seconds: float) -> void:
 	if not running:
 		return
+	missions.on_airtime(seconds)  # T-457: every landing counts, also one too short to pay
 	var amount := _combo_data.airtime_add(seconds)
 	if amount <= 0.0:
 		return
@@ -534,6 +556,7 @@ const TRICK_THREAD_THE_NEEDLE := "thread_the_needle"
 func add_needle_trick() -> void:
 	if not running:
 		return
+	missions.on_trick(TRICK_THREAD_THE_NEEDLE)  # T-457
 	var before := combo
 	combo = minf(combo + _combo_data.trick_add(TRICK_THREAD_THE_NEEDLE), _combo_data.max_multiplier())
 	_record_trick(TRICK_THREAD_THE_NEEDLE)
@@ -561,6 +584,7 @@ func collision() -> void:
 	_cut_combo()
 	if not pay_first:
 		crashed.emit()
+	missions.on_crash()  # T-457: a wall hit ends the drift; the drift goal starts over
 
 
 ## The collision's cut of the combo, without paying the trick in progress.
@@ -760,6 +784,7 @@ func _wreck() -> void:
 	running = false
 	drift_seconds = 0.0
 	drift_seconds_paid = 0
+	missions.on_crash()  # T-457: the drift in progress is dropped
 	wrecked = true
 	wreck_left = maxf(wreck_seconds, 0.0)
 	wreck_started.emit(wreck_left)
@@ -870,6 +895,32 @@ func enemy_slain(enemy_type: String, weapon_id := "") -> void:
 	_slain[enemy_type] = int(_slain.get(enemy_type, 0)) + 1
 	if weapon_id != "":
 		_weapon_kills[weapon_id] = int(_weapon_kills.get(weapon_id, 0)) + 1
+
+
+## The car's tier of driving power-up `id` (T-457; PowerUpData.IDS): 0 when not owned.
+func power_up_tier(id: String) -> int:
+	return int(_power_ups.get(id, 0))
+
+
+## Owned driving power-ups, a copy: {id: tier}.
+func owned_power_ups() -> Dictionary:
+	return _power_ups.duplicate()
+
+
+## Gives the car driving power-up `id` (the mission gift calls it, T-457): tier 1 when new,
+## otherwise the next tier, held at the power-up's last tier (power_ups.json). Sends
+## power_ups_changed when the tier went up. Returns the tier now; 0 for an unknown id.
+func grant_power_up(id: String) -> int:
+	if _power_up_data == null:
+		_power_up_data = PowerUpData.new()
+	if not _power_up_data.is_ok() or not _power_up_data.ids().has(id):
+		return 0
+	var before := power_up_tier(id)
+	var tier := mini(before + 1, _power_up_data.max_tier(id))
+	if tier != before:
+		_power_ups[id] = tier
+		power_ups_changed.emit()
+	return tier
 
 
 func _record_trick(trick_id: String) -> void:
