@@ -1,7 +1,7 @@
 ---
 id: T-456
 title: Text: the mission notebook page, its goal phrasings, and the driving power-up overlay with the four power-ups' names and tier descriptions
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/drifting.md, game/data/missions.json, game/data/power_ups.json, game/data/screen_texts.json, game/tools/style_rules.py]
 files_expected_to_change: [game/data/screen_texts.json, docs/hud-and-menus.md, game/tests/unit/test_mission_texts.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-456.
 ### 2026-10-31, In progress → In QA
 
 Goal runner (G-009): the agent is done; QA is checking it.
+
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
 
 ## Style review
 
@@ -391,3 +395,4 @@ Run by `tools/style_loop/run.py` on 2026-10-31: text, kind card_desc, brief `art
 - **PixelLab:** 0 generations. Refusals: none.
 
 **QA round 1:** all 5 criteria pass. Verified: screen_texts.json has all keys (7 trick goals match missions.json; quantity ones hold {done}/{total}, duration ones don't); 4 power-up templates with slots matching power_ups.json, no 'Greenbull says'; HUD and menus Content section lists all; Style review has 18 runs; GUT 2339/2339 (193 scripts, test_mission_texts.gd included), tools unittest 614 OK, game/tools unittest 767 OK. Not run: `python tools/qa_check.py` (refused, not pre-approved). Screenshots: none, text-only, noted.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
