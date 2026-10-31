@@ -1,7 +1,7 @@
 ---
 id: T-455
 title: Data: the run's missions (5 fixed, generator rules) and the four driving power-ups with their tiers
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Goal-G-009
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-31, Open → In progress
 
 Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-455.
+
+### 2026-10-31, In progress → In QA
+
+Goal runner (G-009): the agent is done; QA is checking it.
 
 ## Style review
 
