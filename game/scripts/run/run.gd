@@ -70,6 +70,9 @@ const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
 const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 ## The level-up screen (task T-052): shows the weapon choices when the run pauses for a level-up.
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
+## The driving power-up gift (task T-459): its choices, and the overlay that shows them.
+const PowerUpOffersScript := preload("res://scripts/run/power_up_offers.gd")
+const PowerUpScreenScript := preload("res://scripts/ui/power_up_screen.gd")
 ## The gift pack drop (task T-144): a helicopter drops a package per level-up; driving over it opens the level-up screen.
 const GiftDropsScript := preload("res://scripts/run/gift_drops.gd")
 ## The pickup magnet (task T-222): pulls coins, gift packs and health drops near the car to it.
@@ -164,6 +167,10 @@ var kaiju_health_bar: Node2D
 var weapons: Node
 ## The level-up screen (task T-052, level_up_screen.gd): child "LevelUpScreen".
 var level_up_screen: CanvasLayer
+## The driving power-up gift's choices (task T-459, power_up_offers.gd): child "PowerUpOffers".
+var power_up_offers: PowerUpOffers
+## The driving power-up overlay (task T-459, power_up_screen.gd): child "PowerUpScreen".
+var power_up_screen: CanvasLayer
 ## The sound effects (task T-077, run_sounds.gd): child "Sounds".
 var sounds: Node
 ## The gift pack drop (task T-144, gift_drops.gd): child "GiftDrops", drawn
@@ -297,6 +304,18 @@ func _ready() -> void:
 	level_up_screen.name = "LevelUpScreen"
 	add_child(level_up_screen)
 	level_up_screen.setup(weapons)
+	# The driving power-up gift (T-459): a completed mission pauses the run and the
+	# overlay offers power-ups; it never shows at once with the level-up screen.
+	power_up_offers = PowerUpOffersScript.new()
+	power_up_offers.name = "PowerUpOffers"
+	add_child(power_up_offers)
+	power_up_offers.bind(state)
+	power_up_screen = PowerUpScreenScript.new()
+	power_up_screen.name = "PowerUpScreen"
+	add_child(power_up_screen)
+	power_up_screen.setup(power_up_offers)
+	level_up_screen.hold = power_up_offers.is_showing
+	power_up_offers.closed.connect(level_up_screen.show_held)
 	# The gift pack drop (T-144): a helicopter drops a package per level-up.
 	gift_drops = GiftDropsScript.new()
 	gift_drops.name = "GiftDrops"

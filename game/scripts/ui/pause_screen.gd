@@ -508,7 +508,11 @@ func is_paused() -> bool:
 ## level-up pause, and Escape must not end it.
 func _choice_open() -> bool:
 	var st = target.get("state") if target != null else null
-	return st != null and st.has_method("is_waiting_for_choice") and st.is_waiting_for_choice()
+	if st != null and st.has_method("is_waiting_for_choice") and st.is_waiting_for_choice():
+		return true
+	# T-459: the driving power-up overlay's choice is the same kind of pause.
+	var gifts = target.get("power_up_offers") if target != null else null
+	return gifts != null and gifts.has_method("is_showing") and gifts.is_showing()
 
 
 ## True while the time's up screen plays (T-317): the run is frozen at 0:00 and
