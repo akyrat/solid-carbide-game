@@ -27,8 +27,9 @@ def git(root, *args, check=True):
     return done.stdout
 
 
-def ticket_text(tid, status="open", to="ui", title=None, goal=None, depends_on=""):
+def ticket_text(tid, status="open", to="ui", title=None, goal=None, depends_on="", approved_art=False):
     goal_line = "" if goal is None else f"goal: {goal}\n"
+    goal_line += "board_approved_art: yes\n" if approved_art else ""
     return (f"---\nid: {tid}\ntitle: {title or 'Ticket ' + tid}\nstatus: {status}\nfrom: project-lead\nto: {to}\n"
             f"lead:\nepic: tooling\nmilestone: mvp\n{goal_line}depends_on: [{depends_on}]\nmodel: sonnet\nqa_rounds: 0\n"
             f"---\n\n## Description\n\nA ticket.\n\n## Acceptance criteria\n\n- [ ] It works (QA: pass / fail)\n\n"

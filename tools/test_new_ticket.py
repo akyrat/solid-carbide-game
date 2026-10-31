@@ -97,6 +97,16 @@ class NewTicketTests(unittest.TestCase):
         out = sh(self.root, sys.executable, "tools/task_status.py", "T-044")
         self.assertIn("lead Tokens", out)
 
+    def test_board_approved_art_field_defaults_to_no_and_comes_from_the_input(self):
+        template = (REPO / "tasks/_TEMPLATE.md").read_text(encoding="utf-8")
+        self.assertEqual(tb.parse_header(template)["board_approved_art"], "no")
+        s = spec(2)
+        s["tickets"][1]["board_approved_art"] = "yes"
+        nt.run(s, self.root)
+        got = [tb.parse_header((self.root / f"tasks/T-0{n}-ticket-{i}.md").read_text(encoding="utf-8"))
+               for i, n in ((1, 44), (2, 45))]
+        self.assertEqual([g["board_approved_art"] for g in got], ["no", "yes"])
+
     def test_numbers_come_from_git_log_and_branches(self):
         sh(self.root, "git", "branch", "task/T-050-elsewhere")
         lines = nt.run(spec(1), self.root)

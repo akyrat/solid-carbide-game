@@ -1,7 +1,7 @@
 ---
 id: T-449
 title: The status script lets board-approved art go straight to the board's playtest
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -55,6 +55,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-31, Open → In progress
+
+Started: the QA/Integration Agent builds it in C:\solid-carbide-worktrees\T-449.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -62,3 +66,13 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built (QA/Integration Agent, T-449):
+- tasks/_TEMPLATE.md: new header line `board_approved_art: no` plus its comment line. tools/new_ticket.py: the `"board_approved_art"` key (default no) is accepted and written.
+- tools/task_status.py (`allowed`): a ticket with `board_approved_art: yes` may go in-progress -> needs-playtest once result notes exist, with no QA marks and no QA round. needs-playtest -> done already needed no marks. Other tickets are unchanged.
+- tools/merge_batch.py: reads the field from the ticket on its branch; a round made only of such tickets runs no test sets (also with --each, per ticket); a batch that also holds an ordinary ticket is tested as before. The ticket's line reads "merged (board-approved art: no test sets run)".
+- tasks/README.md: "Changing a task's status" (the shortened path) and "QA" (the field) describe it.
+- Tests: tools/test_task_status.py (BoardApprovedArt, 3 tests), tools/test_new_ticket.py (1), tools/test_merge_batch.py (BoardApprovedArtTest, 4, with stubbed counting test commands), tools/goal_agent/temp_repo.py (approved_art option).
+- Test results: `python -m unittest discover -s tools -p "test_*.py"` Ran 599, OK. `python -m unittest discover -s game/tools -p "test_*.py"` Ran 767, OK (skipped=1).
+- Nothing under game/data/levels/ was touched.
+- Not done: the mixed-batch case runs the tests for everyone (by design); the guard hook refused inline python that names tasks, so I used the Edit tool instead.
