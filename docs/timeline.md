@@ -2865,3 +2865,8 @@ Entry format:
 - Decision or change: Names for the level creator's standing alert sign and alert banner pieces, their head and body designs and the banner's wall and height hints, in creator_texts.json (style loop 8/10).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-440
+
+## 2026-10-31: A browser build on a private itch.io page
+- Decision or change: tools/publish_itch.py exports master as a browser (Web) build and pushes it with butler to the board's private itch.io page (jerry-of-rivia/solid-carbide:html5); the Project Lead runs it only when the board asks. QA passed; merged straight after QA.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-448
