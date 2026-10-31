@@ -39,11 +39,11 @@ The board's review: look at the notebook page and the power-up overlay's frame i
 
 ## Acceptance criteria
 
-- [ ] The notebook page, checkbox, tick, cross-off mark and overlay frame are PNGs in game/art/, each with a Style review round on the ticket, and the generation count is in the result notes. (QA: pass / fail)
-- [ ] The HUD's mission page and the power-up overlay use the new art in place of their placeholders, and their tests still pass. (QA: pass / fail)
-- [ ] Screenshots of the page and the overlay in the game, on a dark and a light background, are in art-archive/<id>/screenshots/. (QA: pass / fail)
-- [ ] Visual style records the new art. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] The notebook page, checkbox, tick, cross-off mark and overlay frame are PNGs in game/art/, each with a Style review round on the ticket, and the generation count is in the result notes. (QA: pass)
+- [ ] The HUD's mission page and the power-up overlay use the new art in place of their placeholders, and their tests still pass. (QA: pass)
+- [ ] Screenshots of the page and the overlay in the game, on a dark and a light background, are in art-archive/<id>/screenshots/. (QA: pass)
+- [ ] Visual style records the new art. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -183,3 +183,7 @@ Five assets, all through `tools/style_loop/run.py art`, briefs in `art-archive/T
 - **Test counts**: `python -m unittest discover -s game/tools`: 793 tests, OK (1 skipped) after the `hud_sheet_check.py` fix (the first run had 3 failures, the three ink marks and the outline rule; `test_hud_sheet_check.py` 5/5 after); `python -m unittest discover -s tools`: 614 tests, OK; Godot (GUT, full run, log `art-archive/T-464/full_test_run.log`): 200 scripts, 2419 tests, all passing (1131 s). All three sets pass.
 - Weakness for the board's playtest: the page's ruled lines (every 20 screen px) don't line up with the goal text lines, and the tape sits under the header's end; the evaluator's note on each piece is in the Style review.
 - **Refusals**: inside the style loop the generator agent was refused several commands (inline `python -c`, `sed`/`cut`, `wmic`, `python -m pytest`, `python -m unittest` on a file path, the PixelLab workbench; listed in each round's "Refused" line); it worked around none, and the script tests were run by me afterwards. My own: `python -c` (a size check) and a redirect of test output to a file; skipped, not essential.
+
+### QA round 1
+
+All five criteria pass. Own re-run of the tests: `python -m unittest discover -s game/tools` 793 OK (1 skipped); `python -m unittest discover -s tools` 614 OK; Godot `bash game/tools/run_tests.sh` 2419 passing, all passed (1117 s). The five PNGs exist in game/art/hud and game/art/ui; five Style review runs, each kept at 8/10; 0 PixelLab generations noted; four screenshots (dark and light, page and overlay) in art-archive/T-464/screenshots/ (the overlay light one viewed: amber frame in use); Visual style entry present. `tools/qa_check.py` was refused (not on the pre-approved list), so I checked those items by hand.
