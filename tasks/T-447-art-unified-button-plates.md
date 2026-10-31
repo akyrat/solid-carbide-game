@@ -1,7 +1,7 @@
 ---
 id: T-447
 title: Art: the shared button's plates for every state
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -162,3 +162,4 @@ I checked the size and format only; I didn't re-count the colours or the alpha v
 **Docs changed:** `docs/visual-style.md` (the plates' entry), `docs/hud-and-menus.md` (Plate and States and feel bullets), `game/docs/art/button-plates.md` (new).
 
 **Notes.** Godot's `.import` line-ending noise and `.uid` files in the worktree were not committed. The focus ring is now inside the plate's edge (before: 2 px outside it); the board can judge it in the playtest.
+- 2026-10-31, in-progress → in-qa: Plates done, style loop 8+ each, tests pass; ready for QA
