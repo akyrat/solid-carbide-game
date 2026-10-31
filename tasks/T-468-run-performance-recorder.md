@@ -51,15 +51,15 @@ The board's review: play a full run with the recorder on (the command is in the 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With the recorder off, no file is written and the game behaves as before (test). (QA: pass / fail)
-- [ ] With it on, a run writes a recording with per-frame times, Performance monitors, run counts, nested zones and event markers (test on a short scripted run checks each kind is present). (QA: pass / fail)
-- [ ] The recording opens as Chrome trace JSON (a test validates the trace format: every begin has an end, nested correctly). (QA: pass / fail)
-- [ ] The recorder's own overhead is measured and in the result notes (frame time with and without it). (QA: pass / fail)
-- [ ] The analysis script prints the worst spikes with their time in run and nearby events, and each zone's time in spike frames against normal frames (test on a fixture recording). (QA: pass / fail)
-- [ ] A sample recording's analysis output is in the result notes. (QA: pass / fail)
-- [ ] The recording folder is git-ignored, and docs/working-with-the-board.md says how the board records a run and that the Project Lead analyses it. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] With the recorder off, no file is written and the game behaves as before (test). (QA: pass - off: no file and no recorder, test_perf_recorder passes)
+- [x] With it on, a run writes a recording with per-frame times, Performance monitors, run counts, nested zones and event markers (test on a short scripted run checks each kind is present). (QA: pass - on: frames, monitors, counts, zones, markers present in tests and sample)
+- [x] The recording opens as Chrome trace JSON (a test validates the trace format: every begin has an end, nested correctly). (QA: pass - trace format test passes (balanced, nested); analyse --check-trace)
+- [x] The recorder's own overhead is measured and in the result notes (frame time with and without it). (QA: pass - overhead 0.5 ms median / 1.4 ms mean, in notes)
+- [x] The analysis script prints the worst spikes with their time in run and nearby events, and each zone's time in spike frames against normal frames (test on a fixture recording). (QA: pass - fixture test passes; ran on sample: spikes with run time, events, zone comparison)
+- [x] A sample recording's analysis output is in the result notes. (QA: pass - sample analysis output in notes)
+- [x] The recording folder is git-ignored, and docs/working-with-the-board.md says how the board records a run and that the Project Lead analyses it. (QA: pass - game/perf/ ignored (git check-ignore); working-with-the-board.md line 33)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - all three sets pass (qa_check PASS; counts in notes))
+- [x] Nothing under game/data/levels/ is changed or committed. (QA: pass - no changes under game/data/levels vs master)
 
 ## Updates
 
@@ -413,3 +413,5 @@ What the before-T-444 sample said: on the game's map, in the debug build, the dr
 
 **Documents affected:** `docs/working-with-the-board.md` (how the board records a run and that the Project Lead analyses it). Also new/updated game docs: `game/docs/game-loop/perf-recorder.md` (new), `game/docs/setup/folder-layout.md`, `game/README.md` (index).
 - 2026-10-31, in-progress → in-qa: Recorder, zones, analysis, sample run and docs done; board's command in the result notes; all three test sets pass.
+
+**QA round 1 (QA agent, 2026-10-31).** All 9 criteria pass (marked above). `qa_check`: tests PASS (3 sets), documents PASS, screenshots FAIL (paperwork): no image in `art-archive/T-468/screenshots/`. The ticket says none (tooling), which `tasks/README.md` "Screenshots" allows, but the check requires one because the ticket has a `The board's review:` line. Status left at in-qa for the Project Lead to waive or to have an image (e.g. a spike plot) added. The analysis script ran on the newest sample recording without error; the recorder is off by default.
