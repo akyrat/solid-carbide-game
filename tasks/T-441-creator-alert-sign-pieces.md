@@ -1,7 +1,7 @@
 ---
 id: T-441
 title: Kaiju alert signs are level creator pieces; the fixed sign list is retired
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/docs/level/level-creator-pieces.
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/docs/level/mvp-map.md, tasks/T-130-kaiju-alert-banners-art.md, tasks/T-265-creator-skyscraper-banner-toggle.md, tasks/T-439-kaiju-signs-on-kaiju-city.md, game/scripts/level/kaiju_signs.gd, game/data/level/kaiju_signs.json, game/scripts/level_creator/editor.gd, game/tests/unit/test_kaiju_signs.gd]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/kaiju_signs.gd, game/data/level/kaiju_signs.json, game/tests/unit/, game/docs/level/level-creator-pieces.md, game/docs/level/mvp-map.md, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,15 +52,15 @@ The board's review: in the level creator, place standing signs on the ground and
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test places a standing alert sign on the ground and one on a rooftop in a level document, saves and reopens it, and finds both with their design and position; a run built from that level draws them at the height of what they stand on. (QA: pass / fail)
-- [ ] A test places an alert banner on a skyscraper wall, saves and reopens it, and a run built from that level draws it as a child of that skyscraper's art (so it fades with it), on the chosen wall at the chosen height. (QA: pass / fail)
-- [ ] A test shows a banner can't be placed on a platform or a short building, and that signs and banners have no collisions. (QA: pass / fail)
-- [ ] A test shows a map no longer reads game/data/level/kaiju_signs.json: a level with no placed signs draws none. (QA: pass / fail)
-- [ ] Both pieces appear in the creator's side panel with the text ticket's labels, and their two designs are chosen in the strip (test or screenshot). (QA: pass / fail)
-- [ ] Screenshots of both pieces in the editor and in a run are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass / fail)
-- [ ] game/docs/level/level-creator-pieces.md and game/docs/level/mvp-map.md describe the pieces and the retired list; docs/level-design.md, Content, describes the pieces. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed, and 0 PixelLab calls are made. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [x] A test places a standing alert sign on the ground and one on a rooftop in a level document, saves and reopens it, and finds both with their design and position; a run built from that level draws them at the height of what they stand on. (QA: pass)
+- [x] A test places an alert banner on a skyscraper wall, saves and reopens it, and a run built from that level draws it as a child of that skyscraper's art (so it fades with it), on the chosen wall at the chosen height. (QA: pass)
+- [x] A test shows a banner can't be placed on a platform or a short building, and that signs and banners have no collisions. (QA: pass)
+- [x] A test shows a map no longer reads game/data/level/kaiju_signs.json: a level with no placed signs draws none. (QA: pass)
+- [x] Both pieces appear in the creator's side panel with the text ticket's labels, and their two designs are chosen in the strip (test or screenshot). (QA: pass)
+- [x] Screenshots of both pieces in the editor and in a run are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass)
+- [x] game/docs/level/level-creator-pieces.md and game/docs/level/mvp-map.md describe the pieces and the retired list; docs/level-design.md, Content, describes the pieces. (QA: pass)
+- [x] Nothing under game/data/levels/ is changed or committed, and 0 PixelLab calls are made. (QA: pass)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -119,3 +119,6 @@ Written by the agent when it finishes.
 
 **Documents affected:** `docs/level-design.md`, `game/docs/level/level-creator-pieces.md`, `game/docs/level/mvp-map.md`. The long GDD needs regenerating at merge (Project Lead).
 - 2026-10-31, in-progress → in-qa: Built: Alert sign and Alert banner creator pieces (both designs), saved in alert_signs, drawn identically in editor and run; kaiju_signs.json retired. All three test sets pass (769 / 614 / GUT 2322). Proposals and screenshots in result notes.
+
+**QA, 2026-10-31:** all 9 criteria pass. qa_check: three test sets passed in one full run (GUT with GUT_TIME_LIMIT=1500), documents changed, 6 screenshots, nothing under game/data/levels/ changed.
+- 2026-10-31, in-qa → needs-playtest: QA passed
