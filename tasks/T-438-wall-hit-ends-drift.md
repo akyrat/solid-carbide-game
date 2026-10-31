@@ -79,3 +79,5 @@ Built. `car.gd`: new `_end_drift_on_hit(impact)`, called in `_bounce()` and `_bo
 - Screenshots: not captured (headless only; no movie run). Skipped; the board plays it directly.
 - Nothing under game/data/levels/ touched.
 - 2026-10-31, in-progress → in-qa: Built; all three test sets pass; ready for QA.
+
+Screenshots (added before QA): `art-archive/T-438/screenshots/wall_hit_ends_drift_frame1.png` (1 frame after the hit: the drift has ended, the car bounced off the boulder, LONG DRIFT! and COMBO BROKEN! both shown) and `wall_hit_ends_drift_frame10.png` (10 frames after the hit, popups stacked, tyre marks of the drift stop at the hit). Fixture: `game/tests/fixtures/wall_hit_drift.tscn` (the T-315 crash fixture with the tutorial slides off); the log shows the LONG DRIFT! payment (1.72 s) and COMBO BROKEN on the same step as the hit.
