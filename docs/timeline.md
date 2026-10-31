@@ -2795,3 +2795,13 @@ Entry format:
 - Decision or change: The board, after a 1.5-hour estimate for swapping in its own splash art: "there's no point running any of the tests for just art. And I already have approved the picture I've seen it, so QA doesn't need to check it." A ticket that only swaps in art the board has already approved, with no code or data change, goes from the agent straight to the board's playtest, with no QA round and no test sets, and merges with `merge_batch.py --no-tests`.
 - Documents touched: `tasks/README.md`, `docs/working-with-the-board.md`
 - Tasks: none
+
+## 2026-10-31: Text for the alert sign pieces in the level creator
+- Decision or change: Names for the standing alert sign and the alert banner pieces, their two designs and the banner's wall and height hints.
+- Documents touched: docs/level-design.md
+- Tasks: T-440
+
+## 2026-10-31: Kaiju alert signs are level creator pieces
+- Decision or change: The kaiju alert signs become level creator pieces the board places itself: a standing sign on the ground or a rooftop and a banner on a skyscraper's wall, in both designs. The fixed sign list (kaiju_signs.json) is retired, and T-439 is cancelled.
+- Documents touched: docs/level-design.md
+- Tasks: T-441
