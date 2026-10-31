@@ -1,7 +1,7 @@
 ---
 id: T-470
 title: The garage's Buy buttons are on screen at every window size
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -65,3 +65,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Screenshots** (art-archive/T-470/screenshots/): garage_1152x648.png, garage_1920x1080.png, garage_2560x1080.png, garage_960x540.png, taken with the new fixture game/tests/fixtures/t470_garage_size_demo.tscn (size from env GARAGE_SHOT_SIZE).
 
 **Documents updated:** docs/garage-design.md (new section "How the garage fits the window (T-470)"). Nothing under game/data/levels/ touched.
+- 2026-10-31, in-progress → in-qa: Garage column scales to fit the window; tests and screenshots at 4 sizes
