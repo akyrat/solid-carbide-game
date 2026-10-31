@@ -48,11 +48,11 @@ The board's review: read the notebook page's header, the goal phrasings, the ove
 
 ## Acceptance criteria
 
-- [ ] screen_texts.json (or the named HUD text file) holds non-empty entries for: the notebook header, a goal template for every trick type in missions.json (quantity ones contain `{done}/{total}`, duration ones do not), the overlay header, the take-button label, and the four power-up names. (QA: pass / fail)
-- [ ] Each power-up has one description per tier in power_ups.json, or one template naming the tier's number; none contains 'Greenbull says'. (QA: pass / fail)
-- [ ] HUD and menus, Content lists every new text with where it appears. (QA: pass / fail)
-- [ ] The ticket's Style review records the style loop rounds for the texts. (QA: pass / fail)
-- [ ] A GUT test checks every new key is present and non-empty, and it passes; all three test sets pass, with the counts in the result notes. No screenshots: the result notes say there is nothing to picture. (QA: pass / fail)
+- [ ] screen_texts.json (or the named HUD text file) holds non-empty entries for: the notebook header, a goal template for every trick type in missions.json (quantity ones contain `{done}/{total}`, duration ones do not), the overlay header, the take-button label, and the four power-up names. (QA: pass)
+- [ ] Each power-up has one description per tier in power_ups.json, or one template naming the tier's number; none contains 'Greenbull says'. (QA: pass)
+- [ ] HUD and menus, Content lists every new text with where it appears. (QA: pass)
+- [ ] The ticket's Style review records the style loop rounds for the texts. (QA: pass)
+- [ ] A GUT test checks every new key is present and non-empty, and it passes; all three test sets pass, with the counts in the result notes. No screenshots: the result notes say there is nothing to picture. (QA: pass)
 
 ## Updates
 
@@ -389,3 +389,5 @@ Run by `tools/style_loop/run.py` on 2026-10-31: text, kind card_desc, brief `art
 - **Test sets:** GUT 2339 of 2339 passing (193 scripts, includes the 4 new); `python -m unittest discover -s tools` 614 OK; `-s game/tools` 767 OK (1 skipped). (The "FAIL parked_car_3" lines in the latter are a checker test's expected output.)
 - **Screenshots:** none; this is text-only work with nothing to picture.
 - **PixelLab:** 0 generations. Refusals: none.
+
+**QA round 1:** all 5 criteria pass. Verified: screen_texts.json has all keys (7 trick goals match missions.json; quantity ones hold {done}/{total}, duration ones don't); 4 power-up templates with slots matching power_ups.json, no 'Greenbull says'; HUD and menus Content section lists all; Style review has 18 runs; GUT 2339/2339 (193 scripts, test_mission_texts.gd included), tools unittest 614 OK, game/tools unittest 767 OK. Not run: `python tools/qa_check.py` (refused, not pre-approved). Screenshots: none, text-only, noted.
