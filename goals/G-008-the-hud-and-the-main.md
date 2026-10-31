@@ -1,7 +1,7 @@
 ---
 id: G-008
 title: The HUD and the main menu (board, 2026-10-29 and 2026-10-30; HUD an...
-status: ready-to-play
+status: done
 art_cap: 20
 art_used: 4
 iteration: 8
