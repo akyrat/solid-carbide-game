@@ -273,7 +273,15 @@ def parse(argv):
     return tickets, opts, (tests or ([] if no_tests else DEFAULT_TESTS)), root, log
 
 
+def safe_output():
+    """A cp1252 console can't print task_status's arrow: write UTF-8, replacing what still can't be written (T-425)."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 def main(argv=None):
+    safe_output()
     tickets, opts, tests, root, log = parse(sys.argv[1:] if argv is None else argv)
     root = Path(root) if root else HERE.parent
     log = Path(log) if log else root / ".board" / f"merge_batch-{datetime.now():%Y%m%d-%H%M%S}.log"

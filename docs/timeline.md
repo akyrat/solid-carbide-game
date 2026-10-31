@@ -2755,3 +2755,8 @@ Entry format:
 - Decision or change: Build I: closing the game mid-run is handled, and the game pauses when its window loses focus. The board played it: "LGTM".
 - Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
 - Tasks: T-416
+
+## 2026-10-31: merge_batch prints safely on the Windows console; drive_elevation_sample.sh drives
+- Decision or change: Tooling: merge_batch.py no longer crashes printing on a cp1252 Windows console, and drive_elevation_sample.sh no longer stops before driving. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-425
