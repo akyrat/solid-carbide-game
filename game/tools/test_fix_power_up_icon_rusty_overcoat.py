@@ -73,6 +73,24 @@ class RustyOvercoatFixTest(unittest.TestCase):
                 self.assertEqual(im.getpixel((x - 1, y))[:3], fix.CYAN_MID)
                 self.assertEqual(im.getpixel((x - 2, y))[:3], fix.CYAN_DARK)
 
+    def test_archived_v4_reproduces(self):
+        v4 = fix.ROOT / "art-archive" / "T-465" / "style-loop" / "v4-4.png"
+        if not v4.exists():
+            self.skipTest("v4-4.png not saved yet")
+        self.assertEqual(list(Image.open(v4).convert("RGBA").getdata()), list(fix.make_v4().getdata()))
+
+    def test_v4_rules_and_spikes(self):
+        im = fix.make_v4()
+        px = list(im.getdata())
+        self.assertFalse([p for p in px if 0 < p[3] < 255])
+        colours = {p[:3] for p in px if p[3]}
+        self.assertLessEqual(len(colours), 30)
+        self.assertFalse(colours & GREENBULL)
+        for xy in [(0, 0), (31, 0), (0, 31), (31, 31)]:
+            self.assertEqual(im.getpixel(xy)[3], 0)
+        for x, y in [(2, 15), (1, 20), (29, 15), (30, 20)]:
+            self.assertEqual(im.getpixel((x, y))[3], 255)
+
     def test_refuses_to_overwrite(self):
         with tempfile.TemporaryDirectory() as d:
             out = Path(d) / "x.png"

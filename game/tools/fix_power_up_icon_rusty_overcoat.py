@@ -143,6 +143,22 @@ OUTLINE_BREAKS_V3 = {(3, 13): OUT_HI, (9, 21): OUT_HI, (4, 8): OUT_HI}
 
 EDITS_V3 = [LAPELS, SEAM, BUTTONS, OUTLINE_BREAKS_V3]
 
+# ---- Version 4: a more jagged, spiky edge and a fuller magenta halo ----
+# Sideways spikes down both sleeves (rows 15 and 20), each a steel tip on a dark wedge.
+SIDE_SPIKES = {
+    (3, 15): STEEL_LIT, (2, 15): STEEL_TIP, (3, 14): OUTLINE, (3, 16): OUTLINE,
+    (2, 20): STEEL_LIT, (1, 20): STEEL_TIP, (2, 19): OUTLINE, (2, 21): OUTLINE,
+    (28, 15): STEEL_MID, (29, 15): STEEL_LIT, (28, 14): OUTLINE, (28, 16): OUTLINE,
+    (29, 20): STEEL_MID, (30, 20): STEEL_LIT, (29, 19): OUTLINE, (29, 21): OUTLINE,
+}
+# Pauldron rivets: magenta core, mid magenta on three sides, a dark magenta step above.
+MAG_HALO = {
+    (6, 6): MAG_MID, (8, 6): MAG_MID, (7, 4): MAG_DARK,
+    (23, 6): MAG_MID, (25, 6): MAG_MID, (24, 4): MAG_DARK,
+}
+
+EDITS_V4 = [SIDE_SPIKES, MAG_HALO]
+
 
 def _apply(im, layers):
     for layer in layers:
@@ -159,13 +175,17 @@ def make_v3():
     return _apply(make_v2(), EDITS_V3)
 
 
+def make_v4():
+    return _apply(make_v3(), EDITS_V4)
+
+
 def main(argv):
     if argv and argv[0] == "--dump":
         dump(load_v1())
         return 0
-    make = make_v3
-    if argv and argv[0] == "--v2":
-        make, argv = make_v2, argv[1:]
+    make = make_v4
+    if argv and argv[0] in ("--v2", "--v3"):
+        make, argv = {"--v2": make_v2, "--v3": make_v3}[argv[0]], argv[1:]
     if len(argv) != 1:
         raise SystemExit(__doc__)
     out = Path(argv[0])
