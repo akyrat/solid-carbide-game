@@ -6,8 +6,12 @@ extends CanvasLayer
 ## at the screen's edge points to it, one arrow per package. Several arrows that
 ## would overlap are slid apart along the track (each later arrow keeps GAP
 ## clear of the ones placed before it, in the packages' order, so they don't
-## swap places from frame to frame). None is drawn for a package on screen. Placeholder look: a pale cyan
-## triangle with a dark outline, not the heart's red. Each arrow sits on a track
+## swap places from frame to frame). None is drawn for a package on screen.
+## Look (the board, 2026-10-31, T-442): 3 times today's size (ARROW_SIZE 90 x 72
+## at the HUD's base size, scaled with the HUD like the rest of it: `ui_scale`),
+## in the gift box's colours (art/gift_pack/package.png): Greenbull's dark green
+## fill (12, 76, 44) with the ribbon's light green (104, 220, 96) as an inner
+## stripe along the arrow, inside the HUD's dark outline. Each arrow sits on a track
 ## MARGIN inside the screen's edges, where the line from the screen's centre to
 ## the package crosses it, slid along the track when that spot would touch a
 ## HUD part (the timer, the health column, the coins, the likes bar with its
@@ -17,18 +21,25 @@ extends CanvasLayer
 ## and the pause screen (20). It only draws; gift_drops.gd owns the packages.
 
 const LAYER := 11
-## Arrow's length and width, in screen pixels.
-const ARROW_SIZE := Vector2(30, 24)
+## Arrow's length and width, in screen pixels at the HUD's base size (scaled by `ui_scale`).
+const ARROW_SIZE := Vector2(90, 72)
 ## The track's distance from the screen's edges.
 const MARGIN := 12.0
 ## The space kept between an arrow and any HUD part.
 const GAP := 8.0
 ## How far along the track each try moves when sliding clear of the HUD.
 const STEP := 4.0
-const FILL := Color8(140, 235, 255)
-const OUTLINE := Color8(14, 16, 26)
+## The box's dark green, and the ribbon's light green.
+const FILL := Color8(12, 76, 44)
+const STRIPE := Color8(104, 220, 96)
+## The HUD's dark outline.
+const OUTLINE := Color8(8, 8, 15)
+## The outline's width at the HUD's base size.
+const OUTLINE_WIDTH := 4.0
 
 var drops: Node
+## The HUD's scale now (screen pixels per layout pixel); the arrows grow with it.
+var ui_scale := 1.0
 var _hud_node: Node = null
 ## The arrows drawn this frame: {package, position, angle}, angle in radians
 ## (0 points right, as Vector2.angle()).
@@ -58,16 +69,23 @@ func refresh() -> void:
 	if drops == null:
 		return
 	var screen := screen_size()
+	ui_scale = _hud_scale()
 	var avoid := hud_rects()
 	for pkg in drops.mapped_packages():
 		var at: Vector2 = pkg.get_global_transform_with_canvas().origin
-		var placed := place(screen, at, avoid)
+		var placed := place(screen, at, avoid, ui_scale)
 		if not placed.is_empty():
 			placed["package"] = pkg
 			shown.append(placed)
-			avoid.append(arrow_rect(placed.position))  # the next arrow keeps clear of this one
+			avoid.append(arrow_rect(placed.position, ui_scale))  # the next arrow keeps clear of this one
 	if _canvas != null:
 		_canvas.queue_redraw()
+
+
+func _hud_scale() -> float:
+	if _hud_node != null and is_instance_valid(_hud_node) and _hud_node.has_method("hud_scale"):
+		return maxf(_hud_node.hud_scale(), 0.01)
+	return 1.0
 
 
 func screen_size() -> Vector2:
@@ -103,10 +121,10 @@ func hud_rects() -> Array:
 ## Where the arrow for a package at screen point `target` goes on a screen of
 ## `screen` size, keeping clear of the `avoid` rectangles: {position, angle},
 ## or {} when the package is on screen (no arrow).
-static func place(screen: Vector2, target: Vector2, avoid: Array) -> Dictionary:
+static func place(screen: Vector2, target: Vector2, avoid: Array, scale := 1.0) -> Dictionary:
 	if Rect2(Vector2.ZERO, screen).has_point(target):
 		return {}
-	var inset := MARGIN + ARROW_SIZE.x / 2.0
+	var inset := (MARGIN + ARROW_SIZE.x / 2.0) * scale
 	var track := Rect2(Vector2(inset, inset), screen - Vector2(inset, inset) * 2.0)
 	var centre := screen / 2.0
 	var d := target - centre
@@ -122,22 +140,22 @@ static func place(screen: Vector2, target: Vector2, avoid: Array) -> Dictionary:
 	for k in tries + 1:
 		for dir_sign in ([1.0] if k == 0 else [1.0, -1.0]):
 			var p := _track_point(track, s0 + dir_sign * k * STEP)
-			if _clear(p, avoid):
+			if _clear(p, avoid, scale):
 				return {"position": p, "angle": (target - p).angle()}
 	return {"position": start, "angle": (target - start).angle()}
 
 
 ## The arrow's box on screen when centred on `p` (a square as long as the
 ## arrow, so it holds the arrow at any angle).
-static func arrow_rect(p: Vector2) -> Rect2:
-	var side := ARROW_SIZE.x
+static func arrow_rect(p: Vector2, scale := 1.0) -> Rect2:
+	var side := ARROW_SIZE.x * scale
 	return Rect2(p - Vector2(side, side) / 2.0, Vector2(side, side))
 
 
-static func _clear(p: Vector2, avoid: Array) -> bool:
-	var box := arrow_rect(p)
+static func _clear(p: Vector2, avoid: Array, scale := 1.0) -> bool:
+	var box := arrow_rect(p, scale)
 	for r in avoid:
-		if (r as Rect2).grow(GAP).intersects(box):
+		if (r as Rect2).grow(GAP * scale).intersects(box):
 			return false
 	return true
 
@@ -173,19 +191,29 @@ static func _track_s(r: Rect2, p: Vector2) -> float:
 
 
 ## The arrow's triangle around `p`, pointing along `angle`.
-static func arrow_points(p: Vector2, angle: float) -> PackedVector2Array:
-	var l := ARROW_SIZE.x / 2.0
-	var w := ARROW_SIZE.y / 2.0
+static func arrow_points(p: Vector2, angle: float, scale := 1.0) -> PackedVector2Array:
+	var l := ARROW_SIZE.x / 2.0 * scale
+	var w := ARROW_SIZE.y / 2.0 * scale
 	var pts := PackedVector2Array([Vector2(l, 0), Vector2(-l, -w), Vector2(-l * 0.4, 0), Vector2(-l, w)])
 	for i in pts.size():
 		pts[i] = p + pts[i].rotated(angle)
 	return pts
 
 
+## The light green stripe: the arrow's triangle shrunk towards its centre.
+static func stripe_points(p: Vector2, angle: float, scale := 1.0) -> PackedVector2Array:
+	var pts := arrow_points(p, angle, scale)
+	var c := (pts[0] + pts[1] + pts[3]) / 3.0
+	for i in pts.size():
+		pts[i] = c + (pts[i] - c) * 0.45
+	return pts
+
+
 func _draw_arrows() -> void:
 	for a in shown:
-		var pts := arrow_points(a.position, a.angle)
+		var pts := arrow_points(a.position, a.angle, ui_scale)
 		_canvas.draw_colored_polygon(pts, FILL)
+		_canvas.draw_colored_polygon(stripe_points(a.position, a.angle, ui_scale), STRIPE)
 		var ring := pts.duplicate()
 		ring.append(pts[0])
-		_canvas.draw_polyline(ring, OUTLINE, 3.0, false)
+		_canvas.draw_polyline(ring, OUTLINE, OUTLINE_WIDTH * ui_scale, false)

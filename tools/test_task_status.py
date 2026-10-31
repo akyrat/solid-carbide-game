@@ -33,11 +33,12 @@ _spec.loader.exec_module(gate)
 
 def task(tid, status="open", depends_on="", qa_rounds=0, criteria=("- [ ] It works (QA: pass / fail)",),
          notes="Written by the agent when it finishes.", review=None, lead=None, goal=None, epic="hud-menus",
-         style=None):
+         style=None, approved_art=False):
     review_line = f"\nThe board's review: {review}\n" if review else ""
     style_block = "" if style is None else f"## Style review\n\n{style}\n\n"
     lead_line = "" if lead is None else ("lead:\n" if not lead else f"lead: {lead}\n")
     lead_line += "" if goal is None else (f"goal: {goal}\n" if goal else "goal:\n")
+    lead_line += "board_approved_art: yes\n" if approved_art else ""
     return f"""---
 id: {tid}
 title: Task {tid}
@@ -104,6 +105,28 @@ class Base(unittest.TestCase):
         with self.assertRaises(ts.Refused) as ctx:
             self.move(tid, new, note)
         return str(ctx.exception)
+
+
+class BoardApprovedArt(Base):
+    """T-449: art the board already approved skips QA: in-progress -> needs-playtest -> done, no QA marks."""
+
+    def test_board_approved_art_goes_to_the_playtest_and_done_without_qa(self):
+        self.put("T-001", status="in-progress", approved_art=True, notes="Swapped in the splash.")
+        self.move("T-001", "needs-playtest")
+        self.assertEqual(self.status("T-001"), "needs-playtest")
+        self.move("T-001", "done")
+        self.assertEqual(self.status("T-001"), "done")
+
+    def test_it_still_needs_result_notes(self):
+        self.put("T-001", status="in-progress", approved_art=True)
+        self.assertIn("result notes", self.refused("T-001", "needs-playtest"))
+
+    def test_other_tickets_keep_the_rules(self):
+        self.put("T-001", status="in-progress", notes="Built it.")
+        self.assertIn("needs-playtest", self.refused("T-001", "needs-playtest"))
+        self.move("T-001", "in-qa")
+        self.assertIn("hasn't marked", self.refused("T-001", "done"))
+        self.assertIn("hasn't marked", self.refused("T-001", "needs-playtest"))
 
 
 class StatusRules(Base):

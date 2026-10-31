@@ -1,7 +1,7 @@
 ---
 id: T-445
 title: Art: the board's own splash art behind the main menu
-status: open
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/art/menu/splash.json]
 files_expected_to_change: [game/art/menu/splash.png, game/art/menu/splash.json, art-archive/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,15 +46,23 @@ The board's review: open the game and look at the main menu.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/art/menu/splash.png is byte for byte the board's picture (the agent shows matching SHA-256 hashes in the result notes). (QA: pass / fail)
-- [ ] Today's splash is in art-archive/ with its record, not deleted. (QA: pass / fail)
-- [ ] splash.json and docs/visual-style.md say the cover is the board's own picture. (QA: pass / fail)
-- [ ] A screenshot of the main menu is saved in art-archive/<this ticket>/screenshots/, or the result notes say why not. (QA: pass / fail)
-- [ ] 0 PixelLab calls; nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] game/art/menu/splash.png is byte for byte the board's picture (the agent shows matching SHA-256 hashes in the result notes). (QA: pass) Checked by the Project Lead: SHA-256 46c5be910d86... on both files. Board-approved art, no QA round (board, 2026-10-31).
+- [x] Today's splash is in art-archive/ with its record, not deleted. (QA: pass) Checked by the Project Lead: art-archive/T-445/splash_T-433_v2_previous.png and .json.
+- [x] splash.json and docs/visual-style.md say the cover is the board's own picture. (QA: pass) Checked by the Project Lead: both changed on the branch.
+- [x] A screenshot of the main menu is saved in art-archive/<this ticket>/screenshots/, or the result notes say why not. (QA: pass) Checked by the Project Lead: main_menu_with_board_splash.png.
+- [x] 0 PixelLab calls; nothing under game/data/levels/ is changed or committed. (QA: pass) Checked by the Project Lead: the branch's diff touches no game/data/levels/ file.
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Open → In progress
+
+Started: the Asset Generation Agent swaps your splash in, in C:\solid-carbide-worktrees\T-445. No QA, no tests (your rule).
+
+### 2026-10-31, In QA
+
+Ready for you to play (no QA, no tests): open C:\solid-carbide-worktrees\T-445\game\project.godot and look at the main menu. Say LGTM and I merge it.
 
 ## Style review
 
@@ -62,4 +70,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the Asset Generation Agent, 2026-10-31. 0 PixelLab calls, no style loop, no tests (board-approved art).
+- game/art/menu/splash.png is the board's picture, byte for byte. SHA-256 of the source and of the copy: 46c5be910d86cea0688e5fa1d87ea0f2647dae32968aeea6e1f4866f43edad9d (identical). 320 x 180 RGBA. The source was only read.
+- T-433's splash archived (not deleted): art-archive/T-445/splash_T-433_v2_previous.png (SHA-256 5b96b80e6c4bbf420558870ecf6b65074443e5a8276b6375cbab6b0ad64d32fb) and its record splash_T-433_v2_previous.json.
+- game/art/menu/splash.json rewritten (source: the board's own picture, date, ticket, hash). docs/visual-style.md: new entry "The splash cover is now the board's own picture (T-445)" above the T-433 entry.
+- Screenshot: art-archive/T-445/screenshots/main_menu_with_board_splash.png (1152 x 648, main menu scene, 90 frames).
+- Nothing under game/data/levels/ touched; .import/.uid noise not committed.
+- 2026-10-31, in-progress → in-qa: Board-approved art: no QA agent, no tests; ready for the board to play
+- 2026-10-31, in-qa → needs-playtest: Criteria checked by the Project Lead; the board played it
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31); board-approved art, no QA and no tests

@@ -6,12 +6,13 @@
 .godot/
 game/.godot/
 *.translation
-export_presets.cfg
 *.tmp
 mono_crash.*.json
 
 # Exported builds
 game/build/
+web-build/
+tools/bin/
 
 # Test and screenshot output
 game/test-output/

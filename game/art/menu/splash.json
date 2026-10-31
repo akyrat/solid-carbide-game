@@ -1,20 +1,10 @@
 {
   "file": "splash.png",
-  "task": "T-433",
-  "kept_version": 2,
-  "style_loop_score": 6,
-  "note": "Kept below 8 after 3 refines, for the board's final playtest (goal run, not flagged). Unedited copy of art-archive/T-433/style-loop/v2.png, which is art-archive/T-433/generations/splash_v2_raw.png.",
+  "task": "T-445",
+  "source": "the board's own PixelLab picture, made outside the studio: C:/Users/andre/Downloads/pixellab-Make-this-more-cinematic-and-a-1793446317815.png",
+  "note": "Board-approved art, copied byte for byte (no style loop, no PixelLab call by the studio). Replaces T-433's splash (v2 of its style loop), archived in art-archive/T-445/splash_T-433_v2_previous.png with its record splash_T-433_v2_previous.json.",
   "image": {"width": 320, "height": 180},
-  "endpoint": "/create-image-pixflux",
-  "prompt": "see art-archive/T-433/generations/splash_v2_raw.json (request_params, prompt, usage)",
-  "usage": {"type": "generations", "generations": 1.0, "total_for_ticket": 4},
-  "resources_consulted": [
-    "docs/visual-style.md",
-    "docs/extended-narrative.md",
-    "game/art/car/car_iso.png",
-    "art-archive/T-433/brief.md"
-  ],
-  "all_versions": "art-archive/T-433/style-loop/v1.png to v4.png, raw generations and records in art-archive/T-433/generations/",
-  "generated_at": "2026-10-30T20:57:27+00:00",
-  "generator": "game/tools/pixellab_client.py"
+  "sha256": "46c5be910d86cea0688e5fa1d87ea0f2647dae32968aeea6e1f4866f43edad9d",
+  "generated_at": "2026-10-31",
+  "generator": "the board, PixelLab (outside the studio)"
 }
