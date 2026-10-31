@@ -44,12 +44,12 @@ Document it in game/docs/game-loop/the-run.md and Game loop architecture, Conten
 
 ## Acceptance criteria
 
-- [ ] A new run has 30 missions; its first 5 match missions.json's fixed list and are identical across at least 3 different seeds, and missions 6 to 30 differ between at least two seeds (GUT test). (QA: pass / fail)
-- [ ] GUT tests complete missions 1 to 5 in order from simulated trick events, each sending goal_progress, goal_completed and mission_completed, and the current mission advances after each. (QA: pass / fail)
-- [ ] A GUT test shows the continuous-drift goal counts only one unbroken drift: two 2 s drifts don't complete mission 1, one 4 s drift does. (QA: pass / fail)
-- [ ] Starting a new run (and Restart) resets the tracker to mission 1 and clears owned power-ups; grant_power_up gives tier 1 then tier 2 and power_up_tier reads them (GUT tests). (QA: pass / fail)
-- [ ] game/docs/game-loop/the-run.md and Game loop architecture, Content, describe the tracker, its signals and the power-up state; the result notes say there is nothing to picture. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] A new run has 30 missions; its first 5 match missions.json's fixed list and are identical across at least 3 different seeds, and missions 6 to 30 differ between at least two seeds (GUT test). (QA: pass)
+- [ ] GUT tests complete missions 1 to 5 in order from simulated trick events, each sending goal_progress, goal_completed and mission_completed, and the current mission advances after each. (QA: pass)
+- [ ] A GUT test shows the continuous-drift goal counts only one unbroken drift: two 2 s drifts don't complete mission 1, one 4 s drift does. (QA: pass)
+- [ ] Starting a new run (and Restart) resets the tracker to mission 1 and clears owned power-ups; grant_power_up gives tier 1 then tier 2 and power_up_tier reads them (GUT tests). (QA: pass)
+- [ ] game/docs/game-loop/the-run.md and Game loop architecture, Content, describe the tracker, its signals and the power-up state; the result notes say there is nothing to picture. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -107,6 +107,8 @@ Documents affected: `game/docs/game-loop/the-run.md` (new section "Missions and 
 Screenshots: there is nothing to picture. The tracker is invisible state with no screen, layout or motion; the HUD page and the overlay are separate tickets.
 
 PixelLab generations: 0. Refusals: none.
+
+**QA round 1 (QA/Integration, 2026-10-31): all 6 criteria pass.** Reran here: test_missions.gd 16/16 (242 asserts); GUT run folder 393 passed; game/tools Python 767 OK (1 skipped); tools Python 614 OK. The full GUT suite (about 1070 s, past the foreground limit) was not rerun; its count 2335/2335 is the agent's. `python tools/qa_check.py` is not on the pre-approved list and was not run. Docs sections for T-457 found in both documents; no-screenshot note present.
 
 Notes on how it ran:
 - The full GUT suite goes past the 10-minute foreground limit, so the tool moved it to the background, where it finished (exit 0). The studio-tools Python set did the same. Both had finished before this hand-back, and no jobs are left running.
