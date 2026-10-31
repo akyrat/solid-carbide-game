@@ -1,7 +1,7 @@
 ---
 id: T-458
 title: HUD: the current mission as a notebook page on the left, with checkboxes, live counts and crossing off (placeholder art)
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-009
@@ -56,6 +56,10 @@ The board's review: play a run and check the notebook page on the left: its plac
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-458.
 
 ## Style review
 
