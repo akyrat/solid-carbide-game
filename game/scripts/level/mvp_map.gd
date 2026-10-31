@@ -160,8 +160,9 @@ var boulder_textures: Array[Texture2D] = []
 var building_art: Dictionary = {}
 ## Set false before the map enters the tree to keep the placeholder boxes (tests of the boxes).
 var building_art_enabled := true
-## The kaiju alert signs (T-130) stand at the sample map's own blocks. The level creator's
-## editor (T-235) sets this false before the map enters the tree, since its levels have other blocks.
+## The kaiju alert signs and banners the level places (T-441, kaiju_signs.gd: the layout's
+## "alert_signs"; a level without them has none). Set false before the map enters the tree to leave
+## them out.
 var alert_signs_enabled := true
 var building_atlas: Texture2D = null
 ## "flat" or "iso".
@@ -200,9 +201,12 @@ var buildings: Array = []
 ## The skyscrapers' own fade nodes (T-064, per-slot fade): four per block when the building art is
 ## loaded, in depth order. Empty without the art; then the blocks (`buildings`) fade as wholes.
 var slots: Array = []
-## The kaiju alert signs (T-130): every sprite, and the root of the pavement ones (kaiju_signs.gd).
+## The kaiju alert signs (T-441, kaiju_signs.gd): every sprite (banners and standing signs), the root
+## of the standing signs (screen pixels, like prop_sprites_root) and the standing signs' sprites, which
+## take part in the depth order like the props' (depth_sprites).
 var alert_signs: Array = []
 var alert_signs_root: Node2D
+var alert_sign_sprites: Array = []
 ## Meteor challenges: id -> {id, design, centre, angle, boulders,
 ## corridor_width, centre_line}, everything placed, in units.
 var meteor_challenges: Dictionary = {}
@@ -275,8 +279,6 @@ func _build() -> void:
 	buildings_draw.map = self
 	view_root.add_child(buildings_draw)
 	_build_buildings()
-	if alert_signs_enabled:
-		alert_signs = KaijuSigns.build(self)
 	arrows_root = Node2D.new()
 	arrows_root.name = "Arrows"
 	view_root.add_child(arrows_root)
@@ -293,6 +295,8 @@ func _build() -> void:
 	_build_boulders()
 	_sync_boulder_sprites()
 	LevelProps.build(self)
+	if alert_signs_enabled:
+		alert_signs = KaijuSigns.build(self)
 	if challenges_enabled:
 		_build_challenges()
 	set_view(view)
@@ -564,9 +568,11 @@ func prop_blocks_spot(centre: Vector2, radius: float) -> bool:
 
 
 ## The sprites the depth order covers the car and the enemies with: the boulders', then the
-## props' (T-253). The array itself when there are no props.
+## props' (T-253), then the standing alert signs' (T-441). The array itself when there are none.
 func depth_sprites() -> Array:
-	return boulder_sprites if prop_sprites.is_empty() else boulder_sprites + prop_sprites
+	if prop_sprites.is_empty() and alert_sign_sprites.is_empty():
+		return boulder_sprites
+	return boulder_sprites + prop_sprites + alert_sign_sprites
 
 
 ## Places one plain boulder at `centre` (units from the map's centre) during a
@@ -1100,6 +1106,10 @@ func set_view(v: String) -> void:
 		# Prop sprites (T-253) in screen pixels too; the flat view draws no props.
 		prop_sprites_root.visible = v == "iso"
 		prop_sprites_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+	if alert_signs_root != null:
+		# The standing alert signs (T-441) in screen pixels too; the flat view draws none.
+		alert_signs_root.visible = v == "iso"
+		alert_signs_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
 	if boulders_draw != null:
 		boulders_draw.queue_redraw()
 	if ground_tiles != null:

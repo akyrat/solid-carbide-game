@@ -2980,3 +2980,8 @@ Entry format:
 - Decision or change: Every player-facing button (main menu, garage, tutorial slides, level-up, pause, recap) is one shared button with five states (normal, hover, keyboard-selected, pressed, disabled) from the HUD style sheet; placeholder plates until T-447. The level-up Take it button is steel. The board: "LGTM" (swipe review).
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-446
+
+## 2026-10-31: Kaiju alert signs are level creator pieces
+- Decision or change: Alert sign (ground or rooftop) and Alert banner (on a skyscraper's wall, heights 3 to 15) are level creator pieces in both designs; M mirrors a sign. The fixed sign list kaiju_signs.json is retired, so Kaiju City has no signs until the board places them. The board: "LGTM" (swipe review).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-441

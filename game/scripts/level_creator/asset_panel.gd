@@ -77,6 +77,9 @@ var looks_strip: VBoxContainer
 var looks_heading: Label
 var looks_row: HFlowContainer
 var look_counter: Label
+## T-441: under the counter, the picked look's name (a family's "look_labels": the alert signs' designs)
+## and the family's "hints" (the alert banner's wall and height keys), one per line; empty for the rest.
+var look_notes: Label
 ## The strip's look buttons, in order (each has the member it picks as meta "member").
 var look_buttons: Array = []
 
@@ -145,6 +148,10 @@ func _make_strip() -> void:
 	look_counter = Label.new()
 	look_counter.name = "Counter"
 	looks_strip.add_child(look_counter)
+	look_notes = Label.new()
+	look_notes.name = "Notes"
+	look_notes.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	looks_strip.add_child(look_notes)
 	looks_strip.visible = false
 	_list.add_child(looks_strip)
 
@@ -211,6 +218,8 @@ func _update_strip() -> void:
 			_list.move_child(looks_strip, (g.grid as Node).get_index() + 1)
 	var all := CreatorFamilies.looks(picked_family, member)
 	var at := CreatorFamilies.look_index(picked_family, member)
+	var fam := CreatorFamilies.family(picked_family)
+	var look_labels: Array = fam.get("look_labels", [])
 	for i in all.size():
 		var m: Dictionary = all[i]
 		var b := Button.new()
@@ -220,7 +229,7 @@ func _update_strip() -> void:
 		b.custom_minimum_size = LOOK_SIZE
 		b.expand_icon = true
 		b.icon = member_icon(m)
-		b.tooltip_text = str(m.asset)
+		b.tooltip_text = CreatorTexts.get_text(str(look_labels[i])) if i < look_labels.size() else str(m.asset)
 		b.set_meta("member", m)
 		b.pressed.connect(func(): member_picked.emit(m))
 		looks_row.add_child(b)
@@ -228,6 +237,14 @@ func _update_strip() -> void:
 	# T-398: the cars and craters count models ("model_counter", the family's "counter").
 	var counter_key := str(CreatorFamilies.family(picked_family).get("counter", "look_counter"))
 	look_counter.text = CreatorTexts.get_text(counter_key).format({"n": at + 1, "count": all.size()})
+	var notes: Array = []
+	if at >= 0 and at < look_labels.size():
+		notes.append(CreatorTexts.get_text(str(look_labels[at])))
+	for k in fam.get("hints", []):
+		notes.append(CreatorTexts.get_text(str(k)))
+	var one_per_line := "\n"
+	look_notes.text = one_per_line.join(notes)
+	look_notes.visible = not notes.is_empty()
 	looks_strip.visible = true
 
 

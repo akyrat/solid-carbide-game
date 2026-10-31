@@ -1,172 +1,85 @@
 extends GutTest
-## Task T-130: the kaiju alert signs: 4 banners hanging on skyscraper walls and 2 signs on the pavement,
-## from data/level/kaiju_signs.json. Pictures only (no collisions), banners fade with their slot, signs do not.
+## The kaiju alert signs' geometry (scripts/level/kaiju_signs.gd). T-130 placed 4 banners and 2 standing
+## signs from a fixed list; T-441 retired that list: the signs are level creator pieces now, placed in a
+## level's "alert_signs" (tests in tests/unit/level_creator/test_creator_alert_signs.gd). These are the
+## helpers both the run and the creator use.
 
-const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const KaijuSigns := preload("res://scripts/level/kaiju_signs.gd")
-const NOSE_UP := -PI / 2.0
-## Behind the skyscraper at block (2, 0) slot (1, 0), on the road north of it.
-const BEHIND_BANNER_SLOT := Vector2(30, -100)
+const MapScene := preload("res://scenes/level/mvp_map.tscn")
 
 
-func make_map(view := "iso", art := true) -> Node2D:
-	var map: Node2D = MapScene.instantiate()
-	map.building_art_enabled = art
-	add_child_autofree(map)
-	map.set_view(view)
-	return map
+func test_kinds_and_designs_come_from_the_asset() -> void:
+	assert_eq(KaijuSigns.kind_of_asset("alert-sign-head"), "sign")
+	assert_eq(KaijuSigns.kind_of_asset("alert-banner-body"), "banner")
+	assert_eq(KaijuSigns.kind_of_asset("prop-barrier"), "")
+	assert_eq(KaijuSigns.design_of_asset("alert-sign-head"), "head")
+	assert_eq(KaijuSigns.design_of_asset("alert-banner-body"), "body")
 
 
-func _count_collision(n: Node) -> int:
-	var c := 1 if (n is CollisionObject2D or n is CollisionShape2D or n is CollisionPolygon2D) else 0
-	for k in n.get_children():
-		c += _count_collision(k)
-	return c
-
-
-func _block_rect_at(map: Node2D, p: Vector2) -> Rect2:
-	for b in map.buildings:
-		if b.footprint.has_point(p):
-			return b.footprint
-	return Rect2()
-
-
-func test_six_signs_four_banners_two_pavement_signs() -> void:
-	var map := make_map()
-	assert_eq(map.alert_signs.size(), 6)
-	var banners := 0
-	var pavement := 0
-	var designs := {}
-	for s in map.alert_signs:
-		if s.get_meta("alert_kind") == "banner":
-			banners += 1
-		else:
-			pavement += 1
-		designs[s.texture.resource_path] = true
-	assert_eq(banners, 4)
-	assert_eq(pavement, 2)
-	assert_eq(designs.size(), 4, "all 4 designs: head and body, as banner and as sign")
-
-
-func test_the_data_list_is_small_and_valid() -> void:
-	var data := KaijuSigns.load_data()
-	assert_eq(data.size(), 6)
-	for e in data:
-		assert_true(e.design in ["head", "body"])
-		assert_true(e.kind in ["banner", "sign"])
-
-
-func test_no_sign_on_a_road_and_all_on_blocks() -> void:
-	var map := make_map()
-	for s in map.alert_signs:
-		var g: Vector2 = s.get_meta("ground")
-		var rect := _block_rect_at(map, g if s.get_meta("alert_kind") == "sign" else g - Vector2(0.01, 0.01))
-		assert_ne(rect, Rect2(), "%s: its ground point is on a block (not a road)" % s.name)
-		if s.get_meta("alert_kind") == "sign":
-			assert_gt(g.x, rect.end.x - 1.5, "%s: on the pavement strip, not in a building" % s.name)
-			assert_gt(g.y, rect.end.y - 1.5)
-			assert_lt(g.x, rect.end.x, "%s: not on the road" % s.name)
-			assert_lt(g.y, rect.end.y)
-
-
-func test_banners_hang_on_skyscrapers_not_short_buildings() -> void:
-	var map := make_map()
-	for s in map.alert_signs:
-		if s.get_meta("alert_kind") == "banner":
-			var slot: Node2D = s.get_parent().get_parent()
-			assert_gte(slot.height_units, 20.0, "%s hangs on a skyscraper" % s.name)
-			assert_true(slot in map.slots)
-
-
-func test_banners_are_children_of_their_slot_art_and_pavement_signs_are_not_under_a_slot() -> void:
-	var map := make_map()
-	for s in map.alert_signs:
-		if s.get_meta("alert_kind") == "banner":
-			assert_true(s.get_parent() in map.slots.map(func(n): return n.towers))
-		else:
-			assert_eq(s.get_parent(), map.alert_signs_root)
-			assert_eq(map.alert_signs_root.get_parent(), map.buildings_draw)
-
-
-func test_nearest_filter_and_art_scale() -> void:
-	var map := make_map()
-	for s in map.alert_signs:
-		assert_eq(s.scale, Vector2(0.5, 0.5))
-	assert_eq(map.alert_signs_root.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
-
-
-func test_banner_fades_with_its_slot_and_pavement_signs_do_not() -> void:
-	var map := make_map()
-	map.update_see_through(BEHIND_BANNER_SLOT, NOSE_UP, 1.0)
-	var slot: Node2D = null
-	for s in map.alert_signs:
-		if s.name == "banner_top_east":
-			slot = s.get_parent().get_parent()
-			assert_almost_eq(s.get_parent().get_parent().alpha(), 0.15, 0.001, "the slot fades")
-			assert_almost_eq(s.get_global_transform().get_scale().x, 0.5, 0.001)
-	assert_not_null(slot)
-	assert_true(slot in map.covering_buildings())
-	# The banner's own alpha stays 1: it shows at the slot's alpha through the parent's modulate.
-	for s in map.alert_signs:
-		assert_eq(s.modulate.a, 1.0)
-		if s.get_meta("alert_kind") == "sign":
-			assert_eq(map.alert_signs_root.modulate.a, 1.0, "pavement signs never fade")
-			assert_false(s.get_parent() in map.slots)
-	# Out of the way, the slot is solid again.
-	map.update_see_through(Vector2(0, 0), NOSE_UP, 2.0)
-	assert_eq(slot.alpha(), 1.0)
-
-
-func test_depth_order_pavement_sign_is_just_above_its_blocks_front_slot() -> void:
-	var map := make_map()
-	for s in map.alert_signs:
-		if s.get_meta("alert_kind") != "sign":
-			continue
-		var block := _block_rect_at(map, s.get_meta("ground"))
-		var front: Node2D = null
-		for sl in map.slots:
-			if sl.footprint.position.distance_to(block.position + Vector2(16.5, 16.5)) < 0.01:
-				front = sl
-		assert_not_null(front)
-		assert_eq(s.z_index, front.z_index + 1)
-		for sl in map.slots:
-			if sl.depth_key() > front.depth_key():
-				assert_gt(sl.z_index, s.z_index, "every nearer slot draws over the sign")
-		assert_lt(s.z_index, map.top_z_index(), "the car at the top is drawn over every sign")
-
-
-func test_banners_inherit_their_slots_depth() -> void:
-	var map := make_map()
-	for s in map.alert_signs:
-		if s.get_meta("alert_kind") == "banner":
-			assert_eq(s.z_index, 0, "relative to the slot, which has the z")
-			assert_gt(s.get_parent().get_parent().z_index, 1)
-
-
-func test_no_collisions_added() -> void:
-	var with_signs := _count_collision(make_map())
-	var placeholder := _count_collision(make_map("iso", false))
-	assert_eq(with_signs, placeholder, "the collision objects are the same as without the art")
-	var map := make_map()
-	for s in map.alert_signs:
-		assert_eq(s.get_child_count(), 0)
-		assert_eq(_count_collision(s), 0)
-
-
-func test_flat_view_hides_the_signs() -> void:
-	var map := make_map("flat")
-	assert_false(map.alert_signs_root.visible)
-	for s in map.alert_signs:
-		if s.get_meta("alert_kind") == "banner":
-			assert_false(s.is_visible_in_tree())
+func test_every_kind_and_design_has_its_t130_art() -> void:
+	for design in KaijuSigns.DESIGNS:
+		for kind in ["sign", "banner"]:
+			var path := KaijuSigns.texture_path(design, kind)
+			assert_true(path.begins_with("res://art/banners/kaiju_" + design), path)
+			assert_not_null(KaijuSigns.texture_of({"asset": "alert-%s-%s" % [kind, design]}), path)
 
 
 func test_banner_sits_on_the_wall_three_units_up() -> void:
 	var foot := Rect2(0, 0, 12, 12)
 	var tex := KaijuSigns.BuildingTowers.load_texture(KaijuSigns.texture_path("head", "banner"))
-	var pos := KaijuSigns.banner_sprite_position(foot, "y", 2.0, 3.0, tex)
+	var pos := KaijuSigns.banner_sprite_position(foot, "south", 2.0, 3.0, tex)
 	var g := KaijuSigns.iso(Vector2(2.0, 12.0))
 	# The sprite's bottom-left (unsheared) pixel row is front_h - 1.
 	var front_h := float(tex.get_height()) - floorf((float(tex.get_width()) - 1.0) / 2.0)
 	assert_almost_eq(pos.x, g.x, 0.001)
 	assert_almost_eq(pos.y + (front_h - 1.0) * 0.5, g.y - 48.0, 0.001)
+	# T-130's wall names are the same walls.
+	assert_eq(KaijuSigns.banner_sprite_position(foot, "y", 2.0, 3.0, tex), pos)
+	assert_eq(KaijuSigns.banner_ground_point(foot, "east", 2.0), Vector2(12, 10))
+	assert_eq(KaijuSigns.banner_ground_point(foot, "x", 2.0), Vector2(12, 10))
+
+
+func test_a_banner_is_three_units_long_and_stays_on_a_12_unit_wall() -> void:
+	var tex := KaijuSigns.texture_of({"asset": "alert-banner-head"})
+	assert_almost_eq(KaijuSigns.banner_length(tex), 3.0, 0.001)
+	assert_almost_eq(KaijuSigns.max_along(Rect2(0, 0, 12, 12), "south", tex), 9.0, 0.001)
+	var quad := KaijuSigns.banner_quad(Rect2(0, 0, 12, 12), "south", 0.0, 3.0, tex)
+	assert_eq(quad[0], KaijuSigns.iso(Vector2(0, 12)) - Vector2(0, 48))
+	assert_eq(quad[1], KaijuSigns.iso(Vector2(3, 12)) - Vector2(0, 48))
+
+
+func test_the_banner_target_is_the_nearest_skyscraper_under_the_point_and_never_a_short_building() -> void:
+	var layout := {"buildings": [
+		{"x": 0.0, "y": 0.0, "w": 12.0, "h": 12.0, "asset": "skyscraper-1"},
+		{"x": 14.0, "y": 14.0, "w": 12.0, "h": 12.0, "asset": "skyscraper-2"},
+		{"x": -40.0, "y": 0.0, "w": 12.0, "h": 12.0, "asset": "short-0"},
+	]}
+	# A point drawn over both skyscrapers: the nearer (14, 14) one wins.
+	var both := KaijuSigns.iso(Vector2(20, 26)) - Vector2(0, 300)
+	assert_true(Geometry2D.is_point_in_polygon(both, KaijuSigns.skyscraper_outline(Rect2(0, 0, 12, 12))))
+	var t := KaijuSigns.banner_target(layout, "alert-banner-head", both, "south", 6.0)
+	assert_eq(t.building.asset, "skyscraper-2")
+	assert_eq(t.wall, "south")
+	assert_eq(t.along, 4.5)
+	assert_eq(t.bottom_units, 6.0)
+	assert_true(KaijuSigns.banner_target(layout, "alert-banner-head", KaijuSigns.iso(Vector2(-34, 6)), "south", 3.0).is_empty())
+	assert_false(KaijuSigns.can_hang_on(layout.buildings[2]))
+	assert_false(KaijuSigns.can_hang_on({"x": 0, "y": 0, "w": 30, "h": 30}), "nor a whole block of the old map")
+
+
+func test_a_standing_sign_stands_on_its_cells_middle_at_the_height_under_it() -> void:
+	var it := {"asset": "alert-sign-body", "x": 4.0, "y": 6.0, "w": 2.0, "h": 2.0}
+	var g := KaijuSigns.sign_ground_point(it)
+	assert_eq(g, Vector2(5, 7))
+	var tex := KaijuSigns.texture_of(it)
+	assert_eq(KaijuSigns.sign_sprite_position(g, 3.0, tex),
+		KaijuSigns.iso(g) - Vector2(tex.get_width() * 0.5, tex.get_height()) * 0.5 - Vector2(0, 48))
+
+
+func test_a_map_without_placed_signs_draws_none() -> void:
+	var map: Node2D = MapScene.instantiate()
+	add_child_autofree(map)
+	map.set_view("iso")
+	assert_eq(map.alert_signs.size(), 0)
+	assert_null(map.alert_signs_root)
+	assert_eq(map.depth_sprites().size(), map.boulder_sprites.size())

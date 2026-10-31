@@ -84,7 +84,7 @@ func test_the_panel_lists_the_props_under_obstacles_and_decoration_with_creator_
 	var by_cat := e.panel.entries_by_category()
 	assert_eq(by_cat[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])
 	assert_eq(by_cat[CreatorTexts.get_text("group_decoration")],
-		["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"])
+		["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign", "alert-sign", "alert-banner"])
 	for id in PROP_IDS:
 		var fid := CreatorFamilies.family_of_asset(id)
 		var b: Button = e.panel.buttons[fid]
