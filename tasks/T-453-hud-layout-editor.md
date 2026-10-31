@@ -1,7 +1,7 @@
 ---
 id: T-453
 title: The player moves the HUD's pieces from the pause screen
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -113,3 +113,4 @@ Nothing under `game/data/levels/` was touched. The new scripts' `.uid` files and
 - QA, 2026-10-31, round 1: all 8 criteria pass. qa_check: 3 test sets pass (GUT full run), documents changed, 5 screenshots present; docs/hud-and-menus.md has "The HUD layout editor" naming settings.cfg; nothing under game/data/levels/ differs from master.
 - 2026-10-31, in-progress → in-qa: Built: HUD layout editor from the pause screen (drag, snap, Reset, Done saves to settings.cfg hud_layout). All three test sets pass (GUT 2362/2362). Screenshots in art-archive/T-453/screenshots/.
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, swipe review)
