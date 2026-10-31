@@ -1,7 +1,7 @@
 ---
 id: T-470
 title: The garage's Buy buttons are on screen at every window size
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -58,4 +58,10 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Fix.** The garage's column (heading, coins, five rows, Back) is now a plain VBox scaled and centred by `GarageScreen.fit()` to the largest scale that fits its natural size in the window, refit on every resize; nearest filtering. Descriptions now wrap (300 px) so a long one no longer widens the row and pushes Buy off screen (the cause at 1152 x 648). Look and shared buttons (T-446) unchanged.
+
+**Tests.** New `game/tests/unit/test_garage_fit.gd` (3 tests): at 1152x648, 1920x1080, 2560x1080 and 960x540 every Buy button, Back, coins and title are fully inside the screen (corners taken through the scaled transform), every Buy is clickable and buys, and a resize refits. Existing garage tests pass. Counts: GUT 2372/2372; game/tools unittest 769 OK (1 skipped); tools unittest 633 OK.
+
+**Screenshots** (art-archive/T-470/screenshots/): garage_1152x648.png, garage_1920x1080.png, garage_2560x1080.png, garage_960x540.png, taken with the new fixture game/tests/fixtures/t470_garage_size_demo.tscn (size from env GARAGE_SHOT_SIZE).
+
+**Documents updated:** docs/garage-design.md (new section "How the garage fits the window (T-470)"). Nothing under game/data/levels/ touched.
