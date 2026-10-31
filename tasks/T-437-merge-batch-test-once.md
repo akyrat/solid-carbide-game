@@ -45,14 +45,14 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/tools/run_tests.sh` defaults to a 1500 s limit, GUT_TIME_LIMIT still overrides it (a test or a dry run shows both). (QA: pass / fail)
-- [ ] merge_batch with several tickets runs the three test sets once when they all pass (tests with stubbed test runs count the runs: one per batch). (QA: pass / fail)
-- [ ] When the batch's tests fail, merge_batch finds the breaking ticket, merges the others, stops only that one with its reason, and leaves master with no merge in progress and without the breaking ticket's commits (tests with stubbed runs and a temporary git repo). (QA: pass / fail)
-- [ ] A ticket that conflicts stops on its own and the rest of the batch still merges (test). (QA: pass / fail)
-- [ ] The old ticket-by-ticket mode is still there behind a flag (test). (QA: pass / fail)
-- [ ] docs/working-with-the-board.md, "Merging (Project Lead)", describes testing once per batch and the flag. (QA: pass / fail)
-- [ ] The 10 slowest Godot test files and their times are in the result notes. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `game/tools/run_tests.sh` defaults to a 1500 s limit, GUT_TIME_LIMIT still overrides it (a test or a dry run shows both). (QA: pass - default 1500, env override tested)
+- [ ] merge_batch with several tickets runs the three test sets once when they all pass (tests with stubbed test runs count the runs: one per batch). (QA: pass - test_all_green_runs_the_tests_once_for_the_batch)
+- [ ] When the batch's tests fail, merge_batch finds the breaking ticket, merges the others, stops only that one with its reason, and leaves master with no merge in progress and without the breaking ticket's commits (tests with stubbed runs and a temporary git repo). (QA: pass - test_the_breaking_ticket_is_found_and_the_others_merge)
+- [ ] A ticket that conflicts stops on its own and the rest of the batch still merges (test). (QA: pass - test_a_conflict_stops_alone_and_the_rest_is_tested_once)
+- [ ] The old ticket-by-ticket mode is still there behind a flag (test). (QA: pass - test_each_flag_keeps_the_old_mode)
+- [ ] docs/working-with-the-board.md, "Merging (Project Lead)", describes testing once per batch and the flag. (QA: pass - doc line 46 describes once per batch, halving, --each, 1500 s)
+- [ ] The 10 slowest Godot test files and their times are in the result notes. (QA: pass - 10 files listed in result notes (from junit data; read only))
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - qa_check ran the 3 sets: all green)
 
 ## Updates
 
