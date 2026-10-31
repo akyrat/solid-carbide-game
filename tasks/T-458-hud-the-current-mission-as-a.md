@@ -67,4 +67,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, 2026-10-31.
+
+**Built.** `game/scripts/hud/mission_page.gd` (`MissionPage`): the current mission as a placeholder notebook page (pale paper, ruled lines, red margin, dark Bangers ink, drawn in code) on the HUD's left, 176 x 180 at (12, 304) in the 1152 x 648 layout, between the weapon icons and the coins. `Hud` builds it (`hud.mission_page`) and `bind(state)` binds it to `state.missions` (T-457). Texts are `screen_texts.json`'s `missions.header` and `missions.goals.<trick>`, word for word, `{done}/{total}`/`{seconds}` filled in. Each goal has a checkbox; quantity goals update live on `goal_progress`; duration goals show no count; `goal_completed` ticks the box and crosses the line off; `mission_started` shows the next mission; after the last one the page hides. HudStyle got roles `mission_header`/`mission_goal` and the `MISSION_*` colours.
+
+**Movable HUD (T-453): not on this branch**, so the page is fixed. It is noted in `game/docs/hud-and-menus/hud.md` as a piece to register when it lands.
+
+**Placement:** the test checks the page's rect against the coins (`COINS_POS`), the clock and a full 30-heart block in layout pixels at 1152x648 and 1920x1080 (both give the same 1152 x 648 layout area, since the HUD scales as one piece); no overlap. The screenshot tool renders 1152 x 648 only.
+
+**Tests:** `tests/unit/hud/test_hud_mission_page.gd`, 10 tests. Full Godot GUT run: 196 scripts, 2379 tests, all pass. `python -m unittest discover tools`: 614 tests OK. The third set (docs/staleness checks) is run by the runner, not here.
+
+**Screenshots** (`art-archive/T-458/screenshots/`, from `game/tests/fixtures/mission_page_demo*.tscn`): `mission_half.png` (Alt drifts 5/10), `mission_ticked.png` (a goal ticked and crossed, the other open), `mission_next.png` (the next mission after two completed). The fixtures hide the power-up overlay (T-459) that opens on each completed mission.
+
+**Notes for the playtest:** the rules on the page do not line up with the text lines (placeholder); a long line wraps (the stroke runs along each wrapped line); the page's place and size are proposals. Two fixtures extra to the expected list: `mission_page_demo_ticked.tscn` and `mission_page_demo_next.tscn`. Documents updated: `docs/hud-and-menus.md`, `game/docs/hud-and-menus/hud.md`. No PixelLab generations, no style loop (placeholder drawn in code; text is T-456's). No refusals.
