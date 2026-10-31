@@ -1,7 +1,7 @@
 ---
 id: T-438
 title: A wall hit ends the drift
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/docs/driving/collisions.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, game/docs/driving/collisions.md, tasks/T-435-wall-bounce-not-stick.md, game/scripts/driving/car.gd, game/scripts/driving/car_model.gd]
 files_expected_to_change: [game/scripts/driving/car_model.gd, game/scripts/driving/car.gd, game/tests/unit/, game/docs/driving/collisions.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the Driving & Drift Agent builds it in C:\solid-carbide-worktrees\T-438.
 
+### 2026-10-31, Needs playtest
+
+QA passed 7/7. Ready for your playtest: open C:\solid-carbide-worktrees\T-438\game\project.godot, drift into walls head-on and glancing; the drift should end and pay LONG DRIFT! at the hit.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -85,3 +89,5 @@ Screenshots (added before QA): `art-archive/T-438/screenshots/wall_hit_ends_drif
 ### QA, 2026-10-31
 
 All seven criteria pass. qa_check: tests (3 sets, GUT_TIME_LIMIT=1500, fixture included), documents, screenshots all PASS. test_wall_hit_ends_drift.gd covers the hit, the unchanged drift and the new drift after the bounce; test_wall_bounce.gd passes unchanged; docs/drifting.md and collisions.md describe the rule; game/data/levels untouched.
+- 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31)
