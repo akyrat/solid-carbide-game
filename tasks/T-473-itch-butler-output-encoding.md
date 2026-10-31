@@ -1,7 +1,7 @@
 ---
 id: T-473
 title: publish_itch.py reads butler's output safely on Windows
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, tools/publish_itch.py, tools/test_publish_itch.py, docs/working-with-the-board.md]
 files_expected_to_change: [tools/publish_itch.py, tools/test_publish_itch.py, docs/working-with-the-board.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,12 +46,12 @@ Never run a real push in this ticket (stub butler in tests). Never write, move o
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test with a stubbed butler that prints non-ASCII bytes shows the script doesn't crash and prints its (redacted) output. (QA: pass / fail)
-- [ ] A test shows the script runs butler status after a push and prints the channel's version. (QA: pass / fail)
-- [ ] A test shows a failing butler gives a non-zero exit code, and the key never appears in the output. (QA: pass / fail)
-- [ ] docs/working-with-the-board.md, "Publishing to itch.io", says where butler lives and how to reinstall it. (QA: pass / fail)
-- [ ] The tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`), with the count in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] A test with a stubbed butler that prints non-ASCII bytes shows the script doesn't crash and prints its (redacted) output. (QA: pass - test_non_ascii_output_does_not_crash)
+- [x] A test shows the script runs butler status after a push and prints the channel's version. (QA: pass - test_status_runs_after_push_and_prints_version)
+- [x] A test shows a failing butler gives a non-zero exit code, and the key never appears in the output. (QA: pass - test_failing_butler_exits_nonzero_without_key)
+- [x] docs/working-with-the-board.md, "Publishing to itch.io", says where butler lives and how to reinstall it. (QA: pass)
+- [x] The tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`), with the count in the result notes. (QA: pass - qa_check: 3 test sets pass; count 633 in notes)
+- [x] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -65,3 +65,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 Done. tools/publish_itch.py: new run_butler() runs butler with encoding utf-8, errors replace (output never None, key redacted); after a successful push it runs butler status on ITCH_TARGET, prints it and a "Channel html5: now shows version X" line (or a warning if the version is not in the output); a failing push or status gives exit 1 with the redacted output. tools/test_publish_itch.py: stub butler prints non-ASCII bytes; new tests for no crash, status after push with version, failing butler gives non-zero and no key, run_butler never None. docs/working-with-the-board.md "Publishing to itch.io": butler lives in the main checkout's tools/bin/, reinstall from the official download URL. Tools Python tests: 633 run, OK. No real butler call; nothing under game/data/levels/ touched.
 - 2026-10-31, in-progress → in-qa: ready for QA
+- 2026-10-31, in-qa → done: QA passed
