@@ -1,7 +1,7 @@
 ---
 id: T-438
 title: A wall hit ends the drift
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -78,3 +78,4 @@ Built. `car.gd`: new `_end_drift_on_hit(impact)`, called in `_bounce()` and `_bo
 - Docs: `docs/drifting.md` (Content, Collisions; crash-pays section) and `game/docs/driving/collisions.md` (Bounce). The Decision line was already in place.
 - Screenshots: not captured (headless only; no movie run). Skipped; the board plays it directly.
 - Nothing under game/data/levels/ touched.
+- 2026-10-31, in-progress → in-qa: Built; all three test sets pass; ready for QA.
