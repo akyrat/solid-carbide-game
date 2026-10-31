@@ -325,7 +325,8 @@ func move_step(dt: float, contacts := true) -> void:
 		var target := car_units
 		if navigation != null and m.follower != null:
 			target = m.follower.target(navigation, m.position_units(), car_units, dt)
-			m.may_drop = m.follower.dropping(navigation, m.position_units(), m.body_height())
+			# T-444: dropping() is false without a path; asked only with one (it reads the height).
+			m.may_drop = m.follower.has_path() and m.follower.dropping(navigation, m.position_units(), m.body_height())
 		var was_falling: bool = m.is_falling()
 		m.walk(dt, target, pushes[i])
 		if not was_falling and m.is_falling():
@@ -368,7 +369,54 @@ func _spawn_step(dt: float) -> void:
 
 ## Separation pushes, one per minion in `minions` order. On a map with
 ## heights only minions at the same level push apart (T-207).
+## T-444: the minions are first put in a grid of cells as wide as the push's reach, so each
+## one is only compared with the minions in its own and the eight cells round it (every
+## minion nearer than the reach is in one of them), in the same order as before (by index),
+## so the pushes are the same sums as comparing every pair. Before, each step compared every
+## pair: 300 minions were 90 000 pairs.
 func _separation() -> Array:
+	var out := []
+	var sep: float = MinionScript.SEPARATION_UNITS * float(_stats.get("size_scale", 1.0))
+	var pos := []
+	var hs := []
+	var cells := {}
+	var keys := []
+	for i in minions.size():
+		var m = minions[i]
+		var p: Vector2 = m.position_units()
+		pos.append(p)
+		hs.append(m.body_height() if ground != null else 0.0)
+		var key := Vector2i(floori(p.x / sep), floori(p.y / sep))
+		keys.append(key)
+		if not cells.has(key):
+			cells[key] = []
+		cells[key].append(i)
+	for a in minions.size():
+		var push := Vector2.ZERO
+		var near := []
+		var ka: Vector2i = keys[a]
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				var c = cells.get(ka + Vector2i(dx, dy))
+				if c != null:
+					near.append_array(c)
+		near.sort()
+		for b in near:
+			if a == b:
+				continue
+			if absf(hs[a] - hs[b]) > EnemyHeightScript.LEVEL_TOLERANCE:
+				continue
+			var d: Vector2 = pos[a] - pos[b]
+			var l := d.length()
+			if l < sep and l > 0.0001:
+				push += d / l * (1.0 - l / sep)
+		out.append(push * SEPARATION_WEIGHT)
+	return out
+
+
+## The same pushes by comparing every pair (the rule before T-444): tests check _separation()
+## against it.
+func _separation_all_pairs() -> Array:
 	var out := []
 	var sep: float = MinionScript.SEPARATION_UNITS * float(_stats.get("size_scale", 1.0))
 	var pos := []
