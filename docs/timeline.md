@@ -2840,3 +2840,8 @@ Entry format:
 - Decision or change: The game is published as a browser build to the board's private, password-protected itch.io page with one script (tools/publish_itch.py, butler), run by the Project Lead only when the board asks.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-448
+
+## 2026-10-31: The board's own splash art behind the main menu
+- Decision or change: The main menu's splash cover is the board's own picture (made with PixelLab outside the studio), byte for byte; T-433's 6/10 cover is archived in art-archive/T-445/. The first ticket under the board's rule that approved art skips QA and the tests. The board: "LGTM".
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-445
