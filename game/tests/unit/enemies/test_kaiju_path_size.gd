@@ -367,3 +367,40 @@ func test_the_kaiju_reaches_a_car_on_a_rooftop_from_ten_street_spots() -> void:
 			start, length, r.reached, r.seconds, r.longest_stop])
 		assert_true(r.reached, "reached the car from %s within %.0f s" % [start, limit])
 		assert_lt(r.longest_stop, 2.0, "no stop of 2 s from %s (at %s)" % [start, r.stop_at])
+
+
+# --- T-436: a path that starts on a ramp's foot and only skims it ------------------------
+
+## A navigation over a flat 80 x 80 map with one rooftop (x 0..20, y -20..20, height 3) and
+## a ramp up to it from the west (x -12..0, y -5..5, its foot at x -12).
+func _ramp_nav() -> RefCounted:
+	var ground = GroundHeightScript.new()
+	ground.load_data({
+		"platforms": [{"id": "roof", "x": 0, "y": -20, "w": 20, "h": 40, "height": 3}],
+		"ramps": [{"id": "ramp", "platform": "roof", "side": "west", "x": -12, "y": -5, "w": 12, "h": 10,
+			"bottom_height": 0, "top_height": 3}]})
+	var nav = NavScript.new()
+	nav.build(Rect2(-40, -40, 80, 80), [], ground)
+	return nav
+
+
+func test_a_path_starting_on_a_ramps_foot_that_only_skims_it_keeps_its_cells() -> void:
+	var nav = _ramp_nav()
+	var on_foot: int = nav.cell_at(Vector2(-11, -1))
+	assert_gt(nav.ramp_of[on_foot], -1, "the first cell is on the ramp")
+	var ids := PackedInt64Array([on_foot, nav.cell_at(Vector2(-11, -3)), nav.cell_at(Vector2(-11, -7)),
+		nav.cell_at(Vector2(-11, -9))])
+	var points: PackedVector2Array = nav.through_ramps(ids)
+	var foot: Vector2 = nav.ramp_end(0, false)
+	assert_false(points.has(foot), "not sent back to the foot's point (%s): %s" % [foot, points])
+	assert_eq(points, PackedVector2Array([Vector2(-11, -1), Vector2(-11, -3), Vector2(-11, -7), Vector2(-11, -9)]))
+
+
+func test_a_path_starting_on_a_ramps_foot_that_climbs_it_still_goes_by_its_top_point() -> void:
+	var nav = _ramp_nav()
+	var ids := PackedInt64Array()
+	for x in [-11, -9, -7, -5, -3, -1, 1, 3]:
+		ids.append(nav.cell_at(Vector2(x, -1)))
+	var points: PackedVector2Array = nav.through_ramps(ids)
+	assert_eq(points[0], nav.ramp_end(0, true), "straight to the top's point on the centre line")
+	assert_eq(points.size(), 3, "the top's point, then the two rooftop cells: %s" % points)

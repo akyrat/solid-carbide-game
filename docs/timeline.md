@@ -2715,3 +2715,8 @@ Entry format:
 - Decision or change: After the board saved kaiju_city.json at 21:12, T-419's test shows the kaiju never reaching a rooftop car from street spot (-79, 47), and every merge into master stops on it (T-420's merge stopped twice). A fix ticket for the Enemy Behavior Agent: fix the kaiju's planning, not the level, and don't loosen the test without the board.
 - Documents touched: docs/enemies.md
 - Tasks: T-436
+
+## 2026-10-31: The kaiju reaches a rooftop car on the board's latest level
+- Decision or change: Built and merged (audit epic): on the board's level saved 2026-10-30 21:12 the kaiju went to and fro at the foot of ramp-12 near (-79, 46) and never reached a rooftop car from the west; one rule in enemy_navigation.gd through_ramps() keeps a path that only skims a ramp on the ramp's cells. T-380's reproduction test now checks the enemy reaches the car. Master's test set is green again. Played by the board (lgtm, 2026-10-31).
+- Documents touched: none
+- Tasks: T-436
