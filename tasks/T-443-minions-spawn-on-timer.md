@@ -1,7 +1,7 @@
 ---
 id: T-443
 title: Minions spawn on a timer from the screen's edges, faster as the run goes on, and move 30% slower
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/docs/enemies/minions.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, game/docs/enemies/minions.md, game/data/enemies.json, game/data/combo.json]
 files_expected_to_change: [game/scripts/enemies/, game/data/enemies.json, game/tests/unit/, game/docs/enemies/minions.md, docs/enemies.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,15 +45,15 @@ The board's review: play a full run; minions should keep coming from the screen'
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows minions keep spawning on the timer while many minions are already alive (no top-up to a wanted count). (QA: pass / fail)
-- [ ] A test shows the spawn interval at the run's start, at 7 minutes and in between follows the numbers in enemies.json, and that the combo's multiplier shortens it. (QA: pass / fail)
-- [ ] A test shows a new minion appears beyond the visible screen's edge, on the street, clear of buildings and boulders. (QA: pass / fail)
-- [ ] A test shows minions move at 4.2 units per second (30% slower than 6), and the kaiju's speed is unchanged. (QA: pass / fail)
-- [ ] The proposed spawn numbers and any ceiling, with reasons, are in the result notes and in enemies.json's comment. (QA: pass / fail)
-- [ ] docs/enemies.md (Content, "Spawning") and game/docs/enemies/minions.md describe the timer. (QA: pass / fail)
-- [ ] Screenshots of a run late on, with many minions, are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test shows minions keep spawning on the timer while many minions are already alive (no top-up to a wanted count). (QA: pass)
+- [ ] A test shows the spawn interval at the run's start, at 7 minutes and in between follows the numbers in enemies.json, and that the combo's multiplier shortens it. (QA: pass)
+- [ ] A test shows a new minion appears beyond the visible screen's edge, on the street, clear of buildings and boulders. (QA: pass)
+- [ ] A test shows minions move at 4.2 units per second (30% slower than 6), and the kaiju's speed is unchanged. (QA: pass)
+- [ ] The proposed spawn numbers and any ceiling, with reasons, are in the result notes and in enemies.json's comment. (QA: pass)
+- [ ] docs/enemies.md (Content, "Spawning") and game/docs/enemies/minions.md describe the timer. (QA: pass)
+- [ ] Screenshots of a run late on, with many minions, are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -131,3 +131,6 @@ Roughly linear, about 0.2 ms per minion per step. Separation is O(n^2), but the 
 
 Nothing under `game/data/levels/` was touched. No refused actions.
 - 2026-10-31, in-progress → in-qa: Built: timer spawning (1.2 s at start to 0.3 s at 7:00, rate linear), ceiling 100 alive, minions 4.2 u/s; all three test sets pass; screenshots in art-archive/T-443/screenshots.
+
+- 2026-10-31, QA round 1: all 9 criteria pass; full GUT suite and both Python sets green in one run.
+- 2026-10-31, in-qa → needs-playtest: QA passed
