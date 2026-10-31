@@ -49,6 +49,7 @@ extends Node2D
 ## Pixels per unit in the flat world (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
 const HeatSparks := preload("res://scripts/driving/drift_heat_sparks.gd")
+const CarHeight := preload("res://scripts/driving/car_height.gd")
 
 ## The mark's texture, drawn along each line (Line2D texture). Opaque pixels
 ## only; the whole piece fades through modulate.
@@ -152,7 +153,8 @@ func step_of_mark(mark: int) -> int:
 ## the air", task T-206).
 func bind(car: Node) -> void:
 	car.stepped.connect(func() -> void:
-		lay(lays(car), car.model.get_position(), car.model.rotation))
+		var h = car.get("height")
+		lay(lays(car), car.model.get_position(), car.model.rotation, float(h) if h != null else NAN))
 
 
 ## Whether `car` lays marks this step: drifting and not airborne (a car
@@ -171,7 +173,11 @@ func rear_tyres(position_units: Vector2, rotation_rad: float) -> Array:
 
 
 ## One physics step of the car: lays marks while drifting, ends them when not.
-func lay(drifting: bool, position_units: Vector2, rotation_rad: float) -> void:
+## car_height (units, task T-411): the car's height, when it has one. A rear tyre
+## whose ground is more than CarHeight.STEP_CLIMB_MAX below it hangs over an edge
+## (a rooftop's or a ramp's side): it lays nothing there and its mark ends, and a
+## new one starts when it is back on the ground, as in the air (T-206).
+func lay(drifting: bool, position_units: Vector2, rotation_rad: float, car_height: float = NAN) -> void:
 	if not drifting:
 		if _was_drifting:
 			_close_open()
@@ -183,14 +189,25 @@ func lay(drifting: bool, position_units: Vector2, rotation_rad: float) -> void:
 		_sparks.z_index = z
 	if not _was_drifting:
 		_close_open()
-		for t in 2:
+	for t in 2:
+		if overhangs(tyres[t], car_height):
+			_close_tyre(t)
+		elif _open[t] == null:
 			marks_started += 1
 			_open[t] = _new_piece(marks_started, t, point_px(tyres[t]), z)
-	else:
-		for t in 2:
+		else:
 			_extend(t, point_px(tyres[t]), z)
 	_was_drifting = true
 	_enforce_cap()
+
+
+## True when the tyre at tyre_units hangs over an edge (task T-411): its ground
+## is more than CarHeight.STEP_CLIMB_MAX below car_height. Never without raised
+## ground or a car height.
+func overhangs(tyre_units: Vector2, car_height: float) -> bool:
+	if is_nan(car_height) or not height_at.is_valid():
+		return false
+	return float(height_at.call(tyre_units)) < car_height - CarHeight.STEP_CLIMB_MAX
 
 
 ## A tyre's place in this node's pixels: the flat place, lifted by the ground's
@@ -378,15 +395,20 @@ func _extend(tyre: int, new_px: Vector2, z: int = 0) -> void:
 
 func _close_open() -> void:
 	for t in 2:
-		var p = _open[t]
-		_open[t] = null
-		if p == null:
-			continue
-		if p.segments == 0:
-			_pieces.erase(p)
-			p.line.queue_free()
-		else:
-			p.closed_at = time
+		_close_tyre(t)
+
+
+## Ends tyre t's open mark, if any (dropped when it has no segment yet).
+func _close_tyre(t: int) -> void:
+	var p = _open[t]
+	_open[t] = null
+	if p == null:
+		return
+	if p.segments == 0:
+		_pieces.erase(p)
+		p.line.queue_free()
+	else:
+		p.closed_at = time
 
 
 func _enforce_cap() -> void:

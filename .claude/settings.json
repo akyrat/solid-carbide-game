@@ -20,10 +20,6 @@
       "Bash(python tools/style_loop/run.py *)"
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "python tools/statusline.py"
-  },
   "hooks": {
     "SessionStart": [
       {

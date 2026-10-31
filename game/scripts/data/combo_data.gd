@@ -19,6 +19,12 @@ func is_ok() -> bool:
 	return error == ""
 
 
+## Seconds after a collision cut the combo during which another collision does not cut it
+## again (T-415; a proposal for the playtest).
+func collision_window_seconds() -> float:
+	return float(_data.get("collision_window_seconds", 0.0))
+
+
 func start_multiplier() -> float:
 	return float(_data["start_multiplier"])
 

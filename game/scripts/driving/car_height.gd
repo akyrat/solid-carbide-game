@@ -31,6 +31,21 @@ const RAMP_TAKEOFF_FACTOR := 1.0
 const STEP_CLIMB_MAX := 0.1
 ## Length of the pieces a move is walked in, units (as GroundHeight.SAMPLE_STEP).
 const SAMPLE_STEP := 0.05
+## The car's drawn footprint (task T-411; Drifting, Decisions, 2026-10-07: drawn
+## 1 wide and 3 long around its centre, car_flat.json): the points of its
+## outline, in units around the centre with the nose along +x. Every point
+## meets the sides of raised areas (rooftops, ramps, platforms) like the centre
+## does, so the drawn bumper, corners and flanks stop at a side. Falling off an
+## edge and landing stay with the centre (the board's choice is open: Drifting,
+## Content, "The car's footprint (task T-411)").
+const HALF_LENGTH := 1.5
+const HALF_WIDTH := 0.5
+const OUTLINE: Array[Vector2] = [
+	Vector2(1.5, -0.5), Vector2(1.5, 0.0), Vector2(1.5, 0.5),  # the nose
+	Vector2(0.5, 0.5), Vector2(-0.5, 0.5),                      # the right flank
+	Vector2(-1.5, 0.5), Vector2(-1.5, 0.0), Vector2(-1.5, -0.5), # the tail
+	Vector2(-0.5, -0.5), Vector2(0.5, -0.5),                    # the left flank
+]
 
 ## Height above y = 0 ground, units.
 var height := 0.0
@@ -103,13 +118,19 @@ static func past_top(r: Dictionary, point: Vector2) -> bool:
 ## top) and stopped at "point", the last place along the move outside it; the
 ## caller moves the flat car there and bounces it off "normal". The height is
 ## stepped as if the car had moved from prev to that point.
-func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float) -> Dictionary:
+##
+## rot_prev and rot_new (radians, the car's heading before and after the step,
+## task T-411): given, the whole drawn outline (OUTLINE) meets the sides, and a
+## wall also gives "rotation", the heading the car stops at (a turn into a side
+## is stopped too). Left out (NAN), only the centre does, as before T-411.
+func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float,
+		rot_prev: float = NAN, rot_new: float = NAN) -> Dictionary:
 	if ground == null:
 		height = 0.0
 		vertical_speed = 0.0
 		airborne = false
-		return {"wall": false}
-	var walk := _walk(prev, pos, dt)
+		return {"wall": false, "rotation": rot_new}
+	var walk := _walk(prev, pos, dt, rot_prev, rot_new)
 	if walk.wall:
 		pos = walk.point
 	if airborne:
@@ -154,19 +175,47 @@ func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float) -> Dictiona
 ## ground down by more than STEP_CLIMB_MAX; drop_height is the car's height
 ## just before it.
 ##
+## The outline (task T-411, rot_prev and rot_new given): each OUTLINE point is
+## walked too, the heading turning evenly from rot_prev to rot_new, and meets a
+## side by the same rule against its own ground, compared with the car's body
+## there: the car's height, along the ramp's slope when the centre is on a ramp
+## (so the ramp the car is on is never a wall for its nose or tail). Pieces are
+## short enough that no outline point moves more than SAMPLE_STEP in one.
+##
 ## Returns {"wall": bool, "point": Vector2 (where the car stops; pos with no
-## wall), "normal": Vector2 (the side's outward normal), "area": int (the higher
+## wall), "rotation": float (the heading it stops at; rot_new with no wall),
+## "normal": Vector2 (the side's outward normal), "area": int (the higher
 ## area's index, GroundHeight.area_index_at), "wall_height": float (the ground's
 ## height past the side), "drop": bool, "drop_height": float}.
-func _walk(prev: Vector2, pos: Vector2, dt: float) -> Dictionary:
-	var out := {"wall": false, "point": pos, "normal": Vector2.ZERO, "area": -1,
+func _walk(prev: Vector2, pos: Vector2, dt: float, rot_prev: float = NAN, rot_new: float = NAN) -> Dictionary:
+	var out := {"wall": false, "point": pos, "rotation": rot_new, "normal": Vector2.ZERO, "area": -1,
 		"wall_height": 0.0, "drop": false, "drop_height": 0.0}
-	var n := maxi(1, ceili(prev.distance_to(pos) / SAMPLE_STEP))
+	var span := prev.distance_to(pos)
+	# The outline, only where a raised area is near enough to touch it this step.
+	var near := {}
+	var turn := 0.0
+	if not is_nan(rot_prev) and not is_nan(rot_new):
+		var reach := Vector2(HALF_LENGTH, HALF_WIDTH).length()
+		var box := Rect2(prev, Vector2.ZERO).expand(pos).grow(reach + SAMPLE_STEP)
+		var found: Dictionary = ground.areas_near(box)
+		if not found.ramps.is_empty() or not found.platforms.is_empty():
+			near = found
+			turn = rot_new - rot_prev
+			span += absf(turn) * reach
+	var n := maxi(1, ceili(span / SAMPLE_STEP))
 	var h0 := height
 	var h1 := height + (vertical_speed - GRAVITY * dt) * dt
 	var h := height
 	var a := prev
 	var g_a: float = ground.height_at(prev)
+	var rot_a := rot_prev
+	var pts_a: Array[Vector2] = []
+	var gs_a: Array[float] = []
+	if not near.is_empty():
+		for o in OUTLINE:
+			var p := prev + o.rotated(rot_prev)
+			pts_a.append(p)
+			gs_a.append(ground.height_among(p, near))
 	for i in range(1, n + 1):
 		var t := float(i) / float(n)
 		var b := prev.lerp(pos, t)
@@ -176,10 +225,33 @@ func _walk(prev: Vector2, pos: Vector2, dt: float) -> Dictionary:
 			var area: int = ground.area_index_at(b)
 			out.wall = true
 			out.point = a
+			out.rotation = rot_a
 			out.area = area
 			out.normal = ground.side_normal(area, a, b)
 			out.wall_height = g_b
 			return out
+		if not near.is_empty():
+			var rot_b := rot_prev + turn * t
+			# On a ramp the body lies along its slope; in the air it is level.
+			var on_ramp: Dictionary = {} if airborne else ground.ramp_at(b)
+			for k in OUTLINE.size():
+				var p := b + OUTLINE[k].rotated(rot_b)
+				var g_p: float = ground.height_among(p, near)
+				var body := h_b
+				if not on_ramp.is_empty():
+					body += ramp_vertical_speed(on_ramp, p - b)
+				if g_p - gs_a[k] > STEP_CLIMB_MAX and g_p > body + STEP_CLIMB_MAX:
+					var area: int = ground.area_among(p, near)
+					out.wall = true
+					out.point = a
+					out.rotation = rot_a
+					out.area = area
+					out.normal = ground.side_normal(area, pts_a[k], p)
+					out.wall_height = g_p
+					return out
+				pts_a[k] = p
+				gs_a[k] = g_p
+			rot_a = rot_b
 		if not airborne and not out.drop:
 			if g_b < h - STEP_CLIMB_MAX:
 				out.drop = true

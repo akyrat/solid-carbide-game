@@ -91,11 +91,14 @@ signal combo_broken
 ## otherwise just after the cut.
 signal crashed
 ## The car lost its last heart (T-360; Game loop architecture, Decisions,
-## "Wrecked: the stream keeps rolling"): the run is lost from this moment (result
-## "loss", loss_reason "health", nothing more counts), but the scene stays for
-## `seconds` while the car slides on with dead controls, smoking and burning.
-## run_ended follows when they are over. The run scene turns the car's input off
-## and starts the smoke and flames on it.
+## "Wrecked: the stream keeps rolling" and, T-413, "The wreck decides the loss at
+## its end"): the clock stops and likes, tricks, damage and the gift packs stop
+## counting, but the result is not decided yet: during these `seconds` the car
+## slides on with dead controls, smoking and burning, coins and health pickups
+## still count, a health pickup revives the car (revive()) and a kaiju kill wins.
+## When they are over the run is lost (result "loss", loss_reason "health") and
+## run_ended follows. The run scene turns the car's input off, drops the trick
+## in progress and starts the smoke and flames on it.
 signal wreck_started(seconds: float)
 ## A health pickup revived the wrecked car (T-406): back with 1 heart, the run
 ## goes on, run_ended does not come. The run scene gives the controls back and
@@ -163,8 +166,8 @@ var result := ""
 ## "time" or "health" after a loss (LOSS_*), "" otherwise.
 var loss_reason := ""
 var boss_time_sent := false
-## The wreck (T-360): true from the last heart until run_ended, `wreck_left`
-## seconds still to go. `wreck_seconds` is run.json's wreck.seconds, set at
+## The wreck (T-360): true from the last heart until run_ended (or a revive, or a
+## kaiju kill), `wreck_left` seconds still to go. The result stays "" (T-413). `wreck_seconds` is run.json's wreck.seconds, set at
 ## start_run(); tests may change it (0 ends the run at once, as before T-360).
 var wrecked := false
 var wreck_left := 0.0
@@ -175,6 +178,10 @@ var wreck_seconds := 3.0
 var timed_out := false
 var time_up_left := 0.0
 var time_up_seconds := 3.0
+## The physics and process frame the clock reached 0:00 on (T-413, "A tie goes to
+## the player"): a kaiju kill in that same step still wins.
+var _time_up_physics_frame := -1
+var _time_up_process_frame := -1
 ## The combo multiplier now (T-081): multiplies all XP gained. combo.json's
 ## start_multiplier (1.0, no combo) at the start of a run.
 var combo := 1.0
@@ -194,6 +201,8 @@ var _slain := {}  # enemy type -> kills
 var _tricks_done := {}  # trick id -> times completed
 var _weapon_kills := {}  # weapon id -> kills
 var _highest_combo := 1.0
+## When the combo was last cut by a collision, in seconds into the run (T-415).
+var _last_cut_at := -1000.0
 var _likes_total := 0.0
 ## Set by the weapon rack (weapons.gd bind): returns {weapon id: tier} for the
 ## weapons the car owns now. Empty Callable when no rack is bound.
@@ -220,9 +229,12 @@ func start_run() -> void:
 	pickup_magnet_radius_units = _run_data.pickup_magnet_radius_units()
 	pickup_pull_speed = _run_data.pickup_pull_speed_units_per_second()
 	if progress != null:
-		max_health = progress.current_value("car_health")
-		pickup_magnet_radius_units = progress.current_value("pickup_magnet")  # garage upgrade (T-224)
+		# T-415: the garage adds to run.json's base (read here, not the garage's copy).
+		var g: GarageData = progress.garage
+		max_health += g.bonus("car_health", progress.level("car_health"))
+		pickup_magnet_radius_units += g.bonus("pickup_magnet", progress.level("pickup_magnet"))  # garage upgrade (T-224)
 	health = max_health
+	_last_cut_at = -1000.0
 	invulnerable_left = 0.0
 	invulnerable_total = 0.0
 	time_left = RUN_SECONDS
@@ -326,8 +338,13 @@ func damage_car(amount: float) -> void:
 	if not running or amount <= 0.0 or is_invulnerable():
 		return
 	# Enemies and meteors damage the car by hitting it: any damage counts as
-	# a collision and cuts the combo (Game loop architecture, Decisions).
-	collision()
+	# a collision and cuts the combo (Game loop architecture, Decisions). The
+	# last heart's hit (T-413) cuts it too, but the trick in progress is dropped
+	# at the wreck, not paid: no `crashed`.
+	if health - amount <= EPSILON:
+		_cut_combo()
+	else:
+		collision()
 	if not running:
 		return
 	health = maxf(health - amount, 0.0)
@@ -375,21 +392,49 @@ func heal_car(amount: float) -> float:
 	return health - before
 
 
-## Adds coins collected this run. Ignored when the run is not going or
-## `amount` is not positive.
+## Adds coins collected this run. They count during the wreck too (T-413), and
+## on the step the clock reaches 0:00 (the kaiju's coins in a tie). Ignored
+## otherwise when the run is not going, or when `amount` is not positive.
 func add_coins(amount: int) -> void:
-	if not running or amount <= 0:
+	if not _counts_pickups() or amount <= 0:
 		return
 	coins += amount
 	coins_changed.emit(coins)
 
 
-## The kaiju was killed: the run ends at once, as a win. Ignored when the run
-## is not going.
+## The kaiju was killed: the run ends at once, as a win. During the wreck too
+## (T-413: the wreck ends with no loss), and on the same step the clock reached
+## 0:00 (T-413, "A tie goes to the player": the time's up is called off).
+## Ignored once the run's result is decided.
 func kaiju_killed() -> void:
-	if not running:
+	if wrecked:
+		wrecked = false
+		wreck_left = 0.0
+	elif _in_tie_step():
+		_call_off_time_up()
+	elif not running:
 		return
 	_end(RESULT_WIN)
+
+
+## True while coins (and the kills that drop them) still count: the run is going,
+## the car is wrecked (T-413), or it is the step the clock reached 0:00.
+func _counts_pickups() -> bool:
+	return running or wrecked or _in_tie_step()
+
+
+## True on the physics step (and frame) the clock reached 0:00, once the time's
+## up hold has started (T-413, "A tie goes to the player").
+func _in_tie_step() -> bool:
+	return timed_out and Engine.get_physics_frames() == _time_up_physics_frame and Engine.get_process_frames() == _time_up_process_frame
+
+
+## Calls off the time's up hold (a tie won by a kaiju kill): the tree runs again.
+func _call_off_time_up() -> void:
+	timed_out = false
+	time_up_left = 0.0
+	process_mode = Node.PROCESS_MODE_INHERIT
+	_set_paused(false)
 
 
 func is_running() -> bool:
@@ -513,12 +558,24 @@ func collision() -> void:
 		crashed.emit()
 		if not running:
 			return
+	_cut_combo()
+	if not pay_first:
+		crashed.emit()
+
+
+## The collision's cut of the combo, without paying the trick in progress.
+##
+## T-415 (Decisions, "Hits close together cut the combo once"): a collision within
+## combo.json's collision_window_seconds of the one that cut the combo does not cut it again
+## (the crash still pays its trick). The window runs on the run's clock.
+func _cut_combo() -> void:
+	if time_elapsed() - _last_cut_at < _combo_data.collision_window_seconds():
+		return
 	var before := combo
 	_set_combo(_combo_data.after_collision(combo))
 	if before - combo > EPSILON:
+		_last_cut_at = time_elapsed()
 		combo_broken.emit()
-	if not pay_first:
-		crashed.emit()
 
 
 ## How much the minion spawn rate is multiplied at the current combo
@@ -693,11 +750,16 @@ func _decide(r: String, reason := "") -> void:
 	_final_recap = _build_recap()
 
 
-## The last heart is gone (T-360): the run is lost now (the clock, coins, likes,
-## tricks, damage and kills all stop counting, as after any end), and the wreck
-## starts. run_ended follows after wreck_seconds (at once when it is 0).
+## The last heart is gone (T-360, T-413): the wreck starts. The clock, likes,
+## tricks, damage and gift packs stop (running is false) and the drift in
+## progress is forgotten, but the result is not decided yet: coins and kills
+## still count, a health pickup revives the car (revive()) and a kaiju kill wins
+## (kaiju_killed()). When wreck_seconds are over (at once when 0) the run is lost
+## on health and run_ended follows (_finish_wreck()).
 func _wreck() -> void:
-	_decide(RESULT_LOSS, LOSS_HEALTH)
+	running = false
+	drift_seconds = 0.0
+	drift_seconds_paid = 0
 	wrecked = true
 	wreck_left = maxf(wreck_seconds, 0.0)
 	wreck_started.emit(wreck_left)
@@ -707,8 +769,10 @@ func _wreck() -> void:
 
 ## A health pickup reached the wrecked car (T-406; Game loop architecture,
 ## Decisions, "A health pickup revives a wrecked car"): the car comes back with
-## 1 heart (REVIVE_HEARTS, at most the maximum), the run is going again (result
-## and recap cleared, the clock where it stopped) and run_ended is not sent. The
+## 1 heart (REVIVE_HEARTS, at most the maximum), the run is going again (the
+## result was never decided during the wreck, T-413; the clock runs on from where
+## it stopped) and run_ended is not sent. `revived` tells the run scene to give
+## the controls and the trick detection back and stop the smoke and flames. The
 ## usual invulnerability after a hit follows (a proposal). The combo stays cut by
 ## the fatal hit, and the live viewers follow the combo, as always. Returns the
 ## hearts given; 0 when the car is not wrecked.
@@ -739,12 +803,13 @@ func _advance_wreck(seconds: float) -> void:
 		_finish_wreck()
 
 
+## The wreck's seconds are over (T-413): only now is the run lost on health.
 func _finish_wreck() -> void:
 	if not wrecked:
 		return
 	wrecked = false
 	wreck_left = 0.0
-	run_ended.emit(result, coins)
+	_end(RESULT_LOSS, LOSS_HEALTH)
 
 
 ## The clock ran out (T-317): the run is lost now (nothing more counts) and
@@ -754,6 +819,8 @@ func _finish_wreck() -> void:
 func _time_up() -> void:
 	_decide(RESULT_LOSS, LOSS_TIME)
 	timed_out = true
+	_time_up_physics_frame = Engine.get_physics_frames()
+	_time_up_process_frame = Engine.get_process_frames()
 	time_up_left = maxf(time_up_seconds, 0.0)
 	if time_up_left <= EPSILON:
 		_finish_time_up()
@@ -798,7 +865,7 @@ func is_wrecked() -> bool:
 ## ENEMY_TYPE), `weapon_id` the weapon that struck the last blow ("" if
 ## unknown). Ignored when the run is not going.
 func enemy_slain(enemy_type: String, weapon_id := "") -> void:
-	if not running or enemy_type == "":
+	if not _counts_pickups() or enemy_type == "":
 		return
 	_slain[enemy_type] = int(_slain.get(enemy_type, 0)) + 1
 	if weapon_id != "":

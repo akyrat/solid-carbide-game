@@ -1,0 +1,24 @@
+{
+ "platforms": [
+  {
+   "id": "roof-1",
+   "x": -8,
+   "y": -8,
+   "w": 16,
+   "h": 16,
+   "height": 3
+  }
+ ],
+ "ramps": [
+  {
+   "id": "ramp-1",
+   "platform": "roof-1",
+   "side": "east",
+   "x": 8,
+   "y": -4,
+   "w": 12,
+   "h": 8,
+   "bottom_height": 0
+  }
+ ]
+}

@@ -49,13 +49,16 @@ func _initialize() -> void:
 			return
 	_scene = load(SCENE_PATH).instantiate()
 	root.add_child(_scene)
-	prepare(_scene)
+	# Not prepared here: in a script run with -s the root is not ready yet, so the scene's
+	# _ready (which makes the car) has not run. prepare() waits for the first physics frame.
 
 
 ## The drive waits two physics frames: new static bodies (the map's buildings
 ## and boulders) join the physics space on the next physics frame.
 func _physics_process(_delta: float) -> bool:
 	_frames += 1
+	if _frames == 1:
+		prepare(_scene)
 	if _frames != 3:
 		return false
 	var route := plan(_scene.ground_height)

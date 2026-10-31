@@ -23,6 +23,9 @@ var _interp_before := false
 var _hits := 0
 
 
+## T-411: how far the drawn car's farthest corner is from its centre, plus one walk piece.
+const _DRAWN_REACH := 1.5811 + 0.05
+
 func before_each() -> void:
 	_interp_before = get_tree().physics_interpolation
 	scene = SCENE.instantiate()
@@ -202,7 +205,7 @@ func _drive_into(id: String, start: Vector2, rot: float, steer: float, side_line
 		var units: Vector2 = scene.car.model.get_position()
 		var gap: float = side_line - (units.x if axis == 0 else units.y)
 		closest = minf(closest, gap)
-		if _hits > 0 and gap > 1.0:
+		if _hits > 0 and gap > 2.0:  # T-411: the centre stops 1.5 out
 			break  # the hit is over: the car has steered away from the side
 		if scene.car_sprite.z_index >= a.z_index or scene.shadow.z_index >= a.z_index:
 			under = false
@@ -215,7 +218,8 @@ func _drive_into(id: String, start: Vector2, rot: float, steer: float, side_line
 func _assert_hit(r: Dictionary, what: String) -> void:
 	assert_true(r.under, "%s: under the area on every step" % what)
 	assert_gt(r.hits, 0, "%s: the car hit the side" % what)
-	assert_lt(r.closest, scene.DEPTH_RADIUS, "%s: the footprint reached the side" % what)
+	# T-411: the drawn outline (3 x 1) stops at the side, so the centre waits up to its corner's reach out.
+	assert_lt(r.closest, _DRAWN_REACH, "%s: the drawn car reached the side" % what)
 	assert_gte(r.closest, 0.0, "%s: the centre stayed outside" % what)
 
 

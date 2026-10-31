@@ -120,6 +120,8 @@ var input_enabled := true
 var _pending_knockback := Vector2.ZERO
 ## Obstacles the car is touching: "collider id:shape index" -> surface normal.
 var _contacts := {}
+## T-420: the body and shape of each held contact (same keys as _contacts), for held_contacts().
+var _contact_bodies := {}
 ## Sides of the ground the car is touching (task T-184): key -> {point, normal}.
 var _side_contacts := {}
 
@@ -194,12 +196,17 @@ func physics_step() -> void:
 		model.set_position(position / PX_PER_UNIT)
 		_bounce(hit)
 	_update_contacts(hit)
-	var side: Dictionary = height_model.step(flat_before, model.get_position(), model.get_velocity(), model.dt)
+	# T-411: the whole drawn outline meets the ground's sides, turning included.
+	var side: Dictionary = height_model.step(flat_before, model.get_position(), model.get_velocity(), model.dt,
+		rotation_before, model.rotation)
 	if side.wall:
 		# A side of the ground higher than the car (task T-184): stop at it and
-		# bounce like off any wall.
+		# bounce like off any wall. A turn into it stops too (T-411).
 		model.set_position(side.point)
 		position = model.get_position() * PX_PER_UNIT
+		if not is_nan(float(side.rotation)):
+			model.rotation = side.rotation
+			rotation = model.rotation
 		_bounce_off_side(side)
 	_update_side_contacts()
 	if detect_tricks:
@@ -250,6 +257,7 @@ func _bounce(hit: KinematicCollision2D) -> void:
 	if not _contacts.has(key):
 		hit_obstacle.emit(hit.get_collider(), hit.get_collider_shape_index(), n, impact)
 	_contacts[key] = n
+	_contact_bodies[key] = [hit.get_collider(), hit.get_collider_shape_index()]
 
 
 ## Reflects the velocity off a surface with outward normal n (see _bounce) and
@@ -303,6 +311,19 @@ func _update_contacts(hit: KinematicCollision2D) -> void:
 		var probe := move_and_collide(-_contacts[key] * REARM_GAP_UNITS * PX_PER_UNIT, true)
 		if probe == null or _contact_key(probe.get_collider(), probe.get_collider_shape_index()) != key:
 			_contacts.erase(key)
+			_contact_bodies.erase(key)
+
+
+## T-420: the [collider, shape_index] of every obstacle the car is still in contact with (a contact
+## stays held until the car is REARM_GAP_UNITS clear of it). hit_obstacle fires once per contact; this
+## is how a run knows the car is still scraping.
+func held_contacts() -> Array:
+	var out: Array = []
+	for key in _contact_bodies.keys():
+		var c: Array = _contact_bodies[key]
+		if c[0] != null and is_instance_valid(c[0]):
+			out.append(c)
+	return out
 
 
 static func _contact_key(collider: Object, shape_index: int) -> String:

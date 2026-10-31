@@ -749,31 +749,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/parked_car_1_north.png",
+     "texture": "res://art/props/parked_car_1_north_art.png",
      "anchor_px": [
-      77,
-      66
+      53,
+      46
      ]
     },
     "east": {
-     "texture": "res://art/props/parked_car_1_east.png",
+     "texture": "res://art/props/parked_car_1_east_art.png",
      "anchor_px": [
-      77,
-      75
+      51,
+      48
      ]
     },
     "south": {
-     "texture": "res://art/props/parked_car_1_south.png",
+     "texture": "res://art/props/parked_car_1_south_art.png",
      "anchor_px": [
-      77,
-      75
+      51,
+      48
      ]
     },
     "west": {
-     "texture": "res://art/props/parked_car_1_west.png",
+     "texture": "res://art/props/parked_car_1_west_art.png",
      "anchor_px": [
-      77,
-      66
+      53,
+      46
      ]
     }
    }
@@ -884,31 +884,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/parked_car_2_north.png",
+     "texture": "res://art/props/parked_car_2_north_art.png",
      "anchor_px": [
-      77,
-      66
+      46,
+      40
      ]
     },
     "east": {
-     "texture": "res://art/props/parked_car_2_east.png",
+     "texture": "res://art/props/parked_car_2_east_art.png",
      "anchor_px": [
-      77,
-      75
+      47,
+      41
      ]
     },
     "south": {
-     "texture": "res://art/props/parked_car_2_south.png",
+     "texture": "res://art/props/parked_car_2_south_art.png",
      "anchor_px": [
-      77,
-      75
+      47,
+      41
      ]
     },
     "west": {
-     "texture": "res://art/props/parked_car_2_west.png",
+     "texture": "res://art/props/parked_car_2_west_art.png",
      "anchor_px": [
-      77,
-      66
+      46,
+      40
      ]
     }
    }
@@ -1019,31 +1019,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/parked_car_3_north.png",
+     "texture": "res://art/props/parked_car_3_north_art.png",
      "anchor_px": [
-      77,
-      66
+      47,
+      62
      ]
     },
     "east": {
-     "texture": "res://art/props/parked_car_3_east.png",
+     "texture": "res://art/props/parked_car_3_east_art.png",
      "anchor_px": [
-      77,
-      75
+      45,
+      61
      ]
     },
     "south": {
-     "texture": "res://art/props/parked_car_3_south.png",
+     "texture": "res://art/props/parked_car_3_south_art.png",
      "anchor_px": [
-      77,
-      75
+      45,
+      61
      ]
     },
     "west": {
-     "texture": "res://art/props/parked_car_3_west.png",
+     "texture": "res://art/props/parked_car_3_west_art.png",
      "anchor_px": [
-      77,
-      66
+      47,
+      62
      ]
     }
    }
@@ -1154,31 +1154,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/broken_car_1_north.png",
+     "texture": "res://art/props/broken_car_1_north_art.png",
      "anchor_px": [
-      77,
-      63
+      58,
+      42
      ]
     },
     "east": {
-     "texture": "res://art/props/broken_car_1_east.png",
+     "texture": "res://art/props/broken_car_1_east_art.png",
      "anchor_px": [
-      77,
-      63
+      59,
+      47
      ]
     },
     "south": {
-     "texture": "res://art/props/broken_car_1_south.png",
+     "texture": "res://art/props/broken_car_1_south_art.png",
      "anchor_px": [
-      77,
-      63
+      59,
+      47
      ]
     },
     "west": {
-     "texture": "res://art/props/broken_car_1_west.png",
+     "texture": "res://art/props/broken_car_1_west_art.png",
      "anchor_px": [
-      77,
-      63
+      58,
+      42
      ]
     }
    }
@@ -1289,31 +1289,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/broken_car_2_north.png",
+     "texture": "res://art/props/broken_car_2_north_art.png",
      "anchor_px": [
-      77,
-      63
+      43,
+      38
      ]
     },
     "east": {
-     "texture": "res://art/props/broken_car_2_east.png",
+     "texture": "res://art/props/broken_car_2_east_art.png",
      "anchor_px": [
-      77,
-      63
+      47,
+      46
      ]
     },
     "south": {
-     "texture": "res://art/props/broken_car_2_south.png",
+     "texture": "res://art/props/broken_car_2_south_art.png",
      "anchor_px": [
-      77,
-      63
+      47,
+      46
      ]
     },
     "west": {
-     "texture": "res://art/props/broken_car_2_west.png",
+     "texture": "res://art/props/broken_car_2_west_art.png",
      "anchor_px": [
-      77,
-      63
+      43,
+      38
      ]
     }
    }

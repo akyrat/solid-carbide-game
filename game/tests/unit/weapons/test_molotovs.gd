@@ -279,7 +279,7 @@ func test_nothing_after_the_run_ends() -> void:
 	rack.upgrade("molotov")
 	var spot := _car_units() + Vector2(5.0, 0.0)
 	var f = _fire_at(spot)
-	run.state.damage_car(1e9)
+	run.state.kaiju_killed()  # the run is won and over (T-414: a wreck is not over)
 	assert_false(run.state.is_running())
 	var e := _enemy_at(spot)
 	_step(_steps_for(10.0))

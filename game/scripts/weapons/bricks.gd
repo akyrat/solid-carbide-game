@@ -114,6 +114,11 @@ func _reset_air() -> void:
 
 # --- Each step -------------------------------------------------------------
 
+## Bricks still go off if the wrecked car lands from the air (T-414).
+func step_wrecked(dt: float) -> void:
+	step(dt)
+
+
 ## One physics step of `dt` seconds (the rack calls it while owned and the run
 ## is going): counts the car's time in the air and sends a wave on a landing.
 func step(dt: float) -> void:

@@ -59,6 +59,11 @@ const FollowerScript := preload("res://scripts/enemies/enemy_path_follower.gd")
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## Spawn point tries per spawn before giving up until the next interval.
+## Seconds between spawns when the data has no spawn_interval_seconds (T-418).
+const DEFAULT_SPAWN_INTERVAL := 0.5
+## A pickup's circle radius, and the gap left between it and a boulder it was pushed out of (T-418).
+const PICKUP_RADIUS_UNITS := 0.5
+const PICKUP_CLEARANCE_UNITS := 0.1
 const SPAWN_TRIES := 12
 ## Coins from one drop are spread round the death point this far (units).
 const COIN_SPREAD_UNITS := 0.6
@@ -132,7 +137,7 @@ func _init() -> void:
 	_spawning = data.spawning()
 	_coins = data.coins()
 	_health_drops = data.health_drops()
-	_spawn_clock = _spawning.get("spawn_interval_seconds", 0.5)
+	_spawn_clock = spawn_interval()
 	rng.randomize()
 
 
@@ -183,7 +188,87 @@ func clear() -> void:
 	minions.clear()
 	coins.clear()
 	health_pickups.clear()
-	_spawn_clock = _spawning.get("spawn_interval_seconds", 0.5)
+	_spawn_clock = spawn_interval()
+
+
+## Seconds between spawns: spawn_interval_seconds, DEFAULT_SPAWN_INTERVAL when the data has none
+## (T-418); a value of 0 or less is reported and replaced by the default.
+func spawn_interval() -> float:
+	var v: float = _spawning.get("spawn_interval_seconds", DEFAULT_SPAWN_INTERVAL)
+	if v <= 0.0:
+		push_error("enemies.json spawning.spawn_interval_seconds must be above 0 (got %s): using %s" % [v, DEFAULT_SPAWN_INTERVAL])
+		return DEFAULT_SPAWN_INTERVAL
+	return v
+
+
+## A meteor lands (T-418; Enemies, Decisions): every minion at the level of the ground at `units`
+## whose body reaches within `radius` units of it takes `amount` damage. Returns how many were hit.
+func damage_minions_at(units: Vector2, radius: float, amount: float) -> int:
+	var level := EnemyHeightScript.height_at(ground, units)
+	var n := 0
+	for m in minions.duplicate():
+		if not is_instance_valid(m) or m.is_dead():
+			continue
+		if m.position_units().distance_to(units) > radius + m.radius_units():
+			continue
+		if not EnemyHeightScript.at_car_level(m.body_height(), level):
+			continue
+		m.take_damage(amount, "meteor")
+		n += 1
+	return n
+
+
+## A boulder appears at `centre` (T-418): every coin and health pickup within `radius` units of it
+## (the boulder's radius) is moved just outside it, along the way out from the centre, to the
+## nearest of 16 directions' spots that is free ground. Its sprite and height follow. Returns how many moved.
+func push_pickups_out(centre: Vector2, radius: float) -> int:
+	var n := 0
+	for p in coins + health_pickups:
+		if not is_instance_valid(p) or p.is_taken():
+			continue
+		var at: Vector2 = p.position_units()
+		if at.distance_to(centre) >= radius + PICKUP_RADIUS_UNITS:
+			continue
+		var out := (at - centre)
+		var base := out.angle() if out.length() > 0.001 else 0.0
+		var dist := radius + PICKUP_RADIUS_UNITS + PICKUP_CLEARANCE_UNITS
+		var best = null
+		for i in 16:
+			var a := base + (TAU * i / 16.0 if i % 2 == 0 else -TAU * (i + 1) / 16.0)
+			var cand := centre + Vector2.RIGHT.rotated(a) * dist
+			if _pickup_spot_free(cand):
+				best = cand
+				break
+		if best == null:
+			best = centre + Vector2.RIGHT.rotated(base) * dist
+		_move_pickup(p, best)
+		n += 1
+	return n
+
+
+func _pickup_spot_free(units: Vector2) -> bool:
+	if map == null:
+		return true
+	if not map.rect_of(map.layout.map.rect).grow(-PICKUP_RADIUS_UNITS).has_point(units):
+		return false
+	for b in map.layout.buildings:
+		if map.rect_of(b).grow(PICKUP_RADIUS_UNITS).has_point(units):
+			return false
+	for b in map.all_boulders():
+		if Vector2(float(b.x), float(b.y)).distance_to(units) < float(b.diameter) / 2.0 + PICKUP_RADIUS_UNITS:
+			return false
+	return true
+
+
+func _move_pickup(p: Node, units: Vector2) -> void:
+	p.position = units * PX_PER_UNIT
+	var h := EnemyHeightScript.height_at(ground, units)
+	p.ground_height = h
+	var s: Node2D = p.sprite
+	if s != null and is_instance_valid(s):
+		s.position = ISO_TRANSFORM * p.position + Vector2(0.0, -h * PX_PER_UNIT)
+		s.z_index = depth.z_index_for(units, p.RADIUS_UNITS, 0.6, h)
+		s.reset_physics_interpolation()
 
 
 func _physics_process(delta: float) -> void:
@@ -259,7 +344,7 @@ func _prune() -> void:
 
 
 func _spawn_step(dt: float) -> void:
-	var interval: float = _spawning["spawn_interval_seconds"]
+	var interval: float = spawn_interval()
 	_spawn_clock = minf(_spawn_clock + dt, interval)
 	if minions.size() >= minions_wanted_now():
 		return
