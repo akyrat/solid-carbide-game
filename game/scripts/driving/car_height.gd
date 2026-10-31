@@ -61,6 +61,23 @@ var ground = null
 signal took_off(from_ramp: bool, vertical_speed: float)
 ## Emitted when the car lands, with its vertical speed just before landing.
 signal landed(impact_vertical_speed: float)
+## Emitted when hop() lifts the car off the ground (task T-461, the Jump
+## power-up), with its takeoff vertical speed. took_off(false, vz) is sent too.
+signal hopped(vertical_speed: float)
+
+
+## Task T-461 (Drifting, Content, "Jump (task T-461)"): lifts the car straight
+## up from where it stands with vertical speed vz (units/s, up positive). From
+## then on it is in the air like after any takeoff: gravity, landing, the
+## ground's sides met at height, the aerial tricks. Only on the ground: in the
+## air it does nothing and returns false (no double jump). With no ground
+## source the ground is flat at 0 for the hop (see step()).
+func hop(vz: float) -> bool:
+	if airborne or vz <= 0.0:
+		return false
+	_take_off(false, vz, height)
+	hopped.emit(vz)
+	return true
 
 
 ## Puts the car on the ground at point (for a reset or a teleport).
@@ -126,6 +143,10 @@ static func past_top(r: Dictionary, point: Vector2) -> bool:
 func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float,
 		rot_prev: float = NAN, rot_new: float = NAN) -> Dictionary:
 	if ground == null:
+		if airborne:
+			# T-461: a hop with no ground source flies over flat ground at 0.
+			_step_air(pos, dt)
+			return {"wall": false, "rotation": rot_new}
 		height = 0.0
 		vertical_speed = 0.0
 		airborne = false
@@ -275,7 +296,7 @@ func _take_off(from_ramp: bool, vz: float, new_height: float) -> void:
 func _step_air(pos: Vector2, dt: float) -> void:
 	vertical_speed -= GRAVITY * dt
 	height += vertical_speed * dt
-	var at_ground: float = ground.height_at(pos)
+	var at_ground: float = ground.height_at(pos) if ground != null else 0.0
 	if height <= at_ground:
 		var impact := vertical_speed
 		height = at_ground

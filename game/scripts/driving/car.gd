@@ -22,6 +22,7 @@ const CarModel := preload("res://scripts/driving/car_model.gd")
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const CarHeight := preload("res://scripts/driving/car_height.gd")
 const RevCharge := preload("res://scripts/driving/rev_charge.gd")
+const JumpPowerUp := preload("res://scripts/driving/jump_power_up.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -33,6 +34,7 @@ const ACTION_ACCELERATE := "car_accelerate"
 const ACTION_REVERSE := "car_reverse"
 const ACTION_STEER_LEFT := "car_steer_left"
 const ACTION_STEER_RIGHT := "car_steer_right"
+const ACTION_JUMP := "car_jump"  # Space (task T-461, the Jump power-up)
 
 ## Collision layer bits (game/docs/driving/collisions.md, "Collision layers").
 const LAYER_OBSTACLES := 1 << 0  # layer 1: walls, buildings, the map's edge, boulders
@@ -81,6 +83,13 @@ var tricks = TrickDetector.new()
 ## S is released. Does nothing until rev_charge.set_tier() gives it a tier > 0
 ## (the run sets it from RunState.power_up_tier("rev_charge")).
 var rev_charge = RevCharge.new()
+## Jump (task T-461, jump_power_up.gd): a press of Space on the ground makes a
+## small hop through height_model.hop(). Does nothing until jump.set_tier()
+## gives it a tier > 0 (the run sets it from RunState.power_up_tier("jump")).
+var jump = JumpPowerUp.new()
+## A Space press waiting for the next physics step (_unhandled_input with the
+## keyboard; tests call press_jump()).
+var _jump_pressed := false
 ## When false, no tricks are detected (tests compare the movement both ways).
 var detect_tricks := true
 ## The handling values (shared with the tuning panel).
@@ -170,6 +179,19 @@ func _physics_process(_delta: float) -> void:
 	physics_step()
 
 
+## Task T-461: a Space press (not a held key's repeats) is kept for the next
+## physics step. An event, not the key's state, so the Space that takes a card
+## on a paused screen (the car is paused then and gets no event) never hops.
+func _unhandled_input(event: InputEvent) -> void:
+	if use_keyboard and event.is_action_pressed(ACTION_JUMP, false):
+		_jump_pressed = true
+
+
+## A Space press for the next physics step (tests, and any scripted driving).
+func press_jump() -> void:
+	_jump_pressed = true
+
+
 ## One physics step: read the controls, run the model, move the body.
 func physics_step() -> void:
 	var w: bool
@@ -189,6 +211,11 @@ func physics_step() -> void:
 		steer = 0.0
 		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
 		rev_charge.reset()
+		_jump_pressed = false
+	# T-461: Jump (nothing at all when not owned). Before the model's update, so
+	# the hop's first step is already in the air (air turn rate, no driving).
+	jump.step(height_model, _jump_pressed, model.dt)
+	_jump_pressed = false
 	var rotation_before: float = model.rotation
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
 	model.airborne = height_model.airborne
