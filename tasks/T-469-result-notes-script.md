@@ -1,7 +1,7 @@
 ---
 id: T-469
 title: A script appends an agent's report to a ticket's result notes
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -76,3 +76,4 @@ Tests
 - python -m unittest discover -s game/tools -p "test_*.py": Ran 767 tests, OK (skipped=1). Some scripts print their own OK/FAILED/usage lines mid-output; the final unittest result is OK and master prints the same.
 
 Documents affected: the task README (updated). Nothing under game/data/levels/ was changed or committed.
+- 2026-10-31, in-progress → in-qa: Built; 626 + 767 tests OK; guard change recommended in the result notes
