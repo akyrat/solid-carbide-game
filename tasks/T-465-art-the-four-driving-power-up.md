@@ -1,7 +1,7 @@
 ---
 id: T-465
 title: Art: the four driving power-up icons (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
