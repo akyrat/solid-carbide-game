@@ -1,7 +1,7 @@
 ---
 id: T-441
 title: Kaiju alert signs are level creator pieces; the fixed sign list is retired
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -122,3 +122,4 @@ Written by the agent when it finishes.
 
 **QA, 2026-10-31:** all 9 criteria pass. qa_check: three test sets passed in one full run (GUT with GUT_TIME_LIMIT=1500), documents changed, 6 screenshots, nothing under game/data/levels/ changed.
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, swipe review)
