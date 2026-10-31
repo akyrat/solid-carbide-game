@@ -1,7 +1,7 @@
 ---
 id: T-440
 title: Text: names for the alert sign and banner pieces in the level creator
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/extended-narrative.md, docs/visual-style.md, game/data/level/creator_texts.json, game/docs/level/level-creator-pieces.md]
 files_expected_to_change: [game/data/level/creator_texts.json, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -94,3 +94,4 @@ QA (round 1): all five criteria pass (six keys, valid JSON; style loop 8/10 reco
 Screenshots: no screenshots: text-only work.
 
 QA (round 2): all five criteria pass again (three test sets pass, documents changed). (QA: fail: paperwork - qa_check screenshots is still red: the ticket has user_facing_text yes and art-archive/T-440/screenshots/ has no image or recording; qa_check does not read the "no screenshots: text-only work" line. Needs one screenshot of the texts in the creator, or the ticket's user_facing_text corrected by the Project Lead.) Status left in-qa.
+- 2026-10-31, in-qa → done: QA passed every criterion (round 2); qa_check's screenshot check stays red for text-only work
