@@ -1,7 +1,7 @@
 ---
 id: T-451
 title: Threading the needle flashes the pair and its dashed line
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-272-thread-the-needle.md, tasks/T-394-creator-chained-obstacle-pairs.md, tasks/T-420-needle-scrape-and-level-guards.md]
 files_expected_to_change: [game/scripts/, game/tests/unit/, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,13 +41,13 @@ The board's review: play a level with paired obstacles and thread them, includin
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test threads a pair in a run and asserts both obstacles and their dashed line start flashing on that step and stop after the proposed time. (QA: pass / fail)
-- [ ] A test with a chained row shows only the threaded pair flashes. (QA: pass / fail)
-- [ ] A test shows a pass that doesn't thread (going round) makes no flash. (QA: pass / fail)
-- [ ] Screenshots of the flash are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass / fail)
-- [ ] docs/level-design.md (Content) describes the flash. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test threads a pair in a run and asserts both obstacles and their dashed line start flashing on that step and stop after the proposed time. (QA: pass)
+- [ ] A test with a chained row shows only the threaded pair flashes. (QA: pass)
+- [ ] A test shows a pass that doesn't thread (going round) makes no flash. (QA: pass)
+- [ ] Screenshots of the flash are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass)
+- [ ] docs/level-design.md (Content) describes the flash. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -69,3 +69,4 @@ Built by the Level/Challenge Design Agent.
 - Docs: docs/level-design.md, Content, "Level creator: thread the needle": new bullet on the flash plus a screenshot link. No `game/data/levels/` file touched.
 - Note for the playtest: the car is metres past the gap when the trick pays (0.25 s after the crossing), so the flash is short (0.6 s); the camera follows, so a fast pass sees the flash near the screen's edge. Length and pulse count are the levers.
 - 2026-10-31, in-progress → in-qa: Flash built (needle_flash.gd), 6 tests, all three test sets pass, screenshots saved
+- 2026-10-31, in-qa → needs-playtest: QA passed
