@@ -1,7 +1,7 @@
 ---
 id: T-415
 title: Pickups at full hearts, the combo's hit window, and the run's base values
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 T-413 approved; the game-loop agent starts.
 
+### 2026-10-30, Needs playtest → Done
+
+You approved it; merging into master.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,4 @@ Done (game-loop agent). Tests: unittest game/tools 722 (OK, 1 skipped), unittest
 - All six criteria are covered by the tests.
 - 2026-10-30, in-progress → in-qa: Ready for QA: all three test sets green, screenshot in art-archive/T-415/screenshots.
 - 2026-10-30, in-qa → needs-playtest: QA passed: all 6 criteria, three test sets green
+- 2026-10-30, needs-playtest → done: Build I LGTM by the board (2026-10-30)

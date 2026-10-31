@@ -2760,3 +2760,8 @@ Entry format:
 - Decision or change: Tooling: merge_batch.py no longer crashes printing on a cp1252 Windows console, and drive_elevation_sample.sh no longer stops before driving. QA passed; merged straight after QA.
 - Documents touched: none
 - Tasks: T-425
+
+## 2026-10-31: Pickups at full hearts, the combo's hit window, and the run's base values
+- Decision or change: Build I: pickups at full hearts, the combo's hit window and the run's base values, as built. The board played it: "LGTM".
+- Documents touched: none
+- Tasks: T-415
