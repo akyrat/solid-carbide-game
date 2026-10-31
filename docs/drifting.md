@@ -245,6 +245,16 @@ The board's "little side slip out of a drift" (Decisions). The values are **prop
   - **Full at drift angle**, 60 degrees: a held drift settles at about 68, so every proper drift gets the full slip and small corrections don't.
 - **GIFs** (in `art-archive/T-278/screenshots/`): `drift_exit_slip_prototype.gif` (the drift prototype) and `drift_exit_slip_run.gif` (a run), each with a drift with the slip off, one left alone and one caught with counter-steer, with a caption showing the slip and the drift angle; stills `prototype_slip_off_released.png`, `prototype_slip_left_alone.png`, `run_slip_caught.png`.
 
+### Driving power-ups: the tiers (task T-455, proposals)
+
+The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers each, every number a **proposal for the board's playtest** with its reason in the file (Game Data wrote them on the Driving & Drift Agent's behalf). Icons are fixed at `res://art/power_ups/<id>.png`; the files come with the art ticket.
+
+- **Rev Charge:** charge time to full 1.6 / 1.3 / 1.0 / 0.7 s; boost speed ×1.5 / 1.6 / 1.75 / 1.9 for 0.8 / 1.0 / 1.2 / 1.5 s. Slow and short at first, so the idea shows; the top tier is cheap to use mid-drift.
+- **Jump:** takeoff speed 5 / 6 / 7 / 8 (hop height, hence airtime) with a cooldown of 2.0 / 1.7 / 1.4 / 1.1 s. The first hop is enough for the airtime missions, the third for an air 180, the fourth for an air 360.
+- **Bouncy Bumpers:** the T-435 wall bounce distance ×1.4 / 1.8 / 2.2 / 2.6.
+- **Rusty Overcoat:** contact damage 2 / 3 / 4 / 5 (a minion has 4 health, T-408), a per-enemy repeat cooldown of 0.5 / 0.5 / 0.4 / 0.3 s, and the kaiju is hit only at tier 4. **Open questions for the board:** the repeat cooldown (so a crowd does not melt each frame) and whether the kaiju is hit.
+- **When every power-up is at its last tier** (`offer_when_exhausted`): the mission gift is skipped, with no overlay and no pause, and the run goes on. Reason: an overlay with nothing to choose would only interrupt the run.
+
 ### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.

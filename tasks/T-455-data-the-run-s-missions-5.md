@@ -64,4 +64,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Done (Game Data).** Files: `game/data/missions.json`, `game/data/power_ups.json`, `game/scripts/data/mission_data.gd` (`MissionData`), `game/scripts/data/power_up_data.gd` (`PowerUpData`), `game/tests/unit/test_mission_data.gd` (5 tests), `game/docs/data/game-data.md`, `docs/game-loop-architecture.md` (Content, "Missions: the generator's rules"), `docs/drifting.md` (Content, "Driving power-ups: the tiers"). The Decisions lines are untouched.
+
+**Trick ids used and where they come from:** `extended_drift` (trick_detector.gd, TRICK_EXTENDED_DRIFT; mission 1 "4 s continuous drift", a seconds goal), `alternate_drift` (TRICK_ALTERNATE_DRIFT), `airtime` (TRICK_AIRTIME; seconds goal, summed from `airtime_trick`), `air_one_eighty` (TRICK_AIR_ONE_EIGHTY), `air_three_sixty` (TRICK_AIR_THREE_SIXTY), `three_sixty` (TRICK_THREE_SIXTY, ground 360, generator only), `thread_the_needle` (thread_the_needle.gd, the id in ComboData.needle_rules; generator only).
+
+**Proposals:** all generator numbers (goals per mission 1/2/3 by range, per-trick base, growth per mission, cap) and all power-up tier numbers are proposals for the board's playtest, written by Game Data on the Driving & Drift Agent's behalf (the docs give driving numbers to it). Each has a `reason` and `proposal: true`. Open questions for the board (as proposals): Rusty Overcoat's per-enemy repeat cooldown and whether it hits the kaiju (tier 4 only); `offer_when_exhausted` = `skip_gift`. Note for the building tickets: the file has `known_tricks`; a "seconds" goal shows no progress, a "count" goal does.
+
+**Tests:** GUT 2319/2319 passed (191 scripts, includes the 5 new); `python -m unittest discover -s game/tools`: 767 tests OK (1 skipped); `python -m unittest discover -s tools`: see the line below.
+
+**Screenshots:** none. Data and loaders only, nothing is on screen.
