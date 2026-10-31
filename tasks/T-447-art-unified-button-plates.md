@@ -1,7 +1,7 @@
 ---
 id: T-447
 title: Art: the shared button's plates for every state
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -164,3 +164,4 @@ I checked the size and format only; I didn't re-count the colours or the alpha v
 **Notes.** Godot's `.import` line-ending noise and `.uid` files in the worktree were not committed. The focus ring is now inside the plate's edge (before: 2 px outside it); the board can judge it in the playtest.
 - 2026-10-31, in-progress → in-qa: Plates done, style loop 8+ each, tests pass; ready for QA
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, swipe review)
