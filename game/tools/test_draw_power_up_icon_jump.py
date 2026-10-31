@@ -14,6 +14,7 @@ import draw_power_up_icon_jump as jump  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 V2 = os.path.join(ROOT, "art-archive", "T-465", "style-loop", "v2-2.png")
 V3 = os.path.join(ROOT, "art-archive", "T-465", "style-loop", "v3-2.png")
+V4 = os.path.join(ROOT, "art-archive", "T-465", "style-loop", "v4-2.png")
 FORBIDDEN = {(104, 220, 96), (247, 208, 52)}
 
 
@@ -55,7 +56,21 @@ class TestDraw(unittest.TestCase):
 
     @unittest.skipUnless(os.path.exists(V3), "v3-2 not archived yet")
     def test_reproduces_archived_v3(self):
-        self.assertEqual(self.px, list(Image.open(V3).convert("RGBA").getdata()))
+        px = list(jump.draw(3).getdata())
+        self.assertEqual(px, list(Image.open(V3).convert("RGBA").getdata()))
+
+    @unittest.skipUnless(os.path.exists(V4), "v4-2 not archived yet")
+    def test_reproduces_archived_v4(self):
+        self.assertEqual(self.px, list(Image.open(V4).convert("RGBA").getdata()))
+
+    def test_v4_car_mostly_green_not_pale(self):
+        # the car (rows above the streaks) is led by green, not by the pale stripes
+        inv = {v: k for k, v in jump.P.items()}
+        keys = [inv.get(self.im.getpixel((x, y))[:3]) for y in range(16) for x in range(32)
+                if self.im.getpixel((x, y))[3]]
+        green = sum(k in "ALGgd" for k in keys)
+        pale = sum(k in "W" for k in keys)
+        self.assertGreater(green, 4 * pale)
 
     def test_car_outline_closed(self):
         # no car body pixel touches the transparent background directly (rule 2: closed outline)

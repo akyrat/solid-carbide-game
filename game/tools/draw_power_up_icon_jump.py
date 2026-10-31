@@ -33,6 +33,7 @@ P = {
     "d": (6, 44, 26),       # side shade (bottom right)
     "W": (241, 248, 251),   # stripe
     "w": (190, 200, 214),   # stripe shade
+    "v": (128, 140, 165),   # stripe in deep shade (v4)
     "Q": (190, 182, 240),   # glass glint
     "B": (95, 89, 135),     # glass
     "b": (41, 33, 74),      # glass dark / pillars
@@ -70,7 +71,23 @@ def _car_rows():
     return rows
 
 
-WHEEL = ["#tt#", "tArt", "trrt", "#tt#"]
+def _car_rows_v4():
+    """v4: the stripes no longer make a pale mass: the near stripe is in shade, both fade from
+    white at the lit top-left to a cool grey, and the green has a clear top-left light ramp."""
+    rows = _car_rows()[:4] + [
+        (7, 4, "hA" + "AAL" + "L" * 13 + "GGG" + "Gg#"),
+        (8, 4, "hL" + "W" * 5 + "w" * 7 + "v" * 5 + "gGGc#"),
+        (9, 4, "#m" + "L" * 4 + "G" * 12 + "g" * 3 + "cC#"),
+        (10, 4, "#m" + "w" * 4 + "v" * 13 + "gGGc#"),
+        (11, 4, "#d" + "L" * 2 + "G" * 10 + "g" * 8 + "g#"),
+        (12, 4, "#" + "G" * 3 + "g" * 14 + "d" * 4 + "d#"),
+        (13, 4, "#" + "g" * 10 + "d" * 11 + "d#"),
+        (14, 5, "#" * 22),
+    ]
+    return rows
+
+
+WHEEL =["#tt#", "tArt", "trrt", "#tt#"]
 WHEEL_X = (7, 20)
 WHEEL_Y = 12
 PAD_TOP = 22  # first row of the pad's halo; the pad's outline starts one row below
@@ -205,9 +222,40 @@ def _pad(px):
                     px[q] = k
 
 
-def _car():
+def _streaks_v4(px):
+    """v4: brighter, more distinct streaks: a 3 px bright head, a 2-step halo (mid, then dark) beside
+    the head and a dark halo beside the body."""
+    for x, cols, mid, dark in (
+        (10, "CCCck", "k", "K"),
+        (15, "MMMmn", "m", "n"),
+        (20, "CCCck", "k", "K"),
+    ):
+        y0 = max(y for (cx, y) in px if abs(cx - x) <= 1) + 2
+        n = min(len(cols), PAD_TOP - 1 - y0)
+        for i in range(n):
+            px[(x, y0 + i)] = cols[i]
+        for i in range(n - 1):
+            for dx in (-1, 1):
+                px.setdefault((x + dx, y0 + i), mid if i < 2 else dark)
+        for dx in (-2, 2):
+            px.setdefault((x + dx, y0), dark)
+
+
+def _pad_end_halos(px):
+    """v4: a second, darker step outside the pad's end halos (rule 5)."""
+    for y in range(PAD_TOP + 2, PAD_TOP + 8):
+        row = [x for (x, yy) in px if yy == y]
+        if not row:
+            continue
+        for x, dx in ((min(row), -1), (max(row), 1)):
+            if px.get((x, y)) == "K" and 0 <= x + dx < SIZE:
+                px[(x, y)] = "k"
+                px[(x + dx, y)] = "K"
+
+
+def _car(version=3):
     car = {}
-    for y, x0, s in _car_rows():
+    for y, x0, s in (_car_rows_v4() if version >= 4 else _car_rows()):
         for i, ch in enumerate(s):
             if ch != ".":
                 car[(x0 + i, y)] = ch
@@ -222,15 +270,17 @@ def _car():
     return tilted
 
 
-def draw(version=3):
-    px = _car()
+def draw(version=4):
+    px = _car(version)
     if version >= 3:
         _close_outline(px)
         _light_halos(px)
-        _streaks_v3(px)
+        (_streaks_v4 if version >= 4 else _streaks_v3)(px)
     else:
         _streaks(px)
     _pad(px)
+    if version >= 4:
+        _pad_end_halos(px)
     im = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     for (x, y), k in px.items():
         if 0 <= x < SIZE and 0 <= y < SIZE:
@@ -240,10 +290,11 @@ def draw(version=3):
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
-    version = 3
-    if "--v2" in argv:
-        argv = [a for a in argv if a != "--v2"]
-        version = 2
+    version = 4
+    for flag, v in (("--v2", 2), ("--v3", 3)):
+        if flag in argv:
+            argv = [a for a in argv if a != flag]
+            version = v
     if len(argv) != 1:
         print(__doc__)
         return 2
