@@ -1,7 +1,7 @@
 ---
 id: T-442
 title: Gift pack arrows 3 times as big, in the gift box's colours
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -76,3 +76,4 @@ Documents updated: docs/hud-and-menus.md, game/docs/game-loop/gift-pack-and-pick
 
 QA (round 1): all seven criteria pass. qa_check: three test sets passed, 1 document changed, 1 screenshot. Code checked: ARROW_SIZE 90x72, FILL/STRIPE/OUTLINE constants, ui_scale; docs Decisions entry and script header comment describe size and colours. Nothing under game/data/levels/ changed.
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, from the screenshot)
