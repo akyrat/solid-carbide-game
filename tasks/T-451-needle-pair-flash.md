@@ -1,7 +1,7 @@
 ---
 id: T-451
 title: Threading the needle flashes the pair and its dashed line
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -68,3 +68,4 @@ Built by the Level/Challenge Design Agent.
 - Screenshots (`art-archive/T-451/screenshots/`, from `game/tests/fixtures/t451_needle_flash_demo.tscn`): 0_before.png (pair at rest, chalk line), flash_000.png (first frame; the capture lags the render by one frame so it still shows rest), flash_015.png (dark point), flash_030.png (second pulse peak: both boulders and the line white, popup up), flash_045.png, 9_after.png (rest again).
 - Docs: docs/level-design.md, Content, "Level creator: thread the needle": new bullet on the flash plus a screenshot link. No `game/data/levels/` file touched.
 - Note for the playtest: the car is metres past the gap when the trick pays (0.25 s after the crossing), so the flash is short (0.6 s); the camera follows, so a fast pass sees the flash near the screen's edge. Length and pulse count are the levers.
+- 2026-10-31, in-progress → in-qa: Flash built (needle_flash.gd), 6 tests, all three test sets pass, screenshots saved
