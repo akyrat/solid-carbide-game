@@ -1,7 +1,7 @@
 ---
 id: T-464
 title: Art: the mission notebook page (with checkbox, tick and cross-off marks) and the power-up overlay's frame (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/docs/hud-and-menus/livestream-hud-art.md, game/scripts/hud/mission_page.gd, game/scripts/ui/power_up_screen.gd, game/scripts/hud/hud_style.gd]
 files_expected_to_change: [game/art/hud/mission_page.png, game/art/hud/mission_checkbox.png, game/art/hud/mission_tick.png, game/art/hud/mission_cross.png, game/art/ui/power_up_frame.png, game/scripts/hud/mission_page.gd, game/scripts/ui/power_up_screen.gd, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-464.
 ### 2026-10-31, In progress → In QA
 
 Goal runner (G-009): the agent is done; QA is checking it.
+
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
 
 ## Style review
 
@@ -187,3 +191,4 @@ Five assets, all through `tools/style_loop/run.py art`, briefs in `art-archive/T
 ### QA round 1
 
 All five criteria pass. Own re-run of the tests: `python -m unittest discover -s game/tools` 793 OK (1 skipped); `python -m unittest discover -s tools` 614 OK; Godot `bash game/tools/run_tests.sh` 2419 passing, all passed (1117 s). The five PNGs exist in game/art/hud and game/art/ui; five Style review runs, each kept at 8/10; 0 PixelLab generations noted; four screenshots (dark and light, page and overlay) in art-archive/T-464/screenshots/ (the overlay light one viewed: amber frame in use); Visual style entry present. `tools/qa_check.py` was refused (not on the pre-approved list), so I checked those items by hand.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
