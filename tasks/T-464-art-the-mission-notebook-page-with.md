@@ -1,7 +1,7 @@
 ---
 id: T-464
 title: Art: the mission notebook page (with checkbox, tick and cross-off marks) and the power-up overlay's frame (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
