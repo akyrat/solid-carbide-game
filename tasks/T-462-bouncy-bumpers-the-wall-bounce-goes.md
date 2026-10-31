@@ -1,7 +1,7 @@
 ---
 id: T-462
 title: Bouncy Bumpers: the wall bounce goes further, tier by tier
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/collisions.md, game/scripts/driving/car.gd, game/tests/unit/test_wall_bounce.gd, game/scripts/run/run_state.gd, game/data/power_ups.json]
 files_expected_to_change: [game/scripts/driving/car.gd, game/tests/unit/test_bouncy_bumpers.gd, game/docs/driving/collisions.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-462.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -83,3 +87,4 @@ Driving & Drift Agent, 2026-10-31.
 **Documents affected**: `docs/drifting.md` (updated), `game/docs/driving/collisions.md` (updated). No PixelLab generations; no refusals.
 
 **QA round 1 (QA/Integration Agent)**: all three criteria pass. Godot full suite via run_tests.sh: 199 scripts, 2410 passing, 0 failing (test_bouncy_bumpers.gd ran, tiers measured 1.226/1.585/1.944/2.305 vs base 0.869). game/tools unittest: 767 OK (1 skipped). tools unittest: 614 OK. Plot exists at art-archive/T-462/screenshots/bounce_distance_per_tier.png; docs/drifting.md describes the scaling. `python tools/qa_check.py` was refused (needs approval), so skipped.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
