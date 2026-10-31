@@ -58,6 +58,12 @@ The board can give the studio a whole goal ("the trick system with its final art
 - Each instance has a short name the board gives it when it opens the session, for example "Camera" or "Tools" (board, 2026-10-14). If the board hasn't named it, ask. The session start message gives the session id; register the name with `python tools/board_inbox.py name <session id> <Name>` (the same command renames it). A name another live session holds is refused; after `/clear`, which starts a new session id, add `--take-over` to keep the old name.
 - Claim each ticket you plan or start: `python tools/task_status.py T-012 --lead <Name>` (`tasks/README.md`, "Owners"). The hooks and the watcher then hand you only the moves on your own tickets and on tickets nobody owns. For an unowned one, claim it first and act only if the claim succeeds: another instance may have claimed it first. Take over another instance's ticket (`--take-over`) only when the board says so.
 
+## Publishing to itch.io
+- Friends play the game in the browser on the board's private itch.io page (Restricted, with a password; board, 2026-10-31, T-448). The page's settings (password, visibility) stay the board's: the script never changes them.
+- The board's one-time setup: create the page with a Web/HTML5 project, then add two lines to `.env` (git-ignored, never committed or printed): `BUTLER_API_KEY=<the API key from itch.io, Settings, API keys>` and `ITCH_TARGET=jerry-of-rivia/solid-carbide:html5` (the page is https://jerry-of-rivia.itch.io/solid-carbide).
+- "Push the latest build to itch" means the Project Lead runs `python tools/publish_itch.py` from the main checkout, on master, with a clean tree. Only when the board asks, since it publishes. `--dry-run` does everything but the push.
+- The script exports the "Web" preset (`game/export_presets.cfg`, thread support off, Godot 4.6.2 Web templates installed in `%APPDATA%\Godot\export_templates\4.6.2.stable`) into `web-build/` (git-ignored), checks it has index.html, a .wasm and a .pck, then runs `butler push web-build <ITCH_TARGET> --userversion <short commit>` and prints the version and page link. butler lives in `tools/bin/` (git-ignored). It runs no tests (master is already tested). Details: the script's docstring.
+
 ## Course work
 - `course-material/`: one folder per assignment, kept apart from the game. Short, in the board's voice, linking to real files rather than copying them.
 

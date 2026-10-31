@@ -1,7 +1,7 @@
 ---
 id: T-448
 title: Publish a browser build of master to the board's private itch.io page with one script
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -59,6 +59,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-31, Open → In progress
+
+Started: the QA/Integration Agent builds the itch.io publish script in C:\solid-carbide-worktrees\T-448.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -66,3 +70,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built by the QA/Integration Agent (build task), 2026-10-31.
+- game/export_presets.cfg: preset "Web", release, variant/thread_support=false, canvas_resize_policy=2 (adaptive), exports to ../web-build/index.html, excludes tests/* and tools/*. The root .gitignore had `export_presets.cfg`; I removed that line so the preset is committed. Added `web-build/` and `tools/bin/` to .gitignore.
+- Installed outside the repo (official downloads): Godot 4.6.2 export templates (GitHub release 4.6.2-stable, 1.25 GB tpz; only the 8 web_*.zip extracted, tpz deleted) into %APPDATA%\Godot\export_templates\4.6.2.stable (windows templates were already there). butler (broth.itch.zone, windows-amd64) into tools/bin/ (git-ignored).
+- tools/publish_itch.py (usage in its docstring): works on the checkout it lives in, or any other via `--repo DIR`; also `--butler`, `--godot`. Checks master, clean tree (line-ending-only noise and Godot's untracked .uid/.import files ignored), no merge. Without --dry-run it stops before exporting if BUTLER_API_KEY, ITCH_TARGET or butler is missing and names them. Exports, checks index.html/.wasm/.pck, runs `butler push <web-build> <ITCH_TARGET> --userversion <short commit>` with the key only in butler's environment; output is redacted of the key. GODOT_BIN in .env is empty now: the script needs it (or --godot).
+- Real export check (from this branch, since --dry-run needs master): export_web with Godot 4.6.2 produced web-build/ with index.html (5 KB), index.wasm (37.7 MB), index.pck (18.5 MB), index.js, worklets, icons. Not opened in a browser (none checkable here), so untested in a browser.
+- Godot's export writes .uid/.import files; I removed the generated ones and committed none.
+- Docs: docs/working-with-the-board.md has "Publishing to itch.io" (target jerry-of-rivia/solid-carbide:html5, per the board). No real push made.
+- Tests: tools/test_publish_itch.py, 15 tests (off master, dirty, untracked, merge in progress, missing key/target, exact butler command with a stub butler, key redacted, dry run). tools suite 606 tests OK (incl. these); game/tools suite OK. Nothing under game/data/levels/ touched.
