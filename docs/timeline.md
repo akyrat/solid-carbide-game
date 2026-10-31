@@ -2780,3 +2780,8 @@ Entry format:
 - Decision or change: The board's hand-built level from the level creator, Kaiju City, is the map the game's Start plays (an exact copy, game/data/level/kaiju_city_map.json), in place of the elevation sample map; the car starts at the level's spawn point. Gaps found: roof-13 has no ramp up, no minion spawns round some rooftops, the kaiju alert signs sat at the old map's places (moved by T-439). The board played it: "LGTM".
 - Documents touched: `docs/level-design.md`
 - Tasks: T-372
+
+## 2026-10-31: Merges test once per batch
+- Decision or change: Tooling (the board, 2026-10-31): merge_batch.py runs the three test sets once per batch instead of after every ticket; if they fail it finds the breaking ticket by halving the batch, merges the rest and stops only that one. --each keeps the old ticket-by-ticket mode. The Godot test set's default time limit is 1500 s (GUT_TIME_LIMIT still overrides it). QA passed; merged straight after QA.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-437

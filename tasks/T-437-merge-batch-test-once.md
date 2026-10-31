@@ -1,7 +1,7 @@
 ---
 id: T-437
 title: Merges test once per batch, with a 1500 s Godot test limit
-status: open
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -14,8 +14,8 @@ depends_on: []
 documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, tools/merge_batch.py, tools/test_merge_batch.py, game/tools/run_tests.sh]
 files_expected_to_change: [tools/merge_batch.py, tools/test_merge_batch.py, game/tools/run_tests.sh]
-model: opus
-qa_rounds: 0
+model: sonnet
+qa_rounds: 1
 ---
 
 <!--
@@ -45,18 +45,22 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/tools/run_tests.sh` defaults to a 1500 s limit, GUT_TIME_LIMIT still overrides it (a test or a dry run shows both). (QA: pass / fail)
-- [ ] merge_batch with several tickets runs the three test sets once when they all pass (tests with stubbed test runs count the runs: one per batch). (QA: pass / fail)
-- [ ] When the batch's tests fail, merge_batch finds the breaking ticket, merges the others, stops only that one with its reason, and leaves master with no merge in progress and without the breaking ticket's commits (tests with stubbed runs and a temporary git repo). (QA: pass / fail)
-- [ ] A ticket that conflicts stops on its own and the rest of the batch still merges (test). (QA: pass / fail)
-- [ ] The old ticket-by-ticket mode is still there behind a flag (test). (QA: pass / fail)
-- [ ] docs/working-with-the-board.md, "Merging (Project Lead)", describes testing once per batch and the flag. (QA: pass / fail)
-- [ ] The 10 slowest Godot test files and their times are in the result notes. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `game/tools/run_tests.sh` defaults to a 1500 s limit, GUT_TIME_LIMIT still overrides it (a test or a dry run shows both). (QA: pass - default 1500, env override tested)
+- [ ] merge_batch with several tickets runs the three test sets once when they all pass (tests with stubbed test runs count the runs: one per batch). (QA: pass - test_all_green_runs_the_tests_once_for_the_batch)
+- [ ] When the batch's tests fail, merge_batch finds the breaking ticket, merges the others, stops only that one with its reason, and leaves master with no merge in progress and without the breaking ticket's commits (tests with stubbed runs and a temporary git repo). (QA: pass - test_the_breaking_ticket_is_found_and_the_others_merge)
+- [ ] A ticket that conflicts stops on its own and the rest of the batch still merges (test). (QA: pass - test_a_conflict_stops_alone_and_the_rest_is_tested_once)
+- [ ] The old ticket-by-ticket mode is still there behind a flag (test). (QA: pass - test_each_flag_keeps_the_old_mode)
+- [ ] docs/working-with-the-board.md, "Merging (Project Lead)", describes testing once per batch and the flag. (QA: pass - doc line 46 describes once per batch, halving, --each, 1500 s)
+- [ ] The 10 slowest Godot test files and their times are in the result notes. (QA: pass - 10 files listed in result notes (from junit data; read only))
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - qa_check ran the 3 sets: all green)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Open → In progress
+
+Started: the QA/Integration Agent builds it in C:\solid-carbide-worktrees\T-437 (tooling, merges straight after QA).
 
 ## Style review
 
@@ -64,4 +68,17 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built by the QA/Integration Agent, 2026-10-31.
+
+- `game/tools/run_tests.sh`: default limit 1500 s (`GUT_TIME_LIMIT` still overrides); the comment carries the timings (90 s at first, 270 to 306 s on 2026-10-21, 889 s on 2026-10-31).
+- `tools/merge_batch.py`: default mode merges and commits every ticket without tests, runs the three sets once on the result, then removes the worktrees and branches. On a red batch it halves the merged prefixes (`git reset --keep` to each ticket's merge commit) to find the first ticket whose state is red, undoes it (reset to the prefix before it, drops its done commit on the branch), stops it with "test failed: ...", merges the tickets after it again and tests again; tickets before it stay. A conflict stops that ticket alone. If master turns unclean mid-batch (another instance's merge), tickets already committed are reported "merged, NOT tested", worktrees kept. `--each` is the old mode (tests per ticket before its commit). One line per ticket and the log file are unchanged.
+- `tools/test_merge_batch.py`: new tests with stubbed counting test commands on temporary repos: one run per green batch of three; `--each` runs three; breaker found among four with the others merged, timeline and branch tip clean, no merge in progress; a conflict stops alone and the rest is tested once; run_tests.sh default is 1500, and a fake Godot with GUT_TIME_LIMIT=1 ends with exit 124.
+- `docs/working-with-the-board.md`, "Merging (Project Lead)": describes testing once per batch, the halving, `--each`, and the 1500 s limit.
+
+Test counts (T-437 folder, foreground): game/tools 752 tests OK (1 skipped); tools 591 tests OK; GUT 182 scripts, 2239 of 2239 passing, 729 s.
+
+The 10 slowest Godot test files (GUT junit export, one full run, 654 s of test time): test_level_up_screen 27.7 s; enemies/test_minions 24.0 s; weapons/test_all_weapons_run 21.0 s; run/test_gift_drops 20.8 s; weapons/test_level_up_offers 17.6 s; enemies/test_enemies_on_heights 17.0 s; test_camera_options 16.2 s; enemies/test_kaiju_meteors 15.9 s; weapons/test_starting_gun 15.9 s; weapons/test_neon_underglow 14.6 s. Together about 191 s of 654 s: the set has grown by count (182 scripts, 2239 tests, mean 3.6 s per script); no single file dominates. For per-file times: `bash game/tools/run_tests.sh -gjunit_xml_file=user://full.xml` (an absolute path wrote nothing).
+
+Not done: the new merge_batch was not run on the real repo; the main checkout's copy is untouched.
+- 2026-10-31, in-progress → in-qa: Built and tested; ready for QA
+- 2026-10-31, in-qa → done: QA passed

@@ -22,7 +22,7 @@ def write(path, text):
     path.write_bytes(text.encode("utf-8"))
 
 
-class MergeBatchTest(unittest.TestCase):
+class RepoCase(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
@@ -67,6 +67,8 @@ class MergeBatchTest(unittest.TestCase):
         merge_head = (self.root / ".git" / "MERGE_HEAD").exists()
         return not merge_head and not self.git("status", "--porcelain", "--untracked-files=no").strip()
 
+
+class MergeBatchTest(RepoCase):
     def test_clean_batch_of_two(self):
         w1 = self.ticket("T-901", {"game/scripts/a.gd": "a\n"})
         w2 = self.ticket("T-902", {"game/scripts/b.gd": "b\n"})
@@ -208,6 +210,107 @@ class MergeBatchTest(unittest.TestCase):
         self.assertEqual(code, 0, lines)
         self.assertEqual(lines[0], "T-913: merged")
         self.assertEqual((self.root / "game/art/x.png.import").read_text(encoding="utf-8"), "a=2\n")
+
+
+COUNT = "tests_ran.txt"
+
+
+def counting(extra=""):
+    """A stub test command: appends a line to a file in the repo root (cwd), then fails if `extra` says so."""
+    code = f"open('{COUNT}','a').write('x'); import os, sys; {extra}"
+    return [f'"{sys.executable}" -c "{code}"']
+
+
+BAD_FILE = "sys.exit(1 if os.path.exists('game/scripts/bad.gd') else 0)"
+
+
+class TestOncePerBatchTest(RepoCase):
+    """T-437: the three test sets run once per batch; a red batch is halved to find the breaking ticket."""
+
+    def runs(self):
+        p = self.root / COUNT
+        return len(p.read_text()) if p.exists() else 0
+
+    def run_counted(self, *args, extra=""):
+        # the counter file is untracked in the repo root: keep it out of the way of "clean"
+        return self.run_batch(*args, tests=counting(extra))
+
+    def test_all_green_runs_the_tests_once_for_the_batch(self):
+        for i, n in enumerate("abc"):
+            self.ticket(f"T-92{i}", {f"game/scripts/{n}.gd": n + "\n"})
+        code, lines = self.run_counted("T-920", "T-921", "T-922")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual([l for l in lines if l.startswith("T-9")], [f"T-92{i}: merged" for i in range(3)])
+        self.assertEqual(self.runs(), 1)
+        self.assertEqual(self.git("branch", "--list", "task/*").strip(), "")
+
+    def test_each_flag_keeps_the_old_mode(self):
+        for i, n in enumerate("abc"):
+            self.ticket(f"T-92{i}", {f"game/scripts/{n}.gd": n + "\n"})
+        code, lines = self.run_counted("T-920", "T-921", "T-922", "--each")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(self.runs(), 3)
+
+    def test_the_breaking_ticket_is_found_and_the_others_merge(self):
+        for tid, name in (("T-930", "a"), ("T-931", "bad"), ("T-932", "c"), ("T-933", "d")):
+            self.ticket(tid, {f"game/scripts/{name}.gd": name + "\n"})
+        tip = self.git("rev-parse", "task/T-931-ticket").strip()
+        code, lines = self.run_counted("T-930", "T-931", "T-932", "T-933", extra=BAD_FILE)
+        self.assertEqual(code, 1)
+        by = {l.split(":")[0]: l for l in lines if l.startswith("T-9")}
+        self.assertRegex(by["T-931"], r"^T-931: stopped: test failed")
+        for tid in ("T-930", "T-932", "T-933"):
+            self.assertEqual(by[tid], f"{tid}: merged")
+        self.assertFalse((self.root / "game/scripts/bad.gd").exists())
+        for n in "acd":
+            self.assertTrue((self.root / f"game/scripts/{n}.gd").exists())
+        self.assertTrue(self.clean())
+        timeline = (self.root / "docs" / "timeline.md").read_text(encoding="utf-8")
+        self.assertNotIn("T-931", timeline)
+        for tid in ("T-930", "T-932", "T-933"):
+            self.assertIn(f"- Tasks: {tid}", timeline)
+        self.assertEqual(self.git("rev-parse", "task/T-931-ticket").strip(), tip)   # not left marked done
+        self.assertTrue((self.wts / "T-931").exists())
+        log = self.git("log", "--format=%s", "HEAD")
+        self.assertNotIn("T-931: ", log)   # no merge commit and no done commit
+        self.assertNotIn("T-931 work", log)
+        self.assertLessEqual(self.runs(), 4)   # whole batch, halving steps, then the re-merged rest
+
+    def test_a_conflict_stops_alone_and_the_rest_is_tested_once(self):
+        self.ticket("T-940", {"game/scripts/c.gd": "branch\n"})
+        write(self.root / "game/scripts/c.gd", "master\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "master edit")
+        self.ticket("T-941", {"game/scripts/d.gd": "d\n"})
+        code, lines = self.run_counted("T-940", "T-941")
+        self.assertEqual(code, 1)
+        self.assertRegex(lines[0], r"^T-940: stopped: merge conflict")
+        self.assertEqual(lines[1], "T-941: merged")
+        self.assertEqual(self.runs(), 1)
+        self.assertTrue(self.clean())
+
+
+class RunTestsScriptTest(unittest.TestCase):
+    """T-437: game/tools/run_tests.sh defaults to a 1500 s limit; GUT_TIME_LIMIT overrides it."""
+
+    SCRIPT = Path(__file__).resolve().parent.parent / "game" / "tools" / "run_tests.sh"
+
+    def test_default_limit_is_1500(self):
+        self.assertIn('limit="${GUT_TIME_LIMIT:-1500}"', self.SCRIPT.read_text(encoding="utf-8"))
+
+    def test_the_env_variable_overrides_the_limit(self):
+        import os
+        import shutil
+        bash = shutil.which("bash")
+        if not bash:
+            self.skipTest("no bash")
+        with tempfile.TemporaryDirectory() as d:
+            fake = Path(d) / "godot.sh"
+            fake.write_text("#!/usr/bin/env bash\nsleep 5\n", encoding="utf-8", newline="\n")
+            env = dict(os.environ, GODOT_BIN=str(fake), GUT_TIME_LIMIT="1")
+            r = subprocess.run([bash, str(self.SCRIPT)], capture_output=True, text=True, env=env, timeout=60)
+            self.assertEqual(r.returncode, 124, r.stderr)
+            self.assertIn("went past 1 seconds", r.stderr)
 
 
 class ConsoleEncodingTest(unittest.TestCase):
