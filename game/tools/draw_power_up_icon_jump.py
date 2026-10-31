@@ -77,6 +77,64 @@ PAD_TOP = 22  # first row of the pad's halo; the pad's outline starts one row be
 TILT = 0.16 # nose-up: each column right of the centre is lifted by this many px per px
 
 
+def _streaks_v3(px):
+    """v3: brighter, longer streaks, starting 1 px under the car, with two-step halos."""
+    for x, cols, mid, dark in (
+        (10, "CCcck", "k", "K"),
+        (15, "MMmmn", "m", "n"),
+        (20, "CCcck", "k", "K"),
+    ):
+        y0 = max(y for (cx, y) in px if abs(cx - x) <= 1) + 2
+        n = min(len(cols), PAD_TOP - 1 - y0)
+        for i in range(n):
+            px[(x, y0 + i)] = cols[i]
+        for i in range(min(2, n)):
+            for dx in (-1, 1):
+                px.setdefault((x + dx, y0 + i), mid if i == 0 else dark)
+
+
+def _close_outline(car):
+    """Close the 1 px outline around the tilted car; top-left-facing outline pixels are broken by
+    lighter highlight pixels every other pixel (rule 2)."""
+    solid = dict(car)
+    add = {}
+    for (x, y), ch in solid.items():
+        if ch in "#h":
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            q = (x + dx, y + dy)
+            if q in solid or q in add:
+                continue
+            # a diagonal outline neighbour already closes it (8-connected outline): don't thicken
+            if any(solid.get((q[0] + ax, q[1] + ay), ".") in "#h"
+                   for ax in (-1, 0, 1) for ay in (-1, 0, 1) if (ax, ay) != (0, 0)):
+                continue
+            top_left = dx < 0 or dy < 0
+            add[q] = "h" if top_left and (q[0] + q[1]) % 2 == 0 else "#"
+    car.update(add)
+    # existing outline pixels on the top-left of the silhouette: break every other one too
+    for (x, y), ch in list(car.items()):
+        if ch == "#" and ((x - 1, y) not in car or (x, y - 1) not in car) and y < 9 and (x + y) % 2 == 0:
+            car[(x, y)] = "h"
+    return car
+
+
+def _light_halos(car):
+    """Stepped halos (rule 5) around the cyan headlight (front, right) and magenta tail light (rear)."""
+    lit_rows = {y for (x, y), ch in car.items() if ch in "cC"}
+    for y in lit_rows:
+        xr = max(x for (x, yy) in car if yy == y)
+        for dx, k in ((1, "k"), (2, "K")):
+            if xr + dx < SIZE:
+                car[(xr + dx, y)] = k
+    for (x, y), ch in list(car.items()):
+        if ch == "m" and x < 8:
+            for dx, k in ((-2, "n"),):
+                q = (x + dx, y)
+                if q not in car:
+                    car[q] = k
+
+
 def _streaks(px):
     # (x, top y, length, colours bright->dark, halo)
     for x, n, cols, halo in (
@@ -164,9 +222,14 @@ def _car():
     return tilted
 
 
-def draw():
+def draw(version=3):
     px = _car()
-    _streaks(px)
+    if version >= 3:
+        _close_outline(px)
+        _light_halos(px)
+        _streaks_v3(px)
+    else:
+        _streaks(px)
     _pad(px)
     im = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     for (x, y), k in px.items():
@@ -177,10 +240,14 @@ def draw():
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
+    version = 3
+    if "--v2" in argv:
+        argv = [a for a in argv if a != "--v2"]
+        version = 2
     if len(argv) != 1:
         print(__doc__)
         return 2
-    im = draw()
+    im = draw(version)
     im.save(argv[0])
     print({"bbox": im.getbbox(), "colours": len({p for p in im.getdata() if p[3]})})
     return 0

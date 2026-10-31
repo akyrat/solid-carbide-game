@@ -13,6 +13,7 @@ import draw_power_up_icon_jump as jump  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 V2 = os.path.join(ROOT, "art-archive", "T-465", "style-loop", "v2-2.png")
+V3 = os.path.join(ROOT, "art-archive", "T-465", "style-loop", "v3-2.png")
 FORBIDDEN = {(104, 220, 96), (247, 208, 52)}
 
 
@@ -49,7 +50,27 @@ class TestDraw(unittest.TestCase):
 
     @unittest.skipUnless(os.path.exists(V2), "v2-2 not archived yet")
     def test_reproduces_archived_v2(self):
-        self.assertEqual(self.px, list(Image.open(V2).convert("RGBA").getdata()))
+        px = list(jump.draw(2).getdata())
+        self.assertEqual(px, list(Image.open(V2).convert("RGBA").getdata()))
+
+    @unittest.skipUnless(os.path.exists(V3), "v3-2 not archived yet")
+    def test_reproduces_archived_v3(self):
+        self.assertEqual(self.px, list(Image.open(V3).convert("RGBA").getdata()))
+
+    def test_car_outline_closed(self):
+        # no car body pixel touches the transparent background directly (rule 2: closed outline)
+        car_keys = set("ALGgdWwQBb")
+        inv = {v: k for k, v in jump.P.items()}
+        for y in range(16):
+            for x in range(32):
+                p = self.im.getpixel((x, y))
+                if p[3] and inv.get(p[:3]) in car_keys:
+                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        q = self.im.getpixel((x + dx, y + dy))
+                        n8 = [self.im.getpixel((x + dx + ax, y + dy + ay)) for ax in (-1, 0, 1) for ay in (-1, 0, 1)
+                              if 0 <= x + dx + ax < 32 and 0 <= y + dy + ay < 32]
+                        if q[3] == 0:
+                            self.assertTrue(any(inv.get(n[:3]) in ("#", "h") for n in n8 if n[3]), (x, y))
 
 
 if __name__ == "__main__":
