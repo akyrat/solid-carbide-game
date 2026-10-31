@@ -1,7 +1,7 @@
 ---
 id: T-463
 title: Rusty Overcoat: the car damages minions it touches, with the red hit flash
-status: blocked
+status: open
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-009

@@ -1,7 +1,7 @@
 ---
 id: T-462
 title: Bouncy Bumpers: the wall bounce goes further, tier by tier
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
