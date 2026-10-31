@@ -43,11 +43,11 @@ The board's review: play a run with Rev Charge granted at each tier: how chargin
 
 ## Acceptance criteria
 
-- [ ] With Rev Charge owned, holding W+S charges, and releasing S fires a boost that raises the car's speed; the charge time and boost strength match the owned tier's numbers, and a higher tier gives a stronger or faster charge (GUT tests). (QA: pass / fail)
-- [ ] Without the power-up, W+S gives the same speed and state as before over the same steps (GUT test). (QA: pass / fail)
-- [ ] A placeholder effect is visible while charging and while boosting, and stops after (GUT test of its visibility; screenshots or a GIF in art-archive/<id>/screenshots/). (QA: pass / fail)
-- [ ] Drifting, Content, describes Rev Charge's behaviour and the proposals. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] With Rev Charge owned, holding W+S charges, and releasing S fires a boost that raises the car's speed; the charge time and boost strength match the owned tier's numbers, and a higher tier gives a stronger or faster charge (GUT tests). (QA: pass)
+- [ ] Without the power-up, W+S gives the same speed and state as before over the same steps (GUT test). (QA: pass)
+- [ ] A placeholder effect is visible while charging and while boosting, and stops after (GUT test of its visibility; screenshots or a GIF in art-archive/<id>/screenshots/). (QA: pass)
+- [ ] Drifting, Content, describes Rev Charge's behaviour and the proposals. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -95,6 +95,8 @@ Driving & Drift Agent, 2026-10-31 (goal G-009). Done.
 **Documents affected:** `docs/drifting.md` (Content, "Rev Charge (task T-460)"). Also `game/docs/driving/drift.md` ("Rev Charge (T-460)").
 
 **PixelLab:** 0 generations. Refusals: none.
+
+**QA round 1 (2026-10-31):** all five criteria pass. test_rev_charge.gd re-run: 16/16. `python -m unittest discover -s tools`: 614 OK. `-s game/tools`: ran, no failure. Screenshots (3 PNG + GIF) exist. Drifting doc has the Rev Charge section. The full GUT suite (931 s) is longer than the 10-minute foreground limit, so I did not re-run it and relied on the agent's 2395/2395. `tools/qa_check.py` was refused (not pre-approved), so it was not run.
 
 **Housekeeping notes:**
 - I ran one harmless no-op heredoc command by mistake (not refused).
