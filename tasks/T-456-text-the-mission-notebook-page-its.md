@@ -1,7 +1,7 @@
 ---
 id: T-456
 title: Text: the mission notebook page, its goal phrasings, and the driving power-up overlay with the four power-ups' names and tier descriptions
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Goal-G-009
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-31, Blocked → In progress
 
 Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-456.
+
+### 2026-10-31, In progress → In QA
+
+Goal runner (G-009): the agent is done; QA is checking it.
 
 ## Style review
 
