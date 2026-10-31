@@ -1,7 +1,7 @@
 ---
 id: T-463
 title: Rusty Overcoat: the car damages minions it touches, with the red hit flash
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/enemies/minions.md, game/scripts/enemies/minion.gd, game/scripts/enemies/hit_tint.gd, game/scripts/enemies/kaiju.gd, game/scripts/run/run_state.gd, game/data/power_ups.json]
 files_expected_to_change: [game/scripts/enemies/minion.gd, game/scripts/enemies/kaiju.gd, game/tests/unit/enemies/test_rusty_overcoat.gd, game/docs/enemies/minions.md, docs/enemies.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-463.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,4 @@ Done (Enemy Behavior, 2026-10-31).
 - Documents affected: docs/enemies.md. No art, no PixelLab (0 generations). Refusals: none.
 
 QA round 1 (2026-10-31): all five criteria pass. `tools/qa_check.py` was refused (not pre-approved), so I ran the tests directly. GUT (`bash game/tools/run_tests.sh`): 200 scripts, 2418/2418 passing, including test_rusty_overcoat.gd (8 tests: each tier's damage and red flash, per-enemy cooldown, kaiju per tier, no power-up). Python (`python -m unittest discover -s tools -p "test_*.py"`): 614 tests OK. I did not run the docs-staleness test set separately. The screenshot `art-archive/T-463/screenshots/overcoat_flash.png` exists. `docs/enemies.md` (Content, "Rusty Overcoat", and Open questions) describes the rule and proposals. The worktree has `.import` and `.uid` noise from Godot, not committed by me.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
