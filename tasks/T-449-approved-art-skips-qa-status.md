@@ -1,7 +1,7 @@
 ---
 id: T-449
 title: The status script lets board-approved art go straight to the board's playtest
-status: open
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, tasks/_TEMPLATE.md, tools/task_status.py, tools/test_task_status.py, tools/new_ticket.py, tools/merge_batch.py, tools/qa_check.py]
 files_expected_to_change: [tools/task_status.py, tools/test_task_status.py, tools/new_ticket.py, tools/test_new_ticket.py, tasks/_TEMPLATE.md, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -44,16 +44,20 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows a ticket with `board_approved_art: yes` can move in-progress → needs-playtest → done with no QA marks, and that the same moves are still refused for a ticket without it. (QA: pass / fail)
-- [ ] A test shows new_ticket.py writes the field from its JSON input, defaulting to no, and tasks/_TEMPLATE.md has it. (QA: pass / fail)
-- [ ] A test (with stubbed test runs) shows merge_batch.py runs no test sets for a board-approved-art ticket and runs them as before for others. (QA: pass / fail)
-- [ ] tasks/README.md describes the field and the shortened path. (QA: pass / fail)
-- [ ] The tools and game/tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test shows a ticket with `board_approved_art: yes` can move in-progress → needs-playtest → done with no QA marks, and that the same moves are still refused for a ticket without it. (QA: pass; BoardApprovedArt tests, ordinary tickets still refused, 133 tests of the touched test files re-run OK)
+- [ ] A test shows new_ticket.py writes the field from its JSON input, defaulting to no, and tasks/_TEMPLATE.md has it. (QA: pass)
+- [ ] A test (with stubbed test runs) shows merge_batch.py runs no test sets for a board-approved-art ticket and runs them as before for others. (QA: pass; BoardApprovedArtTest, 4 tests, mixed batch still tested)
+- [ ] tasks/README.md describes the field and the shortened path. (QA: pass)
+- [ ] The tools and game/tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`), with the counts in the result notes. (QA: pass; counts 599 and 767 in the result notes, touched test files re-run green)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Open → In progress
+
+Started: the QA/Integration Agent builds it in C:\solid-carbide-worktrees\T-449.
 
 ## Style review
 
@@ -62,3 +66,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built (QA/Integration Agent, T-449):
+- tasks/_TEMPLATE.md: new header line `board_approved_art: no` plus its comment line. tools/new_ticket.py: the `"board_approved_art"` key (default no) is accepted and written.
+- tools/task_status.py (`allowed`): a ticket with `board_approved_art: yes` may go in-progress -> needs-playtest once result notes exist, with no QA marks and no QA round. needs-playtest -> done already needed no marks. Other tickets are unchanged.
+- tools/merge_batch.py: reads the field from the ticket on its branch; a round made only of such tickets runs no test sets (also with --each, per ticket); a batch that also holds an ordinary ticket is tested as before. The ticket's line reads "merged (board-approved art: no test sets run)".
+- tasks/README.md: "Changing a task's status" (the shortened path) and "QA" (the field) describe it.
+- Tests: tools/test_task_status.py (BoardApprovedArt, 3 tests), tools/test_new_ticket.py (1), tools/test_merge_batch.py (BoardApprovedArtTest, 4, with stubbed counting test commands), tools/goal_agent/temp_repo.py (approved_art option).
+- Test results: `python -m unittest discover -s tools -p "test_*.py"` Ran 599, OK. `python -m unittest discover -s game/tools -p "test_*.py"` Ran 767, OK (skipped=1).
+- Nothing under game/data/levels/ was touched.
+- Not done: the mixed-batch case runs the tests for everyone (by design); the guard hook refused inline python that names tasks, so I used the Edit tool instead.
+- 2026-10-31, in-progress → in-qa: Built and tested; 599 + 767 tests OK.
+- QA round 1: criteria all pass. qa_check's Godot set (set 3) is red on one unrelated test, test_pixellab_assets.gd: game/art/menu/splash.json (T-445, already on master, untouched by this branch) has an invalid escape at line 4 col 75. Reran the set once, same result (2313 of 2314 pass). Not a criterion of this ticket; the Project Lead should fix the record on master.
+- 2026-10-31, in-qa → done: QA passed

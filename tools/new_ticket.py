@@ -16,7 +16,7 @@ default []), "date" (timeline heading date, default today), "common_description"
 (added to every ticket, optional), "tickets" (a list). A ticket: "title", "slug", "description",
 "criteria" (list), "timeline" ({"title", "decision", "documents" (list)}), and optionally "to"
 (default project-lead), "epic", "milestone" (default mvp), "model" (default sonnet), "user_facing_text",
-"changes_visuals" (default no), "depends_on", "documents_affected", "files_to_read_first",
+"changes_visuals" (default no), "board_approved_art" (default no), "depends_on", "documents_affected", "files_to_read_first",
 "files_expected_to_change" (lists), "lead" (overrides the top-level one).
 Exit codes: 0 written and committed, 1 refused (nothing written), 2 usage or input error.
 """
@@ -34,8 +34,8 @@ TEMPLATE = Path("tasks/_TEMPLATE.md")
 TIMELINE = Path("docs/timeline.md")
 TOP_KEYS = {"lead", "commit_message", "decision_docs", "date", "common_description", "common_criteria", "tickets"}
 TICKET_KEYS = {"title", "slug", "description", "criteria", "timeline", "to", "epic", "milestone", "model",
-               "user_facing_text", "changes_visuals", "depends_on", "documents_affected", "files_to_read_first",
-               "files_expected_to_change", "lead"}
+               "user_facing_text", "changes_visuals", "board_approved_art", "depends_on", "documents_affected",
+               "files_to_read_first", "files_expected_to_change", "lead"}
 ID_RE = re.compile(r"\bT-(\d+)\b")
 
 
@@ -111,6 +111,7 @@ def render(template, spec, t, number):
         "to": t.get("to", "project-lead"), "lead": "", "epic": t.get("epic", ""),
         "milestone": t.get("milestone", "mvp"), "goal": "",
         "user_facing_text": t.get("user_facing_text", "no"), "changes_visuals": t.get("changes_visuals", "no"),
+        "board_approved_art": t.get("board_approved_art", "no"),
         "depends_on": lst(t.get("depends_on", [])),
         "documents_affected": lst(t.get("documents_affected", [])),
         "files_to_read_first": lst(t.get("files_to_read_first", ["tasks/README.md"])),

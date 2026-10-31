@@ -2870,3 +2870,8 @@ Entry format:
 - Decision or change: tools/publish_itch.py exports master as a browser (Web) build and pushes it with butler to the board's private itch.io page (jerry-of-rivia/solid-carbide:html5); the Project Lead runs it only when the board asks. QA passed; merged straight after QA.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-448
+
+## 2026-10-31: Board-approved art skips QA in the status script
+- Decision or change: A board_approved_art ticket field lets art the board has already approved go from the agent straight to the playtest and merge with no QA marks and no test sets. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-449
