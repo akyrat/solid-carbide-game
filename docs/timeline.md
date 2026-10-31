@@ -2910,3 +2910,13 @@ Entry format:
 - Decision or change: A recorder, off by default, writes a run's per-frame times, monitors, counts, nested zones and events as a Chrome trace, and a script analyses its spikes, so the board's frame drops can be traced to their cause.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-468
+
+## 2026-10-31: A script for ticket result notes
+- Decision or change: Agents append their reports to a ticket's result notes with tools/task_notes.py instead of editing the ticket file, so a guard refusal no longer stops them or tempts a workaround.
+- Documents touched: tasks/README.md
+- Tasks: T-469
+
+## 2026-10-31: The garage's Buy buttons are on screen
+- Decision or change: Fixed the garage layout so every Buy button and Back stay on screen at any window size.
+- Documents touched: docs/garage-design.md
+- Tasks: T-470
