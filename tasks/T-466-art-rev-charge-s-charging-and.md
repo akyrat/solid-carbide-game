@@ -1,7 +1,7 @@
 ---
 id: T-466
 title: Art: Rev Charge's charging and boost effect
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
