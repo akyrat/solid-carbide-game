@@ -39,9 +39,9 @@ The board's review: play a run with Bouncy Bumpers at each tier and crash into w
 
 ## Acceptance criteria
 
-- [ ] GUT tests measure the bounce distance off a wall from the same hit with no power-up and at each tier: no power-up equals today's bounce, and the distance grows tier by tier by the data's factors. (QA: pass / fail)
-- [ ] A plot of bounce distance per tier is in art-archive/<id>/screenshots/; Drifting, Content, describes the scaling. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] GUT tests measure the bounce distance off a wall from the same hit with no power-up and at each tier: no power-up equals today's bounce, and the distance grows tier by tier by the data's factors. (QA: pass)
+- [ ] A plot of bounce distance per tier is in art-archive/<id>/screenshots/; Drifting, Content, describes the scaling. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -81,3 +81,5 @@ Driving & Drift Agent, 2026-10-31.
 **Screenshots**: `art-archive/T-462/screenshots/bounce_distance_per_tier.png`, a bar plot of the measured distance per tier against base x factor, drawn by `game/tools/plot_bouncy_bumpers.py` from the test's printed numbers.
 
 **Documents affected**: `docs/drifting.md` (updated), `game/docs/driving/collisions.md` (updated). No PixelLab generations; no refusals.
+
+**QA round 1 (QA/Integration Agent)**: all three criteria pass. Godot full suite via run_tests.sh: 199 scripts, 2410 passing, 0 failing (test_bouncy_bumpers.gd ran, tiers measured 1.226/1.585/1.944/2.305 vs base 0.869). game/tools unittest: 767 OK (1 skipped). tools unittest: 614 OK. Plot exists at art-archive/T-462/screenshots/bounce_distance_per_tier.png; docs/drifting.md describes the scaling. `python tools/qa_check.py` was refused (needs approval), so skipped.
