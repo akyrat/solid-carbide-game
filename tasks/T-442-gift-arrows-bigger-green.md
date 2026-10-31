@@ -1,7 +1,7 @@
 ---
 id: T-442
 title: Gift pack arrows 3 times as big, in the gift box's colours
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -72,3 +72,4 @@ Tests (`game/tests/unit/run/test_gift_drops.gd`): 3 new (size 90 x 72 and scalin
 Screenshot: `art-archive/T-442/screenshots/arrows.png` (three arrows at the screen's edge, two right and one left, from `tests/fixtures/gift_drop_arrows_demo.tscn`, which I fixed to skip the tutorial slides).
 
 Documents updated: docs/hud-and-menus.md, game/docs/game-loop/gift-pack-and-pickups.md. Nothing under game/data/levels/ touched.
+- 2026-10-31, in-progress → in-qa: Built, tests pass, screenshot in art-archive/T-442/screenshots
