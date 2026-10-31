@@ -1,7 +1,7 @@
 ---
 id: T-464
 title: Art: the mission notebook page (with checkbox, tick and cross-off marks) and the power-up overlay's frame (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-31, Blocked → In progress
 
 Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-464.
+
+### 2026-10-31, In progress → In QA
+
+Goal runner (G-009): the agent is done; QA is checking it.
 
 ## Style review
 
