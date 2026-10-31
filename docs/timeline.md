@@ -2960,3 +2960,8 @@ Entry format:
 - Decision or change: tools/task_notes.py appends an agent's report to a ticket's result notes only (never the header or another section). The guard change it needs is T-472. QA passed; merged straight after QA.
 - Documents touched: none
 - Tasks: T-469
+
+## 2026-10-31: The itch.io publish script reads butler's output safely
+- Decision or change: publish_itch.py decodes butler's output as UTF-8, confirms the upload with butler status, and the docs say where butler lives.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-473
