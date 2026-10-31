@@ -90,3 +90,5 @@ Note: a stray untracked tasks/.b440.md (a brief copy I made by mistake) is left 
 - 2026-10-31, in-progress → in-qa: Six texts written, style loop 8/10, tests OK
 
 QA (round 1): all five criteria pass (six keys, valid JSON; style loop 8/10 recorded; level-design.md lists the keys; three test sets pass; game/data/levels/ untouched). (QA: fail: paperwork - qa_check screenshots is red: user_facing_text is yes but art-archive/T-440/screenshots/ is empty, and the result notes lack the one line "no screenshots: text-only work" that tasks/README.md, "Screenshots" asks for.) Status left in-qa.
+
+Screenshots: no screenshots: text-only work.
