@@ -272,6 +272,21 @@ The decision is in Decisions ("Driving power-ups"); the tier numbers are above. 
 - **The placeholder effect** (drawn in code until the art ticket replaces it): while charging, a round glow at the car's rear, in the heat yellows and oranges, that grows with the charge and pulses once it is full; while boosting, five light blue-grey speed lines streaming back from the rear, fading as the boost runs out. Both stop when the charge or boost ends; nothing shows without the power-up.
 - Screenshots and GIF: `art-archive/T-460/screenshots/`.
 
+### Jump (task T-461)
+
+The decision is in Decisions ("Driving power-ups"); the tier numbers are above. How it is built: `game/docs/driving/tricks.md`, "Jump (T-461)".
+
+- **What it does:** with Jump owned, a press of Space on the ground makes a small hop. It is the car's own height (Elevation): the car leaves the ground straight up at the tier's takeoff speed (5 / 6 / 7 / 8 units/s), falls with the same gravity as off a rooftop (12 units/s²) and lands. Everything a fall off a rooftop does, the hop does: the car keeps its flat speed and heading in the air (no driving in the air) and spins faster there, it meets the sides of rooftops and ramps at its height and passes over what is lower than it, and its airtime and spins pay the airtime, AIR 180 and AIR 360 tricks, so they count for the missions' airtime and air-spin goals (board, 2026-10-31).
+- **How high and how long** (from the tier numbers, flat ground): about 1.0 / 1.5 / 2.0 / 2.7 units high, 0.83 / 1.0 / 1.17 / 1.33 s in the air.
+- **Without it:** Space does nothing while driving, as before.
+- **The proposals for the playtest** (Driving & Drift Agent's calls):
+  - **Only on the ground, no double jump:** a press in the air does nothing and is not kept for the landing. Reason: the hop is a small lift, not flying; a double jump would make the tallest tier reach rooftops.
+  - **The cooldown counts from the takeoff** (the tier's 2.0 / 1.7 / 1.4 / 1.1 s), in the air too; a press while it runs does nothing and is not kept. So at tier 1 the next hop is ready about 1.2 s after landing, at tier 4 as soon as the car lands.
+  - **One hop per press:** holding Space does not hop again on landing.
+  - **From anywhere on the ground:** a street, a rooftop or a ramp; on a ramp it adds to nothing (straight up at the takeoff speed).
+- **Note on the tier reasons (for Game Data and the board):** at the base air turn rate (240 degrees a second) the tier 1 hop already fits an air 180 (200 degrees), and the tier 4 hop (320 degrees) does not quite fit an air 360 without the garage's air turn upgrade. The tier numbers are unchanged; the playtest decides.
+- Screenshots and GIF: `art-archive/T-461/screenshots/`.
+
 ### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.
