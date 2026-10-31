@@ -1,7 +1,7 @@
 ---
 id: T-471
 title: publish_itch.py ignores the board's level files and leaves them out of the web build
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -72,3 +72,4 @@ Written by the agent when it finishes.
 - Tests (`tools/test_publish_itch.py`, temporary repos only): untracked files under game/data/levels/ (nested too) don't stop and are left untouched; an untracked game/data/level/kaiju_city_map.json still stops; the Web preset excludes data/levels/* and not data/level/.
 - Test runs: `tools/test_publish_itch.py` 18 OK; `python -m unittest discover -s tools -p "test_*.py"` 617 tests OK; `python -m unittest discover -s game/tools -p "test_*.py"` found no unittest tests (it only printed a script usage text, exit 0).
 - Not done: the real `python tools/publish_itch.py --dry-run` (needs master); the Project Lead runs it after the merge. No butler push was run. Nothing under game/data/levels/ was touched.
+- 2026-10-31, in-progress → in-qa: Built; tests pass; Project Lead runs the real dry run after merge
