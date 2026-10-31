@@ -1,7 +1,7 @@
 ---
 id: T-463
 title: Rusty Overcoat: the car damages minions it touches, with the red hit flash
-status: blocked
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-009
@@ -48,6 +48,10 @@ The board's review: play a run with Rusty Overcoat at each tier and ram minions:
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-463.
 
 ## Style review
 
