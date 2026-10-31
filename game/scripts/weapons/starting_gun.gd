@@ -84,6 +84,12 @@ func fire_interval() -> float:
 	return float(stats["fire_interval"])
 
 
+## While the car is wrecked (T-414) the gun fires nothing new: a volley still
+## queued is dropped (bullets already flying carry on).
+func step_wrecked(_dt: float) -> void:
+	_queue.clear()
+
+
 func step(dt: float) -> void:
 	_step_volley(dt)
 	fire_clock += dt

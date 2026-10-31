@@ -231,7 +231,7 @@ func test_a_run_from_the_main_menu_still_plays_the_sample_map() -> void:
 
 # --- Restart and Exit on the pause screen (T-327) ---------------------------------
 
-func test_pause_restart_replays_the_same_level_and_keeps_coins() -> void:
+func test_pause_restart_replays_the_same_level_and_cancels_the_run() -> void:
 	var c := _creator()
 	var run := _play(c)
 	var before: int = c.progress.coins
@@ -240,12 +240,12 @@ func test_pause_restart_replays_the_same_level_and_keeps_coins() -> void:
 	c.pause_screen.restart_button.pressed.emit()
 	assert_ne(c.run, run, "a fresh run")
 	assert_eq(c.run.layout_path, level_path)
-	assert_eq(c.progress.coins, before + 7)
+	assert_eq(c.progress.coins, before, "the cancelled run's coins are lost (board, 2026-10-30)")
 	assert_false(get_tree().paused)
 	assert_null(c.list_screen, "no list while replaying")
 
 
-func test_pause_exit_returns_to_the_creator_list_and_keeps_coins() -> void:
+func test_pause_exit_returns_to_the_creator_list_and_cancels_the_run() -> void:
 	var c := _creator()
 	var run := _play(c)
 	var before: int = c.progress.coins
@@ -254,5 +254,5 @@ func test_pause_exit_returns_to_the_creator_list_and_keeps_coins() -> void:
 	c.pause_screen.exit_button.pressed.emit()
 	assert_null(c.run)
 	assert_not_null(c.list_screen)
-	assert_eq(c.progress.coins, before + 5)
+	assert_eq(c.progress.coins, before, "the cancelled run's coins are lost (board, 2026-10-30)")
 	assert_false(get_tree().paused)

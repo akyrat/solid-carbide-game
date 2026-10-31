@@ -541,7 +541,10 @@ func through_ramps(ids: PackedInt64Array) -> PackedVector2Array:
 		var h_out := heights[ids[j + 1]] if j + 1 < n else heights[ids[j]]
 		var ramp: Dictionary = ground.ramps[r]
 		var mid := (float(ramp.bottom_height) + float(ramp.top_height)) / 2.0
-		var skim := i > 0 and j + 1 < n and absf(h_out - h_in) < CLIMB_MIN
+		# T-436: also when the path starts on the ramp (i == 0, h_in is the height there): an
+		# enemy on a ramp's low foot whose path only skims it used to be sent back to the foot's
+		# point, off the ramp, where the next path skimmed it again; it went to and fro there.
+		var skim := j + 1 < n and absf(h_out - h_in) < CLIMB_MIN
 		# T-419: where the body does not fit at an end point, the path's own cells.
 		var blocked := (i > 0 and not _fits_at(ramp_end(r, h_in >= mid))) \
 			or (j + 1 < n and not _fits_at(ramp_end(r, h_out >= mid)))

@@ -147,6 +147,7 @@ func test_a_crash_leaves_half_the_bonus_x4_and_the_cap() -> void:
 	state.combo = 4.0
 	state.collision()
 	assert_almost_eq(state.combo, 2.5, 0.000001, "x4 leaves x2.5")
+	state.advance(0.6)  # T-415: past the collision window
 	state.combo = 6.0
 	state.collision()
 	assert_almost_eq(state.combo, 3.5, 0.000001, "x6 leaves x3.5")

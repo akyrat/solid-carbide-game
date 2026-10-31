@@ -1,7 +1,7 @@
 ---
 id: T-415
 title: Pickups at full hearts, the combo's hit window, and the run's base values
-status: open
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/scripts/run/run_state.gd, game/scripts/enemies/health_pickup.gd, game/scripts/run/pickup_magnet.gd, game/data/run.json, game/data/garage.json]
 files_expected_to_change: [game/scripts/run/run_state.gd, game/scripts/enemies/health_pickup.gd, game/scripts/run/pickup_magnet.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,16 +41,20 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] At full hearts a health pickup is not collected and not pulled by the magnet; below full it is. (QA: pass / fail)
-- [ ] Two collisions 0.3 s apart cut the combo once; two 0.7 s apart cut it twice. (QA: pass / fail)
-- [ ] Changing run.json's starting hearts changes max health in a run with a saved garage (test with a progress object); the garage's car health level adds to it. (QA: pass / fail)
-- [ ] The magnet radius follows the same rule (run.json base plus the garage level). (QA: pass / fail)
-- [ ] The starting hearts and the base magnet radius are each stored in one data file only. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] At full hearts a health pickup is not collected and not pulled by the magnet; below full it is. (QA: pass)
+- [ ] Two collisions 0.3 s apart cut the combo once; two 0.7 s apart cut it twice. (QA: pass)
+- [ ] Changing run.json's starting hearts changes max health in a run with a saved garage (test with a progress object); the garage's car health level adds to it. (QA: pass)
+- [ ] The magnet radius follows the same rule (run.json base plus the garage level). (QA: pass)
+- [ ] The starting hearts and the base magnet radius are each stored in one data file only. (QA: pass)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+T-413 approved; the game-loop agent starts.
 
 ## Style review
 
@@ -58,4 +62,14 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (game-loop agent). Tests: unittest game/tools 722 (OK, 1 skipped), unittest tools 582 OK, GUT 174 scripts / 2150 tests all passing (an earlier run's test_wreck failure was a load flake; it passes alone and in the full rerun). New: `game/tests/unit/run/test_pickups_combo_base.gd` (11 tests, 49 asserts).
+
+- Full hearts: `health_pickup.gd` gets `wants_health()` (below full, or wrecked: a pickup revives); `can_be_picked_up_by()` includes it. `pickup_magnet.gd` skips a pickup that doesn't want health. It waits where it lies and is taken once the car is hurt. Pickup files changed: `game/scripts/enemies/health_pickup.gd`, `game/scripts/run/pickup_magnet.gd`; `minion_spawner.gd` untouched.
+- Combo window: `combo.json` `collision_window_seconds` 0.5, `ComboData.collision_window_seconds()`, `RunState._cut_combo()` (covers collision() and the damage path), on the run's clock, cleared by start_run(). Proposals for the playtest: the window starts only when a collision really cut the combo (a no-op collision starts none), a collision inside it does not restart it, and the crash still pays its trick (`crashed` fires).
+- Base values: `garage.json` `car_health` and `pickup_magnet` lose `base_value` and the absolute `value`; each level stores a `bonus` (+1 heart, +0.6 units per level, same totals as before), with `base_from` naming run.json. `GarageData.value()` = run.json base (`RunData`, injectable as 2nd arg) + bonus; `bonus()` and `RUN_BASES` added. `RunState.start_run()` = run.json base + `progress.garage.bonus(...)`. The garage screen shows the same numbers.
+- Existing tests adapted to the new rules (second collision, or health pickup at full hearts): test_crash_pays_trick, test_pickup_heights, test_run_combo.
+- Screenshot: art-archive/T-415/screenshots/full_hearts_pickup_stays.png (two pickups beside the car at 5 of 5 hearts, not pulled); fixture tests/fixtures/full_hearts_pickup_demo.tscn.
+- Documents updated: docs/game-loop-architecture.md (the two Decisions plus a new "The garage adds to run.json's base"), game/docs/data/game-data.md. The long GDD is regenerated at merge.
+- All six criteria are covered by the tests.
+- 2026-10-30, in-progress → in-qa: Ready for QA: all three test sets green, screenshot in art-archive/T-415/screenshots.
+- 2026-10-30, in-qa → needs-playtest: QA passed: all 6 criteria, three test sets green

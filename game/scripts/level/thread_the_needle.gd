@@ -96,6 +96,14 @@ func touched(collider: Object, shape_index: int) -> void:
 			g.pending = -1.0
 
 
+## T-420: the car is still in contact with `collider` after a step (Car.held_contacts()). touched() only
+## hears a new contact, so a car scraping along a paired obstacle for longer than the touch window
+## would otherwise cross the gap line "clean". Each step of a contact counts as a touch.
+func touching(contacts: Array) -> void:
+	for c in contacts:
+		touched(c[0], int(c[1]))
+
+
 ## The obstacle ref (ObstaclePairs) of a body the car hit: a prop's id (its "prop_id"), or a pattern
 ## copy's boulder (its "copy_id" and the shape's index). "" for anything else.
 func ref_of_body(collider: Object, shape_index: int) -> String:

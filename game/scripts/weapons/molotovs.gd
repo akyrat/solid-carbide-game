@@ -33,6 +33,9 @@ extends "res://scripts/weapons/weapon.gd"
 ## the heart's red. The art task swaps the final art in.
 
 const FireScript := preload("res://scripts/weapons/molotov_fire.gd")
+const ShortPlatforms := preload("res://scripts/level/short_platforms.gd")
+## How many spots a bottle tries before it lands at the car (T-414, a proposal).
+const LANDING_TRIES := 30
 
 ## Flat world pixels per unit (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
@@ -153,10 +156,35 @@ func throw_volley() -> Array:
 
 
 ## A random landing spot (flat world, units) around the car's centre now.
+##
+## T-414 (Weapons, Decisions, "Molotovs land where enemies can be"): a spot inside
+## a building (a platform, a short building, counts as ground) or off the map is
+## not used; another is picked, up to LANDING_TRIES times, then the car's own spot.
 func random_landing() -> Vector2:
-	var angle := rng.randf() * TAU
-	var d := rng.randf_range(float(stats["throw_distance_min"]), float(stats["throw_distance_max"]))
-	return car_units() + Vector2.from_angle(angle) * d
+	for _t in LANDING_TRIES:
+		var angle := rng.randf() * TAU
+		var d := rng.randf_range(float(stats["throw_distance_min"]), float(stats["throw_distance_max"]))
+		var spot := car_units() + Vector2.from_angle(angle) * d
+		if is_valid_landing(spot):
+			return spot
+	return car_units()
+
+
+## True when a bottle may land at `units`: on the map and not inside a building
+## that is not a platform (short buildings are platforms the car can stand on).
+## A run without a map accepts every spot.
+func is_valid_landing(units: Vector2) -> bool:
+	var map = rack.run.get("map") if rack != null and rack.run != null else null
+	if map == null or not is_instance_valid(map) or map.get("layout") == null:
+		return true
+	if not map.rect_of(map.layout.map.rect).has_point(units):
+		return false
+	for b in map.layout.buildings:
+		if b is Dictionary and ShortPlatforms.is_platform_entry(b):
+			continue
+		if map.rect_of(b).has_point(units):
+			return false
+	return true
 
 
 ## Throws one bottle from the car's centre to `landing` (flat world, units).

@@ -68,6 +68,14 @@ func upgrade() -> bool:
 	return true
 
 
+## One physics step while the car is wrecked (T-414; Weapons, Decisions,
+## "Weapons during the wreck"): the weapon fires nothing new. The default does
+## nothing; a weapon that keeps working (the underglow, Bricks) or has something
+## already going to finish (the flamethrower's burn tints) overrides it.
+func step_wrecked(_dt: float) -> void:
+	pass
+
+
 ## A new run: back to tier 1 for the starting weapon, not owned for the rest.
 func reset_for_run() -> void:
 	set_tier(1 if starts_owned else 0)

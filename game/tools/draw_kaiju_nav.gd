@@ -6,7 +6,8 @@ extends SceneTree
 ## it (what the kaiju walked before T-419).
 ##
 ## Usage, from the repo root:
-##   bash game/tools/draw_kaiju_nav.sh <out.png> [level json, res:// path] [car x] [car y]
+##   bash game/tools/draw_kaiju_nav.sh <out.png> [level json, res:// path] [car x] [car y] [x,y ...]
+## With starts ("x,y") after the car, only the kaiju's paths from those (T-436).
 ## Defaults: res://data/levels/kaiju_city.json, the car on roof-1 at (-32, 36).
 ##
 ## Colours: street light grey, rooftops and ramps darker by height, buildings
@@ -75,9 +76,20 @@ func _draw() -> void:
 			var c: Vector2 = kaiju_nav.cell_centre(k)
 			_blend(img, rect, Rect2(c - Vector2(1, 1), Vector2(2, 2)), Color(1.0, 0.55, 0.1, 0.35))
 	# The kaiju's paths before (minions' grid) and now.
-	for s in STARTS:
-		_path(img, rect, minion_nav.find_path(s, car), s, Color(0.9, 0.15, 0.15))
+	# T-436: starts given after the car ("x,y" each): only the kaiju's paths from them, each
+	# start marked yellow (to show where its plan leads from a spot, e.g. on a ramp's foot).
+	var given: Array = []
+	for a in args.slice(4):
+		var xy: PackedStringArray = str(a).split(",")
+		if xy.size() == 2:
+			given.append(Vector2(float(xy[0]), float(xy[1])))
+	if given.is_empty():
+		for s in STARTS:
+			_path(img, rect, minion_nav.find_path(s, car), s, Color(0.9, 0.15, 0.15))
+			_path(img, rect, kaiju_nav.find_path(s, car), s, Color(0.0, 0.75, 0.9))
+	for s in given:
 		_path(img, rect, kaiju_nav.find_path(s, car), s, Color(0.0, 0.75, 0.9))
+		_fill(img, rect, Rect2(s - Vector2(0.75, 0.75), Vector2(1.5, 1.5)), Color(1.0, 0.9, 0.0))
 	_fill(img, rect, Rect2(car - Vector2(1, 1), Vector2(2, 2)), Color.WHITE)
 	var abs_out := out if out.is_absolute_path() else ProjectSettings.globalize_path("res://").path_join("..").path_join(out)
 	DirAccess.make_dir_recursive_absolute(abs_out.get_base_dir())

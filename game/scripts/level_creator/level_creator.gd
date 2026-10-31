@@ -61,13 +61,10 @@ func play_level(path: String) -> void:
 	run = GameFlow.add_run(self, progress, path)
 	pause_screen = run.get_node("PauseScreenLayer")
 	run.state.run_ended.connect(_on_run_ended)
-	# T-327: Restart replays the same level, Exit returns to the creator's list; coins kept,
-	# except during the wreck (T-413: leaving then cancels the run).
+	# T-327: Restart replays the same level, Exit returns to the creator's list; leaving cancels the run (coins lost, T-416).
 	pause_screen.restart_pressed.connect(func():
-		GameFlow.bank_left_run(progress, run)
 		play_level(path))
 	pause_screen.exit_pressed.connect(func():
-		GameFlow.bank_left_run(progress, run)
 		show_list())
 	run_shown.emit()
 

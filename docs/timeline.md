@@ -2710,3 +2710,53 @@ Entry format:
 - Decision or change: The car really bounces off walls even with W held, scaled by how hard it hits and capped so fast hits are not comical; no throttle cut. Replaces the 2026-10-10 rule that W keeps the car pressed against the wall.
 - Documents touched: docs/drifting.md
 - Tasks: T-435
+
+## 2026-10-30: The kaiju gets stuck from one street spot on the board's latest level
+- Decision or change: After the board saved kaiju_city.json at 21:12, T-419's test shows the kaiju never reaching a rooftop car from street spot (-79, 47), and every merge into master stops on it (T-420's merge stopped twice). A fix ticket for the Enemy Behavior Agent: fix the kaiju's planning, not the level, and don't loosen the test without the board.
+- Documents touched: docs/enemies.md
+- Tasks: T-436
+
+## 2026-10-31: The kaiju reaches a rooftop car on the board's latest level
+- Decision or change: Built and merged (audit epic): on the board's level saved 2026-10-30 21:12 the kaiju went to and fro at the foot of ramp-12 near (-79, 46) and never reached a rooftop car from the west; one rule in enemy_navigation.gd through_ramps() keeps a path that only skims a ramp on the ramp's cells. T-380's reproduction test now checks the enemy reaches the car. Master's test set is green again. Played by the board (lgtm, 2026-10-31).
+- Documents touched: none
+- Tasks: T-436
+
+## 2026-10-31: Thread the needle while scraping, and level data guards
+- Decision or change: Built and merged (audit epic, build J): crossing a thread-the-needle gap while still touching a paired obstacle pays nothing; a level file with a missing key, an unknown ramp side or a zero-size ramp loads with an error naming the piece and flat ground (no NaN); a level without a spawn starts at the map's centre (Level design), and a spawn in geometry is reported. Played by the board.
+- Documents touched: none
+- Tasks: T-420
+
+## 2026-10-31: The kaiju keeps off edges; a guarded edit accepted; no MVP docs status line
+- Decision or change: after playing build J, the board kept the kaiju's edge rule that T-419 added beyond its ticket: the kaiju keeps its body off rooftop, ramp and map edges and drops from a little way back (Enemies, Decisions, "The kaiju only takes paths it fits through"). The board accepted T-436's Edit-tool change to game/tools/draw_kaiju_nav.gd/.sh, made after the command guard refused a `python -` edit of them; it stands. The board asked to remove the "MVP docs" bar from the terminal status line: the statusLine entry is gone from .claude/settings.json (tools/statusline.py and docs/mvp-readiness.json are kept). Merges may run with GUT_TIME_LIMIT=1500 until the default limit is raised (board, via Greenbull).
+- Documents touched: docs/enemies.md
+- Tasks: T-419, T-436
+
+## 2026-10-31: Merges test once per batch
+- Decision or change: The board approved testing once per merge batch instead of after every ticket, and a 1500 s default limit for the Godot test set, after merges timed out at 900 s.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-437
+
+## 2026-10-31: A wall hit ends the drift
+- Decision or change: A wall hit ends a drift in progress: it pays for the time up to the hit, then the hit's combo cut applies.
+- Documents touched: docs/drifting.md
+- Tasks: T-438
+
+## 2026-10-31: The kaiju alert signs move onto Kaiju City
+- Decision or change: The 6 kaiju alert signs (4 banners, 2 standing signs) move onto Kaiju City, at spots the agent proposes for the playtest; the banners come back on this map's skyscrapers.
+- Documents touched: docs/level-design.md
+- Tasks: T-439
+
+## 2026-10-31: Weapons during the wreck, and molotovs land where enemies can be
+- Decision or change: Build I: weapons keep firing during the wreck, and molotovs land only where enemies can be. The board played it: "LGTM".
+- Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`
+- Tasks: T-414
+
+## 2026-10-31: Closing the game mid-run, and pausing when the window loses focus
+- Decision or change: Build I: closing the game mid-run is handled, and the game pauses when its window loses focus. The board played it: "LGTM".
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-416
+
+## 2026-10-31: merge_batch prints safely on the Windows console; drive_elevation_sample.sh drives
+- Decision or change: Tooling: merge_batch.py no longer crashes printing on a cp1252 Windows console, and drive_elevation_sample.sh no longer stops before driving. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-425
