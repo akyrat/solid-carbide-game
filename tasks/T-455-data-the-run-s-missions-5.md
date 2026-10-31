@@ -1,7 +1,7 @@
 ---
 id: T-455
 title: Data: the run's missions (5 fixed, generator rules) and the four driving power-ups with their tiers
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/drifting.md, game/docs/data/game-data.md, game/docs/driving/tricks.md, game/data/combo.json, game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/driving/trick_detector.gd]
 files_expected_to_change: [game/data/missions.json, game/data/power_ups.json, game/scripts/data/mission_data.gd, game/scripts/data/power_up_data.gd, game/tests/unit/test_mission_data.gd, game/docs/data/game-data.md, docs/game-loop-architecture.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-455.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-10-31, In QA → Done
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -79,3 +83,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Screenshots:** none. Data and loaders only, nothing is on screen.
 
 **QA round 1:** all six criteria pass. Data files read and match the criteria. GUT 191 scripts, 2319/2319 pass (incl. the 5 in test_mission_data.gd). `game/tools` unittest: 767 OK (1 skipped). `tools/` unittest: 614 OK (584 s; the Developer's note that it did not finish was only slowness). `tools/qa_check.py` was refused (not pre-approved), so skipped; the checks were done by hand.
+- 2026-10-31, in-qa → done: QA passed every criterion (goal G-009).
