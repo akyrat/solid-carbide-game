@@ -1,7 +1,7 @@
 ---
 id: T-471
 title: publish_itch.py ignores the board's level files and leaves them out of the web build
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -64,3 +64,11 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Build (sonnet agent)
+- `tools/publish_itch.py`: `check_repo` now reads `git status --porcelain -uall` and skips untracked paths starting with `game/data/levels/` (`BOARD_LEVELS`), like the existing `.uid`/`.import` skip. Any other untracked or changed file still stops the push. The script only lists git status; it never opens, moves or writes anything under game/data/levels/ (code review: the only mention is the path-prefix string compare).
+- `game/export_presets.cfg`, Web preset: `exclude_filter="tests/*, tools/*, data/levels/*"`. The game's map is `data/level/kaiju_city_map.json` (different folder, singular), not matched, so it stays in.
+- `docs/working-with-the-board.md`, "Publishing to itch.io": new bullet saying the board's level files are ignored by the clean-tree check and never published.
+- Tests (`tools/test_publish_itch.py`, temporary repos only): untracked files under game/data/levels/ (nested too) don't stop and are left untouched; an untracked game/data/level/kaiju_city_map.json still stops; the Web preset excludes data/levels/* and not data/level/.
+- Test runs: `tools/test_publish_itch.py` 18 OK; `python -m unittest discover -s tools -p "test_*.py"` 617 tests OK; `python -m unittest discover -s game/tools -p "test_*.py"` found no unittest tests (it only printed a script usage text, exit 0).
+- Not done: the real `python tools/publish_itch.py --dry-run` (needs master); the Project Lead runs it after the merge. No butler push was run. Nothing under game/data/levels/ was touched.
