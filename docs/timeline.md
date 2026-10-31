@@ -2845,3 +2845,8 @@ Entry format:
 - Decision or change: The main menu's splash cover is the board's own picture (made with PixelLab outside the studio), byte for byte; T-433's 6/10 cover is archived in art-archive/T-445/. The first ticket under the board's rule that approved art skips QA and the tests. The board: "LGTM".
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-445
+
+## 2026-10-31: Board-approved art skips QA in the status script
+- Decision or change: A board_approved_art ticket field lets art the board has already approved go from the agent straight to the playtest and merge with no QA marks and no test sets.
+- Documents touched: tasks/README.md
+- Tasks: T-449
