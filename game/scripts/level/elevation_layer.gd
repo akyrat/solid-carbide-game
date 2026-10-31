@@ -308,14 +308,8 @@ func drawn_before(a, b) -> bool:
 
 ## Sorts the map's building slots and the raised areas together, back to front
 ## (drawn_before, ties by the centre's x + y), and gives each its z_index; then
-## puts the boulders and the pavement signs back in their places in that order.
+## puts the boulders, props and standing alert signs (map.depth_sprites) back in their places in that order.
 func restack() -> void:
-	var signs := {}
-	if map.alert_signs_root != null:
-		for sp in map.alert_signs_root.get_children():
-			for s in map.fade_items():
-				if s.z_index + 1 == sp.z_index:
-					signs[sp] = s
 	var items: Array = map.fade_items().duplicate()
 	items.append_array(areas)
 	var n := items.size()
@@ -354,8 +348,6 @@ func restack() -> void:
 		depth_items[k].z_index = DEPTH_Z_BASE + MvpMapScript.BUILDING_Z_STEP * k
 	for sp in map.depth_sprites():
 		sp.z_index = boulder_z(sp)
-	for sp in signs:
-		sp.z_index = signs[sp].z_index + 1
 
 
 static func _centre_sum(item) -> float:

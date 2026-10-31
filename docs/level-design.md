@@ -79,7 +79,7 @@ The map the main menu's Start plays (task T-372; Decisions, "The board's own lev
 
 - **What it holds:** a 240 by 240 unit map with a hard stop at its edges, 42 buildings (skyscrapers, and short buildings that are platforms at height 3), 13 rooftops at heights 3 and 6, 28 ramps (among them T-400's small jump ramps), 82 props, 9 boulders, 10 meteor craters, 20 thread-the-needle pairs, sidewalks and painted roads, and its spawn point at (1, 1) on a road, heading 270 (up the screen's right, the run's usual start).
 - **Checks:** `python game/tools/check_level.py` and `python game/tools/check_height_data.py` both print `OK` on it.
-- **What the agents found in a scripted run, for the board's playtest** (T-372; the level is not changed): the rooftop roof-13 (height 6, west of the map's centre) has no ramp up to it (its four small ramps all climb from 6 to 8 on top of it), so it is reached only from the air, and minions can't follow the car onto it. When the car stands on a few rooftops in the north-west cluster and on roof-1 (west of the centre), the ring where minions spawn, just beyond the screen's edge, lies wholly on rooftops and buildings, so no new minions spawn until the car comes back near a street (minions spawn only on the street). The game's kaiju alert signs (task T-130) are placed for the elevation sample map's blocks: their two standing signs are drawn on this map at those same places, which belong to no block here.
+- **What the agents found in a scripted run, for the board's playtest** (T-372; the level is not changed): the rooftop roof-13 (height 6, west of the map's centre) has no ramp up to it (its four small ramps all climb from 6 to 8 on top of it), so it is reached only from the air, and minions can't follow the car onto it. When the car stands on a few rooftops in the north-west cluster and on roof-1 (west of the centre), the ring where minions spawn, just beyond the screen's edge, lies wholly on rooftops and buildings, so no new minions spawn until the car comes back near a street (minions spawn only on the street). The game's kaiju alert signs (task T-130) were placed for the elevation sample map's blocks: their two standing signs were drawn on this map at those same places, which belong to no block here. (Since T-441 that fixed list is retired: Kaiju City has no alert signs until the board places them in the level creator; Content, "Level creator: kaiju alert signs and banners".)
 
 How the run loads it: `game/docs/level/game-map.md`.
 
@@ -351,7 +351,7 @@ GIF of the car jumping off the small ramps in a run: `art-archive/T-400/screensh
 
 Task T-265 (Decisions, "Level creator rework"). How it works: `game/docs/level/level-creator-pieces.md`, "Level creator", "Skyscraper banners on or off (T-265)". The choices marked here are the Level/Challenge Design Agent's proposals for the board's playtest.
 
-- **What the banner is:** the vertical sign in the middle of a skyscraper's face is painted into the building's own picture (every one of the 12 looks has one), not a separate sprite. The kaiju alert banners of the game's own map (`game/art/banners/`) are a different thing and are not part of this.
+- **What the banner is:** the vertical sign in the middle of a skyscraper's face is painted into the building's own picture (every one of the 12 looks has one), not a separate sprite. The kaiju alert banners (`game/art/banners/`) are a different thing and are not part of this: since T-441 they are pieces of their own ("Level creator: kaiju alert signs and banners" below).
 - **On or off per skyscraper:** key B, or the top bar's "Banner on" and "Banner off", chooses it for the next skyscraper placed; with a skyscraper selected and nothing picked, B changes that building. **Off by default.** The choice is saved with the building and the preview shows it.
 - **The pictures without a banner:** the same 12 bodies, built again by script from the same pieces with the sign left out (no PixelLab); the originals stay.
 - **Earlier saved levels** (a skyscraper with no banner choice written) open with the banner **off** (a proposal).
@@ -468,6 +468,24 @@ Task T-398 (Decisions, "Sidewalks and parked cars in the level creator"; names f
 ![The parked and broken cars at each of the four facings, a parked car picked: "Facing bottom right"](../art-archive/T-398/screenshots/editor_cars_facings.png)
 
 ![A run: the car on the sidewalk after driving up over the curb, the crater on the road beyond](../art-archive/T-398/screenshots/run_on_sidewalk.png)
+
+### Level creator: kaiju alert signs and banners
+
+Task T-441 (Decisions, "Kaiju alert signs are level creator pieces"; the labels are T-440's, "Level creator text" above). How it works: `game/docs/level/level-creator-pieces.md`, "Kaiju alert signs and banners (T-441)". The art is T-130's (`game/art/banners/`), no new art. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
+
+- **Two pieces under Decoration:** "Alert sign" (the standing road-style sign) and "Alert banner" (the banner that hangs on a skyscraper's wall). Each comes in the two designs, chosen in the looks strip under the picked piece or with V: "Head in triangle" (the red triangle with the kaiju's head) and "Body in circle" (the red circle with its body); the strip names the chosen design.
+- **The standing sign** goes on the 2 x 2 unit cell clicked, its post on the cell's middle, on whatever is there: the street, a rooftop or ramp, or a low-rise or small or long building (they are platforms), and it stands at that height (Decisions, "Obstacles and decorations respect the buildings' and rooftops' heights"). Its art has one view, so R does nothing; **M mirrors it** (a proposal: the kaiju then faces the other way). Like a prop, it is not placed where it would reach into a skyscraper or across a rooftop's or ramp's edge ("Can't place here: it overlaps another piece.").
+- **The banner** goes on the skyscraper under the mouse (the nearest one drawn there), and on nothing else: over a platform, a low-rise, a small or long building, or the street nothing happens. **R chooses the wall** (the south or the east face, the two the view shows; "R: next wall." in the strip), and **H how high** its bottom hangs: 3, 6, 9, 12 or 15 units above the ground (a proposal: 3 is T-130's height, 15 keeps it below the tower's dissolving top; "H: next height." in the strip). Along the wall it is centred on the mouse, in half-unit steps, and always stays on the wall (a proposal). It looks as T-130's banners did: sheared onto the wall, flipped for the east face, part of that skyscraper's picture, so it fades with that skyscraper when the car is behind it and is drawn in its depth.
+- **Preview, selecting, moving, deleting:** the piece is shown where it will go before the click (a banner only over a skyscraper). A click on a placed sign's or banner's picture selects it (outlined), and Delete removes it; moving one is deleting it and placing it again, as for the other pieces. Deleting a skyscraper takes its banners with it.
+- **Pictures only:** neither has a collision; the car, the enemies and the kaiju pass through them.
+- **Saved levels:** a new `alert_signs` list in the level file (a sign: its cell and design and whether it is mirrored; a banner: its skyscraper, wall, place along the wall, height and design). The run draws them exactly where the editor shows them. Levels saved before have none and open unchanged.
+- **The fixed sign list is retired:** `game/data/level/kaiju_signs.json` (T-130's four banners and two standing signs at fixed places) is gone, and a map shows only the signs its own level places. The game's map, Kaiju City, has none until the board places them in the creator and the level is copied into the game.
+
+![The level creator: alert signs on the street, a rooftop and a low-rise, banners on two skyscrapers' walls at different heights in both designs, the alert banner picked (its designs and hints in the strip) and its preview on a third skyscraper](../art-archive/T-441/screenshots/editor.png)
+
+![A run on that level: the signs and banners where the editor shows them](../art-archive/T-441/screenshots/run.png)
+
+![A run: the car behind the skyscraper, which fades with its two banners](../art-archive/T-441/screenshots/run_behind_skyscraper.png)
 
 ### Short buildings as platforms
 
