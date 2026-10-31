@@ -1,7 +1,7 @@
 ---
 id: T-470
 title: The garage's Buy buttons are on screen at every window size
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/hud-and-menus.md, game/scripts/menu/garage_screen.gd, tasks/T-446-unified-buttons.md, tasks/T-431-the-hud-scales-with-the-window.md]
 files_expected_to_change: [game/scripts/menu/garage_screen.gd, game/tests/unit/, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,12 +41,12 @@ The board's review: open the garage at the default window size, then resize the 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test opens the garage at 1152 x 648, 1920 x 1080, 2560 x 1080 and a small window (for example 960 x 540), and finds every Buy button and Back fully inside the screen and clickable. (QA: pass / fail)
-- [ ] The existing garage tests (buying, prices, saving) still pass. (QA: pass / fail)
-- [ ] Screenshots of the garage at those window sizes are saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/garage-design.md (Content) says how the garage fits the window. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test opens the garage at 1152 x 648, 1920 x 1080, 2560 x 1080 and a small window (for example 960 x 540), and finds every Buy button and Back fully inside the screen and clickable. (QA: pass)
+- [ ] The existing garage tests (buying, prices, saving) still pass. (QA: pass)
+- [ ] Screenshots of the garage at those window sizes are saved and listed in the result notes. (QA: pass)
+- [ ] docs/garage-design.md (Content) says how the garage fits the window. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -66,3 +66,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 **Documents updated:** docs/garage-design.md (new section "How the garage fits the window (T-470)"). Nothing under game/data/levels/ touched.
 - 2026-10-31, in-progress → in-qa: Garage column scales to fit the window; tests and screenshots at 4 sizes
+
+**QA round 1 (2026-10-31): all six criteria pass.** qa_check: three test sets passed, documents changed (garage-design.md has the new section), 4 screenshots present, test_garage_fit covers the four sizes, game/data/levels unchanged.
+- 2026-10-31, in-qa → needs-playtest: QA passed
