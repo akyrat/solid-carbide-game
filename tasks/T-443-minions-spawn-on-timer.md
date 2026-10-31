@@ -1,7 +1,7 @@
 ---
 id: T-443
 title: Minions spawn on a timer from the screen's edges, faster as the run goes on, and move 30% slower
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -139,3 +139,4 @@ Nothing under `game/data/levels/` was touched. No refused actions.
 
 - 2026-10-31, QA round 1: all 9 criteria pass; full GUT suite and both Python sets green in one run.
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, after playing it; frame drops at some points go to a recording ticket)
