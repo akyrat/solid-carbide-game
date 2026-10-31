@@ -41,14 +41,14 @@ The board's review: jump off ramps and platforms, watch a gift pack fall and an 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows the shared helper's shadow size is the sprite's size at height 0, smaller as height grows, and never larger than the sprite. (QA: pass / fail)
-- [ ] Tests show the car in the air, a falling gift pack and a falling enemy each use the helper (shadow size changes with their height). (QA: pass / fail)
-- [ ] A test shows a shadow sits on the platform top when the object is above a platform. (QA: pass / fail)
-- [ ] The result notes list every in-air object found and which use the helper. (QA: pass / fail)
-- [ ] Screenshots of the car high and low in a jump, and a falling gift pack, are saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/visual-style.md (Content) describes the shadow rule. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test shows the shared helper's shadow size is the sprite's size at height 0, smaller as height grows, and never larger than the sprite. (QA: pass)
+- [ ] Tests show the car in the air, a falling gift pack and a falling enemy each use the helper (shadow size changes with their height). (QA: pass)
+- [ ] A test shows a shadow sits on the platform top when the object is above a platform. (QA: pass)
+- [ ] The result notes list every in-air object found and which use the helper. (QA: pass)
+- [ ] Screenshots of the car high and low in a jump, and a falling gift pack, are saved and listed in the result notes. (QA: pass)
+- [ ] docs/visual-style.md (Content) describes the shadow rule. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -84,7 +84,7 @@ Built (code only, no new art, nothing in game/data/levels/).
 - New `game/tests/unit/test_shadow_size.gd` (5 tests): full size at 0, smaller as the height grows, never larger than the sprite and never below the smallest size, the height above the surface, and the screen-width conversion.
 - New `game/tests/unit/run/test_height_scaled_shadows.gd` (8 tests): the car shrinks and grows with its height; over roof-nw-6 the car's shadow lies on the rooftop's top and is sized by the height above it; a gift pack's shadow grows as it falls; the package-width check; a gift pack falling onto a rooftop; a falling minion; a falling kaiju; a Molotov bottle.
 - Existing shadow tests (T-192, T-258, T-407) pass unchanged.
-- Counts: COUNTS_HERE
+- Counts: GUT 192 scripts, 2327 tests; game/tools 767 OK (1 skipped); tools 614 OK. QA ran the same three sets green.
 
 **Screenshots** (`art-archive/T-454/screenshots/`; fixtures `game/tests/fixtures/height_shadow_*.tscn`, script `height_shadow_demo.gd`):
 - The car: `car_ground.png`, `car_low.png` (2 units up), `car_high.png` (5 units up) and `car_roof.png` (2 units over roof-nw-6), side by side in `car_heights_strip.png`.
