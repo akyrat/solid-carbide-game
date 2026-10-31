@@ -2735,3 +2735,8 @@ Entry format:
 - Decision or change: The board approved testing once per merge batch instead of after every ticket, and a 1500 s default limit for the Godot test set, after merges timed out at 900 s.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-437
+
+## 2026-10-31: A wall hit ends the drift
+- Decision or change: A wall hit ends a drift in progress: it pays for the time up to the hit, then the hit's combo cut applies.
+- Documents touched: docs/drifting.md
+- Tasks: T-438
