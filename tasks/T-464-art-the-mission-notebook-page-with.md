@@ -1,7 +1,7 @@
 ---
 id: T-464
 title: Art: the mission notebook page (with checkbox, tick and cross-off marks) and the power-up overlay's frame (PixelLab)
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -48,6 +48,10 @@ The board's review: look at the notebook page and the power-up overlay's frame i
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-464.
 
 ## Style review
 
