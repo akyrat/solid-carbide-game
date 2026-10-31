@@ -4,11 +4,21 @@ extends Node
 ## ticked and crossed off beside one still open), next (the next mission after a completed one).
 
 @export var mode := "half"
+## A light backdrop over the world and under the HUD (T-464's light-ground shot).
+@export var light := false
 
 
 func _ready() -> void:
 	var game: Node = preload("res://scenes/game/game.tscn").instantiate()
 	add_child(game)
+	if light:
+		var back := CanvasLayer.new()
+		back.layer = 1
+		var rect := ColorRect.new()
+		rect.color = Color(0.86, 0.89, 0.92)
+		rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+		back.add_child(rect)
+		add_child(back)
 	game.start_run()  # no tutorial slides
 	await get_tree().process_frame
 	await get_tree().process_frame

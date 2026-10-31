@@ -145,3 +145,22 @@ func test_page_does_not_overlap_hearts_coins_clock_at_two_sizes() -> void:
 		assert_false(page.intersects(coins), "coins at %s" % size)
 		assert_false(page.intersects(clock), "clock at %s" % size)
 		assert_false(page.intersects(hearts), "hearts at %s" % size)
+
+
+func test_the_final_art_is_loaded_and_is_the_size_the_page_expects() -> void:
+	# T-464: the page is 88 x 90 art px at 2x = PAGE_SIZE; the marks are 7 x 7 (the
+	# checkbox and tick) and 24 x 4 (the pen stroke) and are not blank.
+	var page := MissionPage.art(MissionPage.PAGE_ART)
+	assert_not_null(page)
+	assert_eq(page.get_size() * float(HudStyle.HUD_ART_SCALE), MissionPage.PAGE_SIZE)
+	assert_eq(MissionPage.art(MissionPage.CHECKBOX_ART).get_size() * float(HudStyle.HUD_ART_SCALE),
+		Vector2(MissionPage.BOX_SIZE, MissionPage.BOX_SIZE))
+	assert_eq(MissionPage.art(MissionPage.TICK_ART).get_size(), Vector2(7, 7))
+	assert_eq(MissionPage.art(MissionPage.CROSS_ART).get_size(), Vector2(24, 4))
+	var im := page.get_image()
+	var colours := {}
+	for y in im.get_height():
+		for x in im.get_width():
+			colours[im.get_pixel(x, y).to_html()] = true
+	gut.p("page colours: %d, pixel (30,24): %s, (3,3): %s" % [colours.size(), im.get_pixel(30, 24), im.get_pixel(3, 3)])
+	assert_gt(colours.size(), 4, "the page has its paper, rules, margin and outline")
