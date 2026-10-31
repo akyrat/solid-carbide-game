@@ -2805,3 +2805,8 @@ Entry format:
 - Decision or change: The kaiju alert signs become level creator pieces the board places itself: a standing sign on the ground or a rooftop and a banner on a skyscraper's wall, in both designs. The fixed sign list (kaiju_signs.json) is retired, and T-439 is cancelled.
 - Documents touched: docs/level-design.md
 - Tasks: T-441
+
+## 2026-10-31: Gift pack arrows 3 times as big, in the gift box's colours
+- Decision or change: The arrows pointing to off-screen gift packs become 3 times as big and wear the gift box's dark and light green instead of the placeholder pale cyan.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-442

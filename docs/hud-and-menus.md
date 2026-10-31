@@ -59,6 +59,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **Main menu polish** (board, 2026-10-29): the title "SOLID CARBIDE" in a pixel-art font, the "(work in progress)" line kept and styled to match, and behind the menu a **splash cover**, an AI-generated pixel art image (Visual style, Decisions, "The splash cover").
 - **A consistent HUD** (board, 2026-10-29): today's HUD pieces look as if they came from different games; they get one visual language (outline, colours, fonts, panel shapes) so they read as one interface.
 - **The HUD scales with the window, and a HUD size slider** (board, 2026-10-29): the HUD keeps a predictable place and a sensible size at any window size and resolution, ultrawide included (today it stays the same pixel size, so it looks tiny on a big or ultrawide screen). The pause screen gets a slider that sets the HUD's size, saved on this computer.
+- **Bigger gift pack arrows in the gift box's colours** (board, 2026-10-31): the arrows that point to gift packs off screen are 3 times as big as today's (30 by 24 pixels at the HUD's base size), and wear the gift box's colours (Visual style, Decisions, "The gift pack package in Greenbull's colours": Greenbull's dark green box with its light green ribbon) instead of the placeholder pale cyan. As they belong to the gift pack, Greenbull's colours are allowed on them (Visual style, Content, "Rules", rule 6). They keep the HUD's dark outline and stay clear of the HUD parts as today. (T-442)
 
 ## Content
 
