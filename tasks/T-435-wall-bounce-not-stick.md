@@ -1,7 +1,7 @@
 ---
 id: T-435
 title: The car bounces off walls instead of sticking to them
-status: open
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/docs/driving/collisions.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/collisions.md, docs/game-loop-architecture.md, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd]
 files_expected_to_change: [game/scripts/driving/car.gd, game/tests/unit/, game/docs/driving/collisions.md, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,18 +45,34 @@ The board's review: drive into walls at slow, cruise and top speed, head-on, gla
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The cause of the sticking is in the result notes, confirmed in the code. (QA: pass / fail)
-- [ ] Tests drive the real car into a building side, a raised platform's side from the street, the map edge and a boulder, head-on, at about 45 degrees and while drifting into it, with W held throughout, and assert that the car moves away from the wall after the hit (its distance from the wall grows for at least a short time) instead of staying against it. They fail on master before the fix (shown in the result notes) and pass after. (QA: pass / fail)
-- [ ] A test shows the bounce grows with the hit speed and stops growing at the cap: a harder hit bounces further than a slow one, and hits above the cap's speed bounce the same distance. (QA: pass / fail)
-- [ ] There is no time after a hit during which W does nothing (code read; the throttle is never disabled by a timer). (QA: pass / fail)
-- [ ] The scale and the cap are on the tuning panel's Collisions group, with their defaults in the result notes as proposals for the playtest. (QA: pass / fail)
-- [ ] docs/drifting.md (Content, Collisions) and game/docs/driving/collisions.md describe the new bounce. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] The cause of the sticking is in the result notes, confirmed in the code. (QA: pass - W snap to cruise in car_model.gd step 5, confirmed in code)
+- [ ] Tests drive the real car into a building side, a raised platform's side from the street, the map edge and a boulder, head-on, at about 45 degrees and while drifting into it, with W held throughout, and assert that the car moves away from the wall after the hit (its distance from the wall grows for at least a short time) instead of staying against it. They fail on master before the fix (shown in the result notes) and pass after. (QA: pass - test_wall_bounce.gd: building, map edge, boulder, platform side x head-on/45/drift, W held; 13 of 14 fail on master per notes, plausible)
+- [ ] A test shows the bounce grows with the hit speed and stops growing at the cap: a harder hit bounces further than a slow one, and hits above the cap's speed bounce the same distance. (QA: pass - cap test present and passes)
+- [ ] There is no time after a hit during which W does nothing (code read; the throttle is never disabled by a timer). (QA: pass - W pulls speed up every step at wall_bounce_pull, no timer)
+- [ ] The scale and the cap are on the tuning panel's Collisions group, with their defaults in the result notes as proposals for the playtest. (QA: pass - COLLISION_SETTINGS has the sliders, defaults in notes)
+- [ ] docs/drifting.md (Content, Collisions) and game/docs/driving/collisions.md describe the new bounce. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - all three sets green via qa_check)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Filed from your playtest: the car really bounces off walls even with W held, scaled by the hit, capped. Driving & Drift agent started.
+
+### 2026-10-30, In QA
+
+Cause found: W snapped the car back to cruise the step after the bounce. Now the bounce wins, then W pulls you back; capped at top speed; no throttle cut. QA running.
+
+### 2026-10-30, Needs playtest
+
+QA passed (8/8). Ready for you to play: hold W into walls at any speed.
+
+### 2026-10-31, Needs playtest → Done
+
+LGTM from you. Merges once master's tests are green (after T-436).
 
 ## Style review
 
@@ -65,3 +81,39 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Driving & Drift Agent, 2026-10-30.**
+
+**Cause, confirmed in the code.** `car_model.gd`, `update_velocity()`, step 5: with W held and the forward speed below cruise speed, the forward speed is snapped straight to cruise (`fwd = cruise`). `car.gd` bounces the car (`_reflect()`, the speed into the wall reversed x 0.25) only *after* the step's move, so the next step's `update_velocity()` sees the bounced velocity and the snap overwrites it before the car moves: head-on, the forward speed -2.75 becomes +11 into the wall again; glancing or drifting, the forward speed has dropped below cruise after the hit and is snapped back along the nose, which points into the wall. The car never moves away (master: the new tests measure 0 to -0.03 units "away" after every hit, see below), and a held drift keeps climbing on the wall because nothing about the drift changes.
+
+**What changed.**
+- `game/scripts/driving/car_model.gd`: new `bounce_normal`. While it is set and the nose points into that wall, W held below cruise speed does not snap: it speeds the forward speed up toward cruise at `tuning.wall_bounce_pull`. So the bounce first carries the car away, W slows it and brings it back (a smaller bounce on the next touch, like a ball). It ends, and W snaps as before, when the forward speed is back at cruise, W is let go or S reverses, the car is in the air, or the nose turns away from the wall. No timer anywhere; W acts on every step (test `test_w_still_acts_on_the_step_right_after_a_hit`).
+- `game/scripts/driving/car.gd`, `_reflect()`: the car leaves the wall at `wall_bounce x min(hit speed, wall_bounce_max_hit_speed)` (speed along the wall kept) and sets `model.bounce_normal`. Same for walls/buildings/map edge/boulders (physics bodies) and raised areas' sides (`_bounce_off_side`).
+- Hit counting (proposal): coming back onto the same wall during the bounce cycle is the same hit, so W held into a wall is still one crash (one combo cut), as before. The wall counts again once the player has really left it: W let go, the nose turned away, the car in the air, or it got further away than the furthest bounce (`_update_bounce_rearm`). Placing the car (setting `ground`) clears it.
+- `game/scripts/driving/car_tuning.gd`: two new settings on the tuning panel's Collisions group, next to "Wall bounce" (the panel builds its sliders from `COLLISION_SETTINGS`, no panel code changed).
+- What a wall hit does to a drift: unchanged (drift amount and keys untouched).
+
+**Proposals for the playtest (defaults).**
+| Slider (Collisions group) | Key | Default |
+| --- | --- | --- |
+| Wall bounce | `wall_bounce` | 0.4 (was 0.25) |
+| Wall bounce: hardest hit | `wall_bounce_max_hit_speed` | 16.5 units/s (the top speed) |
+| Wall bounce: W pull-back | `wall_bounce_pull` | 12 units/s per s |
+
+Measured with W held (real car, flat wall): head-on at cruise 11 bounces 0.91 units away, then a second small hop (0.13); head-on at 16.5 and at 30 both bounce 1.75 units (the cap); 45 degrees at 11 bounces 0.38 then slides along the wall; drifting in, it bounces off and carries on round its drift circle.
+
+**Tests.** New `game/tests/unit/test_wall_bounce.gd` (14 tests): the real car into a building side, the map's edge (long wall), a 3-unit boulder and the elevation test platform's north side from the street (data/level/elevation_test.json, read only), each head-on, at about 45 degrees and while drifting (W + A), W held throughout; each asserts the distance from the hit point grows for 3 steps and reaches at least 0.15 units. Plus the cap test (cruise < halfway < cap+1, and cap+1 == cap+15 within 1e-3) and the W-acts test. **On master (before the fix): 13 of 14 failed** (every bounce case: away distance about -0.0006 to -0.03 units, max never above 0; the cap test errored on the missing setting); only the W-acts test passed, as it should. After the fix: 14/14.
+Updated existing tests: `test_car_collisions.gd` (default 0.4; top-speed hit now capped at 16.5 x 0.4 = 6.6; the full-bounce case checked on the hit step and then that the car leaves the wall; new `test_bounce_cap_and_pull_sliders`), `test_car_footprint_height.gd` (`test_at_45_degrees_no_corner_enters`: the car now bounces off the platform's side and meets the ramp's north side further on, a second, different wall; the test allows that second hit and checks both are north sides).
+
+**Test sets (all in the worktree):** GUT 2207/2207 passed (`TESTS PASSED`; test_kaiju_path_size.gd passed too); `python -m unittest discover -s game/tools -p "test_*.py"`: 752 OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"`: 582 OK.
+
+**Screenshots:** `art-archive/T-435/screenshots/bounce_distance_w_held.png`, a plot from the real car (distance from the wall vs time after the hit, W held) for head-on at 11, 16.5 and 30, 45 degrees and drifting, with master's "stuck at 0" line.
+
+**Nothing under game/data/levels/** was written, moved or committed.
+
+**Documents affected:** `docs/drifting.md` (Content, Collisions, task T-033 paragraph), `game/docs/driving/collisions.md` ("Bounce": the cause, how the bounce wins over W, the settings table; "Knockback" sentence).
+
+**Merge with master, Driving & Drift Agent, 2026-10-31.** `git merge --no-ff master` conflicted in `game/scripts/driving/car.gd`, `_bounce()`: T-435 added `if impact > 0.0: _remember_bounce(key, n)` and T-420 (71b42cf0 / 60bf2147) added `_contact_bodies[key] = [collider, shape_index]` at the same spot. They are independent, so both are kept: the contact body is recorded, then the bounce remembered. The rest auto-merged cleanly (T-420's `_contact_bodies.erase` in `_update_contacts` and `held_contacts()`; `car_model.gd` carries only T-435's changes); no behaviour change beyond the merge. T-420's scrape test sets `wall_bounce = 0` itself, so the new bounce default does not affect it. Tests after the merge: game/tools 752 OK (1 skipped); tools 585 OK; GUT 2254/2254 passed, run in two foreground parts because the busy machine pushes the full run past the 10-minute command limit (subfolders: 103 scripts / 1346 tests in 564 s; top-level `tests/unit`: 80 scripts / 908 tests in 165 s; both `TESTS PASSED`). Nothing under game/data/levels/ touched.
+- 2026-10-30, in-progress → in-qa: Done: W no longer snaps the car back into a wall it bounced off; bounce = 0.4 x hit speed capped at 16.5, W pulls back at 12 u/s2 (proposals). Tests: GUT 2207/2207, game/tools 752 OK, tools 582 OK. Details in result notes.
+- 2026-10-30, in-qa → needs-playtest: QA passed all 8 criteria; all three test sets green. Play: drive into walls at slow, cruise, top speed, W held.
+- 2026-10-31, needs-playtest → done: T-435 LGTM by the board (2026-10-31)

@@ -4,7 +4,7 @@
 
 ## Car collisions
 
-Task T-033. What the car does when it hits things is decided in Drifting, Decisions: it bounces slightly off walls (buildings and the map's edge) and boulders, and does not bounce off enemies, which only damage it. Minions and meteors knock it back (Enemies, Decisions).
+Task T-033. What the car does when it hits things is decided in Drifting, Decisions: it bounces off walls (buildings and the map's edge), raised areas' sides and boulders, even with W held ("The car bounces off walls", 2026-10-30, task T-435), and does not bounce off enemies, which only damage it. Minions and meteors knock it back (Enemies, Decisions).
 
 ### Collision layers
 
@@ -21,9 +21,19 @@ Walls and boulders share layer 1 because the MVP map builds them that way and th
 
 ### Bounce
 
-When the car's 1 by 1 unit body hits anything on layer 1, it stops against it for that physics step, and the part of its velocity going into the surface is reversed and scaled by the wall bounce setting (`tuning.wall_bounce`, the tuning panel's "Wall bounce" slider). The part along the surface is kept, so after a glancing hit the car carries on along the wall while being pushed off it. 0 = no bounce (it slides along), 1 = it bounces back as fast as it hit. The proposed default is **0.25**: a head-on hit at cruise speed (11 units/s) bounces back at 2.75 units/s, one at top speed (33) at 8.25. The board judges it in a playtest. The Unity prototype has no bounce (report, section 3).
+When the car's 1 by 1 unit body hits anything on layer 1 (or the drawn car meets a raised area's side, task T-184/T-411), it stops against it for that physics step, and the part of its velocity going into the surface is replaced by a bounce away from it: the hit speed (the speed into the surface), capped at `tuning.wall_bounce_max_hit_speed`, times `tuning.wall_bounce`. The part along the surface is kept, so after a glancing hit the car carries on along the wall while bouncing off it. `car.gd`, `_reflect()`.
 
-After the bounce the driving model carries on as usual. Holding W with the nose against the wall snaps the car back to cruise speed into it on the next step, so it stays pressed against the wall; let go of W, reverse or steer away to leave it. The drawn car (1 by 3 units) may overlap a wall or boulder: only the body collides.
+**Why the car used to stick (task T-435).** After the bounce, W held with the forward speed below cruise speed snapped the forward speed straight back to cruise (`car_model.gd`, step 5) on the very next step, before the car had moved: a head-on bounce (forward speed negative) became cruise speed into the wall again, and a glancing or drifting hit lost its bounce the same way, so the car stayed pressed against the wall and a held drift kept climbing on it.
+
+**How the bounce wins over W (task T-435).** Each bounce sets `CarModel.bounce_normal` (the wall's normal). While it is set and the nose points into that wall, W with the forward speed below cruise does not snap: it speeds the car up at `tuning.wall_bounce_pull` units/s per second. So the bounce first carries the car away from the wall, then W slows it and brings it back, like a ball; the next touch bounces again, smaller. W always acts: there is no timer and no time when W does nothing. The bounce ends (and W snaps again as before) when the forward speed is back at cruise speed, when W is let go or S reverses, or when the nose turns away from the wall. While a bounce runs, touching the same wall or boulder again is the same hit (no second `hit_obstacle`, so no second combo cut); the 0.25-unit re-arm rule below still applies otherwise. What a wall hit does to a drift is unchanged (the drift amount and the keys are not touched).
+
+| Setting (Collisions group on the tuning panel) | Key | Proposed default (for the playtest) |
+| --- | --- | --- |
+| Wall bounce | `wall_bounce` | **0.4** (was 0.25) |
+| Wall bounce: hardest hit | `wall_bounce_max_hit_speed` | **16.5 units/s** (the top speed) |
+| Wall bounce: W pull-back | `wall_bounce_pull` | **12 units/s per second** |
+
+With these, holding W, a head-on hit at cruise speed (11 units/s) bounces back at 4.4 units/s and travels about 0.9 units from the wall before W brings it back; one at top speed (16.5) or faster bounces back at 6.6 units/s, about 1.75 units. A faster hit (the hype speed bonus, a knockback into a wall) bounces no further. With W let go the car rolls away with its normal coasting. The Unity prototype has no bounce (report, section 3). The drawn car (1 by 3 units) may overlap a wall or boulder: only the body collides. Tests: `tests/unit/test_wall_bounce.gd`.
 
 ### Collision signal
 
@@ -41,5 +51,5 @@ func apply_knockback(direction: Vector2, strength: float) -> void
 
 Call it on the car node to knock the car back, for example for a minion hit or a meteor impact (Enemy Behavior Agent; the strengths are game data). `direction` is in the flat physics world (x right, y down) and does not need to be normalized; a zero direction is ignored. `strength` is a speed in units per second. On the car's next physics step, after the driving model's own update, `direction.normalized() * strength` is added to the car's velocity. Several calls before one step add up. `pending_knockback()` returns what is waiting.
 
-From then on the push is ordinary speed: the part across the nose fades with the sideways grip (like a drift), the part along the nose changes the forward speed (with W held and the nose against the push, W snaps it back to cruise speed on the step after, as after a bounce), and a push into a wall bounces off it and emits `hit_obstacle`.
+From then on the push is ordinary speed: the part across the nose fades with the sideways grip (like a drift), the part along the nose changes the forward speed (with W held and the nose against the push, W snaps it back to cruise speed on the step after), and a push into a wall bounces off it and emits `hit_obstacle`.
 

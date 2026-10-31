@@ -52,6 +52,17 @@ var airborne := false
 ## turns). 0 = no slip. It fades to 0 in tuning.exit_slip_seconds, faster while
 ## the player counter-steers; it is only ever on the ground.
 var exit_slip := 0.0
+## The wall the car last bounced off (task T-435, Drifting, Decisions, "The car
+## bounces off walls"): its surface normal, pointing away from the wall, set by
+## car.gd at each bounce; ZERO when no bounce is running. While it is set, W
+## held with the nose towards that wall and the forward speed below cruise
+## speed does not snap the car back to cruise speed (which pressed it against
+## the wall): W pulls the forward speed up at tuning.wall_bounce_pull instead,
+## so the bounce first carries the car away and W then brings it back. It ends
+## when the forward speed is back at cruise speed, when W is let go (or the car
+## reverses), when the car leaves the ground, or when the nose turns away from
+## the wall (then W snaps as usual). No timer: W always acts.
+var bounce_normal := Vector2.ZERO
 
 var _w_was_held := false
 ## The slip's size when it started (degrees per second), for its straight-line fade.
@@ -126,6 +137,7 @@ func update_velocity(w: bool, s: bool, steer: float) -> void:
 	# the car stops drifting. Driving resumes from the landing step on.
 	if airborne:
 		is_drifting = false
+		bounce_normal = Vector2.ZERO  # task T-435: a bounce ends when the car leaves the ground
 		# No side slip in the air (task T-278): a slip that was running stops.
 		_clear_exit_slip()
 		_last_steer = steer
@@ -157,11 +169,18 @@ func update_velocity(w: bool, s: bool, steer: float) -> void:
 	var cruise: float = t.forward_speed
 	var top: float = t.top_speed()
 	var ramp: float = t.ramp_delta(dt)
+	if not w:
+		bounce_normal = Vector2.ZERO
 	if w:
-		if fwd < cruise - CRUISE_EPSILON:
+		if fwd < cruise - CRUISE_EPSILON and _bouncing_towards_wall(c, sn):
+			# Task T-435: the bounce wins over W's snap; W pulls the car back up.
+			fwd = move_toward(fwd, cruise, maxf(0.0, float(t.wall_bounce_pull)) * dt)
+		elif fwd < cruise - CRUISE_EPSILON:
+			bounce_normal = Vector2.ZERO
 			cruise_jump.emit(fwd, w_just_pressed)
 			fwd = cruise
 		else:
+			bounce_normal = Vector2.ZERO
 			fwd = move_toward(fwd, top, ramp)
 	elif reverse:
 		if fwd > 0.0:
@@ -180,6 +199,17 @@ func update_velocity(w: bool, s: bool, steer: float) -> void:
 	vx = c * fwd - sn * side
 	vy = sn * fwd + c * side
 	rotation = new_rotation
+
+
+## True while a bounce is running (bounce_normal set) and the nose (cos, sin)
+## points into the wall it bounced off (task T-435). Ends the bounce otherwise.
+func _bouncing_towards_wall(c: float, sn: float) -> bool:
+	if bounce_normal == Vector2.ZERO:
+		return false
+	if c * bounce_normal.x + sn * bounce_normal.y < 0.0:
+		return true
+	bounce_normal = Vector2.ZERO
+	return false
 
 
 ## The side slip out of a drift (task T-278; game/docs/driving/drift.md, "Side slip out of

@@ -38,7 +38,17 @@ var drift_exit_rate := 3.0
 ## How much of its speed into a wall or boulder the car keeps, bouncing back
 ## off it (0 = no bounce, it slides along; 1 = full bounce). Not from the Unity
 ## prototype (no bounce there); proposed for the board's playtest (task T-033).
-var wall_bounce := 0.25
+## Task T-435 (Drifting, Decisions, "The car bounces off walls", board
+## 2026-10-30): raised from 0.25 so the bounce shows; a proposal for the playtest.
+var wall_bounce := 0.4
+## The bounce grows with the hit speed up to this speed (units/s); harder hits
+## bounce as if they hit at this speed (task T-435, proposal: the top speed, 16.5).
+var wall_bounce_max_hit_speed := 16.5
+## After a bounce, while the nose points into the wall it bounced off, W pulls
+## the forward speed back up to cruise speed at this rate (units/s per second)
+## instead of snapping it there (task T-435, proposal). Higher = the car comes
+## back to the wall sooner and bounces less far.
+var wall_bounce_pull := 12.0
 ## The side slip out of a drift (task T-278, board 2026-10-22; Drifting,
 ## Decisions, "A little side slip out of a drift"; car_model.gd,
 ## _exit_slip_turn). Proposals for the board's own playtest; not from the Unity
@@ -215,9 +225,19 @@ const SLIP_SETTINGS := [
 const COLLISION_SETTINGS := [
 	{"key": "wall_bounce", "name": "Wall bounce", "unit": "x impact speed",
 		"label": "How hard the car bounces off walls and boulders",
-		"tip": "Share of the speed going into a wall, building or boulder that the car keeps, bouncing back off it. The speed along the wall is kept. 0 = no bounce (it slides along), 1 = it bounces back as fast as it hit. Game default 0.25.",
+		"tip": "Share of the speed going into a wall, building or boulder that the car keeps, bouncing back off it, even with W held. The speed along the wall is kept. 0 = no bounce (it slides along), 1 = it bounces back as fast as it hit. Game default 0.4 (task T-435; was 0.25).",
 		"unity_note": "Unity: no bounce, it stops against the wall (0)",
 		"min": 0.0, "max": 1.0, "step": 0.01},
+	{"key": "wall_bounce_max_hit_speed", "name": "Wall bounce: hardest hit", "unit": "units/s",
+		"label": "Hits faster than this bounce no further",
+		"tip": "The bounce grows with the speed the car hits the wall at, up to this speed; a faster hit bounces exactly like a hit at this speed, so a very fast hit is not a huge bounce. Game default 16.5 (the top speed): a head-on hit bounces back at most 16.5 x 0.4 = 6.6 units/s.",
+		"unity_note": "Unity: no bounce",
+		"min": 5.0, "max": 40.0, "step": 0.5},
+	{"key": "wall_bounce_pull", "name": "Wall bounce: W pull-back", "unit": "units/s per s",
+		"label": "How fast W brings the car back after a bounce",
+		"tip": "After a bounce, with the nose still towards the wall, W does not snap the car back to cruise speed (that kept it stuck on the wall): it speeds the car up at this rate, so the bounce first carries the car away, then W brings it back. Higher = a shorter bounce. Game default 12: a head-on hit at cruise speed bounces back about 0.9 units, at top speed or faster about 1.75. Turning the nose away from the wall, or letting go of W, ends it at once.",
+		"unity_note": "Unity: no bounce",
+		"min": 2.0, "max": 60.0, "step": 0.5},
 ]
 
 

@@ -11,8 +11,10 @@ extends CharacterBody2D
 ##
 ## Collisions (task T-033; layers in game/docs/driving/collisions.md, "Collision layers"): the
 ## body is on layer 2 (the car) and collides only with layer 1 (walls,
-## buildings, the map's edge and boulders). It bounces off them slightly
-## (tuning.wall_bounce) and emits hit_obstacle once per hit. Enemies (layer 3)
+## buildings, the map's edge and boulders). It bounces off them, even with W
+## held (task T-435: tuning.wall_bounce x the hit speed, capped at
+## tuning.wall_bounce_max_hit_speed; CarModel.bounce_normal keeps W from
+## snapping it back into the wall), and emits hit_obstacle once per hit. Enemies (layer 3)
 ## are not in its mask, so they never block it or make it bounce.
 ## apply_knockback() is how other code (minion hits, meteor impacts) pushes it.
 
@@ -93,6 +95,9 @@ var ground = null:
 	set(value):
 		height_model.ground = value
 		height_model.reset(model.get_position())
+		# Placing the car (every place_car sets the ground): no bounce carries over (T-435).
+		model.bounce_normal = Vector2.ZERO
+		_bounce_key = ""
 ## Height above the ground's zero, units (0 with no ground source).
 var height: float:
 	get:
@@ -124,6 +129,13 @@ var _contacts := {}
 var _contact_bodies := {}
 ## Sides of the ground the car is touching (task T-184): key -> {point, normal}.
 var _side_contacts := {}
+## The contact key (_contact_key, or a side's key) of the last bounce (task
+## T-435), the wall's normal and where the car was. Until it re-arms
+## (_update_bounce_rearm), hitting the same obstacle again is the same hit: the
+## car coming back onto the wall it bounced off, W held, is not a new crash.
+var _bounce_key := ""
+var _bounce_normal := Vector2.ZERO
+var _bounce_point := Vector2.ZERO
 
 
 func _init() -> void:
@@ -209,6 +221,7 @@ func physics_step() -> void:
 			rotation = model.rotation
 		_bounce_off_side(side)
 	_update_side_contacts()
+	_update_bounce_rearm(w)
 	if detect_tricks:
 		# Tricks (task T-079), observed after the height step so the detector
 		# knows whether this step ends in the air: the drift 360 ignores those
@@ -252,25 +265,59 @@ func pending_knockback() -> Vector2:
 ## surface is kept. Emits hit_obstacle for a new hit.
 func _bounce(hit: KinematicCollision2D) -> void:
 	var n := hit.get_normal()
-	var impact := _reflect(n)
 	var key := _contact_key(hit.get_collider(), hit.get_collider_shape_index())
-	if not _contacts.has(key):
+	var same := _same_bounce(key)
+	var impact := _reflect(n)
+	if not _contacts.has(key) and not same:
 		hit_obstacle.emit(hit.get_collider(), hit.get_collider_shape_index(), n, impact)
 	_contacts[key] = n
 	_contact_bodies[key] = [hit.get_collider(), hit.get_collider_shape_index()]
+	if impact > 0.0:
+		_remember_bounce(key, n)
 
 
 ## Reflects the velocity off a surface with outward normal n (see _bounce) and
-## returns the speed into it before the bounce, units/s.
+## returns the speed into it before the bounce, units/s. Task T-435: the car
+## leaves the wall at tuning.wall_bounce x the hit speed, the hit speed capped
+## at tuning.wall_bounce_max_hit_speed, and the model's bounce_normal is set so
+## W held does not snap it straight back into the wall (CarModel.bounce_normal).
 func _reflect(n: Vector2) -> float:
 	var v := model.get_velocity()
 	var into := v.dot(n)
 	var impact := maxf(0.0, -into)
 	if into < 0.0:
 		var e := clampf(float(tuning.wall_bounce), 0.0, 1.0)
-		model.set_velocity(v - (1.0 + e) * into * n)
+		var bounce := e * minf(impact, maxf(0.0, float(tuning.wall_bounce_max_hit_speed)))
+		model.set_velocity(v - into * n + bounce * n)
+		model.bounce_normal = n if bounce > 0.0 else Vector2.ZERO
 	velocity = model.get_velocity() * PX_PER_UNIT
 	return impact
+
+
+## True when key is the obstacle of the last bounce and it has not re-armed (task T-435).
+func _same_bounce(key: String) -> bool:
+	return key != "" and key == _bounce_key
+
+
+func _remember_bounce(key: String, n: Vector2) -> void:
+	_bounce_key = key
+	_bounce_normal = n
+	_bounce_point = model.get_position()
+
+
+## Task T-435: the last bounce's obstacle counts as a new hit again once the
+## player has really left it: W let go, the nose turned away from it, the car
+## in the air, or the car further from it than the furthest bounce
+## (REARM_GAP_UNITS + (wall_bounce x hardest hit)^2 / (2 x pull-back)).
+func _update_bounce_rearm(w: bool) -> void:
+	if _bounce_key == "":
+		return
+	var nose := Vector2(cos(model.rotation), sin(model.rotation))
+	var e := clampf(float(tuning.wall_bounce), 0.0, 1.0)
+	var top_bounce := e * maxf(0.0, float(tuning.wall_bounce_max_hit_speed))
+	var reach := REARM_GAP_UNITS + top_bounce * top_bounce / (2.0 * maxf(0.1, float(tuning.wall_bounce_pull)))
+	if not w or height_model.airborne or nose.dot(_bounce_normal) >= 0.0 			or (model.get_position() - _bounce_point).dot(_bounce_normal) > reach:
+		_bounce_key = ""
 
 
 ## The same bounce off a side of the ground (task T-184; a drop-off edge from
@@ -279,11 +326,14 @@ func _reflect(n: Vector2) -> float:
 ## counts once per side until the car is REARM_GAP_UNITS away from it.
 func _bounce_off_side(side: Dictionary) -> void:
 	var n: Vector2 = side.normal
-	var impact := _reflect(n)
 	var key := "side:%d:%d,%d" % [side.area, roundi(n.x), roundi(n.y)]
-	if not _side_contacts.has(key):
+	var same := _same_bounce(key)
+	var impact := _reflect(n)
+	if not _side_contacts.has(key) and not same:
 		hit_obstacle.emit(ground, side.area, n, impact)
 	_side_contacts[key] = {"point": side.point, "normal": n}
+	if impact > 0.0:
+		_remember_bounce(key, n)
 
 
 ## Forgets the ground's sides the car has moved away from (_bounce_off_side).

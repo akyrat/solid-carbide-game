@@ -2770,3 +2770,8 @@ Entry format:
 - Decision or change: The board played goal G-008's build and approved it ("LGTM"). Merged: the main menu's pixel-art title (Press Start 2P) with its styled "(work in progress)" line over the splash cover (PixelLab, 4 generations; the style loop kept v2 at 6/10, judged in the playtest); one HUD style sheet (Visual style) that every HUD piece and the HUD's code (`hud_style.gd`) follow, with the clock's digit panel and new weapon icons; the HUD scaling with the window at any size and resolution, with a "HUD size" slider (50 to 125, default 100) on the pause screen; and the pause screen's sliders saving once, on release. The 248 Godot-generated files the run swept in were dropped.
 - Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
 - Tasks: T-426, T-427, T-428, T-429, T-430, T-431, T-432, T-433 (goal G-008)
+
+## 2026-10-31: The car bounces off walls instead of sticking to them
+- Decision or change: The car bounces off walls, buildings, raised areas' sides, the map's edges and boulders even with W held, scaled by how hard it hits, up to a maximum. The board played it: "LGTM"; its follow-up is T-438 (a wall hit ends the drift).
+- Documents touched: `docs/drifting.md`
+- Tasks: T-435
