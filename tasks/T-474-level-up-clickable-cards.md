@@ -1,7 +1,7 @@
 ---
 id: T-474
 title: The level-up gift pack's cards are clicked directly, with no Take it button
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -73,3 +73,4 @@ T-474 (UI Agent). The level-up gift pack's cards have no Take it button: the who
 - 2026-10-31, in-progress → in-qa: Cards clickable via reusable GiftCardClick; tests pass; screenshots in art-archive/T-474/screenshots
 - QA 2026-10-31 (round 1): all 8 criteria pass. qa_check: 3 test sets pass (full GUT run repeated here after the test_shared_button fix), documents changed, 4 screenshots. Minor note, not a fail: docs/hud-and-menus.md line 19 still says "or by clicking its button" (stale wording; Content line 18 and the level-up section are updated).
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, swipe review)
