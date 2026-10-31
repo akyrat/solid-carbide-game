@@ -1,7 +1,7 @@
 ---
 id: T-457
 title: Missions in the run: 30 per run (5 fixed, 25 generated), progress from trick events, signals, and the car's owned power-ups
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Goal-G-009
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-31, Blocked → In progress
 
 Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-457.
+
+### 2026-10-31, In progress → In QA
+
+Goal runner (G-009): the agent is done; QA is checking it.
 
 ## Style review
 
