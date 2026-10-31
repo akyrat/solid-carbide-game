@@ -873,10 +873,12 @@ Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it 
 - **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles (since T-394 an obstacle can be in several pairs, but the same two obstacles make one pair at most).
 - **In a run on the level:** when the car's centre crosses the line between the two obstacles' centres without touching either, it is the **thread the needle** trick: the combo goes up and THREAD THE NEEDLE! "+{amount}" pops. Proposals: worth **0.5**, like ALT DRIFT! and AIR 360!; the same pair pays again on a later pass in either direction once **3 seconds** have gone by since it last paid; it **counts in the air** (a jump through the gap); a touch of either obstacle from half a second before the crossing until a quarter second after it voids the pass, and the crash cuts the combo as always. The trick pops a quarter second after the crossing, once the car is clear.
 - **How a pair shows in the run (a proposal):** a faint dashed chalk-white line on the ground across the gap, under the car and the obstacles, drawn in code.
+- **The flash when a pair pays (T-451, board, 2026-10-31; the look is a proposal for the playtest):** on the step the trick pays, the two obstacles of the threaded pair and the dashed line between them flash: two quick white pulses over **0.6 seconds** (bright at once, dark at 0.15 s, bright again at 0.3 s, at rest from 0.6 s). The obstacles' pixels mix up to 75 percent towards white (alpha kept), the line goes opaque white and twice as thick. Only the pair just threaded flashes: in a chained row the other gaps stay still, and the next gap flashes when it pays. A pass that doesn't thread (going round, or a touch that voids it) makes no flash. Code only, no new art (`game/scripts/level/needle_flash.gd`).
 - **The game's own map** has no pairs and is unchanged.
 
 ![Two pairs in the editor, a boulder pair across a road and a barrier with cones, with a crate stack held as the first of a new pair](../art-archive/T-272/screenshots/pair_in_editor.png)
 ![The car threading the boulder pair in a run, with the popup](../art-archive/T-272/screenshots/popup.png)
+![The boulder pair and the dashed line at the first pulse of the flash](../art-archive/T-451/screenshots/flash_030.png)
 
 #### Level creator: a row paired as a chain
 
@@ -1906,7 +1908,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `2b69699f74af984b1b76b2dcd403c946ccae471657f0d73ed0bcd75c8694b0c0` |
 | `drifting.md` | `3d7c96fcd2a4a4a7853b1a534428a4d25355ae2f2bbcbb8641715ebe6ffca74c` |
-| `level-design.md` | `5bd86c898372782a4b953e23326bef0201ba481911d42456fa91375db7cf048b` |
+| `level-design.md` | `59399710bf4bb8246971dc39afdee9b27b98a319d492c594183422e4d4244d27` |
 | `enemies.md` | `8ec7cb688d81058ecb2dad37dc068a705d87d61b80426315898ced7a8998ec96` |
 | `weapons.md` | `69a3236a31a446ccf1141530bf1269a68298f27931b2c583241e5075a5ca5934` |
 | `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |

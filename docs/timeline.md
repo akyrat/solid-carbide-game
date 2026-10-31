@@ -2930,3 +2930,8 @@ Entry format:
 - Decision or change: publish_itch.py ignores the board's untracked level files in game/data/levels/ and the web build leaves them out.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-471
+
+## 2026-10-31: Threading the needle flashes the pair
+- Decision or change: When the car threads the needle, the two paired obstacles and their dashed line flash white, two pulses over 0.6 s; in a chained row only the threaded pair flashes. The board: "LGTM" (from the screenshots).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-451
