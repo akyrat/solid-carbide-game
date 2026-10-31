@@ -1731,6 +1731,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **A consistent HUD** (board, 2026-10-29): today's HUD pieces look as if they came from different games; they get one visual language (outline, colours, fonts, panel shapes) so they read as one interface.
 - **The HUD scales with the window, and a HUD size slider** (board, 2026-10-29): the HUD keeps a predictable place and a sensible size at any window size and resolution, ultrawide included (today it stays the same pixel size, so it looks tiny on a big or ultrawide screen). The pause screen gets a slider that sets the HUD's size, saved on this computer.
 - **Bigger gift pack arrows in the gift box's colours** (board, 2026-10-31): the arrows that point to gift packs off screen are 3 times as big as today's (30 by 24 pixels at the HUD's base size), and wear the gift box's colours (Visual style, Decisions, "The gift pack package in Greenbull's colours": Greenbull's dark green box with its light green ribbon) instead of the placeholder pale cyan. As they belong to the gift pack, Greenbull's colours are allowed on them (Visual style, Content, "Rules", rule 6). They keep the HUD's dark outline and stay clear of the HUD parts as today. (T-442)
+- **One button style across the game** (board, 2026-10-31): every button the player meets (main menu, garage, tutorial slides, level-up screen, pause screen and the end-of-run recap) shares one look and one feel that match the game: the same shape, art, font, colours and outline from the HUD style sheet (Visual style, Content), and the same behaviour when hovered, selected with the keyboard, pressed and disabled. The board's own tools (the level creator and the tuning panel) keep their look. The exact look and feel are the agents' proposals for the board's playtest. (T-446, T-447)
 
 ### Content
 
@@ -1895,4 +1896,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |
 | `visual-style.md` | `276693f9c2695aca9823618333dab3ba7a8e3d96cca8028dfc3d0e9ae329d390` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
-| `hud-and-menus.md` | `1b49b906e49dc5e914db54984d7f4396f86b1ad9dc564f0522c6c049b7117049` |
+| `hud-and-menus.md` | `72ff0ae640ef4e9c67e7154dc22bd7e22f4d02c706201ac39ee44b413e4b3561` |

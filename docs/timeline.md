@@ -2825,3 +2825,13 @@ Entry format:
 - Decision or change: The main menu's splash cover is the board's own picture, replacing T-433's 6/10 cover (archived).
 - Documents touched: docs/visual-style.md
 - Tasks: T-445
+
+## 2026-10-31: One button style across the game
+- Decision or change: Every player-facing button (menu, garage, slides, level-up, pause, recap) uses one shared button with one look and feel from the HUD style sheet; the board's tools keep theirs.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-446
+
+## 2026-10-31: Art: the shared button's plates
+- Decision or change: Script-drawn button plates for each state, in the HUD style sheet's look, replace the shared button's placeholder.
+- Documents touched: docs/visual-style.md
+- Tasks: T-447
