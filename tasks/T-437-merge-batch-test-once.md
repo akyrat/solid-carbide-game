@@ -1,7 +1,7 @@
 ---
 id: T-437
 title: Merges test once per batch, with a 1500 s Godot test limit
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -80,3 +80,4 @@ Test counts (T-437 folder, foreground): game/tools 752 tests OK (1 skipped); too
 The 10 slowest Godot test files (GUT junit export, one full run, 654 s of test time): test_level_up_screen 27.7 s; enemies/test_minions 24.0 s; weapons/test_all_weapons_run 21.0 s; run/test_gift_drops 20.8 s; weapons/test_level_up_offers 17.6 s; enemies/test_enemies_on_heights 17.0 s; test_camera_options 16.2 s; enemies/test_kaiju_meteors 15.9 s; weapons/test_starting_gun 15.9 s; weapons/test_neon_underglow 14.6 s. Together about 191 s of 654 s: the set has grown by count (182 scripts, 2239 tests, mean 3.6 s per script); no single file dominates. For per-file times: `bash game/tools/run_tests.sh -gjunit_xml_file=user://full.xml` (an absolute path wrote nothing).
 
 Not done: the new merge_batch was not run on the real repo; the main checkout's copy is untouched.
+- 2026-10-31, in-progress → in-qa: Built and tested; ready for QA
