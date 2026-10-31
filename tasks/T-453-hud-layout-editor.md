@@ -1,7 +1,7 @@
 ---
 id: T-453
 title: The player moves the HUD's pieces from the pause screen
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull

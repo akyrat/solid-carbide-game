@@ -230,6 +230,37 @@ static func save_hud_size(v: float) -> bool:
 	return cfg.save(path) == OK
 
 
+## The player's HUD layout (task T-453), in section "hud_layout": one key per moved piece
+## (HudLayout.PIECES), each an entry {ax, ay, dx, dy} (HudLayout). No section, or no key for a
+## piece, is the default layout. Invalid entries are dropped on loading.
+static func load_hud_layout() -> Dictionary:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK or not cfg.has_section("hud_layout"):
+		return {}
+	var raw := {}
+	for key in cfg.get_section_keys("hud_layout"):
+		raw[key] = cfg.get_value("hud_layout", key)
+	return HudLayout.clean(raw)
+
+
+## How many times the HUD layout was written (T-453): the editor writes once, on Done.
+static var hud_layout_writes := 0
+
+
+## Saves the whole HUD layout at once (the editor's Done: one write), replacing the saved one;
+## an empty layout removes the section (the default layout).
+static func save_hud_layout(layout: Dictionary) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	if cfg.has_section("hud_layout"):
+		cfg.erase_section("hud_layout")
+	var clean := HudLayout.clean(layout)
+	for id in clean:
+		cfg.set_value("hud_layout", id, clean[id])
+	hud_layout_writes += 1
+	return cfg.save(path) == OK
+
+
 ## Whether the tutorial slides are hidden (task T-382), in section "tutorial": true after the
 ## player ticked "Don't show again" and pressed Start. False by default.
 const DEFAULT_TUTORIAL_HIDDEN := false
