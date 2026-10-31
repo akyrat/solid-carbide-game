@@ -1,7 +1,7 @@
 ---
 id: T-463
 title: Rusty Overcoat: the car damages minions it touches, with the red hit flash
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-009
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-31, Blocked → In progress
 
 Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-463.
+
+### 2026-10-31, In progress → In QA
+
+Goal runner (G-009): the agent is done; QA is checking it.
 
 ## Style review
 
