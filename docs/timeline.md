@@ -2850,3 +2850,8 @@ Entry format:
 - Decision or change: A board_approved_art ticket field lets art the board has already approved go from the agent straight to the playtest and merge with no QA marks and no test sets.
 - Documents touched: tasks/README.md
 - Tasks: T-449
+
+## 2026-10-31: The splash record is valid JSON again
+- Decision or change: Fixed game/art/menu/splash.json (unescaped Windows path) after T-445 merged without tests and turned master's Godot tests red.
+- Documents touched: game/art/menu/splash.json
+- Tasks: T-450
