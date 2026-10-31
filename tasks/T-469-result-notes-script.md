@@ -1,7 +1,7 @@
 ---
 id: T-469
 title: A script appends an agent's report to a ticket's result notes
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, tasks/_TEMPLATE.md, tools/task_status.py, tools/test_task_status.py, .claude/hooks/]
 files_expected_to_change: [tools/task_notes.py, tools/test_task_notes.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,12 +41,12 @@ Write `tools/task_notes.py T-NNN --append FILE` (and `--text "..."`), which appe
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `tools/task_notes.py T-NNN --text "..."` appends to the Result notes section only, and a test shows the header and every other section are byte for byte unchanged. (QA: pass / fail)
-- [ ] It finds the ticket on its open branch folder like task_status.py, and refuses a missing ticket or section (tests). (QA: pass / fail)
-- [ ] The result notes say whether the command guard lets it through as is, and if not, exactly what change the board would need to make. (QA: pass / fail)
-- [ ] tasks/README.md ("Handing back") tells agents to use it. (QA: pass / fail)
-- [ ] The tools and game/tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] `tools/task_notes.py T-NNN --text "..."` appends to the Result notes section only, and a test shows the header and every other section are byte for byte unchanged. (QA: pass: 12 tests, byte-for-byte test green)
+- [x] It finds the ticket on its open branch folder like task_status.py, and refuses a missing ticket or section (tests). (QA: pass: uses task_status.find; refusals tested)
+- [x] The result notes say whether the command guard lets it through as is, and if not, exactly what change the board would need to make. (QA: pass: guard analysis and exact board_gate.py change in notes)
+- [x] tasks/README.md ("Handing back") tells agents to use it. (QA: pass: Handing back bullet names the script)
+- [ ] The tools and game/tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`), with the counts in the result notes. (QA: pass: 626 and 767 in notes; qa_check tests passed)
+- [x] Nothing under game/data/levels/ is changed or committed. (QA: pass: branch diff touches only README, ticket, script, test)
 
 ## Updates
 
@@ -77,3 +77,4 @@ Tests
 
 Documents affected: the task README (updated). Nothing under game/data/levels/ was changed or committed.
 - 2026-10-31, in-progress → in-qa: Built; 626 + 767 tests OK; guard change recommended in the result notes
+- 2026-10-31, in-qa → done: QA passed
