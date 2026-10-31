@@ -2940,3 +2940,8 @@ Entry format:
 - Decision or change: Labels for the pause screen's HUD layout editor (open, hint, reset, done) in pause_text.json, style loop 8 to 9.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-452
+
+## 2026-10-31: The guard trusts task_notes.py
+- Decision or change: The command guard trusts tools/task_notes.py like the status script, so agents can write their result notes without refusals or workarounds.
+- Documents touched: tasks/README.md
+- Tasks: T-472
