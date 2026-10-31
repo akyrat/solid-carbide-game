@@ -2820,3 +2820,8 @@ Entry format:
 - Decision or change: Enemy code is measured and optimised so a crowd of minions doesn't slow the game down much, with a repeatable measurement script.
 - Documents touched: game/docs/enemies/minions.md
 - Tasks: T-444
+
+## 2026-10-31: The board's own splash art behind the main menu
+- Decision or change: The main menu's splash cover is the board's own picture, replacing T-433's 6/10 cover (archived).
+- Documents touched: docs/visual-style.md
+- Tasks: T-445
