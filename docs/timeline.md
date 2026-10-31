@@ -2720,3 +2720,8 @@ Entry format:
 - Decision or change: Built and merged (audit epic): on the board's level saved 2026-10-30 21:12 the kaiju went to and fro at the foot of ramp-12 near (-79, 46) and never reached a rooftop car from the west; one rule in enemy_navigation.gd through_ramps() keeps a path that only skims a ramp on the ramp's cells. T-380's reproduction test now checks the enemy reaches the car. Master's test set is green again. Played by the board (lgtm, 2026-10-31).
 - Documents touched: none
 - Tasks: T-436
+
+## 2026-10-31: Thread the needle while scraping, and level data guards
+- Decision or change: Built and merged (audit epic, build J): crossing a thread-the-needle gap while still touching a paired obstacle pays nothing; a level file with a missing key, an unknown ramp side or a zero-size ramp loads with an error naming the piece and flat ground (no NaN); a level without a spawn starts at the map's centre (Level design), and a spawn in geometry is reported. Played by the board.
+- Documents touched: none
+- Tasks: T-420
