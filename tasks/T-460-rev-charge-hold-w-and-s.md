@@ -1,7 +1,7 @@
 ---
 id: T-460
 title: Rev Charge: hold W and S to charge a boost that fires when S is released, with a placeholder charge and boost effect
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -52,6 +52,10 @@ The board's review: play a run with Rev Charge granted at each tier: how chargin
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-460.
 
 ## Style review
 
