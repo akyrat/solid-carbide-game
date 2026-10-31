@@ -2895,3 +2895,8 @@ Entry format:
 - Decision or change: Every object in the air casts a shadow that is smaller the higher it is, up to its sprite's size at the surface, through one shared helper.
 - Documents touched: docs/visual-style.md
 - Tasks: T-454
+
+## 2026-10-31: Mission packs and driving power-ups
+- Decision or change: The board defined mission packs: one mission at a time on a pixel-art notebook page on the left side, each with one or more checkbox goals (quantity goals show progress), 30 missions a run, for that run only; the first 5 fixed (drift 4 s, 10 alt drifts, 3 s airtime, 3 air 180s, an air 360), missions 6 to 30 generated at random each run from trick combinations. A completed mission offers 2 driving power-ups on an overlay distinct from the weapons' gift menu: Rev Charge (W+S charges a boost released with S), Jump (Space hops; its airtime counts for missions), Bouncy Bumpers (bigger wall bounces) and Rusty Overcoat (contact damage to enemies), each with tiers and an icon; tiers, numbers and the generator's rules are the agents' proposals. Built as goal G-009, PixelLab cap 40.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/drifting.md`
+- Tasks: goal G-009
