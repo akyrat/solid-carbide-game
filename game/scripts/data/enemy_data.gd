@@ -1,8 +1,8 @@
 class_name EnemyData
 extends RefCounted
 ## The enemy numbers from res://data/enemies.json: the minion, minion spawning, coin drops,
-## the kaiju, its coins when defeated and its meteor attack. Enemy stats never change over a run; only the number
-## of minions the spawner keeps around grows (minions_wanted).
+## the kaiju, its coins when defeated and its meteor attack. Enemy stats never change over a run; only how
+## often minions spawn grows (spawn_interval, T-443).
 
 var _data: Dictionary = {}
 var error: String = ""
@@ -38,7 +38,8 @@ func minion() -> Dictionary:
 	return _section("minion")
 
 
-## minions_at_start, minions_at_boss_time, growth_until_seconds, spawn_interval_seconds, spawn_margin_units.
+## spawn_interval_at_start_seconds, spawn_interval_at_boss_time_seconds, growth_until_seconds,
+## max_minions_alive, spawn_margin_units (T-443).
 func spawning() -> Dictionary:
 	return _section("spawning")
 
@@ -77,14 +78,32 @@ func meteor_attack() -> Dictionary:
 	return _section("meteor_attack")
 
 
-## How many minions the spawner keeps around `run_seconds` after the run started: a straight
-## line from minions_at_start to minions_at_boss_time, then held. `spawn_multiplier` is the
-## combo's (ComboData.spawn_multiplier), 1.0 for none. Rounded to the nearest whole minion.
-func minions_wanted(run_seconds: float, spawn_multiplier: float = 1.0) -> int:
-	var s := spawning()
-	var t := clampf(run_seconds / s["growth_until_seconds"], 0.0, 1.0)
-	var count := lerpf(s["minions_at_start"], s["minions_at_boss_time"], t)
-	return roundi(count * spawn_multiplier)
+## Seconds between minion spawns `run_seconds` after the run started (T-443): the spawn rate
+## (1 / interval) grows in a straight line from 1 / spawn_interval_at_start_seconds at second 0 to
+## 1 / spawn_interval_at_boss_time_seconds at growth_until_seconds, then is held. `spawn_multiplier`
+## is the combo's (ComboData.spawn_multiplier), 1.0 for none: it multiplies the rate, so it divides
+## the interval. Returns 0 when the data's intervals or the multiplier are not above 0 (the caller
+## falls back to its default).
+func spawn_interval(run_seconds: float, spawn_multiplier: float = 1.0) -> float:
+	return interval_from(spawning(), run_seconds, spawn_multiplier)
+
+
+## spawn_interval() from a spawning section `s` (the spawner passes its own copy, so tests can swap it).
+static func interval_from(s: Dictionary, run_seconds: float, spawn_multiplier: float = 1.0) -> float:
+	var a: float = s.get("spawn_interval_at_start_seconds", 0.0)
+	var b: float = s.get("spawn_interval_at_boss_time_seconds", 0.0)
+	var until: float = s.get("growth_until_seconds", 0.0)
+	if a <= 0.0 or b <= 0.0 or spawn_multiplier <= 0.0:
+		return 0.0
+	var t := clampf(run_seconds / until, 0.0, 1.0) if until > 0.0 else 1.0
+	var rate := lerpf(1.0 / a, 1.0 / b, t) * spawn_multiplier
+	return 1.0 / rate
+
+
+## The safety ceiling on minions alive at once (T-443): while this many are alive, no new one spawns.
+## 0 when the data has none (no ceiling).
+func max_minions_alive() -> int:
+	return int(spawning().get("max_minions_alive", 0.0))
 
 
 ## Coins one killed minion drops on average (drop chance times coins per drop).

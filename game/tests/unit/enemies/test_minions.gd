@@ -47,76 +47,168 @@ func test_run_has_the_spawner_and_its_draw_order_place() -> void:
 	assert_gt(spawner.draw_root.get_index(), run.map.get_index(), "drawn after the map")
 
 
-func test_more_minions_at_the_end_of_the_7_minutes_than_at_the_start() -> void:
-	var s := data.spawning()
-	# Start of the run: the spawner fills up to the data's starting count.
-	_simulate_spawner(15.0)
-	var at_start: int = spawner.minions.size()
-	assert_eq(at_start, int(s["minions_at_start"]), "12 at the start")
-	assert_eq(spawner.minions_wanted_now(), data.minions_wanted(run.state.time_elapsed()))
-	# Halfway: the run's clock moves on, the count grows.
-	run.state.advance(210.0 - run.state.time_elapsed())
-	_simulate_spawner(10.0)
-	var halfway: int = spawner.minions.size()
-	assert_eq(halfway, data.minions_wanted(run.state.time_elapsed()))
-	# 7 minutes: the kaiju's arrival, the data's top count.
-	run.state.advance(s["growth_until_seconds"] - run.state.time_elapsed())
-	_simulate_spawner(10.0)
-	var at_end: int = spawner.minions.size()
-	assert_eq(at_end, int(s["minions_at_boss_time"]), "20 at 7:00")
-	assert_gt(at_end, at_start, "more minions at the end of the 7 minutes")
-	assert_true(halfway > at_start and halfway < at_end, "growing in between")
-	assert_lt(at_end, at_start * 2, "slightly: under double")
+## Steps the spawner `steps` physics steps (car at full health), returning how many the timer spawned.
+func _spawned_over(steps: int) -> int:
+	var before: int = spawner.spawned_total
+	for i in steps:
+		spawner.step(DT)
+		run.state.health = run.state.max_health
+	return spawner.spawned_total - before
 
 
-func test_spawns_one_per_interval_beyond_the_screen_edge() -> void:
+func test_spawning_follows_the_timer_not_a_wanted_count() -> void:
+	# T-443: one at once, then one every spawn_interval() at the run's start.
+	var interval: float = data.spawn_interval(0.0)
+	assert_almost_eq(spawner.spawn_interval(), interval, 0.0001)
 	spawner.step(DT)
 	assert_eq(spawner.minions.size(), 1, "the first one at once")
-	var interval: float = data.spawning()["spawn_interval_seconds"]
 	var steps := int(round(interval / DT))
 	for i in steps - 1:
 		spawner.step(DT)
 	assert_eq(spawner.minions.size(), 1, "not before the interval")
 	spawner.step(DT)
-	assert_eq(spawner.minions.size(), 2, "the next one after spawn_interval_seconds")
+	assert_eq(spawner.minions.size(), 2, "the next one after the interval")
+
+
+func test_minions_keep_spawning_while_many_are_alive() -> void:
+	# T-443: no top-up to a wanted count: 40 alive round the car, more still come on the timer.
+	var car_units := _car_units()
+	var tries := 0
+	while spawner.minions.size() < 40 and tries < 2000:
+		tries += 1
+		var p: Vector2 = car_units + Vector2.RIGHT.rotated(spawner.rng.randf() * TAU) * spawner.rng.randf_range(6.0, 14.0)
+		if spawner.is_free_spot(p):
+			spawner.spawn_minion_at(p)
+	assert_eq(spawner.minions.size(), 40, "40 placed by hand")
+	var interval: float = spawner.spawn_interval()
+	var n := _spawned_over(int(round(10.0 * interval / DT)))
+	assert_true(n >= 9 and n <= 11, "about one per interval over 10 intervals (got %d)" % n)
+	assert_gt(spawner.minions.size(), 40, "more alive than before")
+
+
+func test_a_new_minion_appears_beyond_the_screen_edge_on_the_street() -> void:
 	var vis: Rect2 = spawner.visible_rect()
-	for i in 50:
-		var p = spawner.pick_spawn_point()
-		if p == null:
+	var margin: float = data.spawning()["spawn_margin_units"] * 16.0
+	var elevation = run.map.get("elevation")
+	var rad: float = MinionScript.BASE_RADIUS_UNITS * float(data.minion()["size_scale"])
+	# The minions the timer really spawns, over 20 spawns.
+	spawner.visible_rect_override = vis  # the same screen for every check
+	var seen := 0
+	var newest: Node = null
+	for i in 20 * int(round(spawner.spawn_interval() / DT)):
+		spawner.step(DT)
+		run.state.health = run.state.max_health
+		if spawner.minions.is_empty() or spawner.minions[-1] == newest:
 			continue
+		newest = spawner.minions[-1]
+		var m: Node = newest
+		var p: Vector2 = m.position_units()
 		var screen: Vector2 = run.ISO_TRANSFORM * (p * 16.0)
 		assert_false(vis.has_point(screen), "off the visible screen")
-		assert_true(vis.grow(data.spawning()["spawn_margin_units"] * 16.0 + 1.0).has_point(screen), "at the margin")
-		assert_true(spawner.is_free_spot(p), "not on a building or boulder")
+		# It already took its first step (0.084 units, under 2 pixels) towards the car.
+		assert_true(vis.grow(margin + 4.0).has_point(screen), "at the margin, %s units out" % data.spawning()["spawn_margin_units"])
+		assert_false(vis.grow(margin - 4.0).has_point(screen), "on the ring, not inside it")
+		assert_true(spawner.is_free_spot(p), "clear of buildings and boulders")
+		if elevation != null:
+			assert_true(elevation.is_street(p, rad), "on the street")
+		for b in run.map.layout.buildings:
+			assert_false(run.map.rect_of(b).grow(rad).has_point(p), "not on a building")
+		for b in run.map.all_boulders():
+			assert_true(Vector2(float(b.x), float(b.y)).distance_to(p) >= float(b.diameter) / 2.0 + rad, "not on a boulder")
+		seen += 1
+	assert_gt(seen, 5, "checked several real spawns")
+	# And the spawn points themselves.
+	for i in 50:
+		var q = spawner.pick_spawn_point()
+		if q == null:
+			continue
+		var sc: Vector2 = run.ISO_TRANSFORM * (q * 16.0)
+		assert_false(vis.has_point(sc), "off the visible screen")
+		assert_true(vis.grow(margin + 1.0).has_point(sc), "at the margin")
+		assert_true(spawner.is_free_spot(q), "not on a building or boulder")
+
+
+func test_spawn_interval_at_the_start_at_7_minutes_and_between() -> void:
+	var s := data.spawning()
+	var start: float = s["spawn_interval_at_start_seconds"]
+	var boss: float = s["spawn_interval_at_boss_time_seconds"]
+	var until: float = s["growth_until_seconds"]
+	assert_eq(until, 420.0, "the kaiju's arrival, 7:00")
+	assert_almost_eq(spawner.spawn_interval(), start, 0.0001, "the data's interval at the start")
+	# Halfway (3:30): the rate is the average of the two rates.
+	run.state.advance(until / 2.0 - run.state.time_elapsed())
+	assert_almost_eq(spawner.spawn_interval(), 1.0 / ((1.0 / start + 1.0 / boss) / 2.0), 0.0001, "halfway")
+	assert_true(spawner.spawn_interval() < start and spawner.spawn_interval() > boss, "between the two")
+	# 7:00 and after: the data's interval at the kaiju's arrival, held.
+	run.state.advance(until - run.state.time_elapsed())
+	assert_almost_eq(spawner.spawn_interval(), boss, 0.0001, "the data's interval at 7:00")
+	# The timer really runs at that interval late on: one at once, one per interval after.
+	var steps := int(round(boss / DT))
+	assert_eq(_spawned_over(1 + 10 * steps), 11, "11 in the first 10 intervals at 7:00")
+	run.state.advance(60.0)
+	assert_almost_eq(spawner.spawn_interval(), boss, 0.0001, "held during the kaiju's minute")
+	# The data's curve never slows down along the way.
+	var last := INF
+	for t in range(0, 481, 10):
+		var v := data.spawn_interval(float(t))
+		assert_true(v <= last, "interval at %d s is not longer than the one before" % t)
+		last = v
 
 
 func test_no_combo_means_no_extra_spawning() -> void:
-	assert_eq(spawner.minions_wanted_now(), data.minions_wanted(run.state.time_elapsed()))
+	assert_almost_eq(spawner.spawn_interval(), data.spawn_interval(run.state.time_elapsed()), 0.0001)
 	assert_eq(spawner.spawn_multiplier, 1.0)
 
 
-func test_a_high_combo_wants_more_minions_by_the_data_amount() -> void:
+func test_a_high_combo_shortens_the_interval_by_the_data_amount() -> void:
 	var combo := ComboData.new()
-	var base: int = spawner.minions_wanted_now()
+	run.state.advance(120.0)
+	var base: float = spawner.spawn_interval()
 	run.state.combo = combo.max_multiplier()
 	var mult := combo.spawn_multiplier(run.state.combo)
 	assert_gt(mult, 1.0)
-	var wanted: int = spawner.minions_wanted_now()
+	var shorter: float = spawner.spawn_interval()
 	assert_eq(spawner.spawn_multiplier, mult)
-	assert_eq(wanted, data.minions_wanted(run.state.time_elapsed(), mult))
-	assert_gt(wanted, base, "more minions with a high combo")
-	for i in 1000:  # contact hits and idling cut the combo, so hold it high
+	assert_almost_eq(shorter, base / mult, 0.0001, "the multiplier divides the interval")
+	assert_almost_eq(shorter, data.spawn_interval(run.state.time_elapsed(), mult), 0.0001)
+	# They really spawn faster: over 10 base intervals about 10 x mult come.
+	var steps := int(round(10.0 * base / DT))
+	var before: int = spawner.spawned_total
+	for i in steps:  # contact hits and idling cut the combo, so hold it high
 		run.state.combo = combo.max_multiplier()
 		spawner.step(DT)
 		run.state.health = run.state.max_health
-	assert_eq(spawner.minions.size(), wanted, "they really spawn")
+	var n: int = spawner.spawned_total - before
+	assert_true(n >= int(10.0 * mult) - 1 and n <= int(ceil(10.0 * mult)) + 1,
+		"about %.1f with the combo (got %d)" % [10.0 * mult, n])
+
+
+func test_the_safety_ceiling_holds_the_timer() -> void:
+	var ceiling: int = spawner.max_minions_alive()
+	assert_eq(ceiling, int(data.spawning()["max_minions_alive"]))
+	assert_true(ceiling >= 100, "high: only there for the frame rate (5 times the old top count of 20)")
+	spawner._spawning = data.spawning()
+	spawner._spawning["max_minions_alive"] = 5.0
+	_spawned_over(int(round(20.0 * spawner.spawn_interval() / DT)))
+	assert_eq(spawner.minions.size(), 5, "no more than the ceiling alive")
+	spawner.minions[0].take_damage(1000.0, "test")
+	_spawned_over(int(round(1.5 * spawner.spawn_interval() / DT)))
+	assert_eq(spawner.minions.size(), 5, "one dies, the timer brings the next")
+
+
+func test_minions_move_30_percent_slower_and_the_kaiju_is_unchanged() -> void:
+	assert_eq(data.minion()["move_speed"], 4.2, "4.2 units per second")
+	assert_almost_eq(data.minion()["move_speed"], 6.0 * 0.7, 0.0001, "30% slower than 6")
+	assert_eq(data.kaiju()["move_speed"], 3.0, "the kaiju's speed is unchanged")
+	var m: Node = spawner.spawn_minion_at(_car_units() + Vector2(8.0, 3.0))
+	assert_eq(m.move_speed, 4.2, "a spawned minion walks at 4.2")
 
 
 func test_with_the_switch_off_the_combo_changes_nothing() -> void:
 	spawner.combo_raises_spawning = false
-	var base: int = spawner.minions_wanted_now()
+	var base: float = spawner.spawn_interval()
 	run.state.combo = ComboData.new().max_multiplier()
-	assert_eq(spawner.minions_wanted_now(), base)
+	assert_eq(spawner.spawn_interval(), base)
 	assert_eq(spawner.spawn_multiplier, 1.0)
 
 
@@ -147,7 +239,7 @@ func test_minion_walks_round_a_building() -> void:
 	var target := Vector2(b.end.x + 10.0, b.get_center().y)
 	var m: Node = spawner.spawn_minion_at(start)
 	spawner.enabled = false
-	for i in 50 * 20:
+	for i in 50 * 30:  # T-443: 30 s, the minion walks 30% slower (4.2 units/s)
 		m.walk(DT, target)
 		assert_false(b.has_point(m.position_units()), "never inside the building")
 	assert_lt(m.position_units().distance_to(target), 2.0, "got round it")

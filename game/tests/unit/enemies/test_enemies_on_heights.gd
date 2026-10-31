@@ -23,7 +23,7 @@ const DT := 0.02  # one physics step (50 per second)
 ## The time limit for the climbs: about three times the longest way at the
 ## minion's 6 units a second (the longest way, round a rooftop block, is
 ## about 200 units).
-const CLIMB_LIMIT_SECONDS := 40.0
+const CLIMB_LIMIT_SECONDS := 60.0  # T-443: 40 s at the old speed 6; minions walk 30% slower (4.2), 40 / 0.7 = 57
 
 var run: Node2D
 var spawner: Node

@@ -2920,3 +2920,8 @@ Entry format:
 - Decision or change: Fixed the garage layout so every Buy button and Back stay on screen at any window size.
 - Documents touched: docs/garage-design.md
 - Tasks: T-470
+
+## 2026-10-31: Minions spawn on a timer, and 30% slower
+- Decision or change: Minions spawn on a timer from the screen's edges however many are alive, every 1.2 s at the run's start down to 0.3 s at 7:00, shortened by the combo, with a safety ceiling of 100 alive; they move 30% slower (4.2 units per second). The board played it: "LGTM", and saw frame drops at some points (T-468 records a run to find them). The board accepted the agent's Edit-tool workaround after a hook refused its result notes edit (2026-10-31).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-443
