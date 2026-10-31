@@ -87,7 +87,7 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 
 The rule for every agent, QA included (board, 2026-10-28, T-343; the agent definitions and the goal runner's prompts point here). Subagent reports pasted into the Project Lead's conversation were the largest single cost in long sessions.
 
-- **The full report goes in the ticket's result notes** (QA's pass or fail per criterion stays on the ticket). The hand-back is one short line, about 300 characters at most: the ticket id, done or blocked, and what the Project Lead must act on.
+- **The full report goes in the ticket's result notes** (QA's pass or fail per criterion stays on the ticket). Write it with the notes script (board, 2026-10-31, T-469): `python C:/solid-carbide-game/tools/task_notes.py T-NNN --append report.md` (or `--text "..."`) adds it to the end of the ticket's `## Result notes` section, finding the ticket on its open branch like `task_status.py`, and touches nothing else (not the header, not any other section). Don't write result notes with Bash redirects or the Edit tool: the command guard and the auto-mode classifier refuse those on tickets, and getting around a refusal is not allowed. The hand-back is one short line, about 300 characters at most: the ticket id, done or blocked, and what the Project Lead must act on.
 - **Tests run in the foreground,** and no background jobs are left running when the agent hands back (a finished agent with a leftover background run wakes up again and re-sends its hand-back).
 - **The ticket is committed before handing back,** result notes and QA results included, so the merge is never held up by uncommitted work in the folder.
 
