@@ -46,12 +46,12 @@ The board's review: complete a mission in a run and check the power-up overlay: 
 
 ## Acceptance criteria
 
-- [ ] After a simulated mission_completed in a run, the run is paused and the power-up overlay shows exactly 2 cards (GUT test). (QA: pass / fail)
-- [ ] GUT tests of the offer rules: offers come only from unowned power-ups and next tiers, a power-up at its last tier is never offered, and the one-left and none-left cases follow the documented proposals. (QA: pass / fail)
-- [ ] Choosing with A/D, arrows, Enter/Space and the mouse works as on the level-up screen; taking a card raises that power-up's tier in RunState and resumes the run; Escape and focus loss behave as on the level-up screen (GUT tests). (QA: pass / fail)
-- [ ] The overlay and the level-up screen never show at the same time; the second waits for the first (GUT test), and the rule is documented in HUD and menus. (QA: pass / fail)
-- [ ] The overlay shows D1's header, button label, names and tier descriptions exactly, with each power-up's icon or a placeholder, and its header and frame differ from the weapons gift screen; screenshots of both screens side by side are in art-archive/<id>/screenshots/. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] After a simulated mission_completed in a run, the run is paused and the power-up overlay shows exactly 2 cards (GUT test). (QA: pass)
+- [ ] GUT tests of the offer rules: offers come only from unowned power-ups and next tiers, a power-up at its last tier is never offered, and the one-left and none-left cases follow the documented proposals. (QA: pass)
+- [ ] Choosing with A/D, arrows, Enter/Space and the mouse works as on the level-up screen; taking a card raises that power-up's tier in RunState and resumes the run; Escape and focus loss behave as on the level-up screen (GUT tests). (QA: pass)
+- [ ] The overlay and the level-up screen never show at the same time; the second waits for the first (GUT test), and the rule is documented in HUD and menus. (QA: pass)
+- [ ] The overlay shows D1's header, button label, names and tier descriptions exactly, with each power-up's icon or a placeholder, and its header and frame differ from the weapons gift screen; screenshots of both screens side by side are in art-archive/<id>/screenshots/. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -105,5 +105,7 @@ Written by the agent when it finishes.
 - `power_up_overlay_next_tier.png`: owned tiers, Bouncy Bumpers offered at tier 3, highlight on the second card.
 - `weapons_gift_screen.png`: the weapons gift screen, for comparison.
 - Fixtures: `game/tests/fixtures/power_up_screen_demo.tscn`, `power_up_screen_next_tier.tscn` and `power_up_screen_weapons_gift.tscn`.
+
+**QA round 1 (2026-10-31): all 6 criteria pass.** Re-ran: Godot GUT full suite TESTS PASSED (exit 0; the new power-up offer, screen and focus tests are listed and passed), Python game/tools 767 OK (1 skipped), Python tools 614 OK. Screenshots exist (4 files) and the side-by-side shows the amber/black power-up overlay clearly distinct from the green Greenbull gift screen; the docs carry the waiting rule. Refusal: `python tools/qa_check.py T-459 --no-marks` was refused (not on the pre-approved list), so the script's checks were done by hand.
 
 **Refusals:** one. A first `cd ...; git log` command was refused. It wasn't needed, and I used plain `git log` instead.
