@@ -1,7 +1,7 @@
 ---
 id: T-440
 title: Text: names for the alert sign and banner pieces in the level creator
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -87,3 +87,4 @@ docs/level-design.md, Content, "Level creator text": new "Added for the kaiju al
 Tests: python -m unittest discover -s game/tools -p "test_*.py": Ran 767 tests, OK (skipped=1). Nothing under game/data/levels/ touched.
 
 Note: a stray untracked tasks/.b440.md (a brief copy I made by mistake) is left uncommitted; a hook refused my rm. Please delete it.
+- 2026-10-31, in-progress → in-qa: Six texts written, style loop 8/10, tests OK
