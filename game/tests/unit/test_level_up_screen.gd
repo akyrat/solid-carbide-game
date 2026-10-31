@@ -295,7 +295,7 @@ func test_look_is_t140s_art_with_black_text() -> void:
 	assert_eq(screen._emblem.texture.resource_path, "res://art/level_up/gift_pack_emblem.png")
 	var plate: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("normal")
 	var pressed: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("pressed")
-	# T-446: "Take it" is the shared button, whose plate is T-303's plate recoloured.
+	# T-446: "Take it" is the shared button, whose plates are the shared button's art (T-447).
 	assert_true(HudStyle.is_shared_button(screen.cards[0].button))
 	assert_eq(plate.texture, HudStyle.button_plate("normal"))
 	assert_eq(pressed.texture, HudStyle.button_plate("pressed"))

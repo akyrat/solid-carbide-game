@@ -2995,3 +2995,8 @@ Entry format:
 - Decision or change: The driving power-up overlay's cards are clicked directly, like the level-up screen's.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-475
+
+## 2026-10-31: Final button art
+- Decision or change: The shared button's five plates (normal, hover, keyboard-selected, pressed, disabled), drawn by script in the HUD style sheet's look, 8/10 each in the style loop, 0 PixelLab calls. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
+- Tasks: T-447
