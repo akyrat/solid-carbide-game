@@ -1,7 +1,7 @@
 ---
 id: T-435
 title: The car bounces off walls instead of sticking to them
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/docs/driving/collisions.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/collisions.md, docs/game-loop-architecture.md, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd]
 files_expected_to_change: [game/scripts/driving/car.gd, game/tests/unit/, game/docs/driving/collisions.md, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -66,6 +66,14 @@ Filed from your playtest: the car really bounces off walls even with W held, sca
 
 Cause found: W snapped the car back to cruise the step after the bounce. Now the bounce wins, then W pulls you back; capped at top speed; no throttle cut. QA running.
 
+### 2026-10-30, Needs playtest
+
+QA passed (8/8). Ready for you to play: hold W into walls at any speed.
+
+### 2026-10-31, Needs playtest → Done
+
+LGTM from you. Merges once master's tests are green (after T-436).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -105,3 +113,5 @@ Updated existing tests: `test_car_collisions.gd` (default 0.4; top-speed hit now
 
 **Documents affected:** `docs/drifting.md` (Content, Collisions, task T-033 paragraph), `game/docs/driving/collisions.md` ("Bounce": the cause, how the bounce wins over W, the settings table; "Knockback" sentence).
 - 2026-10-30, in-progress → in-qa: Done: W no longer snaps the car back into a wall it bounced off; bounce = 0.4 x hit speed capped at 16.5, W pulls back at 12 u/s2 (proposals). Tests: GUT 2207/2207, game/tools 752 OK, tools 582 OK. Details in result notes.
+- 2026-10-30, in-qa → needs-playtest: QA passed all 8 criteria; all three test sets green. Play: drive into walls at slow, cruise, top speed, W held.
+- 2026-10-31, needs-playtest → done: T-435 LGTM by the board (2026-10-31)
