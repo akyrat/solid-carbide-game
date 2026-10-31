@@ -1,7 +1,7 @@
 ---
 id: T-450
 title: Fix splash.json: the source path's backslashes break JSON and master's tests
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, game/art/menu/splash.json, game/tests/unit/test_pixellab_assets.gd]
 files_expected_to_change: [game/art/menu/splash.json]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,12 +41,12 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `python -c "import json; json.load(open('game/art/menu/splash.json'))"` succeeds, and the record keeps its fields and the source path's meaning. (QA: pass / fail)
-- [ ] game/art/menu/splash.png is unchanged (same SHA-256 as on master). (QA: pass / fail)
-- [ ] The Godot test file `res://tests/unit/test_pixellab_assets.gd` passes (run with the project's test runner for that file, or the full Godot set). (QA: pass / fail)
-- [ ] Every JSON file under game/art/ parses; any other bad file is listed in the result notes. (QA: pass / fail)
-- [ ] The game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`). (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] `python -c "import json; json.load(open('game/art/menu/splash.json'))"` succeeds, and the record keeps its fields and the source path's meaning. (QA: pass)
+- [ ] game/art/menu/splash.png is unchanged (same SHA-256 as on master). (QA: pass)
+- [ ] The Godot test file `res://tests/unit/test_pixellab_assets.gd` passes (run with the project's test runner for that file, or the full Godot set). (QA: pass)
+- [ ] Every JSON file under game/art/ parses; any other bad file is listed in the result notes. (QA: pass)
+- [ ] The game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`). (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -66,3 +66,6 @@ Written by the agent when it finishes.
 
 Fixed game/art/menu/splash.json: the "source" path now uses forward slashes (C:/Users/andre/Downloads/...); every other field is untouched. splash.png unchanged (its SHA-256 matches the record). All JSON files under game/art/ parse; no other bad one. test_pixellab_assets.gd passes (1 test, 21 asserts). game/tools Python tests: 767 OK (1 skipped). Nothing in game/data/levels/ touched.
 - 2026-10-31, in-progress → in-qa: splash.json fixed, tests pass
+
+QA (2026-10-31): all 6 criteria pass. qa_check: three test sets passed, splash.png hash equals master's, every JSON under game/art/ parses, only splash.json differs from master, nothing under game/data/levels/ touched.
+- 2026-10-31, in-qa → done: QA passed
