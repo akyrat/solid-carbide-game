@@ -7,8 +7,8 @@ set -u
 source "$(dirname "${BASH_SOURCE[0]}")/godot_env.sh"
 
 # Time limit (task T-137): a run that goes past it is stopped by this script (only the Godot
-# process it started) and fails. A normal full run takes about 270 to 306 s when the computer is busy with several agents (2026-10-21; it was about 90 s at first). GUT_TIME_LIMIT overrides it.
-limit="${GUT_TIME_LIMIT:-900}"
+# process it started) and fails. A normal full run took about 90 s at first, 270 to 306 s on 2026-10-21, and 889 s on 2026-10-31 (T-372's agent), so the default limit is 1500 s (T-437; it was 900 s, which stopped merges with no test failing). GUT_TIME_LIMIT overrides it.
+limit="${GUT_TIME_LIMIT:-1500}"
 
 # Import first so class_name caches and imported resources exist (needed on a fresh clone).
 timeout -k 5 "$limit" "$GODOT_BIN" --headless --path "$GAME_DIR" --import >/dev/null 2>&1

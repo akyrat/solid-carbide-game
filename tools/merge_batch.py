@@ -3,14 +3,17 @@
 Does what docs/working-with-the-board.md, "Merging (Project Lead)" lists, for each ticket in turn:
 no merge in progress, mark the task done on its branch (task_status.py), merge --no-ff --no-commit and
 check it happened, revert Godot's line-ending-only .import noise, regenerate the long GDD and the short GDD's
-fingerprint, run the three test sets, add the timeline entry, commit only the merge's own files, remove the
-worktree and the branch.
+fingerprint, add the timeline entry, commit only the merge's own files. The three test sets run ONCE on the
+whole batch after every ticket is merged (T-437); then the worktrees and branches are removed. If the tests
+fail, the breaking ticket is found by halving the batch (testing the merged prefixes), stopped with its reason
+and undone, and the tickets after it are merged again and tested; the tickets before it stay merged.
+--each is the old mode: the tests run after every ticket, before its commit.
 
 Usage, from the repo root (the Project Lead's checkout on master):
 
   python tools/merge_batch.py T-101 T-102 --note T-101="review note" --title T-101="Timeline title"
       --entry T-101="Decision or change text" --docs T-101="a.md, b.md"
-      [--log FILE] [--root DIR] [--test-cmd "cmd"] ... [--no-tests]
+      [--log FILE] [--root DIR] [--test-cmd "cmd"] ... [--no-tests] [--each]
 
 --note goes to task_status.py done. --title, --entry and --docs make the timeline entry (title defaults to the
 ticket's title, docs to the docs/ files the merge changed). --test-cmd (repeatable) replaces the three default
@@ -138,7 +141,10 @@ def undo(r, extra):
         r.git("checkout", "HEAD", "--", *existing)
 
 
-def merge_one(r, tid, opts, tests):
+def merge_one(r, tid, opts, tests, ours=None):
+    """Merge and commit one ticket; returns its info for finish(). `ours` keeps what an earlier round of this batch did
+    to the ticket's branch (done commit, left-out files), so a ticket merged again is not reported as already done."""
+    ours = {} if ours is None else ours
     root = r.root
     if merge_in_progress(r):
         raise Stop("a merge is already in progress on master (another instance's?); not touching it")
@@ -154,6 +160,7 @@ def merge_one(r, tid, opts, tests):
     title = opts["title"].get(tid) or ticket_title(r, tid)
     # 0. Godot-generated files the branch added are left out of the merge
     left_out = generated_added(r, branch)
+    prior = ours.get(tid)
     if left_out and wt:
         r.git("rm", "-q", "--cached", "--ignore-unmatch", "--", *left_out, cwd=wt, check=True)
         r.git("commit", "-q", "-m", f"{tid}: drop Godot-generated files swept into the branch", cwd=wt, check=True)
@@ -161,15 +168,19 @@ def merge_one(r, tid, opts, tests):
             (wt / n).unlink(missing_ok=True)
     # 1. mark done on the branch (and commit that there); a ticket QA already marked done keeps its status
     already_done = ticket_status(r, branch, tid) == "done"
-    if not already_done:
+    if prior:   # merged again after an earlier round of this batch: our own done commit is already on the branch
+        already_done, left_out = prior["already_done"], prior["left_out"]
+        prev, marked = prior["prev"], prior["marked"]
+    else:
+        prev = marked = None
+    if not already_done and not prior:
         cmd = [sys.executable, str(root / "tools" / "task_status.py"), tid, "done"]
         if tid in opts["note"]:
             cmd += ["--note", opts["note"][tid]]
         done = r.run(cmd)
         if done.returncode != 0:
             raise Stop(f"task_status refused: {(done.stderr or done.stdout).strip()[:200]}")
-    prev = marked = None
-    if wt and not already_done:
+    if wt and not already_done and not prior:
         files = [p for p in modified(r, cwd=wt) if p.startswith("tasks/")]
         if files:
             prev = r.out("rev-parse", "HEAD", cwd=wt).strip()
@@ -177,10 +188,11 @@ def merge_one(r, tid, opts, tests):
             r.git("commit", "-q", "-m", f"{tid}: marked done", cwd=wt, check=True)
             marked = r.out("rev-parse", "HEAD", cwd=wt).strip()
 
+    info = {"tid": tid, "branch": branch, "wt": wt, "prev": prev, "marked": marked, "left_out": left_out,
+            "already_done": already_done}
+
     def unmark():
-        """A stopped ticket must not stay done on its branch: drop our own done commit if it is still the tip."""
-        if marked and r.out("rev-parse", "HEAD", cwd=wt).strip() == marked:
-            r.git("reset", "-q", "--keep", prev, cwd=wt)
+        unmark_branch(r, info)
     tasks_touched = sorted({p for p in modified(r) if p.startswith("tasks/")} - tasks_dirty_before)
     written = list(SHARED) + tasks_touched
     try:
@@ -228,7 +240,21 @@ def merge_one(r, tid, opts, tests):
         undo(r, written)
         unmark()
         raise Stop(f"unexpected error: {e}; merge undone")
-    # 7. remove the worktree and branch
+    info["sha"] = r.out("rev-parse", "HEAD").strip()
+    ours[tid] = info
+    return info
+
+
+def unmark_branch(r, info):
+    """A stopped ticket must not stay done on its branch: drop our own done commit if it is still the tip."""
+    wt, marked = info["wt"], info["marked"]
+    if marked and wt and r.out("rev-parse", "HEAD", cwd=wt).strip() == marked:
+        r.git("reset", "-q", "--keep", info["prev"], cwd=wt)
+
+
+def finish(r, info):
+    """Step 7: remove the worktree and branch; returns the rest of the ticket's line."""
+    wt, branch, left_out, already_done = info["wt"], info["branch"], info["left_out"], info["already_done"]
     note = ""
     if wt and wt.exists():
         revert_import_noise(r, cwd=wt)
@@ -248,7 +274,7 @@ def merge_one(r, tid, opts, tests):
 
 def parse(argv):
     opts = {"note": {}, "title": {}, "entry": {}, "docs": {}}
-    tickets, tests, root, log, no_tests = [], [], None, None, False
+    tickets, tests, root, log, no_tests, each = [], [], None, None, False, False
     it = iter(argv)
     for a in it:
         if a in ("--note", "--title", "--entry", "--docs"):
@@ -260,6 +286,8 @@ def parse(argv):
             tests.append(next(it, ""))
         elif a == "--no-tests":
             no_tests = True
+        elif a == "--each":
+            each = True
         elif a == "--log":
             log = next(it, None)
         elif a == "--root":
@@ -270,7 +298,7 @@ def parse(argv):
             raise SystemExit(__doc__)
     if not tickets:
         raise SystemExit(__doc__)
-    return tickets, opts, (tests or ([] if no_tests else DEFAULT_TESTS)), root, log
+    return tickets, opts, (tests or ([] if no_tests else DEFAULT_TESTS)), root, log, each
 
 
 def safe_output():
@@ -280,23 +308,110 @@ def safe_output():
             stream.reconfigure(encoding="utf-8", errors="replace")
 
 
+def run_tests(r, tests):
+    """Run the test sets once; returns the failing command, or None when all pass."""
+    for t in tests:
+        if r.run(t, shell=True).returncode != 0:
+            return t
+    return None
+
+
+def reset_to(r, sha):
+    """Move master back to `sha` (a commit of this batch), keeping other people's uncommitted edits."""
+    if r.git("reset", "--keep", sha).returncode != 0:
+        raise Stop(f"could not move master back to {sha[:8]} (uncommitted changes in the way)")
+
+
+def clean(r):
+    return not (merge_in_progress(r) or r.out("diff", "--cached", "--name-only").strip())
+
+
+def merge_batch(r, tickets, opts, tests):
+    """Merge every ticket (commits only), test once on the result, find the breaker by halving if it fails (T-437).
+    Returns ({tid: line}, failed)."""
+    lines, failed, ours = {}, False, {}
+    base = r.out("rev-parse", "HEAD").strip()
+    accepted = []          # infos merged and tested green (or untested while no test fails)
+    pending = list(tickets)
+    stopped_early = False
+    while pending:
+        merged = []        # infos of this round, each with the sha master had right after its merge commit
+        for tid in pending:
+            if stopped_early:
+                break
+            try:
+                merged.append(merge_one(r, tid, opts, [], ours))
+            except Stop as e:
+                failed = True
+                lines[tid] = f"stopped: {e}"
+                print(f"{tid}: {lines[tid]}", flush=True)
+                if not clean(r):
+                    print("master is not clean; stopping the batch.", flush=True)
+                    stopped_early = True
+        if stopped_early:   # master is not ours to test: keep what is committed, say it is untested, leave the worktrees
+            for info in merged:
+                lines[info["tid"]] = "merged, NOT tested (the batch stopped first); worktree and branch kept"
+                print(f"{info['tid']}: {lines[info['tid']]}", flush=True)
+            return lines, True
+        if not merged or not tests:
+            accepted += merged
+            break
+        bad = run_tests(r, tests)
+        if bad is None:
+            accepted += merged
+            break
+        failed = True
+        # the batch is red: halve it by testing the merged prefixes (the last one is the red state just seen)
+        lo, hi = 1, len(merged)
+        try:
+            while lo < hi:
+                mid = (lo + hi) // 2
+                reset_to(r, merged[mid - 1]["sha"])
+                if run_tests(r, tests):
+                    hi = mid
+                else:
+                    lo = mid + 1
+            breaker = merged[lo - 1]
+            reset_to(r, merged[lo - 2]["sha"] if lo > 1 else (accepted[-1]["sha"] if accepted else base))
+        except Stop as e:
+            for info in merged:
+                lines[info["tid"]] = f"stopped: {e}"
+                print(f"{info['tid']}: {lines[info['tid']]}", flush=True)
+            print("master is not clean; stopping the batch.", flush=True)
+            return lines, True
+        unmark_branch(r, breaker)
+        lines[breaker["tid"]] = f"stopped: test failed: {bad}; merge undone, master clean"
+        print(f"{breaker['tid']}: {lines[breaker['tid']]}", flush=True)
+        accepted += merged[:lo - 1]
+        pending = [i["tid"] for i in merged[lo:]]
+        # the tickets after the breaker are merged again on the good prefix and tested again
+    for info in accepted:
+        tid = info["tid"]
+        lines[tid] = finish(r, info)
+        print(f"{tid}: {lines[tid]}", flush=True)
+    return lines, failed
+
+
 def main(argv=None):
     safe_output()
-    tickets, opts, tests, root, log = parse(sys.argv[1:] if argv is None else argv)
+    tickets, opts, tests, root, log, each = parse(sys.argv[1:] if argv is None else argv)
     root = Path(root) if root else HERE.parent
     log = Path(log) if log else root / ".board" / f"merge_batch-{datetime.now():%Y%m%d-%H%M%S}.log"
     r = Runner(root, log)
     failed = False
-    for tid in tickets:
-        try:
-            line = merge_one(r, tid, opts, tests)
-        except Stop as e:
-            failed = True
-            line = f"stopped: {e}"
-        print(f"{tid}: {line}", flush=True)
-        if failed and (merge_in_progress(r) or r.out("diff", "--cached", "--name-only").strip()):
-            print("master is not clean; stopping the batch.", flush=True)
-            break
+    if each:
+        for tid in tickets:
+            try:
+                line = finish(r, merge_one(r, tid, opts, tests))
+            except Stop as e:
+                failed = True
+                line = f"stopped: {e}"
+            print(f"{tid}: {line}", flush=True)
+            if failed and not clean(r):
+                print("master is not clean; stopping the batch.", flush=True)
+                break
+    else:
+        _, failed = merge_batch(r, tickets, opts, tests)
     print(f"Full log: {log}")
     return 1 if failed else 0
 
