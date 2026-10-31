@@ -43,12 +43,12 @@ Write the proposals and their reasons in Content of Game loop architecture (miss
 
 ## Acceptance criteria
 
-- [ ] game/data/missions.json holds `total` 30 and exactly 5 fixed missions in the board's order: 4 s continuous drift, 10 alt drifts, 3 s airtime, 3 air 180s, 1 air 360, each with a trick type and an amount. (QA: pass / fail)
-- [ ] missions.json holds the generator's rules (allowed trick types, how amounts grow from mission 6 to 30, how many goals per mission), and every rule has a reason note and is marked as a proposal. (QA: pass / fail)
-- [ ] game/data/power_ups.json holds rev_charge, jump, bouncy_bumpers and rusty_overcoat, each with an icon path under game/art/power_ups/ and at least 1 tier, every tier's numbers marked as proposals; it also holds the proposal for what happens when every power-up is at its last tier. (QA: pass / fail)
-- [ ] A GUT data test loads both files through mission_data.gd and power_up_data.gd and checks: 5 fixed missions, a total of 30, every trick type in the rules is one of a listed known set, the four power-ups present, and at least 1 tier each; it passes. (QA: pass / fail)
-- [ ] Game loop architecture, Content, and Drifting, Content, describe the proposals and their reasons; the result notes list the trick ids used and say there is nothing to picture (no screenshots). (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] game/data/missions.json holds `total` 30 and exactly 5 fixed missions in the board's order: 4 s continuous drift, 10 alt drifts, 3 s airtime, 3 air 180s, 1 air 360, each with a trick type and an amount. (QA: pass)
+- [ ] missions.json holds the generator's rules (allowed trick types, how amounts grow from mission 6 to 30, how many goals per mission), and every rule has a reason note and is marked as a proposal. (QA: pass)
+- [ ] game/data/power_ups.json holds rev_charge, jump, bouncy_bumpers and rusty_overcoat, each with an icon path under game/art/power_ups/ and at least 1 tier, every tier's numbers marked as proposals; it also holds the proposal for what happens when every power-up is at its last tier. (QA: pass)
+- [ ] A GUT data test loads both files through mission_data.gd and power_up_data.gd and checks: 5 fixed missions, a total of 30, every trick type in the rules is one of a listed known set, the four power-ups present, and at least 1 tier each; it passes. (QA: pass)
+- [ ] Game loop architecture, Content, and Drifting, Content, describe the proposals and their reasons; the result notes list the trick ids used and say there is nothing to picture (no screenshots). (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -77,3 +77,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Tests:** GUT 2319/2319 passed (191 scripts, includes the 5 new); `python -m unittest discover -s game/tools`: 767 tests OK (1 skipped); `python -m unittest discover -s tools`: NOT finished. It ran over 10 minutes (about 105 dots, no failure shown, then it crawled), so I stopped it. This ticket changes nothing under `tools/`, so QA or the merge script should run that set.
 
 **Screenshots:** none. Data and loaders only, nothing is on screen.
+
+**QA round 1:** all six criteria pass. Data files read and match the criteria. GUT 191 scripts, 2319/2319 pass (incl. the 5 in test_mission_data.gd). `game/tools` unittest: 767 OK (1 skipped). `tools/` unittest: 614 OK (584 s; the Developer's note that it did not finish was only slowness). `tools/qa_check.py` was refused (not pre-approved), so skipped; the checks were done by hand.
