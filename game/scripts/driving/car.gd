@@ -270,10 +270,21 @@ func _bounce(hit: KinematicCollision2D) -> void:
 	var impact := _reflect(n)
 	if not _contacts.has(key) and not same:
 		hit_obstacle.emit(hit.get_collider(), hit.get_collider_shape_index(), n, impact)
+	_end_drift_on_hit(impact)
 	_contacts[key] = n
 	_contact_bodies[key] = [hit.get_collider(), hit.get_collider_shape_index()]
 	if impact > 0.0:
 		_remember_bounce(key, n)
+
+
+## Task T-438 (Drifting, Decisions, "A wall hit ends the drift"): a hit into a wall ends the drift
+## in progress, as if the player had let go. Called after hit_obstacle, so a run's crash has
+## already paid the drift in progress (TrickDetector.settle()) before its combo cut; with no run
+## the trick detector pays it when it sees the drift end, on this same step (the time up to the
+## hit). The keys decide the next step, so a player still drifting starts a new drift at once.
+func _end_drift_on_hit(impact: float) -> void:
+	if impact > 0.0:
+		model.is_drifting = false
 
 
 ## Reflects the velocity off a surface with outward normal n (see _bounce) and
@@ -331,6 +342,7 @@ func _bounce_off_side(side: Dictionary) -> void:
 	var impact := _reflect(n)
 	if not _side_contacts.has(key) and not same:
 		hit_obstacle.emit(ground, side.area, n, impact)
+	_end_drift_on_hit(impact)
 	_side_contacts[key] = {"point": side.point, "normal": n}
 	if impact > 0.0:
 		_remember_bounce(key, n)

@@ -1,7 +1,7 @@
 ---
 id: T-438
 title: A wall hit ends the drift
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -55,6 +55,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-31, Open → In progress
+
+Started: the Driving & Drift Agent builds it in C:\solid-carbide-worktrees\T-438.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -62,3 +66,15 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Driving & Drift Agent, 2026-10-31
+
+Built. `car.gd`: new `_end_drift_on_hit(impact)`, called in `_bounce()` and `_bounce_off_side()` right after `hit_obstacle` is emitted: any bounce with a speed into the surface clears `model.is_drifting` on that step. Drift amount fades as when the player lets go; keys untouched, so holding W+A starts a new drift on the next step. No change to `car_model.gd`.
+
+- Order (asked in the ticket): today's crash code (T-315) pays the trick first, then cuts the combo (`crash_pays_trick_first` true). Unchanged: in a run, `hit_obstacle` -> `collision()` -> `crashed` -> `settle_tricks()` pays the drift, then the 50% cut applies once. Without a run, the trick detector pays when it sees the drift end on the same step. Either way it pays once, for the time of the steps up to the hit (the hit step itself is not counted).
+- Proposal for the playtest: it ends on any bounce with speed into the wall, including a re-touch of the same wall while a bounce runs (no second `hit_obstacle`, so no second cut, but the new drift would end again). A knockback into a wall ends it too.
+- Tests: new `game/tests/unit/test_wall_hit_ends_drift.gd` (3 tests, real car + RunState wired as run.gd does): drift ends on the hit step, pays once for the time up to the hit, combo cut once, run drift seconds reset; a new drift starts on the step after the bounce; a drift with no wall pays once when the player lets go. `test_wall_bounce.gd` unchanged and passing (14/14).
+- Test sets: game/tools python 767 tests OK (1 skipped); tools python 585 OK; GUT 189 scripts, 2302 tests, all pass, 1271201 asserts.
+- Docs: `docs/drifting.md` (Content, Collisions; crash-pays section) and `game/docs/driving/collisions.md` (Bounce). The Decision line was already in place.
+- Screenshots: not captured (headless only; no movie run). Skipped; the board plays it directly.
+- Nothing under game/data/levels/ touched.
