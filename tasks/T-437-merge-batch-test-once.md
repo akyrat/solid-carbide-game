@@ -14,7 +14,7 @@ depends_on: []
 documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, tools/merge_batch.py, tools/test_merge_batch.py, game/tools/run_tests.sh]
 files_expected_to_change: [tools/merge_batch.py, tools/test_merge_batch.py, game/tools/run_tests.sh]
-model: opus
+model: sonnet
 qa_rounds: 0
 ---
 
