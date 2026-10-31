@@ -1,7 +1,7 @@
 ---
 id: T-458
 title: HUD: the current mission as a notebook page on the left, with checkboxes, live counts and crossing off (placeholder art)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/hud.gd, game/scripts/hud/hud_style.gd, game/scenes/hud/hud.tscn, game/scripts/run/missions.gd, game/data/screen_texts.json]
 files_expected_to_change: [game/scripts/hud/mission_page.gd, game/scripts/hud/hud.gd, game/scenes/hud/hud.tscn, game/tests/unit/hud/test_hud_mission_page.gd, game/tests/fixtures/mission_page_demo.gd, game/tests/fixtures/mission_page_demo.tscn, game/docs/hud-and-menus/hud.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-458.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -86,3 +90,4 @@ UI Agent, 2026-10-31.
 **Notes for the playtest:** the rules on the page do not line up with the text lines (placeholder); a long line wraps (the stroke runs along each wrapped line); the page's place and size are proposals. Two fixtures extra to the expected list: `mission_page_demo_ticked.tscn` and `mission_page_demo_next.tscn`. Documents updated: `docs/hud-and-menus.md`, `game/docs/hud-and-menus/hud.md`. No PixelLab generations, no style loop (placeholder drawn in code; text is T-456's). No refusals.
 
 **QA round 1 (2026-10-31):** all six criteria pass. Godot GUT: 196 scripts, 2379 tests, 2379 passing (10/10 in test_hud_mission_page.gd). `python -m unittest discover tools`: 614 OK. Screenshots viewed: half-done (Alt drifts 5/10), ticked and crossed-off, next mission; page clear of hearts, coins and clock. The third set (docs staleness) is run by the runner. Refused: `python tools/qa_check.py` (not on the pre-approved list), so its paperwork lines and final mark check were not run; I checked the same things by hand.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
