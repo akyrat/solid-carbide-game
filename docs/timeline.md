@@ -2785,3 +2785,8 @@ Entry format:
 - Decision or change: Tooling (the board, 2026-10-31): merge_batch.py runs the three test sets once per batch instead of after every ticket; if they fail it finds the breaking ticket by halving the batch, merges the rest and stops only that one. --each keeps the old ticket-by-ticket mode. The Godot test set's default time limit is 1500 s (GUT_TIME_LIMIT still overrides it). QA passed; merged straight after QA.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-437
+
+## 2026-10-31: A wall hit ends the drift
+- Decision or change: A wall hit ends a drift in progress: the drift pays LONG DRIFT! once for its time up to the hit, then the hit's combo cut applies; a new drift can start after the bounce. The board played it: "LGTM".
+- Documents touched: `docs/drifting.md`
+- Tasks: T-438

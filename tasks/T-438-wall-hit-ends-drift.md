@@ -1,7 +1,7 @@
 ---
 id: T-438
 title: A wall hit ends the drift
-status: open
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/docs/driving/collisions.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, game/docs/driving/collisions.md, tasks/T-435-wall-bounce-not-stick.md, game/scripts/driving/car.gd, game/scripts/driving/car_model.gd]
 files_expected_to_change: [game/scripts/driving/car_model.gd, game/scripts/driving/car.gd, game/tests/unit/, game/docs/driving/collisions.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,17 +43,25 @@ The board's review: drift into walls, head-on and glancing, and see the drift en
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test drives the real car into a wall while drifting and asserts the drift ends on the hit step: the drift stops counting time, it pays once for the time up to the hit, and the hit's combo cut is still applied once. (QA: pass / fail)
-- [ ] A test shows a drift that never touches a wall behaves as before (ends and pays when the player ends it). (QA: pass / fail)
-- [ ] A test shows the player can start a new drift after the bounce. (QA: pass / fail)
-- [ ] The T-435 wall bounce tests still pass unchanged. (QA: pass / fail)
-- [ ] docs/drifting.md (Content) and game/docs/driving/collisions.md describe that a wall hit ends the drift. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test drives the real car into a wall while drifting and asserts the drift ends on the hit step: the drift stops counting time, it pays once for the time up to the hit, and the hit's combo cut is still applied once. (QA: pass)
+- [ ] A test shows a drift that never touches a wall behaves as before (ends and pays when the player ends it). (QA: pass)
+- [ ] A test shows the player can start a new drift after the bounce. (QA: pass)
+- [ ] The T-435 wall bounce tests still pass unchanged. (QA: pass)
+- [ ] docs/drifting.md (Content) and game/docs/driving/collisions.md describe that a wall hit ends the drift. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Open → In progress
+
+Started: the Driving & Drift Agent builds it in C:\solid-carbide-worktrees\T-438.
+
+### 2026-10-31, Needs playtest
+
+QA passed 7/7. Ready for your playtest: open C:\solid-carbide-worktrees\T-438\game\project.godot, drift into walls head-on and glancing; the drift should end and pay LONG DRIFT! at the hit.
 
 ## Style review
 
@@ -62,3 +70,24 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Driving & Drift Agent, 2026-10-31
+
+Built. `car.gd`: new `_end_drift_on_hit(impact)`, called in `_bounce()` and `_bounce_off_side()` right after `hit_obstacle` is emitted: any bounce with a speed into the surface clears `model.is_drifting` on that step. Drift amount fades as when the player lets go; keys untouched, so holding W+A starts a new drift on the next step. No change to `car_model.gd`.
+
+- Order (asked in the ticket): today's crash code (T-315) pays the trick first, then cuts the combo (`crash_pays_trick_first` true). Unchanged: in a run, `hit_obstacle` -> `collision()` -> `crashed` -> `settle_tricks()` pays the drift, then the 50% cut applies once. Without a run, the trick detector pays when it sees the drift end on the same step. Either way it pays once, for the time of the steps up to the hit (the hit step itself is not counted).
+- Proposal for the playtest: it ends on any bounce with speed into the wall, including a re-touch of the same wall while a bounce runs (no second `hit_obstacle`, so no second cut, but the new drift would end again). A knockback into a wall ends it too.
+- Tests: new `game/tests/unit/test_wall_hit_ends_drift.gd` (3 tests, real car + RunState wired as run.gd does): drift ends on the hit step, pays once for the time up to the hit, combo cut once, run drift seconds reset; a new drift starts on the step after the bounce; a drift with no wall pays once when the player lets go. `test_wall_bounce.gd` unchanged and passing (14/14).
+- Test sets: game/tools python 767 tests OK (1 skipped); tools python 585 OK; GUT 189 scripts, 2302 tests, all pass, 1271201 asserts.
+- Docs: `docs/drifting.md` (Content, Collisions; crash-pays section) and `game/docs/driving/collisions.md` (Bounce). The Decision line was already in place.
+- Screenshots: not captured (headless only; no movie run). Skipped; the board plays it directly.
+- Nothing under game/data/levels/ touched.
+- 2026-10-31, in-progress → in-qa: Built; all three test sets pass; ready for QA.
+
+Screenshots (added before QA): `art-archive/T-438/screenshots/wall_hit_ends_drift_frame1.png` (1 frame after the hit: the drift has ended, the car bounced off the boulder, LONG DRIFT! and COMBO BROKEN! both shown) and `wall_hit_ends_drift_frame10.png` (10 frames after the hit, popups stacked, tyre marks of the drift stop at the hit). Fixture: `game/tests/fixtures/wall_hit_drift.tscn` (the T-315 crash fixture with the tutorial slides off); the log shows the LONG DRIFT! payment (1.72 s) and COMBO BROKEN on the same step as the hit.
+
+### QA, 2026-10-31
+
+All seven criteria pass. qa_check: tests (3 sets, GUT_TIME_LIMIT=1500, fixture included), documents, screenshots all PASS. test_wall_hit_ends_drift.gd covers the hit, the unchanged drift and the new drift after the bounce; test_wall_bounce.gd passes unchanged; docs/drifting.md and collisions.md describe the rule; game/data/levels untouched.
+- 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31)
