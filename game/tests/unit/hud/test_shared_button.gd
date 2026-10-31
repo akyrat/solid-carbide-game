@@ -120,9 +120,7 @@ func _look(b: Button, state: String) -> Array:
 		"pressed": "font_pressed_color", "disabled": "font_disabled_color"}[state]
 	var look := [b.get_theme_color(font_key)]
 	if box is StyleBoxTexture:
-		look += [box.texture, box.modulate_color, box.content_margin_top]
-	elif box is StyleBoxFlat:
-		look += ["ring", box.border_color, box.border_width_left]
+		look += [box.texture, box.content_margin_top]
 	return look
 
 
@@ -142,9 +140,21 @@ func test_the_five_states_each_look_different() -> void:
 	assert_eq(pressed.texture, HudStyle.button_plate("pressed"))
 	assert_eq(pressed.content_margin_top - normal.content_margin_top, float(HudStyle.BUTTON_PRESS_DROP))
 	assert_eq(pressed.content_margin_bottom - normal.content_margin_bottom, -float(HudStyle.BUTTON_PRESS_DROP))
-	assert_gt(hover.modulate_color.r, normal.modulate_color.r, "hovered is brighter")
-	assert_lt(disabled.modulate_color.r, normal.modulate_color.r, "disabled is darker")
-	assert_true(b.get_theme_stylebox("focus") is StyleBoxFlat, "keyboard selection is a ring over the plate")
+	# T-447: every state is its own plate picture, no tint.
+	for s in ["normal", "hover", "pressed", "disabled", "focus"]:
+		var box := b.get_theme_stylebox(s) as StyleBoxTexture
+		assert_eq(box.texture, HudStyle.button_plate(s), "%s plate" % s)
+		assert_eq(box.modulate_color, Color.WHITE, "%s: no tint" % s)
+	assert_eq(hover.texture, HudStyle.button_plate("hover"))
+	assert_eq(disabled.texture, HudStyle.button_plate("disabled"))
+	var h := hover.texture.get_image().get_pixelv(hover.texture.get_size() / 2)
+	var n0 := normal.texture.get_image().get_pixelv(normal.texture.get_size() / 2)
+	var d := disabled.texture.get_image().get_pixelv(disabled.texture.get_size() / 2)
+	assert_gt(h.get_luminance(), n0.get_luminance(), "hovered is brighter")
+	assert_lt(d.get_luminance(), n0.get_luminance(), "disabled is darker")
+	var ring := b.get_theme_stylebox("focus") as StyleBoxTexture
+	assert_not_null(ring, "keyboard selection is a ring plate over the state's plate")
+	assert_eq(ring.texture.get_image().get_pixelv(ring.texture.get_size() / 2).a, 0.0, "open in the middle")
 
 
 func test_the_states_render_differently() -> void:
@@ -168,7 +178,6 @@ func test_colours_font_and_outline_come_from_the_hud_style_sheet() -> void:
 	assert_eq(b.get_theme_constant("outline_size"), 6, "the sheet's text outline (rule 2)")
 	assert_eq(HudStyle.BUTTON_SIZE % 2, 0, "even text size (rule 1)")
 	assert_eq(HudStyle.BUTTON_SMALL_SIZE % 2, 0)
-	assert_eq((b.get_theme_stylebox("focus") as StyleBoxFlat).border_color, HudStyle.WHITE)
 	# The plate's colours are the sheet's: its outline near-black and no Greenbull green (rule 6).
 	var img := HudStyle.button_plate("normal").get_image()
 	var greenbull := [Color8(104, 220, 96), Color8(247, 208, 52), Color8(12, 76, 44)]
@@ -187,8 +196,8 @@ func test_colours_font_and_outline_come_from_the_hud_style_sheet() -> void:
 func test_the_plate_is_a_9_slice_at_2x() -> void:
 	var box := HudStyle.button_box("normal")
 	assert_eq(box.texture_margin_left, 6.0)
-	assert_eq(box.texture_margin_top, 8.0)
-	assert_eq(box.texture_margin_bottom, 10.0)
+	assert_eq(box.texture_margin_top, 6.0)
+	assert_eq(box.texture_margin_bottom, 6.0)
 	assert_eq(box.axis_stretch_horizontal, StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH)
 
 
@@ -211,7 +220,7 @@ func test_checkbox_matches_the_button() -> void:
 	assert_eq(c.get_theme_font("font"), HudStyle.comic_font())
 	assert_eq(c.get_theme_color("font_color"), HudStyle.LABEL_COLOR)
 	assert_eq(c.get_theme_color("font_hover_color"), HudStyle.WHITE)
-	assert_true(c.get_theme_stylebox("focus") is StyleBoxFlat, "the same keyboard ring")
+	assert_eq((c.get_theme_stylebox("focus") as StyleBoxTexture).texture, HudStyle.button_plate("focus"), "the same keyboard ring")
 	var off := c.get_theme_icon("unchecked").get_image()
 	var on := c.get_theme_icon("checked").get_image()
 	assert_eq(off.get_size(), Vector2i(28, 28))
