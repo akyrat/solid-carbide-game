@@ -1,7 +1,7 @@
 ---
 id: T-372
 title: The board's level from the level creator becomes the game's map
-status: open
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/docs/level/]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/level-creator.md, game/docs/level/elevation-sample-map.md, game/scripts/game/game_flow.gd]
 files_expected_to_change: [game/data/level/, game/scripts/game/, game/tests/unit/, game/docs/level/, docs/level-design.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,16 +43,32 @@ The board's review: press Start and play a run on your level.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Start on the main menu plays the board's level (a copy in game/data/level/), and the board's original file in game/data/levels/ is unchanged and not committed (test for the layout path; git status). (QA: pass / fail)
-- [ ] The level passes `python game/tools/check_level.py` and `python game/tools/check_height_data.py`, with the output in the result notes. (QA: pass / fail)
-- [ ] A scripted run on it builds the map, spawns minions that reach the car, and the kaiju and gift packs land (tests), or the result notes list what the level lacks. (QA: pass / fail)
-- [ ] Level design, Content and game/docs/level/ say which file the game plays. (QA: pass / fail)
-- [ ] Screenshots of a run on the level are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] Start on the main menu plays the board's level (a copy in game/data/level/), and the board's original file in game/data/levels/ is unchanged and not committed (test for the layout path; git status). (QA: pass)
+- [ ] The level passes `python game/tools/check_level.py` and `python game/tools/check_height_data.py`, with the output in the result notes. (QA: pass)
+- [ ] A scripted run on it builds the map, spawns minions that reach the car, and the kaiju and gift packs land (tests), or the result notes list what the level lacks. (QA: pass)
+- [ ] Level design, Content and game/docs/level/ say which file the game plays. (QA: pass)
+- [ ] Screenshots of a run on the level are in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; QA rerun: game/tools 752 OK, tools 582 OK, GUT all passed)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Your level kaiju_city.json is going into the game: the Level/Challenge agent copies it into the game's own data and makes Start play it. Your original stays untouched.
+
+### 2026-10-30, In QA
+
+Your map is in: Start plays kaiju_city_map.json (an exact copy). Three level gaps for you: roof-13 has no ramp up, no minion spawns around a few rooftops, kaiju alert signs misplaced. QA running.
+
+### 2026-10-30, Needs playtest
+
+QA passed (6/6). Ready for you to play: Start runs Kaiju City.
+
+### 2026-10-30, Needs playtest → Done
+
+LGTM from you. Merges once master's tests are green (after T-436).
 
 ## Style review
 
@@ -60,4 +76,49 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-30, open → in-progress: The board handed over its level: game/data/levels/kaiju_city.json in the main checkout (C:\solid-carbide-game), finished 2026-10-30.
+- 2026-10-30, Level/Challenge Design Agent, done (to QA):
+  - **The copy:** `game/data/level/kaiju_city_map.json`, copied once with `cp -n` from `C:\solid-carbide-game\game\data\levels\kaiju_city.json`. It is byte for byte the same file (sha256 `169e1b24681d9f3816b8e7e2c216e05befd9c75b9810103090ffd5312d10ca69` for both). The original was only read: it was not written, moved or committed, and no `game/data/levels/` folder exists in this worktree. The copy's content is unchanged (no fixes).
+  - **Start plays it:** `GameFlow.GAME_MAP_PATH` = `res://data/level/kaiju_city_map.json` (`game/scripts/game/game_flow.gd`). `start_run()` (main menu Start, tutorial Start, pause Restart) passes it to `add_run`. No format change was needed: the run already reads creator levels (T-230, T-239, T-280, T-391). `run.gd`'s default stays `elevation_sample_map.json`, so the tests, the F6 run scene and the creator are unchanged. The creator's Play still plays its own levels.
+  - **Checks** (from the repo root): `python game/tools/check_level.py game/data/level/kaiju_city_map.json` printed `OK` (exit 0). `python game/tools/check_height_data.py game/data/level/kaiju_city_map.json` printed `OK` (exit 0). Since the file has a spawn point, check_level also checks it: (1, 1), heading 270, on a road at street level.
+  - **Tests:** a new file, `game/tests/unit/game/test_game_map.gd` (12 tests), checks that:
+    - Start and Restart play the file, and the sample map is still the run's default.
+    - The map holds the file's 42 buildings, 13 rooftops, 28 ramps, 82 props and 9 boulders, and draws the file's own ground.
+    - The car starts on the spawn point, on a road.
+    - Minions spawn and reach the parked car (13 spawned, 10 reached it in 30 s).
+    - Scripted chase: the car is parked on the spawn point and then on each rooftop's centre, with 12 minions on the nearest street spots. Minions reach the car at every stop (7 to 11 of 12) except roof-13 (0 of 12, see finding 1 below).
+    - The kaiju arrives at boss time on open street and walks to the car, and its meteors find landing spots.
+    - Gift packs land on open road.
+    - A report test lists where minions can't spawn.
+    - Three existing tests changed for the new behaviour: `test_creator_end_to_end.gd` (`test_the_main_menu_run_uses_the_game_map`), `test_play_level.gd` (`test_a_run_from_the_main_menu_plays_the_game_map`) and `test_screen_flow.gd` (`test_start_begins_a_fresh_run`: the car now starts on the level's spawn point).
+  - **What the level lacks or does oddly, for the Project Lead (reported, not changed):**
+    1. **roof-13** (height 6, x -60..-12, y -46..-20) has no ramp up to it. Ramps 18 to 22 and ramp 25 all sit on top of it and climb from 6 to 8. The car can only reach it from the air, and minions can't follow the car there (0 of 12 reached it in 40 s).
+    2. **No minions spawn round some rooftops.** Minions spawn only on the street, on a ring just beyond the screen's edge. With the car on roof-1 (west of the centre) or in the north-west rooftop cluster (roof-3, roof-6, roof-7, roof-10 and nearby places), that ring lies wholly on rooftops and buildings, so no new minions come until the car gets near a street. This happened at 7 of the 214 car places tried. The rooftop screenshot fixture still had 0 minions after 15 s.
+    3. **Kaiju alert signs.** The game's two standing kaiju alert signs (T-130, `data/level/kaiju_signs.json`) are positioned for the elevation sample map's blocks. On this map they are drawn at those same places, (-66.75, 41.25) beside roof-11 and (95.25, 95.25), which aren't part of any block here. The hanging banners find no matching skyscraper and are not drawn. Whether to keep, move or turn off the signs on this map is the board's call.
+    - The kaiju, its meteors and the gift packs all have room to land near the spawn point. The navigation finds paths onto every other rooftop.
+  - **Proposals for the playtest:** the file name `kaiju_city_map.json`. The car's start is the level's own spawn point, as the board placed it (not changed).
+  - **Screenshots** in `art-archive/T-372/screenshots/`, taken from `game/tests/fixtures/game_map_run_{start,wide,rooftop,kaiju,gift}.tscn` (a run started from Start, with the car parked):
+    - `start.png`: the spawn point, with minions at the car.
+    - `wide.png`: the widest zoom.
+    - `rooftop.png`: the car on roof-1 with no minions (finding 2).
+    - `kaiju.png`: the kaiju just arrived beside the car.
+    - `gift.png`: the helicopter and a landed gift pack.
+  - **Test sets:**
+    - `python -m unittest discover -s game/tools -p "test_*.py"`: 752 tests OK (1 skipped).
+    - `python -m unittest discover -s tools -p "test_*.py"`: 582 tests OK.
+    - `bash game/tools/run_tests.sh`: TESTS PASSED, 179 scripts, 2201 tests, 2201 passing, 1264783 asserts, 889 s.
+    - The suite is now close to the script's default 900 s time limit (on a busy machine). One run hit the limit and was stopped (exit 124), so the passing run used the script's documented override, `GUT_TIME_LIMIT=1500`. `test_game_map.gd` adds about 60 s, mostly the scripted chase. The Project Lead may want to raise the default.
+  - **Documents affected:**
+    - `docs/level-design.md`: a new Content section, "The game's map", and the Decision's last sentence now names the file.
+    - `game/docs/level/game-map.md` (new).
+    - `game/docs/level/level-creator.md`.
+    - `game/docs/game-loop/the-run.md`.
+    - `game/README.md` (index).
+- 2026-10-30, in-progress → in-qa: Start plays game/data/level/kaiju_city_map.json (byte copy of the board's kaiju_city.json). check_level and check_height_data OK. Tests: game/tools 752 OK, tools 582 OK, GUT 2201/2201. Findings: roof-13 has no ramp up; no minion spawns round some rooftops; the kaiju alert signs sit at the sample map's places.
+- 2026-10-30, in-qa → needs-playtest: QA passed all 6 criteria. Press Start and play a run on your level.
+- 2026-10-30, needs-playtest → done: T-372 LGTM by the board (2026-10-30)
+- 2026-10-31, Level/Challenge Design Agent, merge fix (the merge into master was stopped by one red test):
+  - Merged `master` again (T-415): no conflicts.
+  - **Root cause:** `run.gd` (T-420, spawn start) moves the car to `LevelSpawn`'s start whenever `current_layout_path()` is not the elevation sample map, even when `use_elevation_map` is false and the map is built from the MVP layout instead of that file. Since T-372 the menu's Start sets `layout_path` to `kaiju_city_map.json`, so `test_the_car_bounces_off_a_meteor_boulder_in_a_run` (it starts from the menu, then switches to the MVP map) got the MVP layout's snapped centre, off the car's own (0, 0). The car hit the meteor boulder off centre, glanced past it and drove on to y = -54.8.
+  - **Fix (code):** `game/scripts/run/run.gd`: the file's spawn rule now applies only when the map really is built from the file (`use_elevation_map and current_layout_path() != ELEVATION_LAYOUT_PATH`). A layout with its own spawn still uses it, as before. **Test:** the test now also checks that the car starts at (0, 0) with its nose up, so this regression shows up directly. The test was not made looser.
+  - **Test sets:** game/tools 752 OK (1 skipped); tools 585 OK; GUT TESTS PASSED, 183 scripts, 2251/2251, 776 s (`GUT_TIME_LIMIT=1500`).

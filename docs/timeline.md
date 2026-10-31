@@ -2775,3 +2775,8 @@ Entry format:
 - Decision or change: The car bounces off walls, buildings, raised areas' sides, the map's edges and boulders even with W held, scaled by how hard it hits, up to a maximum. The board played it: "LGTM"; its follow-up is T-438 (a wall hit ends the drift).
 - Documents touched: `docs/drifting.md`
 - Tasks: T-435
+
+## 2026-10-31: Kaiju City is the game's map
+- Decision or change: The board's hand-built level from the level creator, Kaiju City, is the map the game's Start plays (an exact copy, game/data/level/kaiju_city_map.json), in place of the elevation sample map; the car starts at the level's spawn point. Gaps found: roof-13 has no ramp up, no minion spawns round some rooftops, the kaiju alert signs sat at the old map's places (moved by T-439). The board played it: "LGTM".
+- Documents touched: `docs/level-design.md`
+- Tasks: T-372

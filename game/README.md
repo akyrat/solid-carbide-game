@@ -67,6 +67,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/level/mvp-map.md](docs/level/mvp-map.md): MVP map. The MVP map's scene, data and see-through buildings.
 - [docs/level/elevation-test-scene.md](docs/level/elevation-test-scene.md): Elevation test scene. Ground-height data, the query, the car's height, the test scene.
 - [docs/level/elevation-sample-map.md](docs/level/elevation-sample-map.md): Elevation sample map. The sample map with rooftops and ramps.
+- [docs/level/game-map.md](docs/level/game-map.md): The game's map. The board's level that the main menu's Start plays (T-372).
 - [docs/level/level-creator.md](docs/level/level-creator.md): Level creator. Storage, editor, side panel, rotate, snapping, saving.
 - [docs/level/level-creator-pieces.md](docs/level/level-creator-pieces.md): Level creator: pieces and tools. Road brush, ramps, banners, thread the needle, spawn, any-size rooftops, props, road pieces.
 
