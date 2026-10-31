@@ -2855,3 +2855,8 @@ Entry format:
 - Decision or change: Fixed game/art/menu/splash.json (unescaped Windows path) after T-445 merged without tests and turned master's Godot tests red.
 - Documents touched: game/art/menu/splash.json
 - Tasks: T-450
+
+## 2026-10-31: The splash record is valid JSON again
+- Decision or change: Fixed game/art/menu/splash.json (unescaped Windows path, written by T-445) after T-445 merged without tests and turned master's Godot tests red. Lesson: board-approved art still needs its records checked.
+- Documents touched: none
+- Tasks: T-450

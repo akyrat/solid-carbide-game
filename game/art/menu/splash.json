@@ -1,7 +1,7 @@
 {
   "file": "splash.png",
   "task": "T-445",
-  "source": "the board's own PixelLab picture, made outside the studio: C:\Users\andre\Downloads\pixellab-Make-this-more-cinematic-and-a-1793446317815.png",
+  "source": "the board's own PixelLab picture, made outside the studio: C:/Users/andre/Downloads/pixellab-Make-this-more-cinematic-and-a-1793446317815.png",
   "note": "Board-approved art, copied byte for byte (no style loop, no PixelLab call by the studio). Replaces T-433's splash (v2 of its style loop), archived in art-archive/T-445/splash_T-433_v2_previous.png with its record splash_T-433_v2_previous.json.",
   "image": {"width": 320, "height": 180},
   "sha256": "46c5be910d86cea0688e5fa1d87ea0f2647dae32968aeea6e1f4866f43edad9d",
