@@ -2835,3 +2835,8 @@ Entry format:
 - Decision or change: Script-drawn button plates for each state, in the HUD style sheet's look, replace the shared button's placeholder.
 - Documents touched: docs/visual-style.md
 - Tasks: T-447
+
+## 2026-10-31: A browser build on a private itch.io page
+- Decision or change: The game is published as a browser build to the board's private, password-protected itch.io page with one script (tools/publish_itch.py, butler), run by the Project Lead only when the board asks.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-448
