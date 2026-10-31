@@ -56,6 +56,8 @@ const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The placeholder boost effect (task T-008, boost_effect.gd).
 const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
+## The Rev Charge placeholder effect (task T-460).
+const RevChargeEffectScript := preload("res://scripts/driving/rev_charge_effect.gd")
 ## The wreck's smoke and flames (task T-360, wreck_effect.gd; placeholders in code).
 const WreckEffectScript := preload("res://scripts/run/wreck_effect.gd")
 ## The minions (task T-044): spawning, chasing, contact damage, coins.
@@ -128,6 +130,10 @@ var drift_smoke: Node2D
 ## The placeholder boost effect (task T-008): streaks behind the car when W
 ## snaps it to cruise speed. Child "BoostEffect" of the View, under the car.
 var boost_effect: Node2D
+## The Rev Charge placeholder effect (task T-460, rev_charge_effect.gd): a glow at
+## the rear while charging, speed lines while boosting. Child "RevChargeEffect" of
+## the View, drawn over the car.
+var rev_charge_effect: Node2D
 ## The wreck's smoke and flames (task T-360): on the drawn car, above it, from
 ## the last heart to the run's end. Child "WreckEffect" of the View.
 var wreck_effect: Node2D
@@ -234,6 +240,13 @@ func _ready() -> void:
 	view_root.add_child(boost_effect)
 	view_root.move_child(boost_effect, car_sprite.get_index())  # under the car
 
+	rev_charge_effect = RevChargeEffectScript.new()
+	rev_charge_effect.name = "RevChargeEffect"
+	rev_charge_effect.view_transform = ISO_TRANSFORM
+	view_root.add_child(rev_charge_effect)
+	# Over the car: under it, the car's own sprite hides most of the rear glow.
+	view_root.move_child(rev_charge_effect, car_sprite.get_index() + 1)
+
 	level_up_burst = LevelUpBurstScene.instantiate()
 	level_up_burst.name = "LevelUpBurst"
 	view_root.add_child(level_up_burst)
@@ -316,6 +329,8 @@ func _ready() -> void:
 	power_up_screen.setup(power_up_offers)
 	level_up_screen.hold = power_up_offers.is_showing
 	power_up_offers.closed.connect(level_up_screen.show_held)
+	# Rev Charge (T-460): the car's charge follows the owned tier.
+	state.power_ups_changed.connect(_apply_rev_charge_tier)
 	# The gift pack drop (T-144): a helicopter drops a package per level-up.
 	gift_drops = GiftDropsScript.new()
 	gift_drops.name = "GiftDrops"
@@ -378,6 +393,7 @@ func _build_world() -> void:
 	# Back to the street's drawing until sync_view() places them (T-206).
 	drift_smoke.position = Vector2.ZERO
 	boost_effect.position = Vector2.ZERO
+	rev_charge_effect.position = Vector2.ZERO
 	car_sprite.set_in_air(false)
 	# Drift marks go on the ground: right after the ground tiles in the map's
 	# drawing, so the buildings, boulders and the car (View) are drawn over them.
@@ -430,6 +446,9 @@ func _build_world() -> void:
 	# Boost effect (T-008): when W snaps the car to cruise speed.
 	boost_effect.clear()
 	boost_effect.bind(car)
+	# Rev Charge (T-460): the tier owned now, and its placeholder effect.
+	_apply_rev_charge_tier()
+	rev_charge_effect.bind(car)
 	# Likes (XP): every completed challenge, preset or meteor (T-037).
 	map.challenge_completed.connect(state.challenge_completed)
 	map.meteor_challenge_completed.connect(state.challenge_completed)
@@ -592,6 +611,7 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
 	drift_smoke.position = lift
 	boost_effect.position = lift
+	rev_charge_effect.position = lift
 	view_root.z_index = elevation.z_for(units, car.rotation, car.height)
 	shadow.z_index = elevation.shadow_z_for(units, car.rotation, car.height, ground_h)
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
@@ -611,6 +631,13 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 func set_zoom(orthographic_size: float) -> void:
 	zoom = orthographic_size
 	camera_follow.set_base_size(orthographic_size)  # applies the zoom
+
+
+## Rev Charge (task T-460): gives the car the owned tier (0 = not owned; a new run's
+## power-ups start at 0, RunState.start_run).
+func _apply_rev_charge_tier() -> void:
+	if car != null and is_instance_valid(car):
+		car.rev_charge.set_tier(state.power_up_tier("rev_charge"))
 
 
 ## Reads the saved camera options (task T-123) and applies them at once.

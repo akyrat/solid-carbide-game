@@ -21,6 +21,7 @@ extends CharacterBody2D
 const CarModel := preload("res://scripts/driving/car_model.gd")
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const CarHeight := preload("res://scripts/driving/car_height.gd")
+const RevCharge := preload("res://scripts/driving/rev_charge.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -76,6 +77,10 @@ signal airtime_trick(seconds: float)
 var model = CarModel.new()
 ## Watches the driving for tricks (task T-079). It only reads the model.
 var tricks = TrickDetector.new()
+## Rev Charge (task T-460, rev_charge.gd): W+S charges a boost that fires when
+## S is released. Does nothing until rev_charge.set_tier() gives it a tier > 0
+## (the run sets it from RunState.power_up_tier("rev_charge")).
+var rev_charge = RevCharge.new()
 ## When false, no tricks are detected (tests compare the movement both ways).
 var detect_tricks := true
 ## The handling values (shared with the tuning panel).
@@ -182,10 +187,15 @@ func physics_step() -> void:
 		w = false
 		s = false
 		steer = 0.0
+		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
+		rev_charge.reset()
 	var rotation_before: float = model.rotation
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
 	model.airborne = height_model.airborne
+	rev_charge.before_step(model)
 	model.update_velocity(w, s, steer)
+	# T-460: Rev Charge (nothing at all when not owned).
+	rev_charge.step(model, w, s, rotation_before, height_model.airborne, model.dt)
 	if _pending_knockback != Vector2.ZERO:
 		model.vx += _pending_knockback.x
 		model.vy += _pending_knockback.y
@@ -285,6 +295,8 @@ func _bounce(hit: KinematicCollision2D) -> void:
 func _end_drift_on_hit(impact: float) -> void:
 	if impact > 0.0:
 		model.is_drifting = false
+		# T-460 (proposal): a wall hit also ends a running Rev Charge boost; the charge is kept.
+		rev_charge.end_boost()
 
 
 ## Reflects the velocity off a surface with outward normal n (see _bounce) and
