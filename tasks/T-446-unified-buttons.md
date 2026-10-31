@@ -1,7 +1,7 @@
 ---
 id: T-446
 title: One button style and feel across every player-facing screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -116,3 +116,4 @@ Nothing under `game/data/levels/` was touched.
 **Refusals:**
 - A hook refused an inline `python -` edit of this ticket file. I didn't use that route again.
 - The auto-mode classifier refused the first Edit of these result notes. The board said to retry once, and this retry is that Edit.
+- 2026-10-31, in-progress → in-qa: Shared button built on all six screens; full report above. Tests: game/tools 767 OK, tools 591 OK, GUT 2326/2326. Screenshots in art-archive/T-446/screenshots/.
