@@ -1,7 +1,7 @@
 ---
 id: T-457
 title: Missions in the run: 30 per run (5 fixed, 25 generated), progress from trick events, signals, and the car's owned power-ups
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/drifting.md, game/docs/game-loop/the-run.md, game/docs/driving/tricks.md, game/data/missions.json, game/data/power_ups.json, game/scripts/data/mission_data.gd, game/scripts/data/power_up_data.gd, game/scripts/run/run_state.gd, game/scripts/run/run.gd, game/scripts/driving/trick_detector.gd, game/scripts/level/thread_the_needle.gd]
 files_expected_to_change: [game/scripts/run/missions.gd, game/scripts/run/run_state.gd, game/scripts/run/run.gd, game/tests/unit/run/test_missions.gd, game/docs/game-loop/the-run.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-457.
 ### 2026-10-31, In progress → In QA
 
 Goal runner (G-009): the agent is done; QA is checking it.
+
+### 2026-10-31, In QA → Done
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
 
 ## Style review
 
@@ -113,3 +117,4 @@ PixelLab generations: 0. Refusals: none.
 Notes on how it ran:
 - The full GUT suite goes past the 10-minute foreground limit, so the tool moved it to the background, where it finished (exit 0). The studio-tools Python set did the same. Both had finished before this hand-back, and no jobs are left running.
 - The Godot import left line-ending `.import` noise and untracked `.uid` files in the working tree. I did not commit them, because reverting them needs a git command that is not on the pre-approved list.
+- 2026-10-31, in-qa → done: QA passed every criterion (goal G-009).
