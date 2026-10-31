@@ -1,7 +1,7 @@
 ---
 id: T-459
 title: The driving power-up overlay: a completed mission pauses the run and offers 2 power-ups (new or next tier)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md, docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/level-up-screen.md, game/scripts/ui/level_up_screen.gd, game/scripts/weapons/level_up_offers.gd, game/scripts/run/run.gd, game/scripts/run/run_state.gd, game/scripts/run/missions.gd, game/data/power_ups.json, game/data/screen_texts.json]
 files_expected_to_change: [game/scripts/ui/power_up_screen.gd, game/scripts/run/power_up_offers.gd, game/scripts/run/run.gd, game/tests/unit/test_power_up_screen.gd, game/tests/unit/run/test_power_up_offers.gd, game/tests/fixtures/power_up_screen_demo.gd, game/tests/fixtures/power_up_screen_demo.tscn, game/docs/hud-and-menus/level-up-screen.md, docs/hud-and-menus.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-459.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -109,3 +113,4 @@ Written by the agent when it finishes.
 **QA round 1 (2026-10-31): all 6 criteria pass.** Re-ran: Godot GUT full suite TESTS PASSED (exit 0; the new power-up offer, screen and focus tests are listed and passed), Python game/tools 767 OK (1 skipped), Python tools 614 OK. Screenshots exist (4 files) and the side-by-side shows the amber/black power-up overlay clearly distinct from the green Greenbull gift screen; the docs carry the waiting rule. Refusal: `python tools/qa_check.py T-459 --no-marks` was refused (not on the pre-approved list), so the script's checks were done by hand.
 
 **Refusals:** one. A first `cd ...; git log` command was refused. It wasn't needed, and I used plain `git log` instead.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
