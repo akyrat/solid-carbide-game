@@ -2860,3 +2860,8 @@ Entry format:
 - Decision or change: Fixed game/art/menu/splash.json (unescaped Windows path, written by T-445) after T-445 merged without tests and turned master's Godot tests red. Lesson: board-approved art still needs its records checked.
 - Documents touched: none
 - Tasks: T-450
+
+## 2026-10-31: Text for the alert sign pieces in the level creator
+- Decision or change: Names for the level creator's standing alert sign and alert banner pieces, their head and body designs and the banner's wall and height hints, in creator_texts.json (style loop 8/10).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-440

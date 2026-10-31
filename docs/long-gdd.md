@@ -771,6 +771,13 @@ Added for meteor craters (task T-401; same file, every earlier key unchanged; De
 - **Ground (side panel):** "Meteor crater", after "Sidewalk" (`piece_meteor_crater`). The looks strip reuses T-396's "Model {n} of {count}" (`model_counter`).
 - Style loop: score 10/10 in round 1 (Style review, T-401).
 
+Added for the kaiju alert sign and banner pieces (task T-440; same file, every earlier key unchanged; Decisions, "Kaiju alert signs are level creator pieces"; the pieces ticket T-441 builds them):
+
+- **Side panel buttons:** "Alert sign" (`piece_alert_sign`, the standing sign on the ground or a rooftop) and "Alert banner" (`piece_alert_banner`, hangs on a skyscraper's wall).
+- **Looks strip, the two designs:** "Head in triangle" (`alert_design_head`) and "Body in circle" (`alert_design_body`).
+- **Banner hints in the strip:** "R: next wall." (`banner_wall_hint`) and "H: next height." (`banner_height_hint`); the keys are the existing turn and height keys, a proposal the creator must follow.
+- Style loop: score 8/10 in round 1 (Style review, T-440). The script's complaints about one line and sentence case came from checking the six labels as one block.
+
 #### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
@@ -1894,7 +1901,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `17315fec4a980783a8a183b3a46665ebedcf87454ee02d2bc185f97867f94495` |
 | `drifting.md` | `6b6f77950ec12d8fe73cdfe0eea08b67a1f06bafae3fbde462908dfcde25e49b` |
-| `level-design.md` | `1a4c46c9f888072f52c451fe1d719a5edf3154865f7f66f9c974598476f1bbc7` |
+| `level-design.md` | `23a4ec5adc4a8679f94af7d2443a73a131e2bcfda916601fc7b9c172bfbee961` |
 | `enemies.md` | `7e381c14d8792ebf77bfeb5f7573dd183456d23acf3e8abe6477dd5025d4990c` |
 | `weapons.md` | `69a3236a31a446ccf1141530bf1269a68298f27931b2c583241e5075a5ca5934` |
 | `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |
