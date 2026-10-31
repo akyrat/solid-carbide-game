@@ -1,7 +1,7 @@
 ---
 id: T-457
 title: Missions in the run: 30 per run (5 fixed, 25 generated), progress from trick events, signals, and the car's owned power-ups
-status: blocked
+status: open
 from: project-lead
 to: game-loop
 lead: Goal-G-009
