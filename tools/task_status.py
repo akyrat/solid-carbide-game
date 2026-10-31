@@ -195,6 +195,9 @@ def allowed(fields, text, folders, by="agent"):
         rule("planning", True, "", "back to refining with the board")
         rule("blocked", True, "")
         rule("open", True, "")
+        if fields.get("board_approved_art", "no").strip().lower() == "yes":   # T-449: the board's playtest is the check
+            rule("needs-playtest", has_result_notes(text), "the agent hasn't written its result notes yet",
+                 "board-approved art skips QA and goes straight to the board's playtest")
         if by == "style-loop":   # T-291: still below 8 after 3 refines (tasks/README.md, "The style loop")
             rule("flagged-for-review", True, "", "the style loop stayed below 8 after 3 refines")
     if old == "in-qa":

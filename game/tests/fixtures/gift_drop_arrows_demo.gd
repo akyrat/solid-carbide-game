@@ -6,6 +6,7 @@ extends Node
 
 
 func _ready() -> void:
+	GameFlow.tutorial_enabled = false  # Start goes straight to the run (T-442)
 	var game: Node = preload("res://scenes/game/game.tscn").instantiate()
 	add_child(game)
 	game.menu.start_button.pressed.emit()

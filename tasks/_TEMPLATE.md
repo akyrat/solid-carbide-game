@@ -10,6 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: no
+board_approved_art: no
 depends_on: []
 documents_affected: []
 files_to_read_first: [tasks/README.md]
@@ -24,6 +25,7 @@ lead: the name of the Project Lead session that owns the task; empty until a ses
 epic and milestone: one of the ids listed in tasks/README.md.
 goal: the goal id (G-001) when the goal runner wrote or reused the task; empty otherwise (tasks/README.md, "Goal runs").
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
+board_approved_art: yes only for a ticket that swaps in art the board has already approved, with no code or data change; it skips QA and the tests (tasks/README.md, "QA"). Default no.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
 qa_rounds: how many times QA has checked this task. The maximum is 2.
 A task is not done until every document listed in documents_affected has been updated.
