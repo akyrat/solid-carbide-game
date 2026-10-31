@@ -1,7 +1,7 @@
 ---
 id: T-445
 title: Art: the board's own splash art behind the main menu
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -56,10 +56,19 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-31, Open → In progress
+
+Started: the Asset Generation Agent swaps your splash in, in C:\solid-carbide-worktrees\T-445. No QA, no tests (your rule).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the Asset Generation Agent, 2026-10-31. 0 PixelLab calls, no style loop, no tests (board-approved art).
+- game/art/menu/splash.png is the board's picture, byte for byte. SHA-256 of the source and of the copy: 46c5be910d86cea0688e5fa1d87ea0f2647dae32968aeea6e1f4866f43edad9d (identical). 320 x 180 RGBA. The source was only read.
+- T-433's splash archived (not deleted): art-archive/T-445/splash_T-433_v2_previous.png (SHA-256 5b96b80e6c4bbf420558870ecf6b65074443e5a8276b6375cbab6b0ad64d32fb) and its record splash_T-433_v2_previous.json.
+- game/art/menu/splash.json rewritten (source: the board's own picture, date, ticket, hash). docs/visual-style.md: new entry "The splash cover is now the board's own picture (T-445)" above the T-433 entry.
+- Screenshot: art-archive/T-445/screenshots/main_menu_with_board_splash.png (1152 x 648, main menu scene, 90 frames).
+- Nothing under game/data/levels/ touched; .import/.uid noise not committed.

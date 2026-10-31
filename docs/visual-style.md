@@ -117,7 +117,11 @@ The visual style guide: every generated or script-drawn asset is checked against
 
 Greenbull's logo (emblem and wordmark) is flat brand art: exempt from rule 2's shading and detail, but it follows rule 1 (Decisions, "Greenbull's look").
 
-### The splash cover (T-433)
+### The splash cover is now the board's own picture (T-445)
+
+Board, 2026-10-31: the splash cover is the board's own PixelLab picture (320 x 180, made outside the studio), copied byte for byte into `game/art/menu/splash.png` (record `splash.json`); it was approved by the board, so it skipped the style loop and QA. T-433's cover, described below, is archived in `art-archive/T-445/` and is no longer the game's cover. Screenshot: `art-archive/T-445/screenshots/main_menu_with_board_splash.png`.
+
+### The splash cover (T-433, replaced by T-445)
 
 Task T-433 made the splash cover (Decisions, "The splash cover") with PixelLab through the style loop, 4 generations (`create-image-pixflux`, 320 x 180, prompt only; the loop's agent was refused the script that would have given it the real car as an init image). Kept: version 2, scored 6/10, below 8 after 3 refines, noted for the board's playtest. It shows an isometric night street crossing, the dark-green fastback at the left, the kaiju at the right, steel-and-glass towers with pale lit windows. Weak points the Style Evaluator named: no meteors or drift trails, magenta windows in the towers, green patches on the pavement, little damage, and a bright zebra crossing and arrow in the middle band. The best car was version 4's, but that version has no kaiju. The kept file is `game/art/menu/splash.png` (record `splash.json`); every version and raw generation is in `art-archive/T-433/`, with the review pictures in `art-archive/T-433/screenshots/` (`splash_enlarged.png`, `compositions.png`, `main_menu_with_splash.png`). The menu's slot: `game/docs/hud-and-menus/main-menu.md`. A cheap next step, if the board wants it, is a free script composite of version 4's car and trail into version 2's scene.
 
