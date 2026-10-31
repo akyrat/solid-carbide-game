@@ -1,7 +1,7 @@
 ---
 id: T-443
 title: Minions spawn on a timer from the screen's edges, faster as the run goes on, and move 30% slower
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -130,3 +130,4 @@ Roughly linear, about 0.2 ms per minion per step. Separation is O(n^2), but the 
 **Documents affected:** `docs/enemies.md`, `game/docs/enemies/minions.md` (and the data comment in `game/data/enemies.json`). The long GDD still has the old Spawning text and is regenerated at merge.
 
 Nothing under `game/data/levels/` was touched. No refused actions.
+- 2026-10-31, in-progress → in-qa: Built: timer spawning (1.2 s at start to 0.3 s at 7:00, rate linear), ceiling 100 alive, minions 4.2 u/s; all three test sets pass; screenshots in art-archive/T-443/screenshots.
