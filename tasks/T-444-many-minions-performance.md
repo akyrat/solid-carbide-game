@@ -1,7 +1,7 @@
 ---
 id: T-444
 title: The game stays fast with a crowd of minions
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -101,3 +101,4 @@ Remaining per minion (300 alive): walking with `move_and_collide` about 25 µs, 
 **Outside the enemy files:** none. `game/scripts/level/ground_height.gd` (the Level/Challenge Design Agent's) would be the natural home for the bucket lookup, which would also speed up the car's and other callers' `height_at`; I kept it in the enemies' files because tests and level-creator code change a ground's lists after it is built, and the enemy lookup checks for that. A suggestion for a later ticket, not done.
 
 Nothing under `game/data/levels/` was touched (`game/data/level/kaiju_city_map.json` only read). No refused actions, except one: a hook refused a chained `timeout ... bash game/tools/minion_crowd_bench.sh` loop (it can't tell `timeout` won't write a ticket); I ran the runs as separate commands without `timeout`.
+- 2026-10-31, in-progress → in-qa: Built: minions' step ~4.5x faster (100 alive: frame 37 -> 8 ms; 200: 76 -> 17 ms; 300: 119 -> 25 ms), same behaviour; bench game/tools/minion_crowd_bench.sh; ceiling unchanged at 100 (proposal 150); all three test sets pass.
