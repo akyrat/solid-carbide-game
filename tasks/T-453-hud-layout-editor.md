@@ -60,4 +60,53 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+**UI Agent, 2026-10-31: built.**
+
+What was built:
+- `game/scripts/hud/hud_layout.gd` (new, `HudLayout`): the movable pieces (hearts, weapon icons, coins, clock, sub goal, viewers counter) and the maths. A moved piece is stored as `{ax, ay, dx, dy}` in layout pixels: its anchor (0 / 0.5 / 1 per axis, from the third of the screen its centre is in) and its distance from it. So a piece keeps its corner, edge or centre at any window size and HUD size, and is clamped to stay fully on screen.
+- `game/scripts/hud/hud.gd`: `piece()`, `piece_rect()`, `layout`, `set_layout()`, `move_piece()` and `reset_layout()`. `_apply_layout()` runs on every resize and HUD size change. A moved piece is placed from its entry. A default piece gets its own offsets back, so its anchors are never touched. The sub goal's `keep_above` (T-431) runs only while it and the viewers counter are both at their defaults. A moved piece that grows (more hearts or weapons) is placed again so it stays on screen.
+- `game/scripts/ui/hud_layout_editor.gd` (new, `HudLayoutEditor`): the overlay. It draws white frames round the pieces and lights up the one under the pointer and the one being dragged. A dark bar in the screen's middle holds T-452's hint, "Reset layout" and "Done" (the shared button, T-446, small). It only collects drags and hands them to `Hud.move_piece()`.
+- `game/scripts/ui/pause_screen.gd`: an "Edit HUD layout" button (shared button), shown only when there is a HUD. It sits in the run buttons row after "Trick list". A row of its own made the strip end below half the screen, which failed `test_screen_flow`'s compact-strip test, so I moved it. Opening the editor hides the strip and the dim. Done, Escape or resume saves the layout once and brings the strip back. `pause_text(key)` reads the texts from `data/pause_text.json`; no script spells them out.
+- `game/scripts/ui/game_settings.gd`: `load_hud_layout()` and `save_hud_layout()` save to `user://settings.cfg`, section `hud_layout`. An empty layout removes the section. `hud_layout_writes` counts the writes for tests.
+- `game/scripts/game/game_flow.gd`: one line. `add_run()` applies the saved layout to the run's HUD, next to the HUD size (T-431's pattern).
+- `game/scripts/run/gift_arrows.gd`: `hud_rects()` now merges the sub goal's label row into its rect, so the arrows keep clear of the subs label wherever the sub goal is moved. I made this small change outside UI files because the clearance criterion needs it.
+
+My proposals for the playtest:
+- **Movable pieces:** the six above. The airtime and drift counters (shown only in the air or in a drift), the reactions and the trick popups stay where they are.
+- **Snapping:** a 4 layout-pixel grid. A piece also snaps to the 16 px edge margin when it comes within 12 px of an edge. A piece can never be partly off screen.
+- **Controls:** drag with the left mouse button. Escape is the same as Done. There is no keyboard nudge.
+- **Overlaps:** pieces may overlap if the player stacks them.
+- **Editor bar:** placed in the middle of the screen.
+
+Tests:
+- New file `game/tests/unit/hud/test_hud_layout_editor.gd` (13 tests):
+  - HudLayout's entries, snapping and cleaning.
+  - The texts and shared buttons. `test_shared_button.gd` now counts 9 shared pause buttons (it counted 6): Edit HUD layout, Reset layout and Done are new.
+  - Opening the editor and Done; Escape works as Done.
+  - Criterion 1: a drag in the editor, then Done, saves the layout, and a new HUD finds the piece at its new place while the others stay at their defaults.
+  - Criterion 2: the layout holds at 1920 x 1080 and 960 x 540, each at HUD size 50 and 125, with every piece fully on screen and the moved pieces keeping their corner or centre.
+  - A moved piece that grows stays on screen.
+  - Criterion 3: Reset returns every piece to its default, and Done then removes the saved section. Reset also works at HUD size 125, with the sub goal kept clear of the viewers counter.
+  - A run started by GameFlow uses the saved layout.
+- New test in `game/tests/unit/run/test_gift_drops.gd`, `test_t453_arrows_stay_clear_of_moved_hud_pieces` (criterion 4): the viewers counter, clock, sub goal and coins are moved, and arrows in 32 directions at 4 window sizes stay clear of them. The existing clearance tests still pass.
+
+Test runs:
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 767 tests, OK (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: 633 tests, OK.
+- GUT (`GUT_TIME_LIMIT=1500 ... run_tests.sh`): 194 scripts, 2362 tests, 2362 passing, 0 failing, TESTS PASSED (970 s).
+
+Screenshots are in `art-archive/T-453/screenshots/`, written by the fixture `game/tests/fixtures/t453_hud_layout_demo.gd` (scenes `t453_editor.tscn`, `t453_run.tscn`, `t453_run_1920.tscn`, `t453_run_small_big.tscn`):
+- `pause_screen_with_button.png`: the pause screen with the new button.
+- `editor_1152x648.png`: the editor open, with four pieces moved and the hearts mid-drag.
+- `run_moved_layout_1152x648.png`: the next run with the saved layout. The clock is at the top centre, the viewers counter on the right edge's middle, the sub goal at the bottom left beside the weapons, and the coins at the bottom centre.
+- `run_moved_layout_1920x1080.png`: the same layout at full HD.
+- `run_moved_layout_960x540_hud125.png`: the same layout in a small window at HUD size 125.
+
+Board review files: art-archive/T-453/screenshots/pause_screen_with_button.png, art-archive/T-453/screenshots/editor_1152x648.png, art-archive/T-453/screenshots/run_moved_layout_1152x648.png, art-archive/T-453/screenshots/run_moved_layout_1920x1080.png, art-archive/T-453/screenshots/run_moved_layout_960x540_hud125.png
+
+Documents affected:
+- `docs/hud-and-menus.md`: new Content section, "The HUD layout editor". It describes the editor, the pieces, the controls, the snapping, how positions are kept and where the layout is saved.
+- `game/docs/hud-and-menus/hud.md`: new paragraph, "The HUD layout".
+- `game/docs/hud-and-menus/pause-screen.md`: new bullet, "HUD layout editor".
+
+Nothing under `game/data/levels/` was touched. The new scripts' `.uid` files and Godot's `.import` noise were not committed.
