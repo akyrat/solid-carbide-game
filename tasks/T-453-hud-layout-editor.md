@@ -1,7 +1,7 @@
 ---
 id: T-453
 title: The player moves the HUD's pieces from the pause screen
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, game/scripts/ui/pause_screen.gd, game/scripts/hud/hud_style.gd, tasks/T-431-the-hud-scales-with-the-window.md, tasks/T-446-unified-buttons.md]
 files_expected_to_change: [game/scripts/hud/, game/scripts/ui/, game/tests/unit/, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,14 +41,14 @@ The board's review: pause, open the editor, move several pieces, resize the wind
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test moves a HUD piece in the editor, saves, rebuilds the HUD, and finds it at the new place. (QA: pass / fail)
-- [ ] A test shows the layout holds at two window sizes and two HUD size slider values, and pieces stay fully on screen. (QA: pass / fail)
-- [ ] A test shows Reset returns every piece to the default layout. (QA: pass / fail)
-- [ ] The gift arrows' HUD clearance test still passes with a moved piece. (QA: pass / fail)
-- [ ] Screenshots of the editor and of a run with a moved layout are saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) describes the editor and where the layout is saved. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test moves a HUD piece in the editor, saves, rebuilds the HUD, and finds it at the new place. (QA: pass)
+- [ ] A test shows the layout holds at two window sizes and two HUD size slider values, and pieces stay fully on screen. (QA: pass)
+- [ ] A test shows Reset returns every piece to the default layout. (QA: pass)
+- [ ] The gift arrows' HUD clearance test still passes with a moved piece. (QA: pass)
+- [ ] Screenshots of the editor and of a run with a moved layout are saved and listed in the result notes. (QA: pass)
+- [ ] docs/hud-and-menus.md (Content) describes the editor and where the layout is saved. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -110,4 +110,6 @@ Documents affected:
 - `game/docs/hud-and-menus/pause-screen.md`: new bullet, "HUD layout editor".
 
 Nothing under `game/data/levels/` was touched. The new scripts' `.uid` files and Godot's `.import` noise were not committed.
+- QA, 2026-10-31, round 1: all 8 criteria pass. qa_check: 3 test sets pass (GUT full run), documents changed, 5 screenshots present; docs/hud-and-menus.md has "The HUD layout editor" naming settings.cfg; nothing under game/data/levels/ differs from master.
 - 2026-10-31, in-progress → in-qa: Built: HUD layout editor from the pause screen (drag, snap, Reset, Done saves to settings.cfg hud_layout). All three test sets pass (GUT 2362/2362). Screenshots in art-archive/T-453/screenshots/.
+- 2026-10-31, in-qa → needs-playtest: QA passed
