@@ -1,7 +1,7 @@
 ---
 id: T-447
 title: Art: the shared button's plates for every state
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/hud-and-menus.md, game/art/level_up/button_plate.png, game/art/level_up/button_plate_pressed.png, game/scripts/hud/hud_style.gd]
 files_expected_to_change: [game/art/ui/, game/tools/, art-archive/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,13 +41,13 @@ The board's review: go through every screen and look at the buttons in each stat
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A plate for each of the five states is in game/art/ui/ with its record, built by a script in game/tools/ that is committed and documented. (QA: pass / fail)
-- [ ] Each plate's style loop score is in the result notes (8 or more, or noted for the playtest). (QA: pass / fail)
-- [ ] The shared button uses the new plates (test or screenshot), and the six screens still show their buttons correctly. (QA: pass / fail)
-- [ ] Screenshots of the buttons in each state on at least two screens are saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/visual-style.md records the button plates. (QA: pass / fail)
-- [ ] 0 PixelLab calls unless the board gave its go (in the result notes); nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] A plate for each of the five states is in game/art/ui/ with its record, built by a script in game/tools/ that is committed and documented. (QA: pass: plates, record, script, tests and doc present)
+- [ ] Each plate's style loop score is in the result notes (8 or more, or noted for the playtest). (QA: pass: scores 8,8,8,8,8 in result notes and Style review)
+- [ ] The shared button uses the new plates (test or screenshot), and the six screens still show their buttons correctly. (QA: pass: HudStyle loads the new plates; shared button and level-up tests pass; screenshots show buttons)
+- [ ] Screenshots of the buttons in each state on at least two screens are saved and listed in the result notes. (QA: pass: 7 screenshots listed, incl. button_states, main_menu, garage, level_up, recap, pause, tutorial)
+- [ ] docs/visual-style.md records the button plates. (QA: pass: visual-style.md line 101 records the plates)
+- [ ] 0 PixelLab calls unless the board gave its go (in the result notes); nothing under game/data/levels/ is changed or committed. (QA: pass: 0 T-447 lines in pixellab log; no game/data/levels diff vs master)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass: 3 test sets pass (qa_check); counts 772/633/2348 in notes)
 
 ## Updates
 
@@ -163,3 +163,4 @@ I checked the size and format only; I didn't re-count the colours or the alpha v
 
 **Notes.** Godot's `.import` line-ending noise and `.uid` files in the worktree were not committed. The focus ring is now inside the plate's edge (before: 2 px outside it); the board can judge it in the playtest.
 - 2026-10-31, in-progress → in-qa: Plates done, style loop 8+ each, tests pass; ready for QA
+- 2026-10-31, in-qa → needs-playtest: QA passed
