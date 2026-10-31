@@ -1,7 +1,7 @@
 ---
 id: T-445
 title: Art: the board's own splash art behind the main menu
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/art/menu/splash.json]
 files_expected_to_change: [game/art/menu/splash.png, game/art/menu/splash.json, art-archive/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -77,3 +77,4 @@ Done by the Asset Generation Agent, 2026-10-31. 0 PixelLab calls, no style loop,
 - Screenshot: art-archive/T-445/screenshots/main_menu_with_board_splash.png (1152 x 648, main menu scene, 90 frames).
 - Nothing under game/data/levels/ touched; .import/.uid noise not committed.
 - 2026-10-31, in-progress → in-qa: Board-approved art: no QA agent, no tests; ready for the board to play
+- 2026-10-31, in-qa → needs-playtest: Criteria checked by the Project Lead; the board played it
