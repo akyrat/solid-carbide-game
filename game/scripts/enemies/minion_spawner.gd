@@ -633,4 +633,6 @@ func _place_sprite(m: Node) -> void:
 	s.position = ISO_TRANSFORM * m.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(m.heading)
 	s.set_falling(m.is_falling())
+	s.air_height = h - m.ground_height()  # T-454: its falling shadow on the ground under it
+	s.shadow_radius_units = m.radius_units()
 	s.z_index = depth.z_index_for(m.position_units(), m.radius_units(), m.height_units(), h)

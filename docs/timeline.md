@@ -2970,3 +2970,8 @@ Entry format:
 - Decision or change: publish_itch.py decodes butler's output as UTF-8, confirms the upload with butler status and prints the channel's version, and exits non-zero on failure; the docs say butler lives in the main checkout's tools/bin/ and how to reinstall it. QA passed; merged straight after QA.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-473
+
+## 2026-10-31: Shadows shrink with height
+- Decision or change: One shared size curve drives the shadows of the car, gift packs, falling enemies and molotov bottles: smaller the higher they are, the sprite's size at the surface. The board: "LGTM" (swipe review).
+- Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/visual-style.md`
+- Tasks: T-454
