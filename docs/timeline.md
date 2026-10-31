@@ -2950,3 +2950,8 @@ Entry format:
 - Decision or change: Enemy code optimised with the same behaviour: the minion step is about 4.5 times faster (100 minions: 37 to 8 ms a frame; 300: 119 to 25 ms). A repeatable benchmark, game/tools/minion_crowd_bench.sh. The ceiling stays at 100 alive; the agent proposes 150. QA passed; merged straight after QA.
 - Documents touched: none
 - Tasks: T-444
+
+## 2026-10-31: The itch.io build ignores the board's level files
+- Decision or change: publish_itch.py ignores the board's untracked level files in game/data/levels/ and the Web export leaves them out of the build. QA passed; merged straight after QA.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-471

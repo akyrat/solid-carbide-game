@@ -66,6 +66,31 @@ class RepoChecks(unittest.TestCase):
         (self.repo / "y.png.import").write_text("i")
         p.check_repo(self.repo)
 
+    def test_ignores_untracked_board_level_files(self):
+        d = self.repo / "game" / "data" / "levels" / "sub"
+        d.mkdir(parents=True)
+        (d / "mine.json").write_text("{}")
+        (self.repo / "game" / "data" / "levels" / "other.json").write_text("{}")
+        p.check_repo(self.repo)
+        self.assertEqual((d / "mine.json").read_text(), "{}")  # left untouched
+
+    def test_other_changes_still_stop_next_to_board_levels(self):
+        lv = self.repo / "game" / "data" / "levels"
+        lv.mkdir(parents=True)
+        (lv / "mine.json").write_text("{}")
+        (self.repo / "game" / "data" / "level").mkdir()
+        (self.repo / "game" / "data" / "level" / "kaiju_city_map.json").write_text("{}")
+        with self.assertRaisesRegex(p.PublishError, "kaiju_city_map"):
+            p.check_repo(self.repo)
+
+    def test_web_preset_excludes_levels_but_not_the_game_map(self):
+        cfg = (Path(__file__).resolve().parent.parent / "game" / "export_presets.cfg").read_text()
+        web = cfg.split("[preset.0.options]")[0]
+        self.assertIn('name="Web"', web)
+        line = [l for l in web.splitlines() if l.startswith("exclude_filter=")][0]
+        self.assertIn("data/levels/*", line)
+        self.assertNotIn("data/level/", line)
+
     def test_ignores_line_ending_only_noise(self):
         (self.repo / "a.txt").write_bytes(b"a\r\n")
         p.check_repo(self.repo)
