@@ -46,12 +46,12 @@ The board's review: play a run and check the notebook page on the left: its plac
 
 ## Acceptance criteria
 
-- [ ] In a run the HUD shows the current mission on the left as a notebook page (placeholder), with the D1 header and goal texts exactly. (QA: pass / fail)
-- [ ] Each goal has a checkbox; a quantity goal shows '{done}/{total}' and its count updates after simulated progress; a duration goal shows no count; a completed goal is ticked and crossed off; after mission_completed the next mission is shown (GUT test checking the label text and the tick/cross state). (QA: pass / fail)
-- [ ] The page does not overlap the hearts, coins or clock at 1152x648 and 1920x1080 (screenshots). (QA: pass / fail)
-- [ ] If T-453's movable HUD is on master, the page is one of its movable pieces; otherwise the result notes say it wasn't there. (QA: pass / fail)
-- [ ] Screenshots in art-archive/<id>/screenshots/ show a half-done goal, a ticked and crossed-off goal, and the next mission. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] In a run the HUD shows the current mission on the left as a notebook page (placeholder), with the D1 header and goal texts exactly. (QA: pass)
+- [ ] Each goal has a checkbox; a quantity goal shows '{done}/{total}' and its count updates after simulated progress; a duration goal shows no count; a completed goal is ticked and crossed off; after mission_completed the next mission is shown (GUT test checking the label text and the tick/cross state). (QA: pass)
+- [ ] The page does not overlap the hearts, coins or clock at 1152x648 and 1920x1080 (screenshots). (QA: pass)
+- [ ] If T-453's movable HUD is on master, the page is one of its movable pieces; otherwise the result notes say it wasn't there. (QA: pass)
+- [ ] Screenshots in art-archive/<id>/screenshots/ show a half-done goal, a ticked and crossed-off goal, and the next mission. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -84,3 +84,5 @@ UI Agent, 2026-10-31.
 **Screenshots** (`art-archive/T-458/screenshots/`, from `game/tests/fixtures/mission_page_demo*.tscn`): `mission_half.png` (Alt drifts 5/10), `mission_ticked.png` (a goal ticked and crossed, the other open), `mission_next.png` (the next mission after two completed). The fixtures hide the power-up overlay (T-459) that opens on each completed mission.
 
 **Notes for the playtest:** the rules on the page do not line up with the text lines (placeholder); a long line wraps (the stroke runs along each wrapped line); the page's place and size are proposals. Two fixtures extra to the expected list: `mission_page_demo_ticked.tscn` and `mission_page_demo_next.tscn`. Documents updated: `docs/hud-and-menus.md`, `game/docs/hud-and-menus/hud.md`. No PixelLab generations, no style loop (placeholder drawn in code; text is T-456's). No refusals.
+
+**QA round 1 (2026-10-31):** all six criteria pass. Godot GUT: 196 scripts, 2379 tests, 2379 passing (10/10 in test_hud_mission_page.gd). `python -m unittest discover tools`: 614 OK. Screenshots viewed: half-done (Alt drifts 5/10), ticked and crossed-off, next mission; page clear of hearts, coins and clock. The third set (docs staleness) is run by the runner. Refused: `python tools/qa_check.py` (not on the pre-approved list), so its paperwork lines and final mark check were not run; I checked the same things by hand.
