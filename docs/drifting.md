@@ -287,6 +287,18 @@ The decision is in Decisions ("Driving power-ups"); the tier numbers are above. 
 - **Note on the tier reasons (for Game Data and the board):** at the base air turn rate (240 degrees a second) the tier 1 hop already fits an air 180 (200 degrees), and the tier 4 hop (320 degrees) does not quite fit an air 360 without the garage's air turn upgrade. The tier numbers are unchanged; the playtest decides.
 - Screenshots and GIF: `art-archive/T-461/screenshots/`.
 
+### Bouncy Bumpers (task T-462)
+
+The decision is in Decisions ("Driving power-ups"); the tier numbers (×1.4 / 1.8 / 2.2 / 2.6) are above. How it is built: `game/docs/driving/collisions.md`, "Bouncy Bumpers (T-462)".
+
+- **What it does:** with Bouncy Bumpers owned, the wall bounce of "The car bounces off walls" (T-435: walls, buildings, raised sides, the map's edge, boulders) carries the car further, by the owned tier's factor. A head-on hit at cruise speed that travels about 0.9 units from the wall goes about 1.23 / 1.59 / 1.94 / 2.30 units at tiers 1 to 4 (measured, 0.87 without it; tests/unit/test_bouncy_bumpers.gd).
+- **Without it:** the bounce is exactly the T-435 bounce.
+- **The proposals for the playtest** (Driving & Drift Agent's calls):
+  - **The factor multiplies the distance, not the speed:** a bounce's distance goes with its speed squared (W pulls the car back at a steady rate), so the bounce speed is scaled by the square root of the factor. Reason: the data calls it a distance multiplier and the screen text says "Bounce 1.4x farther".
+  - **The bounce's maximum scales the same way:** a hit faster than the hardest-hit cap bounces like one at the cap, and that bounce is also times the factor, so the farthest bounce is the factor times today's (about 1.75 × 2.6 = 4.5 units at tier 4).
+  - **Everything else is unchanged:** the drift still ends on a hit, the combo still cuts, W still pulls the car back at the same rate.
+- Screenshots: `art-archive/T-462/screenshots/` (bounce distance per tier).
+
 ### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.
