@@ -2925,3 +2925,8 @@ Entry format:
 - Decision or change: Minions spawn on a timer from the screen's edges however many are alive, every 1.2 s at the run's start down to 0.3 s at 7:00, shortened by the combo, with a safety ceiling of 100 alive; they move 30% slower (4.2 units per second). The board played it: "LGTM", and saw frame drops at some points (T-468 records a run to find them). The board accepted the agent's Edit-tool workaround after a hook refused its result notes edit (2026-10-31).
 - Documents touched: `docs/enemies.md`
 - Tasks: T-443
+
+## 2026-10-31: The itch.io build ignores the board's level files
+- Decision or change: publish_itch.py ignores the board's untracked level files in game/data/levels/ and the web build leaves them out.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-471
