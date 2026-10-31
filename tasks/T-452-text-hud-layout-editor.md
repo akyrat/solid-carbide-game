@@ -1,7 +1,7 @@
 ---
 id: T-452
 title: Text: the HUD layout editor's labels
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/extended-narrative.md, game/data/pause_text.json]
 files_expected_to_change: [game/data/pause_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,11 +39,12 @@ The board, 2026-10-31 (docs/hud-and-menus.md, Decisions, "The player can move th
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/pause_text.json has the four texts under their own keys and stays valid JSON. (QA: pass / fail)
-- [ ] Each text's style loop score is in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) lists the texts or their keys. (QA: pass / fail)
-- [ ] The game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`), with the count in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] game/data/pause_text.json has the four texts under their own keys and stays valid JSON. (QA: pass)
+- [ ] Each text's style loop score is in the result notes. (QA: pass)
+- [ ] docs/hud-and-menus.md (Content) lists the texts or their keys. (QA: pass)
+- [ ] The game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`), with the count in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
+(QA note: qa_check's screenshots check is red; text-only ticket, not a criterion.)
 
 ## Updates
 
@@ -123,3 +124,4 @@ Docs: `docs/hud-and-menus.md` (Content, Pause screen) lists the four keys and te
 Tests: `python -m unittest discover -s game/tools -p "test_*.py"`: Ran 767 tests, OK (skipped=1). Some tests print "FAIL parked_car_..." lines as expected-failure scenarios; the run result is OK.
 Nothing under game/data/levels/ touched. Note for the UI ticket: the sentence-case script flags "HUD"; if that matters, "Edit screen layout" is the alternative.
 - 2026-10-31, in-progress → in-qa: Four texts in pause_text.json, scores 8/9/9/9, 767 tests OK
+- 2026-10-31, in-qa → done: QA passed
