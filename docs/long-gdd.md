@@ -1486,6 +1486,10 @@ The player's coins and the level of each upgrade are kept in one small file unde
 
 A plain list (task T-058, `game/scenes/menu/garage_screen.tscn`, script `game/scripts/menu/garage_screen.gd`, `GarageScreen`). From the top: the heading, the player's coins, one row per upgrade, and a back button. Each row shows the upgrade's name and description, its current level, the price of the next level and a buy button. All text is the approved text from task T-059. Buying calls the save-and-buy object (`PlayerProgress`), and the whole screen redraws from it: the coins, the level and the price. When the player cannot afford the next level, the buy button is disabled and the row says "Not enough coins". At the last level the price and buy button go and the row says "Fully Funded". The back button only sends a signal; connecting it to the main menu, and the main menu's Garage button to this screen, is the screen flow's job.
 
+#### How the garage fits the window (T-470)
+
+The whole list (heading, coins, the five rows and Back) is one column, measured at its natural size (descriptions wrap in a 300 px width so a long one never widens a row) and scaled to the largest size that fits the window, then centred. Every Buy button and Back are therefore fully on screen at any window size: the base 1152 x 648, 1920 x 1080, ultrawide 2560 x 1080 and small windows (960 x 540). It refits whenever the window is resized. Like the HUD (T-431) the column uses nearest filtering and the scale follows the window, but it has no size slider.
+
 ### References
 
 - The upgrade prices and effects: `game/data/garage.json` (task T-056).
@@ -1957,7 +1961,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `0cae47e3f39f663510d0f09e6b5e66c483cc83668a087513a378a9e93b03b71e` |
 | `enemies.md` | `8ec7cb688d81058ecb2dad37dc068a705d87d61b80426315898ced7a8998ec96` |
 | `weapons.md` | `69a3236a31a446ccf1141530bf1269a68298f27931b2c583241e5075a5ca5934` |
-| `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |
+| `garage-design.md` | `06e33390bbfb2ccd72ff922846486588bd136c9736364ed5f3d2fd4698d51dac` |
 | `visual-style.md` | `cfdbb123b1d0d6f9b2607c3e5f942ced3d9c0bd77e5559399e322b4d8a2c8d80` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
 | `hud-and-menus.md` | `04bdadcdcb5c417b9e9ce1cd8bff50e7e0628cc3249dbb7f1413db05bbdaa507` |

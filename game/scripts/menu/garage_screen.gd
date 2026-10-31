@@ -45,6 +45,11 @@ const PLACEHOLDER_LIGHT := Color(0.72, 0.74, 0.8)
 ## the flow) or, standalone, one read from the save file.
 var progress: PlayerProgress
 
+const MIN_COLUMN_WIDTH := 900
+## Descriptions wrap in this width, so a long one never pushes the Buy button off screen.
+const DESCRIPTION_WIDTH := 300
+
+var column: VBoxContainer
 var title_label: Label
 var coins_label: Label
 var back_button: Button
@@ -63,14 +68,13 @@ func _ready() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(center)
-
-	var column := VBoxContainer.new()
+	# T-470: the whole column is scaled to fit the window (see fit), like the HUD (T-431).
+	column = VBoxContainer.new()
+	column.name = "Column"
 	column.add_theme_constant_override("separation", 14)
-	column.custom_minimum_size = Vector2(900, 0)
-	center.add_child(column)
+	column.custom_minimum_size = Vector2(MIN_COLUMN_WIDTH, 0)
+	column.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(column)
 
 	title_label = _label("Title", TITLE, 56, Color(0.3, 0.9, 1.0))
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -92,7 +96,26 @@ func _ready() -> void:
 	back_button.pressed.connect(func(): back_pressed.emit())
 	column.add_child(back_button)
 
+	resized.connect(func(): fit())
 	refresh()
+	fit()
+
+
+## T-470: scales and centres the column so all of it (every Buy button, Back, coins) is on screen at any
+## window size. The scale is the largest that fits the column's natural size into the window, so it
+## grows on big windows and shrinks on small ones. `view` is the window size (the screen's own size by default).
+func fit(view: Vector2 = Vector2.ZERO) -> void:
+	if column == null:
+		return
+	if view == Vector2.ZERO:
+		view = size
+	column.scale = Vector2.ONE
+	column.size = Vector2.ZERO  # shrink to the natural minimum size
+	var natural := column.get_combined_minimum_size()
+	column.size = natural
+	var s := maxf(minf(view.x / maxf(natural.x, 1.0), view.y / maxf(natural.y, 1.0)), 0.05)
+	column.scale = Vector2(s, s)
+	column.position = (view - natural * s) / 2.0
 
 
 func _label(node_name: String, text: String, size: int, color: Color) -> Label:
@@ -127,6 +150,8 @@ func _build_row(id: String) -> Control:
 	var name_label := _label("Name", NAMES.get(id, id), 28, Color(1, 1, 1))
 	text_col.add_child(name_label)
 	var desc := _label("Description", DESCRIPTIONS.get(id, ""), 16, Color(0.6, 0.6, 0.7))
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc.custom_minimum_size = Vector2(DESCRIPTION_WIDTH, 0)
 	text_col.add_child(desc)
 
 	var level_label := _label("Level", "", 24, Color(1, 1, 1))
