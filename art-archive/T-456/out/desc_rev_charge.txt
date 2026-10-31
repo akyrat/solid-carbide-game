@@ -1,0 +1,1 @@
+Hold W+S {charge_seconds}s, let go of S: {boost_seconds}s boost. Brakes, now monetized.

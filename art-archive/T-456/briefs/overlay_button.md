@@ -1,0 +1,1 @@
+The take-button label on the power-up overlay (opened when a mission completes, offering driving power-ups): the button the player presses to take the chosen power-up. Short, plain, one line, sentence case, no end punctuation, like "Music volume". No "Greenbull says".

@@ -1,0 +1,1 @@
+A goal line on the mission notebook page (small, left of the HUD): the goal "N seconds of airtime in total". It is a duration goal: no count, only the amount, with the slot {seconds} (for example 3). Short, one line, sentence case, no end punctuation, plain label, a sibling of "2/4 Alt drifts". No "Greenbull says".
