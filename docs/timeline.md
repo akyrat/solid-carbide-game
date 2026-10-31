@@ -2985,3 +2985,13 @@ Entry format:
 - Decision or change: Alert sign (ground or rooftop) and Alert banner (on a skyscraper's wall, heights 3 to 15) are level creator pieces in both designs; M mirrors a sign. The fixed sign list kaiju_signs.json is retired, so Kaiju City has no signs until the board places them. The board: "LGTM" (swipe review).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-441
+
+## 2026-10-31: Gift pack cards are clicked directly
+- Decision or change: The level-up screen's cards have no Take it button; the whole card is clicked (or chosen with the keyboard).
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-474
+
+## 2026-10-31: Power-up cards are clicked directly
+- Decision or change: The driving power-up overlay's cards are clicked directly, like the level-up screen's.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-475
