@@ -1,7 +1,7 @@
 ---
 id: T-456
 title: Text: the mission notebook page, its goal phrasings, and the driving power-up overlay with the four power-ups' names and tier descriptions
-status: blocked
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Goal-G-009
@@ -57,6 +57,10 @@ The board's review: read the notebook page's header, the goal phrasings, the ove
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-456.
 
 ## Style review
 
