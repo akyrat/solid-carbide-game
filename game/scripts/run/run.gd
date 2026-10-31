@@ -381,8 +381,11 @@ func _build_world() -> void:
 	var start_rotation := START_ROTATION
 	# T-420: a level from a file (the creator's) with no spawn starts the car where LevelSpawn says
 	# (the map's centre, snapped to a cell); the game's own map keeps START_POSITION_UNITS.
+	# Only a map actually built from that file counts: with use_elevation_map off the map is the
+	# MVP map whatever layout_path says (T-372: the menu's Start now sets layout_path to the game map).
 	spawn_problem = ""
-	if LevelSpawn.has_spawn(map.layout) or current_layout_path() != ELEVATION_LAYOUT_PATH:
+	var from_file := use_elevation_map and current_layout_path() != ELEVATION_LAYOUT_PATH
+	if LevelSpawn.has_spawn(map.layout) or from_file:
 		# A level made in the creator (T-280): the car starts on its spawn point, at the ground's
 		# height there (car.ground below), facing its heading. The game's own map has none.
 		start = LevelSpawn.position_of(map.layout)

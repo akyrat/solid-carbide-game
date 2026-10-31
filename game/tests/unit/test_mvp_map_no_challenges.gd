@@ -242,6 +242,9 @@ func test_the_car_bounces_off_a_meteor_boulder_in_a_run() -> void:
 	run.car.scripted_input = [false, false, 0.0]
 	run.car.hit_obstacle.connect(func(c: Object, s: int, n: Vector2, v: float) -> void: _hits.append([c, s, n, v]))
 	# The car starts at 0, 0 with its nose up (-y); the meteor lands ahead of it.
+	# (T-372: the menu's Start sets layout_path to the game map, but this MVP map has no spawn.)
+	assert_eq(Vector2(run.car.model.x, run.car.model.y), Vector2.ZERO, "the MVP map's own start")
+	assert_almost_eq(run.car.model.rotation, -PI / 2.0, 0.0001, "nose up")
 	var centre := Vector2(0, -11.5)
 	assert_true(run.map.can_place_meteor_boulder(centre))
 	var body: StaticBody2D = run.map.add_meteor_boulder(centre)
