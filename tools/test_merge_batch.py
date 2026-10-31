@@ -2,6 +2,7 @@
 
 import contextlib
 import io
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -207,6 +208,37 @@ class MergeBatchTest(unittest.TestCase):
         self.assertEqual(code, 0, lines)
         self.assertEqual(lines[0], "T-913: merged")
         self.assertEqual((self.root / "game/art/x.png.import").read_text(encoding="utf-8"), "a=2\n")
+
+
+class ConsoleEncodingTest(unittest.TestCase):
+    """T-425: a cp1252 console can't print task_status's arrow; the tools that print its lines must not crash."""
+
+    TOOLS = Path(__file__).resolve().parent
+    ARROW = "→"
+
+    def run_cp1252(self, code):
+        import os
+        env = dict(os.environ, PYTHONIOENCODING="cp1252")
+        return subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, r'{self.TOOLS}'); {code}"],
+                              capture_output=True, env=env)
+
+    def test_without_the_fix_cp1252_crashes(self):
+        r = self.run_cp1252("print('in-qa \u2192 done')")
+        self.assertNotEqual(r.returncode, 0)
+
+    def test_merge_batch_prints_an_arrow_on_a_cp1252_console(self):
+        r = self.run_cp1252("import merge_batch as mb; mb.safe_output(); print('T-1: in-qa \u2192 done', flush=True)")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn(self.ARROW.encode("utf-8"), r.stdout)
+
+    def test_the_other_tools_that_print_task_status_lines_are_safe(self):
+        # task_status.main, board_inbox.main and qa_check.main all call tb.utf8_output() first.
+        for mod in ("task_status", "board_inbox", "qa_check"):
+            src = (self.TOOLS / f"{mod}.py").read_text(encoding="utf-8")
+            first_lines = src.split("def main(", 1)[1].splitlines()[:3]
+            self.assertTrue(any("tb.utf8_output()" in ln for ln in first_lines), mod)
+        r = self.run_cp1252("import taskboard_sync as tb; tb.utf8_output(); print('in-qa \u2192 done')")
+        self.assertEqual(r.returncode, 0, r.stderr)
 
 
 if __name__ == "__main__":

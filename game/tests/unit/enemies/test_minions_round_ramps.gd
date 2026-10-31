@@ -103,16 +103,17 @@ func test_minions_are_the_bigger_size_of_t379() -> void:
 
 ## The board's case: the car on the street east of ramp-nw-0-3, a minion on the
 ## street west of it. Before T-380 (the surface rule) it ended at the ramp's
-## bottom end, going back and forth between the street and the ramp's foot.
-func test_reproduced_stuck_at_the_bottom_end_of_a_ramp_before_the_fix() -> void:
+## bottom end, going back and forth between the street and the ramp's foot: on
+## the ramp it got a path back to the foot's point. T-436 removed that half of
+## the loop for every enemy (enemy_navigation.gd, through_ramps: a path that
+## starts on a ramp and only skims it keeps the ramp's cells), so the surface
+## rule, which the kaiju still walks by, now gets there too. (Until T-436 this
+## test reproduced the stuck minion.)
+func test_the_surface_rule_no_longer_sticks_at_the_bottom_end_of_a_ramp_since_t436() -> void:
 	_place_car(Vector2(-66, -58))
 	var r := _chase_one(Vector2(-92, -58), 1.0, 10.0, false)
-	assert_false(r.reached, "the old rule never reaches the car")
-	assert_not_null(r.stuck_at, "and stands still")
-	if r.stuck_at != null:
-		var p: Vector2 = r.stuck_at
-		assert_almost_eq(p.y, -54.0, 1.0, "at the ramp's bottom end (y -54): %s" % p)
-		assert_true(p.x > -86.0 and p.x < -76.0, "across the ramp's foot: %s" % p)
+	assert_true(r.reached, "the surface rule reaches the car round the ramp's foot")
+	assert_null(r.stuck_at, "never stood still %.0f s: %s" % [STUCK_SECONDS, r.stuck_at])
 
 
 func test_no_longer_stuck_at_the_bottom_end_of_a_ramp() -> void:

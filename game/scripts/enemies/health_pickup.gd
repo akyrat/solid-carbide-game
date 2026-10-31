@@ -1,8 +1,8 @@
 extends Area2D
 ## A health pickup a minion dropped (task T-220). Driving over it restores
 ## `restore_hearts` hearts through RunState.heal_car(),
-## never above the maximum, and the pickup is gone (also at full health: a
-## proposal for the playtest).
+## never above the maximum. At full hearts it stays where it is (T-415, Game loop
+## architecture, Decisions, "A health pickup at full hearts stays").
 ##
 ## Built like the coin (coin.gd): an Area2D on collision layer 4 (pickups) with
 ## mask 2 (the car), in the group "health_pickups" so a magnet can find it the
@@ -59,8 +59,17 @@ func _on_body_entered(body: Node) -> void:
 
 
 ## True when `car` is high enough to pick it up (T-402): not from the street below a rooftop.
+## T-415: also not at full hearts (it stays, and the magnet leaves it); during the wreck it counts
+## as below full, since it revives the car.
 func can_be_picked_up_by(car: Node) -> bool:
-	return PickupHeightScript.car_reaches(PickupHeightScript.height_of(car), ground_height)
+	return wants_health() and PickupHeightScript.car_reaches(PickupHeightScript.height_of(car), ground_height)
+
+
+## True when the car can use it: below full hearts, or wrecked (a pickup revives it).
+func wants_health() -> bool:
+	if state == null:
+		return true
+	return state.is_wrecked() or state.health < state.max_health - 0.0001
 
 
 ## Collects it: restores the health and removes it. Once only.

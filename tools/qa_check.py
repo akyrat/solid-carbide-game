@@ -112,6 +112,7 @@ def run_checks(tid, root, base="master", marks=True, tests=None):
 
 
 def main(argv=None):
+    tb.utf8_output()
     argv = sys.argv[1:] if argv is None else argv
     tid, root, base, marks, tests, no_tests = None, Path.cwd(), "master", True, [], False
     it = iter(argv)
