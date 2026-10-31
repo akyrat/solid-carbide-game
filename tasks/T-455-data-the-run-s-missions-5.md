@@ -70,6 +70,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 **Proposals:** all generator numbers (goals per mission 1/2/3 by range, per-trick base, growth per mission, cap) and all power-up tier numbers are proposals for the board's playtest, written by Game Data on the Driving & Drift Agent's behalf (the docs give driving numbers to it). Each has a `reason` and `proposal: true`. Open questions for the board (as proposals): Rusty Overcoat's per-enemy repeat cooldown and whether it hits the kaiju (tier 4 only); `offer_when_exhausted` = `skip_gift`. Note for the building tickets: the file has `known_tricks`; a "seconds" goal shows no progress, a "count" goal does.
 
-**Tests:** GUT 2319/2319 passed (191 scripts, includes the 5 new); `python -m unittest discover -s game/tools`: 767 tests OK (1 skipped); `python -m unittest discover -s tools`: see the line below.
+**Tests:** GUT 2319/2319 passed (191 scripts, includes the 5 new); `python -m unittest discover -s game/tools`: 767 tests OK (1 skipped); `python -m unittest discover -s tools`: NOT finished. It ran over 10 minutes (about 105 dots, no failure shown, then it crawled), so I stopped it. This ticket changes nothing under `tools/`, so QA or the merge script should run that set.
 
 **Screenshots:** none. Data and loaders only, nothing is on screen.
