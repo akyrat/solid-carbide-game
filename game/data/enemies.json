@@ -1,18 +1,18 @@
 {
-  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health in the same points as the weapons' damage (weapons.json); damage to the car in hearts (run.json car.starting_hearts). Knockback is a speed added to the car (the car's knockback function). Minion size_scale (T-379, board 2026-10-29): the minion is drawn this many times its old size (a whole number, so the pixel edges stay hard) and its body, hits and navigation radius grow to match; the kaiju is unchanged. Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
+  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health in the same points as the weapons' damage (weapons.json); damage to the car in hearts (run.json car.starting_hearts). Knockback is a speed added to the car (the car's knockback function). Minion size_scale (T-379, board 2026-10-29): the minion is drawn this many times its old size (a whole number, so the pixel edges stay hard) and its body, hits and navigation radius grow to match; the kaiju is unchanged. Minion move_speed 4.2 is 30% below the old 6 (board, 2026-10-31, T-443). Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
   "minion": {
     "size_scale": 2,
     "health": 4,
-    "move_speed": 6,
+    "move_speed": 4.2,
     "contact_damage": 1,
     "knockback": 8
   },
   "spawning": {
-    "_comment": "minions_wanted: how many minions the spawner keeps around. It grows in a straight line from minions_at_start (run second 0) to minions_at_boss_time (run second growth_until_seconds, the kaiju's arrival) and then stays there. When fewer are around, one spawns every spawn_interval_seconds, spawn_margin_units beyond the edge of the visible screen. The combo's spawn multiplier (combo.json, spawning) multiplies minions_wanted.",
-    "minions_at_start": 12,
-    "minions_at_boss_time": 20,
+    "_comment": "T-443 (Enemies, Decisions, 'Minions spawn on a timer, and 30% slower', board 2026-10-31): minions spawn one after another on a timer, however many are already around, each spawn_margin_units beyond the edge of the visible screen (street only, clear of buildings and boulders). The spawn rate (minions per second, 1 / interval) grows in a straight line from 1 / spawn_interval_at_start_seconds at run second 0 to 1 / spawn_interval_at_boss_time_seconds at run second growth_until_seconds (the kaiju's arrival, 7:00) and is then held; at 3:30 the interval is 1 / the average of the two rates (0.48 s). The combo's spawn multiplier (combo.json, spawning) multiplies the rate, so it divides the interval (x1.75 at its top: 0.3 s becomes about 0.17 s). max_minions_alive is a safety ceiling for the frame rate only: while that many are alive the timer waits. Proposals for the playtest (reasons: tasks/T-443-minions-spawn-on-timer.md, Result notes): 1.2 s at the start is about one per volley of the starting gun (base_fire_interval 1.2 s, one bullet kills a minion), so a player who shoots keeps up and one who does not sees a crowd build; 0.3 s at 7:00 is 4 a second, twice the old refill's top rate (one per 0.5 s), above what a mid-run gun alone kills, so the late run is crowded; about 870 minions over the 7 minutes. The ceiling 100 is five times the old top count (20), so it should not be met while the player drives and shoots (minions a whole screen behind are removed); it is there because the informal measurement (T-443's result notes) put the minions' physics step at about 0.2 ms per minion before T-444's optimisation, so 100 alive is about 20 ms a step, a whole frame. T-444 should raise it once the crowd is cheaper. The old wanted-count numbers (minions_at_start 12, minions_at_boss_time 20, spawn_interval_seconds 0.5) are gone.",
+    "spawn_interval_at_start_seconds": 1.2,
+    "spawn_interval_at_boss_time_seconds": 0.3,
     "growth_until_seconds": 420,
-    "spawn_interval_seconds": 0.5,
+    "max_minions_alive": 100,
     "spawn_margin_units": 3
   },
   "coins": {
