@@ -1,7 +1,7 @@
 ---
 id: T-468
 title: Record a run's performance so its frame drops can be traced to their cause
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -265,3 +265,4 @@ What the sample says (for the Project Lead, to compare with the board's run): on
 **Refusals:** one Bash command (an inline Python edit of `docs/working-with-the-board.md` and `game/docs/setup/folder-layout.md`) was refused by a hook that guards task files' `lead` (the text contained a link it read as a task file); those two doc edits were made with the Edit tool instead, as the hook suggested running such parts on their own. Nothing else was refused.
 
 **Documents affected:** `docs/working-with-the-board.md` (how the board records a run and that the Project Lead analyses it). Also new/updated game docs: `game/docs/game-loop/perf-recorder.md` (new), `game/docs/setup/folder-layout.md`, `game/README.md` (index).
+- 2026-10-31, in-progress → in-qa: Recorder, zones, analysis, sample run and docs done; board's command in the result notes; all three test sets pass.
