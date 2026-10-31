@@ -1,7 +1,7 @@
 ---
 id: T-454
 title: Shadows shrink as objects rise and grow as they come down
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md, docs/game-loop-architecture.md, docs/
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-407-gift-pack-falling-shadow.md, tasks/T-204-art-car-frames-without-shadow.md]
 files_expected_to_change: [game/scripts/, game/tests/unit/, docs/visual-style.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -98,3 +98,4 @@ Built (code only, no new art, nothing in game/data/levels/).
 
 Documents: docs/visual-style.md (Content, "Shadows that shrink with height"), docs/game-loop-architecture.md (the falling shadow line now points to it), docs/drifting.md (the T-192 entry notes the change), game/docs/game-loop/gift-pack-and-pickups.md.
 - 2026-10-31, in-progress → in-qa: Built: one shared size curve (shadow_size.gd) used by the car in the air, falling gift packs, falling minions and the kaiju, and Molotov bottles. Counts: GUT 192 scripts / 2327 tests passing; game/tools 767 OK (1 skipped); tools 614 OK. Screenshots in art-archive/T-454/screenshots/. The 'Counts: COUNTS_HERE' line in the result notes is a leftover placeholder: these are the counts (an edit to fix it was refused).
+- 2026-10-31, in-qa → needs-playtest: QA passed
