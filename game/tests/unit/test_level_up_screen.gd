@@ -295,8 +295,10 @@ func test_look_is_t140s_art_with_black_text() -> void:
 	assert_eq(screen._emblem.texture.resource_path, "res://art/level_up/gift_pack_emblem.png")
 	var plate: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("normal")
 	var pressed: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("pressed")
-	assert_eq(plate.texture.resource_path, "res://art/level_up/button_plate.png")
-	assert_eq(pressed.texture.resource_path, "res://art/level_up/button_plate_pressed.png")
+	# T-446: "Take it" is the shared button, whose plate is T-303's plate recoloured.
+	assert_true(HudStyle.is_shared_button(screen.cards[0].button))
+	assert_eq(plate.texture, HudStyle.button_plate("normal"))
+	assert_eq(pressed.texture, HudStyle.button_plate("pressed"))
 	assert_eq(screen._root.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	for c in screen.cards:
 		assert_eq(c.title.get_theme_color("font_color"), Color.BLACK)
@@ -315,7 +317,8 @@ func test_the_ribbon_title_is_cream_with_a_dark_outline() -> void:
 	for c in screen.cards:
 		assert_eq(c.title.get_theme_color("font_color"), Color.BLACK)
 		assert_eq(c.desc.get_theme_color("font_color"), Color.BLACK)
-		assert_eq(c.button.get_theme_color("font_color"), Color.BLACK)
+		# T-446: the button's text is the shared button's (light, outlined).
+		assert_eq(c.button.get_theme_color("font_color"), HudStyle.BUTTON_TEXT)
 
 
 func test_the_title_sits_between_art_x_76_and_304_of_the_ribbon() -> void:

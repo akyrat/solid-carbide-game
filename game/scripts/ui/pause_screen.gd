@@ -185,7 +185,7 @@ func _build_trick_panel() -> void:
 	trick_list.name_font_size = HudStyle.PAUSE_TRICK_NAME_SIZE
 	trick_list.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(trick_list)
-	trick_back_button = _make_button("TrickBackButton", TrickList.text("button.back"))
+	trick_back_button = _make_game_button("TrickBackButton", TrickList.text("button.back"))
 	trick_back_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	trick_back_button.pressed.connect(close_trick_list)
 	col.add_child(trick_back_button)
@@ -217,15 +217,15 @@ func _build_run_buttons(box: VBoxContainer) -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 24)
 	box.add_child(row)
-	trick_list_button = _make_button("TrickListButton", TrickList.text("button.trick_list"))
+	trick_list_button = _make_game_button("TrickListButton", TrickList.text("button.trick_list"))
 	trick_list_button.pressed.connect(open_trick_list)
 	row.add_child(trick_list_button)
-	restart_button = _make_button("RestartButton", TEXT_RESTART)
+	restart_button = _make_game_button("RestartButton", TEXT_RESTART)
 	restart_button.pressed.connect(func():
 		save_pending()
 		restart_pressed.emit())
 	row.add_child(restart_button)
-	exit_button = _make_button("ExitButton", TEXT_EXIT)
+	exit_button = _make_game_button("ExitButton", TEXT_EXIT)
 	exit_button.pressed.connect(func():
 		save_pending()
 		exit_pressed.emit())
@@ -398,30 +398,16 @@ func _make_check(node_name: String, text: String) -> CheckBox:
 	var c := CheckBox.new()
 	c.name = node_name
 	c.text = text
-	HudStyle.apply(c, "pause_text")
-	c.add_theme_icon_override("unchecked", check_icon(false))
-	c.add_theme_icon_override("checked", check_icon(true))
-	c.add_theme_icon_override("unchecked_disabled", check_icon(false))
-	c.add_theme_icon_override("checked_disabled", check_icon(true))
+	HudStyle.style_checkbox(c, CHECK_ICON_SIZE, true)  # the shared checkbox (T-446)
 	return c
 
 
-## A placeholder checkbox icon: a light square frame on a dark fill, with a
-## light square inside when checked.
+## The checkbox square (T-446: the shared one, HudStyle.check_icon).
 static func check_icon(checked: bool) -> ImageTexture:
-	var n := CHECK_ICON_SIZE
-	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
-	img.fill(CONTROL_FILL)
-	for i in n:
-		for j in [0, 1, n - 2, n - 1]:
-			img.set_pixel(i, j, CONTROL_FRAME)
-			img.set_pixel(j, i, CONTROL_FRAME)
-	if checked:
-		img.fill_rect(Rect2i(4, 4, n - 8, n - 8), CONTROL_FRAME)
-	return ImageTexture.create_from_image(img)
+	return HudStyle.check_icon(checked, CHECK_ICON_SIZE)
 
 
-## A placeholder button frame: a light border round a dark fill.
+## The board's camera tuning buttons' frame (a tool, not the shared button): a light border round a dark fill.
 static func button_style(fill: Color, border: int = 2) -> StyleBoxFlat:
 	var st := StyleBoxFlat.new()
 	st.bg_color = fill
@@ -434,6 +420,8 @@ static func button_style(fill: Color, border: int = 2) -> StyleBoxFlat:
 	return st
 
 
+## The board's camera tuning buttons (Set min and max zoom): a tool, so they keep
+## their own placeholder look (T-446 leaves the board's tools out).
 func _make_button(node_name: String, text: String) -> Button:
 	var b := Button.new()
 	b.name = node_name
@@ -447,6 +435,15 @@ func _make_button(node_name: String, text: String) -> Button:
 	focus.draw_center = false
 	focus.border_color = HudStyle.PAUSE_FOCUS
 	b.add_theme_stylebox_override("focus", focus)
+	return b
+
+
+## A player's button on the strip: the shared button (T-446) in its small size.
+func _make_game_button(node_name: String, text: String) -> Button:
+	var b := Button.new()
+	b.name = node_name
+	b.text = text
+	HudStyle.style_button(b, true)
 	return b
 
 
