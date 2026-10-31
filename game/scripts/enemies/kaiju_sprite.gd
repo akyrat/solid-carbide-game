@@ -79,8 +79,10 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"kaiju.sprite_anim")
 	advance(delta)
 	queue_redraw()
+	Perf.end(&"kaiju.sprite_anim")
 
 
 ## Moves the animation on `delta` seconds (the stomp, the fall, the squash).
@@ -198,6 +200,7 @@ func _blob(cx: float, cy: float, rx: float, ry: float, color: Color, outline: bo
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.kaiju")
 	var gr := RADIUS_UNITS * PX * sqrt(2.0)
 	if not falling:
 		_ground_shadow(gr)
@@ -208,6 +211,7 @@ func _draw() -> void:
 			# T-227's frames, as they are.
 			var n := maxi(1, fall_tex.get_width() / FRAME_SIZE)
 			_draw_art(fall_tex, entry[1], int(fall_seconds * FALL_FPS) % n)
+			if Perf.on: Perf.each_end(&"draw.kaiju")
 			return
 	var anim := anim_transform()
 	var tex := _sheet(entry[0])
@@ -215,6 +219,7 @@ func _draw() -> void:
 		draw_set_transform_matrix(anim)
 		_draw_art(tex, entry[1], frame_for(_walk))
 		draw_set_transform_matrix(Transform2D.IDENTITY)
+		if Perf.on: Perf.each_end(&"draw.kaiju")
 		return
 	var sc := HEIGHT_UNITS * PX / DESIGN_HEIGHT_PX
 	draw_set_transform_matrix(anim * Transform2D(0.0, Vector2(sc, sc), 0.0, Vector2.ZERO))
@@ -247,6 +252,7 @@ func _draw() -> void:
 	var eye := _p(36, 138 + bob)
 	draw_rect(Rect2(eye - Vector2(3, 2), Vector2(6, 4)), OUTLINE_COLOR)
 	draw_rect(Rect2(eye - Vector2(2, 1), Vector2(4, 2)), EYE_COLOR)
+	if Perf.on: Perf.each_end(&"draw.kaiju")
 
 
 func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:

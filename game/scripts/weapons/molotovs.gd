@@ -310,11 +310,13 @@ class MolotovBottle:
 		return [BOTTLE_OUTLINE, BOTTLE_GLASS, BOTTLE_GLASS_DARK, BOTTLE_RAG, BOTTLE_FLAME]
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.molotov_bottle")
 		var tex: Texture2D = ART_TEXTURE
 		if tex != null:
 			# The final art (T-175): 32 x 32 art pixels at scale 0.5.
 			var size := tex.get_size() * ART_SCALE
 			draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
+			if Perf.on: Perf.each_end(&"draw.molotov_bottle")
 			return
 		# The placeholder: a bottle about 0.3 by 0.6 units, its neck up, in screen pixels.
 		draw_rect(Rect2(-3, -3, 6, 9), BOTTLE_OUTLINE)
@@ -323,3 +325,4 @@ class MolotovBottle:
 		draw_rect(Rect2(-2, -7, 4, 5), BOTTLE_OUTLINE)
 		draw_rect(Rect2(-1, -6, 2, 4), BOTTLE_RAG)
 		draw_rect(Rect2(-2, -10, 4, 3), BOTTLE_FLAME)
+		if Perf.on: Perf.each_end(&"draw.molotov_bottle")

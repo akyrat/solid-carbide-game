@@ -311,6 +311,9 @@ func _ready() -> void:
 	sounds = RunSoundsScript.new()
 	add_child(sounds)
 	sounds.bind(self)
+	# The performance recorder (T-468): only when the game was started with --record-perf
+	# or SC_RECORD_PERF=1; null otherwise (perf_recorder.gd).
+	PerfRecorder.attach_to_run(self)
 	start_run()
 
 
@@ -319,6 +322,7 @@ func _ready() -> void:
 ## at the start, and the state reset (full health, 8:00, 0 coins).
 ## `path`, when given, becomes the run's layout_path first (task T-230).
 func start_run(path: String = "") -> void:
+	Perf.begin(&"run.start_run")
 	if path != "":
 		layout_path = path
 	_build_world()
@@ -329,6 +333,7 @@ func start_run(path: String = "") -> void:
 	car_flash = HitFlash.from_data()
 	car_flash.apply_to(car_sprite)
 	apply_blink()
+	Perf.end(&"run.start_run")
 
 
 func _build_world() -> void:
@@ -435,7 +440,10 @@ func _build_world() -> void:
 	# T-405 (altitude audit): props and boulders block the car only at their own heights.
 	var the_map: Node2D = map
 	var the_car = car
-	car.stepped.connect(func() -> void: the_map.update_car_obstacles(the_car, the_car.height))
+	car.stepped.connect(func() -> void:
+		Perf.begin(&"map.car_obstacles")
+		the_map.update_car_obstacles(the_car, the_car.height)
+		Perf.end(&"map.car_obstacles"))
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
@@ -466,16 +474,20 @@ func _on_crashed() -> void:
 
 ## T-272: after each physics step, the car's centre to thread the needle (the pairs' gates).
 func _on_car_needle_step() -> void:
+	Perf.begin(&"run.needle")
 	if needle != null and not needle.gates.is_empty():
 		needle.touching(car.held_contacts())  # T-420: still scraping a paired obstacle is a touch
 		needle.observe(car.model.get_position(), car.airborne, car.model.dt)
+	Perf.end(&"run.needle")
 
 
 ## Feeds the car's drift state to the run's likes after each physics step.
 func _on_car_stepped() -> void:
+	Perf.begin(&"run.drift_likes")
 	state.drift_step(car.model.is_drifting, car.model.dt)
 	# Hype speed boost (T-275): the top speed eases to the combo heat step's.
 	car.tuning.hype_speed_bonus = state.eased_hype_speed(car.tuning.hype_speed_bonus, car.model.dt)
+	Perf.end(&"run.drift_likes")
 
 
 ## T-072: the car took damage: the drawn car shakes briefly (its drawing only).
@@ -492,11 +504,13 @@ func _on_level_up(_new_level: int) -> void:
 
 ## After each physics step: the drawn car, and the camera one step on.
 func _on_car_moved() -> void:
+	Perf.begin(&"run.sync_view")
 	sync_view(false)
 	apply_blink()
 	car_flash.advance(car.model.dt)
 	car_flash.apply_to(car_sprite)
 	wreck_effect.follow(car_sprite.position)
+	Perf.end(&"run.sync_view")
 
 
 ## The car lost its last heart (T-360; Game loop architecture, Decisions,
@@ -573,9 +587,13 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
 	drift_smoke.position = lift
 	boost_effect.position = lift
+	Perf.begin(&"level.car_depth_sort")
 	view_root.z_index = elevation.z_for(units, car.rotation, car.height)
 	shadow.z_index = elevation.shadow_z_for(units, car.rotation, car.height, ground_h)
+	Perf.end(&"level.car_depth_sort")
+	Perf.begin(&"level.see_through")
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
+	Perf.end(&"level.see_through")
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
 		camera_follow.snap(at_ground, frac, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))

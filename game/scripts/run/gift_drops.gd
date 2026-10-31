@@ -94,7 +94,9 @@ func bind(the_run: Node2D, the_data: GiftPackData = null) -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"gifts.drops")
 	advance(delta)
+	Perf.end(&"gifts.drops")
 
 
 func _on_level_up(new_level: int) -> void:

@@ -20,6 +20,8 @@ signal tier_changed(weapon_id: String, tier: int)
 
 ## The weapon's id, as in res://data/weapons.json ("gun", "flamethrower").
 var weapon_id := ""
+## Its zone for the perf recorder (T-468), "weapon.<id>"; set by weapons.gd.
+var perf_zone: StringName = &"weapon"
 ## True for the weapon every run starts with (the starting gun).
 var starts_owned := false
 ## 0 = not owned; 1 to max_tier.

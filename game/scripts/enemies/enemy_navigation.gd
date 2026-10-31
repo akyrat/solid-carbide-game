@@ -484,16 +484,23 @@ func can_find_path() -> bool:
 ## each on the ground under it. The first point is near `from`, the last at
 ## `to`'s cell. Empty when there is no way (or either end is off the grid).
 func find_path(from: Vector2, to: Vector2) -> PackedVector2Array:
+	Perf.begin(&"nav.find_path")
 	paths_this_step += 1
 	paths_total += 1
 	var a := _cell_near(from, ground.height_at(from))
 	var b := _cell_near(to, ground.height_at(to))
 	if a < 0 or b < 0:
-		return PackedVector2Array()
+		var _perf_r = PackedVector2Array()
+		Perf.end(&"nav.find_path")
+		return _perf_r
 	var ids := astar.get_id_path(a, b)
 	if ids.is_empty():
-		return PackedVector2Array()
-	return off_edges(through_ramps(ids))
+		var _perf_r = PackedVector2Array()
+		Perf.end(&"nav.find_path")
+		return _perf_r
+	var _perf_r = off_edges(through_ramps(ids))
+	Perf.end(&"nav.find_path")
+	return _perf_r
 
 
 ## T-380, after T-405: moves each path point in a rough cell that is less than

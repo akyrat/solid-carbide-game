@@ -64,12 +64,14 @@ func place(bar_rect: Rect2) -> void:
 
 
 func _process(delta: float) -> void:
+	if Perf.on: Perf.each_begin(&"hud.likes_fire")
 	time += delta
 	var f := int(floorf(time / ComboHeat.FLICKER_FRAME))
 	if f != frame:
 		frame = f
 		if burning:
 			queue_redraw()
+	if Perf.on: Perf.each_end(&"hud.likes_fire")
 
 
 ## The flame's height in screen pixels above the bar for column `i`.
@@ -96,7 +98,9 @@ func has_spark(i: int) -> bool:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.hud_likes_fire")
 	if not burning:
+		if Perf.on: Perf.each_end(&"draw.hud_likes_fire")
 		return
 	var columns := int(size.x / PIXEL)
 	var base := MAX_HEIGHT + INTO_BAR  # the flames' bottom, in this node's y
@@ -111,6 +115,7 @@ func _draw() -> void:
 			var y := base - h - PIXEL * (2 + int(_hash(i + frame) * 3.0))
 			if y >= 0:
 				draw_rect(Rect2(i * PIXEL, y, PIXEL, PIXEL), PALETTE[PALETTE.size() - 1])
+	if Perf.on: Perf.each_end(&"draw.hud_likes_fire")
 
 
 ## Every colour the fire draws (for the not-red tests).

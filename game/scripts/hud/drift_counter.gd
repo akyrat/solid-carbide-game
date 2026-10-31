@@ -28,8 +28,10 @@ func _make_icon() -> Control:
 ## Two white skid marks with a black outline.
 class _SkidIcon extends Control:
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.hud_counter")
 		for mark: Array in [DriftCounter.MARK_A, DriftCounter.MARK_B]:
 			var pts := PackedVector2Array(mark)
 			draw_polyline(pts, DriftCounter.OUTLINE_COLOR, 7.0)
 		for mark: Array in [DriftCounter.MARK_A, DriftCounter.MARK_B]:
 			draw_polyline(PackedVector2Array(mark), DriftCounter.NUMBER_COLOR, 3.0)
+		if Perf.on: Perf.each_end(&"draw.hud_counter")

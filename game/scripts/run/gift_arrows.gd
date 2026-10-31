@@ -60,7 +60,9 @@ func bind(the_drops: Node, the_hud: Node) -> void:
 
 
 func _process(_delta: float) -> void:
+	Perf.begin(&"gifts.arrows")
 	refresh()
+	Perf.end(&"gifts.arrows")
 
 
 ## Works out the arrows for the packages on the map now and redraws them.

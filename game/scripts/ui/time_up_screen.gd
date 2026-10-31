@@ -165,8 +165,10 @@ func is_playing() -> bool:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"ui.time_up")
 	if playing:
 		advance(delta)
+	Perf.end(&"ui.time_up")
 
 
 ## Moves the animation on by `seconds` (tests and the screenshot tool call it).

@@ -358,7 +358,9 @@ func advance(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"ui.level_up_screen")
 	advance(delta)
+	Perf.end(&"ui.level_up_screen")
 
 
 func _input(event: InputEvent) -> void:

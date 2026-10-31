@@ -281,7 +281,9 @@ func _move_pickup(p: Node, units: Vector2) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	Perf.begin(&"minions.step")
 	step(delta)
+	Perf.end(&"minions.step")
 
 
 ## The safety ceiling on minions alive at once (T-443): the data's max_minions_alive, 0 for none.
@@ -301,11 +303,21 @@ func step(dt: float) -> void:
 	if state != null and not state.is_running() and not swarming:
 		return
 	var t0 := Time.get_ticks_usec()
+	Perf.begin(&"minions.prune")
 	_prune()
+	Perf.end(&"minions.prune")
+	Perf.begin(&"minions.spawn")
 	_spawn_step(dt)
+	Perf.end(&"minions.spawn")
+	Perf.begin(&"minions.move")
 	move_step(dt, not swarming)
+	Perf.end(&"minions.move")
+	Perf.begin(&"minions.despawn")
 	_despawn_far()
+	Perf.end(&"minions.despawn")
+	Perf.begin(&"minions.place_and_depth")
 	update_drawing()
+	Perf.end(&"minions.place_and_depth")
 	last_step_usec = Time.get_ticks_usec() - t0
 
 
@@ -319,15 +331,21 @@ func move_step(dt: float, contacts := true) -> void:
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if navigation != null:
 		navigation.new_step()
+	Perf.begin(&"minions.separation")
 	var pushes := _separation()
+	Perf.end(&"minions.separation")
 	var i := 0
 	for m in minions.duplicate():
 		var target := car_units
+		if Perf.on: Perf.each_begin(&"minions.path")
 		if navigation != null and m.follower != null:
 			target = m.follower.target(navigation, m.position_units(), car_units, dt)
 			m.may_drop = m.follower.dropping(navigation, m.position_units(), m.body_height())
+		if Perf.on: Perf.each_end(&"minions.path")
 		var was_falling: bool = m.is_falling()
+		if Perf.on: Perf.each_begin(&"minions.walk")
 		m.walk(dt, target, pushes[i])
+		if Perf.on: Perf.each_end(&"minions.walk")
 		if not was_falling and m.is_falling():
 			drops_total += 1
 		i += 1
@@ -471,6 +489,7 @@ func roll_coin_drop() -> int:
 
 
 func _on_minion_died(m: Node, at_units: Vector2) -> void:
+	if Perf.on: Perf.each_begin(&"minions.death_drops")
 	minions.erase(m)
 	var n := roll_coin_drop()
 	for k in n:
@@ -486,6 +505,7 @@ func _on_minion_died(m: Node, at_units: Vector2) -> void:
 	if state != null:
 		state.enemy_slain(m.ENEMY_TYPE, m.last_hit_by)
 	minion_killed.emit(m, n)
+	if Perf.on: Perf.each_end(&"minions.death_drops")
 
 
 ## The visible screen, in the view's pixels (the camera's), or the override.

@@ -94,4 +94,6 @@ func advance(dt: float) -> void:
 
 
 func _process(dt: float) -> void:
+	if Perf.on: Perf.each_begin(&"hud.viewers_flight")
 	advance(dt)
+	if Perf.on: Perf.each_end(&"hud.viewers_flight")

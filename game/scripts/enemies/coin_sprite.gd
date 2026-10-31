@@ -24,10 +24,12 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.coin")
 	var bob := -6.0 - (1.0 if _t < 0.6 else 0.0)
 	_ellipse(Vector2.ZERO, 4.0, 2.0, SHADOW_COLOR)
 	# T-072: the final 10 x 12 coin art (art/effects/coin.png), bobbing like the placeholder.
 	draw_texture(COIN_TEXTURE, Vector2(-5, bob - 6))
+	if Perf.on: Perf.each_end(&"draw.coin")
 
 
 func _ellipse(c: Vector2, rx: float, ry: float, color: Color) -> void:

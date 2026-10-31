@@ -276,7 +276,9 @@ static func celebrate_length() -> float:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"hud.sub_goal")
 	advance(delta)
+	Perf.end(&"hud.sub_goal")
 
 
 ## Moves the celebration on by `delta` seconds (tests call it directly).
@@ -306,6 +308,7 @@ func glow_color() -> Color:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.hud_sub_goal")
 	var p := float(ART_SCALE)
 	var g := glow_color()
 	if g.a > 0.0:
@@ -324,3 +327,4 @@ func _draw() -> void:
 		var c := FILL_TOP_COLOR if i == n - 1 else FILL_COLOR
 		# Vector3i(art row, first inside x, last inside x), at ART_SCALE.
 		draw_rect(Rect2(Vector2(row.y, row.x) * p, Vector2(row.z - row.y + 1, 1) * p), c)
+	if Perf.on: Perf.each_end(&"draw.hud_sub_goal")

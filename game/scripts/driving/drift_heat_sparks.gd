@@ -56,6 +56,7 @@ func clear() -> void:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.drift_sparks")
 	for p in particles:
 		var t: float = p.age / p.life
 		var colors: Array = p.colors
@@ -67,3 +68,4 @@ func _draw() -> void:
 		var s := maxf(1.0, roundf(p.size * (1.0 - t * 0.6)))
 		var at: Vector2 = (p.pos - Vector2(s, s) * 0.5).round()
 		draw_rect(Rect2(at, Vector2(s, s)), c)
+	if Perf.on: Perf.each_end(&"draw.drift_sparks")

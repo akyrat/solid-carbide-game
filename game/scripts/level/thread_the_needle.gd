@@ -163,4 +163,6 @@ class _Marker extends Node2D:
 	var dash := 12.0
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.needle")
 		draw_dashed_line(from, to, MARKER_COLOR, width, dash)
+		if Perf.on: Perf.each_end(&"draw.needle")

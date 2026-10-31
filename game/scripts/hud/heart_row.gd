@@ -116,7 +116,9 @@ func _reset(h: TextureRect) -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"hud.hearts")
 	advance(delta)
+	Perf.end(&"hud.hearts")
 
 
 ## Moves the animations on (called by _process, and by tests).

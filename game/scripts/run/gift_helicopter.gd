@@ -31,10 +31,12 @@ func apply_draw_scale() -> void:
 
 
 func _process(delta: float) -> void:
+	if Perf.on: Perf.each_begin(&"gifts.helicopter")
 	_rotor_time += delta
 	var s := sprite()
 	if s != null and s.hframes > 1:
 		s.frame = int(_rotor_time * ROTOR_FPS) % s.hframes
+	if Perf.on: Perf.each_end(&"gifts.helicopter")
 
 
 ## Where it starts and ends (drawn x), and where it drops the package.

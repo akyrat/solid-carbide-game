@@ -186,7 +186,9 @@ func _on_boss_time() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	Perf.begin(&"kaiju.step")
 	step(delta)
+	Perf.end(&"kaiju.step")
 
 
 func has_appeared() -> bool:

@@ -212,7 +212,9 @@ func _move(motion: Vector2) -> KinematicCollision2D:
 ## `died` fires once and the node is freed. Ignored when `amount` is not
 ## positive or the minion is already dead.
 func take_damage(amount: float, source := "") -> void:
+	if Perf.on: Perf.each_begin(&"enemy.damage")
 	if _dead or amount <= 0.0:
+		if Perf.on: Perf.each_end(&"enemy.damage")
 		return
 	if source != "":
 		last_hit_by = source
@@ -221,6 +223,7 @@ func take_damage(amount: float, source := "") -> void:
 		_die()
 	elif hit_tint != null:
 		hit_tint.flash()  # T-072: a brief red tint
+	if Perf.on: Perf.each_end(&"enemy.damage")
 
 
 func is_dead() -> bool:
