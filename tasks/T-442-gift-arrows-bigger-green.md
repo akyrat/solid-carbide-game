@@ -1,7 +1,7 @@
 ---
 id: T-442
 title: Gift pack arrows 3 times as big, in the gift box's colours
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, game/scripts/run/gift_arrows.gd, game/art/gift_pack/package.png]
 files_expected_to_change: [game/scripts/run/gift_arrows.gd, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,13 +41,13 @@ The board's review: play a run until gift packs drop, drive away from them and l
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows each arrow is 3 times today's size (90 x 72 at the HUD's base size) and scales with the HUD size like the rest of the HUD. (QA: pass / fail)
-- [ ] A test shows the arrow's colours are the gift box's dark green and light green, with the dark outline. (QA: pass / fail)
-- [ ] The existing gift arrow tests still pass: one arrow per off-screen package, none for a package on screen, arrows clear of the HUD parts and of each other. (QA: pass / fail)
-- [ ] Screenshots of two or more arrows at the screen's edge in a run are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content, where the arrow's look is described) and the script's comment describe the new size and colours. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] A test shows each arrow is 3 times today's size (90 x 72 at the HUD's base size) and scales with the HUD size like the rest of the HUD. (QA: pass)
+- [x] A test shows the arrow's colours are the gift box's dark green and light green, with the dark outline. (QA: pass)
+- [x] The existing gift arrow tests still pass: one arrow per off-screen package, none for a package on screen, arrows clear of the HUD parts and of each other. (QA: pass)
+- [x] Screenshots of two or more arrows at the screen's edge in a run are saved and listed in the result notes (tasks/README.md, "Screenshots"). (QA: pass)
+- [x] docs/hud-and-menus.md (Content, where the arrow's look is described) and the script's comment describe the new size and colours. (QA: pass)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [x] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -73,3 +73,6 @@ Screenshot: `art-archive/T-442/screenshots/arrows.png` (three arrows at the scre
 
 Documents updated: docs/hud-and-menus.md, game/docs/game-loop/gift-pack-and-pickups.md. Nothing under game/data/levels/ touched.
 - 2026-10-31, in-progress → in-qa: Built, tests pass, screenshot in art-archive/T-442/screenshots
+
+QA (round 1): all seven criteria pass. qa_check: three test sets passed, 1 document changed, 1 screenshot. Code checked: ARROW_SIZE 90x72, FILL/STRIPE/OUTLINE constants, ui_scale; docs Decisions entry and script header comment describe size and colours. Nothing under game/data/levels/ changed.
+- 2026-10-31, in-qa → needs-playtest: QA passed
