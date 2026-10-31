@@ -1,7 +1,7 @@
 ---
 id: T-436
 title: The kaiju reaches a rooftop car on the board's latest level
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -97,3 +97,4 @@ Written by the agent when it finishes.
 - `after_kaiju_paths_from_-79_47.png`, `after_ramp12_foot_zoom.png`: from the ramp-foot start the plan goes straight on north. The zooms show 40 x 40 units round the foot, 16 px per unit. The difference is a short segment; the full map pictures show the whole 190-unit way, which hasn't changed.
 
 Board review files: art-archive/T-436/screenshots/before_ramp12_foot_zoom.png, art-archive/T-436/screenshots/after_ramp12_foot_zoom.png
+- 2026-10-31, needs-playtest → done: The board: T-436 lgtm (2026-10-31, relayed by Greenbull)
