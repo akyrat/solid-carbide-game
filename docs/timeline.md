@@ -2935,3 +2935,8 @@ Entry format:
 - Decision or change: When the car threads the needle, the two paired obstacles and their dashed line flash white, two pulses over 0.6 s; in a chained row only the threaded pair flashes. The board: "LGTM" (from the screenshots).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-451
+
+## 2026-10-31: Text for the HUD layout editor
+- Decision or change: Labels for the pause screen's HUD layout editor (open, hint, reset, done) in pause_text.json, style loop 8 to 9.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-452
