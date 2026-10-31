@@ -1,7 +1,7 @@
 ---
 id: T-426
 title: Text: the HUD size slider's label
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Goal-G-008
@@ -85,3 +85,4 @@ Label: "HUD size", scored 9/10 in round 1 of the style loop (see Style review; b
 
 QA round 1: all 5 criteria pass. JSON valid with hud_size_label "HUD size"; text present in both docs; style loop 9/10 round 1 recorded; form matches siblings; unittest 736 OK (1 skipped), re-run by QA. No screenshots needed (text only). `python tools/qa_check.py` was refused (not pre-approved), so checks were done by hand.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
+- 2026-10-31, needs-playtest → done: The board's playtest of G-008: LGTM (2026-10-30)

@@ -1,7 +1,7 @@
 ---
 id: T-433
 title: Art: the splash cover behind the main menu (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-008
@@ -239,3 +239,4 @@ Total at most 6 calls (cap 8, only if a call fails). Cost: 1 generation each, so
 
 - 2026-10-30, style loop: version 2 kept at 6/10, still below 8 after 3 refines; noted for the board's final playtest (goal run, not flagged)
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
+- 2026-10-31, needs-playtest → done: The board's playtest of G-008: LGTM (2026-10-30)

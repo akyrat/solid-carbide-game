@@ -1,7 +1,7 @@
 ---
 id: T-429
 title: The HUD's code follows the HUD style sheet (fonts, colours, outlines)
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -273,3 +273,4 @@ A bug found by screenshot: the first `ClockDigits` drew with `draw_texture_rect`
 - QA round 2: all six criteria pass. Screenshots are in art-archive/T-429/screenshots/. QA reran game/tools (736 OK, 1 skipped), tools (582 OK) and the Godot hud folder (185/185). QA did not rerun the full Godot suite (over 600 s); it relies on the agent's reported 2141 green. Refusals: none.
 - 2026-10-30, style loop: version 1 kept at 7/10, still below 8 after 3 refines; noted for the board's final playtest (goal run, not flagged)
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
+- 2026-10-31, needs-playtest → done: The board's playtest of G-008: LGTM (2026-10-30)

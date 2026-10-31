@@ -1,7 +1,7 @@
 ---
 id: T-430
 title: Art: one HUD style sheet, and script redraws of the HUD pieces that break it
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-008
@@ -117,3 +117,4 @@ Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-430/br
 
 **Weak spot for the board:** the redraw is a 3-pixel change at the corners, small to see; the real inconsistencies left are the weapon icons' scale and the code-side fonts and outlines.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
+- 2026-10-31, needs-playtest → done: The board's playtest of G-008: LGTM (2026-10-30)
