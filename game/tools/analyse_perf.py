@@ -461,7 +461,7 @@ def analyse(rec: Recording, top: int = 10, spike_ms: float | None = None, window
             causes.append((d, z))
             p(f"  {rank}. {z}: {sm:.2f} ms in a spike frame against {nm:.2f} normally (+{d:.2f}); " + "; ".join(notes))
             rank += 1
-        if steps_sp > steps_n + 0.3:
+        if steps_sp > 1.5 and steps_sp > steps_n + 0.3:  # more than one step a spike frame
             step_ms = statistics.fmean([f.zones["physics_step"][0] / 1000.0 / max(f.calls("physics_step"), 1)
                                         for f in spikes if "physics_step" in f.zones] or [0.0])
             budget = 1000.0 / float(rec.meta.get("physics_ticks_per_second", 50) or 50)

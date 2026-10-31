@@ -103,7 +103,153 @@ which is the same as `"C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" --path C:\s
 
 About +0.5 ms on the median frame and +1.4 ms on the mean (the mean is dominated by heavy many-minion frames, where per-minion zones add up). The recorder's own figures: 0.2 to 0.25 ms a frame writing, about 140 zone calls a frame at 1.76 us each (~0.25 ms), so about 3% of the 16 ms mean frame in the sample below; 0.8 ms in a spike frame (writing the detailed frames). That is small next to the spikes it finds (100 to 350 ms), but a 25 to 30 ms frame should be read with ~1 ms of recorder in it; the analysis reports the recorder separately and never ranks it as a cause.
 
-**Sample recording** (criterion 6): `bash game/tools/perf_sample_run.sh --record-perf --seconds=150 --start-at=300` (vsync on, like the board; weapons from level-ups). The script's own numbers: 8877 frames, mean 16.7 ms, median 4.4, p95 42.1, p99 229, max 386, 645 frames over 25 ms, recording on. Its analysis (`python game/tools/analyse_perf.py --top 5 --check-trace`):
+**Sample recording, after T-444 (the current picture; criterion 6).** Master (with T-444's minion optimisation) merged into this branch on 2026-10-31; conflicts in `minion_spawner.gd` (`move_step`'s `may_drop` line) and `thread_the_needle.gd` (the marker's `_draw`, T-451's flash) resolved keeping both the new code and the zones. The same scripted run, `bash game/tools/perf_sample_run.sh --record-perf --seconds=150 --start-at=300` (vsync on, like the board; weapons from level-ups), recording `game/perf/2026-10-31_16-23-13/`. The script's own numbers: 35,020 frames, mean 4.2 ms, median 2.9, p95 10.3, p99 11.9, max 27.9, 4 frames over 25 ms (before T-444: 645), up to 95 minions alive. Its analysis (`python game/tools/analyse_perf.py --top 5 --check-trace`; after the merge the "catch-up physics" line needs more than one physics step per spike frame on average, so it no longer shows for single-step spikes at 240 Hz):
+
+```
+==============================================================================
+Recording  C:\solid-carbide-worktrees\T-468\game\perf\2026-10-31_16-23-13
+Machine    Intel(R) Core(TM) Ultra 9 275HX x24, NVIDIA GeForce RTX 5070 Laptop GPU; Godot 4.6.2-stable (official) (forward_plus), debug=True
+Display    window (1152, 648), 240.0 Hz, vsync mode 1, max_fps 0, physics 50/s
+Frames     35484 over 150.0 s; run time 5:00.4 to 7:30.2
+Frame ms   mean 4.23  median 3.63  p95 9.34  p99 11.62  max 28.56
+Spikes     4 frames at 25 ms or more (1.6 a minute); over 50 ms: 0; over 100 ms: 0
+Overhead   recorder 0.123 ms a frame (max 16.81); zones 111 calls a frame x 1.57 us = ~0.175 ms; together ~7.0% of the mean frame
+
+------------------------------------------------------------------------------
+WORST SPIKES (the 4 longest frames; times are in the run, m:ss elapsed)
+
+frame 11168  28.6 ms  at run 5:47.5 (wall 48.27 s)
+  phases (ms): 1 physics step(s); physics scripts 24.3, physics engine 0.7, process scripts 0.7, deferred (draws, frees) 1.2, render 1.4, wait (vsync, input) 0.1
+  where the time went (self ms; in brackets what those calls usually cost):
+    weapon.flamethrower                10.12  (1 call: usually 0.55; +9.57)
+    car.physics                         5.56  (1 call: usually 0.27; +5.29)
+    minions.walk                        1.89  (94 calls: usually 2.03; -0.14)
+    minions.place_and_depth             1.42  (1 call: usually 0.64; +0.78)
+    render                              1.36  (1 call: usually 1.66; -0.30)
+    minions.separation                  1.07  (1 call: usually 0.34; +0.73)
+  counts: minions 94, coins 15, gift_packages 1, popups 2, drift_smoke_puffs 11, drift_mark_pieces 40
+  monitors: draw_calls 688, render_objects 14739, nodes 1260, orphan_nodes 0, objects 3895, physics_pairs 45
+  events within 1 s: gift_pack_picked_up -0.39s; level_up_screen_opened(level=3) -0.38s; paused -0.38s; weapon_gained(tier=1, weapon=flamethrower) -0.38s; level_up_choice_made(level=3) -0.38s; resumed -0.37s; combo_broken +0.01s; car_damaged(amount=1.0) +0.48s
+
+frame 299  27.0 ms  at run 5:01.6 (wall 2.31 s)
+  phases (ms): 1 physics step(s); physics scripts 24.1, physics engine 0.6, process scripts 0.4, deferred (draws, frees) 0.2, render 1.3, wait (vsync, input) 0.1
+  where the time went (self ms; in brackets what those calls usually cost):
+    car.physics                        22.25  (1 call: usually 0.27; +21.98)
+    render                              1.28  (1 call: usually 1.66; -0.38)
+    physics.engine                      0.61  (1 call: usually 0.29; +0.32)
+    level.car_depth_sort                0.49  (1 call: usually 0.33; +0.16)
+    sounds.sync                         0.32  (1 call: usually 0.58; -0.26)
+    level.see_through                   0.18  (1 call: usually 0.12; +0.06)
+  counts: minions 4, popups 2, drift_smoke_puffs 12, drift_mark_pieces 10
+  monitors: draw_calls 625, render_objects 14659, nodes 793, orphan_nodes 0, objects 3081, physics_pairs 1
+  events within 1 s: combo_broken +0.02s
+
+frame 11131  26.6 ms  at run 5:47.2 (wall 47.91 s)
+  phases (ms): 1 physics step(s); physics scripts 22.6, physics engine 0.7, process scripts 0.7, deferred (draws, frees) 1.1, render 1.2, wait (vsync, input) 0.1
+  where the time went (self ms; in brackets what those calls usually cost):
+    weapon.flamethrower                12.09  (1 call: usually 0.55; +11.54)
+    minions.walk                        2.23  (93 calls: usually 2.01; +0.21)
+    minions.separation                  1.63  (1 call: usually 0.34; +1.29)
+    minions.place_and_depth             1.44  (1 call: usually 0.64; +0.80)
+    render                              1.25  (1 call: usually 1.66; -0.41)
+    minions.path                        1.12  (93 calls: usually 1.48; -0.36)
+  counts: minions 93, coins 15, gift_packages 1, drift_smoke_puffs 14, drift_mark_pieces 38
+  monitors: draw_calls 682, render_objects 14736, nodes 1251, orphan_nodes 0, objects 3880, physics_pairs 38
+  events within 1 s: gift_pack_picked_up -0.03s; level_up_screen_opened(level=3) -0.03s; paused -0.02s; weapon_gained(tier=1, weapon=flamethrower) -0.02s; level_up_choice_made(level=3) -0.02s; resumed -0.01s; combo_broken +0.36s; car_damaged(amount=1.0) +0.84s
+
+frame 11410  26.2 ms  at run 5:49.3 (wall 50.07 s)
+  phases (ms): 1 physics step(s); physics scripts 22.1, physics engine 0.6, process scripts 0.7, deferred (draws, frees) 1.1, render 1.5, wait (vsync, input) 0.1
+  where the time went (self ms; in brackets what those calls usually cost):
+    weapon.flamethrower                 8.81  (1 call: usually 0.55; +8.26)
+    car.physics                         5.50  (1 call: usually 0.27; +5.24)
+    minions.walk                        1.58  (80 calls: usually 1.73; -0.15)
+    render                              1.50  (1 call: usually 1.66; -0.16)
+    minions.place_and_depth             1.19  (1 call: usually 0.64; +0.55)
+    minions.separation                  0.87  (1 call: usually 0.34; +0.53)
+  counts: minions 80, projectiles 1, coins 20, burning_enemies 1, gift_packages 2, popups 2, drift_smoke_puffs 9, drift_mark_pieces 40
+  monitors: draw_calls 687, render_objects 14755, nodes 1234, orphan_nodes 0, objects 3852, physics_pairs 44
+  events within 1 s: gift_helicopter_sent -0.08s; level_up(level=4) -0.08s; combo_broken +0.01s; car_damaged(amount=1.0) +0.31s
+
+------------------------------------------------------------------------------
+ZONES IN SPIKE FRAMES AGAINST NORMAL FRAMES (self ms a frame, mean; sorted by the difference)
+  zone                                spike   normal     diff   calls spike/normal  top in N spikes
+  car.physics                         8.391    0.056   +8.335       1.0/0.2        1
+  weapon.flamethrower                 7.757    0.080   +7.677       0.8/0.1        3
+  minions.walk                        1.449    0.167   +1.282      67.8/7.7        0
+  minions.place_and_depth             1.034    0.135   +0.899       1.0/0.2        0
+  minions.separation                  0.906    0.072   +0.834       1.0/0.2        0
+  minions.path                        0.730    0.122   +0.607      67.8/7.7        0
+  minions.spawn                       0.580    0.012   +0.568       1.0/0.2        0
+  physics.engine                      0.593    0.061   +0.532       1.0/0.2        0
+  sounds.sync                         0.598    0.123   +0.475       1.0/0.2        0
+  minions.move                        0.444    0.048   +0.396       1.0/0.2        0
+  level.car_depth_sort                0.374    0.069   +0.305       1.0/0.2        0
+  map.car_obstacles                   0.157    0.034   +0.123       1.0/0.2        0
+  draw.minion                         0.250    0.127   +0.122      68.5/35.9       0
+  process                             0.249    0.130   +0.119       1.0/1.0        0
+  after_process                       0.406    0.289   +0.116       1.0/1.0        0
+  weapons.projectile                  0.121    0.011   +0.110       0.2/0.0        0
+  level.see_through                   0.134    0.026   +0.108       1.0/0.2        0
+  pickups.magnet                      0.092    0.025   +0.067       1.0/0.2        0
+  physics.scripts                     0.072    0.015   +0.058       1.0/0.2        0
+  run.sync_view                       0.071    0.014   +0.057       1.0/0.2        0
+
+------------------------------------------------------------------------------
+GROWTH WITH THE MINION COUNT (unpaused frames; 1 to 95 minions alive)
+    minions  frames  mean ms  p95 ms  spikes
+     0-24     11742     4.17    7.94       1
+    25-49     16553     4.17    8.93       0
+    50-74      4601     4.24   10.32       0
+    75-99      2582     4.83   12.09       3
+  frame time grows 0.71 ms per 100 minions (r=0.06)
+  zones that grow most with the minions (self ms a frame added per 100 minions; at the peak; frames with one physics step):
+    minions.walk                     + 1.956 ms/100  r=0.96  ~1.86 ms at 95
+    minions.place_and_depth          + 1.379 ms/100  r=0.91  ~1.31 ms at 95
+    minions.separation               + 1.084 ms/100  r=0.97  ~1.03 ms at 95
+    minions.path                     + 1.023 ms/100  r=0.34  ~0.97 ms at 95
+    minions.move                     + 0.516 ms/100  r=0.64  ~0.49 ms at 95
+
+------------------------------------------------------------------------------
+EVENTS FOLLOWED BY A SPIKE (within 1 s after the event; chance = spikes' share of the time)
+  weapon_gained                   1 of 2    ( 50%; chance ~2%)  <-- more than chance
+  gift_pack_picked_up             1 of 3    ( 33%; chance ~2%)
+  level_up_screen_opened          1 of 3    ( 33%; chance ~2%)
+  paused                          1 of 3    ( 33%; chance ~2%)
+  level_up_choice_made            1 of 3    ( 33%; chance ~2%)
+  resumed                         1 of 3    ( 33%; chance ~2%)
+  gift_helicopter_sent            1 of 4    ( 25%; chance ~2%)
+  level_up                        1 of 4    ( 25%; chance ~2%)
+  weapon_reset                    0 of 5    (  0%; chance ~2%)
+  world_rebuilt                   0 of 1    (  0%; chance ~2%)
+  run_started                     0 of 1    (  0%; chance ~2%)
+  combo_broken                    0 of 101  (  0%; chance ~2%)
+  car_damaged                     0 of 84   (  0%; chance ~2%)
+  gift_pack_dropped               0 of 4    (  0%; chance ~2%)
+  gift_pack_landed                0 of 4    (  0%; chance ~2%)
+  weapon_tier                     0 of 2    (  0%; chance ~2%)
+  kaiju_arrived                   0 of 1    (  0%; chance ~2%)
+  boss_time                       0 of 1    (  0%; chance ~2%)
+  meteor_attack                   0 of 4    (  0%; chance ~2%)
+  meteor_landed                   0 of 9    (  0%; chance ~2%)
+  boulder_placed                  0 of 9    (  0%; chance ~2%)
+
+------------------------------------------------------------------------------
+LIKELY CAUSES (zones ranked by the time they add to a spike frame, then other signs)
+  1. car.physics: 8.39 ms in a spike frame against 0.06 normally (+8.33); runs 1.0 times a spike frame against 0.2 normally; each call costs 8.39 ms in spikes against 0.27 usually; +8.13 ms beyond what its calls usually cost; the largest part of 1 of 4 spikes
+  2. weapon.flamethrower: 7.76 ms in a spike frame against 0.08 normally (+7.68); runs 0.8 times a spike frame against 0.1 normally; each call costs 10.34 ms in spikes against 0.55 usually; +7.35 ms beyond what its calls usually cost; the largest part of 3 of 4 spikes
+  3. minions.walk: 1.45 ms in a spike frame against 0.17 normally (+1.28); runs 67.8 times a spike frame against 7.7 normally; grows with the minions, +1.96 ms per 100 (r=0.96); the largest part of 0 of 4 spikes
+  4. minions.place_and_depth: 1.03 ms in a spike frame against 0.14 normally (+0.90); runs 1.0 times a spike frame against 0.2 normally; each call costs 1.03 ms in spikes against 0.64 usually; grows with the minions, +1.38 ms per 100 (r=0.91); +0.53 ms beyond what its calls usually cost; the largest part of 0 of 4 spikes
+  5. minions.separation: 0.91 ms in a spike frame against 0.07 normally (+0.83); runs 1.0 times a spike frame against 0.2 normally; each call costs 0.91 ms in spikes against 0.34 usually; grows with the minions, +1.08 ms per 100 (r=0.97); +0.64 ms beyond what its calls usually cost; the largest part of 0 of 4 spikes
+  6. minions.path: 0.73 ms in a spike frame against 0.12 normally (+0.61); runs 67.8 times a spike frame against 7.7 normally; grows with the minions, +1.02 ms per 100 (r=0.34); the largest part of 0 of 4 spikes
+  7. The event 'weapon_gained': 1 of 2 are followed by a spike within 1 s.
+  (The recorder itself: 0.12 ms in a spike frame on average, 0.12 ms in a normal one.)
+==============================================================================
+trace OK (B: 14696, C: 106455, E: 14696, M: 2, i: 258)
+```
+
+What it says: the minion spiral is gone (frame time no longer grows with the minions: 4.2 ms mean at 0-24 minions, 4.8 ms at 75-99; no frame over 29 ms). The 4 remaining spikes (26 to 29 ms, each one physics step) are `weapon.flamethrower` (8 to 12 ms in the first steps after it is gained from a gift pack, 3 of 4 spikes; usually 0.55 ms) and `car.physics` (one 22 ms step at 5:01.6, and 5 ms in another; usually 0.27 ms). Those two are what to look for in the board's recording; the minions now cost about 2 ms per 100 for walking, 1.4 for depth, 1.1 for separation, 1 for paths, per physics step.
+
+**Sample recording before T-444** (for comparison; same command, recording `game/perf/2026-10-31_15-26-18/`). The script's own numbers: 8877 frames, mean 16.7 ms, median 4.4, p95 42.1, p99 229, max 386, 645 frames over 25 ms, recording on. Its analysis (made before the catch-up fix above):
 
 ```
 ==============================================================================
@@ -253,12 +399,13 @@ LIKELY CAUSES (zones ranked by the time they add to a spike frame, then other si
 trace OK (B: 206059, C: 28008, E: 206059, M: 2, i: 806)
 ```
 
-What the sample says (for the Project Lead, to compare with the board's run): on the game's map, in the debug build, the drops are the minions: from about 25 alive, a physics step costs more than its own 20 ms (`minions.walk` about 0.16 ms per minion, `minions.place_and_depth` (each sprite's depth among the buildings) and `minions.path` with `nav.find_path` bursts), so Godot runs up to 8 catch-up physics steps a frame and frames reach 200 to 350 ms (a spiral). Smaller contributors: `weapon.flamethrower`, `weapon.underglow`, `sounds.sync` (0.8 ms a step), `level.car_depth_sort` (0.6 ms a step), occasional `draw.popup` bursts (12 ms) and the flamethrower's first step after it is gained (33 ms, seen in a shorter all-weapons sample). T-444 is working on the minion costs.
+What the before-T-444 sample said: on the game's map, in the debug build, the drops are the minions: from about 25 alive, a physics step costs more than its own 20 ms (`minions.walk` about 0.16 ms per minion, `minions.place_and_depth` (each sprite's depth among the buildings) and `minions.path` with `nav.find_path` bursts), so Godot runs up to 8 catch-up physics steps a frame and frames reach 200 to 350 ms (a spiral). Smaller contributors: `weapon.flamethrower`, `weapon.underglow`, `sounds.sync` (0.8 ms a step), `level.car_depth_sort` (0.6 ms a step), occasional `draw.popup` bursts (12 ms) and the flamethrower's first step after it is gained (33 ms, seen in a shorter all-weapons sample). T-444 is working on the minion costs.
 
 **Tests:**
 
 - New: `game/tests/unit/run/test_perf_zones.gd` (6: off records nothing, nesting and self time, each-zones summed into one block, blocks beside real children, a missed end, clearing), `game/tests/unit/run/test_perf_recorder.gd` (4: off writes nothing and adds no recorder; on, a run writes frames/monitors/counts/zones/markers and a trace whose every begin has its end, nested; a spike keeps the frames around it in detail and frames far away only as counters; a new run on the same scene gets its own recording), `game/tools/test_analyse_perf.py` (9, on a made-up recording: loading, worst spikes with run time and nearby events, spike against normal zones, minion growth, ranked causes, new pipeline compilations as a change, trace check incl. a broken and a cut-short trace, newest recording and `main`, a cut line skipped).
 - All three sets pass: `python -m unittest discover -s game/tools -p "test_*.py"`: 776 tests OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"`: 614 tests OK; `GUT_TIME_LIMIT=1500 ... bash game/tools/run_tests.sh`: 192 scripts, 2331/2331 tests passing, 1,274,008 asserts, TESTS PASSED. (The first full GUT run had 1 failure, `test_weapons_wreck.gd` `test_after_the_run_ends_no_later_weapon_damages_in_the_same_step`: its stand-in weapon has no `perf_zone`; `weapons.gd` now falls back to `&"weapon"` for such stand-ins, and the whole suite was run again: all pass.) The tests ran with the machine shared with other agents' Godot runs, hence the long times.
+- After merging master (T-444) on 2026-10-31, all three sets again: game/tools 776 tests OK (1 skipped); tools 614 tests OK; GUT 194 scripts, 2346/2346 tests passing, 1,274,140 asserts, TESTS PASSED.
 
 **Screenshots:** none; tooling with no picture (the sample's output above is the result to look at; the recording `game/perf/2026-10-31_15-26-18/trace.json` opens in https://ui.perfetto.dev as a flame graph, it is git-ignored and stays in this ticket's folder).
 
