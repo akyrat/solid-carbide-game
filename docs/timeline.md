@@ -2905,3 +2905,8 @@ Entry format:
 - Decision or change: The arrows pointing to off-screen gift packs are 3 times as big (90 x 72 at the HUD's base size, scaled with the HUD) and wear the gift box's dark green with a light green stripe and the dark outline, instead of the placeholder pale cyan. The board: "LGTM".
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-442
+
+## 2026-10-31: Recording a run's performance
+- Decision or change: A recorder, off by default, writes a run's per-frame times, monitors, counts, nested zones and events as a Chrome trace, and a script analyses its spikes, so the board's frame drops can be traced to their cause.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-468
