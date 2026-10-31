@@ -374,4 +374,14 @@ Run by `tools/style_loop/run.py` on 2026-10-31: text, kind card_desc, brief `art
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Done (Narrative Theme).** All 18 texts went through the style loop (kinds `label`, `card_title`, `card_desc`); every kept version scored 8 or more (see Style review). Briefs: `art-archive/T-456/briefs/`; kept texts: `art-archive/T-456/out/`.
+
+- **File:** the existing `game/data/screen_texts.json`, new `missions` and `power_ups` sections, each text with a `_comment` line saying where it appears.
+- **Keys:** `missions.header` ("Content quota"); `missions.goals.<trick id>` for all 7 trick types in missions.json: alternate_drift "Alt drifts {done}/{total}", three_sixty "Full 360s {done}/{total}", air_one_eighty "Air 180s {done}/{total}", air_three_sixty "Air 360s {done}/{total}", thread_the_needle "Needles threaded {done}/{total}" (quantity); extended_drift "Hold one drift for {seconds} seconds", airtime "Rack up {seconds} seconds of airtime" (duration, no count). `power_ups.overlay_header` "Mission done: soup up the car"; `power_ups.take_button` "Take power-up"; `power_ups.names.*`: Rev Charge, Jump, Bouncy Bumpers, Rusty Overcoat (kept as the board's, all scored 9, no rule broken).
+- **Tier descriptions:** one template per power-up (option allowed by the ticket) with a slot for the offered tier's number from power_ups.json: `{charge_seconds}`/`{boost_seconds}`, `{cooldown_seconds}`, `{bounce_multiplier}` (from `bounce_distance_multiplier`), `{contact_damage}`. The UI must fill these slots; no 'Greenbull says'.
+- **For the board:** the example "2/4 Alt drifts" became "Alt drifts 2/4" because the label rule (sentence case, so a leading "Alt" with a later capital...) failed the script check in rounds 1 and 2 for the alternate_drift, air 360 and needle goals; count-last passed. Rusty Overcoat's description says "minions", while tier 4 also hits the kaiju (a small mismatch to fix in the playtest if it matters). Two scores of 8 (needles, header) are borderline.
+- **Docs:** HUD and menus, Content, new section "Mission notebook and power-up texts" lists every text and where it appears.
+- **Test:** `game/tests/unit/test_mission_texts.gd` (4 tests): header, button, a template per trick type in missions.json (count ones hold `{done}/{total}`, duration ones don't), name and description per power-up, number slots, no 'Greenbull says'.
+- **Test sets:** GUT 2339 of 2339 passing (193 scripts, includes the 4 new); `python -m unittest discover -s tools` 614 OK; `-s game/tools` 767 OK (1 skipped). (The "FAIL parked_car_3" lines in the latter are a checker test's expected output.)
+- **Screenshots:** none; this is text-only work with nothing to picture.
+- **PixelLab:** 0 generations. Refusals: none.
