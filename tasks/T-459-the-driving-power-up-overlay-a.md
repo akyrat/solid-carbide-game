@@ -68,3 +68,38 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**UI Agent, 2026-10-31: done, ready for QA.** PixelLab: 0 generations. Style loop: not run. No new player-facing text: every word comes from T-456's texts, which have already passed the style loop (`screen_texts.json`, `power_ups`). The look is a placeholder drawn in code, with no generated asset.
+
+**What was built**
+- `game/scripts/run/power_up_offers.gd` (`PowerUpOffers`, child `PowerUpOffers` of the run). It listens for `RunMissions.mission_completed`, pauses the run and emits `offers_ready(mission_index, ids)`. The choices are power-ups the car doesn't own (offered at tier 1) and the next tier of power-ups it owns (`RunState.power_up_tier`). A power-up at its last tier is never offered. A gift gives 2 cards drawn at random in power_ups.json's order. **Proposal: when only one choice is left, it shows one card.** When nothing is left, power_ups.json's `offer_when_exhausted` "skip_gift" applies: no overlay, no pause, `gift_skipped`. `choose(id)` calls `RunState.grant_power_up(id)` and resumes the run.
+- `game/scripts/ui/power_up_screen.gd` (`PowerUpScreen`, layer 15). It has the level-up screen's controls: A/D, arrows, Enter/Space and the card's button. A key held when the overlay opens does nothing until it is let go, and nothing counts during the short stepped build-up (0.36 s). Texts are T-456's word for word. Each description is filled with the offered tier's numbers ("Next hop in 2 s"). Each card shows the icon from power_ups.json's path, or an amber placeholder square with the name's initial until the art exists. **Tier pips** (no text) show the tiers owned, the tier offered and the rest.
+- **Its own look** (placeholder drawn in code): an amber and black hazard-striped header bar with a dark steel plate, dark steel cards with amber frames, a white frame on the highlighted card and amber "Take power-up" plates. It uses no Greenbull green, emblem, ribbon or sunburst.
+- **Escape and focus loss:** `pause_screen.gd` `_choice_open()` also counts the overlay, so Escape doesn't open the pause screen over it. When the window loses focus nothing happens, because the tree is paused (test added to `test_close_and_focus.gd`).
+- **Never at once with the level-up screen (proposal, documented):**
+  - A weapon choice that starts while the overlay is open is held (`LevelUpScreen.hold` / `show_held()`) and shows when a power-up is taken. The run stays paused in between.
+  - A mission completed during the weapon choice waits. It opens at the start of the next frame (the tree's `process_frame`/`physics_frame` signals, before anything moves), because RunState unpauses right after `level_up_choice_made`.
+  - The same check re-pauses the run if a weapon choice with nothing to offer resumes the tree while the overlay is open.
+  - Two missions completed together open one overlay after the other.
+  - A new run closes the overlay and drops any waiting gift.
+- `run.gd` wires all of this up. Small changes in `level_up_screen.gd` (the hold) and `pause_screen.gd`. RunState is unchanged.
+
+**Tests**
+- New: `tests/unit/run/test_power_up_offers.gd` (11) and `tests/unit/test_power_up_screen.gd` (18), plus 1 in `tests/unit/game/test_close_and_focus.gd`.
+- Godot GUT, full suite: **2369/2369 passed** (195 scripts, 880 s).
+- Python `game/tools`: **767 tests OK** (1 skipped).
+- Python `tools`: **614 tests OK**.
+
+**Documents affected**
+- `docs/hud-and-menus.md`: new Content section, "Power-up overlay", with the rules, the one-left and none-left cases, the waiting rule and the look.
+- `docs/game-loop-architecture.md`: "Missions in the run" now has "The gift's pause (T-459)".
+- `game/docs/hud-and-menus/level-up-screen.md`: new "Power-up overlay (T-459)" section on how it is built.
+
+**Screenshots** (`art-archive/T-459/screenshots/`)
+- `side_by_side_power_ups_vs_weapons_gift.png`: the power-up overlay next to the weapons gift screen.
+- `power_up_overlay.png`: a fresh car, Rev Charge and Jump at tier 1.
+- `power_up_overlay_next_tier.png`: owned tiers, Bouncy Bumpers offered at tier 3, highlight on the second card.
+- `weapons_gift_screen.png`: the weapons gift screen, for comparison.
+- Fixtures: `game/tests/fixtures/power_up_screen_demo.tscn`, `power_up_screen_next_tier.tscn` and `power_up_screen_weapons_gift.tscn`.
+
+**Refusals:** one. A first `cd ...; git log` command was refused. It wasn't needed, and I used plain `git log` instead.
