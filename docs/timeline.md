@@ -2965,3 +2965,8 @@ Entry format:
 - Decision or change: publish_itch.py decodes butler's output as UTF-8, confirms the upload with butler status, and the docs say where butler lives.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-473
+
+## 2026-10-31: The itch.io publish script reads butler's output safely
+- Decision or change: publish_itch.py decodes butler's output as UTF-8, confirms the upload with butler status and prints the channel's version, and exits non-zero on failure; the docs say butler lives in the main checkout's tools/bin/ and how to reinstall it. QA passed; merged straight after QA.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-473

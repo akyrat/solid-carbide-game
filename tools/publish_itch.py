@@ -158,6 +158,12 @@ def redact(text, key):
     return text.replace(key, "***") if key else text
 
 
+def run_butler(cmd, env, key):
+    """Run butler; its output is read as UTF-8 (bad bytes replaced), never None, key redacted."""
+    r = subprocess.run(cmd, env=env, capture_output=True, encoding="utf-8", errors="replace")
+    return r.returncode, redact(((r.stdout or "") + (r.stderr or "")), key).rstrip()
+
+
 def run(argv, out=print, exporter=export_web):
     ap = argparse.ArgumentParser(description="Publish a browser build of master to itch.io.")
     ap.add_argument("--dry-run", action="store_true", help="do everything except the push")
@@ -188,11 +194,19 @@ def run(argv, out=print, exporter=export_web):
             out("Dry run, would run: " + " ".join(cmd))
             return 0
         sub_env = dict(os.environ, BUTLER_API_KEY=env["BUTLER_API_KEY"])
-        r = subprocess.run(cmd, env=sub_env, capture_output=True, text=True)
-        out(redact(r.stdout + r.stderr, env["BUTLER_API_KEY"]).rstrip())
-        if r.returncode != 0:
-            raise PublishError(f"butler push failed (exit {r.returncode})")
+        key = env["BUTLER_API_KEY"]
+        code, text = run_butler(cmd, sub_env, key)
+        out(text)
+        if code != 0:
+            raise PublishError(f"butler push failed (exit {code})")
         out(f"Pushed version {version}. Page: {page_link(target)}")
+        code, text = run_butler([butler or "butler", "status", target], sub_env, key)
+        out(text)
+        if code != 0:
+            raise PublishError(f"butler status failed (exit {code})")
+        channel = target.partition(":")[2]
+        out(f"Channel {channel}: " + ("now shows version " + version if version in text
+                                      else "version " + version + " not seen in butler status"))
         return 0
     except PublishError as e:
         out(f"STOPPED: {e}")

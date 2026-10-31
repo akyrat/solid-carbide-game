@@ -138,15 +138,25 @@ class FullRun(unittest.TestCase):
             os.environ.pop(k, None)
         self.d = tempfile.TemporaryDirectory()
         self.repo = make_repo(self.d.name)
-        (self.repo / ".gitignore").write_text("web-build/\n.env\nstub*\nbutler.*\n")
+        (self.repo / ".gitignore").write_text("web-build/\n.env\nstub*\nbutler.*\nfail\npushed\n")
         (self.repo / ".env").write_text(
             f"BUTLER_API_KEY={KEY}\nITCH_TARGET=me/game:html5\nGODOT_BIN={sys.executable}\n")
         git(self.repo, "add", ".gitignore")
         git(self.repo, "commit", "-q", "-m", "ignore")
         # a stub "butler" that echoes its arguments and the key it received
         stub = self.repo / "stubbutler.py"
-        stub.write_text("import os,sys\nprint(' '.join(sys.argv[1:]))\n"
-                        "print('key:'+os.environ['BUTLER_API_KEY'])\n")
+        stub.write_text(
+            "import os,sys\n"
+            "here=os.path.dirname(os.path.abspath(__file__))\n"
+            "if os.path.exists(os.path.join(here,'fail')):\n"
+            "    print('boom '+os.environ['BUTLER_API_KEY']); sys.exit(3)\n"
+            "sys.stdout.buffer.write(b'progress \\x90\\xe2\\x96\\x88\\n'); sys.stdout.flush()\n"
+            "if sys.argv[1]=='status':\n"
+            "    print('html5 channel version '+open(os.path.join(here,'pushed')).read())\n"
+            "else:\n"
+            "    open(os.path.join(here,'pushed'),'w').write(sys.argv[sys.argv.index('--userversion')+1])\n"
+            "    print(' '.join(sys.argv[1:]))\n"
+            "    print('key:'+os.environ['BUTLER_API_KEY'])\n")
         if os.name == "nt":
             self.bat = self.repo / "butler.bat"
             self.bat.write_text(f'@"{sys.executable}" "{stub}" %*\n')
@@ -180,6 +190,31 @@ class FullRun(unittest.TestCase):
         self.assertNotIn(KEY, out)
         self.assertIn("key:***", out)
         self.assertIn("https://me.itch.io/game", out)
+
+    def test_non_ascii_output_does_not_crash(self):
+        code, out = self.go()
+        self.assertEqual(code, 0, out)
+        self.assertIn("progress", out)
+
+    def test_status_runs_after_push_and_prints_version(self):
+        code, out = self.go()
+        version = p.check_repo(self.repo)
+        self.assertIn(f"html5 channel version {version}", out)
+        self.assertIn(f"Channel html5: now shows version {version}", out)
+
+    def test_failing_butler_exits_nonzero_without_key(self):
+        (self.repo / "fail").write_text("x")
+        code, out = self.go()
+        self.assertEqual(code, 1)
+        self.assertIn("boom ***", out)
+        self.assertIn("butler push failed", out)
+        self.assertNotIn(KEY, out)
+
+    def test_run_butler_never_returns_none(self):
+        code, text = p.run_butler([sys.executable, "-c",
+                                   "import sys;sys.stdout.buffer.write(b'\\x90')"], dict(os.environ), "k")
+        self.assertEqual(code, 0)
+        self.assertIsInstance(text, str)
 
     def test_missing_key_stops_before_export(self):
         (self.repo / ".env").write_text("ITCH_TARGET=me/game:html5\n")
