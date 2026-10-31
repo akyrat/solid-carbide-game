@@ -1,7 +1,7 @@
 ---
 id: T-441
 title: Kaiju alert signs are level creator pieces; the fixed sign list is retired
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -118,3 +118,4 @@ Written by the agent when it finishes.
    - GUT: 2322 tests in 191 scripts, all pass. The full suite runs past the 600 s a foreground call allows on this busy machine, so I ran it in five batches with `game/tools/run_tests.sh` and the same GUT settings (`-gconfig` with these dirs): `tests/unit` top level 83 scripts / 926 tests; `level_creator` 25 / 305; `enemies` + `game` + `weapons` + `helpers` 34 / 520; `hud` 20 / 194; `run` 29 / 377.
 
 **Documents affected:** `docs/level-design.md`, `game/docs/level/level-creator-pieces.md`, `game/docs/level/mvp-map.md`. The long GDD needs regenerating at merge (Project Lead).
+- 2026-10-31, in-progress → in-qa: Built: Alert sign and Alert banner creator pieces (both designs), saved in alert_signs, drawn identically in editor and run; kaiju_signs.json retired. All three test sets pass (769 / 614 / GUT 2322). Proposals and screenshots in result notes.
