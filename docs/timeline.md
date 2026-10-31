@@ -2740,3 +2740,8 @@ Entry format:
 - Decision or change: A wall hit ends a drift in progress: it pays for the time up to the hit, then the hit's combo cut applies.
 - Documents touched: docs/drifting.md
 - Tasks: T-438
+
+## 2026-10-31: The kaiju alert signs move onto Kaiju City
+- Decision or change: The 6 kaiju alert signs (4 banners, 2 standing signs) move onto Kaiju City, at spots the agent proposes for the playtest; the banners come back on this map's skyscrapers.
+- Documents touched: docs/level-design.md
+- Tasks: T-439
