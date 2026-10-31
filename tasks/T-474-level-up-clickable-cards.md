@@ -74,3 +74,5 @@ T-474 (UI Agent). The level-up gift pack's cards have no Take it button: the who
 - QA 2026-10-31 (round 1): all 8 criteria pass. qa_check: 3 test sets pass (full GUT run repeated here after the test_shared_button fix), documents changed, 4 screenshots. Minor note, not a fail: docs/hud-and-menus.md line 19 still says "or by clicking its button" (stale wording; Content line 18 and the level-up section are updated).
 - 2026-10-31, in-qa → needs-playtest: QA passed
 - 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, swipe review)
+
+Merge of master (T-447, T-453) into T-474: conflicts in test_shared_button.gd (kept 0 level-up buttons and the pause count 9) and test_level_up_screen.gd (dropped the plate asserts). T-447 removed HudStyle.BUTTON_HOVER_TINT, so GiftCardClick has its own HOVER_TINT (1.35). Tests: game/tools 774 OK, tools 633 OK, GUT 2392/2392 pass.

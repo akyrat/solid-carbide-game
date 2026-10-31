@@ -2995,3 +2995,18 @@ Entry format:
 - Decision or change: The driving power-up overlay's cards are clicked directly, like the level-up screen's.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-475
+
+## 2026-10-31: Final button art
+- Decision or change: The shared button's five plates (normal, hover, keyboard-selected, pressed, disabled), drawn by script in the HUD style sheet's look, 8/10 each in the style loop, 0 PixelLab calls. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
+- Tasks: T-447
+
+## 2026-10-31: The player moves the HUD's pieces
+- Decision or change: Edit HUD layout on the pause screen (in the Restart/Exit row) lets the player drag every HUD piece with snapping, Reset and Done; the layout is saved in settings.cfg and holds at any window size and HUD size. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-453
+
+## 2026-10-31: The garage's Buy buttons are on screen
+- Decision or change: The garage scales and centres to fit the window and refits on resize, so every Buy button and Back stay on screen at any size; long descriptions wrap. The board: "LGTM" (swipe review).
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-470

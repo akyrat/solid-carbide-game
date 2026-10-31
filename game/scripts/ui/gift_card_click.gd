@@ -4,10 +4,13 @@ extends Button
 ## "Gift menu cards are clicked directly", board, 2026-10-31). It is a see-through
 ## button laid over a whole card, so a click anywhere on the card takes it, with no
 ## "Take it" button. It gives the card the shared button's feel (T-446): a hover
-## brightens the card's frame (HudStyle.BUTTON_HOVER_TINT) and a click presses the
+## brightens the card's frame (HOVER_TINT) and a click presses the
 ## card down (HudStyle.BUTTON_PRESS_DROP pixels). Keyboard selection is the screen's
 ## own highlight frame. Built to be reused by every gift menu (T-475 applies it to
 ## the driving power-up overlay): call `GiftCardClick.attach(...)`.
+
+## The hover brightening of a card's frame (a card has no plate art, so this is the card's own).
+const HOVER_TINT := Color(1.35, 1.35, 1.35)
 
 ## The card's body (what moves down when pressed) and the frame that is tinted.
 var body: Control
@@ -67,5 +70,5 @@ func _on_up() -> void:
 
 
 func _refresh() -> void:
-	frame.modulate = HudStyle.BUTTON_HOVER_TINT if hovered else Color.WHITE
+	frame.modulate = HOVER_TINT if hovered else Color.WHITE
 	body.position.y = HudStyle.BUTTON_PRESS_DROP if held else 0.0

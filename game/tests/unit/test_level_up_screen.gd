@@ -795,7 +795,7 @@ func test_hover_changes_the_cards_look_and_leaves_the_highlight() -> void:
 	var frame: Control = c.body.get_node("Frame")
 	assert_eq(frame.modulate, Color.WHITE)
 	c.click.mouse_entered.emit()
-	assert_eq(frame.modulate, HudStyle.BUTTON_HOVER_TINT, "hover brightens the card")
+	assert_eq(frame.modulate, GiftCardClick.HOVER_TINT, "hover brightens the card")
 	assert_eq(screen.highlight, 0, "hover does not move the highlight")
 	c.click.mouse_exited.emit()
 	assert_eq(frame.modulate, Color.WHITE)

@@ -224,40 +224,22 @@ const LEVEL_UP_HOVER_TINT := Color(1.15, 1.15, 1.15)
 ## board's tools (the level creator, the drift tuning panel, the pause strip's
 ## two camera tuning buttons) keep their own look.
 ##
-## Placeholder art: the level-up screen's "Take it" plate (T-303) as a 9-slice,
-## recoloured in code from Greenbull's greens to the HUD style sheet's steel ramp
-## (Visual style, Content, rules 3 and 6: no Greenbull light green on a placeholder
-## or outside its own things), shown at 2x (rule 1). The other states tint it.
-## The linked art ticket (T-447) replaces the two plate files and this recolour.
-const BUTTON_PLATE_ART := "res://art/level_up/button_plate.png"
-const BUTTON_PLATE_PRESSED_ART := "res://art/level_up/button_plate_pressed.png"
-## The plate's colours to the sheet's palette: the outline, a blue-grey steel
-## bevel lit from the top left, a steel face (the clock panel's ramp).
-const BUTTON_RECOLOR := {
-	"0e1612": Color8(8, 8, 15),       # outline (the sheet's near-black)
-	"0c4c2c": Color8(36, 40, 52),     # outer edge: dark steel
-	"186e3a": Color8(66, 73, 90),     # bevel: mid steel
-	"e2fcc8": Color8(104, 114, 136),  # the top glint: light steel
-	"68dc60": Color8(56, 62, 77),     # the face
-	"34a048": Color8(44, 49, 62),     # the face's bottom shade; the pressed face
-	"062e1a": Color8(26, 29, 38),     # the pressed plate's sunk edge
-}
-## 9-slice margins in art pixels (x: left and right, y: top, z: bottom), per plate.
-const BUTTON_SLICE := {"normal": Vector3i(3, 4, 5), "pressed": Vector3i(3, 3, 3)}
+## The art (task T-447): one 9-slice plate per state in `res://art/ui/` (drawn by
+## `game/tools/build_button_plates.py`), 72 x 22 art pixels shown at 2x (rule 1),
+## the HUD style sheet's steel bezel lit from the top left. The keyboard-selection
+## plate is a bright ring with an open middle, drawn over whichever state the button
+## is in. No tint and no recolour: every state is its own picture.
+const BUTTON_PLATE_ART := "res://art/ui/button_plate_%s.png"
+## 9-slice margins in art pixels (x: left and right, y: top, z: bottom): the outline and two bevel rows.
+const BUTTON_SLICE := Vector3i(3, 3, 3)
 ## Where the text sits inside the plate, in screen pixels (x: left and right, y: top,
 ## z: bottom). Pressed moves the text BUTTON_PRESS_DROP pixels down: the press-down.
 const BUTTON_CONTENT := Vector3i(16, 6, 8)
 const BUTTON_PRESS_DROP := 2
-## Tints over the plate: the hovered plate lights up, a disabled one sinks into the dark.
-const BUTTON_HOVER_TINT := Color(1.35, 1.35, 1.35)
-const BUTTON_DISABLED_TINT := Color(0.55, 0.55, 0.6)
 ## Text: the sheet's light label colour, white when hovered or selected, grey when disabled.
 const BUTTON_TEXT := LABEL_COLOR
 const BUTTON_TEXT_LIT := WHITE
 const BUTTON_TEXT_DISABLED := Color8(120, 126, 140)
-## Keyboard selection (focus): a 2 px white ring round the plate's outline.
-const BUTTON_FOCUS := WHITE
-const BUTTON_FOCUS_WIDTH := 2
 ## The two text sizes: the screens' buttons, and the pause strip's small ones.
 const BUTTON_SIZE := 28
 const BUTTON_SMALL_SIZE := 16
@@ -269,32 +251,23 @@ const CHECK_MARK := LABEL_COLOR
 static var _button_plates := {}
 
 
-## The recoloured plate ("normal" or "pressed") at 2x, cached.
+## One state's plate ("normal", "hover", "focus", "pressed" or "disabled") at 2x, cached.
 static func button_plate(kind: String) -> Texture2D:
 	if _button_plates.has(kind):
 		return _button_plates[kind]
-	var path := BUTTON_PLATE_PRESSED_ART if kind == "pressed" else BUTTON_PLATE_ART
-	var src := (load(path) as Texture2D).get_image()
-	src.convert(Image.FORMAT_RGBA8)
-	var img := Image.create(src.get_width(), src.get_height(), false, Image.FORMAT_RGBA8)
-	for y in src.get_height():
-		for x in src.get_width():
-			var c := src.get_pixel(x, y)
-			if c.a8 == 0:
-				continue
-			img.set_pixel(x, y, BUTTON_RECOLOR.get(c.to_html(false), c))
+	var img := (load(BUTTON_PLATE_ART % kind) as Texture2D).get_image()
+	img.convert(Image.FORMAT_RGBA8)
 	img.resize(img.get_width() * HUD_ART_SCALE, img.get_height() * HUD_ART_SCALE, Image.INTERPOLATE_NEAREST)
 	var tex := ImageTexture.create_from_image(img)
 	_button_plates[kind] = tex
 	return tex
 
 
-## One state's 9-slice plate: `kind` the art, `tint` its tint, `drop` the press-down.
-static func button_box(kind: String, tint := Color.WHITE, drop := 0) -> StyleBoxTexture:
+## One state's 9-slice plate: `kind` the art, `drop` the press-down of the text.
+static func button_box(kind: String, drop := 0) -> StyleBoxTexture:
 	var box := StyleBoxTexture.new()
 	box.texture = button_plate(kind)
-	box.modulate_color = tint
-	var m: Vector3i = BUTTON_SLICE[kind] * HUD_ART_SCALE
+	var m: Vector3i = BUTTON_SLICE * HUD_ART_SCALE
 	box.texture_margin_left = m.x
 	box.texture_margin_right = m.x
 	box.texture_margin_top = m.y
@@ -306,14 +279,14 @@ static func button_box(kind: String, tint := Color.WHITE, drop := 0) -> StyleBox
 	return box
 
 
-## The keyboard selection ring, drawn over the plate.
-static func button_focus_box() -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	box.draw_center = false
-	box.border_color = BUTTON_FOCUS
-	box.set_border_width_all(BUTTON_FOCUS_WIDTH)
-	box.set_expand_margin_all(BUTTON_FOCUS_WIDTH)
-	box.anti_aliasing = false
+## The keyboard selection plate: a bright ring, open in the middle, over the state's plate.
+## It adds no room round the text (content margins 0 so it never changes the button's size).
+static func button_focus_box() -> StyleBoxTexture:
+	var box := button_box("focus")
+	box.content_margin_left = 0
+	box.content_margin_right = 0
+	box.content_margin_top = 0
+	box.content_margin_bottom = 0
 	return box
 
 
@@ -341,10 +314,10 @@ static func _button_text(b: Button, small: bool) -> void:
 static func style_button(b: Button, small := false) -> void:
 	_button_text(b, small)
 	b.add_theme_stylebox_override("normal", button_box("normal"))
-	b.add_theme_stylebox_override("hover", button_box("normal", BUTTON_HOVER_TINT))
-	b.add_theme_stylebox_override("pressed", button_box("pressed", Color.WHITE, BUTTON_PRESS_DROP))
-	b.add_theme_stylebox_override("hover_pressed", button_box("pressed", BUTTON_HOVER_TINT, BUTTON_PRESS_DROP))
-	b.add_theme_stylebox_override("disabled", button_box("normal", BUTTON_DISABLED_TINT))
+	b.add_theme_stylebox_override("hover", button_box("hover"))
+	b.add_theme_stylebox_override("pressed", button_box("pressed", BUTTON_PRESS_DROP))
+	b.add_theme_stylebox_override("hover_pressed", button_box("pressed", BUTTON_PRESS_DROP))
+	b.add_theme_stylebox_override("disabled", button_box("disabled"))
 	b.add_theme_stylebox_override("focus", button_focus_box())
 	b.set_meta("hud_button", "button")
 

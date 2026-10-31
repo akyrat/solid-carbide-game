@@ -622,6 +622,34 @@ func test_answer_5_arrows_stay_clear_of_the_hud_at_every_window_size() -> void:
 			pkg.free()
 
 
+## T-453: the player can move the HUD's pieces; the arrows keep clear of them at their new places.
+func test_t453_arrows_stay_clear_of_moved_hud_pieces() -> void:
+	for size in SIZES:
+		_run_at(size)
+		await wait_process_frames(2)
+		var hud: Hud = run.hud
+		var area: Vector2 = hud.root.size
+		hud.move_piece("viewers", Vector2(area.x - 256.0, area.y / 2.0 - 36.0))  # right edge, middle
+		hud.move_piece("clock", Vector2(area.x / 2.0 - 100.0, 16.0))  # top centre
+		hud.move_piece("sub_goal", Vector2(16.0, area.y / 2.0 - 40.0))  # left edge, middle
+		hud.move_piece("coins", Vector2(area.x / 2.0 - 54.0, area.y - 52.0))  # bottom centre
+		await wait_process_frames(1)
+		var parts := _hud_parts(hud)
+		var screen := Vector2(size)
+		for i in 32:
+			var dir := Vector2.from_angle(TAU * i / 32.0)
+			var pkg := _package_at_drawn(dir * 5000.0)
+			drops.arrows.refresh()
+			var mine: Array = drops.arrows.shown.filter(func(a): return a.package == pkg)
+			assert_eq(mine.size(), 1, "%s dir %d: an arrow" % [size, i])
+			var box := GiftArrows.arrow_rect(mine[0].position, drops.arrows.ui_scale)
+			assert_true(Rect2(Vector2.ZERO, screen).encloses(box), "%s dir %d: on screen" % [size, i])
+			for n in parts:
+				assert_false(box.intersects(parts[n]), "%s dir %d: clear of the moved %s" % [size, i, n])
+			drops.packages.erase(pkg)
+			pkg.free()
+
+
 func test_answer_5_arrow_placement_slides_off_a_hud_part() -> void:
 	var screen := Vector2(1000, 600)
 	var straight := GiftArrows.place(screen, Vector2(2000, 300), [])
