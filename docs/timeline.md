@@ -2745,3 +2745,8 @@ Entry format:
 - Decision or change: The 6 kaiju alert signs (4 banners, 2 standing signs) move onto Kaiju City, at spots the agent proposes for the playtest; the banners come back on this map's skyscrapers.
 - Documents touched: docs/level-design.md
 - Tasks: T-439
+
+## 2026-10-31: Weapons during the wreck, and molotovs land where enemies can be
+- Decision or change: Build I: weapons keep firing during the wreck, and molotovs land only where enemies can be. The board played it: "LGTM".
+- Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`
+- Tasks: T-414

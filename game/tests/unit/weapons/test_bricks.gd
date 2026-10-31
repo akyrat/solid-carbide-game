@@ -258,7 +258,7 @@ func test_the_garage_bonus_multiplies_the_damage() -> void:
 func test_nothing_after_the_run() -> void:
 	rack.upgrade("bricks")
 	var e := _place(FakeEnemy.new(), _car() + Vector2(1.0, 0.0))
-	run.state.damage_car(1e9)  # the car is destroyed: the run is lost
+	run.state.kaiju_killed()  # the run is won and over (T-414: a wreck is not over)
 	assert_false(run.state.is_running())
 	_air(1.0)
 	assert_eq(bricks.waves, 0, "no wave once the run is over")
