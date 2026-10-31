@@ -118,7 +118,7 @@ func dropping(nav, from: Vector2, body_h: float) -> bool:
 		return false
 	var p := path[index]
 	if index > 0 and nav.is_drop(path[index - 1], p):
-		return body_h - nav.ground.height_at(p) > EnemyHeightScript.MAX_STEP
+		return body_h - nav.ground_height_at(p) > EnemyHeightScript.MAX_STEP
 	return index + 1 < path.size() and from.distance_to(p) <= DROP_NEAR and nav.is_drop(p, path[index + 1])
 
 

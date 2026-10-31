@@ -2945,3 +2945,8 @@ Entry format:
 - Decision or change: The command guard trusts tools/task_notes.py like the status script, so agents can write their result notes without refusals or workarounds.
 - Documents touched: tasks/README.md
 - Tasks: T-472
+
+## 2026-10-31: The game stays fast with a crowd of minions
+- Decision or change: Enemy code optimised with the same behaviour: the minion step is about 4.5 times faster (100 minions: 37 to 8 ms a frame; 300: 119 to 25 ms). A repeatable benchmark, game/tools/minion_crowd_bench.sh. The ceiling stays at 100 alive; the agent proposes 150. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-444
