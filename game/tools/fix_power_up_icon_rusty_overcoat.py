@@ -102,25 +102,76 @@ OUTLINE_BREAKS = {
 
 EDITS = [SPIKES, COLLAR, GLOW, OUTLINE_BREAKS]
 
+# ---- Version 3: make it read as an overcoat, not a robot torso ----
+# v1's round orange chest emblem under a dark hood read as a robot's head.
+# v3 replaces it with an open collar: two steel lapels folding down in a V over
+# the dark lining, then a front seam down the coat with neon buttons.
+RUST = (157, 78, 46)
+RUST_DARK = (145, 68, 40)
+RUST_LIT = (246, 169, 109)
+STEEL = (116, 113, 134)
+STEEL_SHADE = (96, 95, 118)
+LINING = (29, 25, 46)
 
-def make_v2():
-    im = load_v1()
-    for layer in EDITS:
+_ROWS = {
+    # x:   12          13          14          15          16          17          18          19
+    3: [None,      STEEL_LIT,  LINING,     LINING,     LINING,     LINING,     STEEL_MID,  None],
+    4: [STEEL_LIT, STEEL_LIT,  STEEL_LIT,  LINING,     LINING,     STEEL_MID,  STEEL_MID,  STEEL_SHADE],
+    5: [RUST_LIT,  STEEL_LIT,  STEEL_LIT,  STEEL_LIT,  STEEL_MID,  STEEL_MID,  STEEL_SHADE, RUST],
+    6: [RUST,      RUST_LIT,   RUST_LIT,   STEEL_LIT,  OUTLINE,    STEEL_MID,  STEEL,      STEEL],
+    7: [RUST,      RUST_LIT,   RUST,       STEEL,      OUTLINE,    STEEL,      RUST,       STEEL],
+    8: [STEEL,     RUST,       RUST,       STEEL,      OUTLINE,    RUST,       RUST_DARK,  STEEL],
+    9: [STEEL,     STEEL,      STEEL,      STEEL,      OUTLINE,    STEEL,      STEEL,      None],
+    10: [STEEL_MID, STEEL,     STEEL,      STEEL,      OUTLINE,    STEEL,      STEEL_SHADE, None],
+}
+LAPELS = {(12 + i, y): c for y, row in _ROWS.items() for i, c in enumerate(row) if c is not None}
+
+# Front seam: a dark line down the middle (x 16) with a lit plate edge to its left.
+SEAM = {}
+for _y in range(11, 26):
+    SEAM[(16, _y)] = OUTLINE
+    SEAM[(15, _y)] = STEEL_MID if _y % 4 else STEEL_LIT
+
+# Neon buttons on the left panel, each with a stepped halo (bright, mid, dark).
+BUTTONS = {}
+for _y in (10, 15, 20):
+    BUTTONS.update({(14, _y): CYAN, (13, _y): CYAN_MID, (15, _y): CYAN_MID,
+                    (12, _y): CYAN_DARK, (14, _y + 1): CYAN_DARK})
+
+# More lighter outline breaks on the top-left edges.
+OUTLINE_BREAKS_V3 = {(3, 13): OUT_HI, (9, 21): OUT_HI, (4, 8): OUT_HI}
+
+EDITS_V3 = [LAPELS, SEAM, BUTTONS, OUTLINE_BREAKS_V3]
+
+
+def _apply(im, layers):
+    for layer in layers:
         for (x, y), c in layer.items():
             im.putpixel((x, y), c + (255,))
     return im
+
+
+def make_v2():
+    return _apply(load_v1(), EDITS)
+
+
+def make_v3():
+    return _apply(make_v2(), EDITS_V3)
 
 
 def main(argv):
     if argv and argv[0] == "--dump":
         dump(load_v1())
         return 0
+    make = make_v3
+    if argv and argv[0] == "--v2":
+        make, argv = make_v2, argv[1:]
     if len(argv) != 1:
         raise SystemExit(__doc__)
     out = Path(argv[0])
     if out.exists():
         raise SystemExit(f"{out} exists; never overwrite a version")
-    im = make_v2()
+    im = make()
     im.save(out)
     colours = {p for p in im.getdata() if p[3]}
     print(f"wrote {out}: bbox {im.getbbox()}, {len(colours)} colours")
