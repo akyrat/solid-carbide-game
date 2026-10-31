@@ -2655,3 +2655,108 @@ Entry format:
 - Decision or change: The board played goal G-007's build and approved it ("g007 also lgtm"). Merged: tutorial slides before a run (with "Don't show again" on the last slide, unticked; Restart doesn't show them; no early skip), a trick list button on the pause screen, the seven trick illustrations (both sets made; the script-drawn set chosen over PixelLab's, 7.0 vs 5.9), every sound effect off for the MVP with one switch (the music stays), and the SFX volume slider hidden on the pause screen. Noted in the goal run (not yet a ticket): the pause screen's trick list panel is see-through.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/visual-style.md`
 - Tasks: T-381, T-382, T-383, T-384, T-385, T-386, T-387, T-388, T-389, T-390 (goal G-007)
+
+## 2026-10-30: A broken save never wipes progress
+- Decision or change: Saves are written to a temp file and swapped in, with a backup of the last good save; a file that fails to load is kept aside and the backup loads; every save carries a version.
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-417
+
+## 2026-10-30: The wreck decides the loss at its end
+- Decision or change: The run is lost only when the wreck's 3 seconds end; a kaiju kill during the wreck wins; coins and health pickups count; Restart or Exit during the wreck keeps no coins and adds no runs-list entry.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-413
+
+## 2026-10-30: The street art: sidewalks, curbs, parked and broken cars, craters
+- Decision or change: The full sidewalk and curb set, five parked and broken cars at four facings (PixelLab's rotations with the front lamps repainted grey by script, as the board asked), and three crater looks, swapped into the level creator; 21 of 50 generations used.
+- Documents touched: `docs/drifting.md`, `docs/visual-style.md`
+- Tasks: T-399
+
+## 2026-10-30: The drift-pays-its-combo test under load
+- Decision or change: The drift-pays-its-combo test no longer depends on how busy the machine is.
+- Documents touched: game/tests/unit/run/test_run_likes.gd
+- Tasks: T-434
+
+## 2026-10-30: The car's height uses its whole footprint
+- Decision or change: The car's whole 1 by 3 outline meets raised sides, turns included; the board kept today's behaviour on the four open questions (roof-edge tip-off, bumper bounce, slow ramp tops, skyscraper nose).
+- Documents touched: none
+- Tasks: T-411
+
+## 2026-10-30: The drift-pays-its-combo test under load
+- Decision or change: test_run_likes.gd steps the car and the run's clock directly instead of waiting on frames, so it no longer fails when the machine is busy.
+- Documents touched: none
+- Tasks: T-434
+
+## 2026-10-30: Restart, Exit or closing cancels the run
+- Decision or change: The board, after playing build I: Restart or Exit on the pause screen and closing the game window cancel the run at any point, the wreck included; its coins are lost, nothing goes into the run history and no recap shows. Replaces T-327's coins kept on Restart and Exit, and the audit's loss with coins kept on closing. The board also pointed out there is no runs list screen yet (T-364, parked for the final release): the Project Lead's build I checklist wrongly asked it to check one.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-416
+
+## 2026-10-30: Meteors hit minions and push pickups aside
+- Decision or change: Built and merged (audit epic, build J): a meteor landing on minions damages them (minion_damage 2, the agent's proposal, played by the board), coins and health pickups on a new boulder's spot are pushed out, a car more than 1 unit above a landing is missed; data guards for seconds_between_attacks and spawn_interval_seconds.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-418
+
+## 2026-10-30: The kaiju only takes paths it fits through
+- Decision or change: Built and merged (audit epic, build J): each enemy plans its way for its own size; the kaiju keeps 2 units off buildings, never takes a gap narrower than its body, and keeps off rooftop, ramp and map edges, dropping from 3 units back. The board played it and kept the edge rule (2026-10-30).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-419
+
+## 2026-10-30: Each weapon has its own top tier
+- Decision or change: Built and merged (audit epic, build J): each weapon's top tier comes from its own data (T-408's, kept: the gun 11, the others 8), a weapon at its top tier is never in a gift pack, a gun with bullets 0 reports an error instead of crashing.
+- Documents touched: none
+- Tasks: T-422
+
+## 2026-10-30: The car bounces off walls
+- Decision or change: The car really bounces off walls even with W held, scaled by how hard it hits and capped so fast hits are not comical; no throttle cut. Replaces the 2026-10-10 rule that W keeps the car pressed against the wall.
+- Documents touched: docs/drifting.md
+- Tasks: T-435
+
+## 2026-10-30: The kaiju gets stuck from one street spot on the board's latest level
+- Decision or change: After the board saved kaiju_city.json at 21:12, T-419's test shows the kaiju never reaching a rooftop car from street spot (-79, 47), and every merge into master stops on it (T-420's merge stopped twice). A fix ticket for the Enemy Behavior Agent: fix the kaiju's planning, not the level, and don't loosen the test without the board.
+- Documents touched: docs/enemies.md
+- Tasks: T-436
+
+## 2026-10-31: The kaiju reaches a rooftop car on the board's latest level
+- Decision or change: Built and merged (audit epic): on the board's level saved 2026-10-30 21:12 the kaiju went to and fro at the foot of ramp-12 near (-79, 46) and never reached a rooftop car from the west; one rule in enemy_navigation.gd through_ramps() keeps a path that only skims a ramp on the ramp's cells. T-380's reproduction test now checks the enemy reaches the car. Master's test set is green again. Played by the board (lgtm, 2026-10-31).
+- Documents touched: none
+- Tasks: T-436
+
+## 2026-10-31: Thread the needle while scraping, and level data guards
+- Decision or change: Built and merged (audit epic, build J): crossing a thread-the-needle gap while still touching a paired obstacle pays nothing; a level file with a missing key, an unknown ramp side or a zero-size ramp loads with an error naming the piece and flat ground (no NaN); a level without a spawn starts at the map's centre (Level design), and a spawn in geometry is reported. Played by the board.
+- Documents touched: none
+- Tasks: T-420
+
+## 2026-10-31: The kaiju keeps off edges; a guarded edit accepted; no MVP docs status line
+- Decision or change: after playing build J, the board kept the kaiju's edge rule that T-419 added beyond its ticket: the kaiju keeps its body off rooftop, ramp and map edges and drops from a little way back (Enemies, Decisions, "The kaiju only takes paths it fits through"). The board accepted T-436's Edit-tool change to game/tools/draw_kaiju_nav.gd/.sh, made after the command guard refused a `python -` edit of them; it stands. The board asked to remove the "MVP docs" bar from the terminal status line: the statusLine entry is gone from .claude/settings.json (tools/statusline.py and docs/mvp-readiness.json are kept). Merges may run with GUT_TIME_LIMIT=1500 until the default limit is raised (board, via Greenbull).
+- Documents touched: docs/enemies.md
+- Tasks: T-419, T-436
+
+## 2026-10-31: Merges test once per batch
+- Decision or change: The board approved testing once per merge batch instead of after every ticket, and a 1500 s default limit for the Godot test set, after merges timed out at 900 s.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-437
+
+## 2026-10-31: A wall hit ends the drift
+- Decision or change: A wall hit ends a drift in progress: it pays for the time up to the hit, then the hit's combo cut applies.
+- Documents touched: docs/drifting.md
+- Tasks: T-438
+
+## 2026-10-31: The kaiju alert signs move onto Kaiju City
+- Decision or change: The 6 kaiju alert signs (4 banners, 2 standing signs) move onto Kaiju City, at spots the agent proposes for the playtest; the banners come back on this map's skyscrapers.
+- Documents touched: docs/level-design.md
+- Tasks: T-439
+
+## 2026-10-31: Weapons during the wreck, and molotovs land where enemies can be
+- Decision or change: Build I: weapons keep firing during the wreck, and molotovs land only where enemies can be. The board played it: "LGTM".
+- Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`
+- Tasks: T-414
+
+## 2026-10-31: Closing the game mid-run, and pausing when the window loses focus
+- Decision or change: Build I: closing the game mid-run is handled, and the game pauses when its window loses focus. The board played it: "LGTM".
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-416
+
+## 2026-10-31: merge_batch prints safely on the Windows console; drive_elevation_sample.sh drives
+- Decision or change: Tooling: merge_batch.py no longer crashes printing on a cp1252 Windows console, and drive_elevation_sample.sh no longer stops before driving. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-425

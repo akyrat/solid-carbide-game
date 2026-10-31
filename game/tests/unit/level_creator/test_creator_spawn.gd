@@ -320,8 +320,10 @@ func test_a_run_on_an_old_level_starts_at_the_centre() -> void:
 	var path := dir.path_join("old.json")
 	LevelStore.save_level(path, data)
 	var run := _run_on(path)
-	assert_eq(Vector2(run.car.model.x, run.car.model.y), Vector2.ZERO, "the run's own start, as before")
-	assert_almost_eq(run.car.model.rotation, -PI / 2.0, 0.0001)
+	# T-420: where LevelSpawn says (the map's centre, snapped to a cell), as Level design decides:
+	# "a level saved before this has it there too"; not the run's own (0, 0).
+	assert_eq(Vector2(run.car.model.x, run.car.model.y), LevelSpawn.centre_of(data), "the map's centre, snapped")
+	assert_almost_eq(angle_difference(run.car.model.rotation, -PI / 2.0), 0.0, 0.0001, "facing north")
 
 
 # ---- The game's own map is unchanged ----------------------------------------------------------

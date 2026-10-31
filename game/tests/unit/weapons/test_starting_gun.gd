@@ -312,6 +312,7 @@ func test_no_bullets_fires_nothing() -> void:
 	_run_for(gun.fire_interval() * 2)
 	assert_eq(shots.size(), 0)
 	assert_eq(gun.volleys, 0)
+	assert_push_error_count(1, "T-422: reported once, not at every check")
 
 
 func test_every_tier_applies_the_data_values() -> void:
@@ -475,3 +476,4 @@ class FakeEnemy:
 
 	func take_damage(amount: float, _source := "") -> void:
 		damage_taken += amount
+

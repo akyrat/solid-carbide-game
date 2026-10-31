@@ -39,7 +39,7 @@ func test_buttons_are_labelled_and_focusable() -> void:
 	assert_true(ps.restart_button.has_focus(), "keyboard focus starts on Restart")
 
 
-func test_restart_starts_a_fresh_run_and_keeps_coins() -> void:
+func test_restart_starts_a_fresh_run_and_cancels_the_old_one() -> void:
 	var old = game.run
 	old.state.add_coins(9)
 	game.pause_screen.pause()
@@ -48,18 +48,20 @@ func test_restart_starts_a_fresh_run_and_keeps_coins() -> void:
 	assert_true(game.run.state.is_running())
 	assert_eq(game.run.state.time_left_text(), "8:00")
 	assert_eq(game.run.state.coins, 0)
-	assert_eq(game.progress.coins, 9)
+	assert_eq(game.progress.coins, 0, "the cancelled run's coins are lost (board, 2026-10-30)")
+	assert_eq(game.history.count(), 0, "no runs-list entry")
 	assert_false(get_tree().paused)
 	assert_null(game.menu)
 
 
-func test_exit_shows_the_menu_unpaused_and_keeps_coins() -> void:
+func test_exit_shows_the_menu_unpaused_and_cancels_the_run() -> void:
 	game.run.state.add_coins(4)
 	game.pause_screen.pause()
 	game.pause_screen.exit_button.pressed.emit()
 	assert_null(game.run)
 	assert_true(game.menu is MainMenu)
-	assert_eq(game.progress.coins, 4)
+	assert_eq(game.progress.coins, 0, "the cancelled run's coins are lost (board, 2026-10-30)")
+	assert_eq(game.history.count(), 0, "no runs-list entry")
 	assert_false(get_tree().paused)
 	assert_eq(quit_calls, 0, "the pause Exit does not close the game")
 

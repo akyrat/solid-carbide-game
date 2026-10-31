@@ -119,6 +119,11 @@ func reset_for_run() -> void:
 
 # --- Each step -------------------------------------------------------------
 
+## The underglow keeps ticking while the car is wrecked (T-414).
+func step_wrecked(dt: float) -> void:
+	step(dt)
+
+
 ## One physics step of `dt` seconds (the rack calls it while owned and the run
 ## is going, after the car has moved).
 func step(dt: float) -> void:

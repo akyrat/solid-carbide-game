@@ -12,6 +12,10 @@ const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 
 var platforms: Array = []
 var ramps: Array = []
+## T-420: "" when the last load_data was fine, else what was wrong with the data, naming the piece.
+var error := ""
+
+const RAMP_SIDES := ["east", "west", "south", "north"]
 
 
 static func from_file(path: String = DEFAULT_PATH) -> GroundHeight:
@@ -37,10 +41,16 @@ func load_file(path: String = DEFAULT_PATH) -> bool:
 func load_data(data: Dictionary) -> bool:
 	platforms = []
 	ramps = []
+	error = ""
 	var listed: Array = data.get("platforms", []).duplicate()
 	# T-405: the short buildings (low-rise, small, long) are platforms at ShortPlatforms.HEIGHT,
 	# after the file's own rooftops (so the rooftops keep their area indices).
 	listed.append_array(ShortPlatformsScript.platforms_of(data))
+	# T-420: a bad piece is reported by name and the ground stays flat, never half loaded.
+	error = _problem_in(listed, data.get("ramps", []))
+	if error != "":
+		push_error("GroundHeight: " + error)
+		return false
 	for p in listed:
 		platforms.append({
 			"id": str(p.get("id", "")),
@@ -75,6 +85,42 @@ func load_data(data: Dictionary) -> bool:
 	return true
 
 
+## T-420: "" when every platform and ramp has the keys it needs and a usable size, else a message
+## naming the piece (its id, or its index) and what is wrong with it.
+static func _problem_in(listed: Array, ramp_list: Array) -> String:
+	for i in listed.size():
+		var p = listed[i]
+		var name := "platform %s" % (str(p.get("id", "")) if p is Dictionary and str(p.get("id", "")) != "" else "#%d" % i)
+		if not (p is Dictionary):
+			return "%s is not an object" % name
+		var why := _missing_numbers(p, ["x", "y", "w", "h", "height"])
+		if why != "":
+			return "%s: %s" % [name, why]
+	for i in ramp_list.size():
+		var r = ramp_list[i]
+		var name := "ramp %s" % (str(r.get("id", "")) if r is Dictionary and str(r.get("id", "")) != "" else "#%d" % i)
+		if not (r is Dictionary):
+			return "%s is not an object" % name
+		var why := _missing_numbers(r, ["x", "y", "w", "h", "top_height"])
+		if why != "":
+			return "%s: %s" % [name, why]
+		if float(r.w) <= 0.0 or float(r.h) <= 0.0:
+			return "%s: its width and height must be above 0 (w %s, h %s)" % [name, str(r.w), str(r.h)]
+		var side := str(r.get("side", "east"))
+		if not (side in RAMP_SIDES):
+			return "%s: unknown side \"%s\" (east, west, south or north)" % [name, side]
+	return ""
+
+
+static func _missing_numbers(d: Dictionary, keys: Array) -> String:
+	for k in keys:
+		if not d.has(k):
+			return "missing \"%s\"" % k
+		if not (d[k] is float or d[k] is int) or is_nan(float(d[k])) or is_inf(float(d[k])):
+			return "\"%s\" is not a number" % k
+	return ""
+
+
 static func _contains(rect: Rect2, point: Vector2) -> bool:
 	# Closed on every side (Rect2.has_point is open on the far sides).
 	return point.x >= rect.position.x and point.x <= rect.end.x \
@@ -97,6 +143,9 @@ func is_ramp(point: Vector2) -> bool:
 func _ramp_t(r: Dictionary, point: Vector2) -> float:
 	var rect: Rect2 = r.rect
 	var t := 0.0
+	# T-420: load_data refuses a ramp with no size; this keeps a hand-built one from dividing by zero.
+	if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+		return 1.0
 	match r.side:
 		"east":   # the top is at the ramp's west end
 			t = (rect.end.x - point.x) / rect.size.x
@@ -134,6 +183,51 @@ func area_index_at(point: Vector2) -> int:
 		var p: Dictionary = platforms[i]
 		if _contains(p.rect, point) and p.height > best_h:
 			best = i
+			best_h = p.height
+	return best
+
+
+## The areas whose rectangles touch box (task T-411, the car's footprint):
+## {"ramps": [index in ramps, in order], "platforms": [index in platforms]}.
+## height_among and area_among answer height_at and area_index_at from only
+## these, so the car's outline points test a few rectangles, not the whole map.
+func areas_near(box: Rect2) -> Dictionary:
+	var out := {"ramps": [], "platforms": []}
+	for i in ramps.size():
+		if ramps[i].rect.intersects(box, true):
+			out.ramps.append(i)
+	for i in platforms.size():
+		if platforms[i].rect.intersects(box, true):
+			out.platforms.append(i)
+	return out
+
+
+## height_at, from the areas near (areas_near) only. The same everywhere inside
+## the box areas_near was given.
+func height_among(point: Vector2, near: Dictionary) -> float:
+	for i in near.ramps:
+		var r: Dictionary = ramps[i]
+		if _contains(r.rect, point):
+			return lerpf(r.bottom_height, r.top_height, _ramp_t(r, point))
+	var best := 0.0
+	for i in near.platforms:
+		var p: Dictionary = platforms[i]
+		if _contains(p.rect, point):
+			best = maxf(best, p.height)
+	return best
+
+
+## area_index_at, from the areas near (areas_near) only.
+func area_among(point: Vector2, near: Dictionary) -> int:
+	for i in near.ramps:
+		if _contains(ramps[i].rect, point):
+			return platforms.size() + int(i)
+	var best := -1
+	var best_h := 0.0
+	for i in near.platforms:
+		var p: Dictionary = platforms[i]
+		if _contains(p.rect, point) and p.height > best_h:
+			best = int(i)
 			best_h = p.height
 	return best
 

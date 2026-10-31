@@ -222,6 +222,38 @@ func test_a_weapon_at_its_last_tier_is_never_offered() -> void:
 		offers.choose(ids[0])
 
 
+func test_each_weapon_reaches_its_own_top_tier_and_stops_there() -> void:
+	for id in WEAPONS:
+		var w: Node = rack.get_weapon(id)
+		var top: int = w.data.max_tier(id)
+		assert_eq(w.max_tier(), top, id)
+		w.set_tier(99)
+		assert_eq(w.tier, top, "%s clamps to its own top tier" % id)
+		assert_true(w.is_max_tier())
+		assert_false(w.upgrade(), "%s has no tier past its top" % id)
+		assert_eq(w.tier, top)
+	assert_eq(rack.gun.tier, 11, "the gun reaches its T-408 top tier")
+	assert_eq(rack.molotov.tier, 8, "the others keep theirs")
+
+
+func test_a_gift_pack_never_offers_a_weapon_at_its_own_top_tier() -> void:
+	# The gift pack opens the same choice as a level-up (_open_choice).
+	for id in WEAPONS:
+		for s in 10:
+			_new_run(s)
+			rack.get_weapon(id).set_tier(rack.get_weapon(id).max_tier())
+			_open_choice()
+			var ids: Array = shown[0][1]
+			assert_false(ids.has("upgrade_" + id) or ids.has("get_" + id), "%s at its top, seed %d" % [id, s])
+			offers.choose(ids[0])
+	# The gun one tier short of its own top is still offered.
+	_new_run(0)
+	_max_all_but(["gun"])
+	rack.gun.set_tier(10)
+	_open_choice()
+	assert_eq(shown[0][1], ["upgrade_gun"])
+
+
 # ---- One left, none left ---------------------------------------------------------------------
 
 func test_one_choice_when_only_one_is_left() -> void:
