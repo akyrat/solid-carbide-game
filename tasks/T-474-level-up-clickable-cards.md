@@ -1,7 +1,7 @@
 ---
 id: T-474
 title: The level-up gift pack's cards are clicked directly, with no Take it button
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -70,3 +70,4 @@ T-474 (UI Agent). The level-up gift pack's cards have no Take it button: the who
 - Screenshots (art-archive/T-474/screenshots/): level_up_plain.png, level_up_hover.png (right card hovered, brightened), level_up_selected.png (second card selected by keyboard), level_up_pressed.png (left card pressed down). Fixtures: game/tests/fixtures/t474_*_demo.tscn and t474_cards_demo.gd. (The old level_up_screen_demo fixture is stale: game.run is null there; not touched.)
 - Documents: docs/hud-and-menus.md (Content and Decisions wording), game/docs/hud-and-menus/level-up-screen.md.
 - Nothing under game/data/levels/ touched. Untracked .uid/.import noise not committed.
+- 2026-10-31, in-progress → in-qa: Cards clickable via reusable GiftCardClick; tests pass; screenshots in art-archive/T-474/screenshots
