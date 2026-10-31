@@ -1,7 +1,7 @@
 ---
 id: T-451
 title: Threading the needle flashes the pair and its dashed line
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -70,3 +70,4 @@ Built by the Level/Challenge Design Agent.
 - Note for the playtest: the car is metres past the gap when the trick pays (0.25 s after the crossing), so the flash is short (0.6 s); the camera follows, so a fast pass sees the flash near the screen's edge. Length and pulse count are the levers.
 - 2026-10-31, in-progress → in-qa: Flash built (needle_flash.gd), 6 tests, all three test sets pass, screenshots saved
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, from the screenshots)
