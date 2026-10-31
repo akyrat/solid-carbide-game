@@ -2730,3 +2730,8 @@ Entry format:
 - Decision or change: after playing build J, the board kept the kaiju's edge rule that T-419 added beyond its ticket: the kaiju keeps its body off rooftop, ramp and map edges and drops from a little way back (Enemies, Decisions, "The kaiju only takes paths it fits through"). The board accepted T-436's Edit-tool change to game/tools/draw_kaiju_nav.gd/.sh, made after the command guard refused a `python -` edit of them; it stands. The board asked to remove the "MVP docs" bar from the terminal status line: the statusLine entry is gone from .claude/settings.json (tools/statusline.py and docs/mvp-readiness.json are kept). Merges may run with GUT_TIME_LIMIT=1500 until the default limit is raised (board, via Greenbull).
 - Documents touched: docs/enemies.md
 - Tasks: T-419, T-436
+
+## 2026-10-31: Merges test once per batch
+- Decision or change: The board approved testing once per merge batch instead of after every ticket, and a 1500 s default limit for the Godot test set, after merges timed out at 900 s.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-437
