@@ -1,7 +1,7 @@
 ---
 id: T-473
 title: publish_itch.py reads butler's output safely on Windows
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -64,3 +64,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. tools/publish_itch.py: new run_butler() runs butler with encoding utf-8, errors replace (output never None, key redacted); after a successful push it runs butler status on ITCH_TARGET, prints it and a "Channel html5: now shows version X" line (or a warning if the version is not in the output); a failing push or status gives exit 1 with the redacted output. tools/test_publish_itch.py: stub butler prints non-ASCII bytes; new tests for no crash, status after push with version, failing butler gives non-zero and no key, run_butler never None. docs/working-with-the-board.md "Publishing to itch.io": butler lives in the main checkout's tools/bin/, reinstall from the official download URL. Tools Python tests: 633 run, OK. No real butler call; nothing under game/data/levels/ touched.
+- 2026-10-31, in-progress → in-qa: ready for QA
