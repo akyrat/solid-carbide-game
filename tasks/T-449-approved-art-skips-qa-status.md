@@ -1,7 +1,7 @@
 ---
 id: T-449
 title: The status script lets board-approved art go straight to the board's playtest
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -76,3 +76,4 @@ Built (QA/Integration Agent, T-449):
 - Test results: `python -m unittest discover -s tools -p "test_*.py"` Ran 599, OK. `python -m unittest discover -s game/tools -p "test_*.py"` Ran 767, OK (skipped=1).
 - Nothing under game/data/levels/ was touched.
 - Not done: the mixed-batch case runs the tests for everyone (by design); the guard hook refused inline python that names tasks, so I used the Edit tool instead.
+- 2026-10-31, in-progress → in-qa: Built and tested; 599 + 767 tests OK.
