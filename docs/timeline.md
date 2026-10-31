@@ -2765,3 +2765,8 @@ Entry format:
 - Decision or change: Build I: pickups at full hearts, the combo's hit window and the run's base values, as built. The board played it: "LGTM".
 - Documents touched: none
 - Tasks: T-415
+
+## 2026-10-31: Goal G-008, the HUD and the main menu, merged after the board's playtest
+- Decision or change: The board played goal G-008's build and approved it ("LGTM"). Merged: the main menu's pixel-art title (Press Start 2P) with its styled "(work in progress)" line over the splash cover (PixelLab, 4 generations; the style loop kept v2 at 6/10, judged in the playtest); one HUD style sheet (Visual style) that every HUD piece and the HUD's code (`hud_style.gd`) follow, with the clock's digit panel and new weapon icons; the HUD scaling with the window at any size and resolution, with a "HUD size" slider (50 to 125, default 100) on the pause screen; and the pause screen's sliders saving once, on release. The 248 Godot-generated files the run swept in were dropped.
+- Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
+- Tasks: T-426, T-427, T-428, T-429, T-430, T-431, T-432, T-433 (goal G-008)

@@ -16,13 +16,8 @@ const LETTER := 1
 const OUTLINE := 2
 const CARD := 3
 const BORDER_COLOR := 4
-const PALETTE := [
-	Color(0, 0, 0, 0),
-	Color8(255, 255, 255),  # letters
-	Color8(0, 0, 0),        # letter outline
-	Color8(255, 80, 16),    # card: warning red-orange
-	Color8(0, 0, 0),        # border and crack edges
-]
+## Transparent, letters, letter outline, the warning red-orange card, border (HudStyle, T-428).
+const PALETTE := HudStyle.BROKEN_PALETTE
 ## Least colour distance from the HUD heart's red.
 const RED_CLEARANCE := 0.2
 ## The card's border width and the crack's gap (popup pixels).

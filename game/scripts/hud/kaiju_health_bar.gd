@@ -14,12 +14,13 @@ extends Node2D
 ## (as the popups', T-132), so no building hides it. Drawn in code, never
 ## the heart's red.
 
-const FILL_COLOR := Color(0.72, 0.18, 1.0)  # neon purple
-const BACK_COLOR := Color.WHITE
-const LINE_COLOR := Color.BLACK
+## The colours and the outline are HudStyle's (T-428).
+const FILL_COLOR := HudStyle.KAIJU_FILL  # neon purple
+const BACK_COLOR := HudStyle.KAIJU_BACK
+const LINE_COLOR := HudStyle.KAIJU_LINE
 ## Bar height inside the outline, and the outline's thickness (view pixels).
 const BAR_HEIGHT := 8.0
-const OUTLINE := 2.0
+const OUTLINE := HudStyle.KAIJU_OUTLINE
 ## Space between the top of the kaiju's drawing and the bar's bottom.
 const GAP := 8.0
 ## Dividers: one every 10% of the health.

@@ -7,7 +7,7 @@ extends Control
 
 signal arrived
 
-const FONT_SIZE := 30
+const FONT_SIZE := HudStyle.VIEWERS_FLIGHT_SIZE
 const EYE_PATH := "res://art/hud/eye_icon.png"
 const EYE_GAP := 3
 ## The scale at the end of the flight.
@@ -21,6 +21,9 @@ var seconds := 0.55
 var arc := 90.0
 var age := 0.0
 var done := false
+## The HUD's scale (T-431): the flight is top level, in screen pixels, so it is drawn at the
+## HUD's scale itself, and its arc grows with it.
+var base_scale := 1.0
 var label: Label
 var eye: TextureRect
 
@@ -40,11 +43,7 @@ func setup(text: String, color: Color, start: Vector2, target: Callable, flight_
 	label = Label.new()
 	label.name = "Amount"
 	label.text = text
-	label.add_theme_font_override("font", Hud.comic_font())
-	label.add_theme_font_size_override("font_size", FONT_SIZE)
-	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_outline_color", ViewersCounter.DARK)
-	label.add_theme_constant_override("outline_size", 6)
+	HudStyle.apply(label, "viewers_flight", color)
 	label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(label)
 	var ls := label.get_combined_minimum_size()
@@ -70,7 +69,7 @@ func setup(text: String, color: Color, start: Vector2, target: Callable, flight_
 func point_at(t: float) -> Vector2:
 	var to: Vector2 = to_point.call() if to_point.is_valid() else from
 	var e := t * t
-	var mid := (from + to) / 2.0 + Vector2(0, -arc)
+	var mid := (from + to) / 2.0 + Vector2(0, -arc * base_scale)
 	var a := from.lerp(mid, e)
 	var b := mid.lerp(to, e)
 	return a.lerp(b, e)
@@ -78,7 +77,7 @@ func point_at(t: float) -> Vector2:
 
 func _place() -> void:
 	var t := clampf(age / seconds, 0.0, 1.0)
-	var s := lerpf(1.0, END_SCALE, t)
+	var s := lerpf(1.0, END_SCALE, t) * base_scale
 	scale = Vector2(s, s)
 	position = (point_at(t) - size / 2.0).round()
 

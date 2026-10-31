@@ -4,7 +4,7 @@ extends Label
 ## warning red and drops away from it, falling faster as it goes and fading, then
 ## frees itself. Pausable.
 
-const FONT_SIZE := 24
+const FONT_SIZE := HudStyle.VIEWERS_DROP_SIZE
 
 var age := 0.0
 var seconds := 0.9
@@ -23,11 +23,7 @@ func setup(t: String, color: Color, at: Vector2, drop_seconds: float, drop_px: f
 	text = t
 	seconds = maxf(drop_seconds, 0.01)
 	fall = drop_px
-	add_theme_font_override("font", Hud.comic_font())
-	add_theme_font_size_override("font_size", FONT_SIZE)
-	add_theme_color_override("font_color", color)
-	add_theme_color_override("font_outline_color", ViewersCounter.DARK)
-	add_theme_constant_override("outline_size", 6)
+	HudStyle.apply(self, "viewers_drop", color)
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	size = get_combined_minimum_size()
 	start = Vector2(at.x - size.x / 2.0, at.y - size.y)

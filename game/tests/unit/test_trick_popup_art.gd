@@ -112,7 +112,7 @@ func test_white_bubble_black_border_black_letters() -> void:
 					continue
 				if p == Color.WHITE:
 					white += 1
-				elif p == Color.BLACK:
+				elif p == HudStyle.POPUP_PALETTE[1]:
 					black += 1
 				else:
 					other += 1
@@ -126,7 +126,7 @@ func test_white_bubble_black_border_black_letters() -> void:
 			if img.get_pixel(x, row).a > 0.0:
 				first = x
 				break
-		assert_eq(img.get_pixel(first, row), Color.BLACK, "%s: black border" % c[0])
+		assert_eq(img.get_pixel(first, row), HudStyle.POPUP_PALETTE[1], "%s: black border" % c[0])
 
 
 func test_name_and_amount_letters_are_both_black() -> void:
@@ -137,9 +137,9 @@ func test_name_and_amount_letters_are_both_black() -> void:
 	for y in box.size.y:
 		for x in box.size.x:
 			var p := img.get_pixel(box.position.x + x, box.position.y + y)
-			if p == Color.BLACK and x < box.size.x / 2:
+			if p == HudStyle.POPUP_PALETTE[1] and x < box.size.x / 2:
 				left_black += 1
-			if p == Color.BLACK and x > box.size.x * 0.7:
+			if p == HudStyle.POPUP_PALETTE[1] and x > box.size.x * 0.7:
 				right_black += 1
 	assert_gt(left_black, 50, "the name is black")
 	assert_gt(right_black, 20, "the amount is black")
@@ -153,7 +153,7 @@ func test_letters_sit_on_one_baseline() -> void:
 	for x in range(box.position.x, box.end.x):
 		var last := -1
 		for y in range(box.position.y, box.end.y):
-			if img.get_pixel(x, y) == Color.BLACK:
+			if img.get_pixel(x, y) == HudStyle.POPUP_PALETTE[1]:
 				last = y
 		if last >= 0:
 			bottoms[last] = bottoms.get(last, 0) + 1
@@ -190,8 +190,8 @@ func test_corners_are_rounded_in_stepped_pixels() -> void:
 		# The very corner of the shape is cut off; the middle of each edge is not.
 		assert_eq(img.get_pixel(1, 1).a, 0.0, "%s: corner pixel cut" % c[0])
 		assert_eq(img.get_pixel(w - 2, h - 2).a, 0.0, "%s: corner pixel cut" % c[0])
-		assert_eq(img.get_pixel(w / 2, 1), Color.BLACK, "%s: straight black top edge" % c[0])
-		assert_eq(img.get_pixel(1, h / 2), Color.BLACK, "%s: straight black left edge" % c[0])
+		assert_eq(img.get_pixel(w / 2, 1), HudStyle.POPUP_PALETTE[1], "%s: straight black top edge" % c[0])
+		assert_eq(img.get_pixel(1, h / 2), HudStyle.POPUP_PALETTE[1], "%s: straight black left edge" % c[0])
 		# Stepped: the first opaque pixel on each of the top rows moves in by whole pixels, never back.
 		var prev := w
 		for y in range(1, 1 + Art.CORNER):

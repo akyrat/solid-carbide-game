@@ -218,7 +218,7 @@ func test_layout_holds_at_the_top_step() -> void:
 			var fire := hud.likes_fire.get_global_rect()
 			assert_true(view.encloses(fire), "%s: the flames inside the screen" % where)
 			assert_false(fire.intersects(combo), "%s: the flames stay clear of the counter" % where)
-			assert_lte(fire.end.y, square_top + LikesFire.INTO_BAR + 0.5,
+			assert_lte(fire.end.y, square_top + LikesFire.INTO_BAR * hud.hud_scale() + 0.5,
 				"%s: the flames reach only the top of the square" % where)
 
 

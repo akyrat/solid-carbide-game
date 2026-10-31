@@ -32,10 +32,10 @@ const BADGE_AT := Vector2(14, 12)
 const EYE_GAP := 4
 const TEXT_RIGHT := 14
 const TEXT_TOP := 6
-const UNIT_FONT_SIZE := 14
+const UNIT_FONT_SIZE := HudStyle.VIEWERS_UNIT_SIZE
 ## The look step from which the panel burns (ViewersData.step_for_viewers: 4 is fire).
 const FIRE_STEP := 4
-const DARK := Color(0.03, 0.03, 0.06)
+const DARK := HudStyle.DARK
 const DEFAULT_LAYOUT := {"x": 896, "y": 560, "w": 240, "h": 72, "reference_w": 1152, "reference_h": 648}
 
 ## Sent when an amount flying in from a trick popup reaches the counter.
@@ -43,8 +43,8 @@ signal landed(viewers: float)
 
 var viewers: ViewersData
 ## The viewers colour (hud.json), used for nothing else in the HUD.
-var color := Color("#33e1ff")
-var crash_color := Color("#ff5010")
+var color := HudStyle.VIEWERS_COLOR
+var crash_color := HudStyle.VIEWERS_CRASH_COLOR
 var cfg: Dictionary = {}
 
 var panel: TextureRect
@@ -89,8 +89,8 @@ func _init() -> void:
 	viewers = ViewersData.new()
 	var r := GameData.load_file("hud")
 	cfg = r.data.get("viewers_counter", {}) if r.ok else {}
-	color = Color(String(cfg.get("color", "#33e1ff")))
-	crash_color = Color(String(cfg.get("crash_color", "#ff5010")))
+	color = Color(String(cfg.get("color", HudStyle.VIEWERS_COLOR.to_html(false))))
+	crash_color = Color(String(cfg.get("crash_color", HudStyle.VIEWERS_CRASH_COLOR.to_html(false))))
 	_anchor(cfg.get("layout", DEFAULT_LAYOUT))
 	_build()
 	reset(1.0)
@@ -148,20 +148,14 @@ func _build() -> void:
 	number_label = Label.new()
 	number_label.name = "Number"
 	number_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	number_label.add_theme_font_override("font", Hud.comic_font())
-	number_label.add_theme_color_override("font_outline_color", DARK)
-	number_label.add_theme_constant_override("outline_size", 8)
+	HudStyle.apply(number_label, "viewers_number")
 	number_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(number_label)
 	unit_label = Label.new()
 	unit_label.name = "Unit"
 	unit_label.text = Hud.TEXT_VIEWERS_UNIT
 	unit_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	unit_label.add_theme_font_override("font", Hud.comic_font())
-	unit_label.add_theme_font_size_override("font_size", UNIT_FONT_SIZE)
-	unit_label.add_theme_color_override("font_color", color)
-	unit_label.add_theme_color_override("font_outline_color", DARK)
-	unit_label.add_theme_constant_override("outline_size", 4)
+	HudStyle.apply(unit_label, "viewers_unit", color)
 	unit_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(unit_label)
 	_apply_step()
@@ -262,6 +256,8 @@ func release(gain: float) -> void:
 ## on arrival the held viewers count in and the counter bumps.
 func fly_in(text: String, gain: float, from: Vector2) -> ViewersFlight:
 	var f := ViewersFlight.new()
+	if is_inside_tree():
+		f.base_scale = get_global_transform().get_scale().x  # the HUD's scale (T-431)
 	f.setup(text, color, from, Callable(self, "number_center"),
 		float(cfg.get("flight_seconds", 0.55)), float(cfg.get("flight_arc", 90.0)))
 	f.gain = gain
@@ -346,14 +342,11 @@ func _update_step() -> void:
 func _apply_step() -> void:
 	var heat := mini(step, ComboHeat.STEPS.size() - 1)
 	var st: Dictionary = ComboHeat.STEPS[heat]
-	var sizes: Array = cfg.get("number_sizes", [28, 30, 32, 34])
-	number_label.add_theme_font_size_override("font_size", int(sizes[mini(heat, sizes.size() - 1)]))
-	number_label.add_theme_color_override("font_color", color if heat == 0 else st.color)
-	number_label.add_theme_constant_override("shadow_offset_x", 0)
-	number_label.add_theme_constant_override("shadow_offset_y", 0)
-	number_label.add_theme_constant_override("shadow_outline_size", int(st.glow) / 2)
-	number_label.add_theme_color_override("font_shadow_color",
-		st.glow_colors[0] if st.glow > 0 else Color(0, 0, 0, 0))
+	var sizes: Array = cfg.get("number_sizes", HudStyle.VIEWERS_NUMBER_SIZES)
+	# The heat step's look with the counter's own sizes, base colour, half the glow
+	# and its own outline (HudStyle "viewers_number").
+	HudStyle.apply_heat(number_label, st, int(sizes[mini(heat, sizes.size() - 1)]),
+		color if heat == 0 else st.color, int(st.glow) / 2, false)
 	fire.visible = is_burning()
 	_layout_text()
 	_animate()
@@ -407,7 +400,7 @@ func _animate() -> void:
 	var colors: Array = st.glow_colors
 	if st.glow > 0 and colors.size() > 1:
 		var pick := int(abs(sin(frame * 12.9898) * 43758.5453)) % colors.size()
-		number_label.add_theme_color_override("font_shadow_color", colors[pick])
+		number_label.add_theme_color_override("font_shadow_color", HudStyle.glow_color(st, pick))
 	if fire.visible:
 		fire_frame = posmod(frame, FIRE_FRAMES)
 		fire.texture = fire_textures()[fire_frame]

@@ -1,0 +1,18 @@
+{
+ "what": "Press Start 2P, the pixel-art font for the main menu title and its work in progress line (task T-432). Downloaded unmodified.",
+ "font": "Press Start 2P",
+ "designer": "CodeMan38",
+ "licence": "SIL Open Font License, Version 1.1 (OFL.txt in this folder). Allows use, bundling and selling with software, commercial games included; the licence text ships with the font; a modified font may not use the reserved name.",
+ "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/",
+ "downloaded": "2026-10-30",
+ "files": {
+  "PressStart2P-Regular.ttf": {
+   "bytes": 118204,
+   "sha256": "034c77f1f05ec89421e4a63f0e3a4ca1ecf852cc6d2bf611f126f275728e017d"
+  },
+  "OFL.txt": {
+   "bytes": 4413,
+   "sha256": "705960c3281a5765ecc0b59bd4ed7ca59eed165748076bc2fc3e8fdbfeb944b0"
+  }
+ }
+}

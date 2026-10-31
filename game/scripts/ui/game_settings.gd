@@ -28,6 +28,9 @@ const MUSIC_BUS := "Music"
 
 ## Where the settings are read and written. Tests point this at a test file.
 static var path := DEFAULT_PATH
+## How many times a slider setting (zoom, SFX volume, music volume) was written to the file
+## (T-427): tests count the pause sliders' writes with it.
+static var slider_writes := 0
 
 
 ## The saved camera zoom, or DEFAULT_ZOOM when there is no file or no valid value.
@@ -46,6 +49,7 @@ static func save_zoom(zoom: float) -> bool:
 	var cfg := ConfigFile.new()
 	cfg.load(path)
 	cfg.set_value("camera", "zoom", clampf(zoom, MIN_ZOOM, MAX_ZOOM))
+	slider_writes += 1
 	return cfg.save(path) == OK
 
 
@@ -137,6 +141,7 @@ static func save_sfx_volume(v: float) -> bool:
 	var cfg := ConfigFile.new()
 	cfg.load(path)
 	cfg.set_value("audio", "sfx_volume", clampf(v, 0.0, 100.0))
+	slider_writes += 1
 	return cfg.save(path) == OK
 
 
@@ -193,6 +198,35 @@ static func save_music_volume(v: float) -> bool:
 	var cfg := ConfigFile.new()
 	cfg.load(path)
 	cfg.set_value("audio", "music_volume", clampf(v, 0.0, 100.0))
+	slider_writes += 1
+	return cfg.save(path) == OK
+
+
+## The HUD's size (task T-431), in percent of the HUD's size for the window, in section "hud":
+## the pause screen's HUD size slider sets it. 50 to 125, default 100 (proposals for the
+## playtest; HUD and menus, Content, "HUD size slider"). Above 125 the five weapons' icon
+## column reaches the coins counter, the layout page being full at 100.
+const DEFAULT_HUD_SIZE := 100.0
+const MIN_HUD_SIZE := 50.0
+const MAX_HUD_SIZE := 125.0
+
+
+## The saved HUD size, MIN_HUD_SIZE to MAX_HUD_SIZE (default DEFAULT_HUD_SIZE).
+static func load_hud_size() -> float:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_HUD_SIZE
+	var v = cfg.get_value("hud", "size", DEFAULT_HUD_SIZE)
+	if not (v is float or v is int):
+		return DEFAULT_HUD_SIZE
+	return clampf(float(v), MIN_HUD_SIZE, MAX_HUD_SIZE)
+
+
+static func save_hud_size(v: float) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("hud", "size", clampf(v, MIN_HUD_SIZE, MAX_HUD_SIZE))
+	slider_writes += 1
 	return cfg.save(path) == OK
 
 

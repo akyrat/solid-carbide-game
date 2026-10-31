@@ -24,13 +24,8 @@ const INTO_BAR := 4
 const MAX_HEIGHT := 26
 const TEXT_HEIGHT := 8
 const EMPTY_HEIGHT := 4
-## Flames only; index 0 is the hottest (bottom), the last the tip.
-const PALETTE: Array[Color] = [
-	Color(1.0, 0.98, 0.82),  # white-hot
-	Color(1.0, 0.88, 0.3),   # yellow
-	Color(1.0, 0.72, 0.16),  # orange-yellow
-	Color(1.0, 0.6, 0.08),   # orange
-]
+## Flames only; index 0 is the hottest (bottom), the last the tip (HudStyle, T-428).
+const PALETTE: Array[Color] = HudStyle.FIRE_PALETTE
 
 var burning := false:
 	set(value):

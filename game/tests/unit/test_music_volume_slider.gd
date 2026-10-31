@@ -56,10 +56,12 @@ func test_moving_it_changes_the_music_only_and_saves() -> void:
 	screen.music_slider.value = 80.0
 	assert_almost_eq(_heard(GameSettings.MUSIC_BUS), 0.8, 0.001)
 	assert_almost_eq(_heard(GameSettings.SFX_BUS), 0.3, 0.001, "sound effects untouched")
+	screen.music_slider.drag_ended.emit(true)  # saved on release (T-427)
 	assert_eq(GameSettings.load_music_volume(), 80.0, "saved")
 	assert_eq(screen._music_value_label.text, "80")
 	screen.music_slider.value = 0.0
 	assert_eq(_heard(GameSettings.MUSIC_BUS), 0.0)
+	screen.music_slider.drag_ended.emit(true)
 	assert_eq(GameSettings.load_music_volume(), 0.0)
 
 
@@ -67,6 +69,7 @@ func test_the_sfx_slider_does_not_move_the_music() -> void:
 	var screen := _screen()
 	screen.music_slider.value = 55.0
 	screen.sfx_slider.value = 20.0
+	screen.music_slider.drag_ended.emit(true)
 	assert_almost_eq(_heard(GameSettings.MUSIC_BUS), 0.55, 0.001)
 	assert_eq(GameSettings.load_music_volume(), 55.0)
 

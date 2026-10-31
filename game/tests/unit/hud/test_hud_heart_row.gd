@@ -19,9 +19,11 @@ func test_five_full_hearts_at_the_layout_place() -> void:
 	var row: HeartRow = r.hud.heart_row
 	assert_eq(row.hearts.size(), int(r.state.max_health))
 	assert_eq(_full(row).count(true), row.hearts.size(), "all full at the start")
-	assert_eq(row.get_global_rect().position, Vector2(36, 24))
+	# T-431: in the layout page's pixels (the HUD scales with the window; headless it is 64 x 64).
+	var s: float = r.hud.hud_scale()
+	assert_almost_eq(row.get_global_rect().position / s, Vector2(36, 24), Vector2(0.01, 0.01))
 	if row.hearts.size() == 5:
-		assert_eq(row.get_global_rect().size, Vector2(220, 40))
+		assert_almost_eq(row.get_global_rect().size / s, Vector2(220, 40), Vector2(0.01, 0.01))
 	assert_null(r.hud.get("health_bar"))
 
 
@@ -75,7 +77,8 @@ func test_new_run_resets_the_row() -> void:
 func test_weapon_icons_clear_of_the_row() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
-	assert_eq(hud.weapon_icons.get_global_rect().position, Vector2(12, 88))
+	assert_almost_eq(hud.weapon_icons.get_global_rect().position / hud.hud_scale(), Vector2(12, 88),
+		Vector2(0.01, 0.01), "in the layout page's pixels (T-431)")
 	assert_false(hud.weapon_icons.get_global_rect().intersects(hud.heart_row.get_global_rect()))
 
 

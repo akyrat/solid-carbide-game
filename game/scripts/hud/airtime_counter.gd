@@ -14,9 +14,10 @@ extends Control
 ## heart's red. The number is in the comic font (Bangers). Its size, place and look are
 ## proposals for the playtest.
 
-const FONT_SIZE := 30
-const NUMBER_COLOR := Color(1.0, 1.0, 1.0)
-const OUTLINE_COLOR := Color(0.0, 0.0, 0.0)
+## The look is HudStyle's "air_counter" (T-428).
+const FONT_SIZE := HudStyle.AIR_COUNTER_SIZE
+const NUMBER_COLOR := HudStyle.WHITE
+const OUTLINE_COLOR := HudStyle.BLACK
 const ICON_SIZE := Vector2(30, 22)
 const ICON_GAP := 6
 ## The wing's outline in a 30 x 22 box: feathers fanning up and to the right.
@@ -43,11 +44,7 @@ func _ready() -> void:
 	number_label = Label.new()
 	number_label.name = "Number"
 	number_label.text = airtime_text(0.0)
-	number_label.add_theme_font_override("font", Hud.comic_font())
-	number_label.add_theme_font_size_override("font_size", FONT_SIZE)
-	number_label.add_theme_color_override("font_color", NUMBER_COLOR)
-	number_label.add_theme_color_override("font_outline_color", OUTLINE_COLOR)
-	number_label.add_theme_constant_override("outline_size", 8)
+	HudStyle.apply(number_label, "air_counter")
 	add_child(number_label)
 	_layout()
 	visible = false

@@ -26,17 +26,19 @@ extends CanvasLayer
 ## placeholder drawn in code (16 x 16 pixels, never the heart's red).
 
 const Texts := preload("res://scripts/ui/level_up_texts.gd")
+## Kept for the tests that reach the HUD through the screen (test_level_up_screen.gd).
 const HudScript := preload("res://scripts/hud/hud.gd")
 
 ## Over the HUD (layer 10), under the pause screen (layer 20).
 const LAYER := 15
-const DIM := Color(0, 0, 0, 0.6)
-const INK := Color(0, 0, 0)
+## The colours, fonts and sizes are HudStyle's (T-428): these names point at it.
+const DIM := HudStyle.LEVEL_UP_DIM
+const INK := HudStyle.BLACK
 # The ribbon title (T-310): cream with the art's dark outline, to read on a dark ribbon.
-const TITLE_CREAM := Color8(246, 250, 232)
-const TITLE_OUTLINE := Color8(14, 22, 18)
-const TITLE_OUTLINE_SIZE := 4
-const HOVER_TINT := Color(1.15, 1.15, 1.15)
+const TITLE_CREAM := HudStyle.LEVEL_UP_TITLE_CREAM
+const TITLE_OUTLINE := HudStyle.LEVEL_UP_TITLE_OUTLINE
+const TITLE_OUTLINE_SIZE := HudStyle.LEVEL_UP_TITLE_OUTLINE_SIZE
+const HOVER_TINT := HudStyle.LEVEL_UP_HOVER_TINT
 ## T-173: 74 px taller than T-141's 360 x 300 to make room for the weapon image
 ## (64 px and its 10 px gap), so the texts keep the room they had.
 const CARD_SIZE := Vector2(360, 374)
@@ -112,10 +114,10 @@ const CARD_MARGIN_Y := 26
 ## Width the wrapping texts get inside a card.
 const TEXT_WIDTH := 360.0 - 2.0 * CARD_MARGIN_X
 const CARD_GAP := 40
-const TITLE_SIZE := 40
-const CARD_TITLE_SIZE := 36
-const CARD_DESC_SIZE := 24
-const BUTTON_SIZE := 30
+const TITLE_SIZE := HudStyle.LEVEL_UP_TITLE_SIZE
+const CARD_TITLE_SIZE := HudStyle.LEVEL_UP_CARD_TITLE_SIZE
+const CARD_DESC_SIZE := HudStyle.LEVEL_UP_CARD_DESC_SIZE
+const BUTTON_SIZE := HudStyle.LEVEL_UP_BUTTON_SIZE
 const BUTTON_PLATE_SIZE := Vector2(144, 44)
 const KEYS_LEFT := [KEY_A, KEY_LEFT]
 const KEYS_RIGHT := [KEY_D, KEY_RIGHT]
@@ -214,11 +216,8 @@ func setup(the_rack: Node) -> void:
 	box.add_child(_ribbon_holder)
 	_ribbon = _art_rect("header_ribbon.png", "Ribbon", RIBBON_SIZE)
 	_ribbon_holder.add_child(_ribbon)
-	title_label = _label(Texts.TEXTS["levelup.title"], TITLE_SIZE)
+	title_label = _label(Texts.TEXTS["levelup.title"], "level_up_title")
 	title_label.name = "TitleLabel"
-	title_label.add_theme_color_override("font_color", TITLE_CREAM)
-	title_label.add_theme_color_override("font_outline_color", TITLE_OUTLINE)
-	title_label.add_theme_constant_override("outline_size", TITLE_OUTLINE_SIZE)
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	title_label.position = Vector2(TITLE_X0, 0)
@@ -503,13 +502,13 @@ func _add_card(id: String) -> void:
 	image.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(image)
-	var title := _label(text.title, CARD_TITLE_SIZE)
+	var title := _label(text.title, "level_up_card_title")
 	title.name = "Title"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	title.custom_minimum_size.x = TEXT_WIDTH
 	v.add_child(title)
-	var desc := _label(text.desc, CARD_DESC_SIZE)
+	var desc := _label(text.desc, "level_up_card_desc")
 	desc.name = "Description"
 	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -522,10 +521,7 @@ func _add_card(id: String) -> void:
 	button.focus_mode = Control.FOCUS_NONE
 	button.custom_minimum_size = BUTTON_PLATE_SIZE
 	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	button.add_theme_font_override("font", HudScript.comic_font())
-	button.add_theme_font_size_override("font_size", BUTTON_SIZE)
-	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color"]:
-		button.add_theme_color_override(c, INK)
+	HudStyle.apply(button, "level_up_button")
 	button.add_theme_stylebox_override("normal", _plate("button_plate.png"))
 	button.add_theme_stylebox_override("hover", _plate("button_plate.png", HOVER_TINT))
 	button.add_theme_stylebox_override("pressed", _plate("button_plate_pressed.png"))
@@ -562,10 +558,9 @@ func _plate(file: String, tint := Color.WHITE) -> StyleBoxTexture:
 	return st
 
 
-func _label(text: String, size: int) -> Label:
+## A label in a HudStyle role's look (T-428).
+func _label(text: String, role: String) -> Label:
 	var l := Label.new()
 	l.text = text
-	l.add_theme_font_override("font", HudScript.comic_font())
-	l.add_theme_font_size_override("font_size", size)
-	l.add_theme_color_override("font_color", INK)
+	HudStyle.apply(l, role)
 	return l

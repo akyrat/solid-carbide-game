@@ -55,11 +55,13 @@ func test_moving_the_slider_applies_at_once_and_saves() -> void:
 	var screen := _screen(_run())
 	screen.sfx_slider.value = 100.0
 	assert_almost_eq(_heard(), 1.0, 0.001)
+	screen.sfx_slider.drag_ended.emit(true)  # saved on release (T-427)
 	assert_eq(GameSettings.load_sfx_volume(), 100.0, "saved")
 	screen.sfx_slider.value = 40.0
 	assert_almost_eq(_heard(), 0.4, 0.001)
 	screen.sfx_slider.value = 0.0
 	assert_eq(_heard(), 0.0)
+	screen.sfx_slider.drag_ended.emit(true)
 	assert_eq(GameSettings.load_sfx_volume(), 0.0)
 
 

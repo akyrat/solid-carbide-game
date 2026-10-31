@@ -1,0 +1,4 @@
+{
+	"_comment": "The pause screen's slider labels written as data (T-426). hud_size_label is the HUD size slider's label, shown at the left of the slider like 'Camera zoom level' and 'Music volume'. The slider's value reads as a bare number at the right end like the other sliders, so there is no hud_size_value key. The older labels are still constants in scripts/ui/pause_screen.gd.",
+	"hud_size_label": "HUD size"
+}

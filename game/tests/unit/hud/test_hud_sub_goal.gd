@@ -48,7 +48,8 @@ func test_keeps_its_right_margin_at_other_sizes() -> void:
 		var r := _run(size)
 		await get_tree().process_frame
 		var rect: Rect2 = r.hud.sub_goal.get_global_rect()
-		assert_almost_eq(size.x - rect.end.x, 36.0, 0.5, "%s: 36 px from the right edge" % size)
+		# T-431: the margin is in the layout page's pixels, times the HUD's scale.
+		assert_almost_eq(size.x - rect.end.x, 36.0 * r.hud.hud_scale(), 0.5, "%s: 36 px from the right edge" % size)
 		assert_almost_eq(rect.position.y, size.y * 340.0 / 648.0, 1.0, "%s" % size)
 
 

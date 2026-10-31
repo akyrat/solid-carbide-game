@@ -145,6 +145,7 @@ static func add_run(parent: Node, progress: PlayerProgress, layout_path: String 
 	r.car.tuning.apply_air_turn_upgrade(progress)  # garage upgrade (T-270)
 	r.weapons.set_damage_bonus(progress.current_value("damage_bonus"))  # garage upgrade (T-062)
 	r.set_zoom(GameSettingsScript.load_zoom())
+	r.hud.set_hud_size(GameSettingsScript.load_hud_size())  # the HUD size slider's value (T-431)
 	r.load_camera_options()  # smoothing and the dynamic camera (T-123)
 	var ps: CanvasLayer = PauseScreenScript.new()
 	ps.name = "PauseScreenLayer"

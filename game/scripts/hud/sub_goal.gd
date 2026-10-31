@@ -28,22 +28,19 @@ const GIFT_SHARE := 0.8
 ## The greyed gift's brightness (its grey times this) until the goal.
 const GREY_DIM := 0.6
 ## The label under the square, and the space between it and the square.
-const LABEL_FONT_SIZE := 20
+const LABEL_FONT_SIZE := HudStyle.LABEL_FONT_SIZE
 const LABEL_GAP := 2
 ## The fill: the HUD's green (the health bar's, not Greenbull's light green),
-## with a lighter top line one art pixel tall.
-const FILL_COLOR := Color(0.25, 0.85, 0.45)
-const FILL_TOP_COLOR := Color(0.62, 1.0, 0.72)
+## with a lighter top line one art pixel tall. Colours are HudStyle's (T-428).
+const FILL_COLOR := HudStyle.HEALTH_COLOR
+const FILL_TOP_COLOR := HudStyle.HEALTH_TOP_COLOR
 ## The celebration: frames, the gift's scale per frame (it bounces), and the
 ## glow ring's colour per frame (index into GLOW_COLORS, -1 = no glow).
 const CELEBRATE_FRAMES := 12
 const BOUNCE: Array[float] = [1.08, 1.16, 1.2, 1.12, 1.0, 0.94, 1.0, 1.06, 1.08, 1.03, 1.0, 1.0]
 const GLOW_STEP: Array[int] = [0, 0, 1, 0, 1, 2, 1, 2, 2, -1, 2, -1]
-const GLOW_COLORS: Array[Color] = [
-	Color(1.0, 1.0, 1.0),       # white
-	Color(0.62, 1.0, 0.72),     # pale mint (the fill's top line)
-	Color(0.25, 0.85, 0.45),    # the fill's green
-]
+## White, pale mint (the fill's top line), the fill's green.
+const GLOW_COLORS: Array[Color] = HudStyle.SUB_GOAL_GLOW
 ## The glow ring: art pixels wide, outside the frame.
 const GLOW_WIDTH := 2
 
@@ -120,6 +117,16 @@ func _anchor() -> void:
 	offset_bottom = float(_layout["h"])
 
 
+## Keeps the bottom at or above `max_bottom` in an area `area_h` tall (T-431): a HUD size
+## above 100 makes the layout page shorter than 648, and the square, kept at its share of the
+## height, would reach the viewers counter below it; it moves up just enough instead.
+func keep_above(max_bottom: float, area_h: float) -> void:
+	var h := float(_layout["h"])
+	var shift := maxf(0.0, anchor_top * area_h + h - max_bottom)
+	offset_top = -shift
+	offset_bottom = h - shift
+
+
 ## The frame's black inside, from its centre pixel's colour: per art row, the
 ## first and last inside pixel (the rounded corners make the rows differ).
 static func inside_rows(img: Image) -> Array[Vector3i]:
@@ -191,11 +198,7 @@ func _build_label() -> void:
 	label_row.add_child(icon)
 	label = Label.new()
 	label.name = "SubGoalLabel"
-	label.add_theme_font_override("font", Hud.comic_font())
-	label.add_theme_font_size_override("font_size", LABEL_FONT_SIZE)
-	label.add_theme_color_override("font_color", Hud.LABEL_COLOR)
-	label.add_theme_color_override("font_outline_color", Hud.OUTLINE_COLOR)
-	label.add_theme_constant_override("outline_size", 6)
+	HudStyle.apply(label, "sub_goal")
 	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	label_row.add_child(label)
@@ -298,7 +301,7 @@ func _apply_frame() -> void:
 ## The glow ring's colour now, or a transparent colour when none shows.
 func glow_color() -> Color:
 	if not celebrating or GLOW_STEP[frame] < 0:
-		return Color(0, 0, 0, 0)
+		return HudStyle.NO_GLOW
 	return GLOW_COLORS[GLOW_STEP[frame]]
 
 

@@ -1,0 +1,5 @@
+Task T-430 (read tasks/T-430-art-one-hud-style-sheet-and.md and docs/visual-style.md, Decisions, "The HUD style sheet"). Screen-space HUD art shown at 2x, not a world sprite (see art-archive/T-339/briefs/subgoal_frame.md for what the piece is: the sub goal square's 64 x 64 frame, white ring between two dark outlines, black inside from (4, 4) to (59, 59) with rounded inner corners).
+
+What changes: the HUD style sheet says every panel has a **stepped corner of radius 2** (pixels (0,0), (1,0), (0,1) cut), outline (8, 8, 15) 1 art pixel, and no Greenbull light green or yellow. The T-339 frame had radius 3. Redraw it with radius 2, everything else as it was.
+
+The tool: `python game/tools/build_hud_livestream_art.py subgoal-frame --out <the version path>` (its default radius is now 2). Check with `python game/tools/hud_sheet_check.py <png>`. Write each version only to the path the loop gives you; never overwrite or delete a file. Change nothing outside `game/tools/build_hud_livestream_art.py`, `game/tools/test_build_hud_livestream_art.py` and `art-archive/T-430/`. No PixelLab: script fixes only.

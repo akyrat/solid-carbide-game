@@ -132,15 +132,19 @@ def panel(w, h, rim=None):
     return im
 
 
-def subgoal_frame(size=64):
+PANEL_RADIUS = 2   # the HUD style sheet's stepped corner (Visual style, Decisions, "The HUD style sheet"; T-430)
+
+
+def subgoal_frame(size=64, radius=PANEL_RADIUS):
     """The sub goal square: a dark outline, a 2 pixel white ring that reads over the street (shaded to blue-grey
-    on its bottom and right), an inner dark outline and a black inside (from (4, 4) to (size-5, size-5))."""
+    on its bottom and right), an inner dark outline and a black inside (from (4, 4) to (size-5, size-5)). Its
+    corners are the sheet's stepped corner of radius 2, like every panel (T-339 had radius 3: pass 3 for that)."""
     im = new(size, size)
     for y in range(size):
         for x in range(size):
-            if not rounded_inside(x, y, size, size, 3):
+            if not rounded_inside(x, y, size, size, radius):
                 continue
-            d = ring_depth(x, y, size, size, 3)
+            d = ring_depth(x, y, size, size, radius)
             side = nearest_side(x, y, size, size)
             lit = side in ("top", "left")
             if d == 0 or d == 3:

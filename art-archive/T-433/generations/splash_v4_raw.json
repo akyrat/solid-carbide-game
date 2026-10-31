@@ -1,0 +1,40 @@
+{
+  "file": "splash_v4_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric pixel art, deep dark night, downtown Tokyo street seen from high above at a 3/4 angle between dark blue-grey steel and glass towers. Left third: a large detailed 1967 Mustang fastback muscle car painted very dark forest green, almost black-green, with exactly two parallel white racing stripes down the centre of hood, roof and trunk with a thin gap between them, sloping fastback roof, 3/4 isometric view from above, drifting sideways, a bright curving pink and cyan neon drift trail with stepped glow and white-grey tyre smoke behind it. Right third: a giant dark grey Godzilla-like reptile kaiju with pale jagged back plates, near-black outline, grey highlights on its body. Sky and upper corners: four alien meteors, chunks of dark navy and purple rock with glowing magenta cracks and stepped magenta glow halos, falling diagonally, one bursting on a rooftop. Towers with windows lit pale white and pale blue, small amber lamps, small muted vertical signs with abstract marks, a few broken dark windows, cracks and grey rubble. Plain dark grey asphalt with no road markings, no lines, no letters. The centre of the image is dark, calm and empty. Retro pixel art, hard edges, selective outline. No text, no words, no logos, no yellow.",
+    "image_size": {
+      "width": 320,
+      "height": 180
+    },
+    "text_guidance_scale": 8,
+    "view": "high top-down",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed"
+  },
+  "prompt": "isometric pixel art, deep dark night, downtown Tokyo street seen from high above at a 3/4 angle between dark blue-grey steel and glass towers. Left third: a large detailed 1967 Mustang fastback muscle car painted very dark forest green, almost black-green, with exactly two parallel white racing stripes down the centre of hood, roof and trunk with a thin gap between them, sloping fastback roof, 3/4 isometric view from above, drifting sideways, a bright curving pink and cyan neon drift trail with stepped glow and white-grey tyre smoke behind it. Right third: a giant dark grey Godzilla-like reptile kaiju with pale jagged back plates, near-black outline, grey highlights on its body. Sky and upper corners: four alien meteors, chunks of dark navy and purple rock with glowing magenta cracks and stepped magenta glow halos, falling diagonally, one bursting on a rooftop. Towers with windows lit pale white and pale blue, small amber lamps, small muted vertical signs with abstract marks, a few broken dark windows, cracks and grey rubble. Plain dark grey asphalt with no road markings, no lines, no letters. The centre of the image is dark, calm and empty. Retro pixel art, hard edges, selective outline. No text, no words, no logos, no yellow.",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T20:59:35+00:00",
+  "image": {
+    "width": 320,
+    "height": 180,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "game/art/car/car_iso.png",
+    "art-archive/T-433/brief.md"
+  ],
+  "task": "T-433",
+  "job_status": null,
+  "notes": "Style loop refine 3 (version 4): dark green fastback with two stripes, no road markings, meteors with cracks, drift trail, amber, damage, dark centre",
+  "generator": "game/tools/pixellab_client.py"
+}
