@@ -1,7 +1,7 @@
 ---
 id: T-459
 title: The driving power-up overlay: a completed mission pauses the run and offers 2 power-ups (new or next tier)
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-009

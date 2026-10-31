@@ -1,7 +1,7 @@
 ---
 id: T-458
 title: HUD: the current mission as a notebook page on the left, with checkboxes, live counts and crossing off (placeholder art)
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-009
