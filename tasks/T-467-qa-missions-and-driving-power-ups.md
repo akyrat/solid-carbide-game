@@ -1,7 +1,7 @@
 ---
 id: T-467
 title: QA: missions and driving power-ups through a whole run
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead: Goal-G-009
