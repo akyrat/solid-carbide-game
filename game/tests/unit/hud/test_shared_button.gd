@@ -32,6 +32,8 @@ func _all_shared(root: Node, screen_name: String) -> int:
 	for b in _buttons(root):
 		if b.name in BOARD_TOOL_BUTTONS:
 			continue
+		if b is GiftCardClick:  # T-474: a gift card's see-through click area is no button plate
+			continue
 		assert_true(HudStyle.is_shared_button(b), "%s: %s is the shared button" % [screen_name, b.name])
 		if b is CheckBox:
 			assert_eq(b.get_meta("hud_button"), "checkbox", "%s: %s" % [screen_name, b.name])
@@ -88,7 +90,7 @@ func test_level_up_and_pause_buttons_are_shared() -> void:
 	var screen: CanvasLayer = run.level_up_screen
 	screen.skip_animation()
 	assert_gt(screen.cards.size(), 0)
-	assert_eq(_all_shared(screen, "level-up"), screen.cards.size(), "one Take it per card")
+	assert_eq(_all_shared(screen, "level-up"), 0, "T-474: no Take it buttons, the cards are clicked")
 	# Pause: Trick list, Edit HUD layout (T-453), Restart, Exit, the trick list's Back, the two
 	# camera checkboxes, and the HUD layout editor's Reset layout and Done (T-453).
 	assert_eq(_all_shared(pause, "pause"), 9)

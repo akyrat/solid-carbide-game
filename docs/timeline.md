@@ -3010,3 +3010,8 @@ Entry format:
 - Decision or change: The garage scales and centres to fit the window and refits on resize, so every Buy button and Back stay on screen at any size; long descriptions wrap. The board: "LGTM" (swipe review).
 - Documents touched: `docs/garage-design.md`
 - Tasks: T-470
+
+## 2026-10-31: Gift pack cards are clicked directly
+- Decision or change: The level-up screen's cards have no Take it button; clicking anywhere on a card takes it (GiftCardClick, reused by T-475), with hover and keyboard highlight. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-474
