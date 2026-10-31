@@ -8,6 +8,10 @@ extends Node
 
 @export var run_seconds := 400.0
 @export var simulate_seconds := 15.0
+## For the GIF (record_minions_timer_gif.sh): keep the parked car at full health while the run plays live.
+@export var hold_health := false
+
+var _run: Node2D = null
 
 
 func _ready() -> void:
@@ -16,6 +20,7 @@ func _ready() -> void:
 	game.start_run()  # skips the tutorial slides (T-389)
 	await get_tree().process_frame
 	var run: Node2D = game.run
+	_run = run
 	run.car.use_keyboard = false
 	var spawner: Node = run.minions
 	spawner.rng.seed = 443
@@ -30,3 +35,8 @@ func _ready() -> void:
 		m.sprite.reset_physics_interpolation()
 	print("T-443 demo: run_seconds=%.0f simulated=%.0f spawned=%d alive=%d interval=%.3f" % [
 		run.state.time_elapsed(), simulate_seconds, spawner.spawned_total, spawner.minions.size(), spawner.spawn_interval()])
+
+
+func _physics_process(_delta: float) -> void:
+	if hold_health and _run != null:
+		_run.state.health = _run.state.max_health

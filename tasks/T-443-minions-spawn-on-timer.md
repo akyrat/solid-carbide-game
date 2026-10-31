@@ -63,6 +63,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the Enemy Behavior Agent builds it in C:\solid-carbide-worktrees\T-443.
 
+### 2026-10-31, Needs playtest
+
+QA passed 9/9. Ready for your playtest: open C:\solid-carbide-worktrees\T-443\game\project.godot, play a full run. Minions spawn every 1.2 s at the start down to 0.3 s at 7:00, at most 100 alive, 30% slower.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -126,6 +130,7 @@ Roughly linear, about 0.2 ms per minion per step. Separation is O(n^2), but the 
 **Screenshots** (`art-archive/T-443/screenshots/`, fixture `game/tests/fixtures/minions_timer_demo.tscn` and `minions_timer_early_demo.tscn`: the run's clock is moved forward, then the spawner's timer runs 15 s with the car parked and no shooting):
 - `late_run_6m40_48_minions.png`: clock at 6:40 (interval 0.31 s), 48 minions came in from the edges in 15 s and crowd the car.
 - `early_run_0m05_14_minions.png`: clock at 0:05 (interval 1.16 s), 14 minions in the same 15 s.
+- `minions_timer_early_and_late.gif` (added 2026-10-31 at the Project Lead's request for the board's review; 15 fps, half size, about 16 s): the run plays live with the car parked and kept at full health, first 8 s with the clock at 0:05 (a minion every ~1.2 s walks in from the screen's edges), then 8 s with the clock at 6:40 (one every ~0.3 s, a crowd forming round the car). Made by `bash game/tools/record_minions_timer_gif.sh` (Godot `--write-movie`, then `frames_to_gif.py`), fixtures `game/tests/fixtures/minions_timer_early_gif.tscn` and `minions_timer_late_gif.tscn` (`minions_timer_demo.gd` got a `hold_health` switch for them; no game code changed).
 
 **Documents affected:** `docs/enemies.md`, `game/docs/enemies/minions.md` (and the data comment in `game/data/enemies.json`). The long GDD still has the old Spawning text and is regenerated at merge.
 
