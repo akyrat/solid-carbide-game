@@ -1,7 +1,7 @@
 ---
 id: T-437
 title: Merges test once per batch, with a 1500 s Godot test limit
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, tools/merge_batch.py, tools/test_merge_batch.py, game/tools/run_tests.sh]
 files_expected_to_change: [tools/merge_batch.py, tools/test_merge_batch.py, game/tools/run_tests.sh]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -81,3 +81,4 @@ The 10 slowest Godot test files (GUT junit export, one full run, 654 s of test t
 
 Not done: the new merge_batch was not run on the real repo; the main checkout's copy is untouched.
 - 2026-10-31, in-progress → in-qa: Built and tested; ready for QA
+- 2026-10-31, in-qa → done: QA passed
