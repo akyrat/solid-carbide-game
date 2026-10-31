@@ -1,7 +1,7 @@
 ---
 id: T-445
 title: Art: the board's own splash art behind the main menu
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -72,3 +72,4 @@ Done by the Asset Generation Agent, 2026-10-31. 0 PixelLab calls, no style loop,
 - game/art/menu/splash.json rewritten (source: the board's own picture, date, ticket, hash). docs/visual-style.md: new entry "The splash cover is now the board's own picture (T-445)" above the T-433 entry.
 - Screenshot: art-archive/T-445/screenshots/main_menu_with_board_splash.png (1152 x 648, main menu scene, 90 frames).
 - Nothing under game/data/levels/ touched; .import/.uid noise not committed.
+- 2026-10-31, in-progress → in-qa: Board-approved art: no QA agent, no tests; ready for the board to play
