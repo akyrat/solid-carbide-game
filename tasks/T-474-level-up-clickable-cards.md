@@ -1,7 +1,7 @@
 ---
 id: T-474
 title: The level-up gift pack's cards are clicked directly, with no Take it button
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -60,4 +60,13 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+T-474 (UI Agent). The level-up gift pack's cards have no Take it button: the whole card is clicked.
+
+- New reusable `GiftCardClick` (`game/scripts/ui/gift_card_click.gd`): a see-through Button over a whole card; `GiftCardClick.attach(panel, body, frame, on_take)`; `set_active(bool)` for the build-up. Hover tints the card's frame with `HudStyle.BUTTON_HOVER_TINT`; a click presses the card body down `HudStyle.BUTTON_PRESS_DROP` px; keyboard selection stays the gold highlight frame. T-475 can call `attach` for the power-up overlay.
+- `level_up_screen.gd`: the Button is gone; cards dict key `button` became `click`. Keyboard and the build-up guard unchanged. The card keeps its size (nothing else changed).
+- The "levelup.take" text key is now unused; left in level_up_texts.gd as asked.
+- Tests: test_level_up_screen.gd (49, all pass): button tests now use the click area; a real mouse click near the card's top left takes the card; new tests for no button, hover, press-down, keyboard selection look, move then Enter, reuse on any card. test_shared_button.gd: the level-up expects 0 shared buttons and skips GiftCardClick.
+- Test sets: game/tools unittest 769 OK (1 skipped); tools unittest 633 OK; GUT full run 2375 tests, first run 2374 pass and 1 fail (test_shared_button expected a plate on the new click area), fixed; test_shared_button re-run 12/12 pass; the full GUT run was not repeated after that one-test fix.
+- Screenshots (art-archive/T-474/screenshots/): level_up_plain.png, level_up_hover.png (right card hovered, brightened), level_up_selected.png (second card selected by keyboard), level_up_pressed.png (left card pressed down). Fixtures: game/tests/fixtures/t474_*_demo.tscn and t474_cards_demo.gd. (The old level_up_screen_demo fixture is stale: game.run is null there; not touched.)
+- Documents: docs/hud-and-menus.md (Content and Decisions wording), game/docs/hud-and-menus/level-up-screen.md.
+- Nothing under game/data/levels/ touched. Untracked .uid/.import noise not committed.

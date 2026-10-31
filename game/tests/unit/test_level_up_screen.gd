@@ -92,7 +92,7 @@ func test_level_up_opens_two_cards_with_the_approved_text() -> void:
 		var key: String = "get_flamethrower" if c.id == "get_flamethrower" else "upgrade_gun.tier2"
 		assert_eq(c.title.text, Texts.TEXTS[key + ".title"])
 		assert_eq(c.desc.text, Texts.TEXTS[key + ".desc"])
-		assert_eq(c.button.text, "Take it")
+		assert_false(c.has("button"), "T-474: no Take it button")
 	assert_eq(screen.title_label.text, "Greenbull sent a gift pack!")
 
 
@@ -124,11 +124,11 @@ func test_flamethrower_upgrade_card_shows_its_next_tier() -> void:
 	assert_eq(c.desc.text, Texts.TEXTS["upgrade_flamethrower.tier5.desc"])
 
 
-func test_pressing_a_cards_button_takes_it_and_closes() -> void:
+func test_pressing_a_cards_click_area_takes_it_and_closes() -> void:
 	_level_up()
 	var taken: Array = []
 	offers.offer_taken.connect(func(id): taken.append(id))
-	_card("get_flamethrower").button.pressed.emit()
+	_card("get_flamethrower").click.pressed.emit()
 	assert_eq(taken, ["get_flamethrower"])
 	assert_eq(run.weapons.flamethrower.tier, 1, "applied")
 	assert_false(screen.visible)
@@ -136,14 +136,15 @@ func test_pressing_a_cards_button_takes_it_and_closes() -> void:
 	assert_false(state.is_waiting_for_choice())
 
 
-func test_real_mouse_click_on_the_button_takes_the_card() -> void:
+func test_real_mouse_click_on_the_card_takes_it() -> void:
 	var win := get_window()
 	var old_size := win.size
 	win.size = Vector2i(1152, 648)
 	_level_up()
 	await wait_process_frames(3)
-	var b: Button = _card("upgrade_gun").button
-	var pos := b.get_global_rect().get_center()
+	var b: Control = _card("upgrade_gun").panel
+	# Anywhere on the card, here near the top left of its frame, not a button spot.
+	var pos := b.get_global_rect().position + Vector2(60, 50)
 	for pressed in [true, false]:
 		var e := InputEventMouseButton.new()
 		e.button_index = MOUSE_BUTTON_LEFT
@@ -293,12 +294,6 @@ func test_look_is_t140s_art_with_black_text() -> void:
 	assert_eq(screen._ribbon.texture.resource_path, "res://art/level_up/header_ribbon.png")
 	assert_eq(screen._sun.texture.resource_path, "res://art/level_up/sunburst.png")
 	assert_eq(screen._emblem.texture.resource_path, "res://art/level_up/gift_pack_emblem.png")
-	var plate: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("normal")
-	var pressed: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("pressed")
-	# T-446: "Take it" is the shared button, whose plate is T-303's plate recoloured.
-	assert_true(HudStyle.is_shared_button(screen.cards[0].button))
-	assert_eq(plate.texture, HudStyle.button_plate("normal"))
-	assert_eq(pressed.texture, HudStyle.button_plate("pressed"))
 	assert_eq(screen._root.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	for c in screen.cards:
 		assert_eq(c.title.get_theme_color("font_color"), Color.BLACK)
@@ -317,8 +312,6 @@ func test_the_ribbon_title_is_cream_with_a_dark_outline() -> void:
 	for c in screen.cards:
 		assert_eq(c.title.get_theme_color("font_color"), Color.BLACK)
 		assert_eq(c.desc.get_theme_color("font_color"), Color.BLACK)
-		# T-446: the button's text is the shared button's (light, outlined).
-		assert_eq(c.button.get_theme_color("font_color"), HudStyle.BUTTON_TEXT)
 
 
 func test_the_title_sits_between_art_x_76_and_304_of_the_ribbon() -> void:
@@ -398,7 +391,7 @@ func test_later_level_ups_show_laid_out_cards_without_a_resize() -> void:
 			assert_gte(r.size.x, screen.CARD_SIZE.x - 1.0, "level-up %d: real width" % (n + 1))
 			assert_gte(r.size.y, screen.CARD_SIZE.y - 1.0, "level-up %d: real height" % (n + 1))
 			assert_true(vp.encloses(r), "level-up %d: card %s inside the window: %s" % [n + 1, c.id, r])
-			assert_gt(c.button.get_global_rect().size.x, 100.0, "button laid out")
+			assert_gte(c.click.get_global_rect().size.x, screen.CARD_SIZE.x - 1.0, "click area covers the card")
 		var a: Rect2 = screen.cards[0].panel.get_global_rect()
 		var b: Rect2 = screen.cards[1].panel.get_global_rect() if screen.cards.size() > 1 else a
 		if screen.cards.size() > 1:
@@ -494,10 +487,10 @@ func test_keys_during_the_animation_take_nothing_and_move_nothing() -> void:
 func test_buttons_ignore_the_mouse_during_the_animation() -> void:
 	_level_up_animating()
 	for c in screen.cards:
-		assert_eq(c.button.mouse_filter, Control.MOUSE_FILTER_IGNORE)
+		assert_eq(c.click.mouse_filter, Control.MOUSE_FILTER_IGNORE)
 	screen.skip_animation()
 	for c in screen.cards:
-		assert_eq(c.button.mouse_filter, Control.MOUSE_FILTER_STOP)
+		assert_eq(c.click.mouse_filter, Control.MOUSE_FILTER_STOP)
 
 
 func test_a_key_pressed_during_the_animation_does_not_take_a_card_when_it_ends() -> void:
@@ -528,8 +521,8 @@ func test_keyboard_and_mouse_work_after_the_animation() -> void:
 	var id: String = screen.cards[0].id
 	var weapon: Node = run.weapons.get_weapon(offers.weapon_of(id))
 	var tier_before: int = weapon.tier
-	screen.cards[0].button.pressed.emit()
-	assert_eq(weapon.tier, tier_before + 1, "the button works")
+	screen.cards[0].click.pressed.emit()
+	assert_eq(weapon.tier, tier_before + 1, "the click works")
 
 
 func test_a_second_screen_animates_again() -> void:
@@ -756,16 +749,15 @@ func test_every_card_lays_out_its_image_and_text_inside_the_card() -> void:
 		var img: Rect2 = card.image.get_global_rect()
 		var title: Rect2 = card.title.get_global_rect()
 		var desc: Rect2 = card.desc.get_global_rect()
-		var button: Rect2 = card.button.get_global_rect()
 		assert_eq(frame.size, screen.CARD_SIZE, label)
 		assert_true(vp.encloses(frame), "%s: the card is inside the window" % label)
-		for r in [img, title, desc, button]:
+		for r in [img, title, desc]:
 			assert_true(inner.encloses(r), "%s: %s inside the card %s" % [label, r, inner])
 		assert_eq(img.size, screen.IMAGE_SIZE, label)
 		assert_gte(title.position.y, img.end.y, "%s: the title is under the image" % label)
 		assert_gte(desc.position.y, title.end.y, "%s: the description is under the title" % label)
 		var text_end: float = desc.position.y + card.desc.get_minimum_size().y
-		assert_lte(text_end, button.position.y, "%s: the description ends above the button" % label)
+		assert_lte(text_end, inner.end.y, "%s: the description ends inside the card" % label)
 		assert_eq(card.panel.size, screen.CARD_SIZE, "%s: the card did not grow" % label)
 	win.size = old_size
 
@@ -775,3 +767,81 @@ func test_the_highlight_frame_still_reaches_12_px_past_the_taller_card() -> void
 	var glow: NinePatchRect = screen.cards[0].highlight_frame
 	assert_eq(glow.position, Vector2(-12, -12))
 	assert_eq(glow.size * glow.scale, screen.CARD_SIZE + Vector2(24, 24))
+
+
+# T-474: the whole card is the control.
+func test_no_card_has_a_take_it_button() -> void:
+	_level_up()
+	for c in screen.cards:
+		assert_false(c.has("button"))
+		assert_eq(_buttons_in(c.panel).size(), 1, "only the see-through click area")
+		assert_eq(_buttons_in(c.panel)[0].text, "", "it has no label")
+		assert_false(HudStyle.is_shared_button(c.click), "it is not a plate")
+
+
+func _buttons_in(n: Node) -> Array:
+	var out: Array = []
+	for ch in n.get_children():
+		if ch is BaseButton:
+			out.append(ch)
+		out.append_array(_buttons_in(ch))
+	return out
+
+
+func test_hover_changes_the_cards_look_and_leaves_the_highlight() -> void:
+	_level_up()
+	screen.skip_animation()
+	var c: Dictionary = screen.cards[1]
+	var frame: Control = c.body.get_node("Frame")
+	assert_eq(frame.modulate, Color.WHITE)
+	c.click.mouse_entered.emit()
+	assert_eq(frame.modulate, HudStyle.BUTTON_HOVER_TINT, "hover brightens the card")
+	assert_eq(screen.highlight, 0, "hover does not move the highlight")
+	c.click.mouse_exited.emit()
+	assert_eq(frame.modulate, Color.WHITE)
+
+
+func test_a_click_presses_the_card_down() -> void:
+	_level_up()
+	screen.skip_animation()
+	var c: Dictionary = screen.cards[0]
+	c.click.button_down.emit()
+	assert_eq(c.body.position.y, float(HudStyle.BUTTON_PRESS_DROP))
+	c.click.button_up.emit()
+	assert_eq(c.body.position.y, 0.0)
+
+
+func test_keyboard_selection_changes_the_cards_look() -> void:
+	_level_up()
+	screen.skip_animation()
+	assert_true(screen.cards[0].highlight_frame.visible)
+	assert_false(screen.cards[1].highlight_frame.visible)
+	_key(KEY_D)
+	assert_false(screen.cards[0].highlight_frame.visible)
+	assert_true(screen.cards[1].highlight_frame.visible, "the selected card shows the gold frame")
+
+
+func test_keyboard_moves_then_enter_takes_that_card() -> void:
+	_level_up()
+	screen.skip_animation()
+	var id: String = screen.cards[1].id
+	var taken: Array = []
+	offers.offer_taken.connect(func(i): taken.append(i))
+	_key(KEY_D)
+	_key(KEY_ENTER)
+	assert_eq(taken, [id])
+
+
+func test_the_click_area_is_reusable_on_any_card() -> void:
+	var panel := Control.new()
+	var body := Control.new()
+	var frame := Control.new()
+	panel.add_child(body)
+	body.add_child(frame)
+	add_child_autofree(panel)
+	var hits: Array = []
+	var click := GiftCardClick.attach(panel, body, frame, func(): hits.append(1))
+	click.pressed.emit()
+	assert_eq(hits.size(), 1)
+	click.set_active(false)
+	assert_eq(click.mouse_filter, Control.MOUSE_FILTER_IGNORE)
