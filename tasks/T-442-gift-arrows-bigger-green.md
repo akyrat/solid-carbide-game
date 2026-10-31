@@ -1,7 +1,7 @@
 ---
 id: T-442
 title: Gift pack arrows 3 times as big, in the gift box's colours
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -53,6 +53,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-31, Open → In progress
+
+Started: the UI Agent builds it in C:\solid-carbide-worktrees\T-442.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -60,3 +64,11 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done by the UI Agent (0 PixelLab calls). `game/scripts/run/gift_arrows.gd`: ARROW_SIZE 90 x 72; FILL (12, 76, 44) dark green, STRIPE (104, 220, 96) light green as an inner stripe (the arrow shrunk to 45% towards its centre; the split is my proposal for the playtest), OUTLINE (8, 8, 15) 4 px wide. The arrows did not scale with the HUD before; now `ui_scale` is read from `hud.hud_scale()` each refresh, and the size, the track's inset, the gap and the outline width all multiply by it (statics `place`, `arrow_rect`, `arrow_points` take an optional scale, default 1). Clearance from the HUD parts and between arrows holds at every test window size.
+
+Tests (`game/tests/unit/run/test_gift_drops.gd`): 3 new (size 90 x 72 and scaling with the HUD size at 4 window sizes and the slider; the colours equal the constants and both greens are in package.png; the stripe sits inside the arrow); existing arrow tests updated to pass `ui_scale`. Results: game/tools 591 OK; tools OK; GUT 190 scripts, 2317 tests, all passing.
+
+Screenshot: `art-archive/T-442/screenshots/arrows.png` (three arrows at the screen's edge, two right and one left, from `tests/fixtures/gift_drop_arrows_demo.tscn`, which I fixed to skip the tutorial slides).
+
+Documents updated: docs/hud-and-menus.md, game/docs/game-loop/gift-pack-and-pickups.md. Nothing under game/data/levels/ touched.
