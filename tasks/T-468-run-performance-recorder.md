@@ -1,7 +1,7 @@
 ---
 id: T-468
 title: Record a run's performance so its frame drops can be traced to their cause
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, tasks/T-443-minions-spawn-on-timer.md, tasks/T-444-many-minions-performance.md, game/scripts/run/run.gd]
 files_expected_to_change: [game/scripts/, game/tools/, game/tests/unit/, game/docs/, docs/working-with-the-board.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, In QA → Needs playtest
+
+Ready: play one run with recording on (command in the terminal), then tell me.
 
 ## Style review
 
@@ -415,3 +419,4 @@ What the before-T-444 sample said: on the game's map, in the debug build, the dr
 - 2026-10-31, in-progress → in-qa: Recorder, zones, analysis, sample run and docs done; board's command in the result notes; all three test sets pass.
 
 **QA round 1 (QA agent, 2026-10-31).** All 9 criteria pass (marked above). `qa_check`: tests PASS (3 sets), documents PASS, screenshots FAIL (paperwork): no image in `art-archive/T-468/screenshots/`. The ticket says none (tooling), which `tasks/README.md` "Screenshots" allows, but the check requires one because the ticket has a `The board's review:` line. Status left at in-qa for the Project Lead to waive or to have an image (e.g. a spike plot) added. The analysis script ran on the newest sample recording without error; the recorder is off by default.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion; qa_check's screenshot check is red for tooling with nothing to show (tasks/README.md allows it). The Project Lead moves it to the board's run.
