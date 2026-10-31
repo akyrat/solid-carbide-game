@@ -1,7 +1,7 @@
 ---
 id: T-420
 title: Thread the needle while scraping, and level data guards
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Audit
@@ -106,3 +106,4 @@ Board review files: art-archive/T-420/screenshots/scrape_2_crossing.png, art-arc
 - Test counts: qa_check does not print them; its full Godot run exited 0. Agent reported 2151 tests; unittest 722 (game/tools) and 582 (tools).
 
 **Merge of master into playtest/audit-world (coordinator request)**: one conflict in game/scripts/run/run.gd near line 139, where my `spawn_problem` declaration and master T-413 `_tricks_before_wreck` declaration sat together. Kept both, each with its comment. No semantic clash: T-420 only changes the start in `_build_world` (spawn position and `spawn_problem`), while T-413 changes the wreck and revive code (`_tricks_before_wreck`, `car.detect_tricks`), which do not touch each other. Merge committed in C:\solid-carbide-worktrees\playtest-audit-world (f53d5854); test counts are in the reply to the coordinator.
+- 2026-10-31, needs-playtest → done: The board played build J: lgtm (2026-10-30)
