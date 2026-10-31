@@ -1,7 +1,7 @@
 ---
 id: T-444
 title: The game stays fast with a crowd of minions
-status: in-qa
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [game/docs/enemies/minions.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/docs/enemies/minions.md, game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/enemy_path_follower.gd]
 files_expected_to_change: [game/scripts/enemies/, game/tools/, game/tests/unit/, game/docs/enemies/minions.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ No gameplay or numbers change in this ticket. Never write, move or commit anythi
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A measurement script in game/tools/ reports the average and worst frame times with a given number of minions alive on Kaiju City, and is documented in game/docs/enemies/minions.md with how to run it. (QA: pass / fail)
-- [ ] The result notes have before and after numbers for at least 50, 100 and 200 minions, and the after numbers are lower for 100 and 200. (QA: pass / fail)
-- [ ] The existing enemy navigation, falling, ramp and contact tests still pass unchanged (minions behave as before). (QA: pass / fail)
-- [ ] A test (or the script's own check) covers each optimisation that changes when work happens (for example cached paths stay correct when the car moves). (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] A measurement script in game/tools/ reports the average and worst frame times with a given number of minions alive on Kaiju City, and is documented in game/docs/enemies/minions.md with how to run it. (QA: pass - game/tools/minion_crowd_bench.sh/.gd exist, documented in minions.md 'Performance (T-444)' with run command)
+- [x] The result notes have before and after numbers for at least 50, 100 and 200 minions, and the after numbers are lower for 100 and 200. (QA: pass - table has 50/100/200/300 before and after; after lower (100: 37.0 -> 8.3 ms, 200: 75.7 -> 17.1 ms))
+- [x] The existing enemy navigation, falling, ramp and contact tests still pass unchanged (minions behave as before). (QA: pass - no existing test file modified (diff shows only added files); GUT 2327/2327 green)
+- [x] A test (or the script's own check) covers each optimisation that changes when work happens (for example cached paths stay correct when the car moves). (QA: pass - new test_minion_crowd_performance.gd (9 tests) covers lookup, limit_motion shortcut, depth grid rebuild, separation cells, kept surface)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - qa_check: 3 test sets passed; counts in notes (767, 591, 2327))
+- [x] Nothing under game/data/levels/ is changed or committed. (QA: pass - git diff vs merge-base touches nothing in game/data/levels/)
 
 ## Updates
 
@@ -102,3 +102,4 @@ Remaining per minion (300 alive): walking with `move_and_collide` about 25 µs, 
 
 Nothing under `game/data/levels/` was touched (`game/data/level/kaiju_city_map.json` only read). No refused actions, except one: a hook refused a chained `timeout ... bash game/tools/minion_crowd_bench.sh` loop (it can't tell `timeout` won't write a ticket); I ran the runs as separate commands without `timeout`.
 - 2026-10-31, in-progress → in-qa: Built: minions' step ~4.5x faster (100 alive: frame 37 -> 8 ms; 200: 76 -> 17 ms; 300: 119 -> 25 ms), same behaviour; bench game/tools/minion_crowd_bench.sh; ceiling unchanged at 100 (proposal 150); all three test sets pass.
+- 2026-10-31, in-qa → done: QA passed
