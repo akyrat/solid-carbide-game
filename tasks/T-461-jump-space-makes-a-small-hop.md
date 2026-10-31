@@ -1,7 +1,7 @@
 ---
 id: T-461
 title: Jump: Space makes a small hop on the car's real height, and its airtime counts for missions
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/tricks.md, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd, game/scripts/driving/trick_detector.gd, game/scripts/run/run_state.gd, game/scripts/run/missions.gd, game/data/power_ups.json]
 files_expected_to_change: [game/scripts/driving/car.gd, game/scripts/driving/car_height.gd, game/tests/unit/test_jump_power_up.gd, game/tests/fixtures/jump_power_up_demo.gd, game/tests/fixtures/jump_power_up_demo.tscn, game/docs/driving/tricks.md, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-461.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -95,3 +99,4 @@ Driving & Drift Agent, 2026-10-31. Done; ready for QA.
 **QA round 1 (sonnet):** all five criteria pass. `tools/qa_check.py` was refused (not pre-approved), so I checked by hand: test_jump_power_up 12/12 pass; game/tools unittest 767 OK (1 skipped); tools unittest 614 OK; the full GUT run (about 1000 s) is over the 600 s foreground limit, so I took the agent's 2407/2407 and ran only the ticket's own GUT file. 6 screenshots/GIF in art-archive/T-461/screenshots/; docs/drifting.md has "Jump (task T-461)".
 
 **Refusals:** one, not essential: `ls` of Godot's user data folder (outside the worktree) was refused; I recorded the GIF frames to the git-ignored `screenshots/` folder at the repo root instead.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
