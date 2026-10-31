@@ -1,7 +1,7 @@
 ---
 id: T-457
 title: Missions in the run: 30 per run (5 fixed, 25 generated), progress from trick events, signals, and the car's owned power-ups
-status: blocked
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Goal-G-009
@@ -54,6 +54,10 @@ Document it in game/docs/game-loop/the-run.md and Game loop architecture, Conten
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-457.
 
 ## Style review
 
