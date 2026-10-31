@@ -1,0 +1,63 @@
+---
+id: T-455
+title: Data: the run's missions (5 fixed, generator rules) and the four driving power-ups with their tiers
+status: open
+from: project-lead
+to: game-data
+lead: Goal-G-009
+epic: game-loop
+milestone: mvp
+goal: G-009
+user_facing_text: no
+changes_visuals: no
+board_approved_art: no
+depends_on: []
+documents_affected: [docs/game-loop-architecture.md, docs/drifting.md]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/drifting.md, game/docs/data/game-data.md, game/docs/driving/tricks.md, game/data/combo.json, game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/driving/trick_detector.gd]
+files_expected_to_change: [game/data/missions.json, game/data/power_ups.json, game/scripts/data/mission_data.gd, game/scripts/data/power_up_data.gd, game/tests/unit/test_mission_data.gd, game/docs/data/game-data.md, docs/game-loop-architecture.md, docs/drifting.md]
+model: sonnet
+qa_rounds: 0
+---
+
+<!--
+status: open | planning | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+lead: the name of the Project Lead session that owns the task; empty until a session claims it with python tools/task_status.py T-NNN --lead <Name> (tasks/README.md, "Owners").
+epic and milestone: one of the ids listed in tasks/README.md.
+goal: the goal id (G-001) when the goal runner wrote or reused the task; empty otherwise (tasks/README.md, "Goal runs").
+user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
+board_approved_art: yes only for a ticket that swaps in art the board has already approved, with no code or data change; it skips QA and the tests (tasks/README.md, "QA"). Default no.
+model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
+qa_rounds: how many times QA has checked this task. The maximum is 2.
+A task is not done until every document listed in documents_affected has been updated.
+-->
+
+## Description
+
+The board decided mission packs and driving power-ups on 2026-10-31 (Game loop architecture, Decisions, 'Mission packs'; Drifting, Decisions, 'Driving power-ups'). This ticket writes the data the rest of goal G-009 reads; no gameplay code.
+
+1. `game/data/missions.json`: `total` 30, and the 5 fixed missions in the board's order, each one goal with a trick type and amount: (1) drift 4 seconds continuously (one unbroken drift, a duration goal); (2) 10 alt drifts; (3) 3 seconds of airtime; (4) 3 air 180s; (5) 1 air 360. Trick type ids must match the trick names the trick detector already emits (`trick_detector.gd`, and thread the needle from `thread_the_needle.gd`); list the ids you use and where each comes from in the result notes. Then the generator's rules for missions 6 to 30: which trick types are allowed, each with a base amount and how the amount grows from mission 6 to 30, and how many goals a mission has (and how that grows). Every rule carries a `reason` note and a `proposal: true` flag, for the board's playtest. Numbers for driving tricks are the Driving & Drift Agent's call by the docs; write them as proposals and say in the result notes they are proposed on its behalf.
+2. `game/data/power_ups.json`: Rev Charge, Jump, Bouncy Bumpers and Rusty Overcoat, each with an id, an icon path under `game/art/power_ups/` (the files come later in the art ticket; the path is fixed now), and a list of tiers with per-tier numbers, each marked as a proposal with a reason: Rev Charge (charge time to full, boost strength/speed, boost duration), Jump (hop takeoff speed or height, hence airtime), Bouncy Bumpers (bounce distance factor over the T-435 wall bounce), Rusty Overcoat (contact damage per hit, a per-enemy repeat cooldown, and whether it hits the kaiju; the last two are open questions for the board, so write them as proposals). Also an `offer_when_exhausted` field: the proposal for what the power-up overlay does when every power-up is at its last tier (for example: the mission gift is skipped and the run goes on), with its reason.
+3. Loaders `mission_data.gd` and `power_up_data.gd` (same style as `weapon_data.gd`) and a GUT data check test.
+
+Write the proposals and their reasons in Content of Game loop architecture (missions) and Drifting (power-ups); the Decisions lines stay the board's.
+
+## Acceptance criteria
+
+- [ ] game/data/missions.json holds `total` 30 and exactly 5 fixed missions in the board's order: 4 s continuous drift, 10 alt drifts, 3 s airtime, 3 air 180s, 1 air 360, each with a trick type and an amount. (QA: pass / fail)
+- [ ] missions.json holds the generator's rules (allowed trick types, how amounts grow from mission 6 to 30, how many goals per mission), and every rule has a reason note and is marked as a proposal. (QA: pass / fail)
+- [ ] game/data/power_ups.json holds rev_charge, jump, bouncy_bumpers and rusty_overcoat, each with an icon path under game/art/power_ups/ and at least 1 tier, every tier's numbers marked as proposals; it also holds the proposal for what happens when every power-up is at its last tier. (QA: pass / fail)
+- [ ] A GUT data test loads both files through mission_data.gd and power_up_data.gd and checks: 5 fixed missions, a total of 30, every trick type in the rules is one of a listed known set, the four power-ups present, and at least 1 tier each; it passes. (QA: pass / fail)
+- [ ] Game loop architecture, Content, and Drifting, Content, describe the proposals and their reasons; the result notes list the trick ids used and say there is nothing to picture (no screenshots). (QA: pass / fail)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+
+## Updates
+
+The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+## Style review
+
+Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+
+## Result notes
+
+Written by the agent when it finishes.

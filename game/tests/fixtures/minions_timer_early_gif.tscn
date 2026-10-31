@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/minions_timer_demo.gd" id="1_demo"]
+
+[node name="MinionsTimerGif" type="Node"]
+script = ExtResource("1_demo")
+run_seconds = 5.0
+simulate_seconds = 0.0
+hold_health = true

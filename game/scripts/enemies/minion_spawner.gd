@@ -1,6 +1,6 @@
 extends Node
 ## The run's minions (task T-044; Enemies, Decisions): spawning them at the
-## edges of the screen in numbers that grow slightly over the run, walking
+## edges of the screen on a timer that speeds up over the run (T-443), walking
 ## them towards the car, their contact damage and knockback, and the coins
 ## they drop when they die. Numbers: res://data/enemies.json through
 ## EnemyData; nothing here changes them.
@@ -11,17 +11,19 @@ extends Node
 ## damage), and they stand still once the run is over. A new run
 ## (run.world_rebuilt) clears every minion and coin.
 ##
-## How many: EnemyData.minions_wanted(run seconds, spawn_multiplier). While
-## fewer are around, one spawns every spawn_interval_seconds, at a random
-## point spawn_margin_units beyond the edge of the visible screen, on the map
-## and clear of buildings and boulders. `spawn_multiplier` is the hook for the
-## combo's extra spawning (T-085): minions_wanted_now() sets it from
-## RunState.combo_spawn_multiplier() each time, or to 1.0 when
-## `combo_raises_spawning` is false (the board's playtest switch).
+## How often (T-443; Enemies, Decisions, "Minions spawn on a timer"): one
+## minion every spawn_interval() seconds, however many are already around
+## (EnemyData.spawn_interval(run seconds, spawn_multiplier): faster as the run
+## goes on), at a random point spawn_margin_units beyond the edge of the visible
+## screen, on the map and clear of buildings and boulders. Only the data's
+## max_minions_alive (a safety ceiling for the frame rate) holds the timer.
+## `spawn_multiplier` is the hook for the combo's extra spawning (T-085):
+## spawn_interval() sets it from RunState.combo_spawn_multiplier() each time,
+## or to 1.0 when `combo_raises_spawning` is false (the board's playtest switch).
 ##
 ## Minions that fall a whole screen behind the visible screen (the car has
-## driven away from them) are removed without dropping coins, and the spawner
-## refills at the screen's edge, so the minions stay around the car.
+## driven away from them) are removed without dropping coins; the timer keeps
+## bringing new ones in at the screen's edge, so the minions stay around the car.
 ##
 ## Drawing: each minion's body is in the flat physics world (PhysicsWorld,
 ## hidden); its sprite is in `draw_root`, a node of the run drawn over the map
@@ -58,12 +60,12 @@ const FollowerScript := preload("res://scripts/enemies/enemy_path_follower.gd")
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
-## Spawn point tries per spawn before giving up until the next interval.
-## Seconds between spawns when the data has no spawn_interval_seconds (T-418).
+## Seconds between spawns when the data's spawn intervals are missing or not above 0 (T-418, T-443).
 const DEFAULT_SPAWN_INTERVAL := 0.5
 ## A pickup's circle radius, and the gap left between it and a boulder it was pushed out of (T-418).
 const PICKUP_RADIUS_UNITS := 0.5
 const PICKUP_CLEARANCE_UNITS := 0.1
+## Spawn point tries per step; when none is free the spawn waits for the next step.
 const SPAWN_TRIES := 12
 ## Coins from one drop are spread round the death point this far (units).
 const COIN_SPREAD_UNITS := 0.6
@@ -81,8 +83,8 @@ signal minion_killed(minion: Node, coins: int)
 
 ## False stops spawning and moving (the run scene's switch, for tests).
 var enabled := true
-## The combo's extra spawning: multiplies minions_wanted. Set by
-## minions_wanted_now() (T-085); 1.0 with no combo or with the switch off.
+## The combo's extra spawning: multiplies the spawn rate (divides the interval). Set by
+## spawn_interval() (T-085, T-443); 1.0 with no combo or with the switch off.
 var spawn_multiplier := 1.0
 ## The on/off switch for the combo's extra spawning (T-085; Enemies, Decisions).
 ## On by default. Set false in code (here, or run.minions.combo_raises_spawning
@@ -128,6 +130,8 @@ var _coins: Dictionary
 var _health_drops: Dictionary
 ## Seconds since the last spawn (starts full, so the first one is at once).
 var _spawn_clock := 0.0
+## How many minions the timer has spawned since the last clear() (T-443; tests and the soak).
+var spawned_total := 0
 var _run: Node = null
 
 
@@ -137,7 +141,7 @@ func _init() -> void:
 	_spawning = data.spawning()
 	_coins = data.coins()
 	_health_drops = data.health_drops()
-	_spawn_clock = spawn_interval()
+	_spawn_clock = INF
 	rng.randomize()
 
 
@@ -188,15 +192,20 @@ func clear() -> void:
 	minions.clear()
 	coins.clear()
 	health_pickups.clear()
-	_spawn_clock = spawn_interval()
+	_spawn_clock = INF
+	spawned_total = 0
 
 
-## Seconds between spawns: spawn_interval_seconds, DEFAULT_SPAWN_INTERVAL when the data has none
-## (T-418); a value of 0 or less is reported and replaced by the default.
+## Seconds between spawns now (T-443): EnemyData.spawn_interval() at the run's time, with the
+## combo's spawn multiplier (1.0 when the switch is off), which it also stores in spawn_multiplier.
+## Intervals missing or not above 0 in the data are reported and replaced by DEFAULT_SPAWN_INTERVAL (T-418).
 func spawn_interval() -> float:
-	var v: float = _spawning.get("spawn_interval_seconds", DEFAULT_SPAWN_INTERVAL)
+	spawn_multiplier = state.combo_spawn_multiplier() if combo_raises_spawning and state != null else 1.0
+	var t: float = state.time_elapsed() if state != null else 0.0
+	var v: float = EnemyData.interval_from(_spawning, t, spawn_multiplier)
 	if v <= 0.0:
-		push_error("enemies.json spawning.spawn_interval_seconds must be above 0 (got %s): using %s" % [v, DEFAULT_SPAWN_INTERVAL])
+		push_error("enemies.json spawning.spawn_interval_at_start_seconds and spawn_interval_at_boss_time_seconds must be above 0 (got %s, %s): using %s" % [
+			_spawning.get("spawn_interval_at_start_seconds"), _spawning.get("spawn_interval_at_boss_time_seconds"), DEFAULT_SPAWN_INTERVAL])
 		return DEFAULT_SPAWN_INTERVAL
 	return v
 
@@ -275,12 +284,9 @@ func _physics_process(delta: float) -> void:
 	step(delta)
 
 
-## How many minions are wanted now: EnemyData.minions_wanted() at the run's
-## time, times the combo's spawn multiplier (1.0 when the switch is off).
-func minions_wanted_now() -> int:
-	spawn_multiplier = state.combo_spawn_multiplier() if combo_raises_spawning and state != null else 1.0
-	var t: float = state.time_elapsed() if state != null else 0.0
-	return data.minions_wanted(t, spawn_multiplier)
+## The safety ceiling on minions alive at once (T-443): the data's max_minions_alive, 0 for none.
+func max_minions_alive() -> int:
+	return int(_spawning.get("max_minions_alive", 0.0))
 
 
 ## One physics step of `dt` seconds: spawn, walk, contact damage, remove the
@@ -319,7 +325,8 @@ func move_step(dt: float, contacts := true) -> void:
 		var target := car_units
 		if navigation != null and m.follower != null:
 			target = m.follower.target(navigation, m.position_units(), car_units, dt)
-			m.may_drop = m.follower.dropping(navigation, m.position_units(), m.body_height())
+			# T-444: dropping() is false without a path; asked only with one (it reads the height).
+			m.may_drop = m.follower.has_path() and m.follower.dropping(navigation, m.position_units(), m.body_height())
 		var was_falling: bool = m.is_falling()
 		m.walk(dt, target, pushes[i])
 		if not was_falling and m.is_falling():
@@ -344,22 +351,72 @@ func _prune() -> void:
 
 
 func _spawn_step(dt: float) -> void:
+	# T-443: a timer, however many are around; only the safety ceiling holds it.
 	var interval: float = spawn_interval()
 	_spawn_clock = minf(_spawn_clock + dt, interval)
-	if minions.size() >= minions_wanted_now():
-		return
 	if _spawn_clock < interval - 0.000001:
+		return
+	var ceiling := max_minions_alive()
+	if ceiling > 0 and minions.size() >= ceiling:
 		return
 	var p = pick_spawn_point()
 	if p == null:
-		return
+		return  # no free spot this step: try again next step
 	_spawn_clock = 0.0
+	spawned_total += 1
 	spawn_minion_at(p)
 
 
 ## Separation pushes, one per minion in `minions` order. On a map with
 ## heights only minions at the same level push apart (T-207).
+## T-444: the minions are first put in a grid of cells as wide as the push's reach, so each
+## one is only compared with the minions in its own and the eight cells round it (every
+## minion nearer than the reach is in one of them), in the same order as before (by index),
+## so the pushes are the same sums as comparing every pair. Before, each step compared every
+## pair: 300 minions were 90 000 pairs.
 func _separation() -> Array:
+	var out := []
+	var sep: float = MinionScript.SEPARATION_UNITS * float(_stats.get("size_scale", 1.0))
+	var pos := []
+	var hs := []
+	var cells := {}
+	var keys := []
+	for i in minions.size():
+		var m = minions[i]
+		var p: Vector2 = m.position_units()
+		pos.append(p)
+		hs.append(m.body_height() if ground != null else 0.0)
+		var key := Vector2i(floori(p.x / sep), floori(p.y / sep))
+		keys.append(key)
+		if not cells.has(key):
+			cells[key] = []
+		cells[key].append(i)
+	for a in minions.size():
+		var push := Vector2.ZERO
+		var near := []
+		var ka: Vector2i = keys[a]
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				var c = cells.get(ka + Vector2i(dx, dy))
+				if c != null:
+					near.append_array(c)
+		near.sort()
+		for b in near:
+			if a == b:
+				continue
+			if absf(hs[a] - hs[b]) > EnemyHeightScript.LEVEL_TOLERANCE:
+				continue
+			var d: Vector2 = pos[a] - pos[b]
+			var l := d.length()
+			if l < sep and l > 0.0001:
+				push += d / l * (1.0 - l / sep)
+		out.append(push * SEPARATION_WEIGHT)
+	return out
+
+
+## The same pushes by comparing every pair (the rule before T-444): tests check _separation()
+## against it.
+func _separation_all_pairs() -> Array:
 	var out := []
 	var sep: float = MinionScript.SEPARATION_UNITS * float(_stats.get("size_scale", 1.0))
 	var pos := []

@@ -34,13 +34,16 @@ const SUB_STEP := 0.25
 const LEVEL_TOLERANCE := 1.0
 
 const _PROBES := [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
+## T-444: every height below is read through the ground's quick lookup (enemy_ground_index.gd,
+## the same numbers as GroundHeight.height_at, without testing every area of the map).
+const GroundIndexScript := preload("res://scripts/enemies/enemy_ground_index.gd")
 
 
 ## The ground height under `units` (0 with no ground).
 static func height_at(ground, units: Vector2) -> float:
 	if ground == null:
 		return 0.0
-	return ground.height_at(units)
+	return GroundIndexScript.of(ground).height_at(units)
 
 
 ## True when a body of `radius` units fits at `units`: the ground under its
@@ -48,9 +51,10 @@ static func height_at(ground, units: Vector2) -> float:
 static func fits(ground, units: Vector2, radius: float) -> bool:
 	if ground == null:
 		return true
-	var h: float = ground.height_at(units)
+	var g = GroundIndexScript.of(ground)
+	var h: float = g.height_at(units)
 	for o in _PROBES:
-		if absf(ground.height_at(units + o * radius) - h) > MAX_STEP:
+		if absf(g.height_at(units + o * radius) - h) > MAX_STEP:
 			return false
 	return true
 
@@ -70,17 +74,18 @@ static func fits(ground, units: Vector2, radius: float) -> bool:
 static func can_step(ground, a: Vector2, b: Vector2, radius: float, body_h: float = NAN, drop: bool = false) -> bool:
 	if ground == null:
 		return true
-	var ha: float = ground.height_at(a) if is_nan(body_h) else body_h
-	var hb: float = ground.height_at(b)
+	var g = GroundIndexScript.of(ground)
+	var ha: float = g.height_at(a) if is_nan(body_h) else body_h
+	var hb: float = g.height_at(b)
 	if hb - ha > MAX_STEP:
 		return false
 	if ha - hb > MAX_STEP and not drop:
 		return false
 	if drop:
 		return true
-	if fits(ground, b, radius):
+	if fits(g, b, radius):
 		return true
-	return not fits(ground, a, radius)
+	return not fits(g, a, radius)
 
 
 ## Limits a move of `motion` units from `from` for a body of `radius` by the
@@ -93,6 +98,12 @@ static func can_step(ground, a: Vector2, b: Vector2, radius: float, body_h: floa
 ## has walked out over an edge it is in the air at the height it left.
 static func limit_motion(ground, from: Vector2, motion: Vector2, radius: float, body_h: float = NAN, drop: bool = false) -> Dictionary:
 	if ground == null or motion.length() < 0.000001:
+		return {"segments": [motion], "normal": Vector2.ZERO}
+	ground = GroundIndexScript.of(ground)
+	# T-444: on the street with no rooftop, short building or ramp anywhere the body could
+	# reach in this move, every piece below would be allowed and nothing would stop it (the
+	# ground is 0 all the way, and a body on it, or in the air with `drop`, may step there).
+	if ground.get("is_enemy_ground_index") == true and _flat_move(ground, from, motion, radius, body_h, drop):
 		return {"segments": [motion], "normal": Vector2.ZERO}
 	var n := maxi(1, ceili(motion.length() / SUB_STEP))
 	var piece := motion / float(n)
@@ -122,6 +133,16 @@ static func limit_motion(ground, from: Vector2, motion: Vector2, radius: float, 
 	return {"segments": [straight, slide], "normal": normal}
 
 
+## T-444: true when the whole move (the body's circle from `from` to `from + motion`) is over
+## flat street (the index's flat_street) and the body's height lets it step there: on the
+## ground (NAN, or within MAX_STEP of 0), or above it with `drop` (a fall, T-226).
+static func _flat_move(index, from: Vector2, motion: Vector2, radius: float, body_h: float, drop: bool) -> bool:
+	if not is_nan(body_h) and (body_h < -MAX_STEP or (body_h > MAX_STEP and not drop)):
+		return false
+	var box := Rect2(from, motion).abs().grow(radius + 0.01)
+	return index.flat_street(box)
+
+
 ## The body's height after a piece of a move ending at `at`: the ground there
 ## when it is within MAX_STEP of `h` (it stands on it), else `h` (it has
 ## walked out over lower ground and is in the air). NAN stays NAN (the
@@ -129,7 +150,7 @@ static func limit_motion(ground, from: Vector2, motion: Vector2, radius: float, 
 static func _next_height(ground, at: Vector2, h: float) -> float:
 	if is_nan(h):
 		return NAN
-	var g: float = ground.height_at(at)
+	var g: float = GroundIndexScript.of(ground).height_at(at)
 	return g if absf(g - h) <= MAX_STEP else h
 
 

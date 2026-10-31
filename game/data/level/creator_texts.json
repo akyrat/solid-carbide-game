@@ -112,5 +112,11 @@
   "facing_top_right": {"text": "Facing top right", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."},
   "facing_bottom_right": {"text": "Facing bottom right", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."},
   "facing_bottom_left": {"text": "Facing bottom left", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."},
-  "facing_top_left": {"text": "Facing top left", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."}
+  "facing_top_left": {"text": "Facing top left", "where": "Editor top bar (T-396): the facing of a picked parked or broken car, turned with R (T-398)."},
+  "piece_alert_sign": {"text": "Alert sign", "where": "Editor side panel, Decoration (T-440): button for the standing kaiju alert sign, placed on the ground or a rooftop."},
+  "piece_alert_banner": {"text": "Alert banner", "where": "Editor side panel, Decoration (T-440): button for the alert banner that hangs on a skyscraper's wall."},
+  "alert_design_head": {"text": "Head in triangle", "where": "Editor side panel, looks strip under a picked alert sign or banner (T-440): the red triangle design with the kaiju's head."},
+  "alert_design_body": {"text": "Body in circle", "where": "Editor side panel, looks strip under a picked alert sign or banner (T-440): the red circle design with the kaiju's body."},
+  "banner_wall_hint": {"text": "R: next wall.", "where": "Editor strip under a picked alert banner (T-440): hint for choosing which wall of the skyscraper it hangs on; R is the same turn key as for pieces (a proposal for the creator to follow)."},
+  "banner_height_hint": {"text": "H: next height.", "where": "Editor strip under a picked alert banner (T-440): hint for choosing how high it hangs; H is the same height key as for pieces (a proposal for the creator to follow)."}
 }

@@ -38,9 +38,9 @@ class RepoCase(unittest.TestCase):
     def git(self, *a, cwd=None):
         return temp_repo.git(cwd or self.root, *a)
 
-    def ticket(self, tid, files, base_status="needs-playtest"):
+    def ticket(self, tid, files, base_status="needs-playtest", approved_art=False):
         """A branch task/T-NNN-ticket with a worktree, its ticket file and `files` ({path: text}) committed."""
-        path = temp_repo.add_ticket(self.root, tid, status=base_status)
+        path = temp_repo.add_ticket(self.root, tid, status=base_status, approved_art=approved_art)
         self.git("add", "-A")
         self.git("commit", "-q", "-m", f"{tid} ticket")
         wt = self.wts / tid
@@ -288,6 +288,45 @@ class TestOncePerBatchTest(RepoCase):
         self.assertEqual(lines[1], "T-941: merged")
         self.assertEqual(self.runs(), 1)
         self.assertTrue(self.clean())
+
+
+class BoardApprovedArtTest(RepoCase):
+    """T-449: a board-approved-art ticket merges without the test sets; other tickets run them as before."""
+
+    def runs(self):
+        p = self.root / COUNT
+        return len(p.read_text()) if p.exists() else 0
+
+    def run_counted(self, *args):
+        return self.run_batch(*args, tests=counting())
+
+    def test_approved_art_runs_no_test_sets_and_says_so(self):
+        self.ticket("T-950", {"game/art/splash.png": "png\n"}, approved_art=True)
+        code, lines = self.run_counted("T-950")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(self.runs(), 0)
+        self.assertIn("T-950: merged (board-approved art: no test sets run)", lines)
+
+    def test_other_tickets_run_them_as_before(self):
+        self.ticket("T-951", {"game/scripts/a.gd": "a\n"})
+        code, lines = self.run_counted("T-951")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(self.runs(), 1)
+        self.assertIn("T-951: merged", lines)
+
+    def test_a_mixed_batch_still_runs_them(self):
+        self.ticket("T-952", {"game/art/splash.png": "png\n"}, approved_art=True)
+        self.ticket("T-953", {"game/scripts/a.gd": "a\n"})
+        code, lines = self.run_counted("T-952", "T-953")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(self.runs(), 1)
+
+    def test_each_mode_skips_them_for_approved_art_only(self):
+        self.ticket("T-954", {"game/art/splash.png": "png\n"}, approved_art=True)
+        self.ticket("T-955", {"game/scripts/a.gd": "a\n"})
+        code, lines = self.run_counted("T-954", "T-955", "--each")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(self.runs(), 1)
 
 
 class RunTestsScriptTest(unittest.TestCase):

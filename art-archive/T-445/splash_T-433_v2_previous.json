@@ -1,0 +1,20 @@
+{
+  "file": "splash.png",
+  "task": "T-433",
+  "kept_version": 2,
+  "style_loop_score": 6,
+  "note": "Kept below 8 after 3 refines, for the board's final playtest (goal run, not flagged). Unedited copy of art-archive/T-433/style-loop/v2.png, which is art-archive/T-433/generations/splash_v2_raw.png.",
+  "image": {"width": 320, "height": 180},
+  "endpoint": "/create-image-pixflux",
+  "prompt": "see art-archive/T-433/generations/splash_v2_raw.json (request_params, prompt, usage)",
+  "usage": {"type": "generations", "generations": 1.0, "total_for_ticket": 4},
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "game/art/car/car_iso.png",
+    "art-archive/T-433/brief.md"
+  ],
+  "all_versions": "art-archive/T-433/style-loop/v1.png to v4.png, raw generations and records in art-archive/T-433/generations/",
+  "generated_at": "2026-10-30T20:57:27+00:00",
+  "generator": "game/tools/pixellab_client.py"
+}
