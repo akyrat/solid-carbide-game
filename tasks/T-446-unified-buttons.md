@@ -1,7 +1,7 @@
 ---
 id: T-446
 title: One button style and feel across every player-facing screen
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -120,3 +120,4 @@ Nothing under `game/data/levels/` was touched.
 
 **QA (2026-10-31):** all 7 criteria pass. qa_check first run: tests, documents, screenshots all PASS. Second run's GUT set hit a one-off exit-time Godot resource warning (TESTS FAILED); rerun alone: 191 scripts, 2326/2326 passing, TESTS PASSED (flaky exit warning, not a test failure). game/data/levels untouched.
 - 2026-10-31, in-qa → needs-playtest: QA passed
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31, swipe review)
