@@ -79,6 +79,8 @@ var sprite: Node2D = null
 var hit_tint: Node = null
 ## Seconds until this minion can damage the car again.
 var contact_cooldown := 0.0
+## T-463: seconds until the car's Rusty Overcoat can damage this minion again.
+var overcoat_cooldown := 0.0
 ## Which way it walks round an obstacle it meets head-on: 1 or -1.
 var detour_side := 1.0
 ## The direction it last walked (flat world, normalized), for the drawing.
@@ -350,12 +352,18 @@ func touches_car(car_centre_units: Vector2, car_rotation: float) -> bool:
 ## is not hit). Returns true when it hit this step.
 func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	contact_cooldown = maxf(contact_cooldown - dt, 0.0)
+	overcoat_cooldown = maxf(overcoat_cooldown - dt, 0.0)
 	if _dead or car == null:
 		return false
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if not touches_car(car_units, car.rotation):
 		return false
 	if ground != null and not EnemyHeightScript.at_car_level(body_height(), EnemyHeightScript.car_height(car)):
+		return false
+	# T-463 Rusty Overcoat: the car damages the minion it touches (before the car's own
+	# invulnerability, which only protects the car).
+	overcoat_cooldown = OvercoatContact.hit(self, state, overcoat_cooldown, false)
+	if _dead:
 		return false
 	# The car's invulnerability after a hit (T-334): no hit and no knockback, so the
 	# car can drive out of a swarm. It is what spaces the hits now.
