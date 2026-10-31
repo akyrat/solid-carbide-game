@@ -2790,3 +2790,8 @@ Entry format:
 - Decision or change: A wall hit ends a drift in progress: the drift pays LONG DRIFT! once for its time up to the hit, then the hit's combo cut applies; a new drift can start after the bounce. The board played it: "LGTM".
 - Documents touched: `docs/drifting.md`
 - Tasks: T-438
+
+## 2026-10-31: Art the board has already approved skips QA and the tests
+- Decision or change: The board, after a 1.5-hour estimate for swapping in its own splash art: "there's no point running any of the tests for just art. And I already have approved the picture I've seen it, so QA doesn't need to check it." A ticket that only swaps in art the board has already approved, with no code or data change, goes from the agent straight to the board's playtest, with no QA round and no test sets, and merges with `merge_batch.py --no-tests`.
+- Documents touched: `tasks/README.md`, `docs/working-with-the-board.md`
+- Tasks: none

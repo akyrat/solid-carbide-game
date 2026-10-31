@@ -99,6 +99,8 @@ QA is the acceptance criteria and the tests, nothing else (board, 2026-10-28, T-
 
 A ticket fails only on a criterion or a red check. QA adds no requirements of its own, and a second round and the flag for review work as in "Status rules" and "Changing a task's status".
 
+**Art the board has already approved skips QA and the tests** (board, 2026-10-31: "there's no point running any of the tests for just art"). A ticket that only swaps in art files the board has already seen and approved (its own picture, or an approved sample), with no code or data change, goes from the agent straight to the board's playtest, with no QA agent and no test sets, and merges with `merge_batch.py --no-tests`. The ticket says so in its description. Its criteria are what the agent checks itself (the file is in place, recorded, archived). Any ticket that also changes code or data gets QA and the tests as usual.
+
 ## Goal runs
 
 The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 2026-10-18), which plans, writes and builds the tickets for it in a loop. The board's side of it is in `docs/working-with-the-board.md`, "Goal runs". On the ticket side:
