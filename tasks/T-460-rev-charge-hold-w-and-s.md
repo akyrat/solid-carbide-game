@@ -1,7 +1,7 @@
 ---
 id: T-460
 title: Rev Charge: hold W and S to charge a boost that fires when S is released, with a placeholder charge and boost effect
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/drift.md, game/docs/driving/effects.md, game/scripts/driving/car.gd, game/scripts/driving/car_model.gd, game/scripts/driving/boost_effect.gd, game/scripts/run/run_state.gd, game/data/power_ups.json]
 files_expected_to_change: [game/scripts/driving/rev_charge.gd, game/scripts/driving/rev_charge_effect.gd, game/scripts/driving/car.gd, game/tests/unit/test_rev_charge.gd, game/tests/fixtures/rev_charge_demo.gd, game/tests/fixtures/rev_charge_demo.tscn, game/docs/driving/drift.md, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-460.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-10-31, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -101,3 +105,4 @@ Driving & Drift Agent, 2026-10-31 (goal G-009). Done.
 **Housekeeping notes:**
 - I ran one harmless no-op heredoc command by mistake (not refused).
 - The GUT run went past the 10-minute foreground limit and finished in the background with exit 0. No background jobs are left.
+- 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
