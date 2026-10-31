@@ -44,11 +44,11 @@ The level creator is the board's own tool, so the names are short and plain, lik
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/level/creator_texts.json has the six texts listed in the description, each under its own key, and stays valid JSON (`python -m json.tool`). (QA: pass / fail)
-- [ ] Each text went through the style loop and its score is in the result notes. (QA: pass / fail)
-- [ ] docs/level-design.md, Content, lists the texts or points to their keys. (QA: pass / fail)
-- [ ] The game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`), with the count in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] game/data/level/creator_texts.json has the six texts listed in the description, each under its own key, and stays valid JSON (`python -m json.tool`). (QA: pass)
+- [ ] Each text went through the style loop and its score is in the result notes. (QA: pass)
+- [ ] docs/level-design.md, Content, lists the texts or points to their keys. (QA: pass)
+- [ ] The game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`), with the count in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -88,3 +88,5 @@ Tests: python -m unittest discover -s game/tools -p "test_*.py": Ran 767 tests, 
 
 Note: a stray untracked tasks/.b440.md (a brief copy I made by mistake) is left uncommitted; a hook refused my rm. Please delete it.
 - 2026-10-31, in-progress → in-qa: Six texts written, style loop 8/10, tests OK
+
+QA (round 1): all five criteria pass (six keys, valid JSON; style loop 8/10 recorded; level-design.md lists the keys; three test sets pass; game/data/levels/ untouched). (QA: fail: paperwork - qa_check screenshots is red: user_facing_text is yes but art-archive/T-440/screenshots/ is empty, and the result notes lack the one line "no screenshots: text-only work" that tasks/README.md, "Screenshots" asks for.) Status left in-qa.
