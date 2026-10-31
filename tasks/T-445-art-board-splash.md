@@ -1,7 +1,7 @@
 ---
 id: T-445
 title: Art: the board's own splash art behind the main menu
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -78,3 +78,4 @@ Done by the Asset Generation Agent, 2026-10-31. 0 PixelLab calls, no style loop,
 - Nothing under game/data/levels/ touched; .import/.uid noise not committed.
 - 2026-10-31, in-progress → in-qa: Board-approved art: no QA agent, no tests; ready for the board to play
 - 2026-10-31, in-qa → needs-playtest: Criteria checked by the Project Lead; the board played it
+- 2026-10-31, needs-playtest → done: LGTM (the board, 2026-10-31); board-approved art, no QA and no tests
