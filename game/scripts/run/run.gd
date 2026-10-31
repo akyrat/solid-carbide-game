@@ -633,11 +633,12 @@ func set_zoom(orthographic_size: float) -> void:
 	camera_follow.set_base_size(orthographic_size)  # applies the zoom
 
 
-## Rev Charge (task T-460): gives the car the owned tier (0 = not owned; a new run's
-## power-ups start at 0, RunState.start_run).
+## Rev Charge (task T-460) and Jump (task T-461): gives the car the owned tiers (0 = not
+## owned; a new run's power-ups start at 0, RunState.start_run).
 func _apply_rev_charge_tier() -> void:
 	if car != null and is_instance_valid(car):
 		car.rev_charge.set_tier(state.power_up_tier("rev_charge"))
+		car.jump.set_tier(state.power_up_tier("jump"))
 
 
 ## Reads the saved camera options (task T-123) and applies them at once.
