@@ -2875,3 +2875,23 @@ Entry format:
 - Decision or change: A board_approved_art ticket field lets art the board has already approved go from the agent straight to the playtest and merge with no QA marks and no test sets. QA passed; merged straight after QA.
 - Documents touched: none
 - Tasks: T-449
+
+## 2026-10-31: Threading the needle flashes the pair
+- Decision or change: When the car threads the needle, the two paired obstacles and their dashed line flash.
+- Documents touched: docs/level-design.md
+- Tasks: T-451
+
+## 2026-10-31: Text for the HUD layout editor
+- Decision or change: Labels for the pause screen's HUD layout editor: open, hint, reset and done.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-452
+
+## 2026-10-31: The player moves the HUD's pieces
+- Decision or change: A HUD layout editor on the pause screen lets the player drag HUD pieces, reset them, and keep the layout between sessions.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-453
+
+## 2026-10-31: Shadows shrink with height
+- Decision or change: Every object in the air casts a shadow that is smaller the higher it is, up to its sprite's size at the surface, through one shared helper.
+- Documents touched: docs/visual-style.md
+- Tasks: T-454
