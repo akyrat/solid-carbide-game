@@ -2810,3 +2810,13 @@ Entry format:
 - Decision or change: The arrows pointing to off-screen gift packs become 3 times as big and wear the gift box's dark and light green instead of the placeholder pale cyan.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-442
+
+## 2026-10-31: Minions spawn on a timer, and 30% slower
+- Decision or change: Minions spawn on a constant timer from the screen's edges, faster as the run goes on, instead of topping up to a wanted count; the combo still raises spawning; minions move 30% slower.
+- Documents touched: docs/enemies.md
+- Tasks: T-443
+
+## 2026-10-31: The game stays fast with a crowd of minions
+- Decision or change: Enemy code is measured and optimised so a crowd of minions doesn't slow the game down much, with a repeatable measurement script.
+- Documents touched: game/docs/enemies/minions.md
+- Tasks: T-444

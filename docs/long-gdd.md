@@ -1073,6 +1073,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Where and how minions spawn, and how often their contact damage applies, are proposed by the Enemy Behavior Agent with the Game Data Agent; the board judges them in playtests.
 - Killing the kaiju ends the run at once, as a win.
 - The higher the player's combo (Game loop architecture, Decisions), the more minions spawn, on top of the slow growth over the run. It can be switched off, so the board can judge in playtests whether to keep it; the Game Data Agent proposes how strongly the combo raises spawning.
+- **Minions spawn on a timer, and 30% slower** (board, 2026-10-31): minions no longer top up to a wanted number around the car (that rewarded not killing them: the fewer the player killed, the fewer came, so runs reached the end with few likes and weapons). Instead they spawn on a constant timer, coming in from the edges of the screen, however many are already around, and the timer speeds up as the run goes on, so more of them come later in the run. The combo still raises spawning on top of that (the decision above). Minions move 30% slower (move speed 6 becomes 4.2 units per second). With many more enemies on screen, the game is optimised so a crowd of minions doesn't slow it down much. The spawn rates at the start and the end of the run, and any safety ceiling on how many can be alive at once, are the Enemy Behavior Agent's proposals for the playtest. (T-443, T-444)
 - Polish for the MVP, once the MVP is playable end to end: minions get a damage animation when hit, and when two minions bump into each other they fall down, get up again and carry on running at the car. How long they stay down is proposed by the Enemy Behavior Agent; the board judges it in playtests.
 - The kaiju walks round buildings and boulders, like the minions, rather than through them.
 
@@ -1889,7 +1890,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `17315fec4a980783a8a183b3a46665ebedcf87454ee02d2bc185f97867f94495` |
 | `drifting.md` | `6b6f77950ec12d8fe73cdfe0eea08b67a1f06bafae3fbde462908dfcde25e49b` |
 | `level-design.md` | `1a4c46c9f888072f52c451fe1d719a5edf3154865f7f66f9c974598476f1bbc7` |
-| `enemies.md` | `aaa01d73ca079d3ae8ab1a84f79f2fa305dc963c89710008373acdfded58c866` |
+| `enemies.md` | `7e381c14d8792ebf77bfeb5f7573dd183456d23acf3e8abe6477dd5025d4990c` |
 | `weapons.md` | `69a3236a31a446ccf1141530bf1269a68298f27931b2c583241e5075a5ca5934` |
 | `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |
 | `visual-style.md` | `276693f9c2695aca9823618333dab3ba7a8e3d96cca8028dfc3d0e9ae329d390` |
