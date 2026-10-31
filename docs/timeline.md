@@ -2955,3 +2955,8 @@ Entry format:
 - Decision or change: publish_itch.py ignores the board's untracked level files in game/data/levels/ and the Web export leaves them out of the build. QA passed; merged straight after QA.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-471
+
+## 2026-10-31: A script for ticket result notes
+- Decision or change: tools/task_notes.py appends an agent's report to a ticket's result notes only (never the header or another section). The guard change it needs is T-472. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-469
