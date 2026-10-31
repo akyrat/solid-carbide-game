@@ -1,7 +1,7 @@
 ---
 id: T-450
 title: Fix splash.json: the source path's backslashes break JSON and master's tests
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -52,6 +52,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-31, Open → In progress
+
+Started: fixing the splash record that turned master's tests red.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -59,3 +63,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Fixed game/art/menu/splash.json: the "source" path now uses forward slashes (C:/Users/andre/Downloads/...); every other field is untouched. splash.png unchanged (its SHA-256 matches the record). All JSON files under game/art/ parse; no other bad one. test_pixellab_assets.gd passes (1 test, 21 asserts). game/tools Python tests: 767 OK (1 skipped). Nothing in game/data/levels/ touched.
