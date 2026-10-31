@@ -1072,7 +1072,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Minions don't get stuck on ramps** (board, 2026-10-29, an MVP nice-to-have; a bug): chasing the car, minions sometimes get stuck on walls as they try to go round a corner, mostly at the bottom end of a ramp. They should find their way round. **Built in T-380** (see Content, "Finding the way").
 - **A red flash when an enemy takes damage** (board, 2026-10-30): every enemy (minions and the kaiju) flashes red when a weapon or the car hits it, the same red flash the car shows when it loses a heart (Game loop architecture, Decisions). Its length and shade match the car's; for the kaiju, whether it flashes on every hit or only in its vulnerable window is a proposal. Built in T-404 (see Content, "The red flash").
 - **Meteors hit minions and push pickups aside** (board, 2026-10-30, audit): a meteor that lands on minions damages them; coins and health pickups where a boulder appears are pushed out of its way. A meteor misses a car more than 1 unit above it, the same rule as contact damage.
-- **The kaiju only takes paths it fits through** (board, 2026-10-30, audit; a bug): the kaiju plans its way round buildings for its own size, so it never heads into a gap too narrow for it.
+- **The kaiju only takes paths it fits through** (board, 2026-10-30, audit; a bug): the kaiju plans its way round buildings for its own size, so it never heads into a gap too narrow for it. It also keeps its body off rooftops', ramps' and the map's edges, and drops off a rooftop from a little way back from the edge (board, 2026-10-30, after playing build J: keep the edge rule; T-419).
 
 ### Content
 
@@ -1847,7 +1847,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `0e99c0e71e1238b8ee43e613796a5401597fe21421362290b4dd03e112ce60dc` |
 | `drifting.md` | `3454273e8130b390f7fec8f77995acad9e9b36d1598e4f3a6d8954069153d2a7` |
 | `level-design.md` | `1df2ad169580f84a2a15614d5309e11b9627e7259b8b624d89d2190c73272579` |
-| `enemies.md` | `f5de4d83c56e028eb20088c11c3aeb8be9777c80b5d2c1c59f884e108e00a3c9` |
+| `enemies.md` | `aaa01d73ca079d3ae8ab1a84f79f2fa305dc963c89710008373acdfded58c866` |
 | `weapons.md` | `d9f6f69d6b8d84e1656454eb605cbed8c681dfc2204b0ffa45bf74c0590d5dcf` |
 | `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |
 | `visual-style.md` | `91c5d48416ceaf9cfb1da72c6ec8ef75a27eb11094bfcf76df1251b264d8f2cc` |

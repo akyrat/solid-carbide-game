@@ -43,7 +43,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Minions don't get stuck on ramps** (board, 2026-10-29, an MVP nice-to-have; a bug): chasing the car, minions sometimes get stuck on walls as they try to go round a corner, mostly at the bottom end of a ramp. They should find their way round. **Built in T-380** (see Content, "Finding the way").
 - **A red flash when an enemy takes damage** (board, 2026-10-30): every enemy (minions and the kaiju) flashes red when a weapon or the car hits it, the same red flash the car shows when it loses a heart (Game loop architecture, Decisions). Its length and shade match the car's; for the kaiju, whether it flashes on every hit or only in its vulnerable window is a proposal. Built in T-404 (see Content, "The red flash").
 - **Meteors hit minions and push pickups aside** (board, 2026-10-30, audit): a meteor that lands on minions damages them; coins and health pickups where a boulder appears are pushed out of its way. A meteor misses a car more than 1 unit above it, the same rule as contact damage.
-- **The kaiju only takes paths it fits through** (board, 2026-10-30, audit; a bug): the kaiju plans its way round buildings for its own size, so it never heads into a gap too narrow for it.
+- **The kaiju only takes paths it fits through** (board, 2026-10-30, audit; a bug): the kaiju plans its way round buildings for its own size, so it never heads into a gap too narrow for it. It also keeps its body off rooftops', ramps' and the map's edges, and drops off a rooftop from a little way back from the edge (board, 2026-10-30, after playing build J: keep the edge rule; T-419).
 
 ## Content
 

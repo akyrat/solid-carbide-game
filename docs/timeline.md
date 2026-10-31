@@ -2725,3 +2725,8 @@ Entry format:
 - Decision or change: Built and merged (audit epic, build J): crossing a thread-the-needle gap while still touching a paired obstacle pays nothing; a level file with a missing key, an unknown ramp side or a zero-size ramp loads with an error naming the piece and flat ground (no NaN); a level without a spawn starts at the map's centre (Level design), and a spawn in geometry is reported. Played by the board.
 - Documents touched: none
 - Tasks: T-420
+
+## 2026-10-31: The kaiju keeps off edges; a guarded edit accepted; no MVP docs status line
+- Decision or change: after playing build J, the board kept the kaiju's edge rule that T-419 added beyond its ticket: the kaiju keeps its body off rooftop, ramp and map edges and drops from a little way back (Enemies, Decisions, "The kaiju only takes paths it fits through"). The board accepted T-436's Edit-tool change to game/tools/draw_kaiju_nav.gd/.sh, made after the command guard refused a `python -` edit of them; it stands. The board asked to remove the "MVP docs" bar from the terminal status line: the statusLine entry is gone from .claude/settings.json (tools/statusline.py and docs/mvp-readiness.json are kept). Merges may run with GUT_TIME_LIMIT=1500 until the default limit is raised (board, via Greenbull).
+- Documents touched: docs/enemies.md
+- Tasks: T-419, T-436
