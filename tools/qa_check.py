@@ -1,16 +1,20 @@
 """The mechanical part of QA, in one script (T-347; tasks/README.md, "QA").
 
-  python tools/qa_check.py T-NNN [--root DIR] [--base master] [--no-marks] [--test-cmd "cmd"] ... [--no-tests]
+  python tools/qa_check.py T-NNN [--root DIR] [--base master] [--no-marks] [--test-cmd "cmd"] ... [--no-tests] [--all-tests]
 
 Run from the ticket's own folder (or give --root). It prints one line per check, PASS or FAIL, then a total line:
 
-  tests        the three test sets run and pass on the ticket's branch
+  tests        the test sets run and pass on the ticket's branch: the Godot set and the game/tools set always, the
+               tools set (the studio's own scripts) only when the branch changes something under tools/ or .claude/
+               against --base (otherwise the line says it was skipped and why); --all-tests forces all three
   documents    every file in the ticket's documents_affected changed on the branch (against --base)
   screenshots  at least one image or recording in art-archive/<id>/screenshots/ when the ticket shows anything
                (changes_visuals or user_facing_text is yes, or it has a `The board's review:` line)
   marks        every acceptance criterion carries a (QA: pass) or (QA: fail ...) mark
 
 --no-marks leaves the marks check out (QA runs the script first, then marks the criteria, then runs it again).
+The second run, after marking, checks only the marks: `--no-tests` (alias `--marks-only`) skips the test sets, so
+the full sets are paid once per ticket (tasks/README.md, "Which tests run when").
 --test-cmd (repeatable) replaces the default test sets; --no-tests skips them. Exit code 0 when every check
 passes, 1 otherwise. The full test output is not printed, only its last lines on a failure. Judging each
 acceptance criterion is still QA's job: this script only does what needs no judgment.
@@ -26,11 +30,13 @@ sys.path.insert(0, str(HERE))
 import taskboard_sync as tb  # noqa: E402
 from task_status import verdicts  # noqa: E402
 
-DEFAULT_TESTS = [
-    f'"{sys.executable}" -m unittest discover -s game/tools -p "test_*.py"',
-    f'"{sys.executable}" -m unittest discover -s tools -p "test_*.py"',
-    "bash game/tools/run_tests.sh",
+# (name, command, only_when_studio_scripts_changed)
+DEFAULT_SETS = [
+    ("game/tools", f'"{sys.executable}" -m unittest discover -s game/tools -p "test_*.py"', False),
+    ("tools", f'"{sys.executable}" -m unittest discover -s tools -p "test_*.py"', True),
+    ("godot", "bash game/tools/run_tests.sh", False),
 ]
+STUDIO_PATHS = ("tools/", ".claude/")
 MEDIA = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".mp4", ".webm"}
 
 
@@ -39,7 +45,20 @@ def ticket_file(root, tid):
     return found[0] if found else None
 
 
-def check_tests(root, tests):
+def default_tests(root, base, force=False):
+    """(commands, skipped note): the tools set is left out unless the branch changes tools/ or .claude/."""
+    studio = force or any(f.startswith(STUDIO_PATHS) for f in changed_files(root, base))
+    cmds = [c for _, c, only in DEFAULT_SETS if studio or not only]
+    skipped = "" if studio else "tools set skipped: the branch changes nothing under tools/ or .claude/"
+    return cmds, skipped
+
+
+def check_tests(root, tests, skipped=""):
+    ok, detail = _run_tests(root, tests)
+    return ok, f"{detail} ({skipped})" if ok and skipped and tests else detail
+
+
+def _run_tests(root, tests):
     for n, cmd in enumerate(tests, 1):
         done = subprocess.run(cmd, cwd=str(root), shell=True, capture_output=True, text=True, encoding="utf-8",
                               errors="replace")
@@ -96,14 +115,17 @@ def check_marks(text):
     return True, f"{len(passed)} pass, {len(failed)} fail marked"
 
 
-def run_checks(tid, root, base="master", marks=True, tests=None):
+def run_checks(tid, root, base="master", marks=True, tests=None, all_tests=False):
     """[(name, ok, detail)] for the ticket in `root`."""
     path = ticket_file(root, tid)
     if path is None:
         return [("ticket", False, f"no tasks/{tid}-*.md in {root}")]
     text = path.read_text(encoding="utf-8")
     fields = tb.parse_header(text) or {}
-    results = [("tests", *check_tests(root, DEFAULT_TESTS if tests is None else tests)),
+    skipped = ""
+    if tests is None:
+        tests, skipped = default_tests(root, base, all_tests)
+    results = [("tests", *check_tests(root, tests, skipped)),
                ("documents", *check_documents(root, fields, base)),
                ("screenshots", *check_screenshots(root, fields, text, tid))]
     if marks:
@@ -114,7 +136,7 @@ def run_checks(tid, root, base="master", marks=True, tests=None):
 def main(argv=None):
     tb.utf8_output()
     argv = sys.argv[1:] if argv is None else argv
-    tid, root, base, marks, tests, no_tests = None, Path.cwd(), "master", True, [], False
+    tid, root, base, marks, tests, no_tests, all_tests = None, Path.cwd(), "master", True, [], False, False
     it = iter(argv)
     for a in it:
         if re.fullmatch(r"T-\d+", a):
@@ -127,13 +149,15 @@ def main(argv=None):
             marks = False
         elif a == "--test-cmd":
             tests.append(next(it, ""))
-        elif a == "--no-tests":
+        elif a in ("--no-tests", "--marks-only"):
             no_tests = True
+        elif a == "--all-tests":
+            all_tests = True
         else:
             raise SystemExit(__doc__)
     if not tid:
         raise SystemExit(__doc__)
-    results = run_checks(tid, root, base, marks, [] if no_tests else (tests or None))
+    results = run_checks(tid, root, base, marks, [] if no_tests else (tests or None), all_tests)
     for name, ok, detail in results:
         print(f"{'PASS' if ok else 'FAIL'} {name}: {detail}")
     bad = [n for n, ok, _ in results if not ok]

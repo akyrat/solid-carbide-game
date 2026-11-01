@@ -5,6 +5,7 @@ import io
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -67,7 +68,7 @@ class QaCheckTest(unittest.TestCase):
         temp_repo.git(self.root, "commit", "-q", "-m", "work", "--allow-empty")
 
     def results(self, tests=(PASS,), **kw):
-        return {n: (ok, d) for n, ok, d in qa_check.run_checks("T-950", self.root, tests=list(tests), **kw)}
+        return {n: (ok, d) for n, ok, d in qa_check.run_checks("T-950", self.root, tests=None if tests is None else list(tests), **kw)}
 
     def test_everything_in_order_passes_with_one_line_each(self):
         self.write_ticket()
@@ -125,6 +126,53 @@ class QaCheckTest(unittest.TestCase):
         self.write_ticket(criteria="(none)")
         self.on_branch({"docs/sample.md": "changed\n"})
         self.assertFalse(self.results()["marks"][0])
+
+    def fresh_repo(self):
+        self.tmp.cleanup()
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = temp_repo.make(Path(self.tmp.name) / "repo")
+
+    def ran_sets(self, changes, **kw):
+        """Which default sets ran (their commands leave a mark), and the tests line."""
+        self.write_ticket()
+        self.on_branch(changes)
+        log = Path(self.tmp.name) / "ran.txt"
+        mark = lambda n: f'"{sys.executable}" -c "open(r\'{log}\', \'a\').write(\'{n} \')"'   # noqa: E731
+        sets = [("game/tools", mark("game"), False), ("tools", mark("tools"), True), ("godot", mark("godot"), False)]
+        with mock.patch.object(qa_check, "DEFAULT_SETS", sets):
+            line = self.results(tests=None, **kw)["tests"]
+        return (log.read_text().split() if log.exists() else []), line
+
+    def test_the_tools_set_is_skipped_unless_tools_or_claude_change(self):
+        ran, (ok, detail) = self.ran_sets({"docs/sample.md": "changed\n"})
+        self.assertEqual(ran, ["game", "godot"])
+        self.assertTrue(ok)
+        self.assertIn("tools set skipped", detail)
+
+    def test_the_tools_set_runs_when_tools_or_claude_change(self):
+        for rel in ("tools/x.py", ".claude/agents/a.md"):
+            self.fresh_repo()
+            ran, (ok, detail) = self.ran_sets({rel: "x\n"})
+            self.assertEqual(ran, ["game", "tools", "godot"], rel)
+            self.assertNotIn("skipped", detail)
+
+    def test_the_force_flag_runs_all_three_sets(self):
+        ran, (ok, detail) = self.ran_sets({"docs/sample.md": "changed\n"}, all_tests=True)
+        self.assertEqual(ran, ["game", "tools", "godot"])
+        self.assertNotIn("skipped", detail)
+
+    def test_marks_only_skips_the_tests_and_the_usage_says_so(self):
+        self.assertIn("--marks-only", qa_check.__doc__)
+        self.assertIn("--all-tests", qa_check.__doc__)
+        self.write_ticket(criteria="- [x] It works (QA: pass)")
+        self.on_branch({"docs/sample.md": "changed\n"})
+        for flag in ("--no-tests", "--marks-only"):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                code = qa_check.main(["T-950", "--root", str(self.root), flag])
+            self.assertEqual(code, 0, out.getvalue())
+            self.assertIn("skipped (--no-tests)", out.getvalue())
 
 
 if __name__ == "__main__":

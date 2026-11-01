@@ -1,7 +1,7 @@
 ---
 id: T-486
 title: qa_check.py follows the new test rule: the tools set only when tools change, and a marks-only second run
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -58,10 +58,23 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-01, Open → In progress
+
+Started: qa_check follows the new test rule.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+qa_check.py now follows the test rule (T-486).
+
+- tools/qa_check.py: the default sets are DEFAULT_SETS; the `tools` set runs only when the branch changes something under tools/ or .claude/ against --base; otherwise the tests line ends "(tools set skipped: the branch changes nothing under tools/ or .claude/)". `--all-tests` forces all three. `--marks-only` is an alias of `--no-tests`; the usage docstring documents the marks-only second run.
+- tools/test_qa_check.py: 4 new tests (skip when no tools/.claude change; run on tools/ and on .claude/ change; --all-tests runs all three; --marks-only/--no-tests skip tests and usage mentions both flags).
+- Goal runner prompts changed (tools/goal_agent/build.py): (1) agent_prompt, the "Write tests for your code and run them" line, now says run the tests for what you changed, not the three full sets, and list what was run; (2) qa_prompt now tells QA to run qa_check --no-marks once for the full sets (tools set skipped if tools/.claude untouched) and --marks-only after marking. No other place in tools/goal_agent/ (loop.py goal check, gaps, prioritize, tickets) tells an agent to run all three sets.
+- tasks/README.md: "Which tests run when" and "QA" describe the skip, --all-tests and --marks-only.
+
+Tests run: python -m unittest tools.test_qa_check (10 tests, OK); goal_agent test_build, test_loop, test_run: see below. Godot set not run (rule). Nothing under game/data/levels/ touched.
+
+Update: goal_agent test_build + test_loop + test_run: 64 tests OK (run after the prompt edits); tools.test_qa_check: 10 OK.
