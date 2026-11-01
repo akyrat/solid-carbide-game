@@ -1,7 +1,7 @@
 ---
 id: T-472
 title: The command guard trusts tools/task_notes.py like the status script
-status: open
+status: blocked
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -54,10 +54,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-31, In progress → Blocked
+
+Blocked: Claude can't edit the guard. Your one-line edit is in the terminal.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-31, in-progress → blocked: The auto-mode classifier refused launching the agent (self-modification of the hook). The board makes the one-line edit itself; see the reply.
