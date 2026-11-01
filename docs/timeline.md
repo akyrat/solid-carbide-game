@@ -3145,3 +3145,8 @@ Entry format:
 - Decision or change: A jump high enough passes over barriers and boulders, the car can land on top of one, and the car is drawn over the obstacle while above it; the board played it.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-478
+
+## 2026-11-01: The redrawn tutorial slides are built
+- Decision or change: Four slides (Drive, Tricks bring gifts, Missions, Survive the stream) match the approved draft, with the recorded clips as frame sheets (at most 3840 px, freed when hidden) and Skip; the board played it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-485

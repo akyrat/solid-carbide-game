@@ -1,17 +1,18 @@
 # Tutorial slides
 
-(Task T-382, UI Agent. What the slides say and show: `docs/hud-and-menus.md`, Content, "Tutorial slides and trick list". The index is [../../README.md](../../README.md).)
+(Tasks T-382 and T-485, UI Agent. What the slides say and show: `docs/hud-and-menus.md`, Content, "Tutorial slides and trick list". The index is [../../README.md](../../README.md).)
 
 ## Scenes and scripts
 
-- `scenes/menu/tutorial_slides.tscn`, script `scripts/menu/tutorial_slides.gd` (`TutorialSlides`): three slides with a left and a right arrow. Slide 1 (controls) and slide 3 (goal) are text; slide 3 has the **Go live** button (`button.start`) and the **Don't show again** checkbox. Slide 2 holds the trick list.
-- `scenes/menu/trick_list.tscn`, script `scripts/menu/trick_list.gd` (`TrickList`): the seven tricks in a grid of four columns, each an illustration with its name under it. A separate scene so the pause screen's trick list panel reuses it.
+- `scenes/menu/tutorial_slides.tscn`, script `scripts/menu/tutorial_slides.gd` (`TutorialSlides`): four slides (T-485: Drive, Tricks bring gift packs, Missions, Survive the stream) on a 1280 x 720 stage scaled to the window, with a left and a right arrow, four dots and a **Skip** button (jumps to slide 4). Slide 4 has the **Go live** button (`button.start`, with the LIVE badge) and the **Don't show again** checkbox. What each slide shows: `docs/hud-and-menus.md`, Content, "The four redrawn slides (T-485)".
+- `scripts/menu/clip_player.gd` (`ClipPlayer`): plays a clip from `art/tutorial/clips/<name>_sheet.png` and `<name>_sheet.json` (frame size, columns, each frame's own duration from the GIF), made by `python game/tools/gif_to_sheet.py` (test `game/tools/test_gif_to_sheet.py`). It loads when first shown and only advances while visible; `advance(delta)` is its whole clock. Four clips: `drift` on slide 1, `long_drift`, `alt_drift`, `ramp_jump` on slide 2.
+- `scenes/menu/trick_list.tscn`, script `scripts/menu/trick_list.gd` (`TrickList`): the seven tricks in a grid of four columns, each an illustration with its name under it. Used by the pause screen's trick list panel (the redrawn slide 2 no longer shows it; it shows the long drift illustration in its first step).
 - **Signal:** `start_pressed(dont_show_again: bool)`, sent when Start is pressed, with the checkbox state. The screen does not start the run and does not save the setting: the screen flow connects it to the main menu's Start and calls `GameSettings.save_tutorial_hidden(true)` when the flag is true.
 - **Setting:** `GameSettings.load_tutorial_hidden()` / `save_tutorial_hidden(bool)`, key `hidden` in section `tutorial` of `user://settings.cfg`, false by default. `tests/unit/test_tutorial_setting.gd`.
 
 ## Text
 
-No string is written in the scripts. `TrickList.text("<dotted key>")` reads `data/tutorial_text.json` (the same lookup as the recap's); the trick names are `trick.<id>`. The arrows have no text: a triangle drawn in code, with the `arrow.left` and `arrow.right` lines as their tooltips. The checkbox's box is drawn in code too.
+No string is written in the scripts. `TrickList.text("<dotted key>")` reads `data/tutorial_text.json` (the same lookup as the recap's); the trick names are `trick.<id>`. Headlines, labels and captions are stored in sentence case and shown in capitals (`Label.uppercase`). The arrows have no text: a triangle drawn in code, with the `arrow.left` and `arrow.right` lines as their tooltips. The checkbox's box is drawn in code too.
 
 ## Trick illustrations (for the art tickets)
 
@@ -25,11 +26,11 @@ No string is written in the scripts. `TrickList.text("<dotted key>")` reads `dat
 ## Keyboard and focus (proposal for the playtest)
 
 - **Left arrow key or A:** previous slide. **Right arrow key or D:** next slide. At the ends they do nothing.
-- **Enter or Space** presses the focused control; **Tab / Shift+Tab** move the focus (tree order: left arrow, the slide's controls, right arrow; on slide 3 the checkbox, then Go live).
-- **Focus on each slide:** slides 1 and 2, the right arrow; slide 3, the Go live button. So Enter, Enter, Enter starts the run.
+- **Enter or Space** presses the focused control; **Tab / Shift+Tab** move the focus (on slide 4 the checkbox, then Go live).
+- **Focus on each slide:** slides 1 to 3, the right arrow; slide 4, the Go live button. So Enter, Enter, Enter, Enter starts the run. Skip is a button too (Tab to it).
 - **Mouse:** click the arrows, the checkbox and the button.
-- The arrow that has nowhere to go is hidden (slide 1 has no left arrow, slide 3 no right arrow). Three small squares at the bottom show the slide.
+- The arrow that has nowhere to go is hidden (slide 1 has no left arrow, slide 4 no right arrow). Four small squares at the bottom show the slide (the current one a long bar).
 
 ## Tests and screenshots
 
-`tests/unit/test_tutorial_slides.gd` (arrows both ways, the signal with the box on and off, every text against the file, keys, focus, Enter on Go live), `tests/unit/test_trick_list.gd` (names, placeholders, a PNG at the fixed path), `tests/unit/test_tutorial_setting.gd`. Screenshots: `bash game/tools/screenshot.sh res://tests/fixtures/tutorial_slides_demo.tscn out.png 10` (and `_2`, `_3` for slides 2 and 3).
+`tests/unit/test_tutorial_slides.gd` (four slides in order, dots, arrows, Skip, the signal with the box on and off, every text against the file, the retired keys unused, the clips' frames and timing, the pictures' files, keys, focus, Enter on Go live), `tests/unit/test_trick_list.gd` (names, placeholders, a PNG at the fixed path), `tests/unit/test_tutorial_setting.gd`. Screenshots: `bash game/tools/screenshot.sh res://tests/fixtures/tutorial_slides_demo.tscn out.png 40` (and `_2`, `_3`, `_4` for slides 2 to 4; the fixture sets the window to 1280 x 720).
