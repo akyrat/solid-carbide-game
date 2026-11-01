@@ -1,7 +1,7 @@
 ---
 id: T-466
 title: Art: Rev Charge's charging and boost effect
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-01, Blocked → In progress
 
 Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-466.
+
+### 2026-11-01, In progress → In QA
+
+Goal runner (G-009): the agent is done; QA is checking it.
 
 ## Style review
 
