@@ -170,8 +170,27 @@ class PopupText extends Node2D:
 	func size() -> Vector2:
 		if broken:
 			return Vector2(broken_textures()[0].get_size()) * PIXEL_SCALE
-		# The plain bubble's size from its lettering, without baking its picture (T-481).
 		return Vector2(Art.plain_size(text, Art.style_for(font_size), viewers)) * PIXEL_SCALE
+
+	## Asks for the pictures this popup will draw later to be baked on worker threads
+	## now (T-480): the flame frames, and the look without the amount once it has flown
+	## off. The first picture is the one the popup is born with, made on the spot.
+	func request_ahead() -> void:
+		var style := Art.style_for(font_size)
+		if broken:
+			broken_textures()  # the cards are made now if the prewarm has not, so drawing never builds them
+			return
+		var frames := Art.FLAME_FRAMES if heat >= Art.FLAME_STEP else 1
+		for f in frames:
+			for hide in ([false, true] if viewers else [false]):
+				if f == 0 and not hide:
+					continue
+				Art.request(text, style, heat, f, viewers, hide)
+		# The picture the popup is born with is made at the end of this frame, not here:
+		# a trick's popup is shown from inside the car's physics step (T-481), and a
+		# bake there was 10 to 30 ms on a landing. Still never while drawing.
+		if is_inside_tree():
+			texture.call_deferred()
 
 	## The car's drawn position now (the last known one if it cannot be asked).
 	func anchor_now() -> Vector2:
@@ -248,14 +267,6 @@ class PopupText extends Node2D:
 
 
 var _car: Node = null
-
-
-## T-481: the lettering of every trick text (with a sample amount) and the eye are made
-## when the popups are made, so the first trick of a run does not bake the font's glyphs
-## in the middle of a physics step.
-func _ready() -> void:
-	Art.warm(TEXTS.values(), "normal")
-	Art.warm(TEXTS.values(), "small")
 ## Returns the car's drawn position (set by bind()).
 var _car_position: Callable
 ## Returns the car's drawn position for the challenge popup (set by bind_score()).
@@ -398,7 +409,37 @@ func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow 
 	add_child(p)
 	p.advance(0.0)
 	p.reset_physics_interpolation()
+	p.request_ahead()
 	return p
+
+
+static var _prewarmed := false
+## Set false to keep prewarm() from starting worker threads (tests that count threads).
+static var prewarm_enabled := true
+
+
+## Bakes ahead, on worker threads, every picture that does not depend on an amount:
+## the combo broken card and each trick's name at every heat step and flame frame
+## (T-480). They stay for the run. Once per process.
+static func prewarm() -> void:
+	if _prewarmed or not prewarm_enabled:
+		return
+	_prewarmed = true
+	BrokenArt.request(BROKEN_TEXT, Art.style_for(SIZE_NORMAL))
+	for id in TEXTS:
+		var style := Art.style_for(SIZES[id])
+		for heat in Art.HEAT_STEPS:
+			for f in (Art.FLAME_FRAMES if heat >= Art.FLAME_STEP else 1):
+				Art.request(TEXTS[id], style, heat, f, false, false, true)
+
+
+func _ready() -> void:
+	prewarm()
+
+
+func _process(_dt: float) -> void:
+	Art.poll()
+	BrokenArt.poll()
 
 
 ## The smallest upward offset (zero or negative) at which `p`, born now, does

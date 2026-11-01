@@ -144,6 +144,7 @@ func _set_loop(id: String, on: bool) -> void:
 	if on and not p.playing:
 		p.play()
 		play_counts[id] += 1
+		WebAudioLog.say("%s playing=%s" % [id, p.playing])
 	elif not on and p.playing:
 		p.stop()
 

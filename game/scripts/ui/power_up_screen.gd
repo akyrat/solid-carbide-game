@@ -8,7 +8,7 @@ extends CanvasLayer
 ## does is the car's.
 ##
 ## Input, as on the level-up screen: A/D or Left/Right move the highlight, Enter or Space
-## takes the highlighted card, clicking a card's button takes that card. A key already down
+## takes the highlighted card, clicking anywhere on a card takes it (GiftCardClick, T-475: no button). A key already down
 ## when the overlay opens (or a key-repeat echo) takes nothing until it has been let go;
 ## nothing counts during the short build-up (`is_animating()`).
 ##
@@ -19,7 +19,7 @@ extends CanvasLayer
 ## thick white frame. Each card: the power-up's icon (its power_ups.json path once the art
 ## exists; until then an amber square with the name's initial), its name, a row of tier
 ## pips (owned tiers amber, the tier offered white, the rest dark) and the offered tier's
-## description, then the "Take power-up" plate.
+## description. No button: a hover brightens the card's frame.
 ## Texts: data/screen_texts.json's power_ups (T-456), word for word; a description's
 ## {slots} are the offered tier's numbers from power_ups.json.
 
@@ -56,8 +56,6 @@ const HEADER_PLATE_INSET := 48
 const TITLE_SIZE := 40
 const NAME_SIZE := 36
 const DESC_SIZE := 22
-const BUTTON_SIZE := 28
-const BUTTON_PLATE_SIZE := Vector2(210, 46)
 const KEYS_LEFT := [KEY_A, KEY_LEFT]
 const KEYS_RIGHT := [KEY_D, KEY_RIGHT]
 const KEYS_TAKE := [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]
@@ -77,7 +75,7 @@ static var _texts: Dictionary = {}
 var offers: PowerUpOffers
 var data: PowerUpData
 ## The cards on show, left to right: {id, tier, panel, body, highlight_frame, icon,
-## placeholder, name, desc, pips, button}.
+## placeholder, name, desc, pips, click}.
 var cards: Array = []
 var highlight := 0
 ## Tells whether a physical key is down right now; tests replace it.
@@ -311,7 +309,7 @@ func _start_animation() -> void:
 	_animating = true
 	_anim_length = animation_length(cards.size())
 	for c in cards:
-		c.button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		c.click.set_active(false)
 	_apply_frame(0.0)
 
 
@@ -319,7 +317,7 @@ func _finish_animation() -> void:
 	_animating = false
 	_t = _anim_length
 	for c in cards:
-		c.button.mouse_filter = Control.MOUSE_FILTER_STOP
+		c.click.set_active(true)
 	_apply_frame(_anim_length + 1.0)
 
 
@@ -414,26 +412,13 @@ func _add_card(id: String) -> void:
 	desc.custom_minimum_size.x = TEXT_WIDTH
 	desc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(desc)
-	var button := Button.new()
-	button.name = "TakeButton"
-	button.text = String(texts().get("take_button", ""))
-	button.focus_mode = Control.FOCUS_NONE
-	button.custom_minimum_size = BUTTON_PLATE_SIZE
-	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	button.add_theme_font_override("font", HudStyle.comic_font())
-	button.add_theme_font_size_override("font_size", BUTTON_SIZE)
-	for n in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color"]:
-		button.add_theme_color_override(n, INK)
-	button.add_theme_stylebox_override("normal", _box(AMBER, INK, 3))
-	button.add_theme_stylebox_override("hover", _box(Color8(255, 206, 96), INK, 3))
-	button.add_theme_stylebox_override("pressed", _box(AMBER_DARK, INK, 3))
-	button.add_theme_stylebox_override("hover_pressed", _box(AMBER_DARK, INK, 3))
-	button.pressed.connect(take.bind(id))
-	v.add_child(button)
+	# T-475: no button: the whole card is the control (the shared GiftCardClick, T-474).
+	var click := GiftCardClick.attach(panel, body, frame, take.bind(id))
+	click.set_active(not _animating)
 	_row.add_child(panel)
 	cards.append({"id": id, "tier": tier, "panel": panel, "body": body, "highlight_frame": glow,
 			"icon": icon, "placeholder": placeholder, "name": name_label, "desc": desc,
-			"pips": pips, "button": button})
+			"pips": pips, "click": click})
 
 
 ## The placeholder icon (until the art exists): an amber square with a dark frame and

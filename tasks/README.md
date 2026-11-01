@@ -87,15 +87,24 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 
 The rule for every agent, QA included (board, 2026-10-28, T-343; the agent definitions and the goal runner's prompts point here). Subagent reports pasted into the Project Lead's conversation were the largest single cost in long sessions.
 
-- **The full report goes in the ticket's result notes** (QA's pass or fail per criterion stays on the ticket). Write it with the notes script (board, 2026-10-31, T-469): `python C:/solid-carbide-game/tools/task_notes.py T-NNN --append report.md` (or `--text "..."`) adds it to the end of the ticket's `## Result notes` section, finding the ticket on its open branch like `task_status.py`, and touches nothing else (not the header, not any other section). Don't write result notes with Bash redirects or the Edit tool: the command guard and the auto-mode classifier refuse those on tickets, and getting around a refusal is not allowed. The hand-back is one short line, about 300 characters at most: the ticket id, done or blocked, and what the Project Lead must act on.
+- **The full report goes in the ticket's result notes** (QA's pass or fail per criterion stays on the ticket). Write it with the notes script (board, 2026-10-31, T-469): `python C:/solid-carbide-game/tools/task_notes.py T-NNN --append report.md` (or `--text "..."`) adds it to the end of the ticket's `## Result notes` section, finding the ticket on its open branch like `task_status.py`, and touches nothing else (not the header, not any other section). Don't write result notes with Bash redirects or the Edit tool: the command guard and the auto-mode classifier refuse those on tickets, and getting around a refusal is not allowed. The command guard trusts `tools/task_notes.py` like `task_status.py` (board, 2026-10-31, T-472): its `--text` may say status, lead or tasks. The hand-back is one short line, about 300 characters at most: the ticket id, done or blocked, and what the Project Lead must act on.
 - **Tests run in the foreground,** and no background jobs are left running when the agent hands back (a finished agent with a leftover background run wakes up again and re-sends its hand-back).
 - **The ticket is committed before handing back,** result notes and QA results included, so the merge is never held up by uncommitted work in the folder.
+
+## Which tests run when
+
+Each full run of the test sets is paid once per stage, never twice for the same code (board, 2026-11-01: "make the test change"; the Godot set alone takes about 25 minutes).
+
+- **The agent doing the work** runs the tests for what it changed: its new and changed test files, and the test files of the scripts it touched (for Godot, `bash game/tools/run_tests.sh -gselect=<test file name>`, GUT's own option (`-gtest=` doesn't narrow the run here: it runs the whole set); for Python, `unittest` on the changed test modules). It does not run the three full sets before handing back. Its result notes list what it ran, with the counts.
+- **QA** runs the full sets once, on the committed state: the Godot set and the `game/tools` Python set always; the `tools` Python set (the studio's own scripts) only when the ticket's branch changes something under `tools/` or `.claude/`. A second `qa_check.py` run after marking the criteria checks only the marks (`--no-tests`).
+- **The merge** (`tools/merge_batch.py`) runs the three sets once per batch, as before: the safety net that keeps `master` green.
+- A ticket's criteria say "the tests for the changed code pass (the agent), and QA's full run passes", not "all three test sets pass" (written that way from 2026-11-01).
 
 ## QA
 
 QA is the acceptance criteria and the tests, nothing else (board, 2026-10-28, T-347). Agents aren't trying to fail tickets; QA makes sure the work holds up to the standards already defined. Two steps:
 
-1. **Run `python tools/qa_check.py T-NNN`** in the ticket's folder. It prints one PASS or FAIL line each for: the three test sets pass on the branch; every file in `documents_affected` changed on the branch; screenshots exist in `art-archive/<id>/screenshots/` when the ticket shows anything (`changes_visuals` or `user_facing_text` is yes, or it has a `The board's review:` line); every acceptance criterion carries a pass or fail mark. QA runs it with `--no-marks` first, marks the criteria, then runs it once more without.
+1. **Run `python tools/qa_check.py T-NNN`** in the ticket's folder. It prints one PASS or FAIL line each for: the test sets pass on the branch (which sets: "Which tests run when"); every file in `documents_affected` changed on the branch; screenshots exist in `art-archive/<id>/screenshots/` when the ticket shows anything (`changes_visuals` or `user_facing_text` is yes, or it has a `The board's review:` line); every acceptance criterion carries a pass or fail mark. QA runs it with `--no-marks` first, marks the criteria, then runs it once more without.
 2. **Judge each acceptance criterion** and mark it `(QA: pass)`, `(QA: fail: code - <reason>)` (the work is wrong or a test is red) or `(QA: fail: paperwork - <reason>)` (the work is fine but a record, note or screenshot is missing). The tag decides the retry model in goal runs: code failures go to opus, failures where every failed criterion is tagged paperwork stay on the ticket's own model (`tools/goal_agent/build.py`, `retry_model`); an untagged failure counts as code. The Project Lead picks the model by hand outside goal runs.
 
 A ticket fails only on a criterion or a red check. QA adds no requirements of its own, and a second round and the flag for review work as in "Status rules" and "Changing a task's status".
@@ -145,7 +154,7 @@ Input (top level: `lead`, `commit_message`, `tickets` are required; `decision_do
 ```
 {"lead": "Tokens", "commit_message": "T-360: ticket (the board's decision)",
  "decision_docs": ["docs/weapons.md"], "date": "2026-10-28",
- "common_criteria": ["All three test sets pass, with the counts in the result notes."],
+ "common_criteria": ["The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes."],
  "tickets": [{"title": "Short title", "slug": "short-title", "to": "weapon-behavior", "epic": "weapons", "model": "sonnet",
    "depends_on": [], "documents_affected": ["docs/weapons.md"], "files_to_read_first": ["tasks/README.md"],
    "files_expected_to_change": ["game/x.gd"], "description": "What and why.", "criteria": ["Something QA can check."],

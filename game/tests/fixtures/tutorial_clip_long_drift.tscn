@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/tutorial_clip_demo.gd" id="1_demo"]
+
+[node name="TutorialClipLongDrift" type="Node"]
+script = ExtResource("1_demo")
+clip = "long_drift"
+zoom = 14.4
+start_units = Vector2(-20, 20)
+start_rotation = -0.7854
+warm_steps = 60
+marks_lifetime = 3.0
+tail_steps = 10
+parts = [[30, true, 0.0], [170, true, 1.0], [40, true, 0.0]]

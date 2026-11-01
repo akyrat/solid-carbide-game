@@ -1,7 +1,7 @@
 ---
 id: T-479
 title: The board's MVP pass: a gallery of every screen and a list of every player-facing text
-status: open
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/setup/tests.md]
 files_expected_to_change: [game/tools/, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,17 +45,21 @@ No game behaviour changes. Never write, move or commit anything in game/data/lev
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Running the script makes one screenshot per screen listed in the description, plus a manifest naming each one; the result notes list the screens and any screen it could not reach, with why. (QA: pass / fail)
-- [ ] The text inventory lists every string in the game's text files, with key, text and screen, and lists strings found in code separately; the result notes give the counts. (QA: pass / fail)
-- [ ] A test runs the inventory on a small fixture and checks its output format. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) says how to rebuild the gallery and the inventory. (QA: pass / fail)
-- [ ] No game script or scene behaviour changes (the diff touches only tools, tests and docs). (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] Running the script makes one screenshot per screen listed in the description, plus a manifest naming each one; the result notes list the screens and any screen it could not reach, with why. (QA: pass: 19 screenshots 1280x720 + manifest with not_reached runs_list, checked by own run)
+- [ ] The text inventory lists every string in the game's text files, with key, text and screen, and lists strings found in code separately; the result notes give the counts. (QA: pass: 232 texts (182 files, 50 code) with key/text/screen; spot-checked 8 texts)
+- [ ] A test runs the inventory on a small fixture and checks its output format. (QA: pass: tests on fixture exist and pass)
+- [ ] docs/hud-and-menus.md (Content) says how to rebuild the gallery and the inventory. (QA: pass: Content section explains both rebuilds)
+- [ ] No game script or scene behaviour changes (the diff touches only tools, tests and docs). (QA: pass: diff only tools, tests, docs, task file)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass: python game/tools 861 OK, tools 633 OK, GUT 2505/2505)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass: no game/data/levels change)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Open → In progress
+
+Started: the screen gallery and text list for the board's MVP pass.
 
 ## Style review
 
@@ -63,4 +67,19 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built by the QA/Integration agent (sonnet).
+
+**Files:** `game/tools/screen_gallery.gd` (the in-game walk-through, run in a real window), `game/tools/screen_gallery.py` (runs it, checks the manifest against the PNGs, writes the text list too), `game/tools/text_inventory.py`, their tests `game/tools/test_text_inventory.py` and `game/tools/test_screen_gallery.py`, and docs/hud-and-menus.md (Content, "The MVP pass: the screen gallery and the text list (T-479)"). No game script or scene changed.
+
+**Rebuild:** `python game/tools/screen_gallery.py` (about 30 s) and `python game/tools/text_inventory.py`. Output: `screenshots/mvp-gallery/` at the repo root (git-ignored): 19 PNGs at 1280 x 720, `manifest.json`, `text_inventory.json`, `text_inventory.csv`. The game's saves are pointed at throwaway `user://gallery_*` files.
+
+**Screens captured (19):** main_menu, tutorial_slide_1, tutorial_slide_2, tutorial_slide_3, garage, hud_run_start, hud_mission_page, hud_trick_popup, hud_combo_broken, level_up_gift_pack, power_up_overlay, pause_screen, pause_trick_list, pause_hud_layout_editor, time_up_screen, wreck, recap_win, recap_time_up, recap_wreck.
+**Not reached (1):** the runs list (Past streams): its texts exist in runs_list_text.json but no screen in the game reads them yet. It is in the manifest's `not_reached`.
+
+**Text counts:** 232 in all: 182 from text files (data/*_text.json, screen_texts.json, and the level-up cards' table level_up_texts.gd, a text table kept in code: 100 keys) and 50 found in code (listed separately, with file:line). 17 developer-tool scripts are skipped and named under `not_scanned`. The code scan goes by pattern; the board's pass is the check for anything built another way. 13 of the text-file strings are the runs list's, for a screen not in the game yet.
+
+**Tests:** python game/tools: 861 OK (1 skipped); python tools: 633 OK; GUT: 2502 of 2502 passing (209 scripts), TESTS PASSED. New Python tests: 12 (the inventory on a small fixture folder, its JSON and CSV format, that every real string has a screen; the manifest check).
+
+Nothing under game/data/levels/ touched. Untracked .uid and .import files Godot made are not committed.
+- 2026-11-01, in-progress → in-qa: Gallery of 19 screens and a 232-string text list built; all three test sets pass
+- 2026-11-01, in-qa → done: QA pass: 19 screenshots, 232-text inventory, all three test sets green (861 / 633 / 2505)

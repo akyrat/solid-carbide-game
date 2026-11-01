@@ -3060,3 +3060,78 @@ Entry format:
 - Decision or change: The game can record a run's frame times and a Chrome trace (--record-perf, off by default) and a script names what causes its frame drops. The board's first recorded run found three causes: trick popups building textures while drawing, car physics spiking with the bricks weapon, and a hitch at the first gift pack (T-480, T-481, T-482).
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-468
+
+## 2026-11-01: The tutorial slides are redrawn
+- Decision or change: The board approved the redrawn tutorial direction (four slides: Drive, Tricks bring gifts, Missions, Survive the stream) with its notes; first, four clips of the real car on a simple background.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-483
+
+## 2026-11-01: The guard trusts the result-notes script
+- Decision or change: The board added tools/task_notes.py to the guard's trusted ticket tools; guard tests show it passes whatever its text says while direct status writes stay refused, and tasks/README.md says agents write their notes with it.
+- Documents touched: none
+- Tasks: T-472
+
+## 2026-11-01: Power-up cards are clicked directly
+- Decision or change: The driving power-up overlay's cards have no take button; the whole card is clicked, sharing the level-up screen's card behaviour (GiftCardClick). The board approved it after playing.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-475
+
+## 2026-11-01: Rusty Overcoat no longer makes the car invincible
+- Decision or change: A minion or the kaiju the overcoat kills on touch still hits the car; the overcoat only adds damage. The board approved it after playing.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-477
+
+## 2026-11-01: The MVP screen gallery and text list
+- Decision or change: Scripts build a screenshot of every screen (19) and a list of every player-facing text (232) for the board's MVP pass; the Project Lead's review page is built from them.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-479
+
+## 2026-11-01: The redrawn tutorial slides' text
+- Decision or change: The Narrative Theme Agent writes the four redrawn slides' headlines, key labels, step captions and the missions line, from the board's approved draft.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-484
+
+## 2026-11-01: The redrawn tutorial slides are built
+- Decision or change: The UI Agent rebuilds the tutorial as four slides matching the board's approved draft, with the recorded clips.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-485
+
+## 2026-11-01: No hitch at the first gift pack
+- Decision or change: The level-up screen's card art and texts are loaded with the run (LevelUpScreen.prewarm), so the first gift pack pickup no longer freezes (97 ms in the board's recorded run, now about 2 ms like every pickup). The board approved it after playing.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-482
+
+## 2026-11-01: Each test run is paid once per stage
+- Decision or change: The board's test rule: agents run the tests for what they changed, QA runs the full sets once (the tools set only when tools change), the merge runs them once per batch; qa_check and the goal runner follow it.
+- Documents touched: tasks/README.md
+- Tasks: T-486
+
+## 2026-11-01: A faster Godot test set
+- Decision or change: The Godot test set (about 25 minutes) is measured and sped up, for example by running its scripts in parallel, keeping one entry point and every test.
+- Documents touched: tasks/README.md
+- Tasks: T-487
+
+## 2026-11-01: The tutorial clips are recorded
+- Decision or change: Four clips of the real car on a plain grid, recorded by script: a zoomed-out drift (slide 1), a long drift, an alt drift and a ramp jump with hang time and an air 180 (slide 2). The board approved them on the draft page.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-483
+
+## 2026-11-01: The redrawn tutorial slides' text
+- Decision or change: The four redrawn slides' headlines, kickers, key labels, the drift rule, the loop's step captions, the ramp clip's caption, the missions line, the kaiju label and Skip, through the style loop (all 8+); the old slide keys are kept, marked unused.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-484
+
+## 2026-11-01: The first mission is a 2-second drift
+- Decision or change: The board shortens mission 1 from a 4-second to a 2-second unbroken drift.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-488
+
+## 2026-11-01: The trick popup hitch is gone
+- Decision or change: The trick popups' text is baked ahead of time, so a popup no longer hitches the frame it appears in (T-468's recording); the board played it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-480
+
+## 2026-11-01: Sound plays in the browser build
+- Decision or change: The Music and SFX buses are defined up front in default_bus_layout.tres, so the web build routes them to the speakers; music starts after the first click; a headless Chrome check proves it. SFX stay off (the board).
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-476

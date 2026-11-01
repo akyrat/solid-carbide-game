@@ -95,4 +95,10 @@ The strict "under 2 ms in a recorder run" numbers need the board's own machine; 
 - GUT: 213 scripts, 2518 tests, all passing (`GUT_TIME_LIMIT=1800`). `python -m unittest discover -s game/tools`: 858 ran, OK (1 skipped). `python -m unittest discover -s tools`: 633 ran, OK.
 - Existing weapon and car tests unchanged and passing. Nothing under game/data/levels/ or game/perf/ touched.
 - Documents: docs/weapons.md (Bricks, "Bodies and cost (T-481)").
+
+### After merging master (T-480)
+
+T-480 had made the same kind of popup fix (plain_size, threaded baking, prewarm, faster loops), so master's trick_popup_art.gd and trick_popups.gd were taken as they are and my duplicates dropped (letter cache, warm(), the `_ready` warm-up, the `_crop` and `_fill_round_rect` speedups; the cached-lettering test went with them). What stays from this ticket: the bricks wave-sheet cache (bricks.gd), and one change in trick_popups.gd: `request_ahead()` still baked the popup's own first picture inside `show_popup`, i.e. inside the car's physics step (car.physics_step 6 to 7 ms in the benchmark on master's version). It is now made with `texture.call_deferred()`, at the end of the frame. Benchmark after: car.physics_step 1.1 to 3.2 ms (headless; 0.8 to 1.0 without a trick), bricks.step 0.2 to 1.5 ms. Tests run: test_bricks_perf (3), test_popup_art_fast_paths (2), test_trick_popups, _heat, _follow, test_combo_broken_popup, test_hud_viewers_counter, test_popups_above_buildings, test_trick_popup_art: all pass. The full runs above (GUT 2518, both Python sets) were before the merge.
 - 2026-11-01, in-progress → in-qa: Fixed: popup bake out of the landing's physics step, bricks sheet cached; all 3 test sets pass
+
+- 2026-11-01, Project Lead: QA waits. T-480 (popups, in QA) also rewrote trick_popups.gd and trick_popup_art.gd and added plain_size(); T-480 merges first, then this branch merges master, keeps its bricks fix and reconciles the popup files onto T-480's version, then QA.

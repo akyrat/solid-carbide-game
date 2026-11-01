@@ -1,7 +1,7 @@
 ---
 id: T-475
 title: The driving power-up overlay's cards are clicked directly, like the gift pack's
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, tasks/T-459-the-driving-power-up-overlay-a.md, tasks/T-474-level-up-clickable-cards.md]
 files_expected_to_change: [game/scripts/ui/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,17 +41,25 @@ The board's review: complete a mission in a run and pick a power-up with the mou
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows no card on the power-up overlay has a take button, and clicking anywhere on a card takes it; a keyboard test does the same. (QA: pass / fail)
-- [ ] The overlay's cards share T-474's card behaviour (one implementation; say where in the result notes). (QA: pass / fail)
-- [ ] The existing power-up overlay tests still pass, changed only where they pressed the button. (QA: pass / fail)
-- [ ] Screenshots of the overlay with a hovered and a selected card are saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) says the overlay's cards are clicked directly. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test shows no card on the power-up overlay has a take button, and clicking anywhere on a card takes it; a keyboard test does the same. (QA: pass)
+- [ ] The overlay's cards share T-474's card behaviour (one implementation; say where in the result notes). (QA: pass)
+- [ ] The existing power-up overlay tests still pass, changed only where they pressed the button. (QA: pass)
+- [ ] Screenshots of the overlay with a hovered and a selected card are saved and listed in the result notes. (QA: pass)
+- [ ] docs/hud-and-menus.md (Content) says the overlay's cards are clicked directly. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Open → In progress
+
+Started: power-up cards become clickable, like the gift pack's.
+
+### 2026-11-01, Needs playtest
+
+Passed QA: power-up cards are clicked directly, like the gift pack's. Ready for the board to play.
 
 ## Style review
 
@@ -59,4 +67,17 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the UI agent.
+
+- `game/scripts/ui/power_up_screen.gd`: the Take power-up button is gone. Each card gets `GiftCardClick.attach(panel, body, frame, take.bind(id))` (T-474's click area); the card dict now has `click` instead of `button`. The build-up turns the click areas off and on with `set_active`, as on the level-up screen. Dead button constants removed. Keyboard handling is unchanged.
+- Shared card behaviour (one implementation): `game/scripts/ui/gift_card_click.gd` (`GiftCardClick`, hover tint, press drop, click anywhere on the card). Both `level_up_screen.gd` and `power_up_screen.gd` call `GiftCardClick.attach`.
+- Tests (`game/tests/unit/test_power_up_screen.gd`): the button-text check became "no take button" (no `button` key, no `TakeButton` node); the button-press test now presses the card's click area; new tests: a real mouse click anywhere on a card takes it, cards ignore the mouse during the build-up, hover brightens the frame and press drops the card. Keyboard tests (Enter, Space, A/D, held key, echo) unchanged and pass.
+- Docs: `docs/hud-and-menus.md` (Content, Power-up overlay: no button, whole card clicked; take_button text noted as unused) and `game/docs/hud-and-menus/level-up-screen.md` (card dict, input).
+- Screenshots in `art-archive/T-475/screenshots/`: `power_up_hover.png` (right card hovered, left selected), `power_up_selected.png` (second card selected by keyboard). Fixtures: `game/tests/fixtures/t475_hover_demo.tscn`, `t475_selected_demo.tscn` (the existing `power_up_screen_demo.gd` got a `hover_card` option).
+- The `power_ups.take_button` text stays in `data/screen_texts.json`, now unused (not mine to remove).
+- Nothing under game/data/levels/ touched.
+- Test counts: see below.
+- Test counts: game/tools unittest 849 OK (1 skipped); tools unittest 633 OK; GUT 2505 of 2505 passing (the first full run had 1 failing test, my own real-click test, fixed; a later run hit the 1500 s limit only because it shared the machine with the Python sets; the last run alone passed).
+- 2026-11-01, in-progress → in-qa: Power-up cards clicked directly via shared GiftCardClick; tests and screenshots done
+- 2026-11-01, in-qa → needs-playtest: QA pass: no take button, shared GiftCardClick, 3 test sets green (849/633/2505)
+- 2026-11-01, needs-playtest → done: The board played it: LGTM (2026-11-01).

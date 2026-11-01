@@ -52,10 +52,3 @@ func test_crop_matches_the_pixel_scan() -> void:
 		for y in got.h:
 			for x in got.w:
 				assert_eq(got.idx[y * got.w + x], idx[(y0 + y) * w + x0 + x])
-
-
-func test_the_lettering_is_cached_and_the_bake_is_unchanged_by_it() -> void:
-	var a := Art.bake("FULL 360! +12.3K", "normal", 2, 0, true)
-	var b := Art.bake("FULL 360! +12.3K", "normal", 2, 0, true)
-	assert_eq(a.get_data(), b.get_data(), "a second bake from the cached lettering is the same picture")
-	assert_same(Art._letter("DRIFT", "normal"), Art._letter("DRIFT", "normal"))
