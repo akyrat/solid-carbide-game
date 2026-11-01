@@ -3110,3 +3110,28 @@ Entry format:
 - Decision or change: The Godot test set (about 25 minutes) is measured and sped up, for example by running its scripts in parallel, keeping one entry point and every test.
 - Documents touched: tasks/README.md
 - Tasks: T-487
+
+## 2026-11-01: The tutorial clips are recorded
+- Decision or change: Four clips of the real car on a plain grid, recorded by script: a zoomed-out drift (slide 1), a long drift, an alt drift and a ramp jump with hang time and an air 180 (slide 2). The board approved them on the draft page.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-483
+
+## 2026-11-01: The redrawn tutorial slides' text
+- Decision or change: The four redrawn slides' headlines, kickers, key labels, the drift rule, the loop's step captions, the ramp clip's caption, the missions line, the kaiju label and Skip, through the style loop (all 8+); the old slide keys are kept, marked unused.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-484
+
+## 2026-11-01: The first mission is a 2-second drift
+- Decision or change: The board shortens mission 1 from a 4-second to a 2-second unbroken drift.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-488
+
+## 2026-11-01: The trick popup hitch is gone
+- Decision or change: The trick popups' text is baked ahead of time, so a popup no longer hitches the frame it appears in (T-468's recording); the board played it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-480
+
+## 2026-11-01: Sound plays in the browser build
+- Decision or change: The Music and SFX buses are defined up front in default_bus_layout.tres, so the web build routes them to the speakers; music starts after the first click; a headless Chrome check proves it. SFX stay off (the board).
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-476

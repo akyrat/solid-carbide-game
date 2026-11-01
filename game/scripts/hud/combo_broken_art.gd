@@ -33,18 +33,88 @@ const FALL_DELAY := 0.08
 const FALL_PX := 70.0
 const FALL_DRIFT := 6.0
 
+## Baked card halves by key. Few and fixed (the texts are the board's: the combo
+## broken popup and the screens' headlines), so the cache stays small; it is bounded
+## all the same (T-480).
 static var _cache := {}
+const CACHE_MAX := 24
+static var _mutex := Mutex.new()
+static var _baked := {}
+static var _pending := {}
+static var _tasks: Array[int] = []
+
+
+static func texture_key(text: String, style: String, in_gap := false) -> String:
+	return "%s|%s|%s" % [style, text, in_gap]
 
 
 ## [left, right] textures for `text` at a size style; cached. `in_gap` puts the
 ## crack in the space between words nearest the middle (the time's up screen,
 ## T-317, so no letter is cut away) instead of the middle.
 static func textures(text: String, style: String, in_gap := false) -> Array:
-	var key := "%s|%s|%s" % [style, text, in_gap]
+	var key := texture_key(text, style, in_gap)
 	if not _cache.has(key):
 		var imgs := bake(text, style, in_gap)
-		_cache[key] = [ImageTexture.create_from_image(imgs[0]), ImageTexture.create_from_image(imgs[1])]
+		_store(key, [ImageTexture.create_from_image(imgs[0]), ImageTexture.create_from_image(imgs[1])])
 	return _cache[key]
+
+
+static func is_cached(key: String) -> bool:
+	return _cache.has(key)
+
+
+static func _store(key: String, halves: Array) -> void:
+	_cache[key] = halves
+	while _cache.size() > CACHE_MAX:
+		_cache.erase(_cache.keys()[0])
+
+
+## Asks a worker thread to bake the halves, so they exist before the popup is drawn (T-480).
+static func request(text: String, style: String, in_gap := false) -> void:
+	var key := texture_key(text, style, in_gap)
+	_mutex.lock()
+	var skip := is_cached(key) or _pending.has(key)
+	if not skip:
+		_pending[key] = true
+	_mutex.unlock()
+	if skip:
+		return
+	Art._warm_shared()
+	_tasks.append(WorkerThreadPool.add_task(_bake_task.bind(key, text, style, in_gap)))
+
+
+static func _bake_task(key: String, text: String, style: String, in_gap: bool) -> void:
+	var imgs := bake(text, style, in_gap)
+	_mutex.lock()
+	_baked[key] = imgs
+	_mutex.unlock()
+
+
+## Makes the textures of the halves the workers have finished (main thread).
+static func poll() -> void:
+	if _baked.is_empty():
+		return
+	_mutex.lock()
+	var done := _baked
+	_baked = {}
+	for key in done:
+		_pending.erase(key)
+	_mutex.unlock()
+	for key in done:
+		if not is_cached(key):
+			_store(key, [ImageTexture.create_from_image(done[key][0]), ImageTexture.create_from_image(done[key][1])])
+
+
+static func finish_requests() -> void:
+	for id in _tasks:
+		WorkerThreadPool.wait_for_task_completion(id)
+	_tasks.clear()
+	poll()
+
+
+static func clear_cache() -> void:
+	finish_requests()
+	_cache.clear()
 
 
 ## The crack's x (popup pixels) on row `y` of a card `w` wide, around `mid`
@@ -134,12 +204,4 @@ static func bake(text: String, style: String, in_gap := false) -> Array:
 
 
 static func _to_image(idx: PackedByteArray, w: int, h: int) -> Image:
-	var data := PackedByteArray()
-	data.resize(w * h * 4)
-	for i in w * h:
-		var col: Color = PALETTE[idx[i]]
-		data[i * 4] = int(round(col.r * 255.0))
-		data[i * 4 + 1] = int(round(col.g * 255.0))
-		data[i * 4 + 2] = int(round(col.b * 255.0))
-		data[i * 4 + 3] = 255 if idx[i] != NONE else 0
-	return Image.create_from_data(w, h, false, Image.FORMAT_RGBA8, data)
+	return Art.rgba_image(idx, w, h, PALETTE)
