@@ -3040,3 +3040,18 @@ Entry format:
 - Decision or change: Before the MVP release the board reviews every screen and every player-facing text; a script builds the screen gallery and the text inventory for it.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-479
+
+## 2026-11-01: Trick popups no longer cause frame drops
+- Decision or change: The board's recorded run showed trick popups building their textures while drawing (117 of 150 spikes); they are built ahead and cached.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-480
+
+## 2026-11-01: The bricks weapon no longer spikes the car's physics
+- Decision or change: The board's recorded run showed car physics spiking to ~28 ms with the bricks weapon; fixed.
+- Documents touched: docs/weapons.md
+- Tasks: T-481
+
+## 2026-11-01: No hitch at the first gift pack
+- Decision or change: The board's recorded run showed a 97 ms hitch at the first gift pack pickup; its load moves to the run's start.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-482
