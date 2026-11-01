@@ -93,7 +93,7 @@ The rule for every agent, QA included (board, 2026-10-28, T-343; the agent defin
 
 ## Which tests run when
 
-Each full run of the test sets is paid once per stage, never twice for the same code (board, 2026-11-01: "make the test change"; the Godot set alone takes about 25 minutes).
+Each full run of the test sets is paid once per stage, never twice for the same code (board, 2026-11-01: "make the test change"; the Godot set alone took about 25 minutes before T-487; it now runs in parallel, `GUT_JOBS` processes, about 3.5 minutes: game/docs/setup/tests.md, "The parallel run").
 
 - **The agent doing the work** runs the tests for what it changed: its new and changed test files, and the test files of the scripts it touched (for Godot, `bash game/tools/run_tests.sh -gselect=<test file name>`, GUT's own option (`-gtest=` doesn't narrow the run here: it runs the whole set); for Python, `unittest` on the changed test modules). It does not run the three full sets before handing back. Its result notes list what it ran, with the counts.
 - **QA** runs the full sets once, on the committed state: the Godot set and the `game/tools` Python set always; the `tools` Python set (the studio's own scripts) only when the ticket's branch changes something under `tools/` or `.claude/`. A second `qa_check.py` run after marking the criteria checks only the marks (`--no-tests`).
