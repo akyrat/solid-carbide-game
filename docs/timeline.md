@@ -3120,3 +3120,8 @@ Entry format:
 - Decision or change: The four redrawn slides' headlines, kickers, key labels, the drift rule, the loop's step captions, the ramp clip's caption, the missions line, the kaiju label and Skip, through the style loop (all 8+); the old slide keys are kept, marked unused.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-484
+
+## 2026-11-01: The first mission is a 2-second drift
+- Decision or change: The board shortens mission 1 from a 4-second to a 2-second unbroken drift.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-488
