@@ -6,4 +6,4 @@
 script = ExtResource("1_demo")
 record_dir = "screenshots/t478_frames"
 record_every = 2
-record_frames = 130
+record_frames = 700

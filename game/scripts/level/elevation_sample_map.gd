@@ -134,8 +134,8 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_apply_zoom)
 	car.stepped.connect(func() -> void: sync_view(false))
 	# T-405 (altitude audit): props and boulders block the car only at their own heights, as in a run.
-	car.stepped.connect(func() -> void: map.update_car_obstacles(car, car.height))
-	car.floor_query = func() -> float: return map.obstacle_floor(car, car.height)
+	car.stepped.connect(func() -> void: map.update_car_obstacles(car, car.height, car.vertical_speed))
+	car.floor_query = func() -> float: return map.obstacle_floor(car, car.height, car.vertical_speed)
 
 
 ## Puts the car at a flat position (units) with a heading, at rest on the

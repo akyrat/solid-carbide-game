@@ -1,7 +1,7 @@
 ---
 id: T-478
 title: Jump: the Space hop clears obstacles lower than the car
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -61,6 +61,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the Jump clears obstacles lower than the car.
 
+### 2026-11-01, Needs playtest
+
+Passed QA: the Jump hops over boulders and low props; tall buildings and the map edge still block. Ready for the board to play.
+
+### 2026-11-01, Needs playtest → In progress
+
+Back to the Driving & Drift Agent: in your playtest the hop still doesn't clear barriers or boulders, and landing on one must work.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -94,3 +102,38 @@ Written by the agent when it finishes.
 **Note for the board's playtest:** the boulder is drawn big (3 wide, taller than 0.8 looks), so a hop over it reads as flying over a tall rock; the car's sprite also draws behind the boulder sprite for a moment mid-hop (depth order, not changed here). If 0.8 feels wrong, it is one constant.
 - 2026-11-01, in-progress → in-qa: Jump now clears boulders (0.8 high) and low props by height; lands on top, never inside; tests green, GIF saved.
 - 2026-11-01, in-qa → needs-playtest: QA pass: 9/9 criteria; GUT 2510/2510 (210 scripts), Python 849 + 633 OK. Own the Jump, hop a boulder, hit a tall building.
+- 2026-11-01, needs-playtest → in-progress: The board played it (2026-11-01): still can't jump over barrier obstacles or even boulders; account for the player landing on one of these obstacles and make it work as expected.
+
+
+---
+
+### Round 2 (the board's playtest, 2026-11-01: "i still cant jump over barrier obstacles or even boulders ... account for the player landing on one")
+
+**What was wrong** (reproduced in the real run: `game.tscn`, Start, the Kaiju City map, Jump tier 1, the car driving at full speed, 16.5 units/s, at the map's real boulders and barriers). The run's obstacles do go through `update_car_obstacles` (82 props, 9 boulders, all on layer 1, heights from `obstacle_heights`; the walls and edge are separate bodies), so it was not a different system. Two things stopped the hop:
+1. **Timing.** The first version needed the car at 0.75 units high before it touched the obstacle, i.e. Space pressed 5 or more units short of a boulder (probe: press 5, 7, 9 cleared, press 3 hit). A player presses when the drawn nose (the sprite is 3 long, the collision body 1x1, so contact comes 1 unit, 0.06 s, later) looks level with the obstacle. Pressed there, the car was at 0.27 units on contact and bounced (tested: "x -2.0, maxh 0.27, hit the boulder" on 8 of 8 street boulders).
+2. **Heights.** The barrier is 1.2 and the parked cars 1.35, above a tier 1 peak of 1.04, so no press could clear them.
+
+**The fix** (all numbers are proposals for the board):
+- **Rising pass** (`mvp_map.gd` `_is_over`, `RISE_PASS_FRACTION` 0.1): a car that is rising, whose apex clears the obstacle's top, passes it once it is 10% of the way up from the foot. A Space pressed with the nose level with the obstacle clears it, and a press up to about 0.04 s later does too; later it bounces (tested).
+- **Prop heights** (`PROP_HEIGHT_SCALE` 0.75): a prop's collision height is 0.75 of its `height_units`, so tier 1 (peak 1.04) clears barrier 0.9, cones 0.68, broken cars 0.71. Alternative if the board prefers: raise tier 1's takeoff speed from 5 to 6 (peak 1.5) and keep the real heights; that touches `power_ups.json` and the tier ladder, so I did not.
+- **Landing on top** (`obstacle_floor`, now also for a car falling through an obstacle it passes, using the vertical speed; `car_height.gd` `floor_height`): the car lands on the top of a boulder or a barrier, stands at its height, drives along it and falls off its far edge to the street; it is never left inside, and never snapped sideways.
+
+**Obstacle table on the Kaiju City map** (collision height; tier peaks 1.04 / 1.5 / 2.04 / 2.67)
+| Obstacle | Collision height | Tiers that clear it |
+|---|---|---|
+| Boulder (9) | 0.8 | 1 to 4 |
+| Barrier | 0.9 (1.2 x 0.75) | 1 to 4 |
+| Cones | 0.68 | 1 to 4 |
+| Broken cars | 0.71 | 1 to 4 |
+| Parked cars | 1.01 | 2 to 4 |
+| AC unit, roof vent (on rooftops, base 3) | about 1.1 | 2 to 4 (from the roof) |
+| Crates | 1.65 | 3, 4 |
+| Roof sign, water tank | 2.5 | 4 |
+| Street lamp | 4.0 | none |
+| Short-building platforms | 3.0 | none; their side is a wall |
+| Skyscrapers, the map's edge | wall | none |
+
+**Real-run tests** (`game/tests/unit/test_jump_real_run.gd`, 6 tests, the real game scene and the map's own boulders and barriers): a tier 1 hop pressed with the nose at the obstacle clears every street boulder with a clean lane and the barrier; the same drive with no press hits the obstacle; a press 2.5 units too late bounces; the car lands on a real boulder and on a real barrier, stands at the top height, drives along and off the far edge with no hit; heights of every boulder and barrier are lower than the car. Also kept: `test_jump_clears_obstacles.gd` (8 tests).
+**Counts:** GUT 2526/2526 (after merging master); `game/tools` unittest 858 OK (1 skipped); `tools` unittest 635 OK.
+**GIF and screenshots (real run):** `art-archive/T-478/screenshots/real_run_hop_boulder_barrier_landing.gif` (a hop over a boulder, over a barrier, and a hop that lands on a boulder and drives off it) and `real_run_montage.png` (12 frames from it). Fixture: `game/tests/fixtures/jump_boulder_gif.tscn`. The earlier fixture GIF was replaced.
+**Files:** `game/scripts/level/mvp_map.gd`, `game/scripts/run/run.gd`, `game/scripts/level/elevation_sample_map.gd`, the tests and fixture above, `docs/drifting.md` (Content, "The Jump clears obstacles (task T-478)").
