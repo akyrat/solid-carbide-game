@@ -1,7 +1,7 @@
 ---
 id: T-481
 title: Frame drops: car physics spikes to ~28 ms together with the bricks weapon
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -113,3 +113,4 @@ docs/weapons.md (Bricks, Bodies and cost) corrected to match the merged code: T-
 - Benchmark now prints the same run's flat step (no landing, no trick). Three runs, six landings each, headless: flat step 0.52 to 0.66 ms. car.physics_step on a landing: first landing 1.85, 2.31, 2.52 ms (one-off costs), later landings 0.75 to 1.8 ms (median about 1.1). bricks.step 0.19 to 1.92 ms (the 1.9 and 1.4 are single outliers, other 15 of 18 under 0.7). So a landing adds about 0.5 to 1.2 ms over the flat step here; the first landing of a run is the only one near 2.5 ms in this headless run, against QA's 3.2 to 3.8 ms before the lettering change. The real game's flat step is 0.37 ms (recording), so the board's machine should land under 2 ms; a recorder run would confirm it.
 - Evidence: art-archive/T-481/screenshots/step_times_before_after.png (chart of before and after per landing; the "before" rounds 2 to 5 are typical values from the profiling runs, rounds 0 and 1 and the bricks column are measured).
 - Tests run (selected): test_trick_popup_prebuild 10, test_bricks_perf 3, test_popup_art_fast_paths 2, test_trick_popup_art 13, test_trick_popups 35, test_trick_popups_heat 12, test_combo_broken_popup 11: all pass.
+- 2026-11-01, in-progress → in-qa: QA fixes: prebuild test, lettering glyph cache, chart
