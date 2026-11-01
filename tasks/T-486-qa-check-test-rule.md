@@ -1,7 +1,7 @@
 ---
 id: T-486
 title: qa_check.py follows the new test rule: the tools set only when tools change, and a marks-only second run
-status: in-progress
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, tools/qa_check.py, tools/test_qa_check.py, tools/goal_agent/]
 files_expected_to_change: [tools/qa_check.py, tools/test_qa_check.py, tools/goal_agent/, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,13 +46,13 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows qa_check skips the tools set on a branch that changes nothing under tools/ or .claude/, and runs it on one that does; the skip is printed on the tests line. (QA: pass / fail)
-- [ ] A test shows the force flag runs all three sets. (QA: pass / fail)
-- [ ] The usage text documents the marks-only second run. (QA: pass / fail)
-- [ ] The goal runner's prompts follow the new rule; the result notes list each changed place, and the goal runner's own tests pass. (QA: pass / fail)
-- [ ] tasks/README.md matches the script. (QA: pass / fail)
-- [ ] The tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`), with the count in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test shows qa_check skips the tools set on a branch that changes nothing under tools/ or .claude/, and runs it on one that does; the skip is printed on the tests line. (QA: pass)
+- [ ] A test shows the force flag runs all three sets. (QA: pass)
+- [ ] The usage text documents the marks-only second run. (QA: pass)
+- [ ] The goal runner's prompts follow the new rule; the result notes list each changed place, and the goal runner's own tests pass. (QA: pass)
+- [ ] tasks/README.md matches the script. (QA: pass)
+- [ ] The tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`), with the count in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -78,3 +78,7 @@ qa_check.py now follows the test rule (T-486).
 Tests run: python -m unittest tools.test_qa_check (10 tests, OK); goal_agent test_build, test_loop, test_run: see below. Godot set not run (rule). Nothing under game/data/levels/ touched.
 
 Update: goal_agent test_build + test_loop + test_run: 64 tests OK (run after the prompt edits); tools.test_qa_check: 10 OK.
+- 2026-11-01, in-progress → in-qa: qa_check skips tools set unless tools/.claude change; --all-tests, --marks-only; goal prompts updated
+
+QA round 1: all seven criteria pass. tools.test_qa_check 10 OK (new tests cover skip/run/--all-tests/--marks-only and the usage text); tools set via goal_agent discover 126 OK; qa_check's own tools set and game/tools set passed in its run. Branch changes only tasks/, tools/ (no game/, nothing under game/data/levels/). The Godot set hit the 1500 s time limit twice (machine shared with other Godot sessions) with no failing test named; the branch changes no game code, so not counted against the ticket. README "Which tests run when" and "QA" match the script; build.py agent_prompt and qa_prompt follow the rule.
+- 2026-11-01, in-qa → done: QA pass: qa_check skips tools set unless tools/.claude change; --all-tests, --marks-only
