@@ -1,7 +1,7 @@
 ---
 id: T-479
 title: The board's MVP pass: a gallery of every screen and a list of every player-facing text
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/setup/tests.md]
 files_expected_to_change: [game/tools/, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,13 +45,13 @@ No game behaviour changes. Never write, move or commit anything in game/data/lev
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Running the script makes one screenshot per screen listed in the description, plus a manifest naming each one; the result notes list the screens and any screen it could not reach, with why. (QA: pass / fail)
-- [ ] The text inventory lists every string in the game's text files, with key, text and screen, and lists strings found in code separately; the result notes give the counts. (QA: pass / fail)
-- [ ] A test runs the inventory on a small fixture and checks its output format. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) says how to rebuild the gallery and the inventory. (QA: pass / fail)
-- [ ] No game script or scene behaviour changes (the diff touches only tools, tests and docs). (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] Running the script makes one screenshot per screen listed in the description, plus a manifest naming each one; the result notes list the screens and any screen it could not reach, with why. (QA: pass: 19 screenshots 1280x720 + manifest with not_reached runs_list, checked by own run)
+- [ ] The text inventory lists every string in the game's text files, with key, text and screen, and lists strings found in code separately; the result notes give the counts. (QA: pass: 232 texts (182 files, 50 code) with key/text/screen; spot-checked 8 texts)
+- [ ] A test runs the inventory on a small fixture and checks its output format. (QA: pass: tests on fixture exist and pass)
+- [ ] docs/hud-and-menus.md (Content) says how to rebuild the gallery and the inventory. (QA: pass: Content section explains both rebuilds)
+- [ ] No game script or scene behaviour changes (the diff touches only tools, tests and docs). (QA: pass: diff only tools, tests, docs, task file)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass: python game/tools 861 OK, tools 633 OK, GUT 2505/2505)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass: no game/data/levels change)
 
 ## Updates
 
@@ -82,3 +82,4 @@ Built by the QA/Integration agent (sonnet).
 
 Nothing under game/data/levels/ touched. Untracked .uid and .import files Godot made are not committed.
 - 2026-11-01, in-progress → in-qa: Gallery of 19 screens and a 232-string text list built; all three test sets pass
+- 2026-11-01, in-qa → done: QA pass: 19 screenshots, 232-text inventory, all three test sets green (861 / 633 / 2505)
