@@ -72,7 +72,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **The garage adds to run.json's base** (board, 2026-10-30, audit; T-415): the run's starting hearts and the magnet's radius are stored in `run.json` only (`car.starting_hearts`, `pickup_magnet.radius_units`). `garage.json` stores for those two upgrades only each level's `bonus` (no `base_value`, no absolute `value`); `RunState.start_run()` adds the bonus to `run.json`'s base, and `GarageData.value()` (the garage screen) is that same sum. Changing the base in `run.json` changes both the run and the garage screen.
 - **Closing the game mid-run** (board, 2026-10-30, audit): ~~closing the window during a run ends it as a loss: its coins are kept and it goes in the runs list~~ (replaced the same day by "Restart, Exit or closing cancels the run", below). Switching to another window pauses the game. How it works (T-416): losing focus opens the pause screen, except during the level-up choice and the time's up screen, where pause is already blocked, and outside a run (proposal for the playtest: no auto-resume when focus returns, the player resumes with Escape).
 - **Restart, Exit or closing cancels the run** (board, 2026-10-30, after playing build I: "I told you to CANCEL the run, NOT SAVE it if it gets restarted or quit"; "coins are lost too, nothing saved"): Restart or Exit on the pause screen, and closing the game window, at any point of a run (the wreck included), cancel it: the coins picked up in it are lost, nothing goes into the run history, and no recap shows. Replaces the coins kept by Restart and Exit (Content, "Restart and Exit on the pause screen", T-327), and the loss with coins kept on closing (above). (T-416)
-- **Mission packs** (board, 2026-10-31): besides the subs (which give weapons through the level-up gift pack), a run has **missions**, shown one at a time on the **left side** of the screen as a pixel-art **notebook page**. A mission is one or more **mission goals** (for example "thread the needle 3 times"); each goal has a checkbox, a quantity goal shows its progress (for example "2/4 Alt drifts"), a duration or other goal shows none, and a goal is crossed off when completed. When every goal of a mission is done, the mission is completed and the next one appears. Missions are for **one run only**: they start over from the first mission every run. There are **30 missions** a run. The **first 5 are always the same**, in this order: (1) drift for 4 seconds continuously; (2) perform 10 alt drifts; (3) get 3 seconds of airtime; (4) perform 3 air 180s; (5) perform an air 360. **Missions 6 to 30 are generated at random each run** from combinations of the tricks and their amounts; the generator's rules (which tricks, how amounts grow, how many goals per mission) are the agents' proposal for the board's review. Airtime from the Jump power-up counts towards the airtime and air-trick goals (board, 2026-10-31). A completed mission gives a **driving power-up gift** instead of a weapon: like the level-up gift pack, it pauses the run and offers **2 choices** (a new power-up or the next tier of one the car has), on an overlay similar to the weapons' gift menu but clearly distinct, to show these are driving power-ups, not weapons. The power-ups: Drifting, Decisions, "Driving power-ups". (goal G-009)
+- **Mission packs** (board, 2026-10-31): besides the subs (which give weapons through the level-up gift pack), a run has **missions**, shown one at a time on the **left side** of the screen as a pixel-art **notebook page**. A mission is one or more **mission goals** (for example "thread the needle 3 times"); each goal has a checkbox, a quantity goal shows its progress (for example "2/4 Alt drifts"), a duration or other goal shows none, and a goal is crossed off when completed. When every goal of a mission is done, the mission is completed and the next one appears. Missions are for **one run only**: they start over from the first mission every run. There are **30 missions** a run. The **first 5 are always the same**, in this order: (1) drift for 2 seconds continuously (the board, 2026-11-01; was 4); (2) perform 10 alt drifts; (3) get 3 seconds of airtime; (4) perform 3 air 180s; (5) perform an air 360. **Missions 6 to 30 are generated at random each run** from combinations of the tricks and their amounts; the generator's rules (which tricks, how amounts grow, how many goals per mission) are the agents' proposal for the board's review. Airtime from the Jump power-up counts towards the airtime and air-trick goals (board, 2026-10-31). A completed mission gives a **driving power-up gift** instead of a weapon: like the level-up gift pack, it pauses the run and offers **2 choices** (a new power-up or the next tier of one the car has), on an overlay similar to the weapons' gift menu but clearly distinct, to show these are driving power-ups, not weapons. The power-ups: Drifting, Decisions, "Driving power-ups". (goal G-009)
 
 ### Content
 
@@ -2062,10 +2062,44 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 | Right arrow, accessible label | `arrow.right` | Next slide |
 | Pause screen button | `button.trick_list` | Trick list |
 | Trick list panel, back control | `button.back` | Back |
+| (T-484) The redrawn four-slide tutorial's text. Stored in sentence case, shown in capitals in the display font; the older rows above marked unused are no longer shown. | | |
+| Every slide, kicker pattern | `kicker.pattern` | {n} / {total} · {topic} |
+| Slide 1, kicker topic | `kicker.controls` | Controls |
+| Slide 2, kicker topic | `kicker.loop` | How you get stronger |
+| Slide 3, kicker topic | `kicker.missions` | Missions |
+| Slide 4, kicker topic | `kicker.goal` | The goal |
+| Slide 1, headline | `slide1.title` | Drive |
+| Slide 1, W keycap | `slide1.key_w` | Gas |
+| Slide 1, A keycap | `slide1.key_a` | Left |
+| Slide 1, S keycap | `slide1.key_s` | Brake |
+| Slide 1, D keycap | `slide1.key_d` | Right |
+| Slide 1, drift rule | `slide1.drift_rule` | W + turn = drift |
+| Slide 2, headline | `slide2.title` | Tricks bring gift packs |
+| Slide 2, step 1 title | `slide2.step1_title` | Pull tricks |
+| Slide 2, step 1 caption | `slide2.step1_caption` | Drifts, spins, air. |
+| Slide 2, step 2 title | `slide2.step2_title` | Live viewers pile in |
+| Slide 2, step 2 caption | `slide2.step2_caption` | Live viewers love a show. |
+| Slide 2, step 3 title | `slide2.step3_title` | Hit a sub goal |
+| Slide 2, step 3 caption | `slide2.step3_caption` | Live viewers become subs. |
+| Slide 2, step 4 title | `slide2.step4_title` | Gift pack |
+| Slide 2, step 4 caption | `slide2.step4_caption` | A new weapon that fires itself. |
+| Slide 2, ramp clip caption (the other two clips use `trick.extended_drift` and `trick.alternate_drift`) | `slide2.clip_ramp` | HANG TIME! + AIR 180! |
+| Slide 3, headline | `slide3.title` | Missions power your car |
+| Slide 3, line beside the notebook | `slide3.missions` | The notebook on the left gives you one mission at a time: clear it, then pick a driving power-up. |
+| Slide 4, headline | `slide4.title` | Survive the stream |
+| Slide 4, last-minute zone label | `slide4.kaiju` | The kaiju! |
+| Skip control, top right | `button.skip` | Skip |
+| Unused since T-484 (kept in the file, marked unused) | `slide1.controls`, `slide1.drift`, `slide2.chain`, `slide2.gift`, `slide3.goal` | the UI ticket removes their use |
 
 **The slides screen (task T-382).** Three full-screen slides on the main menu's dark background, a pale pink arrow triangle on each side (hidden where there is no slide to go to) and three squares at the bottom showing which slide it is. Slide 1: the two controls lines, centred. Slide 2: the seven tricks in a grid of four columns, each a still illustration (64 x 48 pixels drawn at 3 times, nearest) with its name below, then the two loop lines; until the art tickets' PNGs are in, each shows a code-made placeholder (blue picture, pink arrow). Slide 3: the goal line, the "Don't show again" checkbox and the Start button. Pressing Start sends the checkbox state to the screen flow, which starts the run and, when it is ticked, saves `tutorial_hidden` in the settings. Keys: left/right arrow or A/D move between slides, Enter presses the focused control (proposal). The trick list is its own scene so the pause screen can reuse it. How it is built: `game/docs/hud-and-menus/tutorial-slides.md`.
 
 Proposals for the board to judge: the Start button reads "Go live" (loop score 9) where the board's word is "Start"; swap it in `button.start` if "Start" is wanted, like the main menu. Slide 2's single line failed the loop (card_desc is 90 characters at most; best 7), so it is two lines.
+
+#### Tutorial clips (T-483; recordings for the redrawn slides)
+
+Decisions, "The tutorial slides are redrawn, with clips of the real car". Four looping GIFs of the real car (its code and art, driven by scripted inputs) on the drift prototype's plain grid, 480 x 320 pixels, one shared palette, 25 frames a second for the drift clip (camera held still) and 16.7 for the other three (every third physics step, to stay under 1.5 MB), nothing else on screen (no HUD, popups, enemies, city or test room): `game/art/tutorial/clips/drift.gif` (slide 1: zoomed out, the camera held still, the car driving straight, breaking into a drift with W + A, its tyre marks tracing the path from where the drift starts), `long_drift.gif`, `alt_drift.gif` (a forward drift W + A, then a backward one S + A, which counts as ALT DRIFT!) and `ramp_jump.gif` (slide 2: the elevation test scene's ramp, hang time and an air spin in one clip). Each has a record JSON beside it (`<name>.json`: size, frames, seconds, bytes, the tricks and the airtime the run printed). Nothing in the game uses them yet; the UI task puts them on the slides.
+
+**Re-recording:** from the repo root, `python game/tools/record_tutorial_clips.py` (needs a real window, not headless; Godot's movie maker, about 15 seconds a clip; `--only NAME ...` records some, `--no-archive` skips copying the take to `art-archive/T-483/takes/`). The fixture scenes are `game/tests/fixtures/tutorial_clip_<name>.tscn` (script `tutorial_clip_demo.gd`: the inputs, the zoom, the camera and the start are exported values in each scene).
 
 ### References
 
@@ -2078,7 +2112,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `41e4f6fe9b71e9bd2da3404eaaf5e1ad0dc9a611a93210389e63edc182c4784d` |
+| `game-loop-architecture.md` | `fc69e9cb4478188f85e76862afdac1cf1697d9d005bd5de8202f480d2f164199` |
 | `drifting.md` | `e9a2ea1633acfabdd0445d6d7ee5150243ecda4b80b9492a9bc238e156b62dca` |
 | `level-design.md` | `0cae47e3f39f663510d0f09e6b5e66c483cc83668a087513a378a9e93b03b71e` |
 | `enemies.md` | `a70324c963a1b9bf92582224ce73fd6c5fba7accb5df8bdf5f237d078f62c15c` |
@@ -2086,4 +2120,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `06e33390bbfb2ccd72ff922846486588bd136c9736364ed5f3d2fd4698d51dac` |
 | `visual-style.md` | `7452d4b4cbe58da57c2d81a33bead311dd9ccf346da6b106ca1ded22b29f77d4` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
-| `hud-and-menus.md` | `e62dc2130140f0b1a5aee81b9a115cb6b8b89b93495d96603831253a944c7dd1` |
+| `hud-and-menus.md` | `c3a7f56a6b1d96f0df4ac33a1ed9845d07c93debc2c8c367d3560e71fcc6360b` |

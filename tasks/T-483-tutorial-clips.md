@@ -1,7 +1,7 @@
 ---
 id: T-483
 title: Record the tutorial clips: a zoomed-out drift, a long drift, an alt drift, and a ramp jump with hang time and an air spin
-status: open
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, game/scenes/drift_prototype/, game/scenes/elevation_test/]
 files_expected_to_change: [game/tools/, game/tests/, game/art/tutorial/clips/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -48,19 +48,23 @@ The board's review: watch the four clips; the Project Lead puts them on the draf
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Four GIFs exist in game/art/tutorial/clips/: the zoomed-out drift, the long drift, the alt drift and the ramp jump, each with a record JSON; the result notes list their sizes, lengths and file sizes. (QA: pass / fail)
-- [ ] Each clip shows only the car (with its tyre marks, smoke and shadow) on a simple background: no HUD, enemies, popups or city. (QA: pass / fail)
-- [ ] The drift clip's camera is zoomed out enough that the drift's path from its start shows in the frame (the result notes say the zoom used against the run's). (QA: pass / fail)
-- [ ] The ramp clip shows the car leaving a ramp, airborne long enough for the airtime trick (the result notes give the airtime against the HANG TIME! threshold) and turning at least 180 degrees in the air before landing. (QA: pass / fail)
-- [ ] A script re-records all four (the result notes say how to run it); a test checks the script's output (four files, the expected size). (QA: pass / fail)
-- [ ] Only tools, tests, the clips and docs change: no game script or scene behaviour changes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) says where the clips are and how to re-record them. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1800 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] Four GIFs exist in game/art/tutorial/clips/: the zoomed-out drift, the long drift, the alt drift and the ramp jump, each with a record JSON; the result notes list their sizes, lengths and file sizes. (QA: pass; round 2: screenshots folder now holds 8 files, 4 GIFs and 4 frames; work unchanged since round 1)
+- [ ] Each clip shows only the car (with its tyre marks, smoke and shadow) on a simple background: no HUD, enemies, popups or city. (QA: pass; fixtures show only car on grid, ramp placeholder art approved by the board)
+- [ ] The drift clip's camera is zoomed out enough that the drift's path from its start shows in the frame (the result notes say the zoom used against the run's). (QA: pass; ortho 28 vs 14.4, held camera, in notes and drift.json)
+- [ ] The ramp clip shows the car leaving a ramp, airborne long enough for the airtime trick (the result notes give the airtime against the HANG TIME! threshold) and turning at least 180 degrees in the air before landing. (QA: pass; airtime 1.12 s vs 0.30 s, 264 deg, in notes and ramp_jump.json, GUT test covers it)
+- [ ] A script re-records all four (the result notes say how to run it); a test checks the script's output (four files, the expected size). (QA: pass; script documented, its test passes)
+- [ ] Only tools, tests, the clips and docs change: no game script or scene behaviour changes. (QA: pass; diff has no game/scripts or scenes)
+- [ ] docs/hud-and-menus.md (Content) says where the clips are and how to re-record them. (QA: pass; round 2: doc now says 25 fps for drift and 16.7 for the other three)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1800 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; all three sets pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; nothing under game/data/levels/ in the diff)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Open → In progress
+
+Started: the Driving & Drift Agent records the four tutorial clips from the real car on a plain background.
 
 ## Style review
 
@@ -68,4 +72,36 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Driving & Drift Agent (2026-11-01).
+
+**The four clips** (`game/art/tutorial/clips/`, each with `<name>.json`), all 480 x 320 pixels, a straight crop of the 1152 x 648 window (no scaling, nearest by construction), looping, one shared palette:
+
+| Clip | File | Length | Frames | Size |
+|---|---|---|---|---|
+| Drift, zoomed out (slide 1) | `drift.gif` | 6.0 s | 150 at 25 fps | 140,530 bytes |
+| Long drift (slide 2) | `long_drift.gif` | 5.04 s | 84 at 16.7 fps | 1,428,518 bytes |
+| Alt drift (slide 2) | `alt_drift.gif` | 3.84 s | 64 at 16.7 fps | 1,010,558 bytes |
+| Ramp jump (slide 2) | `ramp_jump.gif` | 3.06 s | 51 at 16.7 fps | 1,433,801 bytes |
+
+All four are under the 1.5 MB aim. The three clips whose camera follows the car redraw the whole frame every frame, so they keep every third physics step (16.7 fps); the held-camera drift clip keeps every second (25 fps). The records also hold the tricks and air numbers the real car printed during the take.
+
+**What is on screen:** the drift prototype's plain grid (the test room's walls and boulder removed, its HUD hint, tuning panel and trick popups hidden) with the grid drawn in a light grey (fixture-only colours, because the grid's own dark navy hides the dark tyre marks), the real car, its shadow, tyre marks and smoke. The ramp clip adds the ramp and a short rooftop (the game's placeholder art). No HUD, enemies, popups or city.
+
+**Zoom (drift clip):** orthographic size 28 against the run's 14.4 (about 1.94 times further out, so the car is about half the size); the camera is held still at one point (`fixed_camera`), the car enters from outside the frame, drives straight, breaks into a drift with W + A, and the whole drift circle shows from where it starts; the marks fade after the car leaves, so the clip loops from an empty grid. The long and alt drifts use the run's own 14.4 with a following camera.
+
+**Alt drift:** W + A drift for 1 s, then W released and S pressed with A kept (the forward-then-backward drift with the same steering the detector counts); the real detector printed `alternate_drift` at step 96. The long drift (3.4 s of W + A) also earns a drift 360 at 2.5 s, since one unbroken drift that long turns a full circle.
+
+**Ramp jump:** the elevation test's ramp (12 long, 8 wide, 0 to 3) up to a short rooftop (8 long) of its own, so the car flies over the rooftop and lands on the street: on the elevation test's 16-unit rooftop the car lands on it after 0.66 s and turns only about 160 degrees, short of a 180. The ground data is `game/tests/fixtures/data/tutorial_ramp.json`, read by `tutorial_ramp_scene.gd`, a copy of `elevation_test.gd` with only that path changed (the game's scene and script are untouched). The real car holds W up the ramp, then W + A from takeoff: takeoff off the ramp's top at 16.5 units/s, **airtime 1.12 s against the HANG TIME! minimum of 0.30 s** (combo.json, airtime.min_seconds), **264 degrees turned in the air** (the detector printed `air_one_eighty`), landing on the street.
+
+**Re-recording:** from the repo root, `python game/tools/record_tutorial_clips.py` (a real window, not headless; about 15 s a clip; `--only drift long_drift ...`, `--no-archive`). Fixtures: `game/tests/fixtures/tutorial_clip_<name>.tscn` with `tutorial_clip_demo.gd` (the inputs, zoom, camera and start are exported values in each scene). Every take is copied to `art-archive/T-483/takes/` (6 takes kept; two earlier trial takes of the long and alt drifts, at 25 fps and over 1.5 MB, were removed with the first run's folder by mistake and are not kept).
+
+**Tests:** `game/tools/test_record_tutorial_clips.py` (crop, assembly at the clip size and loop, then the four committed GIFs and records: size, under 1.5 MB, the ramp record's airtime and half turn, the alt record's trick) and `game/tests/unit/test_tutorial_clips.gd` (the four scenes load with a drive, the drift clip is zoomed out with a held camera, the ramp ground is valid, and the real car driven the way the clip drives it takes off from the ramp, with more than the minimum airtime and over 180 degrees turned). Results: `python -m unittest discover -s game/tools -p "test_*.py"`: 864 tests OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"`: 633 tests OK; GUT (`GUT_TIME_LIMIT=1800 ... run_tests.sh`): 2518 tests in 213 scripts, all passing.
+
+**Documents changed:** `docs/hud-and-menus.md` (Content, "Tutorial clips (T-483)"). No game script or scene was changed; nothing under `game/data/levels/` was touched. Open for the board's playtest: the rooftop's textured art makes the ramp clip look busier than the plain grid; the clips' frame rates (16.7 against 25) are a size trade-off.
+- 2026-11-01, in-progress → in-qa: Four tutorial clips recorded (drift zoomed out, long drift, alt drift, ramp jump 1.12 s air, 264 deg); recorder, tests and docs in; all three test sets pass
+- 2026-11-01, in-qa → in-progress: QA round 1: all criteria pass; paperwork fail only: art-archive/T-483/screenshots/ is empty (qa_check screenshots red). Copy the four GIFs there and list them in the result notes.
+
+QA round 1 paperwork fixes: the four final GIFs and one frame of each (PNG) are in art-archive/T-483/screenshots/ (drift.gif, long_drift.gif, alt_drift.gif, ramp_jump.gif, and <name>_frame.png). docs/hud-and-menus.md now says 25 fps for the drift clip and 16.7 fps for the other three. No code changed.
+- 2026-11-01, in-progress → in-qa: Paperwork fixed: screenshots archived, doc frame rates corrected
+- 2026-11-01, in-qa → needs-playtest: QA round 2 passed; clips already approved by the board
+- 2026-11-01, needs-playtest → done: The board saw the four clips on the draft page and approved them (2026-11-01).
