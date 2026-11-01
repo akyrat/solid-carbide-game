@@ -178,6 +178,9 @@ var _anim_length := 0.0
 ## show_held() shows it when the overlay closes. The run scene sets it.
 var hold: Callable = Callable()
 var _held_ids: Array = []
+## T-482: the textures prewarm() keeps loaded, and whether it has run.
+var _warm_art: Array = []
+var prewarmed := false
 
 
 func setup(the_rack: Node) -> void:
@@ -241,6 +244,25 @@ func setup(the_rack: Node) -> void:
 	offers.offer_taken.connect(_on_offer_taken)
 	rack.state.run_started.connect(close)
 	visible = false
+	prewarm()
+
+
+## T-482: loads everything a pickup would otherwise load the first time it is
+## needed (the card and highlight frames, every weapon's picture, the card
+## fonts' text shaping) by building every possible card once, hidden, and
+## clearing them again. Called by setup(), with the run, so the first gift pack
+## pickup opens the screen without a hitch (a cold first pickup took 97 ms in
+## the board's recording). The loaded textures are kept in `_warm_art` so the
+## engine's cache does not drop them while no card shows them.
+func prewarm() -> void:
+	_warm_art = [load(ART + "card_frame.png"), load(ART + "highlight_frame.png")]
+	for id in offers.ALL_IDS:
+		_warm_art.append(weapon_image(offers.weapon_of(id)))
+		_add_card(str(id))
+	for c in cards:
+		c.panel.get_combined_minimum_size()  # shapes the card's texts
+	_clear_cards()
+	prewarmed = true
 
 
 ## The approved text for a choice's card: {title, desc}. An upgrade shows the
