@@ -103,6 +103,11 @@ var _state: RunState
 var _combo_data: ComboData
 ## The trick popups whose amounts fly into the viewers counter (bind_popups, T-336).
 var _popups: Node
+## The player's HUD layout (T-453): HudLayout entries for the pieces the player moved; a piece
+## not in it keeps its default place. set_layout() sets it, the pause screen's editor moves it.
+var layout: Dictionary = {}
+## Each movable piece's default offset_left and offset_top (its own anchoring), for putting it back.
+var _default_offsets: Dictionary = {}
 
 
 func _ready() -> void:
@@ -118,6 +123,7 @@ func _ready() -> void:
 	_build_viewers()
 	_build_airtime()
 	_build_drift()
+	_remember_defaults()
 	_layout_root()
 	get_viewport().size_changed.connect(_layout_root)
 
@@ -156,10 +162,116 @@ func _layout_root() -> void:
 	root.position = Vector2.ZERO
 	root.scale = Vector2(s, s)
 	root.size = view / s
-	if sub_goal != null and viewers_counter != null:
-		sub_goal.keep_above(root.size.y + viewers_counter.offset_top - MARGIN, root.size.y)
+	_apply_layout()
 	_layout_airtime()
 	_layout_drift()
+
+
+## The movable piece with HudLayout id `id` (T-453), or null.
+func piece(id: String) -> Control:
+	match id:
+		"hearts": return heart_row
+		"weapon_icons": return weapon_icons
+		"coins": return coins_label.get_parent() as Control if coins_label != null else null
+		"clock": return timer_clock
+		"sub_goal": return sub_goal
+		"viewers": return viewers_counter
+	return null
+
+
+func _remember_defaults() -> void:
+	for id in HudLayout.PIECES:
+		var c := piece(id)
+		_default_offsets[id] = Vector2(c.offset_left, c.offset_top)
+		c.resized.connect(_on_piece_resized.bind(id))
+	sub_goal.label_row.resized.connect(_on_piece_resized.bind("sub_goal"))
+
+
+## A moved piece that grows (more hearts or weapons, a longer label) stays fully on screen; the
+## default pieces grow by their own anchoring.
+func _on_piece_resized(id: String) -> void:
+	if layout.has(id):
+		_apply_piece(id)
+
+
+## What a piece shows, relative to its own top left: its rect, and for the sub goal the label
+## row under the square too (it can be a little wider than the square).
+func _extent(id: String) -> Rect2:
+	var c := piece(id)
+	var r := Rect2(Vector2.ZERO, c.size)
+	if id == "sub_goal":
+		r = r.merge(Rect2(sub_goal.label_row.position, sub_goal.label_row.size))
+	return r
+
+
+## Where the piece's parent sits in the scaled area (the hearts and weapons are in left_column).
+func _parent_offset(c: Control) -> Vector2:
+	var p := c.get_parent()
+	return Vector2.ZERO if p == root or not (p is Control) else (p as Control).position
+
+
+## The piece's shown rect (its extent) in the scaled area's layout pixels.
+func piece_rect(id: String) -> Rect2:
+	var c := piece(id)
+	var ext := _extent(id)
+	return Rect2(_parent_offset(c) + c.position + ext.position, ext.size)
+
+
+## Uses `new_layout` (HudLayout entries; invalid ones dropped) and places every piece at once.
+func set_layout(new_layout: Dictionary) -> void:
+	layout = HudLayout.clean(new_layout)
+	if root != null and is_inside_tree():
+		_apply_layout()
+
+
+## Moves a piece so its shown rect's top left is at `layout_pos` (layout pixels, snapped and kept
+## on screen: HudLayout.snap) and keeps it in the layout. Returns where it went.
+func move_piece(id: String, layout_pos: Vector2) -> Vector2:
+	var ext := _extent(id)
+	var at := HudLayout.snap(layout_pos, ext.size, root.size)
+	layout[id] = HudLayout.entry_for(at, ext.size, root.size)
+	_apply_layout()
+	return piece_rect(id).position
+
+
+## Every piece back at its default place (the editor's Reset).
+func reset_layout() -> void:
+	set_layout({})
+
+
+## Places every movable piece: the moved ones by the layout, the others at their default places.
+## The sub goal moves up clear of the viewers counter (T-431) only while both are at their defaults.
+func _apply_layout() -> void:
+	if _default_offsets.is_empty():
+		return
+	for id in HudLayout.PIECES:
+		_apply_piece(id)
+	if layout.has("sub_goal"):
+		return
+	if layout.has("viewers"):
+		sub_goal.keep_above(INF, root.size.y)
+	else:
+		sub_goal.keep_above(root.size.y + viewers_counter.offset_top - MARGIN, root.size.y)
+
+
+func _apply_piece(id: String) -> void:
+	if _default_offsets.is_empty():
+		return
+	var c := piece(id)
+	var size := c.size
+	if layout.has(id):
+		var ext := _extent(id)
+		var at := HudLayout.position_for(layout[id], ext.size, root.size)
+		var target := at - ext.position - _parent_offset(c)
+		if not c.position.is_equal_approx(target):
+			c.position = target
+	else:
+		var d: Vector2 = _default_offsets[id]
+		if not (is_equal_approx(c.offset_left, d.x) and is_equal_approx(c.offset_top, d.y)):
+			c.offset_left = d.x
+			c.offset_top = d.y
+			c.offset_right = d.x + size.x
+			c.offset_bottom = d.y + size.y
 
 
 ## A point in screen (canvas) pixels as a point in the scaled area's own pixels.

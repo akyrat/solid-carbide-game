@@ -41,7 +41,7 @@ func test_every_named_texture_exists() -> void:
 
 
 func test_entries_have_the_fields() -> void:
-	var kinds := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater"]  # crater: T-398
+	var kinds := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert"]  # crater: T-398; alert: T-441
 	for e in _json(CATALOGUE).entries:
 		assert_true(str(e.id) != "")
 		assert_true(kinds.has(str(e.kind)), "%s kind" % e.id)

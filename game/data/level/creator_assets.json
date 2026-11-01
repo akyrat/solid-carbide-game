@@ -14132,25 +14132,25 @@
      "view": "north",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_1_north.png"
+     "texture": "res://art/props/parked_car_1_north_art.png"
     },
     {
      "view": "east",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_1_east.png"
+     "texture": "res://art/props/parked_car_1_east_art.png"
     },
     {
      "view": "south",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_1_south.png"
+     "texture": "res://art/props/parked_car_1_south_art.png"
     },
     {
      "view": "west",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_1_west.png"
+     "texture": "res://art/props/parked_car_1_west_art.png"
     }
    ]
   },
@@ -14177,25 +14177,25 @@
      "view": "north",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_2_north.png"
+     "texture": "res://art/props/parked_car_2_north_art.png"
     },
     {
      "view": "east",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_2_east.png"
+     "texture": "res://art/props/parked_car_2_east_art.png"
     },
     {
      "view": "south",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_2_south.png"
+     "texture": "res://art/props/parked_car_2_south_art.png"
     },
     {
      "view": "west",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_2_west.png"
+     "texture": "res://art/props/parked_car_2_west_art.png"
     }
    ]
   },
@@ -14222,25 +14222,25 @@
      "view": "north",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_3_north.png"
+     "texture": "res://art/props/parked_car_3_north_art.png"
     },
     {
      "view": "east",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_3_east.png"
+     "texture": "res://art/props/parked_car_3_east_art.png"
     },
     {
      "view": "south",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_3_south.png"
+     "texture": "res://art/props/parked_car_3_south_art.png"
     },
     {
      "view": "west",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/parked_car_3_west.png"
+     "texture": "res://art/props/parked_car_3_west_art.png"
     }
    ]
   },
@@ -14267,25 +14267,25 @@
      "view": "north",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_1_north.png"
+     "texture": "res://art/props/broken_car_1_north_art.png"
     },
     {
      "view": "east",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_1_east.png"
+     "texture": "res://art/props/broken_car_1_east_art.png"
     },
     {
      "view": "south",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_1_south.png"
+     "texture": "res://art/props/broken_car_1_south_art.png"
     },
     {
      "view": "west",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_1_west.png"
+     "texture": "res://art/props/broken_car_1_west_art.png"
     }
    ]
   },
@@ -14312,25 +14312,25 @@
      "view": "north",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_2_north.png"
+     "texture": "res://art/props/broken_car_2_north_art.png"
     },
     {
      "view": "east",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_2_east.png"
+     "texture": "res://art/props/broken_car_2_east_art.png"
     },
     {
      "view": "south",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_2_south.png"
+     "texture": "res://art/props/broken_car_2_south_art.png"
     },
     {
      "view": "west",
      "mirror": false,
      "variant": "",
-     "texture": "res://art/props/broken_car_2_west.png"
+     "texture": "res://art/props/broken_car_2_west_art.png"
     }
    ]
   },
@@ -16035,6 +16035,244 @@
      "texture": "res://art/craters/crater_3.png"
     }
    ]
+  },
+  {
+   "id": "alert-sign-head",
+   "kind": "alert",
+   "alert": "sign",
+   "design": "head",
+   "label": "piece_alert_sign",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/banners/kaiju_head_triangle_sign.png"
+    },
+    {
+     "view": "iso",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/banners/kaiju_head_triangle_sign.png"
+    }
+   ]
+  },
+  {
+   "id": "alert-sign-body",
+   "kind": "alert",
+   "alert": "sign",
+   "design": "body",
+   "label": "piece_alert_sign",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/banners/kaiju_body_circle_sign.png"
+    },
+    {
+     "view": "iso",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/banners/kaiju_body_circle_sign.png"
+    }
+   ]
+  },
+  {
+   "id": "alert-banner-head",
+   "kind": "alert",
+   "alert": "banner",
+   "design": "head",
+   "label": "piece_alert_banner",
+   "footprint_units": [
+    3.0,
+    1.0
+   ],
+   "heights_units": [
+    3,
+    6,
+    9,
+    12,
+    15
+   ],
+   "views": [
+    "south",
+    "east"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "3",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "6",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "9",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "12",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "15",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "3",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "6",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "9",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "12",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "15",
+     "texture": "res://art/banners/kaiju_head_triangle_building_wall.png"
+    }
+   ]
+  },
+  {
+   "id": "alert-banner-body",
+   "kind": "alert",
+   "alert": "banner",
+   "design": "body",
+   "label": "piece_alert_banner",
+   "footprint_units": [
+    3.0,
+    1.0
+   ],
+   "heights_units": [
+    3,
+    6,
+    9,
+    12,
+    15
+   ],
+   "views": [
+    "south",
+    "east"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "3",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "6",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "9",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "12",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "15",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "3",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "6",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "9",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "12",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "15",
+     "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
+    }
+   ]
   }
  ],
  "groups": [
@@ -17663,6 +17901,291 @@
      "flip": false,
      "height": ""
     }
+   ]
+  },
+  {
+   "id": "alert-sign",
+   "group": "decoration",
+   "label": "piece_alert_sign",
+   "looks": 2,
+   "turns": 1,
+   "mirrors": [
+    false,
+    true
+   ],
+   "heights": [],
+   "members": [
+    {
+     "asset": "alert-sign-head",
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "alert-sign-head",
+     "view": "iso",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": true,
+     "height": ""
+    },
+    {
+     "asset": "alert-sign-body",
+     "view": "iso",
+     "mirror": false,
+     "variant": "",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": ""
+    },
+    {
+     "asset": "alert-sign-body",
+     "view": "iso",
+     "mirror": true,
+     "variant": "",
+     "look": 1,
+     "turn": 0,
+     "flip": true,
+     "height": ""
+    }
+   ],
+   "look_labels": [
+    "alert_design_head",
+    "alert_design_body"
+   ]
+  },
+  {
+   "id": "alert-banner",
+   "group": "decoration",
+   "label": "piece_alert_banner",
+   "looks": 2,
+   "turns": 2,
+   "mirrors": [
+    false
+   ],
+   "heights": [
+    "3",
+    "6",
+    "9",
+    "12",
+    "15"
+   ],
+   "members": [
+    {
+     "asset": "alert-banner-head",
+     "view": "south",
+     "mirror": false,
+     "variant": "3",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "3"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "south",
+     "mirror": false,
+     "variant": "6",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "6"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "south",
+     "mirror": false,
+     "variant": "9",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "9"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "south",
+     "mirror": false,
+     "variant": "12",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "12"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "south",
+     "mirror": false,
+     "variant": "15",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "15"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "east",
+     "mirror": false,
+     "variant": "3",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "3"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "east",
+     "mirror": false,
+     "variant": "6",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "6"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "east",
+     "mirror": false,
+     "variant": "9",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "9"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "east",
+     "mirror": false,
+     "variant": "12",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "12"
+    },
+    {
+     "asset": "alert-banner-head",
+     "view": "east",
+     "mirror": false,
+     "variant": "15",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "15"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "south",
+     "mirror": false,
+     "variant": "3",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": "3"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "south",
+     "mirror": false,
+     "variant": "6",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": "6"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "south",
+     "mirror": false,
+     "variant": "9",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": "9"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "south",
+     "mirror": false,
+     "variant": "12",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": "12"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "south",
+     "mirror": false,
+     "variant": "15",
+     "look": 1,
+     "turn": 0,
+     "flip": false,
+     "height": "15"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "east",
+     "mirror": false,
+     "variant": "3",
+     "look": 1,
+     "turn": 1,
+     "flip": false,
+     "height": "3"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "east",
+     "mirror": false,
+     "variant": "6",
+     "look": 1,
+     "turn": 1,
+     "flip": false,
+     "height": "6"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "east",
+     "mirror": false,
+     "variant": "9",
+     "look": 1,
+     "turn": 1,
+     "flip": false,
+     "height": "9"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "east",
+     "mirror": false,
+     "variant": "12",
+     "look": 1,
+     "turn": 1,
+     "flip": false,
+     "height": "12"
+    },
+    {
+     "asset": "alert-banner-body",
+     "view": "east",
+     "mirror": false,
+     "variant": "15",
+     "look": 1,
+     "turn": 1,
+     "flip": false,
+     "height": "15"
+    }
+   ],
+   "look_labels": [
+    "alert_design_head",
+    "alert_design_body"
+   ],
+   "hints": [
+    "banner_wall_hint",
+    "banner_height_hint"
    ]
   }
  ]

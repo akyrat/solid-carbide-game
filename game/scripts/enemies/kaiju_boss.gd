@@ -390,4 +390,5 @@ func _place_sprite() -> void:
 	s.position = ISO_TRANSFORM * kaiju.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(kaiju.heading)
 	s.set_falling(kaiju.is_falling())
+	s.air_height = h - kaiju.ground_height()  # T-454: its shadow stays on the ground under it
 	s.z_index = depth.z_index_for(kaiju.position_units(), KaijuScript.RADIUS_UNITS, KaijuScript.HEIGHT_UNITS, h)

@@ -493,7 +493,7 @@ func test_answer_5_an_arrow_shows_only_while_the_landed_package_is_off_screen() 
 	assert_eq(arrows.shown.size(), 1, "an arrow once it is off screen")
 	var a: Dictionary = arrows.shown[0]
 	var screen := Vector2(SIZES[0])
-	assert_true(Rect2(Vector2.ZERO, screen).encloses(GiftArrows.arrow_rect(a.position)), "at the screen's edge, inside it")
+	assert_true(Rect2(Vector2.ZERO, screen).encloses(GiftArrows.arrow_rect(a.position, drops.arrows.ui_scale)), "at the screen's edge, inside it")
 	assert_gt(a.position.x, screen.x * 0.75, "at the right edge for a package to the right")
 	var target: Vector2 = pkg.get_global_transform_with_canvas().origin
 	assert_almost_eq(Vector2.from_angle(a.angle).dot((target - a.position).normalized()), 1.0, 0.001, "points to it")
@@ -568,7 +568,7 @@ func test_t314_arrows_in_the_same_direction_slide_apart_and_stay_clear_of_the_hu
 			pkgs.append(_package_at_drawn(Vector2(5000, i * 3.0)) if i != 1 else _falling_package_at_drawn(Vector2(5000, 1.0)))
 		drops.arrows.refresh()
 		assert_eq(drops.arrows.shown.size(), 3)
-		var boxes: Array = drops.arrows.shown.map(func(a): return GiftArrows.arrow_rect(a.position))
+		var boxes: Array = drops.arrows.shown.map(func(a): return GiftArrows.arrow_rect(a.position, drops.arrows.ui_scale))
 		for i in boxes.size():
 			assert_true(Rect2(Vector2.ZERO, screen).encloses(boxes[i]), "%s: on screen" % [size])
 			for n in parts:
@@ -614,10 +614,38 @@ func test_answer_5_arrows_stay_clear_of_the_hud_at_every_window_size() -> void:
 			drops.arrows.refresh()
 			var mine: Array = drops.arrows.shown.filter(func(a): return a.package == pkg)
 			assert_eq(mine.size(), 1, "%s dir %d: an arrow" % [size, i])
-			var box := GiftArrows.arrow_rect(mine[0].position)
+			var box := GiftArrows.arrow_rect(mine[0].position, drops.arrows.ui_scale)
 			assert_true(Rect2(Vector2.ZERO, screen).encloses(box), "%s dir %d: on screen" % [size, i])
 			for n in parts:
 				assert_false(box.intersects(parts[n]), "%s dir %d: clear of %s" % [size, i, n])
+			drops.packages.erase(pkg)
+			pkg.free()
+
+
+## T-453: the player can move the HUD's pieces; the arrows keep clear of them at their new places.
+func test_t453_arrows_stay_clear_of_moved_hud_pieces() -> void:
+	for size in SIZES:
+		_run_at(size)
+		await wait_process_frames(2)
+		var hud: Hud = run.hud
+		var area: Vector2 = hud.root.size
+		hud.move_piece("viewers", Vector2(area.x - 256.0, area.y / 2.0 - 36.0))  # right edge, middle
+		hud.move_piece("clock", Vector2(area.x / 2.0 - 100.0, 16.0))  # top centre
+		hud.move_piece("sub_goal", Vector2(16.0, area.y / 2.0 - 40.0))  # left edge, middle
+		hud.move_piece("coins", Vector2(area.x / 2.0 - 54.0, area.y - 52.0))  # bottom centre
+		await wait_process_frames(1)
+		var parts := _hud_parts(hud)
+		var screen := Vector2(size)
+		for i in 32:
+			var dir := Vector2.from_angle(TAU * i / 32.0)
+			var pkg := _package_at_drawn(dir * 5000.0)
+			drops.arrows.refresh()
+			var mine: Array = drops.arrows.shown.filter(func(a): return a.package == pkg)
+			assert_eq(mine.size(), 1, "%s dir %d: an arrow" % [size, i])
+			var box := GiftArrows.arrow_rect(mine[0].position, drops.arrows.ui_scale)
+			assert_true(Rect2(Vector2.ZERO, screen).encloses(box), "%s dir %d: on screen" % [size, i])
+			for n in parts:
+				assert_false(box.intersects(parts[n]), "%s dir %d: clear of the moved %s" % [size, i, n])
 			drops.packages.erase(pkg)
 			pkg.free()
 
@@ -809,3 +837,47 @@ func test_t330_the_bigger_helicopter_starts_and_ends_off_screen_and_stays_under_
 	var box_top := pkg.position.y - drops.art_height(pkg.sprite())
 	assert_gt(pkg.position.y, belly - 1.0, "the package's bottom hangs below the helicopter's frame")
 	assert_not_null(box_top)
+
+
+# ---- T-442: 3 times as big, in the gift box's colours ----------------------------------------
+
+func test_t442_arrow_is_90_by_72_at_the_base_size_and_scales_with_the_hud() -> void:
+	assert_eq(GiftArrows.ARROW_SIZE, Vector2(90, 72))
+	var base := GiftArrows.arrow_points(Vector2.ZERO, 0.0)
+	assert_almost_eq(base[0].x - base[1].x, 90.0, 0.001, "90 long")
+	assert_almost_eq(base[3].y - base[1].y, 72.0, 0.001, "72 wide")
+	var big := GiftArrows.arrow_points(Vector2.ZERO, 0.0, 1.5)
+	assert_almost_eq(big[0].x - big[1].x, 135.0, 0.001, "scaled with the HUD")
+	assert_eq(GiftArrows.arrow_rect(Vector2.ZERO, 2.0).size, Vector2(180, 180))
+	for size in SIZES:
+		_run_at(size)
+		await wait_process_frames(2)
+		_package_at_drawn(Vector2(5000, 0))
+		drops.arrows.refresh()
+		assert_almost_eq(drops.arrows.ui_scale, run.hud.hud_scale(), 0.0001, "%s: the HUD's scale" % [size])
+	run.hud.set_hud_size(150.0)
+	drops.arrows.refresh()
+	assert_almost_eq(drops.arrows.ui_scale, run.hud.hud_scale(), 0.0001, "follows the HUD size slider")
+
+
+func test_t442_arrow_wears_the_gift_boxs_greens_with_the_huds_dark_outline() -> void:
+	assert_eq(GiftArrows.FILL, Color8(12, 76, 44), "Greenbull's dark green")
+	assert_eq(GiftArrows.STRIPE, Color8(104, 220, 96), "the ribbon's light green")
+	assert_eq(GiftArrows.OUTLINE, Color8(8, 8, 15), "the HUD's dark outline")
+	var img := Image.load_from_file(ProjectSettings.globalize_path("res://art/gift_pack/package.png"))
+	var found := {}
+	for y in img.get_height():
+		for x in img.get_width():
+			var c := img.get_pixel(x, y)
+			if c.a > 0.0:
+				found[c.to_html(false)] = true
+	assert_true(found.has(GiftArrows.FILL.to_html(false)), "dark green is in package.png")
+	assert_true(found.has(GiftArrows.STRIPE.to_html(false)), "light green is in package.png")
+
+
+func test_t442_stripe_sits_inside_the_arrow() -> void:
+	var outer := GiftArrows.arrow_points(Vector2(100, 100), 0.7, 1.0)
+	var inner := GiftArrows.stripe_points(Vector2(100, 100), 0.7, 1.0)
+	var poly := Geometry2D.offset_polygon(outer, 0.5)[0]
+	for p in inner:
+		assert_true(Geometry2D.is_point_in_polygon(p, poly), "stripe point inside")

@@ -134,6 +134,10 @@ const LABELS := {
 	"level_up_card_title": {"font": "comic", "size": LEVEL_UP_CARD_TITLE_SIZE, "color": BLACK},
 	"level_up_card_desc": {"font": "comic", "size": LEVEL_UP_CARD_DESC_SIZE, "color": BLACK},
 	"level_up_button": {"font": "comic", "size": LEVEL_UP_BUTTON_SIZE, "color": BLACK},
+	# The shared button (T-446): Bangers in the sheet's light label colour with its
+	# near-black outline (6, rule 2; 4 on the pause strip's small size, a proposal).
+	"button": {"font": "comic", "size": BUTTON_SIZE, "color": LABEL_COLOR, "outline_color": OUTLINE_COLOR, "outline": 6},
+	"button_small": {"font": "comic", "size": BUTTON_SMALL_SIZE, "color": LABEL_COLOR, "outline_color": OUTLINE_COLOR, "outline": 4},
 }
 
 ## The combo's heat looks (T-131), base step first: font size, colour, outline
@@ -219,6 +223,163 @@ const PAUSE_TRICK_NAME_SIZE := 18
 ## The level-up screen (T-141): the dim, and the "Take it" plate's hover tint.
 const LEVEL_UP_DIM := Color(0, 0, 0, 0.6)
 const LEVEL_UP_HOVER_TINT := Color(1.15, 1.15, 1.15)
+
+# ---------------------------------------------------------------- the shared button (T-446)
+
+## One button for every player-facing screen (task T-446; HUD and menus, Decisions,
+## "One button style across the game"): the main menu, the garage, the tutorial
+## slides, the level-up screen's "Take it", the pause screen and the recap. Every
+## one of them calls `HudStyle.style_button(button)` (checkboxes:
+## `HudStyle.style_checkbox`), so the look and feel are defined only here. The
+## board's tools (the level creator, the drift tuning panel, the pause strip's
+## two camera tuning buttons) keep their own look.
+##
+## The art (task T-447): one 9-slice plate per state in `res://art/ui/` (drawn by
+## `game/tools/build_button_plates.py`), 72 x 22 art pixels shown at 2x (rule 1),
+## the HUD style sheet's steel bezel lit from the top left. The keyboard-selection
+## plate is a bright ring with an open middle, drawn over whichever state the button
+## is in. No tint and no recolour: every state is its own picture.
+const BUTTON_PLATE_ART := "res://art/ui/button_plate_%s.png"
+## 9-slice margins in art pixels (x: left and right, y: top, z: bottom): the outline and two bevel rows.
+const BUTTON_SLICE := Vector3i(3, 3, 3)
+## Where the text sits inside the plate, in screen pixels (x: left and right, y: top,
+## z: bottom). Pressed moves the text BUTTON_PRESS_DROP pixels down: the press-down.
+const BUTTON_CONTENT := Vector3i(16, 6, 8)
+const BUTTON_PRESS_DROP := 2
+## Text: the sheet's light label colour, white when hovered or selected, grey when disabled.
+const BUTTON_TEXT := LABEL_COLOR
+const BUTTON_TEXT_LIT := WHITE
+const BUTTON_TEXT_DISABLED := Color8(120, 126, 140)
+## The two text sizes: the screens' buttons, and the pause strip's small ones.
+const BUTTON_SIZE := 28
+const BUTTON_SMALL_SIZE := 16
+## The checkbox square: a light frame, steel inside, a light mark when checked.
+const CHECK_FRAME := LABEL_COLOR
+const CHECK_FILL := Color8(36, 40, 52)
+const CHECK_MARK := LABEL_COLOR
+
+static var _button_plates := {}
+
+
+## One state's plate ("normal", "hover", "focus", "pressed" or "disabled") at 2x, cached.
+static func button_plate(kind: String) -> Texture2D:
+	if _button_plates.has(kind):
+		return _button_plates[kind]
+	var img := (load(BUTTON_PLATE_ART % kind) as Texture2D).get_image()
+	img.convert(Image.FORMAT_RGBA8)
+	img.resize(img.get_width() * HUD_ART_SCALE, img.get_height() * HUD_ART_SCALE, Image.INTERPOLATE_NEAREST)
+	var tex := ImageTexture.create_from_image(img)
+	_button_plates[kind] = tex
+	return tex
+
+
+## One state's 9-slice plate: `kind` the art, `drop` the press-down of the text.
+static func button_box(kind: String, drop := 0) -> StyleBoxTexture:
+	var box := StyleBoxTexture.new()
+	box.texture = button_plate(kind)
+	var m: Vector3i = BUTTON_SLICE * HUD_ART_SCALE
+	box.texture_margin_left = m.x
+	box.texture_margin_right = m.x
+	box.texture_margin_top = m.y
+	box.texture_margin_bottom = m.z
+	box.content_margin_left = BUTTON_CONTENT.x
+	box.content_margin_right = BUTTON_CONTENT.x
+	box.content_margin_top = BUTTON_CONTENT.y + drop
+	box.content_margin_bottom = BUTTON_CONTENT.z - drop
+	return box
+
+
+## The keyboard selection plate: a bright ring, open in the middle, over the state's plate.
+## It adds no room round the text (content margins 0 so it never changes the button's size).
+static func button_focus_box() -> StyleBoxTexture:
+	var box := button_box("focus")
+	box.content_margin_left = 0
+	box.content_margin_right = 0
+	box.content_margin_top = 0
+	box.content_margin_bottom = 0
+	return box
+
+
+## The shared text look: Bangers, the label colour, the sheet's near-black outline,
+## lit when hovered or selected, grey when disabled; the icon colours follow.
+static func _button_text(b: Button, small: bool) -> void:
+	apply(b, "button_small" if small else "button")
+	b.add_theme_color_override("font_hover_color", BUTTON_TEXT_LIT)
+	b.add_theme_color_override("font_focus_color", BUTTON_TEXT_LIT)
+	b.add_theme_color_override("font_hover_pressed_color", BUTTON_TEXT)
+	b.add_theme_color_override("font_disabled_color", BUTTON_TEXT_DISABLED)
+	b.add_theme_color_override("icon_normal_color", BUTTON_TEXT)
+	b.add_theme_color_override("icon_hover_color", BUTTON_TEXT_LIT)
+	b.add_theme_color_override("icon_focus_color", BUTTON_TEXT_LIT)
+	b.add_theme_color_override("icon_pressed_color", BUTTON_TEXT)
+	b.add_theme_color_override("icon_hover_pressed_color", BUTTON_TEXT)
+	b.add_theme_color_override("icon_disabled_color", BUTTON_TEXT_DISABLED)
+	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	b.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+
+## Makes `b` the shared button: the plate in its five states (normal, hovered,
+## focus, pressed, disabled) and the shared text. `small` is the pause strip's size.
+## Keeps the button's text, place, size, focus mode and actions.
+static func style_button(b: Button, small := false) -> void:
+	_button_text(b, small)
+	b.add_theme_stylebox_override("normal", button_box("normal"))
+	b.add_theme_stylebox_override("hover", button_box("hover"))
+	b.add_theme_stylebox_override("pressed", button_box("pressed", BUTTON_PRESS_DROP))
+	b.add_theme_stylebox_override("hover_pressed", button_box("pressed", BUTTON_PRESS_DROP))
+	b.add_theme_stylebox_override("disabled", button_box("disabled"))
+	b.add_theme_stylebox_override("focus", button_focus_box())
+	b.set_meta("hud_button", "button")
+
+
+## Gives a shared button other room round its text or icon (a small square button,
+## the recap's X): `x` left and right, `y` top and bottom; the press-down stays.
+static func button_padding(b: Button, x: int, y: int) -> void:
+	for state in ["normal", "hover", "pressed", "hover_pressed", "disabled"]:
+		var box := (b.get_theme_stylebox(state) as StyleBoxTexture).duplicate() as StyleBoxTexture
+		var drop := BUTTON_PRESS_DROP if state.contains("pressed") else 0
+		box.content_margin_left = x
+		box.content_margin_right = x
+		box.content_margin_top = y + drop
+		box.content_margin_bottom = y - drop
+		b.add_theme_stylebox_override(state, box)
+
+
+## Makes `c` the shared checkbox: the shared text and focus ring, no plate, and
+## the checkbox square (check_icon) `icon_size` pixels big.
+static func style_checkbox(c: CheckBox, icon_size: int, small := false) -> void:
+	_button_text(c, small)
+	for state in ["normal", "hover", "pressed", "hover_pressed", "disabled"]:
+		c.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+	c.add_theme_stylebox_override("focus", button_focus_box())
+	c.add_theme_color_override("font_pressed_color", BUTTON_TEXT)
+	for n in ["unchecked", "unchecked_disabled"]:
+		c.add_theme_icon_override(n, check_icon(false, icon_size))
+	for n in ["checked", "checked_disabled"]:
+		c.add_theme_icon_override(n, check_icon(true, icon_size))
+	c.set_meta("hud_button", "checkbox")
+
+
+## The checkbox square: a light frame (an eighth of its size, at least 2 px), the
+## steel inside, a light square mark in the middle when checked.
+static func check_icon(checked: bool, n: int) -> ImageTexture:
+	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+	img.fill(CHECK_FILL)
+	var f := maxi(2, n / 8)
+	for i in n:
+		for j in f:
+			for p in [Vector2i(i, j), Vector2i(i, n - 1 - j), Vector2i(j, i), Vector2i(n - 1 - j, i)]:
+				img.set_pixelv(p, CHECK_FRAME)
+	if checked:
+		var inset := maxi(4, n * 2 / 7)
+		img.fill_rect(Rect2i(inset, inset, n - 2 * inset, n - 2 * inset), CHECK_MARK)
+	return ImageTexture.create_from_image(img)
+
+
+## Whether `b` is the shared button or checkbox (the tests walk the screens with it).
+static func is_shared_button(b: BaseButton) -> bool:
+	return b.has_meta("hud_button")
+
 
 # ---------------------------------------------------------------- reading it
 

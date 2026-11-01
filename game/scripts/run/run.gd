@@ -145,6 +145,8 @@ var zoom := ZOOM
 ## Thread the needle (task T-272, thread_the_needle.gd): the map's pairs of obstacles, rebuilt with
 ## every map; it pays the trick through state.add_needle_trick().
 var needle: ThreadTheNeedle
+## T-451: the flash of the pair just threaded (null when the level has no pairs).
+var needle_flash: NeedleFlash
 ## T-420: "" when the car's start is a place it can stand, else LevelSpawn.OFF_MAP or BLOCKED.
 var spawn_problem := ""
 ## The car's trick detection before the wreck turned it off (T-413), given back on a revive.
@@ -459,6 +461,9 @@ func _build_world() -> void:
 	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
 	# Thread the needle (T-272): the level's pairs of obstacles, a faint marker across each gap.
+	if needle_flash != null and is_instance_valid(needle_flash):
+		needle_flash.queue_free()
+	needle_flash = null
 	needle = ThreadTheNeedle.new(map.layout, ComboData.new().needle_rules())
 	needle.threaded.connect(func(_pair_id: String) -> void: state.add_needle_trick())
 	if not needle.gates.is_empty():
@@ -469,6 +474,11 @@ func _build_world() -> void:
 			hf = func(units: Vector2) -> float: return lay.ground_height.height_at(units)
 			df = func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
 		needle.build_markers(map, hf, df)
+		# T-451: threading the needle flashes the pair and its dashed line.
+		needle_flash = NeedleFlash.new()
+		needle_flash.name = "NeedleFlash"
+		add_child(needle_flash)
+		needle_flash.bind(needle, map)
 	car.stepped.connect(_on_car_needle_step)
 	# T-405 (altitude audit): props and boulders block the car only at their own heights.
 	var the_map: Node2D = map
@@ -607,7 +617,7 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	car_sprite.place(at_ground, car.height)
 	car_sprite.set_in_air(CarSpriteScript.is_in_air(car.height, ground_h))
 	car_sprite.set_heading(car.rotation)
-	shadow.place(units, ground_h)
+	shadow.place(units, ground_h, car.height)  # T-454: smaller the higher the car
 	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
 	drift_smoke.position = lift
 	boost_effect.position = lift

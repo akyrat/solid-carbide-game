@@ -2900,3 +2900,118 @@ Entry format:
 - Decision or change: The board defined mission packs: one mission at a time on a pixel-art notebook page on the left side, each with one or more checkbox goals (quantity goals show progress), 30 missions a run, for that run only; the first 5 fixed (drift 4 s, 10 alt drifts, 3 s airtime, 3 air 180s, an air 360), missions 6 to 30 generated at random each run from trick combinations. A completed mission offers 2 driving power-ups on an overlay distinct from the weapons' gift menu: Rev Charge (W+S charges a boost released with S), Jump (Space hops; its airtime counts for missions), Bouncy Bumpers (bigger wall bounces) and Rusty Overcoat (contact damage to enemies), each with tiers and an icon; tiers, numbers and the generator's rules are the agents' proposals. Built as goal G-009, PixelLab cap 40.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/drifting.md`
 - Tasks: goal G-009
+
+## 2026-10-31: Gift pack arrows 3 times as big, in the gift box's colours
+- Decision or change: The arrows pointing to off-screen gift packs are 3 times as big (90 x 72 at the HUD's base size, scaled with the HUD) and wear the gift box's dark green with a light green stripe and the dark outline, instead of the placeholder pale cyan. The board: "LGTM".
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-442
+
+## 2026-10-31: Recording a run's performance
+- Decision or change: A recorder, off by default, writes a run's per-frame times, monitors, counts, nested zones and events as a Chrome trace, and a script analyses its spikes, so the board's frame drops can be traced to their cause.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-468
+
+## 2026-10-31: A script for ticket result notes
+- Decision or change: Agents append their reports to a ticket's result notes with tools/task_notes.py instead of editing the ticket file, so a guard refusal no longer stops them or tempts a workaround.
+- Documents touched: tasks/README.md
+- Tasks: T-469
+
+## 2026-10-31: The garage's Buy buttons are on screen
+- Decision or change: Fixed the garage layout so every Buy button and Back stay on screen at any window size.
+- Documents touched: docs/garage-design.md
+- Tasks: T-470
+
+## 2026-10-31: Minions spawn on a timer, and 30% slower
+- Decision or change: Minions spawn on a timer from the screen's edges however many are alive, every 1.2 s at the run's start down to 0.3 s at 7:00, shortened by the combo, with a safety ceiling of 100 alive; they move 30% slower (4.2 units per second). The board played it: "LGTM", and saw frame drops at some points (T-468 records a run to find them). The board accepted the agent's Edit-tool workaround after a hook refused its result notes edit (2026-10-31).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-443
+
+## 2026-10-31: The itch.io build ignores the board's level files
+- Decision or change: publish_itch.py ignores the board's untracked level files in game/data/levels/ and the web build leaves them out.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-471
+
+## 2026-10-31: Threading the needle flashes the pair
+- Decision or change: When the car threads the needle, the two paired obstacles and their dashed line flash white, two pulses over 0.6 s; in a chained row only the threaded pair flashes. The board: "LGTM" (from the screenshots).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-451
+
+## 2026-10-31: Text for the HUD layout editor
+- Decision or change: Labels for the pause screen's HUD layout editor (open, hint, reset, done) in pause_text.json, style loop 8 to 9.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-452
+
+## 2026-10-31: The guard trusts task_notes.py
+- Decision or change: The command guard trusts tools/task_notes.py like the status script, so agents can write their result notes without refusals or workarounds.
+- Documents touched: tasks/README.md
+- Tasks: T-472
+
+## 2026-10-31: The game stays fast with a crowd of minions
+- Decision or change: Enemy code optimised with the same behaviour: the minion step is about 4.5 times faster (100 minions: 37 to 8 ms a frame; 300: 119 to 25 ms). A repeatable benchmark, game/tools/minion_crowd_bench.sh. The ceiling stays at 100 alive; the agent proposes 150. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-444
+
+## 2026-10-31: The itch.io build ignores the board's level files
+- Decision or change: publish_itch.py ignores the board's untracked level files in game/data/levels/ and the Web export leaves them out of the build. QA passed; merged straight after QA.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-471
+
+## 2026-10-31: A script for ticket result notes
+- Decision or change: tools/task_notes.py appends an agent's report to a ticket's result notes only (never the header or another section). The guard change it needs is T-472. QA passed; merged straight after QA.
+- Documents touched: none
+- Tasks: T-469
+
+## 2026-10-31: The itch.io publish script reads butler's output safely
+- Decision or change: publish_itch.py decodes butler's output as UTF-8, confirms the upload with butler status, and the docs say where butler lives.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-473
+
+## 2026-10-31: The itch.io publish script reads butler's output safely
+- Decision or change: publish_itch.py decodes butler's output as UTF-8, confirms the upload with butler status and prints the channel's version, and exits non-zero on failure; the docs say butler lives in the main checkout's tools/bin/ and how to reinstall it. QA passed; merged straight after QA.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-473
+
+## 2026-10-31: Shadows shrink with height
+- Decision or change: One shared size curve drives the shadows of the car, gift packs, falling enemies and molotov bottles: smaller the higher they are, the sprite's size at the surface. The board: "LGTM" (swipe review).
+- Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/visual-style.md`
+- Tasks: T-454
+
+## 2026-10-31: One button style across the game
+- Decision or change: Every player-facing button (main menu, garage, tutorial slides, level-up, pause, recap) is one shared button with five states (normal, hover, keyboard-selected, pressed, disabled) from the HUD style sheet; placeholder plates until T-447. The level-up Take it button is steel. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-446
+
+## 2026-10-31: Kaiju alert signs are level creator pieces
+- Decision or change: Alert sign (ground or rooftop) and Alert banner (on a skyscraper's wall, heights 3 to 15) are level creator pieces in both designs; M mirrors a sign. The fixed sign list kaiju_signs.json is retired, so Kaiju City has no signs until the board places them. The board: "LGTM" (swipe review).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-441
+
+## 2026-10-31: Gift pack cards are clicked directly
+- Decision or change: The level-up screen's cards have no Take it button; the whole card is clicked (or chosen with the keyboard).
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-474
+
+## 2026-10-31: Power-up cards are clicked directly
+- Decision or change: The driving power-up overlay's cards are clicked directly, like the level-up screen's.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-475
+
+## 2026-10-31: Final button art
+- Decision or change: The shared button's five plates (normal, hover, keyboard-selected, pressed, disabled), drawn by script in the HUD style sheet's look, 8/10 each in the style loop, 0 PixelLab calls. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
+- Tasks: T-447
+
+## 2026-10-31: The player moves the HUD's pieces
+- Decision or change: Edit HUD layout on the pause screen (in the Restart/Exit row) lets the player drag every HUD piece with snapping, Reset and Done; the layout is saved in settings.cfg and holds at any window size and HUD size. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-453
+
+## 2026-10-31: The garage's Buy buttons are on screen
+- Decision or change: The garage scales and centres to fit the window and refits on resize, so every Buy button and Back stay on screen at any size; long descriptions wrap. The board: "LGTM" (swipe review).
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-470
+
+## 2026-10-31: Gift pack cards are clicked directly
+- Decision or change: The level-up screen's cards have no Take it button; clicking anywhere on a card takes it (GiftCardClick, reused by T-475), with hover and keyboard highlight. The board: "LGTM" (swipe review).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-474

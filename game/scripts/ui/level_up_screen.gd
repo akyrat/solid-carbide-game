@@ -8,12 +8,11 @@ extends CanvasLayer
 ## choice does is the weapon rack's.
 ##
 ## Input: A/D or Left/Right move the highlight, Enter or Space takes the
-## highlighted card, clicking a card's button takes that card. A key already down
+## highlighted card, clicking anywhere on a card takes it (GiftCardClick, T-474). A key already down
 ## when the screen opens (or a key-repeat echo) takes nothing: it counts again
 ## once it has been let go. While the screen builds up (see below) nothing counts.
 ## Look (T-141, with T-140's art): red and gold cards (9-slice), a bright gold
-## frame on the highlighted card, the red ribbon with the title, gold "Take it"
-## plates, a sunburst behind and the gift box emblem; black Bangers text with
+## frame on the highlighted card, the red ribbon with the title, a sunburst behind and the gift box emblem; black Bangers text with
 ## hard pixel edges on the cream cards.
 ## Animation (T-141): the screen builds up in under a second in stepped (pixel)
 ## frames, running while the tree is paused: the dim fades in, the sunburst
@@ -40,7 +39,6 @@ const INK := HudStyle.BLACK
 const TITLE_CREAM := HudStyle.LEVEL_UP_TITLE_CREAM
 const TITLE_OUTLINE := HudStyle.LEVEL_UP_TITLE_OUTLINE
 const TITLE_OUTLINE_SIZE := HudStyle.LEVEL_UP_TITLE_OUTLINE_SIZE
-const HOVER_TINT := HudStyle.LEVEL_UP_HOVER_TINT
 ## T-173: 74 px taller than T-141's 360 x 300 to make room for the weapon image
 ## (64 px and its 10 px gap), so the texts keep the room they had.
 const CARD_SIZE := Vector2(360, 374)
@@ -119,8 +117,6 @@ const CARD_GAP := 40
 const TITLE_SIZE := HudStyle.LEVEL_UP_TITLE_SIZE
 const CARD_TITLE_SIZE := HudStyle.LEVEL_UP_CARD_TITLE_SIZE
 const CARD_DESC_SIZE := HudStyle.LEVEL_UP_CARD_DESC_SIZE
-const BUTTON_SIZE := HudStyle.LEVEL_UP_BUTTON_SIZE
-const BUTTON_PLATE_SIZE := Vector2(144, 44)
 const KEYS_LEFT := [KEY_A, KEY_LEFT]
 const KEYS_RIGHT := [KEY_D, KEY_RIGHT]
 const KEYS_TAKE := [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]
@@ -157,7 +153,7 @@ const CARD_STAGGER := 0.1
 ## The weapon rack (run.weapons), whose `offers` this screen shows.
 var rack: Node
 var offers: Node
-## The cards on show, left to right: {id, panel, body, highlight_frame, image, title, desc, button}.
+## The cards on show, left to right: {id, panel, body, highlight_frame, image, title, desc, click}.
 var cards: Array = []
 ## Index of the highlighted card.
 var highlight := 0
@@ -427,7 +423,7 @@ func _start_animation() -> void:
 	_animating = true
 	_anim_length = animation_length(cards.size())
 	for c in cards:
-		c.button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		c.click.set_active(false)
 	_apply_frame(0.0)
 
 
@@ -435,7 +431,7 @@ func _finish_animation() -> void:
 	_animating = false
 	_t = _anim_length
 	for c in cards:
-		c.button.mouse_filter = Control.MOUSE_FILTER_STOP
+		c.click.set_active(true)
 	_apply_frame(_anim_length + 1.0)
 
 
@@ -542,22 +538,12 @@ func _add_card(id: String) -> void:
 	desc.custom_minimum_size.x = TEXT_WIDTH
 	desc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(desc)
-	var button := Button.new()
-	button.name = "TakeButton"
-	button.text = Texts.TEXTS["levelup.take"]
-	button.focus_mode = Control.FOCUS_NONE
-	button.custom_minimum_size = BUTTON_PLATE_SIZE
-	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	HudStyle.apply(button, "level_up_button")
-	button.add_theme_stylebox_override("normal", _plate("button_plate.png"))
-	button.add_theme_stylebox_override("hover", _plate("button_plate.png", HOVER_TINT))
-	button.add_theme_stylebox_override("pressed", _plate("button_plate_pressed.png"))
-	button.add_theme_stylebox_override("hover_pressed", _plate("button_plate_pressed.png"))
-	button.pressed.connect(take.bind(id))
-	v.add_child(button)
+	# T-474: no button: the whole card is the control.
+	var click := GiftCardClick.attach(panel, body, frame, take.bind(id))
+	click.set_active(not _animating)
 	_row.add_child(panel)
 	cards.append({"id": id, "panel": panel, "body": body, "highlight_frame": glow, "image": image,
-			"title": title, "desc": desc, "button": button})
+			"title": title, "desc": desc, "click": click})
 
 
 ## The highlighted card shows T-140's bright gold frame.
@@ -576,13 +562,6 @@ func _art_rect(file: String, node_name: String, size: Vector2) -> TextureRect:
 	r.size = size
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return r
-
-
-func _plate(file: String, tint := Color.WHITE) -> StyleBoxTexture:
-	var st := StyleBoxTexture.new()
-	st.texture = load(ART + file)
-	st.modulate_color = tint
-	return st
 
 
 ## A label in a HudStyle role's look (T-428).

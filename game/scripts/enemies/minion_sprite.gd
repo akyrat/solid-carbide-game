@@ -17,12 +17,23 @@ extends Node2D
 ## Until those sheets exist, the placeholder is made by script from the walk
 ## frames: the legs flail (the walk cycle at FLAIL_SPEED times its speed) and
 ## the body tips from side to side (FALL_TILT radians), stretched a little.
+##
+## Its shadow while it falls (T-454; Visual style, Decisions, "Shadows shrink
+## with height"): the car's air shadow colour, a ground circle of its body's
+## size (shadow_radius_units) on the ground under it (air_height units below
+## its feet), smaller the higher it is (shadow_size.gd). Only in the air: on
+## the ground it still has no shadow (board, 2026-10-15).
 
 const BODY_COLOR := Color(0.55, 0.80, 0.45)
 const BELLY_COLOR := Color(0.70, 0.90, 0.55)
 const LEG_COLOR := Color(0.30, 0.52, 0.28)
 const OUTLINE_COLOR := Color(0.05, 0.07, 0.12)
 const EYE_COLOR := Color(0.40, 0.95, 0.95)
+const ShadowSizeScript := preload("res://scripts/driving/shadow_size.gd")
+const CarShadowScript := preload("res://scripts/driving/car_shadow.gd")
+## T-454: the falling shadow's colour, the car's air shadow's.
+const SHADOW_COLOR := CarShadowScript.COLOR
+const PX := 16.0
 
 const FRAME_SIZE := 48
 const FRAME_COUNT := 8
@@ -66,6 +77,10 @@ var _walk := 0.0
 var falling := false
 var fall_seconds := 0.0
 var land_left := 0.0
+## T-454: how high its feet are above the ground under it, units (the spawner
+## sets it from the fall), and its body's radius, units (the shadow's full size).
+var air_height := 0.0
+var shadow_radius_units := 0.5
 
 
 func _ready() -> void:
@@ -153,7 +168,27 @@ static func _sheet_at(path: String) -> Texture2D:
 	return _textures[path]
 
 
+## T-454: true while it draws its falling shadow (only in the air).
+func shows_shadow() -> bool:
+	return falling and air_height > 0.0
+
+
+## T-454: the falling shadow's outline in the sprite's pixels: a ground circle
+## of shadow_radius_units through the isometric view (2:1), air_height units
+## down the screen, sized by the shared height curve.
+func shadow_outline() -> PackedVector2Array:
+	var rx := ShadowSizeScript.size_for_height(shadow_radius_units * PX * sqrt(2.0), air_height)
+	var c := Vector2(0.0, maxf(air_height, 0.0) * PX)
+	var pts := PackedVector2Array()
+	for i in 16:
+		var t := TAU * i / 16.0
+		pts.append(c + Vector2(cos(t) * rx, sin(t) * rx * 0.5))
+	return pts
+
+
 func _draw() -> void:
+	if shows_shadow():
+		draw_colored_polygon(shadow_outline(), SHADOW_COLOR)
 	var entry: Array = SHEETS[compass_index(facing)]
 	var pivot := Vector2(0.0, -LIFT * size_scale)
 	if falling:

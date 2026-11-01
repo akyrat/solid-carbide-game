@@ -8,7 +8,8 @@ from the main checkout on master:
 What it does, in order:
   1. Checks DIR (default: the repo this script is in) is on branch master, has a clean tree
      (line-ending-only noise in tracked files, like Godot's .import files, and Godot's untracked
-     .uid and .import files are ignored) and has
+     .uid and .import files, and untracked files under game/data/levels/, the board's own level
+     files, are ignored; the Web preset leaves that folder out of the build) and has
      no merge in progress.
   2. Without --dry-run, checks .env has BUTLER_API_KEY and ITCH_TARGET (`<user>/<game>:html5`, here `jerry-of-rivia/solid-carbide:html5`)
      and that butler exists; if not, it stops and names what is missing. Nothing is exported.
@@ -37,6 +38,7 @@ from pathlib import Path
 DEFAULT_REPO = Path(__file__).resolve().parent.parent
 PRESET = "Web"
 BUILD_DIR = "web-build"
+BOARD_LEVELS = "game/data/levels/"  # the board's level files (T-471); the game's map is game/data/level/
 
 
 class PublishError(Exception):
@@ -75,13 +77,15 @@ def check_repo(repo):
     if git(repo, "rev-parse", "-q", "--verify", "MERGE_HEAD").returncode == 0:
         raise PublishError("a merge is in progress: finish or abort it first")
     dirty = []
-    for line in git(repo, "status", "--porcelain").stdout.splitlines():
+    for line in git(repo, "status", "--porcelain", "-uall").stdout.splitlines():
         if not line.strip():
             continue
         name = line[3:].strip().strip('"')
         if line.startswith("??"):
             if name.endswith((".uid", ".import")):
                 continue  # Godot writes these on every import
+            if name.startswith(BOARD_LEVELS):
+                continue  # the board's own level files: never committed, never published, never read
             dirty.append(line)
         elif line[0] == " " and git(repo, "diff", "--ignore-cr-at-eol", "--quiet", "--", name).returncode == 0:
             continue  # line-ending-only noise in an unstaged file
@@ -154,6 +158,12 @@ def redact(text, key):
     return text.replace(key, "***") if key else text
 
 
+def run_butler(cmd, env, key):
+    """Run butler; its output is read as UTF-8 (bad bytes replaced), never None, key redacted."""
+    r = subprocess.run(cmd, env=env, capture_output=True, encoding="utf-8", errors="replace")
+    return r.returncode, redact(((r.stdout or "") + (r.stderr or "")), key).rstrip()
+
+
 def run(argv, out=print, exporter=export_web):
     ap = argparse.ArgumentParser(description="Publish a browser build of master to itch.io.")
     ap.add_argument("--dry-run", action="store_true", help="do everything except the push")
@@ -184,11 +194,19 @@ def run(argv, out=print, exporter=export_web):
             out("Dry run, would run: " + " ".join(cmd))
             return 0
         sub_env = dict(os.environ, BUTLER_API_KEY=env["BUTLER_API_KEY"])
-        r = subprocess.run(cmd, env=sub_env, capture_output=True, text=True)
-        out(redact(r.stdout + r.stderr, env["BUTLER_API_KEY"]).rstrip())
-        if r.returncode != 0:
-            raise PublishError(f"butler push failed (exit {r.returncode})")
+        key = env["BUTLER_API_KEY"]
+        code, text = run_butler(cmd, sub_env, key)
+        out(text)
+        if code != 0:
+            raise PublishError(f"butler push failed (exit {code})")
         out(f"Pushed version {version}. Page: {page_link(target)}")
+        code, text = run_butler([butler or "butler", "status", target], sub_env, key)
+        out(text)
+        if code != 0:
+            raise PublishError(f"butler status failed (exit {code})")
+        channel = target.partition(":")[2]
+        out(f"Channel {channel}: " + ("now shows version " + version if version in text
+                                      else "version " + version + " not seen in butler status"))
         return 0
     except PublishError as e:
         out(f"STOPPED: {e}")

@@ -57,6 +57,10 @@ The player's coins and the level of each upgrade are kept in one small file unde
 
 A plain list (task T-058, `game/scenes/menu/garage_screen.tscn`, script `game/scripts/menu/garage_screen.gd`, `GarageScreen`). From the top: the heading, the player's coins, one row per upgrade, and a back button. Each row shows the upgrade's name and description, its current level, the price of the next level and a buy button. All text is the approved text from task T-059. Buying calls the save-and-buy object (`PlayerProgress`), and the whole screen redraws from it: the coins, the level and the price. When the player cannot afford the next level, the buy button is disabled and the row says "Not enough coins". At the last level the price and buy button go and the row says "Fully Funded". The back button only sends a signal; connecting it to the main menu, and the main menu's Garage button to this screen, is the screen flow's job.
 
+### How the garage fits the window (T-470)
+
+The whole list (heading, coins, the five rows and Back) is one column, measured at its natural size (descriptions wrap in a 300 px width so a long one never widens a row) and scaled to the largest size that fits the window, then centred. Every Buy button and Back are therefore fully on screen at any window size: the base 1152 x 648, 1920 x 1080, ultrawide 2560 x 1080 and small windows (960 x 540). It refits whenever the window is resized. Like the HUD (T-431) the column uses nearest filtering and the scale follows the window, but it has no size slider.
+
 ## Open questions
 
 - (After MVP) More upgrades, for example top speed, cruise speed, steering, drift grip, or other upgrades not about driving (the pickup magnet is now decided: Decisions, 2026-10-21).

@@ -140,12 +140,14 @@ func test_a_zero_gap_does_not_make_the_clock_attack_every_step() -> void:
 
 
 func test_a_missing_spawn_interval_uses_the_default() -> void:
+	# T-443: the timer's two intervals; missing or not above 0 falls back to the default, reported.
 	var sp := SpawnerScript.new()
+	sp._spawning = {"spawn_interval_at_start_seconds": 1.25, "spawn_interval_at_boss_time_seconds": 1.25, "growth_until_seconds": 420.0}
+	assert_almost_eq(sp.spawn_interval(), 1.25, 0.0001)
 	sp._spawning = {}
 	assert_eq(sp.spawn_interval(), SpawnerScript.DEFAULT_SPAWN_INTERVAL)
-	sp._spawning = {"spawn_interval_seconds": 1.25}
-	assert_eq(sp.spawn_interval(), 1.25)
-	sp._spawning = {"spawn_interval_seconds": 0.0}
+	sp._spawning = {"spawn_interval_at_start_seconds": 0.0, "spawn_interval_at_boss_time_seconds": 0.3, "growth_until_seconds": 420.0}
 	assert_eq(sp.spawn_interval(), SpawnerScript.DEFAULT_SPAWN_INTERVAL)
-	assert_push_error("spawn_interval_seconds must be above 0")
+	assert_push_error("spawn_interval_at_start_seconds and spawn_interval_at_boss_time_seconds must be above 0")
+	assert_push_error("spawn_interval_at_start_seconds and spawn_interval_at_boss_time_seconds must be above 0")
 	sp.free()

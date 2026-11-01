@@ -29,8 +29,8 @@ func test_every_section_has_its_numbers() -> void:
 	var keys := ["health", "move_speed", "contact_damage", "knockback"]
 	assert_eq_deep(_sorted(e.minion().keys()), _sorted(keys + ["size_scale"]))  # T-379
 	assert_eq_deep(_sorted(e.kaiju().keys()), _sorted(keys))
-	assert_eq_deep(_sorted(e.spawning().keys()), _sorted(["minions_at_start", "minions_at_boss_time",
-		"growth_until_seconds", "spawn_interval_seconds", "spawn_margin_units"]))
+	assert_eq_deep(_sorted(e.spawning().keys()), _sorted(["spawn_interval_at_start_seconds",
+		"spawn_interval_at_boss_time_seconds", "growth_until_seconds", "max_minions_alive", "spawn_margin_units"]))  # T-443
 	assert_eq_deep(_sorted(e.coins().keys()), _sorted(["drop_chance", "coins_per_drop"]))
 	assert_eq_deep(_sorted(e.kaiju_coins().keys()), _sorted(["drop_chance", "coins_per_drop"]))
 	assert_eq_deep(_sorted(e.meteor_attack().keys()), _sorted(["first_attack_after_seconds",
@@ -43,29 +43,31 @@ func test_every_section_has_its_numbers() -> void:
 	assert_true(e.coins().drop_chance <= 1.0)
 
 
-func test_minion_count_grows_over_the_7_minutes() -> void:
+func test_spawning_speeds_up_over_the_7_minutes() -> void:
+	# T-443: the interval shortens from the start to the kaiju's arrival, then is held.
 	var e := EnemyData.new()
-	var start := e.minions_wanted(0.0)
-	var boss := e.minions_wanted(420.0)
-	assert_eq(start, 12)
-	assert_eq(boss, 20)
-	assert_gt(boss, start)
-	# Never goes down along the way, and is held during the kaiju's minute.
+	var start := e.spawn_interval(0.0)
+	var boss := e.spawn_interval(420.0)
+	assert_almost_eq(start, 1.2, 0.0001)
+	assert_almost_eq(boss, 0.3, 0.0001)
+	assert_almost_eq(e.spawn_interval(210.0), 0.48, 0.0001, "halfway: the average of the two rates")
 	var last := start
 	for s in range(0, 421, 10):
-		var n := e.minions_wanted(float(s))
-		assert_true(n >= last, "count at %d s is not below the one before" % s)
-		last = n
-	assert_eq(e.minions_wanted(480.0), boss)
-	# "Slightly": less than double.
-	assert_lt(boss, 2 * start)
+		var v := e.spawn_interval(float(s))
+		assert_true(v <= last, "interval at %d s is not longer than the one before" % s)
+		last = v
+	assert_almost_eq(e.spawn_interval(480.0), boss, 0.0001, "held in the kaiju's minute")
+	assert_eq(e.max_minions_alive(), 100)
+	# About how many come over the 7 minutes with no combo (the rate's average times 420 s).
+	var total := (1.0 / start + 1.0 / boss) / 2.0 * 420.0
+	assert_almost_eq(total, 875.0, 1.0)
 
 
 func test_minion_stats_do_not_change_over_time() -> void:
 	# The stats are plain numbers with no time input; the only growth key is in spawning.
 	var e := EnemyData.new()
 	var early := e.minion()
-	e.minions_wanted(420.0)
+	e.spawn_interval(420.0)
 	assert_eq_deep(e.minion(), early)
 	assert_eq(early.health, 4.0)
 	assert_eq(early.contact_damage, 1.0)
@@ -79,11 +81,13 @@ func test_minion_stats_do_not_change_over_time() -> void:
 		assert_false(String(k).contains("growth") or String(k).contains("scale"), "kaiju has no scaling key (%s)" % k)
 
 
-func test_combo_raises_the_count() -> void:
+func test_combo_shortens_the_interval() -> void:
 	var e := EnemyData.new()
 	var combo := ComboData.new()
-	assert_eq(e.minions_wanted(0.0, combo.spawn_multiplier(combo.start_multiplier())), 12)
-	assert_eq(e.minions_wanted(420.0, combo.spawn_multiplier(combo.max_multiplier())), 35)
+	assert_almost_eq(e.spawn_interval(0.0, combo.spawn_multiplier(combo.start_multiplier())), 1.2, 0.0001)
+	var top := combo.spawn_multiplier(combo.max_multiplier())
+	assert_almost_eq(top, 1.75, 0.0001)
+	assert_almost_eq(e.spawn_interval(420.0, top), 0.3 / 1.75, 0.0001)
 
 
 func test_expected_coins_per_kill() -> void:

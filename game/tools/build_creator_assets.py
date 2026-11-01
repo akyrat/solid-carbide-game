@@ -174,6 +174,39 @@ def crater_entries(craters):
             for c in craters["craters"]]
 
 
+# T-441 (Level design, Decisions, "Kaiju alert signs are level creator pieces"): the kaiju alert signs
+# with T-130's art (art/banners/, build_kaiju_banners.py), in both designs. The standing sign stands on a
+# 2 x 2 cell (its post on the middle), mirrored with M; the banner hangs on a skyscraper's south (+y) or
+# east (+x) wall (its views, turned with R), its bottom at one of BANNER_HEIGHTS (units above the ground,
+# stepped with H; T-130's banners hung at 3). Proposals for the board's playtest. Geometry and drawing:
+# scripts/level/kaiju_signs.gd.
+ALERT_DESIGNS = [("head", "triangle"), ("body", "circle")]
+ALERT_SIGN_CELL = 2.0
+BANNER_WALLS = ["south", "east"]
+BANNER_HEIGHTS = [3, 6, 9, 12, 15]
+BANNER_ART_DIR = "res://art/banners/"
+
+
+def alert_entries():
+    """T-441: one entry per kind and design, kind "alert" ("alert": sign or banner, "design")."""
+    out = []
+    for design, shape in ALERT_DESIGNS:
+        tex = "%skaiju_%s_%s_sign.png" % (BANNER_ART_DIR, design, shape)
+        out.append({"id": "alert-sign-" + design, "kind": "alert", "alert": "sign", "design": design,
+                    "label": "piece_alert_sign", "footprint_units": [ALERT_SIGN_CELL, ALERT_SIGN_CELL],
+                    "views": ["iso"], "mirrors": [False, True],
+                    "textures": [{"view": "iso", "mirror": m, "variant": "", "texture": tex} for m in (False, True)]})
+    for design, shape in ALERT_DESIGNS:
+        tex = "%skaiju_%s_%s_building_wall.png" % (BANNER_ART_DIR, design, shape)
+        out.append({"id": "alert-banner-" + design, "kind": "alert", "alert": "banner", "design": design,
+                    "label": "piece_alert_banner", "footprint_units": [3.0, 1.0],
+                    "heights_units": list(BANNER_HEIGHTS), "views": list(BANNER_WALLS), "mirrors": [False],
+                    # One pose per wall and height (the variant names the height), so each is one member.
+                    "textures": [{"view": w, "mirror": False, "variant": str(h), "texture": tex}
+                                 for w in BANNER_WALLS for h in BANNER_HEIGHTS]})
+    return out
+
+
 PIECE_DIR = "art/creator_pieces/"
 PIECE_STYLE = "res://" + PIECE_DIR + "piece_style.tres"
 # T-251 (proposals for the board's playtest): a rooftop is dragged to any even size from
@@ -298,6 +331,8 @@ SIMPLE_FAMILIES = [
     ("water-tank", "decoration", "piece_water_tank", ["prop-water-tank"]),
     ("roof-vent", "decoration", "piece_roof_vent", ["prop-roof-vent"]),
     ("roof-sign", "decoration", "piece_roof_sign", ["prop-roof-sign"]),
+    # T-441: the standing kaiju alert sign, its two designs the looks (V), its mirror M.
+    ("alert-sign", "decoration", "piece_alert_sign", ["alert-sign-head", "alert-sign-body"]),
 ]
 # T-398: the families whose looks strip counts models ("Model {n} of {count}", model_counter, T-396)
 # and whose turns the top bar names as facings (facing_*, T-396).
@@ -312,7 +347,12 @@ HEIGHT_FAMILIES = [
 # The panel's order: by group, buildings smallest to tallest.
 FAMILY_ORDER = ["road", "centre-line", "zebra-crossing", "cracked-road", "gravel", "sidewalk", "meteor-crater",
                 "platform", "ramp", "building-small", "building-long", "lowrise", "skyscraper", "boulder", "barrier",
-                "cones", "crates", "parked-car", "broken-car", "street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"]
+                "cones", "crates", "parked-car", "broken-car", "street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign",
+                "alert-sign", "alert-banner"]
+# T-441: the alert families' looks strip names each design (creator_texts.json, T-440); the banner's strip
+# also shows the hints for its wall (R) and height (H).
+ALERT_LOOK_LABELS = ["alert_design_head", "alert_design_body"]
+ALERT_BANNER_HINTS = ["banner_wall_hint", "banner_height_hint"]
 # Pavement (piece_pavement) is left out: the only pavement art is the 30-unit block pavements drawn
 # under buildings (cityB_pavement_*.png, 960 x 486 px), not a 2 x 2 unit ground tile.
 
@@ -399,7 +439,22 @@ def family_entries(entries):
         sw = summarise("sidewalk", "ground", "piece_sidewalk", [member("sidewalk", "iso", False, 0, 0)])
         sw["brush"] = "sidewalk"
         fams.append(sw)
+    # T-441: the alert banner: each design a look (V), each wall a turn (R), each height a height (H).
+    ms = []
+    for look, (design, _shape) in enumerate(ALERT_DESIGNS):
+        e = by_id.get("alert-banner-" + design)
+        if e is None:
+            continue
+        for turn, wall in enumerate(e["views"]):
+            for h in e["heights_units"]:
+                ms.append(member(e["id"], wall, False, look, turn, height=str(h), variant=str(h)))
+    if ms:
+        fams.append(summarise("alert-banner", "decoration", "piece_alert_banner", ms))
     for f in fams:
+        if f["id"] in ("alert-sign", "alert-banner"):
+            f["look_labels"] = list(ALERT_LOOK_LABELS)
+        if f["id"] == "alert-banner":
+            f["hints"] = list(ALERT_BANNER_HINTS)
         if f["id"] in MODEL_FAMILIES:
             f["counter"] = "model_counter"
         if f["id"] in FACING_FAMILIES:
@@ -421,6 +476,7 @@ def build():
     entries += prop_entries(load("data/level/props.json"))
     entries += sidewalk_entries(load("art/ground/sidewalk_tiles.json"))
     entries += crater_entries(load("data/level/craters.json"))
+    entries += alert_entries()
     return {
         "about": "T-232: every placeable asset already in the game, built by game/tools/build_creator_assets.py "
                  "from the art data. Do not edit by hand; rebuild with the script.",
