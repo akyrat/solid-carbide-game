@@ -1,7 +1,7 @@
 ---
 id: T-478
 title: Jump: the Space hop clears obstacles lower than the car
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd, game/scripts/driving/jump_power_up.gd, game/data/power_ups.json, tasks/T-461-jump-space-makes-a-small-hop.md]
 files_expected_to_change: [game/scripts/driving/, game/tests/unit/, docs/drifting.md]
 model: sonnet
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -50,7 +50,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] The result notes list each obstacle kind with its height and whether each Jump tier clears it. (QA: pass; round 2: table updated with collision heights per tier)
 - [ ] A GIF or screenshots of the car hopping over a boulder are saved and listed in the result notes. (QA: pass; round 2: real_run_hop_boulder_barrier_landing.gif is the real game, HUD and map boulders, car mid-hop)
 - [ ] docs/drifting.md (Content) describes how the hop clears obstacles. (QA: pass)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; round 2: GUT 2526/2526 in 213 scripts, game/tools 858 OK, tools 635 OK)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; round 2: GUT 2526/2526 in 213 scripts, game/tools 858 OK, tools 635 OK; round 3: GUT 2529/2529 in 214 scripts (first run hit the 1500 s limit on a loaded machine, rerun alone with 2400 s passed), Python sets green)
 - [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
@@ -152,3 +152,5 @@ Written by the agent when it finishes.
 **Test:** `game/tests/unit/test_jump_draw_order.gd` (3 tests, the real run, a real boulder and a real barrier): on the ground behind it the car is under it; above it, landed on top and past half of its rise it is over it; a sprite with no height changes nothing.
 **Tests run (only what changed, plus the depth tests):** test_jump_real_run 6, test_jump_draw_order 3, test_jump_clears_obstacles 8, test_short_platforms 16, test_boulder_art 10, test_see_through_map 15, test_kaiju_signs 7, test_creator_alert_signs 13, test_elevation_sample_depth 11, test_gift_drops_heights 9, test_gift_drops_shadow 4: all pass.
 **GIF (real run, a hop over a boulder, over a barrier, and a landing on a boulder, the car drawn over them):** `art-archive/T-478/screenshots/real_run_car_over_obstacles.gif`; zoom of three hop frames: `art-archive/T-478/screenshots/real_run_car_over_boulder_zoom.png`. These replace the round 2 GIF and montage.
+- 2026-11-01, in-progress → in-qa: Car now drawn over the obstacle it hops over or lands on; draw-order test and real-run GIF added.
+- 2026-11-01, in-qa → needs-playtest: QA round 3 pass: car drawn over hopped obstacles, depth tests green; GUT 2529/2529, Python sets green
