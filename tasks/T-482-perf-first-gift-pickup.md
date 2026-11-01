@@ -64,4 +64,15 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+**What took the 97 ms.** The recording's markers: `gift_pack_picked_up` at wall 15.3824 s, `level_up_screen_opened` at 15.4792 s, so the 97 ms (all counted as `gifts.drops` self time) lies between the pickup and the level-up screen opening: `GiftDrops.pick_up` -> `RunState.open_choice` -> pause -> `LevelUpOffers` draw -> `LevelUpScreen.show_offers` -> `_add_card`, which loaded on the spot `card_frame.png`, `highlight_frame.png` and each offered weapon's picture (`load()`), and shaped the cards' texts for the first time. The frame's monitors confirm first-time loads: `resources` 306 -> 312 and texture memory +0.43 MB in that one frame; `pipeline_*` unchanged (no shader compile). The later pickups cost 27 and 20 ms (new weapon pictures each time). The assets are tiny (64x64 to 192x162), so the 97 ms is cold-disk and first-use cost. I could not reproduce the cold-disk part here (warm OS cache).
+
+**Fix.** `LevelUpScreen.prewarm()` (new, called at the end of `setup()`, i.e. with the run in `_ready`): loads the card frame, the highlight frame and every weapon picture (kept in `_warm_art` so the engine cache keeps them), builds every possible card once (all `LevelUpOffers.ALL_IDS`), asks each for its minimum size (shapes the texts), then clears them. Screen stays hidden and empty; `prewarmed` is true. Nothing the player sees changes. Costs about 15 ms once at run set-up.
+
+**Before / after** (temporary probe scene, not committed: real `game.tscn`, GPU window 1670x907, car driving, 3 s in, `GiftDrops.pick_up` timed, 3 processes each, warm disk cache):
+- before: first pickup 4.3, 4.5, 2.2 ms; later pickups 2.8 to 4.4 ms.
+- after: first pickup 1.9, 2.2, 2.3 ms; later 2.0 to 2.4 ms (flat, no first-time cost).
+What remains is the tree pause (0.8 ms) plus building the two cards (about 1.2 ms): about 2.0 to 2.3 ms, so just over the "under 2 ms" line in this warm-cache measure. The cold-disk 97 ms case could not be measured here, but a pickup now loads nothing. QA/board: re-record with `play_with_perf.ps1` and read gifts.drops at the first pickup. If a hitch remains, the next step is a pool of kept-built cards (touches the card code and about 78 test references; left out).
+
+**Tests.** New `game/tests/unit/run/test_level_up_prewarm.gd` (3 tests: prewarmed and clean with the run; card art and weapon pictures cached before any pickup; the first pickup still opens the screen with 2 cards). Results: Python `game/tools` 858 tests OK (1 skipped); Python `tools` 633 tests OK; GUT 212 scripts, 2515 tests, all passing.
+
+**Documents.** `docs/game-loop-architecture.md`, "The gift pack drop": one bullet on what is loaded with the run. Nothing in game/data/levels/ touched.
