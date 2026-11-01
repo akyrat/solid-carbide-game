@@ -68,3 +68,15 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Cause (found in a real run).** Exported the Web preset to a folder outside game/ (`godot --headless --export-release Web`), served it with node over http and drove headless Chrome through the DevTools protocol (`game/tools/web_audio_check.mjs`, no autoplay override). Not the autoplay rule: the AudioContext is `suspended` before the first click and `running` after it (Godot resumes it itself). Files are in the .pck, mp3 decodes and starts (probe: one buffer source, 67.4 s, peak 0.22) and the console had no audio errors. The real cause is the buses: `GameSettings.ensure_music_bus()` / `ensure_sfx_bus()` call `AudioServer.add_bus()` while the game runs, and in Godot's web "sample" playback (the web default) a bus added at runtime is not routed through Master. Evidence: with the old build, a tap on the Web Audio destination read output peak 0 while Godot reported `[audio] music playing=true`; the signal reached the Music bus nodes but not the destination. With the buses defined up front, the same run reads output peak 0.03 (music), 0.02 to 0.06 later.
+
+**Fix.** New `game/default_bus_layout.tres` with the SFX and Music buses (both send to Master), so the web audio graph builds them at start; `ensure_*_bus()` find them and add nothing (desktop behaviour is unchanged: same names, same volumes, same code path). New `game/scripts/game/web_audio_log.gd` (`WebAudioLog.say`, prints `[audio] ...` on the web only), called from `music_player.gd` (`[audio] music playing=true`) and `run_sounds.gd` (`[audio] engine playing=true`).
+
+**Browser run after one click** (`node game/tools/web_audio_check.mjs <export> --start 632,315`): `before click, contexts: ["suspended"]`, `after click: ["running"]`, console `[audio] music playing=true`, then in a run `[audio] engine playing=true`, final output peak 0.056, RESULT: PASS. To see the engine I exported a temporary copy with `sfx_enabled` true and SFX volume 100 and reverted both (nothing of that is committed).
+
+**Board should know.** At HEAD the sound effects are off for the MVP by the board's own switch (`sfx_enabled: false` in `game/data/sfx.json`, T-388) and the SFX volume defaults to 0, so the desktop game also plays only music until that switch is turned on; I did not change it. Documented in docs/working-with-the-board.md ("Publishing to itch.io"): sound starts after the first click.
+
+**Tests.** `game/tests/unit/test_web_audio_buses.gd` (GUT) and `game/tools/test_web_audio_check.py`. Counts: see the last line below.
+
+**Test counts:** game/tools unittest 777 OK (1 skipped); tools unittest 633 OK; GUT 2396 of 2396 passing (199 scripts, includes the 4 new tests), TESTS PASSED. Nothing pushed; nothing under game/data/levels/ touched.
