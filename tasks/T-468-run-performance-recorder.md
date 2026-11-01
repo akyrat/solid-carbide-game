@@ -1,7 +1,7 @@
 ---
 id: T-468
 title: Record a run's performance so its frame drops can be traced to their cause
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -421,3 +421,4 @@ What the before-T-444 sample said: on the game's map, in the debug build, the dr
 
 **QA round 1 (QA agent, 2026-10-31).** All 9 criteria pass (marked above). `qa_check`: tests PASS (3 sets), documents PASS, screenshots FAIL (paperwork): no image in `art-archive/T-468/screenshots/`. The ticket says none (tooling), which `tasks/README.md` "Screenshots" allows, but the check requires one because the ticket has a `The board's review:` line. Status left at in-qa for the Project Lead to waive or to have an image (e.g. a spike plot) added. The analysis script ran on the newest sample recording without error; the recorder is off by default.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion; qa_check's screenshot check is red for tooling with nothing to show (tasks/README.md allows it). The Project Lead moves it to the board's run.
+- 2026-11-01, needs-playtest → done: The board played a recorded run (2026-11-01); the recording showed the causes, fixed in T-480 to T-482.
