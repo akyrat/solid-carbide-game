@@ -233,12 +233,5 @@ func test_the_games_own_map_keeps_its_banners() -> void:
 				if bytes == _bytes_of(_file_image(PLAIN_DIR + "skyscraper_%d_%d.png" % [n, k])):
 					plain = true
 		assert_false(plain, "a map skyscraper is the art with its sign")
-	var banners := 0
-	var pavement_signs := 0
-	for sp in map.alert_signs:
-		if sp.get_meta("alert_kind") == "banner":
-			banners += 1
-		else:
-			pavement_signs += 1
-	assert_eq(banners, 4, "the four kaiju banners hang on the map's skyscrapers")
-	assert_eq(pavement_signs, 2)
+	# T-441: the fixed kaiju alert sign list is retired; a map shows only the signs its level places.
+	assert_eq(map.alert_signs.size(), 0, "no kaiju alert signs on a map whose level places none")

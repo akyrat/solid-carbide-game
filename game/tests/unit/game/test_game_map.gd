@@ -103,8 +103,8 @@ func test_the_map_holds_the_levels_buildings_rooftops_ramps_props_and_boulders()
 		boulders += c.boulders.size()
 	assert_eq(run.map.all_boulders().size(), boulders, "the level's boulders")
 	assert_eq(run.car.ground, gh, "the car drives on the level's heights")
-	# A finding (T-372): the kaiju alert signs are placed for the elevation sample map's blocks.
-	gut.p("kaiju alert signs on the game map: %s" % [run.map.alert_signs.map(func(sp): return str(sp.name))])
+	# T-441: the fixed sign list is retired; Kaiju City has no alert signs until the board places them.
+	assert_eq(run.map.alert_signs.size(), 0, "no kaiju alert signs on the game map yet")
 
 
 func test_the_map_draws_the_levels_own_ground() -> void:

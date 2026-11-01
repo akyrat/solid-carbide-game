@@ -41,6 +41,11 @@ const CHECK_ICON_SIZE := 16
 ## The pause screen's slider labels written as data (T-426): the HUD size slider's label.
 const PAUSE_TEXT_FILE := "pause_text"
 const HUD_SIZE_LABEL_KEY := "hud_size_label"
+## The HUD layout editor's texts in that file (T-452), used by T-453's button and editor.
+const HUD_LAYOUT_BUTTON_KEY := "hud_layout_button"
+const HUD_LAYOUT_HINT_KEY := "hud_layout_hint"
+const HUD_LAYOUT_RESET_KEY := "hud_layout_reset"
+const HUD_LAYOUT_DONE_KEY := "hud_layout_done"
 ## The HUD size slider's step, in percent (T-431, a proposal for the playtest).
 const HUD_SIZE_STEP := 5.0
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
@@ -83,7 +88,12 @@ var trick_list_button: Button
 var trick_panel: PanelContainer
 var trick_back_button: Button
 var trick_list: TrickList
+## The "Edit HUD layout" button (T-453), in the run buttons row after Trick list, and the
+## editor it opens. Both exist only when the target has a HUD (a run; not the drift prototype).
+var hud_layout_button: Button
+var hud_layout_editor: HudLayoutEditor
 var _root: Control
+var _dim: ColorRect
 var strip: PanelContainer
 var _saved_cam: Array = []
 ## Sliders changed since their last save (T-427): "zoom", "sfx", "music".
@@ -102,6 +112,7 @@ func setup(t: Node) -> void:
 	dim.color = HudStyle.PAUSE_DIM  # light, so the zoom shows behind it
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(dim)
+	_dim = dim
 	# The panel sits at the top, over a dark strip, so the map behind stays clear.
 	strip = PanelContainer.new()
 	strip.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -159,6 +170,7 @@ func setup(t: Node) -> void:
 	_build_camera_controls(box)
 	_build_run_buttons(box)
 	_build_trick_panel()
+	_build_hud_layout_editor()
 	visible = false
 
 
@@ -185,7 +197,7 @@ func _build_trick_panel() -> void:
 	trick_list.name_font_size = HudStyle.PAUSE_TRICK_NAME_SIZE
 	trick_list.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(trick_list)
-	trick_back_button = _make_button("TrickBackButton", TrickList.text("button.back"))
+	trick_back_button = _make_game_button("TrickBackButton", TrickList.text("button.back"))
 	trick_back_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	trick_back_button.pressed.connect(close_trick_list)
 	col.add_child(trick_back_button)
@@ -217,15 +229,16 @@ func _build_run_buttons(box: VBoxContainer) -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 24)
 	box.add_child(row)
-	trick_list_button = _make_button("TrickListButton", TrickList.text("button.trick_list"))
+	trick_list_button = _make_game_button("TrickListButton", TrickList.text("button.trick_list"))
 	trick_list_button.pressed.connect(open_trick_list)
 	row.add_child(trick_list_button)
-	restart_button = _make_button("RestartButton", TEXT_RESTART)
+	_build_hud_layout_button(row)
+	restart_button = _make_game_button("RestartButton", TEXT_RESTART)
 	restart_button.pressed.connect(func():
 		save_pending()
 		restart_pressed.emit())
 	row.add_child(restart_button)
-	exit_button = _make_button("ExitButton", TEXT_EXIT)
+	exit_button = _make_game_button("ExitButton", TEXT_EXIT)
 	exit_button.pressed.connect(func():
 		save_pending()
 		exit_pressed.emit())
@@ -309,10 +322,62 @@ func _on_music_changed(v: float) -> void:
 
 ## The HUD size slider's label, read from data/pause_text.json (T-426's text); empty if missing.
 static func hud_size_text() -> String:
+	return pause_text(HUD_SIZE_LABEL_KEY)
+
+
+## A text from data/pause_text.json by its key; empty if missing.
+static func pause_text(key: String) -> String:
 	var data = GameData.unwrap(GameData.load_file(PAUSE_TEXT_FILE))
 	if data is Dictionary:
-		return str(data.get(HUD_SIZE_LABEL_KEY, ""))
+		return str(data.get(key, ""))
 	return ""
+
+
+## The "Edit HUD layout" button (T-453): in the run buttons row after Trick list (a row of its
+## own would make the strip taller than half the screen), the shared button in its small size.
+## Only with a HUD to edit.
+func _build_hud_layout_button(row: HBoxContainer) -> void:
+	if _hud() == null:
+		return
+	hud_layout_button = _make_game_button("HudLayoutButton", pause_text(HUD_LAYOUT_BUTTON_KEY))
+	hud_layout_button.pressed.connect(open_hud_layout)
+	row.add_child(hud_layout_button)
+
+
+func _build_hud_layout_editor() -> void:
+	var h = _hud()
+	if h == null:
+		return
+	hud_layout_editor = HudLayoutEditor.new()
+	hud_layout_editor.setup(h, pause_text(HUD_LAYOUT_HINT_KEY), pause_text(HUD_LAYOUT_RESET_KEY),
+		pause_text(HUD_LAYOUT_DONE_KEY))
+	hud_layout_editor.done.connect(_on_hud_layout_done)
+	_root.add_child(hud_layout_editor)
+
+
+func is_hud_layout_open() -> bool:
+	return hud_layout_editor != null and hud_layout_editor.is_open()
+
+
+## Opens the HUD layout editor in place of the strip, without the dim, so the HUD shows as it
+## is; the run stays paused.
+func open_hud_layout() -> void:
+	if hud_layout_editor == null:
+		return
+	strip.visible = false
+	_dim.visible = false
+	hud_layout_editor.open()
+
+
+## Done (or Escape): the layout is saved once, and the pause screen shows again.
+func _on_hud_layout_done() -> void:
+	var h = _hud()
+	if h != null:
+		GameSettingsScript.save_hud_layout(h.layout)
+	_dim.visible = true
+	strip.visible = true
+	if visible:
+		hud_layout_button.grab_focus()
 
 
 ## The HUD the HUD size slider scales: the target's `hud` (a run has one, the drift prototype not).
@@ -398,30 +463,16 @@ func _make_check(node_name: String, text: String) -> CheckBox:
 	var c := CheckBox.new()
 	c.name = node_name
 	c.text = text
-	HudStyle.apply(c, "pause_text")
-	c.add_theme_icon_override("unchecked", check_icon(false))
-	c.add_theme_icon_override("checked", check_icon(true))
-	c.add_theme_icon_override("unchecked_disabled", check_icon(false))
-	c.add_theme_icon_override("checked_disabled", check_icon(true))
+	HudStyle.style_checkbox(c, CHECK_ICON_SIZE, true)  # the shared checkbox (T-446)
 	return c
 
 
-## A placeholder checkbox icon: a light square frame on a dark fill, with a
-## light square inside when checked.
+## The checkbox square (T-446: the shared one, HudStyle.check_icon).
 static func check_icon(checked: bool) -> ImageTexture:
-	var n := CHECK_ICON_SIZE
-	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
-	img.fill(CONTROL_FILL)
-	for i in n:
-		for j in [0, 1, n - 2, n - 1]:
-			img.set_pixel(i, j, CONTROL_FRAME)
-			img.set_pixel(j, i, CONTROL_FRAME)
-	if checked:
-		img.fill_rect(Rect2i(4, 4, n - 8, n - 8), CONTROL_FRAME)
-	return ImageTexture.create_from_image(img)
+	return HudStyle.check_icon(checked, CHECK_ICON_SIZE)
 
 
-## A placeholder button frame: a light border round a dark fill.
+## The board's camera tuning buttons' frame (a tool, not the shared button): a light border round a dark fill.
 static func button_style(fill: Color, border: int = 2) -> StyleBoxFlat:
 	var st := StyleBoxFlat.new()
 	st.bg_color = fill
@@ -434,6 +485,8 @@ static func button_style(fill: Color, border: int = 2) -> StyleBoxFlat:
 	return st
 
 
+## The board's camera tuning buttons (Set min and max zoom): a tool, so they keep
+## their own placeholder look (T-446 leaves the board's tools out).
 func _make_button(node_name: String, text: String) -> Button:
 	var b := Button.new()
 	b.name = node_name
@@ -447,6 +500,15 @@ func _make_button(node_name: String, text: String) -> Button:
 	focus.draw_center = false
 	focus.border_color = HudStyle.PAUSE_FOCUS
 	b.add_theme_stylebox_override("focus", focus)
+	return b
+
+
+## A player's button on the strip: the shared button (T-446) in its small size.
+func _make_game_button(node_name: String, text: String) -> Button:
+	var b := Button.new()
+	b.name = node_name
+	b.text = text
+	HudStyle.style_button(b, true)
 	return b
 
 
@@ -495,6 +557,8 @@ func _input(event: InputEvent) -> void:
 		# While the trick list panel is open, Escape goes back to the pause screen (T-386).
 		if visible and is_trick_list_open():
 			close_trick_list()
+		elif visible and is_hud_layout_open():
+			hud_layout_editor.finish()  # Escape is Done (T-453)
 		else:
 			toggle()
 		get_viewport().set_input_as_handled()
@@ -508,7 +572,11 @@ func is_paused() -> bool:
 ## level-up pause, and Escape must not end it.
 func _choice_open() -> bool:
 	var st = target.get("state") if target != null else null
-	return st != null and st.has_method("is_waiting_for_choice") and st.is_waiting_for_choice()
+	if st != null and st.has_method("is_waiting_for_choice") and st.is_waiting_for_choice():
+		return true
+	# T-459: the driving power-up overlay's choice is the same kind of pause.
+	var gifts = target.get("power_up_offers") if target != null else null
+	return gifts != null and gifts.has_method("is_showing") and gifts.is_showing()
 
 
 ## True while the time's up screen plays (T-317): the run is frozen at 0:00 and
@@ -545,6 +613,8 @@ func resume() -> void:
 	save_pending()
 	if is_trick_list_open():
 		close_trick_list()
+	if is_hud_layout_open():
+		hud_layout_editor.finish()
 	_camera_follows_while_paused(false)
 	get_tree().paused = false
 	visible = false

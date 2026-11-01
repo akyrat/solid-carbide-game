@@ -54,8 +54,8 @@ func test_six_groups_one_button_per_kind_with_labels_from_the_texts() -> void:
 	assert_eq(shown[CreatorTexts.get_text("group_levels")], ["platform", "ramp"])
 	assert_eq(shown[CreatorTexts.get_text("group_buildings")], ["building-small", "building-long", "lowrise", "skyscraper"])
 	assert_eq(shown[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])  # T-398
-	assert_eq(shown[CreatorTexts.get_text("group_decoration")], ["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"])
-	assert_eq(e.panel.buttons.size(), 24, "one button per kind (T-398: sidewalk, meteor crater, parked car, broken car) (Pavement left out: no ground tile art)")
+	assert_eq(shown[CreatorTexts.get_text("group_decoration")], ["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign", "alert-sign", "alert-banner"])
+	assert_eq(e.panel.buttons.size(), 26, "one button per kind (T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign, alert banner) (Pavement left out: no ground tile art)")
 	for fid in e.panel.buttons:
 		var f := CreatorFamilies.family(fid)
 		var b: Button = e.panel.buttons[fid]
@@ -243,7 +243,7 @@ func test_a_new_level_with_every_kind_passes_check_level() -> void:
 	var x := -110.5
 	var y := -110.5
 	for fid in e.panel.buttons:
-		if fid in ["platform", "ramp"]:
+		if fid in ["platform", "ramp", "alert-banner"]:
 			continue
 		e.panel.pick(fid)
 		e.look_pick()
@@ -265,6 +265,13 @@ func test_a_new_level_with_every_kind_passes_check_level() -> void:
 	assert_eq(e.pick_view, "north")
 	assert_false(e.place_asset(e.panel.picked, Vector2(2.5, 56.5), Vector2(10, 0)).is_empty(), "ramp placed")
 	assert_eq(str(e.level_data.ramps[0].platform), str(e.level_data.platforms[0].id), "the ramp climbs the platform")
+	# T-441: the alert banner hangs on the skyscraper placed above (the mouse on its south wall, 5 units up).
+	var sky: Dictionary = e.level_data.buildings.filter(func(b): return str(b.asset).begins_with("skyscraper-"))[0]
+	var wall_point := Vector2(float(sky.x) + float(sky.w) / 2.0, float(sky.y) + float(sky.h))
+	var iso := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
+	e.panel.pick("alert-banner")
+	e.look_pick()
+	assert_false(e.place_asset(e.panel.picked, iso.affine_inverse() * (iso * (wall_point * 16.0) - Vector2(0, 80)) / 16.0).is_empty(), "alert-banner placed")
 	e.panel.pick("")
 	assert_eq(e.save(), OK)
 	var res := _check_level(e.level_path)

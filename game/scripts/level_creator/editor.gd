@@ -62,6 +62,8 @@ const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 const BuildingTowers := preload("res://scripts/level/building_towers.gd")
+## T-441: the kaiju alert signs and banners (their geometry and drawing, shared with the run).
+const KaijuSigns := preload("res://scripts/level/kaiju_signs.gd")
 
 const ISO_TRANSFORM := MvpMapScript.ISO_TRANSFORM
 const PX_PER_UNIT := MvpMapScript.PX_PER_UNIT
@@ -442,7 +444,7 @@ func _rebuild_map() -> void:
 	map.name = "Map"
 	map.layout = document.map_layout()
 	map.ground_layout = document.ground_layout()
-	map.alert_signs_enabled = false
+	# T-441: the level's own alert signs and banners are drawn as the run draws them (kaiju_signs.gd).
 	world.add_child(map)
 	map.set_view("iso")
 	elevation = ElevationLayerScript.new()
@@ -480,6 +482,8 @@ func _refresh_after(kind: String) -> void:
 ##
 ## `size`: a rooftop's or ramp's size (T-251, LevelDocument.piece_size; ZERO: its default).
 func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO) -> Dictionary:
+	if str(LevelDocument.entry(asset_id).get("kind", "")) == "alert":
+		return place_alert(asset_id, units)
 	var picked_now := panel != null and asset_id == panel.picked
 	var view := pick_view if picked_now else ""
 	var mirror := pick_mirror if picked_now else false
@@ -522,6 +526,68 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 	_show_message("")
 	_refresh_after(str(piece.kind))
 	return piece
+
+
+## Places a kaiju alert sign or banner (T-441) with the mouse at `units`, in the picked look, turn (a
+## banner's wall), mirror (a sign's) and height (a banner's; alert_height). A standing sign goes on the cell
+## under the mouse, on the ground or on what stands there (a rooftop, a short building), and is refused,
+## with the overlap message, where it would reach into a skyscraper or across a rooftop's or ramp's edge
+## (LevelSnapping.object_problem, as for the props). A banner goes on the skyscraper drawn under the mouse
+## and nowhere else (nothing happens over anything else). Returns the placed piece, or {}.
+func place_alert(asset_id: String, units: Vector2) -> Dictionary:
+	var picked_now := panel != null and asset_id == panel.picked
+	var view := pick_view if picked_now else ""
+	var mirror := pick_mirror if picked_now else false
+	var piece := document.place_alert(asset_id, units, view, mirror, alert_height() if picked_now else -1.0)
+	if piece.is_empty():
+		return {}
+	if KaijuSigns.kind_of(piece.item) == "sign":
+		var why := LevelSnapping.object_problem(document, document.piece_rect(piece))
+		if why != "":
+			last_problem = why
+			document.delete(piece)
+			_show_message(CreatorTexts.get_text("overlap_message"))
+			return {}
+	last_problem = ""
+	_show_message("")
+	_refresh_after("alert")
+	return piece
+
+
+## The picked banner's height (T-441): its bottom above the ground, in units (the family member's height,
+## stepped with H); -1 when no banner is picked.
+func alert_height() -> float:
+	if panel == null or KaijuSigns.kind_of_asset(_picked()) != "banner":
+		return -1.0
+	var h := str(panel.member.get("height", ""))
+	return float(h) if h.is_valid_float() else -1.0
+
+
+## What the picked alert sign or banner (T-441) would look like with the mouse where it is now: {texture,
+## rect, flip, quad} in map pixels (the picture exactly as kaiju_signs.gd draws it once placed); {} for
+## none (nothing picked, or a banner with no skyscraper under the mouse).
+func alert_preview() -> Dictionary:
+	var id := _picked()
+	var kind := KaijuSigns.kind_of_asset(id)
+	if kind == "" or document == null or hover_cell.x < 0:
+		return {}
+	var tex := KaijuSigns.texture_of({"asset": id})
+	if tex == null:
+		return {}
+	var size := Vector2(tex.get_width(), tex.get_height()) * KaijuSigns.SPRITE_SCALE
+	if kind == "banner":
+		var t := KaijuSigns.banner_target(document.data, id, KaijuSigns.iso(hover_units), pick_view, alert_height())
+		if t.is_empty():
+			return {}
+		var foot := KaijuSigns.building_rect(t.building)
+		var pos := KaijuSigns.banner_sprite_position(foot, t.wall, t.along, t.bottom_units, tex)
+		return {"texture": tex, "rect": Rect2(pos, size), "flip": t.wall == "east",
+			"quad": KaijuSigns.banner_quad(foot, t.wall, t.along, t.bottom_units, tex)}
+	var corner := document.cell_corner(hover_cell)
+	var g := corner + Vector2(KaijuSigns.SIGN_CELL, KaijuSigns.SIGN_CELL) / 2.0
+	var h := document.height_at(g)
+	return {"texture": tex, "rect": Rect2(KaijuSigns.sign_sprite_position(g, h, tex), size), "flip": pick_mirror,
+		"quad": KaijuSigns.sign_quad(g, h, tex), "cell": Rect2(corner, Vector2(KaijuSigns.SIGN_CELL, KaijuSigns.SIGN_CELL))}
 
 
 ## Where the picked asset would go with the cursor at `units` (LevelSnapping.placement), {} for none.
@@ -1495,6 +1561,12 @@ class _Overlay extends Node2D:
 			if r.size != Vector2.ZERO and ok:
 				var col := Color(1.0, 0.55, 0.45, 0.9) if editor.road_erasing else Color(0.55, 0.85, 1.0, 0.9)
 				_outline(r, col, w)
+		elif editor.panel != null and KaijuSigns.kind_of_asset(editor.panel.picked) != "":
+			# T-441: the alert sign or banner where it would go, as it will be drawn, and its outline.
+			var ap: Dictionary = editor.alert_preview()
+			if not ap.is_empty():
+				_texture(ap.texture, ap.rect, bool(ap.flip), Color(1, 1, 1, editor.PREVIEW_ALPHA))
+				_quad(ap.quad, Color(0.55, 0.85, 1.0, 0.9), w)
 		elif editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
 			# Where the piece would go, snapped (LevelSnapping): its art and footprint there (a
 			# piece of any size: the engine-drawn preview, editor.preview_drawing, and footprint).
@@ -1506,7 +1578,12 @@ class _Overlay extends Node2D:
 				if not pv.is_empty():
 					draw_texture_rect(pv.texture, pv.rect, false, Color(1, 1, 1, editor.PREVIEW_ALPHA))
 				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
-		if not editor.selected.is_empty() and str(editor.selected.get("kind", "")) != "spawn":
+		if not editor.selected.is_empty() and str(editor.selected.get("kind", "")) == "alert":
+			# T-441: a selected sign or banner: the outline of its picture.
+			var g := GroundHeight.new()
+			g.load_data(doc.data)
+			_quad(KaijuSigns.screen_quad(doc.data, editor.selected.item, g), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
+		elif not editor.selected.is_empty() and str(editor.selected.get("kind", "")) != "spawn":
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
 		_draw_pairs(doc, w)
 		_draw_spawn(doc, w)
@@ -1585,6 +1662,23 @@ class _Overlay extends Node2D:
 			var at := _at(c, h) + Vector2(-size.x / 2.0, -2.2 * editor.PX_PER_UNIT)  # above the obstacle
 			draw_string_outline(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, maxi(fs / 5, 2), editor.SPAWN_OUTLINE)
 			draw_string(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
+
+	## T-441: a closed outline through screen points (map pixels).
+	func _quad(q: PackedVector2Array, color: Color, width: float) -> void:
+		if q.is_empty():
+			return
+		var pts := q.duplicate()
+		pts.append(q[0])
+		draw_polyline(pts, color, width)
+
+	## T-441: a texture in `rect` (map pixels), flipped left to right with `flip` as a Sprite2D's flip_h.
+	func _texture(tex: Texture2D, rect: Rect2, flip: bool, modulate: Color) -> void:
+		if not flip:
+			draw_texture_rect(tex, rect, false, modulate)
+			return
+		draw_set_transform(Vector2(rect.end.x, rect.position.y), 0.0, Vector2(-1.0, 1.0))
+		draw_texture_rect(tex, Rect2(Vector2.ZERO, rect.size), false, modulate)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 	func _at(units: Vector2, h: float) -> Vector2:
 		return editor.ISO_TRANSFORM * (units * editor.PX_PER_UNIT) - Vector2(0.0, h * editor.PX_PER_UNIT)
