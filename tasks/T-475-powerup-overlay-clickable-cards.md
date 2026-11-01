@@ -1,7 +1,7 @@
 ---
 id: T-475
 title: The driving power-up overlay's cards are clicked directly, like the gift pack's
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: power-up cards become clickable, like the gift pack's.
 
+### 2026-11-01, Needs playtest
+
+Passed QA: power-up cards are clicked directly, like the gift pack's. Ready for the board to play.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -76,3 +80,4 @@ Done by the UI agent.
 - Test counts: game/tools unittest 849 OK (1 skipped); tools unittest 633 OK; GUT 2505 of 2505 passing (the first full run had 1 failing test, my own real-click test, fixed; a later run hit the 1500 s limit only because it shared the machine with the Python sets; the last run alone passed).
 - 2026-11-01, in-progress → in-qa: Power-up cards clicked directly via shared GiftCardClick; tests and screenshots done
 - 2026-11-01, in-qa → needs-playtest: QA pass: no take button, shared GiftCardClick, 3 test sets green (849/633/2505)
+- 2026-11-01, needs-playtest → done: The board played it: LGTM (2026-11-01).
