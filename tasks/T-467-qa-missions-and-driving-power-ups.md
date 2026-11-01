@@ -37,10 +37,10 @@ An integration test of goal G-009 in the real game scene, to catch the pieces no
 
 ## Acceptance criteria
 
-- [ ] A headless GUT test from the main game scene completes mission 1, sees the run paused with the power-up overlay open, takes a card, sees the run resume and mission 2 shown on the notebook page, and then sees a weapon level-up open the weapons gift screen; it passes. (QA: pass / fail)
-- [ ] The test shows the power-up overlay and the weapons gift screen are never open at the same time (or queue as documented in HUD and menus). (QA: pass / fail)
-- [ ] The test shows Restart resets the missions to mission 1 and clears the owned power-ups. (QA: pass / fail)
-- [ ] All three test sets pass in the ticket's folder, with the counts in the result notes; the result notes say there is nothing new to picture. (QA: pass / fail)
+- [ ] A headless GUT test from the main game scene completes mission 1, sees the run paused with the power-up overlay open, takes a card, sees the run resume and mission 2 shown on the notebook page, and then sees a weapon level-up open the weapons gift screen; it passes. (QA: pass)
+- [ ] The test shows the power-up overlay and the weapons gift screen are never open at the same time (or queue as documented in HUD and menus). (QA: pass)
+- [ ] The test shows Restart resets the missions to mission 1 and clears the owned power-ups. (QA: pass)
+- [ ] All three test sets pass in the ticket's folder, with the counts in the result notes; the result notes say there is nothing new to picture. (QA: pass)
 
 ## Updates
 
@@ -67,3 +67,5 @@ Added `game/tests/unit/game/test_missions_power_ups_run.gd` (4 tests, 47 asserts
 4. `test_restart_resets_missions_and_clears_power_ups`: Restart from the pause screen gives a new run on mission 1 with no owned power-ups, overlay closed, run unpaused.
 
 Tests: the new file alone passes 4/4. Python unit tests: 842 run, OK (1 skipped). Full GUT suite: 201 scripts, 2423 tests, all passing, 1275125 asserts, TESTS PASSED. Third set (tool checks) ran inside the Python run above. Nothing new to picture: this is a test only, so there are no screenshots. No failure found for the owning agents.
+
+QA round 1: all four criteria pass. GUT suite re-run in the folder: 201 scripts, 2423 tests, all passing, TESTS PASSED (new file included). Python unittest discover on tools: 614 tests OK. `python tools/qa_check.py` was refused by the permission system (not on the pre-approved list), so I ran the test sets directly; I did not run its document/screenshot lines. Test-only ticket, so no screenshots are needed.
