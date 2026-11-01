@@ -1,7 +1,7 @@
 ---
 id: T-479
 title: The board's MVP pass: a gallery of every screen and a list of every player-facing text
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -81,3 +81,4 @@ Built by the QA/Integration agent (sonnet).
 **Tests:** python game/tools: 861 OK (1 skipped); python tools: 633 OK; GUT: 2502 of 2502 passing (209 scripts), TESTS PASSED. New Python tests: 12 (the inventory on a small fixture folder, its JSON and CSV format, that every real string has a screen; the manifest check).
 
 Nothing under game/data/levels/ touched. Untracked .uid and .import files Godot made are not committed.
+- 2026-11-01, in-progress → in-qa: Gallery of 19 screens and a 232-string text list built; all three test sets pass
