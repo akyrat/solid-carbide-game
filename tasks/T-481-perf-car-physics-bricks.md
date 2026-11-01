@@ -102,3 +102,5 @@ T-480 had made the same kind of popup fix (plain_size, threaded baking, prewarm,
 - 2026-11-01, in-progress → in-qa: Fixed: popup bake out of the landing's physics step, bricks sheet cached; all 3 test sets pass
 
 - 2026-11-01, Project Lead: QA waits. T-480 (popups, in QA) also rewrote trick_popups.gd and trick_popup_art.gd and added plain_size(); T-480 merges first, then this branch merges master, keeps its bricks fix and reconciles the popup files onto T-480's version, then QA.
+
+docs/weapons.md (Bricks, Bodies and cost) corrected to match the merged code: T-480's ahead-of-time baking plus T-481's deferred first picture; no lettering cache or run-start warm-up.
