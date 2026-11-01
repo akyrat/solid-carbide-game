@@ -67,4 +67,17 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built by the QA/Integration agent (sonnet).
+
+**Files:** `game/tools/screen_gallery.gd` (the in-game walk-through, run in a real window), `game/tools/screen_gallery.py` (runs it, checks the manifest against the PNGs, writes the text list too), `game/tools/text_inventory.py`, their tests `game/tools/test_text_inventory.py` and `game/tools/test_screen_gallery.py`, and docs/hud-and-menus.md (Content, "The MVP pass: the screen gallery and the text list (T-479)"). No game script or scene changed.
+
+**Rebuild:** `python game/tools/screen_gallery.py` (about 30 s) and `python game/tools/text_inventory.py`. Output: `screenshots/mvp-gallery/` at the repo root (git-ignored): 19 PNGs at 1280 x 720, `manifest.json`, `text_inventory.json`, `text_inventory.csv`. The game's saves are pointed at throwaway `user://gallery_*` files.
+
+**Screens captured (19):** main_menu, tutorial_slide_1, tutorial_slide_2, tutorial_slide_3, garage, hud_run_start, hud_mission_page, hud_trick_popup, hud_combo_broken, level_up_gift_pack, power_up_overlay, pause_screen, pause_trick_list, pause_hud_layout_editor, time_up_screen, wreck, recap_win, recap_time_up, recap_wreck.
+**Not reached (1):** the runs list (Past streams): its texts exist in runs_list_text.json but no screen in the game reads them yet. It is in the manifest's `not_reached`.
+
+**Text counts:** 232 in all: 182 from text files (data/*_text.json, screen_texts.json, and the level-up cards' table level_up_texts.gd, a text table kept in code: 100 keys) and 50 found in code (listed separately, with file:line). 17 developer-tool scripts are skipped and named under `not_scanned`. The code scan goes by pattern; the board's pass is the check for anything built another way. 13 of the text-file strings are the runs list's, for a screen not in the game yet.
+
+**Tests:** python game/tools: 861 OK (1 skipped); python tools: 633 OK; GUT: 2502 of 2502 passing (209 scripts), TESTS PASSED. New Python tests: 12 (the inventory on a small fixture folder, its JSON and CSV format, that every real string has a screen; the manifest check).
+
+Nothing under game/data/levels/ touched. Untracked .uid and .import files Godot made are not committed.
