@@ -1,7 +1,7 @@
 ---
 id: T-477
 title: Rusty Overcoat: a minion the overcoat kills still hits the car
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: a minion the overcoat kills still hits the car.
 
+### 2026-11-01, Needs playtest
+
+Passed QA: a minion the overcoat kills still hits the car. Ready for the board to play.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -74,3 +78,4 @@ Tests (`game/tests/unit/enemies/test_rusty_overcoat.gd`, 12 tests, all pass): ev
 Test sets: GUT full run 2506 tests, 2505 passed, 1 failed (my own first kaiju test, which I then fixed; that file re-run alone: 12/12 pass; the full run was not repeated after the fix, it takes about 17 minutes); `game/tools` unittest OK; `tools` unittest 633 tests OK. Nothing under game/data/levels/ touched.
 - 2026-11-01, in-progress → in-qa: Overcoat-killed enemies now still hit the car; tests added, all pass
 - 2026-11-01, in-qa → needs-playtest: QA pass: all 7 criteria; GUT 2506/2506, game/tools 849 OK, tools 633 OK
+- 2026-11-01, needs-playtest → done: The board played it: LGTM (2026-11-01).
