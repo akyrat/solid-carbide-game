@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, tasks/T-468-run-performance-recorder.md, game/docs/game-loop/perf-recorder.md, game/scripts/run/gift_drops.gd]
 files_expected_to_change: [game/scripts/run/gift_drops.gd, game/tests/unit/, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ The board's review: pick up the first gift pack in a run and feel no hitch.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The result notes say what took the 97 ms, with the evidence. (QA: pass / fail)
-- [ ] A measured before/after shows the first gift pack pickup's gifts.drops under 2 ms; numbers in the result notes. (QA: pass / fail)
-- [ ] A test shows the moved load is ready before the first pickup, and the existing gift pack tests still pass. (QA: pass / fail)
-- [ ] docs/game-loop-architecture.md notes what is loaded with the run, if that changed. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] The result notes say what took the 97 ms, with the evidence. (QA: pass; evidence is the recording's markers and monitors: first-time loads of card frames and weapon pictures, resources 306 to 312)
+- [ ] A measured before/after shows the first gift pack pickup's gifts.drops under 2 ms; numbers in the result notes. (QA: fail: code - first pickup measured 1.9, 2.2, 2.3 ms after (mean about 2.1), later pickups 2.0 to 2.4 ms; two of three runs are over the 2 ms written; the first pickup is no slower than later ones, so no first-time hitch remains)
+- [x] A test shows the moved load is ready before the first pickup, and the existing gift pack tests still pass. (QA: pass; test_level_up_prewarm.gd 3 tests, GUT 2515/2515)
+- [x] docs/game-loop-architecture.md notes what is loaded with the run, if that changed. (QA: pass; bullet added in The gift pack drop)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; game/tools 858 OK 1 skipped, tools 633 OK, GUT 212 scripts 2515/2515)
+- [x] Nothing under game/data/levels/ is changed or committed. (QA: pass; no change on the branch)
 
 ## Updates
 
@@ -76,3 +76,7 @@ What remains is the tree pause (0.8 ms) plus building the two cards (about 1.2 m
 **Tests.** New `game/tests/unit/run/test_level_up_prewarm.gd` (3 tests: prewarmed and clean with the run; card art and weapon pictures cached before any pickup; the first pickup still opens the screen with 2 cards). Results: Python `game/tools` 858 tests OK (1 skipped); Python `tools` 633 tests OK; GUT 212 scripts, 2515 tests, all passing.
 
 **Documents.** `docs/game-loop-architecture.md`, "The gift pack drop": one bullet on what is loaded with the run. Nothing in game/data/levels/ touched.
+- 2026-11-01, in-progress → in-qa: Level-up screen prewarmed with the run; first pickup ~2.1 ms warm (was 4.4); tests green
+
+QA round 1: 5 of 6 criteria pass; the 2 ms criterion is marginal. First pickup after the fix 1.9, 2.2, 2.3 ms (builder's probe, warm cache), later pickups 2.0 to 2.4 ms, so the first pickup is no slower than later ones and the first-time hitch is gone; QA did not re-measure. Tests: game/tools 858 OK (1 skipped), tools 633 OK, GUT 212 scripts 2515/2515. Prewarm leaves its 110 card nodes queue_freed (show as orphans in GUT until a frame passes; harmless). Prewarm costs about 15 ms once at run set-up (builder's number). Project Lead decides whether 2.2 to 2.3 ms is acceptable.
+- 2026-11-01, in-qa → in-progress: QA: 2 ms criterion marginally missed (1.9/2.2/2.3 ms), all else passes
