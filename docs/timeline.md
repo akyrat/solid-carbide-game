@@ -3130,3 +3130,8 @@ Entry format:
 - Decision or change: The trick popups' text is baked ahead of time, so a popup no longer hitches the frame it appears in (T-468's recording); the board played it.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-480
+
+## 2026-11-01: Sound plays in the browser build
+- Decision or change: The Music and SFX buses are defined up front in default_bus_layout.tres, so the web build routes them to the speakers; music starts after the first click; a headless Chrome check proves it. SFX stay off (the board).
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-476

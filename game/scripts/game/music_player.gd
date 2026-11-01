@@ -33,6 +33,7 @@ func _ready() -> void:
 	player.finished.connect(play_next)
 	add_child(player)
 	play_next()
+	WebAudioLog.say("music playing=%s" % player.playing)
 
 
 ## Starts the next track (the first one on the first call); after the last it is the first again.
