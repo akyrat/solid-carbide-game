@@ -1,7 +1,7 @@
 ---
 id: T-475
 title: The driving power-up overlay's cards are clicked directly, like the gift pack's
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, tasks/T-459-the-driving-power-up-overlay-a.md, tasks/T-474-level-up-clickable-cards.md]
 files_expected_to_change: [game/scripts/ui/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -75,3 +75,4 @@ Done by the UI agent.
 - Test counts: see below.
 - Test counts: game/tools unittest 849 OK (1 skipped); tools unittest 633 OK; GUT 2505 of 2505 passing (the first full run had 1 failing test, my own real-click test, fixed; a later run hit the 1500 s limit only because it shared the machine with the Python sets; the last run alone passed).
 - 2026-11-01, in-progress → in-qa: Power-up cards clicked directly via shared GiftCardClick; tests and screenshots done
+- 2026-11-01, in-qa → needs-playtest: QA pass: no take button, shared GiftCardClick, 3 test sets green (849/633/2505)
