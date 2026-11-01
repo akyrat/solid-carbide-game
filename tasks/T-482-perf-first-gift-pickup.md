@@ -1,7 +1,7 @@
 ---
 id: T-482
 title: Frame drops: a 97 ms hitch at the first gift pack pickup
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, tasks/T-468-run-performance-recorder.md, game/docs/game-loop/perf-recorder.md, game/scripts/run/gift_drops.gd]
 files_expected_to_change: [game/scripts/run/gift_drops.gd, game/tests/unit/, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the hitch at the first gift pack.
 
+### 2026-11-01, In QA → Needs playtest
+
+The first gift pack hitch is fixed (97 ms down to about 2 ms, the same as every pickup). Ready for the board to feel in a playtest.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -81,3 +85,4 @@ What remains is the tree pause (0.8 ms) plus building the two cards (about 1.2 m
 QA round 1: 5 of 6 criteria pass; the 2 ms criterion is marginal. First pickup after the fix 1.9, 2.2, 2.3 ms (builder's probe, warm cache), later pickups 2.0 to 2.4 ms, so the first pickup is no slower than later ones and the first-time hitch is gone; QA did not re-measure. Tests: game/tools 858 OK (1 skipped), tools 633 OK, GUT 212 scripts 2515/2515. Prewarm leaves its 110 card nodes queue_freed (show as orphans in GUT until a frame passes; harmless). Prewarm costs about 15 ms once at run set-up (builder's number). Project Lead decides whether 2.2 to 2.3 ms is acceptable.
 - 2026-11-01, in-qa → in-progress: QA: 2 ms criterion marginally missed (1.9/2.2/2.3 ms), all else passes
 - 2026-11-01, in-progress → in-qa: Project Lead: criterion 2 revised to its intent (no first-time hitch); QA's round-1 measurements meet it.
+- 2026-11-01, in-qa → needs-playtest: All criteria pass after the Project Lead's revision of criterion 2.
