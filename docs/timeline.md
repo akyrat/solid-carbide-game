@@ -3060,3 +3060,8 @@ Entry format:
 - Decision or change: The game can record a run's frame times and a Chrome trace (--record-perf, off by default) and a script names what causes its frame drops. The board's first recorded run found three causes: trick popups building textures while drawing, car physics spiking with the bricks weapon, and a hitch at the first gift pack (T-480, T-481, T-482).
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-468
+
+## 2026-11-01: The tutorial slides are redrawn
+- Decision or change: The board approved the redrawn tutorial direction (four slides: Drive, Tricks bring gifts, Missions, Survive the stream) with its notes; first, four clips of the real car on a simple background.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-483
