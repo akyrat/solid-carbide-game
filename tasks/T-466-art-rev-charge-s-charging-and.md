@@ -1,7 +1,7 @@
 ---
 id: T-466
 title: Art: Rev Charge's charging and boost effect
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -48,6 +48,10 @@ The board's review: play a run with Rev Charge and watch the charge and the boos
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-466.
 
 ## Style review
 
