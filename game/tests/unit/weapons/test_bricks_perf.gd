@@ -48,6 +48,16 @@ func _drop(lift: float) -> Dictionary:
 	return {"car": worst_car, "bricks": worst_bricks, "steps": steps}
 
 
+## The car's step with no landing and no trick, for the same run (the headless floor).
+func _flat_step_ms() -> float:
+	var total := 0.0
+	for i in 20:
+		var t0 := Time.get_ticks_usec()
+		run.car.physics_step()
+		total += (Time.get_ticks_usec() - t0) / 1000.0
+	return total / 20.0
+
+
 func test_bench_landings_with_a_crowd() -> void:
 	var worst_car := 0.0
 	var worst_bricks := 0.0
@@ -57,7 +67,9 @@ func test_bench_landings_with_a_crowd() -> void:
 		for i in 100:
 			run.minions.step(DT) if run.minions.has_method("step") else null
 			await wait_physics_frames(1)
+		var flat := _flat_step_ms()
 		var r := _drop(3.0 + round)
+		print("BENCH flat step %.2f ms (no landing, no trick)" % flat)
 		worst_car = maxf(worst_car, r.car)
 		worst_bricks = maxf(worst_bricks, r.bricks)
 		print("BENCH round %d: car.physics_step %.2f ms, bricks.step %.2f ms (waves %d, minions %d)" % [

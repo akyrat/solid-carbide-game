@@ -105,9 +105,13 @@ func test_a_shown_popup_has_every_picture_before_it_draws() -> void:
 	var popups: Node2D = autofree(Popups.new())
 	add_child(popups)
 	var p: Node2D = popups.show_popup("FULL 360! +12.0K", Vector2.ZERO, Popups.SIZE_NORMAL, Callable(), 3, false, true)
+	# T-481: the born picture is made by a deferred call at the end of the frame the popup
+	# is shown in (not inside the physics step that shows it), which runs before the frame
+	# draws. One frame later is the first moment the popup can be drawn.
+	await wait_process_frames(1)
 	Art.finish_requests()
 	var style := Art.style_for(Popups.SIZE_NORMAL)
-	assert_true(Art.is_cached(Art.texture_key(p.text, style, 3, 0, true, false)), "the born picture is made when the popup is shown")
+	assert_true(Art.is_cached(Art.texture_key(p.text, style, 3, 0, true, false)), "the born picture is made before the popup's first draw")
 	for f in Art.FLAME_FRAMES:
 		for hide in [false, true]:
 			assert_true(Art.is_cached(Art.texture_key(p.text, style, 3, f, true, hide)), "frame %d hide %s" % [f, hide])

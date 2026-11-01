@@ -429,49 +429,81 @@ static func _letter(text: String, style: String, amount_at := -1) -> Dictionary:
 			pen += ts.font_get_kerning(rid, px, Vector2i(glyphs[i - 1], g)).x
 		var gs := ts.font_get_glyph_size(rid, size, g)
 		if gs.x > 0 and gs.y > 0:
-			var tex_idx := ts.font_get_glyph_texture_idx(rid, size, g)
-			if not images.has(tex_idx):
-				images[tex_idx] = ts.font_get_texture_image(rid, size, tex_idx)
-			var timg: Image = images[tex_idx]
-			var tdata := timg.get_data()
-			var tw := timg.get_width()
-			# The glyph atlas is L8 (1 byte per pixel) or LA8 (2); the last byte of a pixel is the coverage.
-			var bpp := 2 if timg.get_format() == Image.FORMAT_LA8 else 1
-			var uv := ts.font_get_glyph_uv_rect(rid, size, g)
+			# The glyph's coverage rows are read from the atlas once and kept (T-481): a new
+			# amount text then costs a copy of rows, not a copy of the whole atlas per glyph.
+			var bits: PackedByteArray = _glyph_bits(ts, rid, size, g, px, gs)
 			var off := ts.font_get_glyph_offset(rid, size, g)
 			var gx := int(round(pen)) + int(off.x) + pad
 			var gy := pad + ascent + int(off.y)
 			var mark := AMOUNT if amount_at >= 0 and i >= amount_at else TEXT
+			var gw := int(gs.x)
 			for j in int(gs.y):
-				for k in int(gs.x):
-					if tdata[((int(uv.position.y) + j) * tw + int(uv.position.x) + k) * bpp + bpp - 1] > 127:
-						var o := (gy + j) * w + gx + k
-						full[o] = mark
+				for k in gw:
+					if bits[j * gw + k] != 0:
+						full[(gy + j) * w + gx + k] = mark
 		pen += ts.font_get_glyph_advance(rid, px, g).x
 	return _crop(full, w, h)
 
 
+static var _glyph_cache := {}
+
+
+## 1 where the glyph `g` at pixel size `px` is more than half covered, row by row (gs.x wide).
+static func _glyph_bits(ts: TextServer, rid: RID, size: Vector2i, g: int, px: int, gs: Vector2) -> PackedByteArray:
+	var key := "%d|%d" % [px, g]
+	# Worker threads bake too (T-480): the cache is only touched under the mutex.
+	_mutex.lock()
+	var cached = _glyph_cache.get(key)
+	_mutex.unlock()
+	if cached != null:
+		return cached
+	var tex_idx := ts.font_get_glyph_texture_idx(rid, size, g)
+	var timg: Image = ts.font_get_texture_image(rid, size, tex_idx)
+	var tdata := timg.get_data()
+	var tw := timg.get_width()
+	# The glyph atlas is L8 (1 byte per pixel) or LA8 (2); the last byte of a pixel is the coverage.
+	var bpp := 2 if timg.get_format() == Image.FORMAT_LA8 else 1
+	var uv := ts.font_get_glyph_uv_rect(rid, size, g)
+	var bits := PackedByteArray()
+	bits.resize(int(gs.x) * int(gs.y))
+	for j in int(gs.y):
+		for k in int(gs.x):
+			if tdata[((int(uv.position.y) + j) * tw + int(uv.position.x) + k) * bpp + bpp - 1] > 127:
+				bits[j * int(gs.x) + k] = 1
+	_mutex.lock()
+	_glyph_cache[key] = bits
+	_mutex.unlock()
+	return bits
+
+
 static func _crop(idx: PackedByteArray, w: int, h: int) -> Dictionary:
+	# Rows are scanned with native searches and copied as slices (T-481).
 	var x0 := w
 	var x1 := -1
 	var y0 := h
 	var y1 := -1
 	for y in h:
-		for x in w:
-			if idx[y * w + x] != 0:
-				x0 = mini(x0, x)
-				x1 = maxi(x1, x)
-				y0 = mini(y0, y)
-				y1 = maxi(y1, y)
+		var row := idx.slice(y * w, (y + 1) * w)
+		if row.count(0) == w:
+			continue
+		if y0 == h:
+			y0 = y
+		y1 = y
+		var lo := 0
+		while row[lo] == 0:
+			lo += 1
+		var hi := w - 1
+		while row[hi] == 0:
+			hi -= 1
+		x0 = mini(x0, lo)
+		x1 = maxi(x1, hi)
 	if x1 < 0:  # nothing to show (empty text): one empty pixel
 		return {"idx": PackedByteArray([0]), "w": 1, "h": 1}
 	var nw := x1 - x0 + 1
 	var nh := y1 - y0 + 1
 	var out := PackedByteArray()
-	out.resize(nw * nh)
 	for y in nh:
-		for x in nw:
-			out[y * nw + x] = idx[(y0 + y) * w + x0 + x]
+		out.append_array(idx.slice((y0 + y) * w + x0, (y0 + y) * w + x0 + nw))
 	return {"idx": out, "w": nw, "h": nh}
 
 
