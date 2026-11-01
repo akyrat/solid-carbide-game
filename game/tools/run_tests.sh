@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runs the whole GUT test suite headless.
 # Exit code 0 = all tests passed; non-zero = a test failed, or a script failed to parse/load.
-# Usage, from the repo root:  bash game/tools/run_tests.sh
+# Usage, from the repo root:  bash game/tools/run_tests.sh   (GUT_JOBS=N picks the number of parallel processes, default 12)
 # Extra arguments go straight to GUT, e.g.  bash game/tools/run_tests.sh -gselect=test_sample
 set -u
 source "$(dirname "${BASH_SOURCE[0]}")/godot_env.sh"
@@ -12,6 +12,22 @@ limit="${GUT_TIME_LIMIT:-1500}"
 
 # Import first so class_name caches and imported resources exist (needed on a fresh clone).
 timeout -k 5 "$limit" "$GODOT_BIN" --headless --path "$GAME_DIR" --import >/dev/null 2>&1
+
+# Parallel run (T-487): a plain full run (no extra GUT arguments) splits the test scripts over several
+# headless Godot processes (run_tests_parallel.py) and merges the results. GUT_JOBS sets the number of
+# processes (default 12; GUT_JOBS=1 gives the old single-process run). Any extra GUT argument
+# (-gselect, -gunit_test_name, ...) keeps the single-process run, since those filter inside one GUT run.
+jobs="${GUT_JOBS:-12}"
+if [ $# -eq 0 ] && [ "$jobs" -gt 1 ] 2>/dev/null; then
+  PY=python
+  for cand in python python3 py; do
+    if "$cand" -c "import sys" >/dev/null 2>&1; then PY="$cand"; break; fi
+  done
+  timeout -k 5 "$((limit + 30))" "$PY" "$GAME_DIR/tools/run_tests_parallel.py" --jobs "$jobs" --limit "$limit"
+  code=$?
+  if [ $code -eq 0 ]; then echo "TESTS PASSED"; else echo "TESTS FAILED (exit $code)" >&2; fi
+  exit $code
+fi
 
 log="$(mktemp)"
 timeout -k 5 "$limit" "$GODOT_BIN" --headless --path "$GAME_DIR" -s res://addons/gut/gut_cmdln.gd -gexit "$@" 2>&1 | tee "$log"
