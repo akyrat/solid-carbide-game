@@ -1,7 +1,7 @@
 ---
 id: T-489
 title: Text: each trick's rule and its key recipe notes for the trick list
-status: in-progress
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, docs/extended-narrative.md, game/data/tutorial_text.json, C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/89bfdaa9-8914-40ee-9f4b-4fc6ef5a226d/scratchpad/tricks/tricks.template.html]
 files_expected_to_change: [game/data/tutorial_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,12 +41,12 @@ For each of LONG DRIFT!, FULL 360!, ALT DRIFT!, HANG TIME!, AIR 180!, AIR 360!: 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/tutorial_text.json has a rule for all seven tricks and the recipe notes and badges for the six tricks listed (none for thread the needle), each with a `_comment`; the result notes list the keys. (QA: pass / fail)
-- [ ] Each new line went through the style loop and scored 8 or more (the Style review shows the scores). (QA: pass / fail)
-- [ ] Every recipe note is 20 characters or fewer (the result notes show the longest). (QA: pass / fail)
-- [ ] The file is valid JSON and the game/tools Python tests pass. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content, "Tutorial slides and trick list") lists the new keys. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] game/data/tutorial_text.json has a rule for all seven tricks and the recipe notes and badges for the six tricks listed (none for thread the needle), each with a `_comment`; the result notes list the keys. (QA: pass; 7 trick_rule keys, 6 recipe sets (none for thread_the_needle), _comment on each, keys listed in result notes)
+- [ ] Each new line went through the style loop and scored 8 or more (the Style review shows the scores). (QA: pass; all 31 kept versions 8 or 9 of 10 (only intermediate refine rounds scored 6 and 7))
+- [ ] Every recipe note is 20 characters or fewer (the result notes show the longest). (QA: pass; counted: longest are 20 (Swap fast, hold turn; Full turn in the air))
+- [ ] The file is valid JSON and the game/tools Python tests pass. (QA: pass; JSON valid, game/tools and Godot sets passed in qa_check)
+- [ ] docs/hud-and-menus.md (Content, "Tutorial slides and trick list") lists the new keys. (QA: pass; docs/hud-and-menus.md lines 282-283 list trick_rule and trick_recipe keys)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; no path under game/data/levels/ in the branch diff)
 
 ## Updates
 
@@ -516,3 +516,5 @@ Run by `tools/style_loop/run.py` on 2026-11-01: text, kind label, brief `C:/User
 ## Result notes
 
 Wrote trick_rule.<id> (7 rules) and trick_recipe.<id> (stepN_note / stepN_badge, 6 tricks, none for thread the needle) in game/data/tutorial_text.json, each with a _comment. Every line went through the style loop (label kind), all scored 8 or more (see Style review). Rules carry no key letters (the label check rejects capital W/A/S/D), so they say gas, brake, turn key. Keys drawn by the UI as keycaps (draft page): LONG DRIFT! step1 W+A/D, step2 none; FULL 360! step1 W+A/D, step2 none; ALT DRIFT! step1 W+A/D, step2 S+A; HANG TIME! step1 W; AIR 180! step1 W, step2 A/D; AIR 360! step1 W, step2 A/D. AIR 360! rule mentions no upgrade (board correction). Longest recipe note: 20 chars. Tests: python -m pytest game/tools: 898 passed, 1 skipped. docs/hud-and-menus.md table updated. Nothing under game/data/levels/ touched.
+- 2026-11-01, in-progress → in-qa: Trick rules and recipe notes written, style loop all 8+, tests pass
+- 2026-11-01, in-qa → done: QA passed; the board approved merging straight after QA; no screenshot (text only, shown by T-491)
