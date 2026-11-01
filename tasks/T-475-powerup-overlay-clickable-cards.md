@@ -1,7 +1,7 @@
 ---
 id: T-475
 title: The driving power-up overlay's cards are clicked directly, like the gift pack's
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -41,13 +41,13 @@ The board's review: complete a mission in a run and pick a power-up with the mou
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows no card on the power-up overlay has a take button, and clicking anywhere on a card takes it; a keyboard test does the same. (QA: pass / fail)
-- [ ] The overlay's cards share T-474's card behaviour (one implementation; say where in the result notes). (QA: pass / fail)
-- [ ] The existing power-up overlay tests still pass, changed only where they pressed the button. (QA: pass / fail)
-- [ ] Screenshots of the overlay with a hovered and a selected card are saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) says the overlay's cards are clicked directly. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test shows no card on the power-up overlay has a take button, and clicking anywhere on a card takes it; a keyboard test does the same. (QA: pass)
+- [ ] The overlay's cards share T-474's card behaviour (one implementation; say where in the result notes). (QA: pass)
+- [ ] The existing power-up overlay tests still pass, changed only where they pressed the button. (QA: pass)
+- [ ] Screenshots of the overlay with a hovered and a selected card are saved and listed in the result notes. (QA: pass)
+- [ ] docs/hud-and-menus.md (Content) says the overlay's cards are clicked directly. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -74,3 +74,4 @@ Done by the UI agent.
 - Nothing under game/data/levels/ touched.
 - Test counts: see below.
 - Test counts: game/tools unittest 849 OK (1 skipped); tools unittest 633 OK; GUT 2505 of 2505 passing (the first full run had 1 failing test, my own real-click test, fixed; a later run hit the 1500 s limit only because it shared the machine with the Python sets; the last run alone passed).
+- 2026-11-01, in-progress → in-qa: Power-up cards clicked directly via shared GiftCardClick; tests and screenshots done
