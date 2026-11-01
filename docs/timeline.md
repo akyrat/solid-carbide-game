@@ -3080,3 +3080,8 @@ Entry format:
 - Decision or change: A minion or the kaiju the overcoat kills on touch still hits the car; the overcoat only adds damage. The board approved it after playing.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-477
+
+## 2026-11-01: The MVP screen gallery and text list
+- Decision or change: Scripts build a screenshot of every screen (19) and a list of every player-facing text (232) for the board's MVP pass; the Project Lead's review page is built from them.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-479
