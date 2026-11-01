@@ -1,7 +1,7 @@
 ---
 id: T-480
 title: Frame drops: trick popups build their textures while drawing
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -90,3 +90,4 @@ Written by the agent when it finishes.
 
 **QA round 1:** all criteria pass. Web build (thread support off; Godot log: "single-threaded"): exported the Web preset outside game/ and ran it in headless Chrome: menu, Start, a run reached the HUD, no console errors or exceptions. Not seen: an actual popup (no scripted way to trigger a trick). With no threads `WorkerThreadPool.add_task` runs the bake inline on the main thread, so there the pictures are built synchronously: prewarm bakes 63 pictures at HUD start (127 ms measured on desktop, likely several times that in wasm, once at load) and each show_popup bakes its frames inline, so a novel hot popup still hitches in the frame it is shown on the Web build (as before, moved from draw to show). Works, but the spike fix is only real on desktop. Bench rerun: show_popup median 4.0 ms, max 9.7 ms; draw lookups max 0.25 ms, 0 calls over 1 ms. Tests: game/tools 858 OK (1 skipped), tools 633 OK, GUT passed.
 - 2026-11-01, in-qa → needs-playtest: QA pass: draw lookups max 0.25 ms, all tests green; Web build (no threads) bakes inline so hot popups still hitch there
+- 2026-11-01, needs-playtest → done: 480 lgtm
