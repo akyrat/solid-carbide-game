@@ -45,13 +45,13 @@ The board's review: after the Project Lead pushes the build, play it on itch.io 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The result notes name the cause, with the browser console lines (or other evidence) that show it. (QA: pass / fail)
-- [ ] In a local browser run of the Web export, after one click, the menu music plays and a run's engine sound plays: shown by console or log lines the agent adds (or the Web Audio state), listed in the result notes. (QA: pass / fail)
-- [ ] A test (or the agent's scripted browser check, saved in game/tools/) covers the fix so it can be rerun. (QA: pass / fail)
-- [ ] The desktop game's sound is unchanged: the existing sound tests still pass. (QA: pass / fail)
-- [ ] docs/working-with-the-board.md ("Publishing to itch.io") notes anything about sound in the browser the board should know (for example, that sound starts after the first click). (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing is pushed to itch.io, and nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] The result notes name the cause, with the browser console lines (or other evidence) that show it. (QA: pass)
+- [ ] In a local browser run of the Web export, after one click, the menu music plays and a run's engine sound plays: shown by console or log lines the agent adds (or the Web Audio state), listed in the result notes. (QA: pass - agent's temp copy with sfx_enabled true showed the engine line; at HEAD the board's switch keeps the engine off, and my rerun showed music: contexts suspended then running, "[audio] music playing=true", buffer source 67.4 s)
+- [ ] A test (or the agent's scripted browser check, saved in game/tools/) covers the fix so it can be rerun. (QA: fail: code - rerun of `node game/tools/web_audio_check.mjs <export> --start 632,315` on the committed state prints RESULT: FAIL because it demands "[audio] engine playing" but sfx_enabled is false in data/sfx.json; make the check require the engine line only when SFX are enabled)
+- [ ] The desktop game's sound is unchanged: the existing sound tests still pass. (QA: pass - layout routes SFX and Music to Master; 2396 GUT tests pass)
+- [ ] docs/working-with-the-board.md ("Publishing to itch.io") notes anything about sound in the browser the board should know (for example, that sound starts after the first click). (QA: pass - line 66)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - game/tools 777 OK (1 skipped), tools 633 OK, GUT 2396/2396)
+- [ ] Nothing is pushed to itch.io, and nothing under game/data/levels/ is changed or committed. (QA: pass - nothing pushed, no change under game/data/levels/)
 
 ## Updates
 
