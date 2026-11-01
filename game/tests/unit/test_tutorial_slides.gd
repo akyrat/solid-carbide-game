@@ -223,12 +223,16 @@ func test_a_clip_loads_when_its_slide_shows_and_its_frames_advance_with_the_gifs
 	var drift: ClipPlayer = slides.clip_players[0]
 	var long_drift: ClipPlayer = slides.clip_players[1]
 	assert_not_null(drift.sheet, "slide 1 is on screen: its clip is loaded")
+	assert_eq(drift.pages.size(), 2, "149 frames of 480 x 320 take two pages")
 	assert_null(long_drift.sheet, "slide 2's clips wait until it shows")
 	slides.show_slide(1)
 	assert_not_null(long_drift.sheet)
+	assert_null(drift.sheet, "slide 1's clip is freed when its slide is hidden")
+	assert_eq(drift.pages.size(), 0)
 	# The drift clip's first frame lasts 80 ms in its GIF, then 40 ms frames.
 	assert_eq(drift.frame, 0)
 	assert_eq(drift.frame_count(), 149)
+	drift.ensure_loaded()
 	drift.advance(0.079)
 	assert_eq(drift.frame, 0, "still on the first frame")
 	drift.advance(0.002)
@@ -249,6 +253,17 @@ func test_a_clip_loads_when_its_slide_shows_and_its_frames_advance_with_the_gifs
 			FileAccess.get_file_as_string("res://art/tutorial/clips/%s.json" % p.clip))
 		assert_almost_eq(sum / 1000.0, float(record["seconds"]), 0.1, p.clip + " keeps its length")
 		assert_eq(p.frame_count(), int(p.meta["frames"]))
+
+
+func test_every_sheet_page_is_at_most_4096_pixels_a_side() -> void:
+	for clip in ["drift", "long_drift", "alt_drift", "ramp_jump"]:
+		var player := ClipPlayer.new()
+		player.set_clip(clip, true)
+		assert_gt(player.pages.size(), 0, clip)
+		for page in player.pages:
+			assert_lte(page.get_width(), 4096, clip)
+			assert_lte(page.get_height(), 4096, clip)
+		player.free()
 
 
 func test_a_visible_clip_plays_on_its_own() -> void:

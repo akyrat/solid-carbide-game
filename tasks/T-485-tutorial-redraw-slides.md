@@ -1,7 +1,7 @@
 ---
 id: T-485
 title: Build the redrawn tutorial slides: four slides with keycaps, the loop chain, the clips, missions and the run timeline
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -84,3 +84,10 @@ UI Agent, T-485: the four redrawn tutorial slides are built to the approved draf
 - **Screenshots (1280 x 720):** `art-archive/T-485/screenshots/slide1.png`, `slide2.png`, `slide3.png`, `slide4.png`. The draft: `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/89bfdaa9-8914-40ee-9f4b-4fc6ef5a226d/scratchpad/tutorial/approved/tutorial-redraft-v3-approved.html`.
 - **Tests I ran (QA runs the full set):** `test_tutorial_slides` 24 of 24 (280 asserts), `test_shared_button` 12 of 12, `test_tutorial_flow` 8 of 8, `test_tutorial_setting` 3 of 3, `test_tutorial_clips` 4 of 4, and `python -m unittest game/tools/test_gif_to_sheet.py` OK. Note for the team: `-gtest=res://...` runs the whole suite here (GUT ignored it); `-gselect=<file name without .gd>` runs one file. My first foreground run therefore started the full set and was left running until the tool stopped it; one orphan Godot process (pid 14216, from `run_tests.sh`) may still be running and ends on its own at the time limit; I was not allowed to kill it.
 - Nothing under game/data/levels/ touched. Documents affected: docs/hud-and-menus.md, game/docs/hud-and-menus/tutorial-slides.md.
+- 2026-11-01, in-progress → in-qa: Four slides built to the approved draft, clips played from frame sheets; my tests green, QA to run the full sets
+
+Web build fix (coordinator, 2026-11-01): the sheets are now at most 4096 x 4096 (WebGL's limit) and freed when their slide is hidden.
+- `gif_to_sheet.py` lays frames out 8 columns wide and 12 rows high at most, and splits a clip into pages (`<name>_sheet.png`, `<name>_sheet_1.png`); the JSON lists the pages. Page sizes: drift 3840 x 3840 and 3840 x 2240 (two pages), long_drift 3840 x 3520, alt_drift 3840 x 2560, ramp_jump 3840 x 2240. Test added for the split.
+- `ClipPlayer` loads a clip's pages when its slide is shown and frees them when it is hidden (`unload()`), so only one slide's clips are in memory. Peak texture memory: slide 1 about 118 MB (two pages of the drift clip), slide 2 about 127 MB (three clips); it was about 214 MB for all four. Test added: every page is at most 4096 a side, and slide 1's clip is freed when slide 2 shows.
+- Tests re-run with `-gselect`: test_tutorial_slides 25 of 25, test_tutorial_flow 8 of 8, test_shared_button 12 of 12, test_tutorial_clips 4 of 4, test_tutorial_setting 3 of 3; `python -m unittest game/tools/test_gif_to_sheet.py` OK.
+- Web export: `python tools/publish_itch.py --dry-run` stopped ("not on master"), so I did not use it. I exported the Web preset with Godot directly to the scratchpad (not pushed): it finished with no errors and the .pck holds all five sheet pages. I did not open it in a browser, so WebGL loading is not confirmed beyond the sizes.

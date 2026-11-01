@@ -6,7 +6,12 @@
     480,
     320
   ],
-  "columns": 10,
+  "columns": 8,
+  "rows_per_page": 12,
+  "frames_per_page": 96,
+  "pages": [
+    "long_drift_sheet.png"
+  ],
   "frames": 84,
   "durations_ms": [
     60,

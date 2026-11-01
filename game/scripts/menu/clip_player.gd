@@ -5,13 +5,15 @@ extends Control
 ## (<clip>_sheet.png and <clip>_sheet.json: the frame size, the columns and each frame's own
 ## duration, read from the GIF). It draws the current frame stretched over its own rectangle
 ## (cropped to fill, the aspect kept) with nearest-neighbour pixels, and loops. It loads the
-## sheet the first time it is shown (the slides call ensure_loaded for the slide on show) and only advances while it is visible, so a hidden slide
-## costs nothing. `advance(delta)` is the whole clock, so a test can step it.
+## sheet pages (each at most 4096 x 4096, for WebGL) when its slide is shown (the slides call
+## ensure_loaded) and frees them when it is hidden, so only the visible slide's clips are in
+## memory; it only advances while visible. `advance(delta)` is the whole clock, so a test can step it.
 
 const CLIP_DIR := "res://art/tutorial/clips/"
 
 var clip := ""
-var sheet: Texture2D
+var sheet: Texture2D  # the first page
+var pages: Array[Texture2D] = []
 var meta: Dictionary = {}
 var frame := 0
 var elapsed_ms := 0.0
@@ -33,7 +35,7 @@ func _ready() -> void:
 func set_clip(clip_name: String, load_now := false) -> void:
 	clip = clip_name
 	_loaded = false
-	sheet = null
+	unload()
 	frame = 0
 	elapsed_ms = 0.0
 	if load_now:
@@ -46,17 +48,31 @@ func ensure_loaded() -> bool:
 		return sheet != null
 	_loaded = true
 	var json_path := CLIP_DIR + clip + "_sheet.json"
-	var png_path := CLIP_DIR + clip + "_sheet.png"
 	var f := FileAccess.open(json_path, FileAccess.READ)
 	var parsed: Variant = JSON.parse_string(f.get_as_text()) if f != null else null
-	if typeof(parsed) != TYPE_DICTIONARY or not ResourceLoader.exists(png_path):
+	if typeof(parsed) != TYPE_DICTIONARY:
 		push_error("ClipPlayer: no sheet for the clip '%s'" % clip)
 		return false
 	meta = parsed
 	_durations = meta["durations_ms"]
-	sheet = load(png_path) as Texture2D
+	pages.clear()
+	for name in meta["pages"]:
+		var path: String = CLIP_DIR + name
+		if not ResourceLoader.exists(path):
+			push_error("ClipPlayer: missing sheet page %s" % path)
+			unload()
+			return false
+		pages.append(load(path) as Texture2D)
+	sheet = pages[0]
 	queue_redraw()
-	return sheet != null
+	return true
+
+
+## Frees the sheet pages (the clock's place is kept); ensure_loaded reads them again.
+func unload() -> void:
+	pages.clear()
+	sheet = null
+	_loaded = false
 
 
 func frame_count() -> int:
@@ -84,14 +100,19 @@ func _process(delta: float) -> void:
 func _on_visibility_changed() -> void:
 	if is_visible_in_tree() and clip != "":
 		ensure_loaded()
+	elif _loaded:
+		unload()
 
 
 func _draw() -> void:
-	if sheet == null or size.x <= 0.0 or size.y <= 0.0:
+	if pages.is_empty() or size.x <= 0.0 or size.y <= 0.0:
 		return
 	var fs := Vector2(meta["frame_size"][0], meta["frame_size"][1])
 	var cols := int(meta["columns"])
-	var origin := Vector2((frame % cols) * fs.x, (frame / cols) * fs.y)
+	var per_page := int(meta["frames_per_page"])
+	var in_page := frame % per_page
+	var page: Texture2D = pages[frame / per_page]
+	var origin := Vector2((in_page % cols) * fs.x, (in_page / cols) * fs.y)
 	# Cover: crop the frame to the rectangle's aspect, so nothing is stretched.
 	var src := Rect2(origin, fs)
 	var want := size.x / size.y
@@ -101,4 +122,4 @@ func _draw() -> void:
 	elif fs.x / fs.y < want:
 		var h := fs.x / want
 		src = Rect2(origin + Vector2(0, (fs.y - h) / 2.0), Vector2(fs.x, h))
-	draw_texture_rect_region(sheet, Rect2(Vector2.ZERO, size), src)
+	draw_texture_rect_region(page, Rect2(Vector2.ZERO, size), src)

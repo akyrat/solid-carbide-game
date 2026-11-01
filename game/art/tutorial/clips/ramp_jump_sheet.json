@@ -7,6 +7,11 @@
     320
   ],
   "columns": 8,
+  "rows_per_page": 12,
+  "frames_per_page": 96,
+  "pages": [
+    "ramp_jump_sheet.png"
+  ],
   "frames": 51,
   "durations_ms": [
     60,
