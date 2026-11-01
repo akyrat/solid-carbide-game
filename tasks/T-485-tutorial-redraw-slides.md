@@ -57,7 +57,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] Tests show Go live starts the run and Don't show again still works, with only fresh key presses counting, as before. (QA: pass / fail)
 - [ ] Screenshots of all four slides at 1280 x 720 are saved and listed in the result notes, next to the draft for comparison. (QA: pass / fail)
 - [ ] docs/hud-and-menus.md (Content) describes the four slides. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1800 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The tests for the changed code pass (the agent: its new and changed test files and those of the scripts it touched, with `bash game/tools/run_tests.sh -gtest=res://tests/unit/<file>.gd` per file), and QA's full run passes (the Godot set and `python -m unittest discover -s game/tools -p "test_*.py"`; the tools set only if tools/ changed; tasks/README.md, "Which tests run when"), with the counts in the result notes. (QA: pass / fail)
 - [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
 
 ## Updates
