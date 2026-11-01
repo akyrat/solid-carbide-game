@@ -6,8 +6,9 @@ extends Control
 ## `KeyPad.attach(player, key_size)` adds one to a ClipPlayer. Look: the HUD style's keycaps (the
 ## tutorial slides' KEY_FACE / KEY_EDGE / BLUSH colours).
 
-const FACE := Color("e9e8f2")
-const EDGE := Color("8f93ab")
+const FACE := Color("33384f")
+const DIM_INK := Color("8a8eaa")
+const EDGE := Color("1f2336")
 const LIT_FACE := Color("f6c9de")
 const LIT_EDGE := Color("b77b98")
 const INK := Color("0d0d1b")
@@ -89,9 +90,9 @@ func _draw() -> void:
 		var rect := Rect2(origin, Vector2(key_size, key_size))
 		# The key's solid edge (its drop), then the face; a lit key sits down onto its edge.
 		draw_rect(rect, LIT_EDGE if lit else EDGE)
-		var down := depth * 0.7 if lit else 0.0
+		var down := 2.0 if lit else 0.0
 		var face := Rect2(origin + Vector2(0, down), Vector2(key_size, key_size - depth))
 		draw_rect(face, LIT_FACE if lit else FACE)
 		var ts := font.get_string_size(letter, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 		draw_string(font, face.position + Vector2((key_size - ts.x) / 2.0, (face.size.y + ts.y * 0.7) / 2.0),
-			letter, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, INK)
+			letter, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, INK if lit else DIM_INK)

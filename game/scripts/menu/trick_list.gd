@@ -25,11 +25,12 @@ const TRICK_IDS: Array[String] = [
 const ILLUSTRATION_SIZE := Vector2i(64, 48)
 const LIST_SCALE := 1
 ## The selected trick's clip box (the clips are 3:2), the detail pane's width and the list rows' width.
-const CLIP_BOX := Vector2(312, 208)
-const DETAIL_WIDTH := 540.0
+const CLIP_BOX := Vector2(372, 248)
+const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
+const DETAIL_WIDTH := 600.0
 const ROW_WIDTH := 300.0
 const KEY_PX := 44.0
-const STEP_WIDTH := 136.0
+const STEP_WIDTH := 172.0
 const KEY_FACE := Color("e9e8f2")
 const KEY_EDGE := Color("8f93ab")
 const KEY_HI := Color("f6c9de")
@@ -138,20 +139,30 @@ func rebuild() -> void:
 	layout.add_child(detail)
 	detail_name = Label.new()
 	detail_name.name = "TrickName"
-	detail_name.add_theme_font_size_override("font_size", name_font_size + 8)
-	detail_name.add_theme_color_override("font_color", PINK)
+	detail_name.add_theme_font_override("font", load(COMIC_FONT_PATH))
+	detail_name.add_theme_font_size_override("font_size", 40)
+	detail_name.add_theme_color_override("font_color", Color("ecebf5"))
+	detail_name.add_theme_color_override("font_shadow_color", PINK)
+	detail_name.add_theme_constant_override("shadow_offset_x", 3)
+	detail_name.add_theme_constant_override("shadow_offset_y", 3)
 	detail.add_child(detail_name)
 	rule_label = Label.new()
 	rule_label.name = "Rule"
 	rule_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rule_label.custom_minimum_size = Vector2(DETAIL_WIDTH, 44)
-	rule_label.add_theme_font_size_override("font_size", name_font_size - 2)
-	detail.add_child(rule_label)
-	detail.add_child(_make_clip_box())
+	rule_label.custom_minimum_size = Vector2(DETAIL_WIDTH - CLIP_BOX.x - 16.0, 0)
+	rule_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	rule_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rule_label.add_theme_font_size_override("font_size", name_font_size)
+	var middle := HBoxContainer.new()
+	middle.name = "Middle"
+	middle.add_theme_constant_override("separation", 16)
+	detail.add_child(middle)
+	middle.add_child(_make_clip_box())
+	middle.add_child(rule_label)
 	recipe_box = HBoxContainer.new()
 	recipe_box.name = "Recipe"
 	recipe_box.add_theme_constant_override("separation", 6)
-	recipe_box.custom_minimum_size.y = 78
+	recipe_box.custom_minimum_size.y = 80
 	detail.add_child(recipe_box)
 	custom_minimum_size = layout.get_combined_minimum_size()
 	select(selected if selected in TRICK_IDS else TRICK_IDS[0])
@@ -232,7 +243,7 @@ func _make_clip_box() -> Control:
 	clip_player.position = Vector2(3, 3)
 	clip_player.size = CLIP_BOX - Vector2(6, 6)
 	box.add_child(clip_player)
-	key_pad = KeyPad.attach(clip_player, 26.0)
+	key_pad = KeyPad.attach(clip_player, 30.0)
 	return box
 
 
@@ -308,7 +319,7 @@ func _make_step(id: String, n: int, step: Dictionary) -> Control:
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	note.custom_minimum_size.x = col.custom_minimum_size.x
 	note.add_theme_font_override("font", _font)
-	note.add_theme_font_size_override("font_size", 8)
+	note.add_theme_font_size_override("font_size", 10)
 	note.add_theme_color_override("font_color", MUTED)
 	col.add_child(note)
 	return col

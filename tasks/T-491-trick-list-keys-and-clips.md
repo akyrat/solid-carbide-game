@@ -1,7 +1,7 @@
 ---
 id: T-491
 title: The trick list shows each trick's clip, live key pad and keycap recipe; slide 2's clips get the key pad
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -74,3 +74,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. New: game/scripts/menu/key_pad.gd (KeyPad.attach; lights ClipPlayer.held_keys() from keys_per_frame, refreshed on the new ClipPlayer.frame_changed signal), game/data/trick_recipes.json (clip, steps, keys, /D marks; texts from tutorial_text.json trick_rule / trick_recipe keys). Slide 2's three clips get the pad (slide 1 unchanged). TrickList rebuilt: seven-row list (click or focus selects) plus detail pane (name, rule, one clip with pad, keycap recipe with arrows, notes, badges, /D tags; none for THREAD THE NEEDLE!); clip loads only while visible. Mapping: air_one_eighty uses ramp_jump, extended_drift long_drift, alternate_drift alt_drift. Panel is 494 -> ~456 px tall so it still clears the HUD clock at 1152x648. Old test_trick_list SCALE assertions changed to LIST_SCALE=1. Tests (-gselect, all pass): test_key_pad 3/3, test_trick_list_recipes 8/8, test_trick_list 6/6, test_tutorial_slides 26/26, test_tutorial_clips 6/6, test_pause_screen 10/10, test_pause_trick_list 8/8. Screenshots 1280x720 in art-archive/T-491/screenshots/: slide2_a.png, slide2_b.png, trick_list_extended_drift.png, trick_list_alternate_drift.png, trick_list_air_one_eighty.png, trick_list_airtime.png, trick_list_thread_the_needle.png. Docs: docs/hud-and-menus.md (Pause screen entry, slides section), game/docs/hud-and-menus/pause-screen.md and tutorial-slides.md. Nothing under game/data/levels/ touched. Untracked .uid files left uncommitted.
+- 2026-11-01, in-progress → in-qa: Trick list, key pad and slide 2 pads built; tests pass; screenshots in art-archive/T-491/screenshots
+
+Project Lead review fixes: (1) key pad unlit keys now dark #33384f with muted letter, lit keys blush #f6c9de with dark letter pressed down 2 px (slide 2 and trick list). (2) Trick list detail: name in Bangers 40 with pink offset shadow; clip 372x248 on the left, rule on its right, recipe full width below with notes at size 10 and wider steps. (3) Screenshots re-taken, each name matches its trick, in art-archive/T-491/screenshots/: slide2_a, slide2_b, trick_list_extended_drift, trick_list_alternate_drift (ALT DRIFT!), trick_list_air_one_eighty, trick_list_air_three_sixty (AIR 360!), trick_list_airtime, trick_list_thread_the_needle; manifest.json updated. Tests re-run with -gselect, all pass: pause_trick_list 8, pause_screen 10, trick_list 6, tutorial_slides 26, key_pad 3, trick_list_recipes 8, tutorial_clips 6. Note: task_status refused in-qa to in-progress (QA criteria unmarked), so the ticket stayed in-qa.

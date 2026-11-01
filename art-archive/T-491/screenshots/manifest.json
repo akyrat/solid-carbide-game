@@ -27,6 +27,11 @@
       "name": "trick_list_air_one_eighty"
     },
     {
+      "file": "trick_list_air_three_sixty.png",
+      "how": "air_three_sixty",
+      "name": "trick_list_air_three_sixty"
+    },
+    {
       "file": "trick_list_airtime.png",
       "how": "airtime",
       "name": "trick_list_airtime"
