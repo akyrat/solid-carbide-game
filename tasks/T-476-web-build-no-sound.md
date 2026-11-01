@@ -1,7 +1,7 @@
 ---
 id: T-476
 title: The browser build on itch.io plays no sound and no music
-status: in-qa
+status: in-progress
 from: project-lead
 to: sfx
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, game/export_presets.cfg, game/scripts/run/run_sounds.gd, game/scripts/game/music_player.gd, tools/publish_itch.py]
 files_expected_to_change: [game/scripts/run/run_sounds.gd, game/scripts/game/music_player.gd, game/export_presets.cfg, game/tests/unit/, docs/working-with-the-board.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -81,3 +81,4 @@ Written by the agent when it finishes.
 
 **Test counts:** game/tools unittest 777 OK (1 skipped); tools unittest 633 OK; GUT 2396 of 2396 passing (199 scripts, includes the 4 new tests), TESTS PASSED. Nothing pushed; nothing under game/data/levels/ touched.
 - 2026-11-01, in-progress → in-qa: Web build silent: runtime-added buses not routed in web sample mode; fixed with default_bus_layout.tres; browser check passes
+- 2026-11-01, in-qa → in-progress: QA fail (code): web_audio_check.mjs prints RESULT: FAIL on the committed state because sfx_enabled is false so no engine line appears; require the engine line only when SFX are on. All else passes.
