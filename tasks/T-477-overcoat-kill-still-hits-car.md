@@ -1,7 +1,7 @@
 ---
 id: T-477
 title: Rusty Overcoat: a minion the overcoat kills still hits the car
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -57,6 +57,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-01, Open → In progress
+
+Started: a minion the overcoat kills still hits the car.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -64,3 +68,7 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done (Enemy Behavior Agent). Confirmed cause: in `contact_step()` of `minion.gd` and `kaiju.gd`, `OvercoatContact.hit()` ran first, and the `if _dead: return false` right after it skipped `state.damage_car()` and the knockback whenever the overcoat's damage killed the enemy in that step (tier 3 and up kill a fresh minion in one touch). Fix: removed that early return in both files; the car's invulnerability and the contact cooldown checks are unchanged, and the overcoat's numbers and cooldown are untouched. Nothing else stopped the damage: `OvercoatContact` only calls `take_damage`, and `RunState.damage_car` has no overcoat check. Note: a killed kaiju wins the run, and `damage_car` does nothing once the run is over, so the kaiju case is tested through the return value plus a hit with health left.
+Tests (`game/tests/unit/enemies/test_rusty_overcoat.gd`, 12 tests, all pass): every tier's kill-on-touch minion still hits the car; weapon-damaged minion killed on touch hits; invulnerability stops a second hit with and without the overcoat; kaiju. Existing T-463 tests unchanged. docs/enemies.md updated.
+Test sets: GUT full run 2506 tests, 2505 passed, 1 failed (my own first kaiju test, which I then fixed; that file re-run alone: 12/12 pass; the full run was not repeated after the fix, it takes about 17 minutes); `game/tools` unittest OK; `tools` unittest 633 tests OK. Nothing under game/data/levels/ touched.

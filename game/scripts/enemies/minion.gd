@@ -363,8 +363,8 @@ func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	# T-463 Rusty Overcoat: the car damages the minion it touches (before the car's own
 	# invulnerability, which only protects the car).
 	overcoat_cooldown = OvercoatContact.hit(self, state, overcoat_cooldown, false)
-	if _dead:
-		return false
+	# The overcoat never stops the enemy's own hit on the car (T-477): it hits even when the
+	# overcoat's damage just killed it.
 	# The car's invulnerability after a hit (T-334): no hit and no knockback, so the
 	# car can drive out of a swarm. It is what spaces the hits now.
 	if state != null and state.has_method("is_invulnerable") and state.is_invulnerable():
