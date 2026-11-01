@@ -1,7 +1,7 @@
 ---
 id: T-487
 title: Make the Godot test set run faster (it takes about 25 minutes now)
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, game/tools/run_tests.sh, game/docs/setup/tests.md, tools/merge_batch.py, tools/qa_check.py]
 files_expected_to_change: [game/tools/run_tests.sh, game/tools/, game/docs/setup/tests.md, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -96,3 +96,4 @@ Total work 3084 s for 213 single-script runs (about 2200 s without the repeated 
 
 **Docs.** `game/docs/setup/tests.md` has a new "The parallel run (T-487)" section (how it works, `GUT_JOBS`, exit codes, `--measure`, `--list`) and the stale 900 s text now says 1500 s. `tasks/README.md` was listed as affected: its "Which tests run when" note about a 25-minute Godot set is now out of date; the Project Lead owns that file and should update the number (about 3.5 minutes) and the `-gtest=` hint (with the single-process path `-gtest` also runs the whole folder; use `-gselect=`). Nothing under `game/data/levels/` was touched.
 - 2026-11-01, in-progress → in-qa: Godot set now 12 parallel processes: 199 s vs 1544 s, 2522 tests same; GUT_JOBS picks count
+- 2026-11-01, in-qa → done: QA passed; tooling
