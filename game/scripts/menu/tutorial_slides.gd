@@ -12,7 +12,10 @@ signal start_pressed(dont_show_again: bool)
 const SLIDE_COUNT := 3
 const BG := Color(0.05, 0.05, 0.12)
 const TEXT_COLOR := Color(0.92, 0.92, 0.96)
-const ARROW_COLOR := Color(0.95, 0.75, 0.85)
+## The arrows' triangle outline, in screen pixels (T-446: the shared button's outline colour).
+const ARROW_OUTLINE := 3
+## The "Don't show again" checkbox square, in screen pixels.
+const CHECK_BOX_SIZE := 28
 const DOT_ON := Color(0.95, 0.75, 0.85)
 const DOT_OFF := Color(0.3, 0.3, 0.42)
 
@@ -153,34 +156,19 @@ func _build_slide3() -> Control:
 	dont_show_checkbox = CheckBox.new()
 	dont_show_checkbox.name = "DontShowCheckbox"
 	dont_show_checkbox.text = TrickList.text("checkbox.dont_show")
-	dont_show_checkbox.add_theme_font_size_override("font_size", 26)
 	dont_show_checkbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	for icon_name in ["unchecked", "checked"]:
-		dont_show_checkbox.add_theme_icon_override(icon_name, _box_icon(icon_name == "checked"))
+	HudStyle.style_checkbox(dont_show_checkbox, CHECK_BOX_SIZE)  # matches the shared button (T-446)
 	text_labels["checkbox.dont_show"] = dont_show_checkbox
 	box.add_child(dont_show_checkbox)
 	start_button = Button.new()
 	start_button.name = "StartButton"
 	start_button.text = TrickList.text("button.start")
 	start_button.custom_minimum_size = Vector2(280, 64)
-	start_button.add_theme_font_size_override("font_size", 32)
+	HudStyle.style_button(start_button)  # the shared button (T-446)
 	start_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	text_labels["button.start"] = start_button
 	box.add_child(start_button)
 	return s
-
-
-## A 28 px checkbox square in the arrow colour, filled when checked, drawn in code.
-func _box_icon(checked: bool) -> Texture2D:
-	var n := 28
-	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
-	for x in range(n):
-		for y in range(n):
-			var edge := x < 3 or y < 3 or x >= n - 3 or y >= n - 3
-			var inner := x >= 8 and y >= 8 and x < n - 8 and y < n - 8
-			if edge or (checked and inner):
-				img.set_pixel(x, y, ARROW_COLOR)
-	return ImageTexture.create_from_image(img)
 
 
 func _slide(slide_name: String) -> Control:
@@ -214,18 +202,34 @@ func _text_label(key: String, size: int) -> Label:
 	return l
 
 
-## An arrow button with no text: a triangle drawn in code; its tooltip is the label from the file.
+## An arrow button with no text: the shared button (T-446) with a triangle drawn in code
+## in its text colour and outline, which drops with the press like a button's text; its
+## tooltip is the label from the file.
 func _make_arrow(node_name: String, direction: int, key: String) -> Button:
 	var b := Button.new()
 	b.name = node_name
 	b.custom_minimum_size = Vector2(88, 140)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	b.tooltip_text = TrickList.text(key)
+	HudStyle.style_button(b)
 	text_labels[key] = b
-	b.draw.connect(func():
-		var c := b.size / 2.0
-		var d := float(direction)
-		b.draw_colored_polygon(PackedVector2Array([
-			c + Vector2(18 * d, 0), c + Vector2(-18 * d, -32), c + Vector2(-18 * d, 32)]),
-			ARROW_COLOR))
+	b.draw.connect(func(): _draw_arrow(b, direction))
 	return b
+
+
+func _draw_arrow(b: Button, direction: int) -> void:
+	var mode := b.get_draw_mode()
+	var pressed := mode == BaseButton.DRAW_PRESSED or mode == BaseButton.DRAW_HOVER_PRESSED
+	var c := (b.size / 2.0).floor() + Vector2(0, HudStyle.BUTTON_PRESS_DROP if pressed else 0)
+	var color := b.get_theme_color("font_color")
+	if mode == BaseButton.DRAW_DISABLED:
+		color = b.get_theme_color("font_disabled_color")
+	elif mode == BaseButton.DRAW_HOVER or b.has_focus():
+		color = b.get_theme_color("font_hover_color")
+	var d := float(direction)
+	var o := float(ARROW_OUTLINE)
+	b.draw_colored_polygon(PackedVector2Array([
+		c + Vector2((18 + o * 2) * d, 0), c + Vector2((-18 - o) * d, -32 - o * 2),
+		c + Vector2((-18 - o) * d, 32 + o * 2)]), b.get_theme_color("font_outline_color"))
+	b.draw_colored_polygon(PackedVector2Array([
+		c + Vector2(18 * d, 0), c + Vector2(-18 * d, -32), c + Vector2(-18 * d, 32)]), color)

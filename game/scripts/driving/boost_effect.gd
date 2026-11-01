@@ -60,7 +60,9 @@ func _init() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"effects.boost")
 	advance(delta)
+	Perf.end(&"effects.boost")
 
 
 ## Plays a burst each time the car's boost signal fires.
@@ -135,9 +137,11 @@ func drawn() -> Array:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.boost")
 	var half := cell_size * ART_SCALE * 0.5
 	for d in drawn():
 		var src := Rect2(d.frame * cell_size, d.row * cell_size, cell_size, cell_size)
 		var at: Vector2 = d.at
 		var dest := Rect2(at - Vector2(half, half), Vector2(half, half) * 2.0)
 		draw_texture_rect_region(SHEET, dest, src)
+	if Perf.on: Perf.each_end(&"draw.boost")

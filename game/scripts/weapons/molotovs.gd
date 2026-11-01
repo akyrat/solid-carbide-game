@@ -59,6 +59,13 @@ const PLAYTEST_KEY := "molotov_at_start"
 const ART_PATH := "res://art/weapons/molotov_bottle.png"
 const ART_TEXTURE := preload("res://art/weapons/molotov_bottle.png")
 const ART_SCALE := 0.5
+## T-454 (Visual style, Decisions, "Shadows shrink with height"): a bottle in
+## the air casts the car's air shadow on the ground under it, sized by the
+## shared height curve (shadow_size.gd). Its full size at the ground: about
+## the bottle's own size, 0.5 units across (proposal).
+const ShadowSizeScript := preload("res://scripts/driving/shadow_size.gd")
+const CarShadowScript := preload("res://scripts/driving/car_shadow.gd")
+const BOTTLE_SHADOW_DIAMETER_UNITS := 0.5
 ## Placeholder bottle colours: green glass, a pale rag, an orange-yellow
 ## flame on the rag, a dark outline. Opaque; never the heart's red.
 const BOTTLE_GLASS := Color(0.3, 0.72, 0.38, 1.0)
@@ -299,6 +306,7 @@ class MolotovBottle:
 				fire = weapon.land(landing)
 		rotation = age * TAU * 2.0  # two turns a second
 		_place()
+		queue_redraw()  # T-454: the shadow follows the height
 
 	func _place() -> void:
 		position = ISO_TRANSFORM * (units * PX_PER_UNIT) + Vector2(0.0, -height_units() * PX_PER_UNIT)
@@ -309,12 +317,28 @@ class MolotovBottle:
 	func colours() -> Array:
 		return [BOTTLE_OUTLINE, BOTTLE_GLASS, BOTTLE_GLASS_DARK, BOTTLE_RAG, BOTTLE_FLAME]
 
+	## T-454: the shadow's outline in the bottle's own (spinning) pixels: a
+	## ground circle through the isometric view, height_units() straight down
+	## the screen, not turning with the bottle, sized by the height curve.
+	func shadow_outline() -> PackedVector2Array:
+		var h := height_units()
+		var r := ShadowSizeScript.size_for_height(BOTTLE_SHADOW_DIAMETER_UNITS, h) * PX_PER_UNIT / 2.0
+		var c := Vector2(0.0, h * PX_PER_UNIT)
+		var pts := PackedVector2Array()
+		for i in 16:
+			var a := TAU * float(i) / 16.0
+			pts.append((c + ISO_TRANSFORM.basis_xform(Vector2(cos(a), sin(a)) * r)).rotated(-rotation))
+		return pts
+
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.molotov_bottle")
+		draw_colored_polygon(shadow_outline(), CarShadowScript.COLOR)
 		var tex: Texture2D = ART_TEXTURE
 		if tex != null:
 			# The final art (T-175): 32 x 32 art pixels at scale 0.5.
 			var size := tex.get_size() * ART_SCALE
 			draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
+			if Perf.on: Perf.each_end(&"draw.molotov_bottle")
 			return
 		# The placeholder: a bottle about 0.3 by 0.6 units, its neck up, in screen pixels.
 		draw_rect(Rect2(-3, -3, 6, 9), BOTTLE_OUTLINE)
@@ -323,3 +347,4 @@ class MolotovBottle:
 		draw_rect(Rect2(-2, -7, 4, 5), BOTTLE_OUTLINE)
 		draw_rect(Rect2(-1, -6, 2, 4), BOTTLE_RAG)
 		draw_rect(Rect2(-2, -10, 4, 3), BOTTLE_FLAME)
+		if Perf.on: Perf.each_end(&"draw.molotov_bottle")

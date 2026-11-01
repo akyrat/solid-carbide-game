@@ -39,6 +39,10 @@ const PackageScene := preload("res://scenes/run/gift_package.tscn")
 const ArrowsScript := preload("res://scripts/run/gift_arrows.gd")
 ## T-407: the car's air shadow (car_shadow.gd), reused for a falling package's landing spot.
 const ShadowScript := preload("res://scripts/driving/car_shadow.gd")
+const ShadowSizeScript := preload("res://scripts/driving/shadow_size.gd")
+## T-454: the package's own width on screen (package.png's box, 40 of its 64
+## pixels, drawn at scale 1): its falling shadow's full size, reached as it lands.
+const PACKAGE_WIDTH_PX := 40.0
 
 const PX_PER_UNIT := 16.0
 ## Same 2:1 isometric projection as the run and the map.
@@ -94,7 +98,9 @@ func bind(the_run: Node2D, the_data: GiftPackData = null) -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"gifts.drops")
 	advance(delta)
+	Perf.end(&"gifts.drops")
 
 
 func _on_level_up(new_level: int) -> void:
@@ -363,10 +369,26 @@ func _add_shadow(pkg: GiftPackage) -> void:
 	var sh: Node2D = ShadowScript.new()
 	sh.name = "Shadow" + pkg.name
 	sh.view_basis = ISO_TRANSFORM
+	sh.full_diameter_units = shadow_full_diameter_units()
 	add_child(sh)
 	sh.place(pkg.ground_units(), pkg.ground_height)
 	sh.z_index = shadow_z(pkg)
 	pkg.shadow = sh
+	update_shadow(pkg)
+
+
+## T-454: the falling shadow's full size (units across on the ground), the
+## package's own width on screen, so it ends at the package's size as it lands.
+static func shadow_full_diameter_units() -> float:
+	return ShadowSizeScript.diameter_for_screen_width(PACKAGE_WIDTH_PX, PX_PER_UNIT)
+
+
+## T-454 (Visual style, Decisions, "Shadows shrink with height"): sizes `pkg`'s
+## falling shadow by its height above the ground it lands on (shadow_size.gd):
+## small high up, growing as it comes down.
+func update_shadow(pkg: GiftPackage) -> void:
+	if pkg.shadow != null and is_instance_valid(pkg.shadow):
+		pkg.shadow.set_height_above(pkg.height() / PX_PER_UNIT)
 
 
 func _remove_shadow(pkg: GiftPackage) -> void:
@@ -393,6 +415,7 @@ func _fall(pkg: GiftPackage, delta: float) -> void:
 	pkg.fall_t += delta
 	var k := 1.0 if pkg.fall_seconds <= 0.0 else clampf(pkg.fall_t / pkg.fall_seconds, 0.0, 1.0)
 	pkg.position = pkg.drawn_ground + Vector2(0, -pkg.drop_height * (1.0 - k))
+	update_shadow(pkg)
 	if k >= 1.0:
 		_land(pkg)
 

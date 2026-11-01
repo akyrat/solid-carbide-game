@@ -18,8 +18,10 @@ extends Node2D
 ##
 ## Falling (task T-226, a proposal: the kaiju drops off edges too): while it
 ## falls (set_falling, from the boss controller) it plays the falling
-## animation, and a squash for LAND_SECONDS after it lands; no ground shadow
-## while it is in the air. The art hook (T-227): falling frames in
+## animation, and a squash for LAND_SECONDS after it lands. Its ground shadow
+## stays on the ground under it while it falls (T-454; Visual style, Decisions,
+## "Shadows shrink with height"): air_height units below the feet, smaller the
+## higher it is (shadow_size.gd), full size again as it lands. The art hook (T-227): falling frames in
 ## FALL_SHEET_DIR (kaiju_fall_e.png, _se, _s, _ne, _n; the others mirrored),
 ## FRAME_SIZE square frames in a row, as many as the sheet is wide, played at
 ## FALL_FPS. Until they exist the placeholder is made by script from the walk
@@ -32,6 +34,7 @@ const PLATE_COLOR := Color(0.55, 0.92, 0.92)
 const OUTLINE_COLOR := Color(0.05, 0.07, 0.12)
 const EYE_COLOR := Color(1.0, 0.88, 0.30)
 const SHADOW_COLOR := Color(0.02, 0.02, 0.05, 0.55)
+const ShadowSizeScript := preload("res://scripts/driving/shadow_size.gd")
 
 ## Body radius and height in units (kaiju.gd's RADIUS_UNITS and HEIGHT_UNITS).
 const RADIUS_UNITS := 2.0
@@ -72,6 +75,9 @@ var _walk := 0.0
 var falling := false
 var fall_seconds := 0.0
 var land_left := 0.0
+## T-454: how high the feet are above the ground under it, units (0 standing;
+## the boss controller sets it from the fall).
+var air_height := 0.0
 
 
 func _ready() -> void:
@@ -79,8 +85,10 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"kaiju.sprite_anim")
 	advance(delta)
 	queue_redraw()
+	Perf.end(&"kaiju.sprite_anim")
 
 
 ## Moves the animation on `delta` seconds (the stomp, the fall, the squash).
@@ -198,9 +206,8 @@ func _blob(cx: float, cy: float, rx: float, ry: float, color: Color, outline: bo
 
 
 func _draw() -> void:
-	var gr := RADIUS_UNITS * PX * sqrt(2.0)
-	if not falling:
-		_ground_shadow(gr)
+	if Perf.on: Perf.each_begin(&"draw.kaiju")
+	_ground_shadow(RADIUS_UNITS * PX * sqrt(2.0))
 	var entry: Array = SHEETS[compass_index(facing)]
 	if falling:
 		var fall_tex := fall_sheet(entry[0])
@@ -208,6 +215,7 @@ func _draw() -> void:
 			# T-227's frames, as they are.
 			var n := maxi(1, fall_tex.get_width() / FRAME_SIZE)
 			_draw_art(fall_tex, entry[1], int(fall_seconds * FALL_FPS) % n)
+			if Perf.on: Perf.each_end(&"draw.kaiju")
 			return
 	var anim := anim_transform()
 	var tex := _sheet(entry[0])
@@ -215,6 +223,7 @@ func _draw() -> void:
 		draw_set_transform_matrix(anim)
 		_draw_art(tex, entry[1], frame_for(_walk))
 		draw_set_transform_matrix(Transform2D.IDENTITY)
+		if Perf.on: Perf.each_end(&"draw.kaiju")
 		return
 	var sc := HEIGHT_UNITS * PX / DESIGN_HEIGHT_PX
 	draw_set_transform_matrix(anim * Transform2D(0.0, Vector2(sc, sc), 0.0, Vector2.ZERO))
@@ -247,6 +256,7 @@ func _draw() -> void:
 	var eye := _p(36, 138 + bob)
 	draw_rect(Rect2(eye - Vector2(3, 2), Vector2(6, 4)), OUTLINE_COLOR)
 	draw_rect(Rect2(eye - Vector2(2, 1), Vector2(4, 2)), EYE_COLOR)
+	if Perf.on: Perf.each_end(&"draw.kaiju")
 
 
 func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
@@ -259,9 +269,18 @@ func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
 	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -ART_FEET_Y * ART_SCALE), Vector2(w, size)), src)
 
 
-func _ground_shadow(rx: float) -> void:
+func _ground_shadow(full_rx: float) -> void:
+	draw_colored_polygon(shadow_outline(full_rx), SHADOW_COLOR)
+
+
+## T-454: the ground shadow's outline in the sprite's pixels, for a full
+## half-width of `full_rx` pixels: on the ground under the feet (air_height
+## units down the screen) and sized by the shared height curve.
+func shadow_outline(full_rx: float = RADIUS_UNITS * PX * sqrt(2.0)) -> PackedVector2Array:
+	var rx := ShadowSizeScript.size_for_height(full_rx, air_height)
+	var c := Vector2(0.0, maxf(air_height, 0.0) * PX)
 	var pts := PackedVector2Array()
 	for i in 24:
 		var t := TAU * i / 24.0
-		pts.append(Vector2(cos(t) * rx, sin(t) * rx * 0.5))
-	draw_colored_polygon(pts, SHADOW_COLOR)
+		pts.append(c + Vector2(cos(t) * rx, sin(t) * rx * 0.5))
+	return pts

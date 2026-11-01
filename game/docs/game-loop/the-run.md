@@ -161,6 +161,50 @@ Feeding it: `enemy_slain(enemy_type, weapon_id)` (the minion spawner and the kai
 
 **Tests:** `tests/unit/run/test_run_recap.gd` (T-319: the summary's counts, the empty start, readable and final after the run ended, JSON, a copy), `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run), `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car) and `tests/unit/run/test_run_likes.gd` (challenge and meteor challenge XP, drift seconds, level-ups and leftovers, the pause switch off and on, two level-ups at once, the top level, a new run resetting XP) and `tests/unit/run/test_run_combo.gd` (tricks raising the multiplier, the cap, likes multiplied, collisions and damage cutting it, the drain and a trick stopping it, a new run, pause, a run started from the main menu) and `tests/unit/run/test_run_likes_drain.gd` (T-115: no drain with a combo, the drain at T-114's speed once it is gone, a trick stopping it, never below the level's start even over a long drain, no drain while paused, while a choice waits, after the run ends or at the top level, the extra wait, the switch, `xp_changed` firing and the HUD's likes bar emptying in a run), part of the GUT suite.
 
+### Missions and the car's power-ups (T-457)
+
+Game loop architecture, Decisions, "Mission packs"; Content, "Missions in the run". The tracker is invisible by itself: the notebook page (HUD) and the power-up gift overlay are separate tickets that read it.
+
+**The tracker:** `scripts/run/missions.gd` (`RunMissions`, a RefCounted), one per `RunState` as `state.missions`, created in `_init()` and kept for every run of that state, so connect its signals once. `start_run()` calls `missions.start(state.mission_seed)`: 30 missions (`MissionData.total()`), the 5 fixed ones from `data/missions.json` first, then missions 6 to 30 from `MissionData.mission(n, rng)` with one `RandomNumberGenerator` seeded with the run's seed. `mission_seed` is -1 by default (a new random seed each run; the seed used is `missions.mission_seed`); tests set it. The pause screen's Restart builds a new run and so a new `RunState` with a fresh tracker.
+
+| Read | Is |
+| --- | --- |
+| `count()` | 30 |
+| `current_index()`, `current_number()` | The current mission, 0-based (-1 once all are done) and 1-based (0 then) |
+| `current_goals()` | A copy of the current mission's goals: `[{"trick", "kind", "amount", "done", "completed"}]` (`done` is the progress; empty once all are done) |
+| `mission(index)` | A copy of any mission's goals `[{"trick", "kind", "amount"}]` |
+| `is_all_done()` | True after mission 30: nothing more is offered (a proposal) |
+
+| Signal (on `state.missions`) | Fires |
+| --- | --- |
+| `goal_progress(mission_index, goal_index, done: float, total: float)` | A goal's progress changed (a count, or seconds) |
+| `goal_completed(mission_index, goal_index)` | A goal is done, after its last `goal_progress` |
+| `mission_completed(mission_index)` | Every goal of the mission is done, after its last `goal_completed`; the next mission is current from now on. The gift overlay opens on it |
+| `mission_started(mission_index)` | A mission is current: on `start_run()` (mission 0) and after each `mission_completed` except the last |
+
+Indices are 0-based (mission_index 0 is mission 1; goal_index 0 is its first goal). All goals of the current mission count at the same time.
+
+**What feeds it** (only while the run is going; `RunState` forwards, how tricks pay is unchanged):
+
+- `add_trick(trick_id, seconds)` → `missions.on_trick()`: a "count" goal for that trick adds 1; the drift's "seconds" goal (`extended_drift`) takes the paid drift's whole length.
+- `add_airtime_trick(seconds)` → `missions.on_airtime()`: every landing, also one too short to pay in the combo; an `airtime` "seconds" goal adds the seconds up ("3 seconds of airtime in total").
+- `add_needle_trick()` → `on_trick("thread_the_needle")`.
+- `drift_step(drifting, delta)` → `missions.on_drift_step()`: the **continuous drift** goal follows the unbroken drift in progress, so it is ticked off the moment the drift reaches its seconds; a step without drifting ends the drift and the goal's progress goes back to 0.
+- `collision()` (a wall, building, map edge, boulder, or damage) and the wreck → `missions.on_crash()`: the drift ends for the goal and starts over, even if the car is still sliding sideways. The crash's paid drift (T-315) reaches `on_trick()` first, so a crash at 4.2 s still counts as a 4.2 s drift.
+
+Proposals for the playtest (T-457): a trick that completes a mission does not also count for the next one; a new mission's drift goal counts only drifting done after it started; after mission 30 nothing more is offered.
+
+**The car's owned driving power-ups** (on `RunState`, for the power-up tickets):
+
+| Function or signal | Is |
+| --- | --- |
+| `power_up_tier(id) -> int` | The tier owned (1 to the last tier), 0 when not owned. Ids: `PowerUpData.IDS` |
+| `grant_power_up(id) -> int` | New at tier 1, otherwise the next tier, held at the power-up's last tier (`power_ups.json`). Returns the tier now; 0 for an unknown id |
+| `owned_power_ups() -> Dictionary` | A copy, `{id: tier}` |
+| `power_ups_changed` | A tier went up, or a new run cleared them (sent on every `start_run()`) |
+
+**Tests:** `tests/unit/run/test_missions.gd` (30 missions, the fixed 5 the same for three seeds, 6 to 30 different between seeds and following the rules, a new seed each run, missions 1 to 5 completed in order from trick events with their signals and order, several goals, a completing trick not carried over, two 2 s drifts against one 4 s drift, a wall hit ending the drift, nothing while the run is not going, nothing after mission 30, a new run and the pause screen's Restart resetting to mission 1 and clearing power-ups, tier 1 then 2, the last tier, unknown ids, the car's trick signal reaching the tracker in a real run).
+
 ### Wrecked (T-360)
 
 Game loop architecture, Decisions, "Wrecked: the stream keeps rolling"; Content, "Wrecked". When `damage_car()` takes the last heart, the wreck starts; since T-413 (Decisions, "The wreck decides the loss at its end") the result waits for its end:

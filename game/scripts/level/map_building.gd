@@ -156,13 +156,16 @@ func set_view(v: String) -> void:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.building")
 	if not draw_placeholder:
+		if Perf.on: Perf.each_end(&"draw.building")
 		return
 	var u := PX_PER_UNIT
 	var r := Rect2(footprint.position * u, footprint.size * u)
 	if view != "iso" or height_units <= 0.0:
 		draw_rect(r, top_color)
 		draw_rect(r, edge_color, false, 2.0)
+		if Perf.on: Perf.each_end(&"draw.building")
 		return
 	# Drawn in flat world pixels: the view's projection turns the world
 	# offset (-h, -h) into straight up on screen.
@@ -178,3 +181,4 @@ func _draw() -> void:
 	draw_colored_polygon(PackedVector2Array([a + up, b + up, c + up, d + up]), top_color)
 	for line in [[a + up, b + up, c + up, d + up, a + up], [d, c, b], [d, d + up], [c, c + up], [b, b + up]]:
 		draw_polyline(PackedVector2Array(line), edge_color, 2.0)
+	if Perf.on: Perf.each_end(&"draw.building")

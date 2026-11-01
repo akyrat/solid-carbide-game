@@ -1655,7 +1655,7 @@ def known_script_ok(script, words):
 # (new_ticket.py writes new tickets in their starting state, open with an empty lead, then claims them through
 # it), so their argument text can name tasks and hold the header words. What they run or write besides is
 # judged: each --test-cmd as a command of its own, and the file of --log.
-TICKET_TOOLS = {"tools/merge_batch.py", "tools/new_ticket.py", "tools/qa_check.py"}
+TICKET_TOOLS = {"tools/merge_batch.py", "tools/new_ticket.py", "tools/qa_check.py", "tools/task_notes.py"}
 # the options through which a ticket tool writes a file of its own (T-354, after QA: `--log=x` as well as `--log x`)
 TOOL_OUTPUT_OPTIONS = {"--log", "--log-file", "--out", "--output", "-o"}
 

@@ -24,7 +24,9 @@ func _init() -> void:
 
 
 func _process(_delta: float) -> void:
+	Perf.begin(&"hud.clock")
 	refresh()
+	Perf.end(&"hud.clock")
 
 
 ## The tint: the source label's font colour.

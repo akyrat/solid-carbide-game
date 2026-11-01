@@ -66,6 +66,8 @@ var sprite: Node2D = null
 var hit_tint: Node = null
 ## Seconds until it can damage the car again.
 var contact_cooldown := 0.0
+## T-463: seconds until the car's Rusty Overcoat can damage the kaiju again.
+var overcoat_cooldown := 0.0
 ## Which way it walks round an obstacle it meets head-on: 1 or -1.
 var detour_side := 1.0
 ## The direction it last walked (flat world, normalized), for the drawing.
@@ -198,7 +200,9 @@ func hit_radius_units() -> float:
 ## fires once and the node is freed at the end of the frame. Ignored when
 ## `amount` is not positive or the kaiju is already dead.
 func take_damage(amount: float, source := "") -> void:
+	if Perf.on: Perf.each_begin(&"enemy.damage")
 	if _dead or amount <= 0.0:
+		if Perf.on: Perf.each_end(&"enemy.damage")
 		return
 	if source != "":
 		last_hit_by = source
@@ -208,6 +212,7 @@ func take_damage(amount: float, source := "") -> void:
 		_die()
 	elif hit_tint != null:
 		hit_tint.flash()  # T-072: a brief red tint
+	if Perf.on: Perf.each_end(&"enemy.damage")
 
 
 func is_dead() -> bool:
@@ -276,12 +281,17 @@ func touches_car(car_centre_units: Vector2, car_rotation: float) -> bool:
 ## `car.apply_knockback(away from the kaiju, knockback)`. True when it hit.
 func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	contact_cooldown = maxf(contact_cooldown - dt, 0.0)
+	overcoat_cooldown = maxf(overcoat_cooldown - dt, 0.0)
 	if _dead or car == null:
 		return false
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if not touches_car(car_units, car.rotation):
 		return false
 	if ground != null and not EnemyHeightScript.at_car_level(body_height(), EnemyHeightScript.car_height(car)):
+		return false
+	# T-463 Rusty Overcoat: only when the owned tier's hits_kaiju is true.
+	overcoat_cooldown = OvercoatContact.hit(self, state, overcoat_cooldown, true)
+	if _dead:
 		return false
 	# The car's invulnerability after a hit (T-334): no hit and no knockback, so the
 	# car can drive out of a swarm. It is what spaces the hits now.

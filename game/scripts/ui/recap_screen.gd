@@ -45,8 +45,6 @@ const ENEMY_ART := {
 
 const BACKGROUND := Color(0.05, 0.05, 0.12)  # the main menu's
 const PANEL_FILL := Color(1, 1, 1)
-const PANEL_HOVER := Color(0.88, 0.88, 0.88)
-const PANEL_PRESSED := Color(0.74, 0.74, 0.74)
 const INK := Color(0, 0, 0)
 const BORDER := 3
 const CORNER := 10
@@ -56,13 +54,15 @@ const TITLE_SIZE := 40
 const HEADING_SIZE := 26
 const NAME_SIZE := 20
 const COUNT_SIZE := 28
-const BUTTON_SIZE := 30
 ## The picture slot of an enemy or a weapon, in screen pixels.
 const SLOT := Vector2(64, 64)
 const CONTINUE_SIZE := Vector2(220, 52)
 const CLOSE_SIZE := Vector2(52, 52)
 ## The X, drawn in code: CLOSE_GRID pixels shown CLOSE_SCALE screen pixels each.
 const CLOSE_SCALE := 3
+## The X's outline (T-446) and the room round it inside the 52 px plate: (52 - 40) / 2.
+const CLOSE_OUTLINE := 2
+const CLOSE_PAD := 6
 const CLOSE_GRID := [
 	"kk........kk", "kkk......kkk", ".kkk....kkk.", "..kkk..kkk..",
 	"...kkkkkk...", "....kkkk....", "....kkkk....", "...kkkkkk...",
@@ -211,9 +211,11 @@ func close() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"ui.recap")
 	if _animating:
 		_t += delta
 		_animate()
+	Perf.end(&"ui.recap")
 
 
 func _animate() -> void:
@@ -285,10 +287,6 @@ func _build() -> void:
 	column.add_child(bottom)
 	continue_button = _button("ContinueButton", CONTINUE_SIZE)
 	continue_button.text = text("button.continue")
-	continue_button.add_theme_font_override("font", Hud.comic_font())
-	continue_button.add_theme_font_size_override("font_size", BUTTON_SIZE)
-	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
-		continue_button.add_theme_color_override(c, INK)
 	continue_button.pressed.connect(close)
 	bottom.add_child(continue_button)
 
@@ -296,6 +294,7 @@ func _build() -> void:
 	close_button = _button("CloseButton", CLOSE_SIZE)
 	close_button.icon = _close_icon()
 	close_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	HudStyle.button_padding(close_button, CLOSE_PAD, CLOSE_PAD)
 	close_button.tooltip_text = text("button.close")
 	close_button.set("accessibility_name", text("button.close"))
 	close_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -518,10 +517,7 @@ func _button(node_name: String, min_size: Vector2) -> Button:
 	b.name = node_name
 	b.custom_minimum_size = min_size
 	b.focus_mode = Control.FOCUS_NONE
-	b.add_theme_stylebox_override("normal", _style(PANEL_FILL, 10, 4))
-	b.add_theme_stylebox_override("hover", _style(PANEL_HOVER, 10, 4))
-	b.add_theme_stylebox_override("pressed", _style(PANEL_PRESSED, 10, 4))
-	b.add_theme_stylebox_override("hover_pressed", _style(PANEL_PRESSED, 10, 4))
+	HudStyle.style_button(b)  # the shared button (T-446)
 	return b
 
 
@@ -533,8 +529,18 @@ static func _close_icon() -> Texture2D:
 	for y in h:
 		for x in w:
 			if CLOSE_GRID[y][x] == "k":
-				img.fill_rect(Rect2i(x * CLOSE_SCALE, y * CLOSE_SCALE, CLOSE_SCALE, CLOSE_SCALE), INK)
-	return ImageTexture.create_from_image(img)
+				img.fill_rect(Rect2i(x * CLOSE_SCALE, y * CLOSE_SCALE, CLOSE_SCALE, CLOSE_SCALE), Color.WHITE)
+	# T-446: the X is white, tinted by the shared button's icon colours, with the
+	# sheet's near-black outline (CLOSE_OUTLINE pixels) round it so it reads on the plate.
+	var o := CLOSE_OUTLINE
+	var out := Image.create(img.get_width() + 2 * o, img.get_height() + 2 * o, false, Image.FORMAT_RGBA8)
+	out.fill(Color(0, 0, 0, 0))
+	for y in img.get_height():
+		for x in img.get_width():
+			if img.get_pixel(x, y).a > 0.0:
+				out.fill_rect(Rect2i(x, y, 2 * o + 1, 2 * o + 1), HudStyle.OUTLINE_COLOR)
+	out.blend_rect(img, Rect2i(Vector2i.ZERO, img.get_size()), Vector2i(o, o))
+	return ImageTexture.create_from_image(out)
 
 
 static func _dict(v: Variant) -> Dictionary:

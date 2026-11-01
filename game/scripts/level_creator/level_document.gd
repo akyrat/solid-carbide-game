@@ -46,6 +46,11 @@ extends RefCounted
 ##   cells gives each sidewalk cell the tile of its curb piece (the roads next to it).
 ## - crater (T-398; data/level/craters.json): {id, asset, x, y, w, h} in craters, a meteor crater on
 ##   the street: a ground decal the car drives over (no body), drawn over the ground tiles.
+## - alert (T-441; scripts/level/kaiju_signs.gd): in alert_signs, a standing kaiju alert sign
+##   {id, asset: "alert-sign-<design>", x, y, w, h, mirror} on one cell (the ground, a rooftop or a short
+##   building), or a banner {id, asset: "alert-banner-<design>", building: [x, y], wall, along,
+##   bottom_units} on a skyscraper's south or east wall (place_alert). Pictures only, no body. A banner
+##   goes with its skyscraper when that is deleted.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -62,7 +67,9 @@ const CELL := 2
 const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
-const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater"]
+const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert"]
+## T-441: the kaiju alert signs' geometry (one place, shared with the run).
+const KaijuSignsScript := preload("res://scripts/level/kaiju_signs.gd")
 const LEGEND := {"R": "road", "G": "gravel", "B": "building"}
 ## mvp_map.gd's ground tiles: cell values from here on draw the layout's "extra" textures.
 const EXTRA_BASE := 1000
@@ -408,6 +415,8 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	if e.is_empty() or c.x < 0:
 		return {}
 	var kind := str(e.kind)
+	if kind == "alert":
+		return place_alert(asset_id, units, view, mirror)
 	var corner := cell_corner(c)
 	view = valid_view(asset_id, view)
 	mirror = valid_mirror(asset_id, mirror)
@@ -482,6 +491,53 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+## Places a kaiju alert sign or banner (T-441) with the mouse at `units` (on the ground, units).
+## A standing sign ("alert-sign-<design>"): on the cell under `units`, mirrored with `mirror`; not placed
+## when its cell would leave the map. A banner ("alert-banner-<design>"): on the skyscraper drawn at that
+## point on screen (KaijuSigns.banner_target: the nearest one there), on wall `view` ("south" or "east"),
+## centred on the point along the wall, its bottom `height` units up (-1: the entry's first height); {}
+## when no skyscraper is drawn there (a platform, a short or small building is never one). Returns
+## {kind: "alert", item}.
+func place_alert(asset_id: String, units: Vector2, view: String = "", mirror: bool = false, height: float = -1.0) -> Dictionary:
+	var e := entry(asset_id)
+	if e.is_empty() or str(e.kind) != "alert":
+		return {}
+	if str(e.get("alert", "")) == "banner":
+		if height < 0.0:
+			var hs: Array = e.get("heights_units", [3])
+			height = float(hs[0])
+		var t := KaijuSignsScript.banner_target(data, asset_id, KaijuSignsScript.iso(units), valid_view(asset_id, view), height)
+		if t.is_empty():
+			return {}
+		return place_banner(asset_id, t.building, t.wall, t.along, t.bottom_units)
+	var c := cell_at(units)
+	if c.x < 0:
+		return {}
+	var corner := cell_corner(c)
+	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
+	if not _holds(map_rect(), Rect2(corner, foot)):
+		return {}
+	var it := {"id": _next_id("alert_signs", "alert-"), "asset": asset_id, "x": corner.x, "y": corner.y,
+		"w": foot.x, "h": foot.y, "mirror": valid_mirror(asset_id, mirror)}
+	_list("alert_signs").append(it)
+	return {"kind": "alert", "item": it}
+
+
+## Hangs a banner (T-441) on the skyscraper entry `building` of this level: on `wall` ("south" or "east"),
+## `along` units from the wall's left end on screen (kept on the wall), its bottom `bottom_units` up. {}
+## when `building` is not a skyscraper (KaijuSigns.can_hang_on).
+func place_banner(asset_id: String, building: Dictionary, wall: String, along: float, bottom_units: float) -> Dictionary:
+	if KaijuSignsScript.kind_of_asset(asset_id) != "banner" or not KaijuSignsScript.can_hang_on(building):
+		return {}
+	var foot := KaijuSignsScript.building_rect(building)
+	var tex := KaijuSignsScript.texture_of({"asset": asset_id})
+	var it := {"id": _next_id("alert_signs", "alert-"), "asset": asset_id,
+		"building": [float(building.x), float(building.y)], "wall": KaijuSignsScript.wall_name(wall),
+		"along": clampf(along, 0.0, KaijuSignsScript.max_along(foot, wall, tex)), "bottom_units": bottom_units}
+	_list("alert_signs").append(it)
+	return {"kind": "alert", "item": it}
 
 
 ## True for a small jump ramp's catalogue id (T-400; its entry's "jump"): it climbs to no rooftop.
@@ -624,6 +680,10 @@ func _next_id(key: String, prefix: String) -> String:
 ## building, else the ground or road tile of the cell. {kind, item[, copy]} or {kind, cell}; {}
 ## outside the map.
 func piece_at(units: Vector2) -> Dictionary:
+	# T-441: a kaiju alert sign or banner whose picture is drawn at that point on screen (the nearest).
+	var alert := alert_at(units)
+	if not alert.is_empty():
+		return alert
 	for copy in _list("pattern_copies"):
 		for b in copy.get("boulders", []):
 			if units.distance_to(Vector2(float(b.x), float(b.y))) <= float(b.diameter) / 2.0:
@@ -652,6 +712,40 @@ func piece_at(units: Vector2) -> Dictionary:
 	return {"kind": _kind_of_tile(tile_at(c)), "cell": c}
 
 
+## The kaiju alert sign or banner (T-441) whose picture is drawn at the point on screen over `units`
+## (on the ground), the nearest to the viewer; {kind: "alert", item} or {}.
+func alert_at(units: Vector2) -> Dictionary:
+	var items: Array = data.get("alert_signs", []) if data.get("alert_signs") is Array else []
+	if items.is_empty():
+		return {}
+	var g := GroundHeight.new()
+	g.load_data(data)
+	var screen := KaijuSignsScript.iso(units)
+	var best: Dictionary = {}
+	var best_key := -INF
+	for it in items:
+		var quad := KaijuSignsScript.screen_quad(data, it, g)
+		if quad.is_empty() or not Geometry2D.is_point_in_polygon(screen, quad):
+			continue
+		var key := _alert_depth(it)
+		if key > best_key:
+			best = it
+			best_key = key
+	return {"kind": "alert", "item": best} if not best.is_empty() else {}
+
+
+## How near the viewer an alert sign or banner is (x + y of its ground point).
+func _alert_depth(it: Dictionary) -> float:
+	if KaijuSignsScript.kind_of(it) == "banner":
+		var b := KaijuSignsScript.building_of(data, it)
+		if b.is_empty():
+			return -INF
+		var p := KaijuSignsScript.banner_ground_point(KaijuSignsScript.building_rect(b), str(it.get("wall", "south")), float(it.get("along", 0)))
+		return p.x + p.y
+	var q := KaijuSignsScript.sign_ground_point(it)
+	return q.x + q.y
+
+
 static func _rect(d: Dictionary) -> Rect2:
 	return Rect2(float(d.x), float(d.y), float(d.w), float(d.h))
 
@@ -663,6 +757,17 @@ func piece_rect(piece: Dictionary) -> Rect2:
 	if piece.has("cell"):
 		return Rect2(cell_corner(piece.cell), Vector2(CELL, CELL))
 	var it: Dictionary = piece.item
+	if piece.kind == "alert" and KaijuSignsScript.kind_of(it) == "banner":
+		# T-441: the strip of ground along the wall under the banner (half a unit deep).
+		var b := KaijuSignsScript.building_of(data, it)
+		if b.is_empty():
+			return Rect2()
+		var foot := KaijuSignsScript.building_rect(b)
+		var length := KaijuSignsScript.banner_length(KaijuSignsScript.texture_of(it))
+		var along := float(it.get("along", 0.0))
+		if KaijuSignsScript.wall_name(str(it.get("wall", "south"))) == "south":
+			return Rect2(foot.position.x + along, foot.end.y, length, 0.5)
+		return Rect2(foot.end.x, foot.end.y - along - length, 0.5, length)
 	if piece.kind == "boulder":
 		var r := float(it.diameter) / 2.0
 		return Rect2(float(it.x) - r, float(it.y) - r, 2.0 * r, 2.0 * r)
@@ -697,6 +802,7 @@ func _delete(piece: Dictionary) -> bool:
 	match str(piece.kind):
 		"building":
 			if _erase_same(_list("buildings"), piece.item):
+				_drop_banners_of(piece.item)  # T-441: a banner goes with its skyscraper
 				refresh_ground_rows()
 				_relink()  # T-405: a short building is a platform ramps and rooftops link to
 				return true
@@ -720,7 +826,25 @@ func _delete(piece: Dictionary) -> bool:
 		"crater":
 			if _erase_same(_list("craters"), piece.item):
 				return true
+		"alert":
+			if _erase_same(_list("alert_signs"), piece.item):
+				return true
 	return false
+
+
+## Removes the banners (T-441) that hang on `building` (a deleted skyscraper).
+func _drop_banners_of(building: Dictionary) -> void:
+	if not (data.get("alert_signs") is Array) or not KaijuSignsScript.can_hang_on(building):
+		return
+	var keep: Array = []
+	for it in data.alert_signs:
+		var at = it.get("building", [])
+		var on_it: bool = KaijuSignsScript.kind_of(it) == "banner" and at is Array and at.size() >= 2 \
+			and absf(float(at[0]) - float(building.x)) < 0.01 and absf(float(at[1]) - float(building.y)) < 0.01
+		if not on_it:
+			keep.append(it)
+	data.alert_signs.clear()
+	data.alert_signs.append_array(keep)
 
 
 # ---- The spawn point (T-280) --------------------------------------------------------------------
@@ -1030,4 +1154,6 @@ func placed_pieces() -> Array:
 		out.append({"kind": "prop", "item": pr})
 	for cr in data.get("craters", []):
 		out.append({"kind": "crater", "item": cr})
+	for al in data.get("alert_signs", []):
+		out.append({"kind": "alert", "item": al})
 	return out

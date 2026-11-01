@@ -160,8 +160,9 @@ var boulder_textures: Array[Texture2D] = []
 var building_art: Dictionary = {}
 ## Set false before the map enters the tree to keep the placeholder boxes (tests of the boxes).
 var building_art_enabled := true
-## The kaiju alert signs (T-130) stand at the sample map's own blocks. The level creator's
-## editor (T-235) sets this false before the map enters the tree, since its levels have other blocks.
+## The kaiju alert signs and banners the level places (T-441, kaiju_signs.gd: the layout's
+## "alert_signs"; a level without them has none). Set false before the map enters the tree to leave
+## them out.
 var alert_signs_enabled := true
 var building_atlas: Texture2D = null
 ## "flat" or "iso".
@@ -200,9 +201,12 @@ var buildings: Array = []
 ## The skyscrapers' own fade nodes (T-064, per-slot fade): four per block when the building art is
 ## loaded, in depth order. Empty without the art; then the blocks (`buildings`) fade as wholes.
 var slots: Array = []
-## The kaiju alert signs (T-130): every sprite, and the root of the pavement ones (kaiju_signs.gd).
+## The kaiju alert signs (T-441, kaiju_signs.gd): every sprite (banners and standing signs), the root
+## of the standing signs (screen pixels, like prop_sprites_root) and the standing signs' sprites, which
+## take part in the depth order like the props' (depth_sprites).
 var alert_signs: Array = []
 var alert_signs_root: Node2D
+var alert_sign_sprites: Array = []
 ## Meteor challenges: id -> {id, design, centre, angle, boulders,
 ## corridor_width, centre_line}, everything placed, in units.
 var meteor_challenges: Dictionary = {}
@@ -275,8 +279,6 @@ func _build() -> void:
 	buildings_draw.map = self
 	view_root.add_child(buildings_draw)
 	_build_buildings()
-	if alert_signs_enabled:
-		alert_signs = KaijuSigns.build(self)
 	arrows_root = Node2D.new()
 	arrows_root.name = "Arrows"
 	view_root.add_child(arrows_root)
@@ -293,6 +295,8 @@ func _build() -> void:
 	_build_boulders()
 	_sync_boulder_sprites()
 	LevelProps.build(self)
+	if alert_signs_enabled:
+		alert_signs = KaijuSigns.build(self)
 	if challenges_enabled:
 		_build_challenges()
 	set_view(view)
@@ -564,9 +568,11 @@ func prop_blocks_spot(centre: Vector2, radius: float) -> bool:
 
 
 ## The sprites the depth order covers the car and the enemies with: the boulders', then the
-## props' (T-253). The array itself when there are no props.
+## props' (T-253), then the standing alert signs' (T-441). The array itself when there are none.
 func depth_sprites() -> Array:
-	return boulder_sprites if prop_sprites.is_empty() else boulder_sprites + prop_sprites
+	if prop_sprites.is_empty() and alert_sign_sprites.is_empty():
+		return boulder_sprites
+	return boulder_sprites + prop_sprites + alert_sign_sprites
 
 
 ## Places one plain boulder at `centre` (units from the map's centre) during a
@@ -772,13 +778,17 @@ static func _densify(line: PackedVector2Array, step: float) -> PackedVector2Arra
 
 
 func _physics_process(_delta: float) -> void:
+	Perf.begin(&"map.update_car")
 	if car != null:
 		update_car(car.position / PX_PER_UNIT, car.rotation)
+	Perf.end(&"map.update_car")
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"map.see_through")
 	if car != null and elevation == null:
 		update_see_through(car.position / PX_PER_UNIT, car.rotation, delta)
+	Perf.end(&"map.see_through")
 
 
 # ---- See-through buildings (task T-034) -----------------------------------------------------
@@ -1100,6 +1110,10 @@ func set_view(v: String) -> void:
 		# Prop sprites (T-253) in screen pixels too; the flat view draws no props.
 		prop_sprites_root.visible = v == "iso"
 		prop_sprites_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+	if alert_signs_root != null:
+		# The standing alert signs (T-441) in screen pixels too; the flat view draws none.
+		alert_signs_root.visible = v == "iso"
+		alert_signs_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
 	if boulders_draw != null:
 		boulders_draw.queue_redraw()
 	if ground_tiles != null:
@@ -1155,15 +1169,18 @@ class _GroundDraw extends Node2D:
 	var map
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.map_layer")
 		var u: float = map.PX_PER_UNIT
 		var m: Rect2 = map.rect_of(map.layout.map.rect)
 		var t: float = map.EDGE_WALL_THICKNESS
 		draw_rect(Rect2((m.position - Vector2(t, t)) * u, (m.size + Vector2(2 * t, 2 * t)) * u), map.outside_color)
 		if map.uses_ground_art():
+			if Perf.on: Perf.each_end(&"draw.map_layer")
 			return
 		draw_rect(Rect2(m.position * u, m.size * u), map.road_color)
 		var g: Rect2 = map.rect_of(map.layout.gravel)
 		draw_rect(Rect2(g.position * u, g.size * u), map.gravel_color)
+		if Perf.on: Perf.each_end(&"draw.map_layer")
 
 
 ## The ground art (T-103): one atlas tile per 2 x 2 unit cell, in screen pixels
@@ -1198,7 +1215,9 @@ class _GroundTiles extends Node2D:
 		return atlas != null
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.map_layer")
 		if not has_art():
+			if Perf.on: Perf.each_end(&"draw.map_layer")
 			return
 		var g: Dictionary = map.ground_layout
 		var tw := float(g.tile_px[0])
@@ -1224,6 +1243,7 @@ class _GroundTiles extends Node2D:
 		# T-398: the meteor craters, ground decals over the tiles (under everything else).
 		for d in LevelCraters.decals_of(map.layout):
 			draw_texture_rect(d.texture, d.rect, false)
+		if Perf.on: Perf.each_end(&"draw.map_layer")
 
 
 ## Holds the building nodes (map_building.gd, flat placeholder colours) and
@@ -1232,9 +1252,11 @@ class _BuildingsDraw extends Node2D:
 	var map
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.map_layer")
 		var u: float = map.PX_PER_UNIT
 		var m: Rect2 = map.rect_of(map.layout.map.rect)
 		draw_rect(Rect2(m.position * u, m.size * u), map.building_edge_color, false, 3.0)
+		if Perf.on: Perf.each_end(&"draw.map_layer")
 
 
 ## Draws every boulder (the pattern copies', the meteor challenges' and the
@@ -1244,7 +1266,9 @@ class _BouldersDraw extends Node2D:
 	var map
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.map_layer")
 		if map.uses_boulder_art():
+			if Perf.on: Perf.each_end(&"draw.map_layer")
 			return
 		var u: float = map.PX_PER_UNIT
 		for b in map.all_boulders():
@@ -1252,6 +1276,7 @@ class _BouldersDraw extends Node2D:
 			var r := float(b.diameter) / 2.0 * u
 			draw_circle(c, r, map.boulder_color)
 			draw_arc(c, r - 1.0, 0.0, TAU, 32, map.boulder_edge_color, 2.0)
+		if Perf.on: Perf.each_end(&"draw.map_layer")
 
 
 ## One boulder's sprite (T-065), in the map's screen pixels (isometric view).

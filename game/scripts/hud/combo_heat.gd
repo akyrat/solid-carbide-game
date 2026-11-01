@@ -94,8 +94,10 @@ func _apply_step() -> void:
 
 
 func _process(delta: float) -> void:
+	if Perf.on: Perf.each_begin(&"hud.combo_heat")
 	time += delta
 	_animate()
+	if Perf.on: Perf.each_end(&"hud.combo_heat")
 
 
 ## The counter's scale for this moment: a quick pop on every beat that eases

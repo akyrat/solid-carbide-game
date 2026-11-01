@@ -1,0 +1,23 @@
+{
+ "task": "T-447",
+ "what": "The shared button's 9-slice plates, one per state: normal, hover, focus (keyboard selected), pressed, disabled. 72 x 22 art pixels, slice margins 3 on every side, shown at 2x.",
+ "made_by": "game/tools/build_button_plates.py (drawn by script; no PixelLab call, 0 generations). Byte-identical every run.",
+ "size": [
+  72,
+  22
+ ],
+ "slice": 3,
+ "files": {
+  "normal": "button_plate_normal.png",
+  "hover": "button_plate_hover.png",
+  "focus": "button_plate_focus.png",
+  "pressed": "button_plate_pressed.png",
+  "disabled": "button_plate_disabled.png"
+ },
+ "references": [
+  "docs/visual-style.md (Content, Rules; the HUD style sheet)",
+  "docs/hud-and-menus.md",
+  "game/art/hud/clock_panel.png (the bezel)"
+ ],
+ "prompt": null
+}

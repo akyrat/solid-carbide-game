@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import build_creator_assets as bc  # noqa: E402
 
-KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater"}  # crater: T-398
+KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert"}  # crater: T-398; alert: T-441
 
 
 class CatalogueTest(unittest.TestCase):
@@ -163,7 +163,7 @@ class FamilyTest(unittest.TestCase):
         groups = [f["group"] for f in self.fams]
         self.assertEqual(groups, sorted(groups, key=self.cat["groups"].index))
         self.assertEqual([f["id"] for f in self.fams], bc.FAMILY_ORDER)
-        self.assertEqual(len(self.fams), 24)  # T-398: sidewalk, meteor crater, parked car, broken car
+        self.assertEqual(len(self.fams), 26)  # T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign and banner
 
     def test_labels_are_texts(self):
         texts = bc.load("data/level/creator_texts.json")
@@ -186,7 +186,7 @@ class FamilyTest(unittest.TestCase):
             if e.get("part") or e["kind"] == "road":
                 continue  # T-263: roads are painted with the brush; their tiles stay in the catalogue
             for t in e["textures"]:
-                if e["id"].startswith("skyscraper-"):
+                if e["id"].startswith("skyscraper-") or e["id"].startswith("alert-banner-"):
                     key = (e["id"], t["view"], t["mirror"], t["variant"])
                 else:
                     key = (e["id"], t["view"], t["mirror"], "")
@@ -286,6 +286,47 @@ class StreetPiecesTest(unittest.TestCase):
         for k in ("piece_sidewalk", "piece_meteor_crater", "piece_parked_car", "piece_broken_car", "model_counter",
                   "facing_top_right", "facing_bottom_right", "facing_bottom_left", "facing_top_left"):
             self.assertIn(k, texts)
+
+
+class AlertSignsTest(unittest.TestCase):
+    """T-441: the standing kaiju alert sign and the alert banner, each in both designs, with T-130's art."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cat = bc.build()
+        cls.by_id = {e["id"]: e for e in cls.cat["entries"]}
+        cls.fams = {f["id"]: f for f in cls.cat["families"]}
+
+    def test_entries(self):
+        for design, shape in (("head", "triangle"), ("body", "circle")):
+            s = self.by_id["alert-sign-" + design]
+            self.assertEqual((s["kind"], s["alert"], s["design"]), ("alert", "sign", design))
+            self.assertEqual(s["mirrors"], [False, True])
+            self.assertEqual(s["footprint_units"], [2.0, 2.0])
+            self.assertEqual({t["texture"] for t in s["textures"]}, {"res://art/banners/kaiju_%s_%s_sign.png" % (design, shape)})
+            b = self.by_id["alert-banner-" + design]
+            self.assertEqual((b["kind"], b["alert"], b["design"]), ("alert", "banner", design))
+            self.assertEqual(b["views"], ["south", "east"])
+            self.assertEqual(b["heights_units"], [3, 6, 9, 12, 15])
+            self.assertEqual({t["texture"] for t in b["textures"]},
+                             {"res://art/banners/kaiju_%s_%s_building_wall.png" % (design, shape)})
+            for t in s["textures"] + b["textures"]:
+                self.assertTrue(bc.res_exists(t["texture"]))
+
+    def test_families_under_decoration_with_the_text_tickets_labels(self):
+        texts = bc.load("data/level/creator_texts.json")
+        sign = self.fams["alert-sign"]
+        banner = self.fams["alert-banner"]
+        self.assertEqual((sign["group"], sign["label"]), ("decoration", "piece_alert_sign"))
+        self.assertEqual((banner["group"], banner["label"]), ("decoration", "piece_alert_banner"))
+        self.assertEqual((sign["looks"], sign["turns"], sign["mirrors"]), (2, 1, [False, True]))
+        self.assertEqual((banner["looks"], banner["turns"], banner["heights"]), (2, 2, ["3", "6", "9", "12", "15"]))
+        for f in (sign, banner):
+            self.assertEqual(f["look_labels"], ["alert_design_head", "alert_design_body"])
+            for k in f["look_labels"] + f.get("hints", []):
+                self.assertIn(k, texts)
+        self.assertEqual(banner["hints"], ["banner_wall_hint", "banner_height_hint"])
+        self.assertNotIn("hints", sign)
 
 
 if __name__ == "__main__":

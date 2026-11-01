@@ -88,6 +88,17 @@ func test_focus_out_does_nothing_during_the_level_up_choice() -> void:
 	assert_true(s.is_waiting_for_choice())
 
 
+## T-459: the driving power-up overlay behaves as the level-up choice does.
+func test_focus_out_does_nothing_during_the_power_up_overlay() -> void:
+	var s := await _start()
+	s.missions.mission_completed.emit(0)
+	assert_true(game.run.power_up_screen.visible)
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	assert_false(game.pause_screen.visible, "the pause screen did not open")
+	assert_true(game.run.power_up_offers.is_showing())
+	assert_true(get_tree().paused, "still paused for the choice")
+
+
 func test_focus_out_does_nothing_during_the_time_up_screen() -> void:
 	var s := await _start()
 	s.advance(s.time_left + 1.0)
