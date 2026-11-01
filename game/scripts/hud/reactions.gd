@@ -245,15 +245,19 @@ func _gap(rate: float) -> float:
 
 
 func _process(dt: float) -> void:
+	Perf.begin(&"hud.reactions")
 	advance(dt)
+	Perf.end(&"hud.reactions")
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.hud_reactions")
 	for it in items:
 		var s: float = float(cfg["icon_scale"]) * scale_of(it)
 		var tex: Texture2D = texture_of(it)
 		var sz := tex.get_size() * s
 		draw_texture_rect(tex, Rect2((it["pos"] - sz / 2.0).round(), sz), false, Color(1, 1, 1, alpha_of(it)))
+	if Perf.on: Perf.each_end(&"draw.hud_reactions")
 
 
 ## The picture for an item: a good reaction's, or (kind past ICONS) a bad one's.

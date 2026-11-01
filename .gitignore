@@ -16,6 +16,8 @@ tools/bin/
 
 # Test and screenshot output
 game/test-output/
+# Performance recordings (T-468, game/docs/game-loop/perf-recorder.md)
+game/perf/
 /screenshots/
 
 # OS and editor clutter

@@ -187,6 +187,7 @@ func shadow_outline() -> PackedVector2Array:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.minion")
 	if shows_shadow():
 		draw_colored_polygon(shadow_outline(), SHADOW_COLOR)
 	var entry: Array = SHEETS[compass_index(facing)]
@@ -198,6 +199,7 @@ func _draw() -> void:
 			var n := maxi(1, fall_tex.get_width() / FRAME_SIZE)
 			var f := int(fall_seconds * FALL_FPS) % n
 			_draw_art(fall_tex, entry[1], f)
+			if Perf.on: Perf.each_end(&"draw.minion")
 			return
 	draw_set_transform_matrix(anim_transform(pivot))
 	var tex := _sheet(entry[0])
@@ -207,6 +209,7 @@ func _draw() -> void:
 		draw_set_transform_matrix(anim_transform(pivot) * Transform2D.IDENTITY.scaled(Vector2(size_scale, size_scale)))
 		_draw_placeholder()
 	draw_set_transform_matrix(Transform2D.IDENTITY)
+	if Perf.on: Perf.each_end(&"draw.minion")
 
 
 func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:

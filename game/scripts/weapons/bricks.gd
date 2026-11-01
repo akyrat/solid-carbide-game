@@ -376,12 +376,15 @@ class BricksWave:
 		return out
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.bricks")
 		if sheet != null:
 			draw_set_transform(Vector2.ZERO, 0.0, Vector2(ART_SCALE, ART_SCALE))
 			draw_texture_rect_region(sheet, Rect2(-art_centre, frame_size),
 				Rect2(Vector2(frame_index() * frame_size.x, 0.0), frame_size))
+			if Perf.on: Perf.each_end(&"draw.bricks")
 			return
 		_draw_placeholder()
+		if Perf.on: Perf.each_end(&"draw.bricks")
 
 	## T-324's placeholder drawing, for a radius with no sheet.
 	func _draw_placeholder() -> void:

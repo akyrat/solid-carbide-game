@@ -47,8 +47,10 @@ static func cell_index(direction: int, frame: int) -> int:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"weapon.flamethrower_drawing")
 	visible = emitting
 	if not emitting:
+		Perf.end(&"weapon.flamethrower_drawing")
 		return
 	_clock += delta
 	if _clock >= FLICKER_SECONDS:
@@ -58,6 +60,7 @@ func _process(delta: float) -> void:
 	if cell != _drawn_cell:
 		_drawn_cell = cell
 		queue_redraw()
+	Perf.end(&"weapon.flamethrower_drawing")
 
 
 ## The flicker frame being drawn (0 or 1).
@@ -95,10 +98,13 @@ func current_cell() -> int:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.flame")
 	if not emitting:
+		if Perf.on: Perf.each_end(&"draw.flame")
 		return
 	var cell := current_cell()
 	var src := Rect2(Vector2((cell % COLUMNS) * CELL, (cell / COLUMNS) * CELL), Vector2(CELL, CELL))
 	# Undo this node's own rotation (the cell is already turned), then draw the cell centred on the base.
 	draw_set_transform(Vector2.ZERO, -rotation, Vector2(ART_SCALE, ART_SCALE))
 	draw_texture_rect_region(SHEET, Rect2(Vector2(-CELL / 2.0, -CELL / 2.0), Vector2(CELL, CELL)), src)
+	if Perf.on: Perf.each_end(&"draw.flame")

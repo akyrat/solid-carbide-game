@@ -176,5 +176,7 @@ class _Marker extends Node2D:
 			queue_redraw()
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.needle")
 		var col := MARKER_COLOR.lerp(FLASH_MARKER_COLOR, flash)
 		draw_dashed_line(from, to, col, width * (1.0 + flash), dash)
+		if Perf.on: Perf.each_end(&"draw.needle")

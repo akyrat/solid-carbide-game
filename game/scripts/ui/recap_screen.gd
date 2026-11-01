@@ -211,9 +211,11 @@ func close() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"ui.recap")
 	if _animating:
 		_t += delta
 		_animate()
+	Perf.end(&"ui.recap")
 
 
 func _animate() -> void:

@@ -214,17 +214,23 @@ class PopupText extends Node2D:
 			queue_free()
 
 	func _process(dt: float) -> void:
+		if Perf.on: Perf.each_begin(&"hud.popup")
 		advance(dt, false)
+		if Perf.on: Perf.each_end(&"hud.popup")
 
 	func _physics_process(_dt: float) -> void:
+		if Perf.on: Perf.each_begin(&"hud.popup_place")
 		place()
+		if Perf.on: Perf.each_end(&"hud.popup_place")
 
 	func _ready() -> void:
 		# Hard pixel edges, never smoothed (Visual style).
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.popup")
 		if text == "":
+			if Perf.on: Perf.each_end(&"draw.popup")
 			return
 		if broken:
 			var halves := broken_textures()
@@ -232,10 +238,12 @@ class PopupText extends Node2D:
 			var shake := broken_shake()
 			draw_texture_rect(halves[0], Rect2(-bsize / 2.0 + shake, bsize), false)
 			draw_texture_rect(halves[1], Rect2(-bsize / 2.0 + shake + broken_fall(), bsize), false)
+			if Perf.on: Perf.each_end(&"draw.popup")
 			return
 		var tex := texture()
 		var size := Vector2(tex.get_size()) * PIXEL_SCALE
 		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
+		if Perf.on: Perf.each_end(&"draw.popup")
 
 
 var _car: Node = null

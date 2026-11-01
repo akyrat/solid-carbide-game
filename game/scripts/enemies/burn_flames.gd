@@ -84,15 +84,19 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if Perf.on: Perf.each_begin(&"effects.burn_flames")
 	_clock += delta
 	if _clock >= FLICKER_SECONDS:
 		_clock = 0.0
 		frame = (frame + 1) % FRAMES
 		queue_redraw()
+	if Perf.on: Perf.each_end(&"effects.burn_flames")
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.burn_flames")
 	var k := ART_SCALE * steps
 	var size := FRAME_SIZE * k
 	draw_texture_rect_region(ART, Rect2(Vector2(-size.x / 2.0, -size.y - BASE_LIFT), size),
 		Rect2(Vector2(frame * FRAME_SIZE.x, 0), FRAME_SIZE))
+	if Perf.on: Perf.each_end(&"draw.burn_flames")

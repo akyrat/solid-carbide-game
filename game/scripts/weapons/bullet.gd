@@ -127,6 +127,8 @@ func _place() -> void:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.bullet")
 	var size := ART_FRAME * ART_SCALE
 	draw_texture_rect_region(ART, Rect2(Vector2(-size / 2.0, -size / 2.0), Vector2(size, size)),
 		Rect2(Vector2(frame * ART_FRAME, 0), Vector2(ART_FRAME, ART_FRAME)))
+	if Perf.on: Perf.each_end(&"draw.bullet")

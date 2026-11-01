@@ -85,13 +85,16 @@ func is_shaking() -> bool:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"car.sprite")
 	if _shake_left <= 0.0:
+		Perf.end(&"car.sprite")
 		return
 	_shake_left = maxf(_shake_left - delta, 0.0)
 	var k := _shake_left / SHAKE_SECONDS
 	var t := SHAKE_SECONDS - _shake_left
 	var px := Vector2(sin(t * TAU * SHAKE_HZ), cos(t * TAU * SHAKE_HZ * 0.5) * 0.5) * SHAKE_PIXELS * k
 	offset = _base_offset + (px / scale.x if scale.x != 0.0 else px)
+	Perf.end(&"car.sprite")
 
 
 ## The lift of the drawing for a height above the ground (task T-185;
