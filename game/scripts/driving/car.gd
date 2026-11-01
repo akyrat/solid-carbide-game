@@ -132,6 +132,11 @@ var airborne: bool:
 	get:
 		return height_model.airborne
 
+## Task T-478: returns the top (units) of the obstacle the car is flying over at its
+## current place, or 0. The run's map sets it (mvp_map.gd obstacle_floor); unset, the car
+## has no obstacle floor (the drift prototype).
+var floor_query := Callable()
+
 ## When false, physics_step uses scripted_input instead of the keyboard (tests).
 var use_keyboard := true
 ## [W held, S held, steer] used when use_keyboard is false.
@@ -254,6 +259,9 @@ func physics_step() -> void:
 		model.set_position(position / PX_PER_UNIT)
 		_bounce(hit)
 	_update_contacts(hit)
+	# T-478: the car lands on the obstacle it flies over, never inside it.
+	if floor_query.is_valid() and (height_model.airborne or height_model.floor_height > 0.0):
+		height_model.set_floor(float(floor_query.call()), model.get_position())
 	# T-411: the whole drawn outline meets the ground's sides, turning included.
 	var side: Dictionary = height_model.step(flat_before, model.get_position(), model.get_velocity(), model.dt,
 		rotation_before, model.rotation)

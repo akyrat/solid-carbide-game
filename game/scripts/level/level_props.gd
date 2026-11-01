@@ -186,6 +186,7 @@ static func build(map: Node2D) -> void:
 		sp.prop_id = str(it.get("id", ""))
 		sp.centre_units = centre
 		sp.ground_units = h
+		sp.top_units = float(map.obstacle_heights(body)[1])
 		sp.outline = outline_of(it, h)
 		sp.box = _bounds(sp.outline)
 		var s := sprite_of(str(it.get("asset", "")), str(it.get("rotation", "north")))
@@ -217,6 +218,8 @@ class PropSprite extends Sprite2D:
 	var centre_units := Vector2.ZERO
 	## The height it stands on, units (a rooftop's, a ramp's; T-393).
 	var ground_units := 0.0
+	## T-478: the top of the prop's collision height, units: a car above it is drawn over it.
+	var top_units := INF
 	## The outline of the prop on screen (convex), and its box.
 	var outline := PackedVector2Array()
 	var box := Rect2()

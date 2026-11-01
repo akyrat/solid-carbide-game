@@ -3140,3 +3140,8 @@ Entry format:
 - Decision or change: run_tests.sh runs the Godot test scripts in GUT_JOBS parallel headless processes (default 12), sharded by measured times: about 3 minutes instead of 25, same 2526 tests; GUT_JOBS=1 or -gselect keeps the single process.
 - Documents touched: none
 - Tasks: T-487
+
+## 2026-11-01: The Jump clears obstacles
+- Decision or change: A jump high enough passes over barriers and boulders, the car can land on top of one, and the car is drawn over the obstacle while above it; the board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-478

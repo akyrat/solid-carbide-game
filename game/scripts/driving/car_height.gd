@@ -55,6 +55,10 @@ var vertical_speed := 0.0
 var airborne := false
 ## The GroundHeight query, or null (no elevation: height stays 0).
 var ground = null
+## Task T-478 (Drifting, Content, "The Jump clears obstacles"): the top of the obstacle the
+## car is flying over now (set by set_floor, 0 = none). The car lands on it like on ground and
+## drives along it, so it never lands inside the obstacle.
+var floor_height := 0.0
 
 ## Emitted when the car leaves the ground. from_ramp is true at the ramp's top,
 ## false when it falls off a drop-off edge.
@@ -78,6 +82,23 @@ func hop(vz: float) -> bool:
 	_take_off(false, vz, height)
 	hopped.emit(vz)
 	return true
+
+
+## Task T-478: sets the top (units) of the obstacle under the car (0 = none). Leaving
+## it while the car stands on it (not airborne, above the ground), the car falls.
+func set_floor(top: float, pos: Vector2) -> void:
+	floor_height = maxf(top, 0.0)
+	if airborne:
+		return
+	var at_ground: float = ground.height_at(pos) if ground != null else 0.0
+	if height > maxf(at_ground, floor_height) + 0.0001:
+		_take_off(false, 0.0, height)
+
+
+## The surface under the car: the ground, or the obstacle it is over if higher.
+func _surface(pos: Vector2) -> float:
+	var at_ground: float = ground.height_at(pos) if ground != null else 0.0
+	return maxf(at_ground, floor_height)
 
 
 ## Puts the car on the ground at point (for a reset or a teleport).
@@ -147,7 +168,7 @@ func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float,
 			# T-461: a hop with no ground source flies over flat ground at 0.
 			_step_air(pos, dt)
 			return {"wall": false, "rotation": rot_new}
-		height = 0.0
+		height = floor_height
 		vertical_speed = 0.0
 		airborne = false
 		return {"wall": false, "rotation": rot_new}
@@ -180,7 +201,7 @@ func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float,
 			return walk
 	# Otherwise the height follows the ground under the car (a step up higher
 	# than STEP_CLIMB_MAX was a wall, so this is a slope or a curb).
-	height = ground.height_at(pos)
+	height = _surface(pos)
 	vertical_speed = 0.0
 	return walk
 
@@ -241,6 +262,7 @@ func _walk(prev: Vector2, pos: Vector2, dt: float, rot_prev: float = NAN, rot_ne
 		var t := float(i) / float(n)
 		var b := prev.lerp(pos, t)
 		var g_b: float = ground.height_at(b)
+		var s_b := maxf(g_b, floor_height)  # T-478: the obstacle the car is over counts as ground for a drop
 		var h_b := lerpf(h0, h1, t) if airborne else h
 		if g_b - g_a > STEP_CLIMB_MAX and g_b > h_b + STEP_CLIMB_MAX:
 			var area: int = ground.area_index_at(b)
@@ -274,11 +296,11 @@ func _walk(prev: Vector2, pos: Vector2, dt: float, rot_prev: float = NAN, rot_ne
 				gs_a[k] = g_p
 			rot_a = rot_b
 		if not airborne and not out.drop:
-			if g_b < h - STEP_CLIMB_MAX:
+			if s_b < h - STEP_CLIMB_MAX:
 				out.drop = true
 				out.drop_height = h
 			else:
-				h = g_b
+				h = s_b
 		a = b
 		g_a = g_b
 	return out
@@ -296,7 +318,7 @@ func _take_off(from_ramp: bool, vz: float, new_height: float) -> void:
 func _step_air(pos: Vector2, dt: float) -> void:
 	vertical_speed -= GRAVITY * dt
 	height += vertical_speed * dt
-	var at_ground: float = ground.height_at(pos) if ground != null else 0.0
+	var at_ground := _surface(pos)
 	if height <= at_ground:
 		var impact := vertical_speed
 		height = at_ground
