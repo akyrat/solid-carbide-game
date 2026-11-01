@@ -3175,3 +3175,8 @@ Entry format:
 - Decision or change: The UI Agent adds a live key pad to every clip (slide 2 and the trick list) and rebuilds the trick list with each trick's clip and keycap recipe.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-491
+
+## 2026-11-01: The trick list's rules and key recipe notes
+- Decision or change: Each trick's one-line rule and the short notes and badges under its keycap recipe (none for thread the needle), through the style loop (all 8+), notes 20 characters at most.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-489
