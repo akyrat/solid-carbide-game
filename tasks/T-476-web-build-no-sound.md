@@ -1,7 +1,7 @@
 ---
 id: T-476
 title: The browser build on itch.io plays no sound and no music
-status: open
+status: in-progress
 from: project-lead
 to: sfx
 lead: Greenbull
@@ -56,6 +56,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Open → In progress
+
+Started: the SFX Agent finds why the browser build is silent, in a local browser run.
 
 ## Style review
 
