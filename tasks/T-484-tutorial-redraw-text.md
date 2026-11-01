@@ -1,7 +1,7 @@
 ---
 id: T-484
 title: Text: the redrawn tutorial slides' headlines, labels and captions
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -453,3 +453,4 @@ Keys and final text (score):
 Retired, kept in the file with a `_comment` starting "UNUSED since T-484": `slide1.controls`, `slide1.drift`, `slide2.chain`, `slide2.gift`, `slide3.goal` (the UI ticket removes their use).
 
 Other changes: `docs/hud-and-menus.md` (Content, "Tutorial slides and trick list") lists the new keys; `game/tools/text_inventory.py` maps the new key prefixes (kicker, slide4, button.skip) to screens, which its test required. Tests: the full game/tools suite had one failure (text inventory, unlisted keys), fixed and re-run green. Nothing under game/data/levels/ touched. For the playtest: the draft's "KAIJU!" became "The kaiju!"; the step 2 and 3 captions say "Live viewers" (the loop's choice).
+- 2026-11-01, in-progress → in-qa: Text for the four redrawn slides done, 25 lines scored 8+, keys in result notes
