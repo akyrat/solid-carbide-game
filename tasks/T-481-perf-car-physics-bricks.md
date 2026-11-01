@@ -1,7 +1,7 @@
 ---
 id: T-481
 title: Frame drops: car physics spikes to ~28 ms together with the bricks weapon
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -95,3 +95,4 @@ The strict "under 2 ms in a recorder run" numbers need the board's own machine; 
 - GUT: 213 scripts, 2518 tests, all passing (`GUT_TIME_LIMIT=1800`). `python -m unittest discover -s game/tools`: 858 ran, OK (1 skipped). `python -m unittest discover -s tools`: 633 ran, OK.
 - Existing weapon and car tests unchanged and passing. Nothing under game/data/levels/ or game/perf/ touched.
 - Documents: docs/weapons.md (Bricks, "Bodies and cost (T-481)").
+- 2026-11-01, in-progress → in-qa: Fixed: popup bake out of the landing's physics step, bricks sheet cached; all 3 test sets pass
