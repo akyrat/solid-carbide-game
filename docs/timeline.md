@@ -3100,3 +3100,13 @@ Entry format:
 - Decision or change: The level-up screen's card art and texts are loaded with the run (LevelUpScreen.prewarm), so the first gift pack pickup no longer freezes (97 ms in the board's recorded run, now about 2 ms like every pickup). The board approved it after playing.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-482
+
+## 2026-11-01: Each test run is paid once per stage
+- Decision or change: The board's test rule: agents run the tests for what they changed, QA runs the full sets once (the tools set only when tools change), the merge runs them once per batch; qa_check and the goal runner follow it.
+- Documents touched: tasks/README.md
+- Tasks: T-486
+
+## 2026-11-01: A faster Godot test set
+- Decision or change: The Godot test set (about 25 minutes) is measured and sped up, for example by running its scripts in parallel, keeping one entry point and every test.
+- Documents touched: tasks/README.md
+- Tasks: T-487
