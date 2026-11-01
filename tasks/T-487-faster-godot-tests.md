@@ -1,7 +1,7 @@
 ---
 id: T-487
 title: Make the Godot test set run faster (it takes about 25 minutes now)
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -95,3 +95,4 @@ Total work 3084 s for 213 single-script runs (about 2200 s without the repeated 
 **Tests run.** `game/tools` Python set: 875 tests (including the 5 new in `test_run_tests_parallel.py`), OK (skipped=1). `tools/test_merge_batch.py` + `tools/test_qa_check.py`: 29 tests OK after one change: `RunTestsScriptTest.test_the_env_variable_overrides_the_limit` fakes Godot with a shell script and expected the single-process path, so it now sets `GUT_JOBS=1` (the limit logic it checks is unchanged; qa_check.py and merge_batch.py themselves are untouched and call the same `bash game/tools/run_tests.sh`). One earlier run of the game/tools set showed 1 failure under heavy load that did not repeat (the second full run was clean); I did not find which. The full Godot set: the 199 s run above (done from the committed code except the final robustness tweak in run_tests_parallel.py for a Godot that won't start).
 
 **Docs.** `game/docs/setup/tests.md` has a new "The parallel run (T-487)" section (how it works, `GUT_JOBS`, exit codes, `--measure`, `--list`) and the stale 900 s text now says 1500 s. `tasks/README.md` was listed as affected: its "Which tests run when" note about a 25-minute Godot set is now out of date; the Project Lead owns that file and should update the number (about 3.5 minutes) and the `-gtest=` hint (with the single-process path `-gtest` also runs the whole folder; use `-gselect=`). Nothing under `game/data/levels/` was touched.
+- 2026-11-01, in-progress → in-qa: Godot set now 12 parallel processes: 199 s vs 1544 s, 2522 tests same; GUT_JOBS picks count
