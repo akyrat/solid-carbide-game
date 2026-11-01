@@ -3085,3 +3085,13 @@ Entry format:
 - Decision or change: Scripts build a screenshot of every screen (19) and a list of every player-facing text (232) for the board's MVP pass; the Project Lead's review page is built from them.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-479
+
+## 2026-11-01: The redrawn tutorial slides' text
+- Decision or change: The Narrative Theme Agent writes the four redrawn slides' headlines, key labels, step captions and the missions line, from the board's approved draft.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-484
+
+## 2026-11-01: The redrawn tutorial slides are built
+- Decision or change: The UI Agent rebuilds the tutorial as four slides matching the board's approved draft, with the recorded clips.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-485
