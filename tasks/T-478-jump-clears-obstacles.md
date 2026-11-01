@@ -1,7 +1,7 @@
 ---
 id: T-478
 title: Jump: the Space hop clears obstacles lower than the car
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd, game/scripts/driving/jump_power_up.gd, game/data/power_ups.json, tasks/T-461-jump-space-makes-a-small-hop.md]
 files_expected_to_change: [game/scripts/driving/, game/tests/unit/, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,15 +43,15 @@ The board's review: own the Jump, hop over a boulder, and hit a tall building.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows the car hopping (Jump power-up, tier 1) over a boulder lower than the hop's height, with no bounce and no hit_obstacle. (QA: pass / fail)
-- [ ] A test shows the same car, too low or on the ground, bouncing off that boulder as today. (QA: pass / fail)
-- [ ] A test shows a building taller than the hop still blocks the car in the air, and the map's edge always does. (QA: pass / fail)
-- [ ] A test shows the car never ends a physics step inside an obstacle when it lands. (QA: pass / fail)
-- [ ] The result notes list each obstacle kind with its height and whether each Jump tier clears it. (QA: pass / fail)
-- [ ] A GIF or screenshots of the car hopping over a boulder are saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/drifting.md (Content) describes how the hop clears obstacles. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A test shows the car hopping (Jump power-up, tier 1) over a boulder lower than the hop's height, with no bounce and no hit_obstacle. (QA: pass)
+- [ ] A test shows the same car, too low or on the ground, bouncing off that boulder as today. (QA: pass)
+- [ ] A test shows a building taller than the hop still blocks the car in the air, and the map's edge always does. (QA: pass)
+- [ ] A test shows the car never ends a physics step inside an obstacle when it lands. (QA: pass)
+- [ ] The result notes list each obstacle kind with its height and whether each Jump tier clears it. (QA: pass)
+- [ ] A GIF or screenshots of the car hopping over a boulder are saved and listed in the result notes. (QA: pass)
+- [ ] docs/drifting.md (Content) describes how the hop clears obstacles. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; QA run: GUT 2510/2510 in 210 scripts, game/tools 849 OK, tools 633 OK. The agent's notes list 2326/191, an older count)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -92,3 +92,5 @@ Written by the agent when it finishes.
 **Files:** car.gd, car_height.gd, mvp_map.gd, run.gd, elevation_sample_map.gd, tests/fixtures/jump_boulder_demo.gd and jump_boulder_gif.tscn, docs/drifting.md (Content, "The Jump clears obstacles (task T-478)").
 **GIF and screenshots:** `art-archive/T-478/screenshots/jump_over_boulder.gif`, `jump_over_boulder_montage.png`.
 **Note for the board's playtest:** the boulder is drawn big (3 wide, taller than 0.8 looks), so a hop over it reads as flying over a tall rock; the car's sprite also draws behind the boulder sprite for a moment mid-hop (depth order, not changed here). If 0.8 feels wrong, it is one constant.
+- 2026-11-01, in-progress → in-qa: Jump now clears boulders (0.8 high) and low props by height; lands on top, never inside; tests green, GIF saved.
+- 2026-11-01, in-qa → needs-playtest: QA pass: 9/9 criteria; GUT 2510/2510 (210 scripts), Python 849 + 633 OK. Own the Jump, hop a boulder, hit a tall building.
