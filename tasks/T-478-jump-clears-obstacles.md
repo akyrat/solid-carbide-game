@@ -1,7 +1,7 @@
 ---
 id: T-478
 title: Jump: the Space hop clears obstacles lower than the car
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -72,6 +72,14 @@ Back to the Driving & Drift Agent: in your playtest the hop still doesn't clear 
 ### 2026-11-01, Needs playtest → In progress
 
 Jump works; back to the Driving & Drift Agent to draw the car over the obstacles it's jumping over.
+
+### 2026-11-01, Needs playtest
+
+Round 3 (draw order) passed QA: the car is drawn over obstacles while it jumps them. Ready to play.
+
+### 2026-11-01, Needs playtest
+
+The board: LGTM. Merging after the current batch.
 
 ## Style review
 
@@ -154,3 +162,4 @@ Written by the agent when it finishes.
 **GIF (real run, a hop over a boulder, over a barrier, and a landing on a boulder, the car drawn over them):** `art-archive/T-478/screenshots/real_run_car_over_obstacles.gif`; zoom of three hop frames: `art-archive/T-478/screenshots/real_run_car_over_boulder_zoom.png`. These replace the round 2 GIF and montage.
 - 2026-11-01, in-progress → in-qa: Car now drawn over the obstacle it hops over or lands on; draw-order test and real-run GIF added.
 - 2026-11-01, in-qa → needs-playtest: QA round 3 pass: car drawn over hopped obstacles, depth tests green; GUT 2529/2529, Python sets green
+- 2026-11-01, needs-playtest → done: lgtm
