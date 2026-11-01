@@ -3020,3 +3020,8 @@ Entry format:
 - Decision or change: The board found the itch.io build silent; the SFX Agent finds and fixes the cause in a local browser run.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-476
+
+## 2026-11-01: Goal G-009, mission packs and driving power-ups, merged after the board's playtest
+- Decision or change: The board played goal G-009's build and approved it ("looks good"). Merged: 30 missions per run (5 fixed, 25 generated) on a notebook page on the HUD, with checkboxes, live counts and crossing off; a completed mission pauses the run and offers 2 driving power-ups on their own overlay; the four power-ups with tiers (Rev Charge, Jump, Bouncy Bumpers, Rusty Overcoat), their icons, the notebook and overlay art and Rev Charge's effect (4 PixelLab generations of a 40 cap). The board confirmed the car takes no damage while jumping over enemies. Found in the playtest, fixed in follow-up tickets: Rusty Overcoat made the car take no damage (a minion the overcoat kills on touch skipped its hit on the car), and the Jump doesn't clear obstacles yet.
+- Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/visual-style.md`, `docs/enemies.md`
+- Tasks: T-455, T-456, T-457, T-458, T-459, T-460, T-461, T-462, T-463, T-464, T-465, T-466, T-467 (goal G-009)

@@ -21,6 +21,8 @@ extends CharacterBody2D
 const CarModel := preload("res://scripts/driving/car_model.gd")
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const CarHeight := preload("res://scripts/driving/car_height.gd")
+const RevCharge := preload("res://scripts/driving/rev_charge.gd")
+const JumpPowerUp := preload("res://scripts/driving/jump_power_up.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -32,6 +34,7 @@ const ACTION_ACCELERATE := "car_accelerate"
 const ACTION_REVERSE := "car_reverse"
 const ACTION_STEER_LEFT := "car_steer_left"
 const ACTION_STEER_RIGHT := "car_steer_right"
+const ACTION_JUMP := "car_jump"  # Space (task T-461, the Jump power-up)
 
 ## Collision layer bits (game/docs/driving/collisions.md, "Collision layers").
 const LAYER_OBSTACLES := 1 << 0  # layer 1: walls, buildings, the map's edge, boulders
@@ -76,6 +79,24 @@ signal airtime_trick(seconds: float)
 var model = CarModel.new()
 ## Watches the driving for tricks (task T-079). It only reads the model.
 var tricks = TrickDetector.new()
+## Rev Charge (task T-460, rev_charge.gd): W+S charges a boost that fires when
+## S is released. Does nothing until rev_charge.set_tier() gives it a tier > 0
+## (the run sets it from RunState.power_up_tier("rev_charge")).
+var rev_charge = RevCharge.new()
+## Jump (task T-461, jump_power_up.gd): a press of Space on the ground makes a
+## small hop through height_model.hop(). Does nothing until jump.set_tier()
+## gives it a tier > 0 (the run sets it from RunState.power_up_tier("jump")).
+var jump = JumpPowerUp.new()
+## Bouncy Bumpers (task T-462): the owned tier (0 = not owned) and its
+## bounce_distance_multiplier from power_ups.json (1.0 when not owned). A wall
+## bounce carries the car that many times further: the bounce speed (and its
+## maximum) is scaled by sqrt(multiplier), as the distance goes with the speed
+## squared (Drifting, Content, "Bouncy Bumpers (task T-462)").
+var bouncy_tier := 0
+var bounce_distance_multiplier := 1.0
+## A Space press waiting for the next physics step (_unhandled_input with the
+## keyboard; tests call press_jump()).
+var _jump_pressed := false
 ## When false, no tricks are detected (tests compare the movement both ways).
 var detect_tricks := true
 ## The handling values (shared with the tuning panel).
@@ -165,6 +186,19 @@ func _physics_process(_delta: float) -> void:
 	physics_step()
 
 
+## Task T-461: a Space press (not a held key's repeats) is kept for the next
+## physics step. An event, not the key's state, so the Space that takes a card
+## on a paused screen (the car is paused then and gets no event) never hops.
+func _unhandled_input(event: InputEvent) -> void:
+	if use_keyboard and event.is_action_pressed(ACTION_JUMP, false):
+		_jump_pressed = true
+
+
+## A Space press for the next physics step (tests, and any scripted driving).
+func press_jump() -> void:
+	_jump_pressed = true
+
+
 ## One physics step: read the controls, run the model, move the body.
 func physics_step() -> void:
 	var w: bool
@@ -182,10 +216,20 @@ func physics_step() -> void:
 		w = false
 		s = false
 		steer = 0.0
+		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
+		rev_charge.reset()
+		_jump_pressed = false
+	# T-461: Jump (nothing at all when not owned). Before the model's update, so
+	# the hop's first step is already in the air (air turn rate, no driving).
+	jump.step(height_model, _jump_pressed, model.dt)
+	_jump_pressed = false
 	var rotation_before: float = model.rotation
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
 	model.airborne = height_model.airborne
+	rev_charge.before_step(model)
 	model.update_velocity(w, s, steer)
+	# T-460: Rev Charge (nothing at all when not owned).
+	rev_charge.step(model, w, s, rotation_before, height_model.airborne, model.dt)
 	if _pending_knockback != Vector2.ZERO:
 		model.vx += _pending_knockback.x
 		model.vy += _pending_knockback.y
@@ -260,6 +304,24 @@ func pending_knockback() -> Vector2:
 	return _pending_knockback
 
 
+## Gives the car the owned Bouncy Bumpers tier (0 = not owned: the bounce is
+## unchanged). data: a PowerUpData, or null to read power_ups.json.
+func set_bouncy_bumpers_tier(tier: int, data = null) -> void:
+	bouncy_tier = maxi(tier, 0)
+	bounce_distance_multiplier = 1.0
+	if bouncy_tier == 0:
+		return
+	if data == null:
+		data = preload("res://scripts/data/power_up_data.gd").new()
+	var t: Dictionary = data.at("bouncy_bumpers", bouncy_tier)
+	bounce_distance_multiplier = maxf(float(t.get("bounce_distance_multiplier", 1.0)), 1.0)
+
+
+## The factor on the bounce speed and its maximum (T-462): sqrt of the distance multiplier.
+func _bounce_speed_scale() -> float:
+	return sqrt(bounce_distance_multiplier)
+
+
 ## Reflects the part of the velocity going into the obstacle, scaled by
 ## tuning.wall_bounce (0 = slide along it, 1 = full bounce). The part along the
 ## surface is kept. Emits hit_obstacle for a new hit.
@@ -285,6 +347,8 @@ func _bounce(hit: KinematicCollision2D) -> void:
 func _end_drift_on_hit(impact: float) -> void:
 	if impact > 0.0:
 		model.is_drifting = false
+		# T-460 (proposal): a wall hit also ends a running Rev Charge boost; the charge is kept.
+		rev_charge.end_boost()
 
 
 ## Reflects the velocity off a surface with outward normal n (see _bounce) and
@@ -298,7 +362,7 @@ func _reflect(n: Vector2) -> float:
 	var impact := maxf(0.0, -into)
 	if into < 0.0:
 		var e := clampf(float(tuning.wall_bounce), 0.0, 1.0)
-		var bounce := e * minf(impact, maxf(0.0, float(tuning.wall_bounce_max_hit_speed)))
+		var bounce := e * minf(impact, maxf(0.0, float(tuning.wall_bounce_max_hit_speed))) * _bounce_speed_scale()
 		model.set_velocity(v - into * n + bounce * n)
 		model.bounce_normal = n if bounce > 0.0 else Vector2.ZERO
 	velocity = model.get_velocity() * PX_PER_UNIT
@@ -325,7 +389,7 @@ func _update_bounce_rearm(w: bool) -> void:
 		return
 	var nose := Vector2(cos(model.rotation), sin(model.rotation))
 	var e := clampf(float(tuning.wall_bounce), 0.0, 1.0)
-	var top_bounce := e * maxf(0.0, float(tuning.wall_bounce_max_hit_speed))
+	var top_bounce := e * maxf(0.0, float(tuning.wall_bounce_max_hit_speed)) * _bounce_speed_scale()
 	var reach := REARM_GAP_UNITS + top_bounce * top_bounce / (2.0 * maxf(0.1, float(tuning.wall_bounce_pull)))
 	if not w or height_model.airborne or nose.dot(_bounce_normal) >= 0.0 			or (model.get_position() - _bounce_point).dot(_bounce_normal) > reach:
 		_bounce_key = ""

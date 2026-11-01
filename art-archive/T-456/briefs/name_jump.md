@@ -1,0 +1,1 @@
+The name of a driving power-up, shown on the power-up overlay (card title, at most 30 characters). The board's name is exactly "Jump" (Space makes the car do a small hop). Keep this name word for word; only change it if it breaks a text rule, and then say which. Output the name.

@@ -1,0 +1,39 @@
+{
+  "file": "bouncy_bumpers_v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "pixel art game icon, the chrome front bumper of a car with a big glowing magenta coil spring mounted on it, the spring pressed against a dark blue-grey brick wall on the right, curved cyan impact arcs bouncing back to the left, a small bright white and cyan star burst at the contact point, neon night colours, cool blue-grey metal, magenta and cyan glow, dark almost-black outline, light from top-left, centred, filling the frame, one clear symbol, no text",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "pixel art game icon, the chrome front bumper of a car with a big glowing magenta coil spring mounted on it, the spring pressed against a dark blue-grey brick wall on the right, curved cyan impact arcs bouncing back to the left, a small bright white and cyan star burst at the contact point, neon night colours, cool blue-grey metal, magenta and cyan glow, dark almost-black outline, light from top-left, centred, filling the frame, one clear symbol, no text",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-31T22:47:38+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-465/briefs/bouncy_bumpers.md",
+    "art-archive/T-465/pixellab/jump_v1.params.json"
+  ],
+  "task": "T-465",
+  "job_status": null,
+  "notes": "Bouncy Bumpers icon, style loop v1 (run 3)",
+  "generator": "game/tools/pixellab_client.py"
+}

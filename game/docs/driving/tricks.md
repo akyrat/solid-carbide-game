@@ -40,6 +40,16 @@ Game loop architecture, Decisions, "A crash pays the trick in progress"; which t
 
 The order is `combo.json`'s `crash_pays_trick_first` (`ComboData.crash_pays_trick_first()`, default `true`): `crashed` fires before the cut, so `combo_trick` (the LONG DRIFT! popup) comes before `combo_broken` (COMBO BROKEN!); `false` fires it after the cut. Because the signals are synchronous, the trick's `add_trick` lands inside `collision()`. Tests: `tests/unit/run/test_crash_pays_trick.gd`. GIF fixture: `tests/fixtures/crash_pays_gif.tscn` (script `crash_pays_gif_demo.gd`; a drift from x2.0 into a boulder south of the building at (12, -96); `CRASH_PAYS_POPUP_PNG` saves the popup frame, `CRASH_START="x,y,rotation"` overrides the start): `"$GODOT_BIN" --path game --fixed-fps 50 --write-movie C:/abs/dir/f.png res://tests/fixtures/crash_pays_gif.tscn`, then `python game/tools/make_turn_gif.py C:/abs/dir out.gif --glob "f*.png" --every 2 --size 640 420 --scale 1 --ms 40`.
 
+### Jump (T-461)
+
+Drifting, Decisions, "Driving power-ups"; behaviour and proposals: Drifting, Content, "Jump (task T-461)". `scripts/driving/jump_power_up.gd` is the car's `jump`; the run sets its tier from `RunState.power_up_tier("jump")` (`run.gd`, `_apply_rev_charge_tier`, also on `power_ups_changed`). Its numbers are `power_ups.json`'s `jump` tiers (`takeoff_speed`, `cooldown_seconds`, through `PowerUpData`).
+
+- **Input:** the action `car_jump` (Space, `project.godot`). `car.gd` takes the press as an event in `_unhandled_input` (not the key's state), so the Space that takes a card on a paused screen never hops; scripted driving and tests call `car.press_jump()`. A press is used on the next physics step and then forgotten.
+- **The hop:** at the start of `physics_step()`, before the model's update, `jump.step(height_model, pressed, dt)` calls `CarHeight.hop(takeoff_speed)` when the power-up is owned, the car is on the ground and the cooldown is over. `hop()` is the height model's own takeoff (`took_off(false, vz)`, then `hopped(vz)`), so the rest is the existing air path: gravity, `landed`, the sides met at height, and the trick detector's airtime and air spins (`airtime_trick`, `air_one_eighty`, `air_three_sixty`), which the run's combo and missions already take. With no ground source (`car.ground` null) the hop flies over flat ground at 0.
+- At tier 0 `jump.step()` returns at once: Space changes nothing.
+- `JumpPowerUp.airtime_for(vz, g)` and `peak_for(vz, g)` give the closed-form airtime and height (the 50 Hz steps land within a step of them).
+- Tests: `tests/unit/test_jump_power_up.gd`. Fixtures: `tests/fixtures/jump_power_up_demo.tscn` (a run, Jump at tier 4, W held, one hop at step 40 with A held in the air) and `jump_power_up_gif.tscn` (the same, saving every 2nd frame to `screenshots/t461_jump_frames/` at the repo root, git-ignored): `bash game/tools/screenshot.sh res://tests/fixtures/jump_power_up_gif.tscn <out.png> 140`, then `python game/tools/frames_to_gif.py screenshots/t461_jump_frames <out.gif> --fps 25 --skip 1 --crop 0.6 --first 15 --shared`.
+
 ### Alternate drift limits
 
 The limits are tuning values in `scripts/driving/car_tuning.gd` (`TRICK_SETTINGS`), read live, with sliders in the tuning panel's "Tricks" group. The panel's reset puts them back to these proposed values, for the board to tune:

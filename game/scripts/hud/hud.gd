@@ -85,6 +85,8 @@ var heart_row: HeartRow
 var _health_shown := false
 ## The car's weapons as a column of icons under the hearts (T-276, T-338).
 var weapon_icons: WeaponIcons
+## The current mission as a notebook page, left side (T-458).
+var mission_page: MissionPage
 ## A full-screen area (empty since T-337 and T-336 took the likes bar and the combo counter away).
 var bottom_area: Control
 ## The combo's heat steps (T-131): lights likes_fire (the viewers counter has its own, T-336).
@@ -115,6 +117,7 @@ func _ready() -> void:
 	_build_reactions()
 	_build_timer()
 	_build_left()
+	_build_mission_page()
 	_build_bottom()
 	_build_coins()
 	_build_viewers()
@@ -351,6 +354,13 @@ func _build_left() -> void:
 	_layout_left()
 
 
+## The mission notebook page on the left (T-458), between the weapon icons and the coins.
+## Not one of the movable pieces: T-453's movable HUD is not on this branch.
+func _build_mission_page() -> void:
+	mission_page = MissionPage.new()
+	root.add_child(mission_page)
+
+
 ## The hearts row and the weapon icons' column at the layout page's places.
 func _layout_left() -> void:
 	heart_row.position = HEART_ROW_POS
@@ -441,6 +451,7 @@ func bind(state: RunState) -> void:
 	_state.combo_changed.connect(_on_combo_changed)
 	_state.combo_broken.connect(_on_combo_broken)
 	_state.level_up.connect(_on_level_up)
+	mission_page.bind(_state.missions)
 	sub_goal.stop()
 	reactions.clear()
 	_likes_level = 0

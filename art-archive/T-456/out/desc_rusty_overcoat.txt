@@ -1,0 +1,1 @@
+The car deals {contact_damage} damage to minions it touches. Rust: now a feature.

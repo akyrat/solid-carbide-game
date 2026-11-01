@@ -1,0 +1,9 @@
+{
+  "description": "pixel art game icon, a car wheel with dark rubber tyre and steel rim seen from the side, a glowing tachometer arc around its top with a rising needle pointing to the red zone, cyan electric lightning and orange-amber flame burst behind the wheel, short speed streaks to the left, neon night colours, cool blue-grey metal, orange and cyan glow, dark almost-black outline, light from top-left, centred, filling the frame, no text",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "outline": "single color black outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}
