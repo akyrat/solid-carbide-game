@@ -3125,3 +3125,8 @@ Entry format:
 - Decision or change: The board shortens mission 1 from a 4-second to a 2-second unbroken drift.
 - Documents touched: docs/game-loop-architecture.md
 - Tasks: T-488
+
+## 2026-11-01: The trick popup hitch is gone
+- Decision or change: The trick popups' text is baked ahead of time, so a popup no longer hitches the frame it appears in (T-468's recording); the board played it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-480
