@@ -190,13 +190,12 @@ static func bake(text: String, style: String, heat := 0, frame := 0, viewers := 
 	if flames:
 		_flames(idx, w, h, frame)
 	var data := PackedByteArray()
-	data.resize(w * h * 4)
+	data.resize(w * h * 4)  # zero: transparent
+	var packed := _packed_palette()
 	for i in w * h:
-		var col: Color = PALETTE[idx[i]]
-		data[i * 4] = int(round(col.r * 255.0))
-		data[i * 4 + 1] = int(round(col.g * 255.0))
-		data[i * 4 + 2] = int(round(col.b * 255.0))
-		data[i * 4 + 3] = 255 if idx[i] != NONE else 0
+		var c := idx[i]
+		if c != NONE:
+			data.encode_u32(i * 4, packed[c])
 	var img := Image.create_from_data(w, h, false, Image.FORMAT_RGBA8, data)
 	if viewers and not hide_amount:
 		_draw_eye(img, Rect2i(eye_rect.position + Vector2i(ox, oy), eye_rect.size), style)
@@ -286,6 +285,45 @@ static func _get_font() -> FontFile:
 ## The lettering: palette indices cropped tight, {"idx", "w", "h"}. Glyphs
 ## from character `amount_at` on (the "+amount") are AMOUNT, the rest TEXT.
 static func _letter(text: String, style: String, amount_at := -1) -> Dictionary:
+	# Cached (T-481): the same lettering serves every heat step and flame frame of a text,
+	# and the popup's size. The result is only ever read.
+	var key := "%s|%d|%s" % [style, amount_at, text]
+	if not _letter_cache.has(key):
+		_letter_cache[key] = _letter_uncached(text, style, amount_at)
+	return _letter_cache[key]
+
+
+static var _letter_cache := {}
+
+
+## Letters every text of `texts` with a sample amount and loads the eye (T-481), so the
+## font's glyphs and the eye are ready before the first popup of a run.
+static func warm(texts: Array, style: String) -> void:
+	for t in texts:
+		var text := str(t) + " +0.123456789KM"
+		plain_size(text, style, true)
+		plain_size(str(t), style, false)
+
+
+## A popup's plain (heat 0) size in popup pixels, as texture(text, style, 0, 0, viewers).get_size()
+## would give, without baking it (T-481): the lettering's size and the margins.
+static func plain_size(text: String, style: String, viewers := false) -> Vector2i:
+	var amount_at := -1
+	var parts := split_text(text)
+	if parts[1] != "":
+		amount_at = (parts[0] as String).length() + 1
+	var letters := _letter(text, style, amount_at)
+	var tw: int = letters.w
+	var th: int = letters.h
+	if viewers and amount_at >= 0:
+		var esz := eye_size(style)
+		tw += EYE_GAP + esz.x
+		th = maxi(th, esz.y)
+	var extra := ring_extra(0)
+	return Vector2i(tw + 2 * (MARGIN_X + extra), th + 2 * (MARGIN_Y + extra))
+
+
+static func _letter_uncached(text: String, style: String, amount_at := -1) -> Dictionary:
 	var st: Dictionary = STYLES[style]
 	var px: int = st.font_px
 	var font := _get_font()
@@ -341,36 +379,83 @@ static func _letter(text: String, style: String, amount_at := -1) -> Dictionary:
 
 
 static func _crop(idx: PackedByteArray, w: int, h: int) -> Dictionary:
+	# Rows are scanned with native searches and copied as slices (T-481): same result as
+	# looking at every pixel, a fraction of the time.
 	var x0 := w
 	var x1 := -1
 	var y0 := h
 	var y1 := -1
 	for y in h:
-		for x in w:
-			if idx[y * w + x] != 0:
-				x0 = mini(x0, x)
-				x1 = maxi(x1, x)
-				y0 = mini(y0, y)
-				y1 = maxi(y1, y)
+		var row := idx.slice(y * w, (y + 1) * w)
+		if row.count(0) == w:
+			continue
+		if y0 == h:
+			y0 = y
+		y1 = y
+		# first and last non-zero pixel of the row
+		var lo := 0
+		while row[lo] == 0:
+			lo += 1
+		var hi := w - 1
+		while row[hi] == 0:
+			hi -= 1
+		x0 = mini(x0, lo)
+		x1 = maxi(x1, hi)
 	if x1 < 0:  # nothing to show (empty text): one empty pixel
 		return {"idx": PackedByteArray([0]), "w": 1, "h": 1}
 	var nw := x1 - x0 + 1
 	var nh := y1 - y0 + 1
 	var out := PackedByteArray()
-	out.resize(nw * nh)
 	for y in nh:
-		for x in nw:
-			out[y * nw + x] = idx[(y0 + y) * w + x0 + x]
+		out.append_array(idx.slice((y0 + y) * w + x0, (y0 + y) * w + x0 + nw))
 	return {"idx": out, "w": nw, "h": nh}
 
 
 ## Sets `value` on every pixel of the rounded rectangle that is the bw x bh box
 ## at (bx, by) in a w wide image, shrunk by `inset`, with corner radius `r`.
 static func _fill_round_rect(idx: PackedByteArray, w: int, bx: int, by: int, bw: int, bh: int, inset: int, r: int, value: int) -> void:
+	# Row by row (T-481): the pixels of a row inside the shape are one run, found from the
+	# row's corner arc and then nudged by the exact test, so the result is _in_round_rect's.
+	var spans_ok := 2 * r <= bw - 2 * inset and 2 * r <= bh - 2 * inset and r >= 0
 	for y in bh:
-		for x in bw:
-			if _in_round_rect(x, y, bw, bh, inset, r):
-				idx[(by + y) * w + bx + x] = value
+		var first := 0
+		var last := bw - 1
+		if spans_ok:
+			var dy := absf((y + 0.5) - clampf(y + 0.5, inset + r, bh - inset - r))
+			if dy > r:
+				continue
+			var d := sqrt(maxf(float(r) * r - dy * dy, 0.0))
+			first = clampi(int(ceil(inset + r - d - 0.5)), 0, bw - 1)
+			last = clampi(int(floor(bw - inset - r + d - 0.5)), 0, bw - 1)
+			while first > 0 and _in_round_rect(first - 1, y, bw, bh, inset, r):
+				first -= 1
+			while first <= last and not _in_round_rect(first, y, bw, bh, inset, r):
+				first += 1
+			while last < bw - 1 and _in_round_rect(last + 1, y, bw, bh, inset, r):
+				last += 1
+			while last >= first and not _in_round_rect(last, y, bw, bh, inset, r):
+				last -= 1
+			var row := (by + y) * w + bx
+			for x in range(first, last + 1):
+				idx[row + x] = value
+		else:
+			for x in bw:
+				if _in_round_rect(x, y, bw, bh, inset, r):
+					idx[(by + y) * w + bx + x] = value
+
+
+## The palette as little-endian RGBA8 integers, for writing a pixel in one call (T-481).
+static var _packed: PackedInt64Array = PackedInt64Array()
+
+
+static func _packed_palette() -> PackedInt64Array:
+	if _packed.size() != PALETTE.size():
+		_packed.resize(PALETTE.size())
+		for i in PALETTE.size():
+			var col: Color = PALETTE[i]
+			var a := 255 if i != NONE else 0
+			_packed[i] = int(round(col.r * 255.0)) | (int(round(col.g * 255.0)) << 8) | (int(round(col.b * 255.0)) << 16) | (a << 24)
+	return _packed
 
 
 ## A one pixel `value` outline (the four side neighbours, so small digits keep their holes) round every `of` pixel,

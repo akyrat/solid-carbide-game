@@ -94,7 +94,9 @@ func _car() -> Node2D:
 func apply_tier() -> void:
 	stats = data.bricks_at(maxi(tier, 1))
 	stats["damage"] = boosted_damage(float(stats["damage"]))
-	if not is_owned():
+	if is_owned():
+		BricksWave.sheet_for(radius())  # loaded now, not at the first landing (T-481)
+	else:
 		_reset_air()
 
 
@@ -312,8 +314,17 @@ class BricksWave:
 
 	## The sheet for a radius of `r` units, or null when there is none.
 	static func sheet_for(r: float) -> Texture2D:
+		# Kept in a static cache (T-481): a sheet nobody holds is freed with its wave, and
+		# loading it again from disk for every landing cost milliseconds in the physics step.
+		if _sheets.has(r):
+			return _sheets[r]
 		var path := art_path(r)
-		return load(path) if ResourceLoader.exists(path) else null
+		var tex: Texture2D = load(path) if ResourceLoader.exists(path) else null
+		_sheets[r] = tex
+		return tex
+
+	## radius -> sheet (or null: none for that radius).
+	static var _sheets := {}
 
 	## The frame of the sheet shown now (0 to FRAMES - 1).
 	func frame_index() -> int:

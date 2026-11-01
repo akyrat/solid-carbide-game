@@ -170,7 +170,8 @@ class PopupText extends Node2D:
 	func size() -> Vector2:
 		if broken:
 			return Vector2(broken_textures()[0].get_size()) * PIXEL_SCALE
-		return Vector2(Art.texture(text, Art.style_for(font_size), 0, 0, viewers).get_size()) * PIXEL_SCALE
+		# The plain bubble's size from its lettering, without baking its picture (T-481).
+		return Vector2(Art.plain_size(text, Art.style_for(font_size), viewers)) * PIXEL_SCALE
 
 	## The car's drawn position now (the last known one if it cannot be asked).
 	func anchor_now() -> Vector2:
@@ -247,6 +248,14 @@ class PopupText extends Node2D:
 
 
 var _car: Node = null
+
+
+## T-481: the lettering of every trick text (with a sample amount) and the eye are made
+## when the popups are made, so the first trick of a run does not bake the font's glyphs
+## in the middle of a physics step.
+func _ready() -> void:
+	Art.warm(TEXTS.values(), "normal")
+	Art.warm(TEXTS.values(), "small")
 ## Returns the car's drawn position (set by bind()).
 var _car_position: Callable
 ## Returns the car's drawn position for the challenge popup (set by bind_score()).
