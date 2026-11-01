@@ -1,20 +1,56 @@
 {
-  "_comment": "T-381, the tutorial slides' and the pause screen's trick list's text (HUD and menus, Content, 'Tutorial slides and trick list'); the UI tickets read it, no text in code. Every line scored 8 or more in the style loop (T-381's Style review). Keys: slide1.*, slide2.*, slide3.*, trick.<id> (reused word for word from the trick popups and recap_text.json), button.*, checkbox.*, arrow.*. Each entry has a '<key>_comment' line saying where it appears.",
+  "_comment": "T-381, the tutorial slides' and the pause screen's trick list's text (HUD and menus, Content, 'Tutorial slides and trick list'); the UI tickets read it, no text in code. Every line scored 8 or more in the style loop (T-381's Style review). Keys: slide1.*, slide2.*, slide3.*, trick.<id> (reused word for word from the trick popups and recap_text.json), button.*, checkbox.*, arrow.*. Each entry has a '<key>_comment' line saying where it appears. T-484 (the redrawn four-slide tutorial, HUD and menus, Decisions, 'The tutorial slides are redrawn, with clips of the real car'): new keys kicker.*, slide1.title, slide1.key_*, slide1.drift_rule, slide2.title, slide2.step*, slide2.clip_ramp, slide3.title, slide3.missions, slide4.*, button.skip, all scored 8 or more in T-484's Style review. Headlines, labels and captions are stored in sentence case (the style loop's label kind); the slides show them in capitals in the display font, so the UI upcases them for display (trick.* are stored in capitals, as popups).",
   "slide1": {
     "controls": "W accelerate, S brake/reverse, A left, D right. Live viewers want confidence. Fake it.",
-    "controls_comment": "Slide 1 (the controls), first line: what W, A, S and D do.",
+    "controls_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 1 (the controls), first line: what W, A, S and D do.",
     "drift": "Accelerate while turning and the car drifts on its own. No drift button, zero friction.",
-    "drift_comment": "Slide 1 (the controls), second line under the controls: accelerating while turning drifts the car."
+    "drift_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 1 (the controls), second line under the controls: accelerating while turning drifts the car.",
+    "title": "Drive",
+    "title_comment": "Slide 1's headline (shown in capitals).",
+    "key_w": "Gas",
+    "key_w_comment": "Slide 1: the small label on the W keycap.",
+    "key_a": "Left",
+    "key_a_comment": "Slide 1: the small label on the A keycap.",
+    "key_s": "Brake",
+    "key_s_comment": "Slide 1: the small label on the S keycap.",
+    "key_d": "Right",
+    "key_d_comment": "Slide 1: the small label on the D keycap.",
+    "drift_rule": "W + turn = drift",
+    "drift_rule_comment": "Slide 1: the drift rule under the keys, written with the W as part of the line (the UI may draw the W as a keycap and split the line on '+' and '=')."
   },
   "slide2": {
     "chain": "Tricks bring live viewers. Live viewers bring subs.",
-    "chain_comment": "Slide 2 (the loop), first line under the trick list: tricks bring viewers, viewers bring subs.",
+    "chain_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 2 (the loop), first line under the trick list: tricks bring viewers, viewers bring subs.",
     "gift": "Every sub goal brings a gift pack: a weapon that keeps enemies away and the stream alive.",
-    "gift_comment": "Slide 2 (the loop), second line under the trick list: a sub goal brings a gift pack with a weapon that helps survive and keeps enemies away."
+    "gift_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 2 (the loop), second line under the trick list: a sub goal brings a gift pack with a weapon that helps survive and keeps enemies away.",
+    "title": "Tricks bring gift packs",
+    "title_comment": "Slide 2's headline (shown in capitals).",
+    "step1_title": "Pull tricks",
+    "step1_title_comment": "Slide 2, step 1 title (the trick clip step).",
+    "step1_caption": "Drifts, spins, air.",
+    "step1_caption_comment": "Slide 2, step 1 caption under its title.",
+    "step2_title": "Live viewers pile in",
+    "step2_title_comment": "Slide 2, step 2 title (the live viewers counter rising).",
+    "step2_caption": "Live viewers love a show.",
+    "step2_caption_comment": "Slide 2, step 2 caption under its title.",
+    "step3_title": "Hit a sub goal",
+    "step3_title_comment": "Slide 2, step 3 title (the sub goal ring).",
+    "step3_caption": "Live viewers become subs.",
+    "step3_caption_comment": "Slide 2, step 3 caption under its title.",
+    "step4_title": "Gift pack",
+    "step4_title_comment": "Slide 2, step 4 title (the gift pack).",
+    "step4_caption": "A new weapon that fires itself.",
+    "step4_caption_comment": "Slide 2, step 4 caption under its title.",
+    "clip_ramp": "HANG TIME! + AIR 180!",
+    "clip_ramp_comment": "Slide 2: the caption under the ramp clip, joining two trick names word for word (trick.airtime and trick.air_one_eighty). The other two clip captions are trick.extended_drift and trick.alternate_drift, read from trick.*, not repeated here."
   },
   "slide3": {
     "goal": "Chain tricks for gift packs. Be maxed out for the kaiju at 1 minute left. Peak content.",
-    "goal_comment": "Slide 3 (the goal): chain tricks to get the most weapons and be strongest when the kaiju arrives with 1 minute left."
+    "goal_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 3 (the goal): chain tricks to get the most weapons and be strongest when the kaiju arrives with 1 minute left.",
+    "title": "Missions power your car",
+    "title_comment": "Slide 3's headline (shown in capitals).",
+    "missions": "The notebook on the left gives you one mission at a time: clear it, then pick a driving power-up.",
+    "missions_comment": "Slide 3: the one line beside the notebook page and the four driving power-ups. The notebook's sample lines and the power-up names come from screen_texts.json, not from here."
   },
   "trick": {
     "extended_drift": "LONG DRIFT!",
@@ -32,7 +68,9 @@
     "trick_list": "Trick list",
     "trick_list_comment": "The pause screen's button that opens the trick list panel.",
     "back": "Back",
-    "back_comment": "The trick list panel's back control, returning to the pause screen."
+    "back_comment": "The trick list panel's back control, returning to the pause screen.",
+    "skip": "Skip",
+    "skip_comment": "The Skip control at the top right of every slide; jumps to the last slide (shown in capitals). Go live and Don't show again keep button.start and checkbox.dont_show."
   },
   "checkbox": {
     "dont_show": "Don't show again",
@@ -43,5 +81,23 @@
     "left_comment": "The left arrow's accessible label (tooltip) on the tutorial slides.",
     "right": "Next slide",
     "right_comment": "The right arrow's accessible label (tooltip) on the tutorial slides."
+  },
+  "kicker": {
+    "pattern": "{n} / {total} · {topic}",
+    "pattern_comment": "Above every slide's headline: the slide number out of the total, then that slide's kicker topic below. Built by code from this pattern (not scored; it holds no wording).",
+    "controls": "Controls",
+    "controls_comment": "Slide 1's kicker topic, after '1 / 4 · '.",
+    "loop": "How you get stronger",
+    "loop_comment": "Slide 2's kicker topic, after '2 / 4 · '.",
+    "missions": "Missions",
+    "missions_comment": "Slide 3's kicker topic, after '3 / 4 · '.",
+    "goal": "The goal",
+    "goal_comment": "Slide 4's kicker topic, after '4 / 4 · '."
+  },
+  "slide4": {
+    "title": "Survive the stream",
+    "title_comment": "Slide 4's headline (shown in capitals).",
+    "kaiju": "The kaiju!",
+    "kaiju_comment": "Slide 4: the label on the timeline's last-minute zone, beside the kaiju drawing. The times (8:00, 4:00, 1:00) are built by code from numbers."
   }
 }
