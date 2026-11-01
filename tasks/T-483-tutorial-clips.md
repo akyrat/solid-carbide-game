@@ -1,7 +1,7 @@
 ---
 id: T-483
 title: Record the tutorial clips: a zoomed-out drift, a long drift, an alt drift, and a ramp jump with hang time and an air spin
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, game/scenes/drift_prototype/, game/scenes/elevation_test/]
 files_expected_to_change: [game/tools/, game/tests/, game/art/tutorial/clips/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -48,13 +48,13 @@ The board's review: watch the four clips; the Project Lead puts them on the draf
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Four GIFs exist in game/art/tutorial/clips/: the zoomed-out drift, the long drift, the alt drift and the ramp jump, each with a record JSON; the result notes list their sizes, lengths and file sizes. (QA: fail: paperwork - the work is fine (4 GIFs 480x320, 64/149/84/51 frames, sizes match the notes, each with a record JSON) but art-archive/T-483/screenshots/ is empty and qa_check's screenshots check is red; copy the four GIFs there and list them in the result notes)
+- [ ] Four GIFs exist in game/art/tutorial/clips/: the zoomed-out drift, the long drift, the alt drift and the ramp jump, each with a record JSON; the result notes list their sizes, lengths and file sizes. (QA: pass; round 2: screenshots folder now holds 8 files, 4 GIFs and 4 frames; work unchanged since round 1)
 - [ ] Each clip shows only the car (with its tyre marks, smoke and shadow) on a simple background: no HUD, enemies, popups or city. (QA: pass; fixtures show only car on grid, ramp placeholder art approved by the board)
 - [ ] The drift clip's camera is zoomed out enough that the drift's path from its start shows in the frame (the result notes say the zoom used against the run's). (QA: pass; ortho 28 vs 14.4, held camera, in notes and drift.json)
 - [ ] The ramp clip shows the car leaving a ramp, airborne long enough for the airtime trick (the result notes give the airtime against the HANG TIME! threshold) and turning at least 180 degrees in the air before landing. (QA: pass; airtime 1.12 s vs 0.30 s, 264 deg, in notes and ramp_jump.json, GUT test covers it)
 - [ ] A script re-records all four (the result notes say how to run it); a test checks the script's output (four files, the expected size). (QA: pass; script documented, its test passes)
 - [ ] Only tools, tests, the clips and docs change: no game script or scene behaviour changes. (QA: pass; diff has no game/scripts or scenes)
-- [ ] docs/hud-and-menus.md (Content) says where the clips are and how to re-record them. (QA: pass; minor: it says 25 fps for all four, notes say 16.7 for three)
+- [ ] docs/hud-and-menus.md (Content) says where the clips are and how to re-record them. (QA: pass; round 2: doc now says 25 fps for drift and 16.7 for the other three)
 - [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1800 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; all three sets pass)
 - [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; nothing under game/data/levels/ in the diff)
 
@@ -103,3 +103,4 @@ All four are under the 1.5 MB aim. The three clips whose camera follows the car 
 
 QA round 1 paperwork fixes: the four final GIFs and one frame of each (PNG) are in art-archive/T-483/screenshots/ (drift.gif, long_drift.gif, alt_drift.gif, ramp_jump.gif, and <name>_frame.png). docs/hud-and-menus.md now says 25 fps for the drift clip and 16.7 fps for the other three. No code changed.
 - 2026-11-01, in-progress → in-qa: Paperwork fixed: screenshots archived, doc frame rates corrected
+- 2026-11-01, in-qa → needs-playtest: QA round 2 passed; clips already approved by the board
