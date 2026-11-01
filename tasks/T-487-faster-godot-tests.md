@@ -43,13 +43,13 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The result notes list the 15 slowest test scripts with their times and causes, before and after. (QA: pass / fail)
-- [ ] A full run of `bash game/tools/run_tests.sh` passes with the same test count as master and takes well under half of master's time on this machine; both times are in the result notes. (QA: pass / fail)
-- [ ] A deliberately failing test (in a temporary copy, not committed) makes the whole run fail with the test's name shown; the result notes show it. (QA: pass / fail)
-- [ ] qa_check.py and merge_batch.py work unchanged with the new runner (their own tests pass). (QA: pass / fail)
-- [ ] game/docs/setup/tests.md says how the parallel run works and how to set the number of processes. (QA: pass / fail)
-- [ ] The tools and game/tools Python tests pass, with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] The result notes list the 15 slowest test scripts with their times and causes, before and after. (QA: pass; notes list 15 scripts with times and causes; before=after stated since no script changed, speed-up from parallelism)
+- [ ] A full run of `bash game/tools/run_tests.sh` passes with the same test count as master and takes well under half of master's time on this machine; both times are in the result notes. (QA: pass; QA run of `bash game/tools/run_tests.sh`: 12 processes, 176 s, 213 scripts, 2526 tests, 2526 passing, TESTS PASSED; 2526 `func test_` in game/tests matches; master single-process 1544 s in notes, 176 s is about 11% of that)
+- [ ] A deliberately failing test (in a temporary copy, not committed) makes the whole run fail with the test's name shown; the result notes show it. (QA: pass; notes show the deliberate failure: shard FAILED, test name and message printed, TESTS FAILED (exit 1), exit 1; not repeated by QA; `-gselect=enemies` ran the single-process GUT path, no parallel banner)
+- [ ] qa_check.py and merge_batch.py work unchanged with the new runner (their own tests pass). (QA: pass; qa_check.py and merge_batch.py untouched; tools set 635 tests OK incl. test_merge_batch and test_qa_check)
+- [ ] game/docs/setup/tests.md says how the parallel run works and how to set the number of processes. (QA: pass; tests.md has the 'The parallel run (T-487)' section with GUT_JOBS)
+- [ ] The tools and game/tools Python tests pass, with the counts in the result notes. (QA: pass; tools 635 OK, game/tools 881 OK skipped=1; notes give 875 for game/tools, 6 more since master was merged in)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; no game/data/levels changes in the branch diff)
 
 ## Updates
 
