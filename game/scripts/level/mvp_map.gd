@@ -1101,6 +1101,7 @@ func _sync_boulder_sprites() -> void:
 		sp.variant = str(boulder_art.variants[k].id)
 		sp.centre_units = Vector2(float(b.x), float(b.y))
 		sp.ground_units = ground_height_at(sp.centre_units)
+		sp.top_units = sp.ground_units + BOULDER_HEIGHT_UNITS
 		var outline := PackedVector2Array()
 		for p in boulder_art.variants[k].hull:
 			outline.append(r.position + Vector2(float(p[0]), float(p[1])) * r.scale)
@@ -1336,6 +1337,8 @@ class _BoulderSprite extends Sprite2D:
 	var centre_units := Vector2.ZERO
 	## The height it stands on, units (a rooftop's, a ramp's; T-393).
 	var ground_units := 0.0
+	## T-478: the top of the boulder's collision height, units: a car above it is drawn over it.
+	var top_units := INF
 	## The outline of its opaque pixels on screen (convex), and its box.
 	var outline := PackedVector2Array()
 	var box := Rect2()

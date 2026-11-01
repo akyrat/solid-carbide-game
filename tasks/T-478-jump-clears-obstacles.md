@@ -1,7 +1,7 @@
 ---
 id: T-478
 title: Jump: the Space hop clears obstacles lower than the car
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -68,6 +68,10 @@ Passed QA: the Jump hops over boulders and low props; tall buildings and the map
 ### 2026-11-01, Needs playtest → In progress
 
 Back to the Driving & Drift Agent: in your playtest the hop still doesn't clear barriers or boulders, and landing on one must work.
+
+### 2026-11-01, Needs playtest → In progress
+
+Jump works; back to the Driving & Drift Agent to draw the car over the obstacles it's jumping over.
 
 ## Style review
 
@@ -139,3 +143,12 @@ Written by the agent when it finishes.
 **Files:** `game/scripts/level/mvp_map.gd`, `game/scripts/run/run.gd`, `game/scripts/level/elevation_sample_map.gd`, the tests and fixture above, `docs/drifting.md` (Content, "The Jump clears obstacles (task T-478)").
 - 2026-11-01, in-progress → in-qa: Real-run fix: rising hop clears boulders and barriers at a natural press, lands on top; real-run tests and GIF; all tests green.
 - 2026-11-01, in-qa → needs-playtest: QA round 2 pass: real-run Jump clears boulders and barriers, lands on top; GUT 2526, py 858+635 OK
+- 2026-11-01, needs-playtest → in-progress: The board played round 2 (2026-11-01): 'it works but the obstacles are drawn over the car when jumping over them.'
+
+### Round 3 (the board's playtest: "it works but the obstacles are drawn over the car when jumping over them")
+
+**Cause:** the car's z_index in `elevation_layer.gd z_for` put it under every boulder and prop sprite that covers it on screen, whatever the car's height; and a sprite at the top z_index shares it with an uncovered car, so the tree order decided.
+**Fix** (only the draw order): boulder and prop sprites got `top_units` (the collision top, `mvp_map.gd` `_BoulderSprite`, `level_props.gd` `PropSprite`); `ElevationLayer.car_over_sprite()` says a car is above a sprite when its height is at the top (within 0.05) or past half of the way up it (a hop's rise); `z_for` then draws the car one over that sprite (never over a building that covers it). A car on the ground behind an obstacle, and sprites with no height (alert signs), keep the old order; the car's shadow stays under the obstacle.
+**Test:** `game/tests/unit/test_jump_draw_order.gd` (3 tests, the real run, a real boulder and a real barrier): on the ground behind it the car is under it; above it, landed on top and past half of its rise it is over it; a sprite with no height changes nothing.
+**Tests run (only what changed, plus the depth tests):** test_jump_real_run 6, test_jump_draw_order 3, test_jump_clears_obstacles 8, test_short_platforms 16, test_boulder_art 10, test_see_through_map 15, test_kaiju_signs 7, test_creator_alert_signs 13, test_elevation_sample_depth 11, test_gift_drops_heights 9, test_gift_drops_shadow 4: all pass.
+**GIF (real run, a hop over a boulder, over a barrier, and a landing on a boulder, the car drawn over them):** `art-archive/T-478/screenshots/real_run_car_over_obstacles.gif`; zoom of three hop frames: `art-archive/T-478/screenshots/real_run_car_over_boulder_zoom.png`. These replace the round 2 GIF and montage.

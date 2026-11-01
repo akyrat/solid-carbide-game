@@ -402,6 +402,18 @@ static func car_shape_at(units: Vector2, rot: float, height: float) -> PackedVec
 	return MvpMapScript.car_screen_shape_at(units, rot, height * PX_PER_UNIT)
 
 
+## Task T-478: true when a car at `height` (units) is above a boulder's or a prop's sprite (its
+## height is at the obstacle's top, or past half of the way up it, a hop's rise), so it is drawn
+## over it. A car on the ground beside it, or a sprite with no height (alert signs), keeps the
+## normal depth order.
+static func car_over_sprite(s, height: float) -> bool:
+	var top = s.get("top_units")
+	if top == null or float(top) == INF:
+		return false
+	var foot := float(s.ground_units)
+	return height >= float(top) - 0.05 or height > foot + 0.5 * (float(top) - foot)
+
+
 ## The z_index for the car drawn at `height` (units): just under the lowest
 ## building, boulder or raised area that covers it, otherwise over them all.
 func z_for(units: Vector2, rot: float, height: float, include_areas: bool = true) -> int:
@@ -410,14 +422,25 @@ func z_for(units: Vector2, rot: float, height: float, include_areas: bool = true
 	for b in map.fade_items():
 		if b.covers(units, shape):
 			z = mini(z, b.z_index - 1)
-	var box := MvpMapScript._bounds(shape)
-	for s in map.depth_sprites():
-		if s.covers(units, shape, box):
-			z = mini(z, s.z_index - 1)
 	if include_areas:
 		for a in areas:
 			if a.covers(units, DEPTH_RADIUS, height, shape):
 				z = mini(z, a.z_index - 1)
+	# What the buildings and raised areas allow; boulders and props go under or over inside it.
+	var cap := z
+	var box := MvpMapScript._bounds(shape)
+	var over: Array = []
+	for s in map.depth_sprites():
+		if s.covers(units, shape, box):
+			if car_over_sprite(s, height):
+				over.append(s)  # T-478: a car above it is drawn over it
+			else:
+				z = mini(z, s.z_index - 1)
+	for s in over:
+		# One over the sprite, even when it sits at the top z_index (then equal z_index would leave
+		# the order to the tree); never over a building that covers the car (cap lower than the sprite).
+		if z <= s.z_index and cap >= s.z_index:
+			z = s.z_index + 1
 	return z
 
 
