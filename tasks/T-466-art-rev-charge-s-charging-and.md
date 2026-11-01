@@ -1,7 +1,7 @@
 ---
 id: T-466
 title: Art: Rev Charge's charging and boost effect
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, game/scripts/driving/rev_charge_effect.gd, game/scripts/driving/boost_effect.gd, game/tools/build_boost_lines.py]
 files_expected_to_change: [game/art/driving/rev_charge/, game/scripts/driving/rev_charge_effect.gd, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-466.
 ### 2026-11-01, In progress → In QA
 
 Goal runner (G-009): the agent is done; QA is checking it.
+
+### 2026-11-01, In QA → Needs playtest
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
 
 ## Style review
 
@@ -148,3 +152,4 @@ Kept: the stepped dithered halo rings, the growth over 25-100 %, and the white-h
 - Visual style records the effect (Content, "Rev Charge's charging and boost effect").
 - QA round 1: frames in game/art/driving/rev_charge/ and Style review rounds 1-4 with 0 generations: pass. rev_charge_effect.gd preloads rev_charge.png; test_rev_charge 17/17 passed in my run: pass. Screenshots frames_dark_light.png and turns.png exist (static pictures; the author explained why no in-game sequence): pass. Visual style has the Rev Charge section: pass. Tests: `python -m unittest discover game/tools` 842 OK (1 skipped). Godot suite run by me: every file passed with no failure through the weapons tests (test_rev_charge 17/17); the run later finished with exit code 0, so the whole Godot suite passed. `python -m unittest discover tools` not run to the end (over 10 min; the author saw no failure). `python tools/qa_check.py` was refused (not pre-approved), so I judged by hand. Score 7/10 kept art is noted for the board's playtest.
 - Refusal: one accidental no-op `python -` command was refused; nothing needed from it.
+- 2026-11-01, in-qa → needs-playtest: QA passed every criterion (goal G-009).
