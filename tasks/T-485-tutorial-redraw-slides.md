@@ -1,7 +1,7 @@
 ---
 id: T-485
 title: Build the redrawn tutorial slides: four slides with keycaps, the loop chain, the clips, missions and the run timeline
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/menu/tutorial_slides.gd, game/data/tutorial_text.json, tasks/T-483-tutorial-clips.md, C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/89bfdaa9-8914-40ee-9f4b-4fc6ef5a226d/scratchpad/tutorial/tutorial-redraft.template.html]
 files_expected_to_change: [game/scripts/menu/tutorial_slides.gd, game/scenes/menu/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -51,14 +51,14 @@ The board's review: press Start and page through the four slides, use Skip, and 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Tests show four slides in the order Drive, Tricks bring gifts, Missions, Survive the stream, the dots show four, and Skip goes to slide 4. (QA: pass / fail)
-- [ ] Tests show each slide's texts come from tutorial_text.json's new keys (none from code) and the retired keys are no longer used. (QA: pass / fail)
-- [ ] Tests show the clips play (frames advance with their timing) on slides 1 and 2, and the pictures on slides 2 to 4 are the game's own art files. (QA: pass / fail)
-- [ ] Tests show Go live starts the run and Don't show again still works, with only fresh key presses counting, as before. (QA: pass / fail)
-- [ ] Screenshots of all four slides at 1280 x 720 are saved and listed in the result notes, next to the draft for comparison. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content) describes the four slides. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent: its new and changed test files and those of the scripts it touched, with `bash game/tools/run_tests.sh -gtest=res://tests/unit/<file>.gd` per file), and QA's full run passes (the Godot set and `python -m unittest discover -s game/tools -p "test_*.py"`; the tools set only if tools/ changed; tasks/README.md, "Which tests run when"), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] Tests show four slides in the order Drive, Tricks bring gifts, Missions, Survive the stream, the dots show four, and Skip goes to slide 4. (QA: pass: order, dots and skip tests green)
+- [ ] Tests show each slide's texts come from tutorial_text.json's new keys (none from code) and the retired keys are no longer used. (QA: pass: texts-match-file, retired-keys, no-word-from-code tests green)
+- [ ] Tests show the clips play (frames advance with their timing) on slides 1 and 2, and the pictures on slides 2 to 4 are the game's own art files. (QA: pass: clip timing and own-art tests green; sheets at most 3840 x 3840)
+- [ ] Tests show Go live starts the run and Don't show again still works, with only fresh key presses counting, as before. (QA: pass: start-signal, fresh-key and Enter tests green)
+- [ ] Screenshots of all four slides at 1280 x 720 are saved and listed in the result notes, next to the draft for comparison. (QA: pass: slide1-4.png at 1280 x 720 in art-archive/T-485/screenshots/, layout and content match the draft)
+- [ ] docs/hud-and-menus.md (Content) describes the four slides. (QA: pass)
+- [ ] The tests for the changed code pass (the agent: its new and changed test files and those of the scripts it touched, with `bash game/tools/run_tests.sh -gtest=res://tests/unit/<file>.gd` per file), and QA's full run passes (the Godot set and `python -m unittest discover -s game/tools -p "test_*.py"`; the tools set only if tools/ changed; tasks/README.md, "Which tests run when"), with the counts in the result notes. (QA: pass: Godot set 213 scripts, 2541 of 2541 tests; unittest 878 tests OK, tools changed on the branch)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass: nothing under game/data/levels/ in the branch diff)
 
 ## Updates
 
@@ -91,3 +91,6 @@ Web build fix (coordinator, 2026-11-01): the sheets are now at most 4096 x 4096 
 - `ClipPlayer` loads a clip's pages when its slide is shown and frees them when it is hidden (`unload()`), so only one slide's clips are in memory. Peak texture memory: slide 1 about 118 MB (two pages of the drift clip), slide 2 about 127 MB (three clips); it was about 214 MB for all four. Test added: every page is at most 4096 a side, and slide 1's clip is freed when slide 2 shows.
 - Tests re-run with `-gselect`: test_tutorial_slides 25 of 25, test_tutorial_flow 8 of 8, test_shared_button 12 of 12, test_tutorial_clips 4 of 4, test_tutorial_setting 3 of 3; `python -m unittest game/tools/test_gif_to_sheet.py` OK.
 - Web export: `python tools/publish_itch.py --dry-run` stopped ("not on master"), so I did not use it. I exported the Web preset with Godot directly to the scratchpad (not pushed): it finished with no errors and the .pck holds all five sheet pages. I did not open it in a browser, so WebGL loading is not confirmed beyond the sizes.
+
+QA round 1 (Sonnet): all 8 criteria pass. Godot set 213 scripts, 2541 of 2541 tests; unittest 878 OK. Web safety: every *_sheet*.png is at most 3840 x 3840; clip_player.gd frees pages when hidden (test covers it). No headless-Chrome run: game/tools/web_audio_check.mjs is not in master. A stray Godot process (pid 14216, this folder) had ended before the run.
+- 2026-11-01, in-qa → needs-playtest: QA pass 8/8; Godot 2541/2541, unittest 878 OK
