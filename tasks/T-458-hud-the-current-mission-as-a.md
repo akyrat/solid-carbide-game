@@ -1,7 +1,7 @@
 ---
 id: T-458
 title: HUD: the current mission as a notebook page on the left, with checkboxes, live counts and crossing off (placeholder art)
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-009
@@ -91,3 +91,4 @@ UI Agent, 2026-10-31.
 
 **QA round 1 (2026-10-31):** all six criteria pass. Godot GUT: 196 scripts, 2379 tests, 2379 passing (10/10 in test_hud_mission_page.gd). `python -m unittest discover tools`: 614 OK. Screenshots viewed: half-done (Alt drifts 5/10), ticked and crossed-off, next mission; page clear of hearts, coins and clock. The third set (docs staleness) is run by the runner. Refused: `python tools/qa_check.py` (not on the pre-approved list), so its paperwork lines and final mark check were not run; I checked the same things by hand.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).

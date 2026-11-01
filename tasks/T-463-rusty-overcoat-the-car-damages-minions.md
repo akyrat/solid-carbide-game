@@ -1,7 +1,7 @@
 ---
 id: T-463
 title: Rusty Overcoat: the car damages minions it touches, with the red hit flash
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-009
@@ -78,3 +78,4 @@ Done (Enemy Behavior, 2026-10-31).
 
 QA round 1 (2026-10-31): all five criteria pass. `tools/qa_check.py` was refused (not pre-approved), so I ran the tests directly. GUT (`bash game/tools/run_tests.sh`): 200 scripts, 2418/2418 passing, including test_rusty_overcoat.gd (8 tests: each tier's damage and red flash, per-enemy cooldown, kaiju per tier, no power-up). Python (`python -m unittest discover -s tools -p "test_*.py"`): 614 tests OK. I did not run the docs-staleness test set separately. The screenshot `art-archive/T-463/screenshots/overcoat_flash.png` exists. `docs/enemies.md` (Content, "Rusty Overcoat", and Open questions) describes the rule and proposals. The worktree has `.import` and `.uid` noise from Godot, not committed by me.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM; the overcoat-kill skips the car's hit, fixed in a follow-up ticket (2026-11-01).

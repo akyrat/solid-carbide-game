@@ -1,7 +1,7 @@
 ---
 id: T-456
 title: Text: the mission notebook page, its goal phrasings, and the driving power-up overlay with the four power-ups' names and tier descriptions
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Goal-G-009
@@ -396,3 +396,4 @@ Run by `tools/style_loop/run.py` on 2026-10-31: text, kind card_desc, brief `art
 
 **QA round 1:** all 5 criteria pass. Verified: screen_texts.json has all keys (7 trick goals match missions.json; quantity ones hold {done}/{total}, duration ones don't); 4 power-up templates with slots matching power_ups.json, no 'Greenbull says'; HUD and menus Content section lists all; Style review has 18 runs; GUT 2339/2339 (193 scripts, test_mission_texts.gd included), tools unittest 614 OK, game/tools unittest 767 OK. Not run: `python tools/qa_check.py` (refused, not pre-approved). Screenshots: none, text-only, noted.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).

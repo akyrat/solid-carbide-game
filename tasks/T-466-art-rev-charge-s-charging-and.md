@@ -1,7 +1,7 @@
 ---
 id: T-466
 title: Art: Rev Charge's charging and boost effect
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -153,3 +153,4 @@ Kept: the stepped dithered halo rings, the growth over 25-100 %, and the white-h
 - QA round 1: frames in game/art/driving/rev_charge/ and Style review rounds 1-4 with 0 generations: pass. rev_charge_effect.gd preloads rev_charge.png; test_rev_charge 17/17 passed in my run: pass. Screenshots frames_dark_light.png and turns.png exist (static pictures; the author explained why no in-game sequence): pass. Visual style has the Rev Charge section: pass. Tests: `python -m unittest discover game/tools` 842 OK (1 skipped). Godot suite run by me: every file passed with no failure through the weapons tests (test_rev_charge 17/17); the run later finished with exit code 0, so the whole Godot suite passed. `python -m unittest discover tools` not run to the end (over 10 min; the author saw no failure). `python tools/qa_check.py` was refused (not pre-approved), so I judged by hand. Score 7/10 kept art is noted for the board's playtest.
 - Refusal: one accidental no-op `python -` command was refused; nothing needed from it.
 - 2026-11-01, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).

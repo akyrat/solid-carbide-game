@@ -1,7 +1,7 @@
 ---
 id: T-465
 title: Art: the four driving power-up icons (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -498,3 +498,4 @@ Written by the agent when it finishes.
 - Tests rerun by QA: game/tools 842 pass (1 skipped); tools 614 pass; Godot run_tests.sh exit 0. qa_check.py was refused (not pre-approved), so I ran the three sets directly.
 - Board note: Bouncy Bumpers (5/10) is a full-bleed scene, not an icon; for the playtest.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).

@@ -1,7 +1,7 @@
 ---
 id: T-461
 title: Jump: Space makes a small hop on the car's real height, and its airtime counts for missions
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -100,3 +100,4 @@ Driving & Drift Agent, 2026-10-31. Done; ready for QA.
 
 **Refusals:** one, not essential: `ls` of Godot's user data folder (outside the worktree) was refused; I recorded the GIF frames to the git-ignored `screenshots/` folder at the repo root instead.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM; no damage while jumping (2026-11-01).

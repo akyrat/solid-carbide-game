@@ -1,7 +1,7 @@
 ---
 id: T-462
 title: Bouncy Bumpers: the wall bounce goes further, tier by tier
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -88,3 +88,4 @@ Driving & Drift Agent, 2026-10-31.
 
 **QA round 1 (QA/Integration Agent)**: all three criteria pass. Godot full suite via run_tests.sh: 199 scripts, 2410 passing, 0 failing (test_bouncy_bumpers.gd ran, tiers measured 1.226/1.585/1.944/2.305 vs base 0.869). game/tools unittest: 767 OK (1 skipped). tools unittest: 614 OK. Plot exists at art-archive/T-462/screenshots/bounce_distance_per_tier.png; docs/drifting.md describes the scaling. `python tools/qa_check.py` was refused (needs approval), so skipped.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).

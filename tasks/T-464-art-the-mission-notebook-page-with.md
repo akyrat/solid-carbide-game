@@ -1,7 +1,7 @@
 ---
 id: T-464
 title: Art: the mission notebook page (with checkbox, tick and cross-off marks) and the power-up overlay's frame (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-009
@@ -192,3 +192,4 @@ Five assets, all through `tools/style_loop/run.py art`, briefs in `art-archive/T
 
 All five criteria pass. Own re-run of the tests: `python -m unittest discover -s game/tools` 793 OK (1 skipped); `python -m unittest discover -s tools` 614 OK; Godot `bash game/tools/run_tests.sh` 2419 passing, all passed (1117 s). The five PNGs exist in game/art/hud and game/art/ui; five Style review runs, each kept at 8/10; 0 PixelLab generations noted; four screenshots (dark and light, page and overlay) in art-archive/T-464/screenshots/ (the overlay light one viewed: amber frame in use); Visual style entry present. `tools/qa_check.py` was refused (not on the pre-approved list), so I checked those items by hand.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).

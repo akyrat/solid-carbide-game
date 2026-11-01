@@ -1,7 +1,7 @@
 ---
 id: T-460
 title: Rev Charge: hold W and S to charge a boost that fires when S is released, with a placeholder charge and boost effect
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-009
@@ -106,3 +106,4 @@ Driving & Drift Agent, 2026-10-31 (goal G-009). Done.
 - I ran one harmless no-op heredoc command by mistake (not refused).
 - The GUT run went past the 10-minute foreground limit and finished in the background with exit 0. No background jobs are left.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).

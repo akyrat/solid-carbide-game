@@ -1,7 +1,7 @@
 ---
 id: T-459
 title: The driving power-up overlay: a completed mission pauses the run and offers 2 power-ups (new or next tier)
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-009
@@ -114,3 +114,4 @@ Written by the agent when it finishes.
 
 **Refusals:** one. A first `cd ...; git log` command was refused. It wasn't needed, and I used plain `git log` instead.
 - 2026-10-31, in-qa → needs-playtest: QA passed every criterion (goal G-009).
+- 2026-11-01, needs-playtest → done: The board played G-009: LGTM (2026-11-01).
