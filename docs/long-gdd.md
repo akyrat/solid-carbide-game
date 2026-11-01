@@ -161,6 +161,7 @@ How the level-up screen is reached (task T-144; how to use it: [game/docs/game-l
 - Every pickup at its height (board, 2026-10-30, widening T-402: "when I go to pick up the gift on a platform, its hitbox is in the wrong place"): gift packages, coins and health pickups are drawn and picked up at the height of the ground they lie on. On a rooftop the car picks them up there, never from the street below; one rule for all of them (`game/scripts/run/pickup_height.gd`: the car's height at least the pickup's less 0.5 units).
 - The run keeps going the whole time (the clock, enemies, likes and the likes drain). The level-up moment itself (the "level up" signal, the level-up effect, the likes bar) is unchanged.
 - One package per level-up. Packages stay on the ground until picked up; a new run clears them.
+- Loaded with the run (T-482; the board's recording of 2026-11-01 showed a 97 ms hitch at the first pickup): the level-up screen builds every possible card once while the run is set up (`LevelUpScreen.prewarm()`, called by `setup()`), hidden, and clears them, so the card and highlight frames, every weapon's picture and the cards' text shaping are loaded before the first gift pack pickup. Nothing the player sees changes.
 - Driving over a landed package removes it and opens the level-up screen for that level, with the same weapon choices as before; the run pauses until the choice is made. Two packages picked up together give two screens, one after the other.
 - Every package on the map gets its own arrow (board, 2026-10-28; T-314): while a package that has been dropped, falling or landed, is off screen, an arrow at the screen's edge points to it, one per package, kept clear of the HUD, so several arrows show when several packages are out. The package still carried by the helicopter has none yet. Arrows that would overlap are slid apart along the edge (proposal for the playtest). Proposal for the playtest: arrows only for packages off screen, none for a package on screen (the board asked for "the same one that appears today at the edge of the screen").
 
@@ -2077,7 +2078,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `df1eccd97ed77c36cda63b4e8379d456c023a059da292b39f38aa30710bd1772` |
+| `game-loop-architecture.md` | `41e4f6fe9b71e9bd2da3404eaaf5e1ad0dc9a611a93210389e63edc182c4784d` |
 | `drifting.md` | `e9a2ea1633acfabdd0445d6d7ee5150243ecda4b80b9492a9bc238e156b62dca` |
 | `level-design.md` | `0cae47e3f39f663510d0f09e6b5e66c483cc83668a087513a378a9e93b03b71e` |
 | `enemies.md` | `a70324c963a1b9bf92582224ce73fd6c5fba7accb5df8bdf5f237d078f62c15c` |

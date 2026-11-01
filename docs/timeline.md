@@ -3095,3 +3095,8 @@ Entry format:
 - Decision or change: The UI Agent rebuilds the tutorial as four slides matching the board's approved draft, with the recorded clips.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-485
+
+## 2026-11-01: No hitch at the first gift pack
+- Decision or change: The level-up screen's card art and texts are loaded with the run (LevelUpScreen.prewarm), so the first gift pack pickup no longer freezes (97 ms in the board's recorded run, now about 2 ms like every pickup). The board approved it after playing.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-482
