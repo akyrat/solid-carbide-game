@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/data/missions.json]
 files_expected_to_change: [game/data/missions.json, game/tests/unit/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,10 +41,10 @@ The board's review: start a run and see the notebook's first mission ask for 2 s
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/missions.json mission 1 asks for one unbroken drift of 2 seconds; a test shows a 2-second drift completes mission 1 and a shorter one does not. (QA: pass / fail)
-- [ ] The notebook's first line reads with 2 seconds (a test or a screenshot listed in the result notes). (QA: pass / fail)
-- [ ] The tests for the changed files pass (the agent, with -gselect), and QA's full run passes (tasks/README.md, "Which tests run when"), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] game/data/missions.json mission 1 asks for one unbroken drift of 2 seconds; a test shows a 2-second drift completes mission 1 and a shorter one does not. (QA: pass; missions.json mission 1 amount 2 and note; test_missions: 2.0 s completes, two 1 s drifts and 1.5+1.5 across a wall hit do not)
+- [ ] The notebook's first line reads with 2 seconds (a test or a screenshot listed in the result notes). (QA: pass; test_hud_mission_page asserts 'Hold one drift for 2 seconds')
+- [ ] The tests for the changed files pass (the agent, with -gselect), and QA's full run passes (tasks/README.md, "Which tests run when"), with the counts in the result notes. (QA: fail: code - full Godot run hit the 1800 s limit twice (exit 124): tests/unit/run/test_run_elevation_map.gd test_the_run_goes_on_with_enemies_and_weapons hangs at 'Awaiting 4.0 seconds' on this branch (alone, 300 s limit hit) but the same file passes on master in 40 s. It scripts a 4 s drift, which now completes mission 1 mid-test (the agent's -gselect run missed it). Fix it and check other run tests that drift 2+ s. game/tools set not run: no game/tools code changed.)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; branch diff touches only missions.json, 4 test files, the ticket)
 
 ## Updates
 
@@ -61,3 +61,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Mission 1 amount and note now 2 seconds in game/data/missions.json. Tests updated: run/test_missions.gd (2.1 s completes; two 1 s drifts do not; 1.5 s + 1.5 s across a wall hit does not; 2 s completes), test_mission_data.gd, game/test_missions_power_ups_run.gd, hud/test_hud_mission_page.gd (notebook line reads 'Hold one drift for 2 seconds', built from the amount). Ran with -gselect: test_missions, test_mission_data, test_missions_power_ups_run, test_hud_mission_page, test_mission_texts, all passed. Nothing in game/data/levels touched.
+- 2026-11-01, in-progress → in-qa: Mission 1 now 2 s; tests updated and passing
+- 2026-11-01, in-qa → in-progress: QA fail: full Godot run hangs in tests/unit/run/test_run_elevation_map.gd test_the_run_goes_on_with_enemies_and_weapons (its 4 s scripted drift now completes mission 1 mid-test); same file passes on master in 40 s
