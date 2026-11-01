@@ -78,7 +78,8 @@ func test_the_texts_are_t456s_word_for_word() -> void:
 	assert_eq(screen.title_label.text, "Mission done: soup up the car")
 	assert_eq(screen.title_label.text, t["overlay_header"])
 	for c in screen.cards:
-		assert_eq(c.button.text, "Take power-up")
+		assert_false(c.has("button"), "T-475: no take button")
+		assert_null(c.panel.find_child("TakeButton", true, false))
 		assert_eq(c.name.text, t["names"][c.id])
 		assert_eq(c.tier, 1)
 
@@ -173,11 +174,11 @@ func test_space_takes_the_highlighted_card() -> void:
 	assert_false(get_tree().paused)
 
 
-func test_clicking_a_card_s_button_takes_it() -> void:
+func test_clicking_a_card_takes_it() -> void:
 	_open()
 	var id: String = screen.cards[1].id
 	var other: String = screen.cards[0].id
-	screen.cards[1].button.pressed.emit()
+	screen.cards[1].click.pressed.emit()
 	assert_eq(state.power_up_tier(id), 1)
 	assert_eq(state.power_up_tier(other), 0, "only the clicked card is taken")
 	assert_false(screen.visible)
@@ -268,3 +269,51 @@ func test_a_new_run_closes_it() -> void:
 	run.start_run()
 	assert_false(screen.visible)
 	assert_false(get_tree().paused)
+
+
+func test_a_real_mouse_click_anywhere_on_a_card_takes_it() -> void:
+	var win := get_window()
+	var old_size := win.size
+	win.size = Vector2i(1152, 648)
+	_open()
+	await wait_process_frames(3)
+	var card: Dictionary = screen.cards[1]
+	var rect: Rect2 = card.click.get_global_rect()
+	assert_gte(rect.size.x, PowerUpScreen.CARD_SIZE.x - 1.0, "click area covers the card")
+	# Anywhere on the card, here near the top left of its frame, not a button spot.
+	var pos := rect.position + Vector2(60, 50)
+	for pressed in [true, false]:
+		var e := InputEventMouseButton.new()
+		e.button_index = MOUSE_BUTTON_LEFT
+		e.position = pos
+		e.global_position = pos
+		e.pressed = pressed
+		get_viewport().push_input(e)
+		await wait_process_frames(1)
+	win.size = old_size
+	assert_eq(state.power_up_tier(card.id), 1)
+	assert_false(screen.visible)
+
+
+func test_the_cards_ignore_the_mouse_during_the_build_up() -> void:
+	_complete_mission()
+	for c in screen.cards:
+		assert_eq(c.click.mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	screen.skip_animation()
+	for c in screen.cards:
+		assert_eq(c.click.mouse_filter, Control.MOUSE_FILTER_STOP)
+
+
+func test_hover_brightens_the_frame_and_press_drops_the_card() -> void:
+	_open()
+	var c: Dictionary = screen.cards[0]
+	var frame: Panel = c.body.get_node("Frame")
+	c.click.mouse_entered.emit()
+	assert_eq(frame.modulate, GiftCardClick.HOVER_TINT)
+	assert_eq(screen.highlight, 0, "hovering does not move the highlight")
+	c.click.button_down.emit()
+	assert_eq(c.body.position.y, float(HudStyle.BUTTON_PRESS_DROP))
+	c.click.button_up.emit()
+	c.click.mouse_exited.emit()
+	assert_eq(frame.modulate, Color.WHITE)
+	assert_eq(c.body.position.y, float(0))

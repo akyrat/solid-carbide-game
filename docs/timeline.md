@@ -3070,3 +3070,8 @@ Entry format:
 - Decision or change: The board added tools/task_notes.py to the guard's trusted ticket tools; guard tests show it passes whatever its text says while direct status writes stay refused, and tasks/README.md says agents write their notes with it.
 - Documents touched: none
 - Tasks: T-472
+
+## 2026-11-01: Power-up cards are clicked directly
+- Decision or change: The driving power-up overlay's cards have no take button; the whole card is clicked, sharing the level-up screen's card behaviour (GiftCardClick). The board approved it after playing.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-475
