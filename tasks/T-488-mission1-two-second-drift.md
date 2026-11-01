@@ -1,7 +1,7 @@
 ---
 id: T-488
 title: The first mission is a 2-second drift instead of 4
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -50,10 +50,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-01, Open → In progress
+
+Filed from the board's note: mission 1 becomes a 2-second drift. Game Data agent started.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Mission 1 amount and note now 2 seconds in game/data/missions.json. Tests updated: run/test_missions.gd (2.1 s completes; two 1 s drifts do not; 1.5 s + 1.5 s across a wall hit does not; 2 s completes), test_mission_data.gd, game/test_missions_power_ups_run.gd, hud/test_hud_mission_page.gd (notebook line reads 'Hold one drift for 2 seconds', built from the amount). Ran with -gselect: test_missions, test_mission_data, test_missions_power_ups_run, test_hud_mission_page, test_mission_texts, all passed. Nothing in game/data/levels touched.
