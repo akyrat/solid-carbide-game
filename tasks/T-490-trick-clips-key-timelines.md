@@ -45,12 +45,12 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The four new clips exist as GIF and frame sheets (each sheet page at most 3840 px, as T-485's web limit), and the recorder's output in the result notes shows each clip's trick fired (airtime: HANG TIME! with no AIR 180! or AIR 360!). (QA: pass / fail)
-- [ ] Every clip's sheet JSON has a key timeline with one entry per frame, matching the scripted inputs; a test checks it for at least alt_drift (W, then W+A, then S+A, then W). (QA: pass / fail)
-- [ ] Screenshots: a contact sheet of a few frames of each new clip is saved and listed in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content, "Tutorial clips") lists the new clips and the key timeline field. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent, with -gselect / unittest on the changed modules), and QA's full run passes (tasks/README.md, "Which tests run when"), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] The four new clips exist as GIF and frame sheets (each sheet page at most 3840 px, as T-485's web limit), and the recorder's output in the result notes shows each clip's trick fired (airtime: HANG TIME! with no AIR 180! or AIR 360!). (QA: pass; four GIFs and sheets exist, pages 3840 px wide max (tallest page 3840x3840 is drift's old sheet, new ones <=3200); recorder JSON: three_sixty, air_three_sixty (370 deg), thread_the_needle tricks fired, airtime has none of AIR 180/360 and 1.12 s, no problems)
+- [ ] Every clip's sheet JSON has a key timeline with one entry per frame, matching the scripted inputs; a test checks it for at least alt_drift (W, then W+A, then S+A, then W). (QA: pass; all 8 sheet JSONs have keys_per_frame equal in length to frames; alt_drift W, WA, A, AS, W; test_tutorial_clips covers it)
+- [ ] Screenshots: a contact sheet of a few frames of each new clip is saved and listed in the result notes. (QA: pass; four *_contact.png in art-archive/T-490/screenshots, each shows its trick plainly)
+- [ ] docs/hud-and-menus.md (Content, "Tutorial clips") lists the new clips and the key timeline field. (QA: pass; docs/hud-and-menus.md lists clips and keys_per_frame)
+- [ ] The tests for the changed code pass (the agent, with -gselect / unittest on the changed modules), and QA's full run passes (tasks/README.md, "Which tests run when"), with the counts in the result notes. (QA: pass; Godot set 2574/2574 (one test red in the first parallel run, green on solo rerun), game/tools 896 OK)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; no data/levels in the branch diff)
 
 ## Updates
 
