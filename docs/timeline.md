@@ -3150,3 +3150,8 @@ Entry format:
 - Decision or change: Four slides (Drive, Tricks bring gifts, Missions, Survive the stream) match the approved draft, with the recorded clips as frame sheets (at most 3840 px, freed when hidden) and Skip; the board played it.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-485
+
+## 2026-11-01: QA's checks follow the new test rule
+- Decision or change: qa_check.py runs the tools set only when tools/ or .claude/ change (--all-tests forces it), --marks-only for the second run; the goal runner's prompts follow the rule.
+- Documents touched: none
+- Tasks: T-486

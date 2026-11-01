@@ -317,7 +317,7 @@ It is part of goal {b.gid}, which the goal runner builds without the board's rev
 (docs/working-with-the-board.md and tasks/README.md, "Goal runs").
 - Read the task file and every file in its files_to_read_first, then do what its Description says.
 - Work and commit only in that folder, in small commits. Never commit to master, never merge, never push.
-- Write tests for your code and run them. Write your result notes in the task file's "## Result notes".
+- Write tests for your code and run the tests for what you changed (your new and changed test files, and the test files of the scripts you touched), not the three full test sets: QA runs those once (tasks/README.md, "Which tests run when"). List what you ran, with counts. Write your result notes in the task file's "## Result notes".
 - Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 - {EDIT_TICKETS_RULE}
 - {HAND_BACK_RULE}
@@ -337,6 +337,7 @@ def qa_prompt(b, ticket, folder, text):
 Its task file there is {ticket['file']}. It is part of goal {b.gid} (tasks/README.md, "Goal runs").
 Check every acceptance criterion, running the tests it names:
 {chr(10).join(criteria)}
+Run `python tools/qa_check.py {ticket['id']} --no-marks` once for the full test sets (it skips the tools set when the branch changes nothing under tools/ or .claude/); after marking, run `python tools/qa_check.py {ticket['id']} --marks-only`, which checks only the marks (tasks/README.md, "Which tests run when").
 Mark each one in the task file as `(QA: pass)` or `(QA: fail: code - <reason>)` (the work is wrong or a test is red)
 or `(QA: fail: paperwork - <reason>)` (the work is fine but a record, note, mark or screenshot is missing), and commit the task file in that folder.
 Replace the criterion's old mark (the `(QA: pass / fail)` placeholder, or an earlier round's mark) with your new one;
