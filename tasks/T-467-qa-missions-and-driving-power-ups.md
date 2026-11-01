@@ -1,7 +1,7 @@
 ---
 id: T-467
 title: QA: missions and driving power-ups through a whole run
-status: blocked
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-009
@@ -45,6 +45,10 @@ An integration test of goal G-009 in the real game scene, to catch the pieces no
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-467.
 
 ## Style review
 
