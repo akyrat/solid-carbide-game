@@ -1,7 +1,7 @@
 ---
 id: T-484
 title: Text: the redrawn tutorial slides' headlines, labels and captions
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/extended-narrative.md, game/data/tutorial_text.json, C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/89bfdaa9-8914-40ee-9f4b-4fc6ef5a226d/scratchpad/tutorial/tutorial-redraft.template.html]
 files_expected_to_change: [game/data/tutorial_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -50,13 +50,13 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/tutorial_text.json has every text listed in the description, each with a `_comment` saying what it is for and where it appears; the result notes list the keys. (QA: pass / fail)
-- [ ] Each new line went through the style loop and scored 8 or more (the Style review in the ticket shows the scores). (QA: pass / fail)
-- [ ] The clip captions reuse the trick names word for word from recap_text.json / tutorial_text.json trick.*. (QA: pass / fail)
-- [ ] The retired keys are kept, marked unused, and listed in the result notes. (QA: pass / fail)
-- [ ] The file is valid JSON and the game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content, "Tutorial slides and trick list") lists the new keys. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] game/data/tutorial_text.json has every text listed in the description, each with a `_comment` saying what it is for and where it appears; the result notes list the keys. (QA: pass: every listed text has a _comment; keys listed in result notes)
+- [ ] Each new line went through the style loop and scored 8 or more (the Style review in the ticket shows the scores). (QA: pass: 25 runs, all kept at 8 or more)
+- [ ] The clip captions reuse the trick names word for word from recap_text.json / tutorial_text.json trick.*. (QA: pass: step texts use trick.* keys unchanged; ramp caption joins HANG TIME! + AIR 180!)
+- [ ] The retired keys are kept, marked unused, and listed in the result notes. (QA: pass: 5 retired keys kept, comments start UNUSED since T-484, listed in notes)
+- [ ] The file is valid JSON and the game/tools Python tests pass (`python -m unittest discover -s game/tools -p "test_*.py"`). (QA: pass: valid JSON; game/tools 870 tests OK; Godot set all passed)
+- [ ] docs/hud-and-menus.md (Content, "Tutorial slides and trick list") lists the new keys. (QA: pass: keys listed at hud-and-menus.md lines 254-279)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass: no changes under game/data/levels/)
 
 ## Updates
 
@@ -454,3 +454,4 @@ Retired, kept in the file with a `_comment` starting "UNUSED since T-484": `slid
 
 Other changes: `docs/hud-and-menus.md` (Content, "Tutorial slides and trick list") lists the new keys; `game/tools/text_inventory.py` maps the new key prefixes (kicker, slide4, button.skip) to screens, which its test required. Tests: the full game/tools suite had one failure (text inventory, unlisted keys), fixed and re-run green. Nothing under game/data/levels/ touched. For the playtest: the draft's "KAIJU!" became "The kaiju!"; the step 2 and 3 captions say "Live viewers" (the loop's choice).
 - 2026-11-01, in-progress → in-qa: Text for the four redrawn slides done, 25 lines scored 8+, keys in result notes
+- 2026-11-01, in-qa → done: QA round 1 passed: all 7 criteria, tools 870 OK, Godot set passed
