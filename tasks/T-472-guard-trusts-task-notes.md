@@ -1,7 +1,7 @@
 ---
 id: T-472
 title: The command guard trusts tools/task_notes.py like the status script
-status: blocked
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Blocked: Claude can't edit the guard. Your one-line edit is in the terminal.
 
+### 2026-11-01, Blocked → In progress
+
+The board made the one-line edit; an agent now adds its tests and the README line.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -65,3 +69,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 - 2026-10-31, in-progress → blocked: The auto-mode classifier refused launching the agent (self-modification of the hook). The board makes the one-line edit itself; see the reply.
+- 2026-11-01, blocked → in-progress: The board made the guard edit (on master, merged in); the guard tests and the README line remain.
+
+Added two guard tests in tools/test_guard.py: test_the_notes_script_is_trusted_whatever_its_text_says (task_notes.py with --text naming status, lead, qa_rounds, tasks/ is allowed, also --append and cd chains) and test_direct_status_writes_stay_refused_with_the_notes_script_trusted (sed, cp, python - heredoc, and sed chained after task_notes.py are denied). tasks/README.md Handing back now says the guard trusts task_notes.py. board_gate.py diff against the base (the board's commit 19948a0e): only TICKET_TOOLS gained "tools/task_notes.py"; I did not edit the hook. Tests: python -m unittest discover -s tools -p test_*.py ran 635 tests, OK (test_guard alone: 90).
