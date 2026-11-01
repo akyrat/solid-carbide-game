@@ -36,7 +36,8 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 ## Where the car starts (flat units) and its heading: on the street east of
 ## the ramp's foot, facing west, so W drives straight up the ramp (proposal).
 ## The tutorial clip's own ramp (task T-483): a short rooftop, so the car flies over it and lands on the street.
-const DATA_PATH := "res://tests/fixtures/data/tutorial_ramp.json"
+## T-490: the clip fixture may set another ground file before adding the scene.
+var data_path := "res://tests/fixtures/data/tutorial_ramp.json"
 const START_UNITS := Vector2(26.0, 0.0)
 const START_ROTATION := PI
 
@@ -64,7 +65,7 @@ var camera_follow = CameraFollowScript.new()
 
 
 func _ready() -> void:
-	ground_height = GroundHeightScript.from_file(DATA_PATH)
+	ground_height = GroundHeightScript.from_file(data_path)
 
 	physics_world = Node2D.new()
 	physics_world.name = "PhysicsWorld"

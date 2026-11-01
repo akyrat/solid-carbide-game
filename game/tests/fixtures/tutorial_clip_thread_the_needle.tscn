@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/tutorial_clip_demo.gd" id="1_demo"]
+
+[node name="TutorialClipThreadTheNeedle" type="Node"]
+script = ExtResource("1_demo")
+clip = "thread_the_needle"
+zoom = 14.4
+start_units = Vector2(-30, 0)
+start_rotation = 0.0
+warm_steps = 60
+marks_lifetime = 3.0
+tail_steps = 20
+needle_boulders = Array[Vector2]([Vector2(0, -3.5), Vector2(0, 3.5)])
+needle_diameter = 3.0
+parts = [[110, true, 0.0]]
