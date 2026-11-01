@@ -392,7 +392,7 @@ func _build_slide2() -> Control:
 	for c in CLIPS_SLIDE2:
 		var fig := VBoxContainer.new()
 		fig.add_theme_constant_override("separation", 8)
-		fig.add_child(_clip_box(c[0], Vector2.ZERO, Vector2(256, 171), 3))
+		fig.add_child(_clip_box(c[0], Vector2.ZERO, Vector2(256, 171), 3, 20.0))
 		var cap := _text_label(c[1], false, 21, INK, true)
 		cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		fig.add_child(cap)
@@ -718,7 +718,7 @@ func _picture(path: String, size: Vector2) -> TextureRect:
 
 
 ## A clip in its framed box (the clip's sheet is loaded when the slide is first shown).
-func _clip_box(clip_name: String, pos: Vector2, box_size: Vector2, border: int) -> Control:
+func _clip_box(clip_name: String, pos: Vector2, box_size: Vector2, border: int, pad_px := 0.0) -> Control:
 	var box := Panel.new()
 	box.name = "Clip_" + clip_name
 	box.position = pos
@@ -731,6 +731,8 @@ func _clip_box(clip_name: String, pos: Vector2, box_size: Vector2, border: int) 
 	player.size = box_size - Vector2(border, border) * 2.0
 	player.set_clip(clip_name)
 	box.add_child(player)
+	if pad_px > 0.0:
+		KeyPad.attach(player, pad_px)  # T-491: slide 2's clips show the live key pad
 	clip_players.append(player)
 	return box
 

@@ -1,0 +1,44 @@
+{
+  "not_reached": [],
+  "screens": [
+    {
+      "file": "slide2_a.png",
+      "how": "slide 2",
+      "name": "slide2_a"
+    },
+    {
+      "file": "slide2_b.png",
+      "how": "slide 2 later",
+      "name": "slide2_b"
+    },
+    {
+      "file": "trick_list_extended_drift.png",
+      "how": "extended_drift",
+      "name": "trick_list_extended_drift"
+    },
+    {
+      "file": "trick_list_alternate_drift.png",
+      "how": "alternate_drift",
+      "name": "trick_list_alternate_drift"
+    },
+    {
+      "file": "trick_list_air_one_eighty.png",
+      "how": "air_one_eighty",
+      "name": "trick_list_air_one_eighty"
+    },
+    {
+      "file": "trick_list_airtime.png",
+      "how": "airtime",
+      "name": "trick_list_airtime"
+    },
+    {
+      "file": "trick_list_thread_the_needle.png",
+      "how": "thread_the_needle",
+      "name": "trick_list_thread_the_needle"
+    }
+  ],
+  "size": [
+    1280,
+    720
+  ]
+}

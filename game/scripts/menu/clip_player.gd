@@ -9,6 +9,9 @@ extends Control
 ## ensure_loaded) and frees them when it is hidden, so only the visible slide's clips are in
 ## memory; it only advances while visible. `advance(delta)` is the whole clock, so a test can step it.
 
+## Emitted when the shown frame changes (the key pad follows it).
+signal frame_changed
+
 const CLIP_DIR := "res://art/tutorial/clips/"
 
 var clip := ""
@@ -34,10 +37,12 @@ func _ready() -> void:
 ## Chooses the clip by name ("drift"); it loads when first shown, or at once with `load_now`.
 func set_clip(clip_name: String, load_now := false) -> void:
 	clip = clip_name
+	meta = {}
 	_loaded = false
 	unload()
 	frame = 0
 	elapsed_ms = 0.0
+	frame_changed.emit()
 	if load_now:
 		ensure_loaded()
 
@@ -65,6 +70,7 @@ func ensure_loaded() -> bool:
 		pages.append(load(path) as Texture2D)
 	sheet = pages[0]
 	queue_redraw()
+	frame_changed.emit()
 	return true
 
 
@@ -73,6 +79,15 @@ func unload() -> void:
 	pages.clear()
 	sheet = null
 	_loaded = false
+
+
+## The keys held in the current frame ("WA", "AS"; T-490's keys_per_frame), "" when unknown.
+## Read from the sheet's JSON, so it works while the pages are loaded.
+func held_keys() -> String:
+	var keys: Variant = meta.get("keys_per_frame", [])
+	if typeof(keys) == TYPE_ARRAY and frame < keys.size():
+		return String(keys[frame])
+	return ""
 
 
 func frame_count() -> int:
@@ -90,6 +105,7 @@ func advance(delta: float) -> void:
 		frame = (frame + 1) % _durations.size()
 	if frame != before:
 		queue_redraw()
+		frame_changed.emit()
 
 
 func _process(delta: float) -> void:

@@ -379,3 +379,12 @@ func test_enter_on_the_focused_start_button() -> void:
 	slides.get_viewport().push_input(up)
 	await wait_process_frames(2)
 	assert_signal_emitted(slides, "start_pressed")
+
+
+func test_slide_two_clips_have_the_live_key_pad_and_slide_one_does_not() -> void:
+	assert_null(slides.clip_players[0].get_node_or_null("KeyPad"), "slide 1's clip is unchanged")
+	for i in range(1, 4):
+		var pad := slides.clip_players[i].get_node_or_null("KeyPad") as KeyPad
+		assert_not_null(pad, "slide 2 clip %d" % i)
+		assert_eq(pad.player, slides.clip_players[i])
+	assert_eq(slides.clip_players.size(), 4)

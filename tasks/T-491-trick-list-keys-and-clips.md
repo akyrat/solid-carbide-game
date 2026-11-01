@@ -1,7 +1,7 @@
 ---
 id: T-491
 title: The trick list shows each trick's clip, live key pad and keycap recipe; slide 2's clips get the key pad
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -63,10 +63,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Filed: waits for T-489 (text) and T-490 (clips).
 
+### 2026-11-01, Open → In progress
+
+T-489 and T-490 are merged: UI agent started on the trick list and slide 2's key pad.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. New: game/scripts/menu/key_pad.gd (KeyPad.attach; lights ClipPlayer.held_keys() from keys_per_frame, refreshed on the new ClipPlayer.frame_changed signal), game/data/trick_recipes.json (clip, steps, keys, /D marks; texts from tutorial_text.json trick_rule / trick_recipe keys). Slide 2's three clips get the pad (slide 1 unchanged). TrickList rebuilt: seven-row list (click or focus selects) plus detail pane (name, rule, one clip with pad, keycap recipe with arrows, notes, badges, /D tags; none for THREAD THE NEEDLE!); clip loads only while visible. Mapping: air_one_eighty uses ramp_jump, extended_drift long_drift, alternate_drift alt_drift. Panel is 494 -> ~456 px tall so it still clears the HUD clock at 1152x648. Old test_trick_list SCALE assertions changed to LIST_SCALE=1. Tests (-gselect, all pass): test_key_pad 3/3, test_trick_list_recipes 8/8, test_trick_list 6/6, test_tutorial_slides 26/26, test_tutorial_clips 6/6, test_pause_screen 10/10, test_pause_trick_list 8/8. Screenshots 1280x720 in art-archive/T-491/screenshots/: slide2_a.png, slide2_b.png, trick_list_extended_drift.png, trick_list_alternate_drift.png, trick_list_air_one_eighty.png, trick_list_airtime.png, trick_list_thread_the_needle.png. Docs: docs/hud-and-menus.md (Pause screen entry, slides section), game/docs/hud-and-menus/pause-screen.md and tutorial-slides.md. Nothing under game/data/levels/ touched. Untracked .uid files left uncommitted.
