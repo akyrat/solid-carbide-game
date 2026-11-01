@@ -116,6 +116,23 @@ class ShellGaps(Base):
             with self.subTest(c=c):
                 self.assertEqual(self.cmd(c), "allow")
 
+    def test_the_notes_script_is_trusted_whatever_its_text_says(self):
+        # T-472: tools/task_notes.py appends to result notes only, like task_status.py it may name tasks, status, lead
+        for c in ['python tools/task_notes.py T-472 --text "done; status: done, lead: X, qa_rounds: 1 in tasks/T-472.md"',
+                  "python C:/solid-carbide-game/tools/task_notes.py T-472 --text 'sed status line in tasks/ lead'",
+                  "cd C:/solid-carbide-worktrees/T-472 && python C:/solid-carbide-game/tools/task_notes.py T-472 "
+                  "--append report.md"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "allow")
+
+    def test_direct_status_writes_stay_refused_with_the_notes_script_trusted(self):
+        for c in ["sed -i 's/status: open/status: done/' tasks/T-472-x.md",
+                  "cp /tmp/x.md tasks/T-472-x.md",
+                  "python - <<'EOF'\nopen('tasks/T-472-x.md','w').write('status: done')\nEOF",
+                  "python tools/task_notes.py T-472 --text ok; sed -i 's/status: open/status: done/' tasks/T-472-x.md"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "deny")
+
     def test_git_housekeeping_still_works(self):
         for c in ['git add tasks/T-149-x.md && git commit -m "T-149: status and qa_rounds guard, tasks/ lead"',
                   "git checkout -- tasks/T-149-x.md", "git merge --no-ff --no-commit task/T-149-x",

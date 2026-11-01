@@ -1,7 +1,7 @@
 ---
 id: T-472
 title: The command guard trusts tools/task_notes.py like the status script
-status: open
+status: done
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, tasks/T-469-result-notes-script.md, .claude/hooks/board_gate.py, tools/test_guard.py]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,16 +43,24 @@ Never write, move or commit anything in game/data/levels/.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A guard test shows `python tools/task_notes.py T-NNN --text "..."` is let through whatever its text says (status, lead, tasks). (QA: pass / fail)
-- [ ] Guard tests show a direct write to a ticket's status line (sed, cp, a python - script) is still refused exactly as before. (QA: pass / fail)
-- [ ] Only the trusted-tools list (and its test) changed in board_gate.py (diff in the result notes). (QA: pass / fail)
-- [ ] tasks/README.md ("Handing back") says agents use task_notes.py for their result notes. (QA: pass / fail)
-- [ ] The tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`), with the count in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] A guard test shows `python tools/task_notes.py T-NNN --text "..."` is let through whatever its text says (status, lead, tasks). (QA: pass)
+- [ ] Guard tests show a direct write to a ticket's status line (sed, cp, a python - script) is still refused exactly as before. (QA: pass)
+- [ ] Only the trusted-tools list (and its test) changed in board_gate.py (diff in the result notes). (QA: pass)
+- [ ] tasks/README.md ("Handing back") says agents use task_notes.py for their result notes. (QA: pass)
+- [ ] The tools Python tests pass (`python -m unittest discover -s tools -p "test_*.py"`), with the count in the result notes. (QA: pass)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-31, In progress → Blocked
+
+Blocked: Claude can't edit the guard. Your one-line edit is in the terminal.
+
+### 2026-11-01, Blocked → In progress
+
+The board made the one-line edit; an agent now adds its tests and the README line.
 
 ## Style review
 
@@ -60,4 +68,9 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-31, in-progress → blocked: The auto-mode classifier refused launching the agent (self-modification of the hook). The board makes the one-line edit itself; see the reply.
+- 2026-11-01, blocked → in-progress: The board made the guard edit (on master, merged in); the guard tests and the README line remain.
+
+Added two guard tests in tools/test_guard.py: test_the_notes_script_is_trusted_whatever_its_text_says (task_notes.py with --text naming status, lead, qa_rounds, tasks/ is allowed, also --append and cd chains) and test_direct_status_writes_stay_refused_with_the_notes_script_trusted (sed, cp, python - heredoc, and sed chained after task_notes.py are denied). tasks/README.md Handing back now says the guard trusts task_notes.py. board_gate.py diff against the base (the board's commit 19948a0e): only TICKET_TOOLS gained "tools/task_notes.py"; I did not edit the hook. Tests: python -m unittest discover -s tools -p test_*.py ran 635 tests, OK (test_guard alone: 90).
+- 2026-11-01, in-progress → in-qa: Guard tests added, README updated, 635 tools tests pass
+- 2026-11-01, in-qa → done: Guard trusts task_notes.py; tests added; 635 tools tests pass

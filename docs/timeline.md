@@ -3065,3 +3065,8 @@ Entry format:
 - Decision or change: The board approved the redrawn tutorial direction (four slides: Drive, Tricks bring gifts, Missions, Survive the stream) with its notes; first, four clips of the real car on a simple background.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-483
+
+## 2026-11-01: The guard trusts the result-notes script
+- Decision or change: The board added tools/task_notes.py to the guard's trusted ticket tools; guard tests show it passes whatever its text says while direct status writes stay refused, and tasks/README.md says agents write their notes with it.
+- Documents touched: none
+- Tasks: T-472
