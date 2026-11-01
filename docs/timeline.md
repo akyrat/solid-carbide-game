@@ -3015,3 +3015,8 @@ Entry format:
 - Decision or change: The level-up screen's cards have no Take it button; clicking anywhere on a card takes it (GiftCardClick, reused by T-475), with hover and keyboard highlight. The board: "LGTM" (swipe review).
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-474
+
+## 2026-11-01: No sound in the browser build
+- Decision or change: The board found the itch.io build silent; the SFX Agent finds and fixes the cause in a local browser run.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-476
