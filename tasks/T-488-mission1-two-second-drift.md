@@ -1,7 +1,7 @@
 ---
 id: T-488
 title: The first mission is a 2-second drift instead of 4
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/data/missions.json]
 files_expected_to_change: [game/data/missions.json, game/tests/unit/]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -66,3 +66,4 @@ Mission 1 amount and note now 2 seconds in game/data/missions.json. Tests update
 
 QA round 1 fix: run/test_run_elevation_map.gd test_the_run_goes_on_with_enemies_and_weapons now starts at mission 5 (missions.current = 4 + _load_current) so its 4 s scripted drift no longer completes mission 1 and pauses the run on the power-up pick; same intent kept (run still going, enemies spawned). Grepped other run tests with long drifts: test_run_likes, test_run_likes_drain, test_wreck, test_wreck_decides_loss, test_run_combo need no change. -gselect passes: test_run_elevation_map 26/26, test_run_likes 37/37, test_run_likes_drain 19/19, test_wreck 37/37, test_wreck_decides_loss 14/14, test_run_combo 20/20, test_missions 20/20, test_mission_data 5/5, test_hud_mission_page 11/11. Screenshot of the notebook's first line (Hold one drift for 2 seconds): art-archive/T-488/screenshots/notebook_first_mission.png, made with the new fixture game/tests/fixtures/mission_page_demo_first.tscn. The doc docs/game-loop-architecture.md was already updated on master by the Project Lead.
 - 2026-11-01, in-progress → in-qa: QA fixes: elevation-map run test, screenshot
+- 2026-11-01, in-qa → needs-playtest: QA round 2 passed: all 4 criteria, 3 test sets green
