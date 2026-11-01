@@ -1,7 +1,7 @@
 ---
 id: T-485
 title: Build the redrawn tutorial slides: four slides with keycaps, the loop chain, the clips, missions and the run timeline
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -68,6 +68,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the UI Agent builds the four redrawn slides (clips and text merged in).
 
+### 2026-11-01, Needs playtest
+
+QA passed 8/8 (2541 Godot tests). Ready to play: press Start, page through the four slides, use Skip, start a run from slide 4.
+
+### 2026-11-01, Needs playtest
+
+The board: LGTM. Merging after the current batch.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -94,3 +102,4 @@ Web build fix (coordinator, 2026-11-01): the sheets are now at most 4096 x 4096 
 
 QA round 1 (Sonnet): all 8 criteria pass. Godot set 213 scripts, 2541 of 2541 tests; unittest 878 OK. Web safety: every *_sheet*.png is at most 3840 x 3840; clip_player.gd frees pages when hidden (test covers it). No headless-Chrome run: game/tools/web_audio_check.mjs is not in master. A stray Godot process (pid 14216, this folder) had ended before the run.
 - 2026-11-01, in-qa → needs-playtest: QA pass 8/8; Godot 2541/2541, unittest 878 OK
+- 2026-11-01, needs-playtest → done: lgtm
