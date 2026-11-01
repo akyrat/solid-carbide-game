@@ -7,7 +7,7 @@ func test_fixed_missions_are_the_boards() -> void:
 	assert_true(m.is_ok(), m.error)
 	assert_eq(m.total(), 30)
 	assert_eq(m.fixed().size(), 5)
-	var want := [["extended_drift", 4], ["alternate_drift", 10], ["airtime", 3], ["air_one_eighty", 3], ["air_three_sixty", 1]]
+	var want := [["extended_drift", 2], ["alternate_drift", 10], ["airtime", 3], ["air_one_eighty", 3], ["air_three_sixty", 1]]
 	for i in 5:
 		var g: Dictionary = m.fixed()[i]["goals"][0]
 		assert_eq(m.fixed()[i]["goals"].size(), 1)

@@ -33,9 +33,9 @@ func after_each() -> void:
 	TestSave.restore_progress()
 
 
-## Mission 1 is one unbroken drift of 4 seconds (data/missions.json).
+## Mission 1 is one unbroken drift of 2 seconds (data/missions.json).
 func _complete_mission_one() -> void:
-	game.run.state.missions.on_trick("extended_drift", 4.0)
+	game.run.state.missions.on_trick("extended_drift", 2.0)
 
 
 ## A level-up, its gift pack landed and picked up: opens the weapons gift screen.

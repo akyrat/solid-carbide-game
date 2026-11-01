@@ -3155,3 +3155,8 @@ Entry format:
 - Decision or change: qa_check.py runs the tools set only when tools/ or .claude/ change (--all-tests forces it), --marks-only for the second run; the goal runner's prompts follow the rule.
 - Documents touched: none
 - Tasks: T-486
+
+## 2026-11-01: The first mission is a 2-second drift
+- Decision or change: Mission 1 asks for one unbroken drift of 2 seconds instead of 4; a run test that drifted 4 s now starts at mission 5; the board played it.
+- Documents touched: none
+- Tasks: T-488

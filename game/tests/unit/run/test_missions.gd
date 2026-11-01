@@ -97,11 +97,11 @@ func test_each_run_without_a_seed_picks_a_new_one() -> void:
 
 func test_missions_1_to_5_complete_in_order_from_trick_events() -> void:
 	var m: RunMissions = state.missions
-	# Mission 1: one unbroken drift of 4 seconds.
-	_drift(4.1)
+	# Mission 1: one unbroken drift of 2 seconds.
+	_drift(2.1)
 	assert_eq(_of("mission"), [["mission", 0]], "mission 1 done")
 	assert_true(_of("goal").has(["goal", 0, 0]))
-	assert_true(_of("progress").any(func(e): return e[1] == 0 and e[3] == 4.0 and e[4] == 4.0))
+	assert_true(_of("progress").any(func(e): return e[1] == 0 and e[3] == 2.0 and e[4] == 2.0))
 	assert_eq(m.current_number(), 2)
 	# Mission 2: 10 alt drifts.
 	for i in 9:
@@ -169,31 +169,31 @@ func test_a_mission_with_several_goals_needs_all_of_them() -> void:
 
 # --- The continuous drift goal ------------------------------------------------------
 
-func test_two_2_second_drifts_do_not_complete_mission_1_one_4_second_drift_does() -> void:
+func test_two_1_second_drifts_do_not_complete_mission_1_one_2_second_drift_does() -> void:
 	var m: RunMissions = state.missions
-	_drift(2.0)
-	_drift(2.0)
-	assert_eq(m.current_number(), 1, "two 2 s drifts are not one 4 s drift")
+	_drift(1.0)
+	_drift(1.0)
+	assert_eq(m.current_number(), 1, "two 1 s drifts are not one 2 s drift")
 	assert_eq(_of("mission"), [])
 	assert_eq(m.current_goals()[0]["done"], 0.0, "the ended drift starts over")
-	_drift(4.0)
-	assert_eq(_of("mission"), [["mission", 0]], "one 4 s drift completes it")
+	_drift(2.0)
+	assert_eq(_of("mission"), [["mission", 0]], "one 2 s drift completes it")
 	assert_eq(m.current_number(), 2)
 
 
 func test_a_wall_hit_ends_the_drift_for_the_goal() -> void:
 	var m: RunMissions = state.missions
-	for i in 150:  # 2.5 s
+	for i in 90:  # 1.5 s
 		state.drift_step(true, DT)
-	assert_almost_eq(float(m.current_goals()[0]["done"]), 2.5, 0.001)
+	assert_almost_eq(float(m.current_goals()[0]["done"]), 1.5, 0.001)
 	state.collision()
 	assert_eq(m.current_goals()[0]["done"], 0.0, "the hit ends the drift")
-	for i in 150:  # still drifting after the hit: a new drift of 2.5 s
+	for i in 90:  # still drifting after the hit: a new drift of 1.5 s
 		state.drift_step(true, DT)
-	assert_eq(m.current_number(), 1, "2.5 s + 2.5 s across a wall hit is not 4 s")
-	for i in 90:
+	assert_eq(m.current_number(), 1, "1.5 s + 1.5 s across a wall hit is not 2 s")
+	for i in 40:
 		state.drift_step(true, DT)
-	assert_eq(m.current_number(), 2, "an unbroken 4 s completes it while still drifting")
+	assert_eq(m.current_number(), 2, "an unbroken 2 s completes it while still drifting")
 
 
 func test_nothing_counts_when_the_run_is_not_going() -> void:
@@ -232,7 +232,7 @@ func test_after_mission_30_nothing_more_is_offered() -> void:
 # --- A new run, and the power-ups ---------------------------------------------------
 
 func test_a_new_run_resets_to_mission_1_and_clears_power_ups() -> void:
-	_drift(4.0)
+	_drift(2.0)
 	state.add_trick("alternate_drift")
 	state.grant_power_up("jump")
 	assert_eq(state.missions.current_number(), 2)
@@ -280,7 +280,7 @@ func test_restart_from_the_pause_screen_starts_mission_1_with_no_power_ups() -> 
 	if game.run == null:  # the tutorial slides first
 		game.tutorial.start_pressed.emit(false)
 	var old: RunState = game.run.state
-	old.drift_step(true, 4.1)
+	old.drift_step(true, 2.1)
 	old.grant_power_up("bouncy_bumpers")
 	assert_eq(old.missions.current_number(), 2)
 	game.pause_screen.restart_pressed.emit()

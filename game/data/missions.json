@@ -3,7 +3,7 @@
   "total": 30,
   "known_tricks": ["extended_drift", "three_sixty", "alternate_drift", "airtime", "air_one_eighty", "air_three_sixty", "thread_the_needle"],
   "fixed": [
-    {"number": 1, "goals": [{"trick": "extended_drift", "kind": "seconds", "amount": 4, "note": "one unbroken drift of 4 seconds"}]},
+    {"number": 1, "goals": [{"trick": "extended_drift", "kind": "seconds", "amount": 2, "note": "one unbroken drift of 2 seconds"}]},
     {"number": 2, "goals": [{"trick": "alternate_drift", "kind": "count", "amount": 10}]},
     {"number": 3, "goals": [{"trick": "airtime", "kind": "seconds", "amount": 3, "note": "3 seconds of airtime in total"}]},
     {"number": 4, "goals": [{"trick": "air_one_eighty", "kind": "count", "amount": 3}]},
