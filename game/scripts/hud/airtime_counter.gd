@@ -92,9 +92,11 @@ func _layout() -> void:
 ## The placeholder wing: a white shape with a black outline.
 class _WingIcon extends Control:
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.hud_counter")
 		var pts := PackedVector2Array(AirtimeCounter.WING_POINTS)
 		var closed := pts.duplicate()
 		closed.append(pts[0])
 		draw_polyline(closed, AirtimeCounter.OUTLINE_COLOR, 5.0)
 		draw_colored_polygon(pts, AirtimeCounter.NUMBER_COLOR)
 		draw_polyline(closed, AirtimeCounter.OUTLINE_COLOR, 2.0)
+		if Perf.on: Perf.each_end(&"draw.hud_counter")

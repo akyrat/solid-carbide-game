@@ -3020,3 +3020,43 @@ Entry format:
 - Decision or change: The board found the itch.io build silent; the SFX Agent finds and fixes the cause in a local browser run.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-476
+
+## 2026-11-01: Goal G-009, mission packs and driving power-ups, merged after the board's playtest
+- Decision or change: The board played goal G-009's build and approved it ("looks good"). Merged: 30 missions per run (5 fixed, 25 generated) on a notebook page on the HUD, with checkboxes, live counts and crossing off; a completed mission pauses the run and offers 2 driving power-ups on their own overlay; the four power-ups with tiers (Rev Charge, Jump, Bouncy Bumpers, Rusty Overcoat), their icons, the notebook and overlay art and Rev Charge's effect (4 PixelLab generations of a 40 cap). The board confirmed the car takes no damage while jumping over enemies. Found in the playtest, fixed in follow-up tickets: Rusty Overcoat made the car take no damage (a minion the overcoat kills on touch skipped its hit on the car), and the Jump doesn't clear obstacles yet.
+- Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/visual-style.md`, `docs/enemies.md`
+- Tasks: T-455, T-456, T-457, T-458, T-459, T-460, T-461, T-462, T-463, T-464, T-465, T-466, T-467 (goal G-009)
+
+## 2026-11-01: Rusty Overcoat no longer makes the car invincible
+- Decision or change: A minion the overcoat kills on touch still hits the car; the overcoat only adds damage to enemies.
+- Documents touched: docs/enemies.md
+- Tasks: T-477
+
+## 2026-11-01: The Jump clears obstacles
+- Decision or change: With the Jump power-up, the car hops over obstacles lower than it; taller ones and the map's edge still block.
+- Documents touched: docs/drifting.md
+- Tasks: T-478
+
+## 2026-11-01: The board's MVP pass through every menu and text
+- Decision or change: Before the MVP release the board reviews every screen and every player-facing text; a script builds the screen gallery and the text inventory for it.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-479
+
+## 2026-11-01: Trick popups no longer cause frame drops
+- Decision or change: The board's recorded run showed trick popups building their textures while drawing (117 of 150 spikes); they are built ahead and cached.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-480
+
+## 2026-11-01: The bricks weapon no longer spikes the car's physics
+- Decision or change: The board's recorded run showed car physics spiking to ~28 ms with the bricks weapon; fixed.
+- Documents touched: docs/weapons.md
+- Tasks: T-481
+
+## 2026-11-01: No hitch at the first gift pack
+- Decision or change: The board's recorded run showed a 97 ms hitch at the first gift pack pickup; its load moves to the run's start.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-482
+
+## 2026-11-01: A performance recorder for the board's runs
+- Decision or change: The game can record a run's frame times and a Chrome trace (--record-perf, off by default) and a script names what causes its frame drops. The board's first recorded run found three causes: trick popups building textures while drawing, car physics spiking with the bricks weapon, and a hitch at the first gift pack (T-480, T-481, T-482).
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-468

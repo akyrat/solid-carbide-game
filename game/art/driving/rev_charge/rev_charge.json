@@ -1,0 +1,30 @@
+{
+  "task": "T-466",
+  "generator": "game/tools/build_rev_charge.py (free script, no PixelLab call)",
+  "frame_size": 80,
+  "directions": 16,
+  "charge_frames": 4,
+  "pulse_frames": 2,
+  "boost_frames": 5,
+  "frames": 11,
+  "charge_anchor_texels": [
+    10,
+    0
+  ],
+  "boost_anchor_texels": [
+    26,
+    0
+  ],
+  "layout": "one row per screen direction, row 0 points right (the effect trails to the left), each next row turned 360/directions degrees clockwise on screen; columns: charge 25/50/75/100 %, two full-charge pulse frames, then the boost's frames",
+  "art_density": "drawn at scale 0.5 in the run (32 texels per unit, like the car)",
+  "check": {
+    "size": [
+      880,
+      1280
+    ],
+    "semi_transparent_pixels": 0,
+    "colors": 11,
+    "closest_to_redgull_red": 0.29,
+    "pass": true
+  }
+}

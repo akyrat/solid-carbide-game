@@ -61,6 +61,13 @@ const COINS_COLOR := Color(1.0, 0.82, 0.25)
 ## The HUD's green (the old health bar's, not Greenbull's light green): the sub goal's fill.
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
 const HEALTH_TOP_COLOR := Color(0.62, 1.0, 0.72)
+## The mission notebook page (T-458, placeholder drawn in code): pale paper, blue ruled lines,
+## red margin line, dark ink (the crossing-off stroke and the tick use it too).
+const MISSION_PAPER := Color(0.96, 0.94, 0.85)
+const MISSION_RULE := Color(0.62, 0.74, 0.88)
+const MISSION_MARGIN := Color(0.85, 0.3, 0.3)
+const MISSION_INK := Color(0.12, 0.13, 0.2)
+const MISSION_EDGE := Color(0.25, 0.22, 0.2)
 ## The likes heart's red (Visual style, Decisions, "Red after the rebrand"): the heart only.
 const HEART_COLOR := Color(0.86, 0.1, 0.16)
 ## The live viewers counter's colours (T-336). data/hud.json (viewers_counter.color,
@@ -102,6 +109,9 @@ const LABELS := {
 	"clock_digits": {"font": "comic", "size": CLOCK_FONT_SIZE, "outline_color": Color(0, 0, 0, 0.6), "outline": 6},
 	# The sub goal's "42 / 156 SUBS" (T-337).
 	"sub_goal": {"font": "comic", "size": LABEL_FONT_SIZE, "color": LABEL_COLOR, "outline_color": OUTLINE_COLOR, "outline": LABEL_OUTLINE},
+	# The mission notebook page (T-458): Bangers in dark ink on the pale page, no outline.
+	"mission_header": {"font": "comic", "size": 22, "color": MISSION_INK},
+	"mission_goal": {"font": "comic", "size": 18, "color": MISSION_INK},
 	# A weapon's "x3" (T-276).
 	"weapon_count": {"font": "comic", "size": WEAPON_COUNT_SIZE, "color": WHITE, "outline_color": BLACK, "outline": WEAPON_COUNT_OUTLINE},
 	# The airtime and drift counters' numbers (T-243, T-247).

@@ -19,6 +19,8 @@ extends CanvasLayer
 ## grows, the ribbon and the emblem drop in, the cards slide up one after the
 ## other. Nothing can be taken or moved while it runs (`is_animating()`).
 ## Texts: LevelUpTexts (approved in T-051 and T-171).
+## Never at once with the power-up overlay (T-459): a choice ready while it is open is
+## held (`hold`) and shown when it closes (show_held()).
 ## Weapon image (T-173; HUD and menus, Decisions, 2026-10-18): every card shows
 ## its weapon's image in a 64 x 64 slot above the title. The image is
 ## `art/level_up/weapon_<weapon id>.png` once the art task adds it; until then a
@@ -171,6 +173,11 @@ var _blocked: Array = []
 var _t := 0.0
 var _animating := false
 var _anim_length := 0.0
+## T-459 (HUD and menus, Content, "Power-up overlay"): while this returns true (the
+## power-up overlay is open), a weapon choice that becomes ready is held, not shown;
+## show_held() shows it when the overlay closes. The run scene sets it.
+var hold: Callable = Callable()
+var _held_ids: Array = []
 
 
 func setup(the_rack: Node) -> void:
@@ -293,6 +300,7 @@ func show_offers(ids: Array) -> void:
 
 
 func close() -> void:
+	_held_ids = []
 	visible = false
 	_animating = false
 	_clear_cards()
@@ -354,7 +362,9 @@ func advance(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"ui.level_up_screen")
 	advance(delta)
+	Perf.end(&"ui.level_up_screen")
 
 
 func _input(event: InputEvent) -> void:
@@ -384,7 +394,26 @@ func _input(event: InputEvent) -> void:
 
 
 func _on_offers_ready(_level: int, ids: Array) -> void:
+	if hold.is_valid() and hold.call():
+		_held_ids = ids.duplicate()  # T-459: shown once the power-up overlay closes
+		return
 	show_offers(ids)
+
+
+## Shows the weapon choice held back while the power-up overlay was open (T-459); nothing
+## when none is held.
+func show_held() -> void:
+	if _held_ids.is_empty() or not offers.has_offers():
+		_held_ids = []
+		return
+	var ids := _held_ids
+	_held_ids = []
+	show_offers(ids)
+
+
+## True while a weapon choice is held back (T-459).
+func is_holding() -> bool:
+	return not _held_ids.is_empty()
 
 
 func _on_offer_taken(_id: String) -> void:

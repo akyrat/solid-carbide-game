@@ -1,0 +1,1 @@
+Press Space to hop. Next hop in {cooldown_seconds} s. Airtime clips better than braking.

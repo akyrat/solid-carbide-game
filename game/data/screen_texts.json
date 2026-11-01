@@ -1,6 +1,46 @@
 {
-  "_comment": "T-316, text on the run's end screens, read by the screens' scripts. time_up.headline: the time's up failure screen (HUD and menus, Content, 'Time's up screen'), shown for 3 seconds when the 8-minute timer runs out with the kaiju still alive. Text approved in the style loop (score 9).",
+  "_comment": "T-316, text on the run's end screens, read by the screens' scripts. time_up.headline: the time's up failure screen (HUD and menus, Content, 'Time's up screen'), shown for 3 seconds when the 8-minute timer runs out with the kaiju still alive. Text approved in the style loop (score 9). T-456 adds 'missions' (the notebook page) and 'power_ups' (the driving power-up overlay): HUD and menus, Content, 'Mission notebook and power-up texts'. Every entry scored 8 or more in the style loop (T-456's Style review).",
   "time_up": {
     "headline": "STREAM OVER, KAIJU STILL TRENDING!"
+  },
+  "missions": {
+    "header": "Content quota",
+    "header_comment": "The notebook page's header, at the top of the small pixel-art page on the left of the HUD that shows the current mission.",
+    "goals": {
+      "extended_drift": "Hold one drift for {seconds} seconds",
+      "extended_drift_comment": "Notebook page goal line, a duration goal: one unbroken drift. {seconds} is the amount (no count).",
+      "airtime": "Rack up {seconds} seconds of airtime",
+      "airtime_comment": "Notebook page goal line, a duration goal: airtime in total. {seconds} is the amount (no count).",
+      "alternate_drift": "Alt drifts {done}/{total}",
+      "alternate_drift_comment": "Notebook page goal line, a quantity goal: alternate drifts, for example 'Alt drifts 2/4'.",
+      "three_sixty": "Full 360s {done}/{total}",
+      "three_sixty_comment": "Notebook page goal line, a quantity goal: ground 360s.",
+      "air_one_eighty": "Air 180s {done}/{total}",
+      "air_one_eighty_comment": "Notebook page goal line, a quantity goal: air 180s.",
+      "air_three_sixty": "Air 360s {done}/{total}",
+      "air_three_sixty_comment": "Notebook page goal line, a quantity goal: air 360s.",
+      "thread_the_needle": "Needles threaded {done}/{total}",
+      "thread_the_needle_comment": "Notebook page goal line, a quantity goal: thread the needle."
+    }
+  },
+  "power_ups": {
+    "overlay_header": "Mission done: soup up the car",
+    "overlay_header_comment": "The power-up overlay's header, opened when a mission completes; offers driving power-ups, not weapons.",
+    "take_button": "Take power-up",
+    "take_button_comment": "The overlay's button that takes the chosen power-up.",
+    "names": {
+      "rev_charge": "Rev Charge",
+      "jump": "Jump",
+      "bouncy_bumpers": "Bouncy Bumpers",
+      "rusty_overcoat": "Rusty Overcoat"
+    },
+    "names_comment": "Each power-up's name on its overlay card (the board's names, kept as the style loop scored them 9).",
+    "descriptions": {
+      "rev_charge": "Hold W+S {charge_seconds}s, let go of S: {boost_seconds}s boost. Brakes, now monetized.",
+      "jump": "Press Space to hop. Next hop in {cooldown_seconds} s. Airtime clips better than braking.",
+      "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles. Crashes are content too.",
+      "rusty_overcoat": "The car deals {contact_damage} damage to minions it touches. Rust: now a feature."
+    },
+    "descriptions_comment": "One template per power-up, shown on its card for the tier offered; the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."
   }
 }

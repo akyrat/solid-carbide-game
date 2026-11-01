@@ -14,6 +14,7 @@ func _ready() -> void:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.health_pickup")
 	var pts := PackedVector2Array()
 	for i in 16:
 		var t := TAU * i / 16.0
@@ -21,3 +22,4 @@ func _draw() -> void:
 	draw_colored_polygon(pts, SHADOW_COLOR)
 	# Lying on the ground: the sprite's bottom edge is a pixel above the shadow's centre.
 	draw_texture(CANISTER_TEXTURE, Vector2(-7, -10))
+	if Perf.on: Perf.each_end(&"draw.health_pickup")

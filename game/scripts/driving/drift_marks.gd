@@ -123,7 +123,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"effects.drift_marks")
 	advance(delta)
+	Perf.end(&"effects.drift_marks")
 
 
 ## The combo multiplier now (from RunState.combo_changed): picks the heat step
@@ -153,8 +155,10 @@ func step_of_mark(mark: int) -> int:
 ## the air", task T-206).
 func bind(car: Node) -> void:
 	car.stepped.connect(func() -> void:
+		Perf.begin(&"effects.drift_marks_lay")
 		var h = car.get("height")
-		lay(lays(car), car.model.get_position(), car.model.rotation, float(h) if h != null else NAN))
+		lay(lays(car), car.model.get_position(), car.model.rotation, float(h) if h != null else NAN)
+		Perf.end(&"effects.drift_marks_lay"))
 
 
 ## Whether `car` lays marks this step: drifting and not airborne (a car

@@ -111,6 +111,7 @@ func _apply(car_world: Vector2) -> void:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.see_through_building")
 	var a := iso(footprint.position)
 	var b := iso(Vector2(footprint.end.x, footprint.position.y))
 	var c := iso(footprint.end)
@@ -122,3 +123,4 @@ func _draw() -> void:
 	# Plain edge lines so the box reads as a box.
 	for loop in [[a + up, b + up, c + up, d + up, a + up], [d, c, b], [d, d + up], [c, c + up], [b, b + up]]:
 		draw_polyline(PackedVector2Array(loop), edge_color, 1.0)
+	if Perf.on: Perf.each_end(&"draw.see_through_building")

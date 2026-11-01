@@ -60,6 +60,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - **No drift smoke or tyre marks in the air** (board, 2026-10-21, after playing the full game on the elevation map): while the car is airborne it leaves no drift smoke and no tyre marks, even if the drift keys are held; both come back when it lands (tyre marks: board, 2026-10-21, same day). (T-206)
 - **Every ramp launches the car off its top** (board, 2026-10-30, audit): leaving a ramp through its top end launches the car, whether or not anything stands at the top, and the faster the car, the higher it flies, so a fast car reaches roofs it couldn't before. Leaving a ramp over its long side is still a fall. (T-411)
 - **Driving power-ups** (board, 2026-10-31): the car can gain driving abilities during a run, as gifts for completed missions (Game loop architecture, Decisions, "Mission packs"). Each has an icon and an upgrade progression (tiers, like the weapons); the tiers and their numbers are the Driving & Drift Agent's proposals for the playtest. The four: **Rev Charge**: hold accelerate (W) and brake (S) at the same time to charge a powerful boost that fires when the brake is released, with a visible charging and boost effect. **Jump**: press Space to do a small hop (its airtime counts towards missions). **Bouncy Bumpers**: increase the bounce distance from crashing into obstacles (the wall bounce, T-435). **Rusty Overcoat**: the car deals damage to enemies on contact. (goal G-009)
+- **The Jump clears obstacles** (board, 2026-11-01, after playing goal G-009): with the Jump power-up, Space hops the car over obstacles: it passes over an obstacle while it is higher than the obstacle's top, and meets it as a wall when it is lower. Taller buildings and the map's edge still block it. The car already takes no damage from enemies while it is above them (the board confirmed it in the playtest). Rusty Overcoat only adds damage to the enemies it touches: it never stops their hit on the car (the board found it made the car take no damage at all).
 
 ## Content
 
@@ -244,6 +245,60 @@ The board's "little side slip out of a drift" (Decisions). The values are **prop
   - **Catch**, 4 times faster with counter-steer: caught within a tenth of a second, so a quick tap is enough and feels decisive.
   - **Full at drift angle**, 60 degrees: a held drift settles at about 68, so every proper drift gets the full slip and small corrections don't.
 - **GIFs** (in `art-archive/T-278/screenshots/`): `drift_exit_slip_prototype.gif` (the drift prototype) and `drift_exit_slip_run.gif` (a run), each with a drift with the slip off, one left alone and one caught with counter-steer, with a caption showing the slip and the drift angle; stills `prototype_slip_off_released.png`, `prototype_slip_left_alone.png`, `run_slip_caught.png`.
+
+### Driving power-ups: the tiers (task T-455, proposals)
+
+The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers each, every number a **proposal for the board's playtest** with its reason in the file (Game Data wrote them on the Driving & Drift Agent's behalf). Icons are fixed at `res://art/power_ups/<id>.png`; the files come with the art ticket.
+
+- **Rev Charge:** charge time to full 1.6 / 1.3 / 1.0 / 0.7 s; boost speed ×1.5 / 1.6 / 1.75 / 1.9 for 0.8 / 1.0 / 1.2 / 1.5 s. Slow and short at first, so the idea shows; the top tier is cheap to use mid-drift.
+- **Jump:** takeoff speed 5 / 6 / 7 / 8 (hop height, hence airtime) with a cooldown of 2.0 / 1.7 / 1.4 / 1.1 s. The first hop is enough for the airtime missions, the third for an air 180, the fourth for an air 360.
+- **Bouncy Bumpers:** the T-435 wall bounce distance ×1.4 / 1.8 / 2.2 / 2.6.
+- **Rusty Overcoat:** contact damage 2 / 3 / 4 / 5 (a minion has 4 health, T-408), a per-enemy repeat cooldown of 0.5 / 0.5 / 0.4 / 0.3 s, and the kaiju is hit only at tier 4. **Open questions for the board:** the repeat cooldown (so a crowd does not melt each frame) and whether the kaiju is hit.
+- **When every power-up is at its last tier** (`offer_when_exhausted`): the mission gift is skipped, with no overlay and no pause, and the run goes on. Reason: an overlay with nothing to choose would only interrupt the run.
+
+### Rev Charge (task T-460)
+
+The decision is in Decisions ("Driving power-ups"); the tier numbers are above. How it is built: `game/docs/driving/drift.md`, "Rev Charge (T-460)".
+
+- **What it does:** with Rev Charge owned, holding W and S together charges a boost; releasing S fires it. The charge fills in the tier's charge time (1.6 / 1.3 / 1.0 / 0.7 s). The boost lifts the car at once to its top speed × the tier's multiplier (×1.5 / 1.6 / 1.75 / 1.9; from a top speed of 16.5 units/s that is 24.8 / 26.4 / 28.9 / 31.4) and holds it there for the tier's boost time (0.8 / 1.0 / 1.2 / 1.5 s); then the car slows back to its top speed on its own over a second or two. The top speed it multiplies includes the hype speed boost, so a hot car boosts harder.
+- **Without it:** W+S drives exactly as before (W wins over S).
+- **The proposals for the playtest** (Driving & Drift Agent's calls):
+  - **While charging, the car slows to cruise speed** (brakes from top speed at the normal ramp rate, about 0.8 s, then holds cruise, 11 units/s) **and keeps driving**: steering and drifting work as with W alone. Reason: the car is never parked in the middle of a run full of enemies, and a charge can be built inside a drift (the tiers' reasons count on charging mid-drift); the slowdown is the price of the charge and makes the release feel like a kick.
+  - **A partial charge fires a partial boost:** the boost's extra speed and its length both scale with how full the charge was. Below a quarter of a full charge nothing fires, so a brief W+S overlap while switching keys never boosts.
+  - **Letting go of W first** (S still held) drops the charge with no boost: the car then brakes or reverses on S as usual.
+  - **Drifting:** charging works mid-drift (above), and the boost holds its speed through a drift; it is the same forward push as W's, so the drift's grip and the tricks are unchanged.
+  - **The air:** the charge does not grow in the air but is kept; releasing S in the air drops it (no boost: in the air the car keeps its takeoff speed, Decisions, "No drifting in the air"). A boost already running keeps its clock in the air and holds its speed again on landing if time is left.
+  - **Walls:** a wall, building, boulder or ground-side hit ends a running boost (as it ends the drift since T-438); a charge in progress is kept.
+  - **The wreck:** the controls go dead, so the charge and any running boost are dropped, with no boost.
+- **The placeholder effect** (drawn in code until the art ticket replaces it): while charging, a round glow at the car's rear, in the heat yellows and oranges, that grows with the charge and pulses once it is full; while boosting, five light blue-grey speed lines streaming back from the rear, fading as the boost runs out. Both stop when the charge or boost ends; nothing shows without the power-up.
+- Screenshots and GIF: `art-archive/T-460/screenshots/`.
+
+### Jump (task T-461)
+
+The decision is in Decisions ("Driving power-ups"); the tier numbers are above. How it is built: `game/docs/driving/tricks.md`, "Jump (T-461)".
+
+- **What it does:** with Jump owned, a press of Space on the ground makes a small hop. It is the car's own height (Elevation): the car leaves the ground straight up at the tier's takeoff speed (5 / 6 / 7 / 8 units/s), falls with the same gravity as off a rooftop (12 units/s²) and lands. Everything a fall off a rooftop does, the hop does: the car keeps its flat speed and heading in the air (no driving in the air) and spins faster there, it meets the sides of rooftops and ramps at its height and passes over what is lower than it, and its airtime and spins pay the airtime, AIR 180 and AIR 360 tricks, so they count for the missions' airtime and air-spin goals (board, 2026-10-31).
+- **How high and how long** (from the tier numbers, flat ground): about 1.0 / 1.5 / 2.0 / 2.7 units high, 0.83 / 1.0 / 1.17 / 1.33 s in the air.
+- **Without it:** Space does nothing while driving, as before.
+- **The proposals for the playtest** (Driving & Drift Agent's calls):
+  - **Only on the ground, no double jump:** a press in the air does nothing and is not kept for the landing. Reason: the hop is a small lift, not flying; a double jump would make the tallest tier reach rooftops.
+  - **The cooldown counts from the takeoff** (the tier's 2.0 / 1.7 / 1.4 / 1.1 s), in the air too; a press while it runs does nothing and is not kept. So at tier 1 the next hop is ready about 1.2 s after landing, at tier 4 as soon as the car lands.
+  - **One hop per press:** holding Space does not hop again on landing.
+  - **From anywhere on the ground:** a street, a rooftop or a ramp; on a ramp it adds to nothing (straight up at the takeoff speed).
+- **Note on the tier reasons (for Game Data and the board):** at the base air turn rate (240 degrees a second) the tier 1 hop already fits an air 180 (200 degrees), and the tier 4 hop (320 degrees) does not quite fit an air 360 without the garage's air turn upgrade. The tier numbers are unchanged; the playtest decides.
+- Screenshots and GIF: `art-archive/T-461/screenshots/`.
+
+### Bouncy Bumpers (task T-462)
+
+The decision is in Decisions ("Driving power-ups"); the tier numbers (×1.4 / 1.8 / 2.2 / 2.6) are above. How it is built: `game/docs/driving/collisions.md`, "Bouncy Bumpers (T-462)".
+
+- **What it does:** with Bouncy Bumpers owned, the wall bounce of "The car bounces off walls" (T-435: walls, buildings, raised sides, the map's edge, boulders) carries the car further, by the owned tier's factor. A head-on hit at cruise speed that travels about 0.9 units from the wall goes about 1.23 / 1.59 / 1.94 / 2.30 units at tiers 1 to 4 (measured, 0.87 without it; tests/unit/test_bouncy_bumpers.gd).
+- **Without it:** the bounce is exactly the T-435 bounce.
+- **The proposals for the playtest** (Driving & Drift Agent's calls):
+  - **The factor multiplies the distance, not the speed:** a bounce's distance goes with its speed squared (W pulls the car back at a steady rate), so the bounce speed is scaled by the square root of the factor. Reason: the data calls it a distance multiplier and the screen text says "Bounce 1.4x farther".
+  - **The bounce's maximum scales the same way:** a hit faster than the hardest-hit cap bounces like one at the cap, and that bounce is also times the factor, so the farthest bounce is the factor times today's (about 1.75 × 2.6 = 4.5 units at tier 4).
+  - **Everything else is unchanged:** the drift still ends on a hit, the combo still cuts, W still pulls the car back at the same rate.
+- Screenshots: `art-archive/T-462/screenshots/` (bounce distance per tier).
 
 ### Trick prototype (reference)
 

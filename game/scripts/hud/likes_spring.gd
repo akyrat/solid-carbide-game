@@ -107,7 +107,9 @@ func _stop() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"hud.likes_spring")
 	advance(delta)
+	Perf.end(&"hud.likes_spring")
 
 
 ## Moves on by `delta` seconds (tests call it directly).

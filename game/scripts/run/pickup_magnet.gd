@@ -37,7 +37,9 @@ func bind(the_run: Node2D) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	Perf.begin(&"pickups.magnet")
 	step(delta)
+	Perf.end(&"pickups.magnet")
 
 
 ## Pulls every pickup inside the reach `delta` seconds closer to the car. Tests call it by hand.

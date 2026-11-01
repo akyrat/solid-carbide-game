@@ -91,7 +91,9 @@ func _on_run_ended(_result: String, _coins: int) -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	Perf.begin(&"sounds.sync")
 	sync_loops()
+	Perf.end(&"sounds.sync")
 
 
 # --- Playing -------------------------------------------------------------

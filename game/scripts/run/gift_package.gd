@@ -75,7 +75,9 @@ func refresh_look() -> void:
 
 
 func _process(_delta: float) -> void:
+	if Perf.on: Perf.each_begin(&"gifts.package")
 	refresh_look()
+	if Perf.on: Perf.each_end(&"gifts.package")
 
 
 ## The package's sprite (T-146's art).

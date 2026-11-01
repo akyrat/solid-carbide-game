@@ -169,7 +169,9 @@ func clear() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	Perf.begin(&"meteors.step")
 	step(delta)
+	Perf.end(&"meteors.step")
 
 
 ## The run's minion spawner, or null (T-418).
@@ -412,13 +414,17 @@ class _GroundDraw extends Node2D:
 	var _pulse := 0.0
 
 	func _process(delta: float) -> void:
+		if Perf.on: Perf.each_begin(&"meteors.fx_process")
 		_pulse = fmod(_pulse + delta * 3.0, 1.0)
 		if not owner_attack.warnings.is_empty():
 			queue_redraw()
+		if Perf.on: Perf.each_end(&"meteors.fx_process")
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.meteors")
 		var a = owner_attack
 		if a.map == null:
+			if Perf.on: Perf.each_end(&"draw.meteors")
 			return
 		var r: float = a.map.boulder_diameter() / 2.0
 		var total: float = maxf(a.stat("warning_seconds"), 0.001)
@@ -434,6 +440,7 @@ class _GroundDraw extends Node2D:
 				var inner: PackedVector2Array = a.ground_ellipse(w.units, r * t)
 				inner.append(inner[0])
 				draw_polyline(inner, WARNING_COLOR, 2.0)
+		if Perf.on: Perf.each_end(&"draw.meteors")
 
 
 ## Over everything: the windup flash above the kaiju, the falling meteors and
@@ -443,12 +450,15 @@ class _SkyDraw extends Node2D:
 	var _t := 0.0
 
 	func _process(delta: float) -> void:
+		if Perf.on: Perf.each_begin(&"meteors.fx_process")
 		_t += delta
 		var a = owner_attack
 		if a.is_winding_up() or not a.warnings.is_empty() or not a.dust.is_empty():
 			queue_redraw()
+		if Perf.on: Perf.each_end(&"meteors.fx_process")
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.meteors")
 		var a = owner_attack
 		var k = a._kaiju()
 		if a.is_winding_up() and k != null:
@@ -479,3 +489,4 @@ class _SkyDraw extends Node2D:
 				var dir := Vector2.RIGHT.rotated(TAU * i / 8.0)
 				var off := Vector2(dir.x, dir.y * 0.5) * (10.0 + f * 34.0)
 				draw_circle(c + off, 9.0 * (1.0 - f) + 2.0, DUST_COLOR)
+		if Perf.on: Perf.each_end(&"draw.meteors")

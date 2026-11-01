@@ -1,7 +1,7 @@
 ---
 id: T-467
 title: QA: missions and driving power-ups through a whole run
-status: open
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/docs/setup/tests.md, game/scenes/game/game.tscn, game/scripts/run/missions.gd, game/scripts/ui/power_up_screen.gd, game/scripts/ui/level_up_screen.gd]
 files_expected_to_change: [game/tests/unit/game/test_missions_power_ups_run.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,14 +37,26 @@ An integration test of goal G-009 in the real game scene, to catch the pieces no
 
 ## Acceptance criteria
 
-- [ ] A headless GUT test from the main game scene completes mission 1, sees the run paused with the power-up overlay open, takes a card, sees the run resume and mission 2 shown on the notebook page, and then sees a weapon level-up open the weapons gift screen; it passes. (QA: pass / fail)
-- [ ] The test shows the power-up overlay and the weapons gift screen are never open at the same time (or queue as documented in HUD and menus). (QA: pass / fail)
-- [ ] The test shows Restart resets the missions to mission 1 and clears the owned power-ups. (QA: pass / fail)
-- [ ] All three test sets pass in the ticket's folder, with the counts in the result notes; the result notes say there is nothing new to picture. (QA: pass / fail)
+- [ ] A headless GUT test from the main game scene completes mission 1, sees the run paused with the power-up overlay open, takes a card, sees the run resume and mission 2 shown on the notebook page, and then sees a weapon level-up open the weapons gift screen; it passes. (QA: pass)
+- [ ] The test shows the power-up overlay and the weapons gift screen are never open at the same time (or queue as documented in HUD and menus). (QA: pass)
+- [ ] The test shows Restart resets the missions to mission 1 and clears the owned power-ups. (QA: pass)
+- [ ] All three test sets pass in the ticket's folder, with the counts in the result notes; the result notes say there is nothing new to picture. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Blocked → In progress
+
+Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-467.
+
+### 2026-11-01, In progress → In QA
+
+Goal runner (G-009): the agent is done; QA is checking it.
+
+### 2026-11-01, In QA → Done
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
 
 ## Style review
 
@@ -52,4 +64,13 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added `game/tests/unit/game/test_missions_power_ups_run.gd` (4 tests, 47 asserts, all pass; no game code changed). All from the main game scene (game.tscn, Start pressed on the menu):
+1. `test_mission_one_to_power_up_to_mission_two_to_weapons_gift`: mission 1 (a 4 s drift, fed through `missions.on_trick`) opens the power-up overlay with 2 cards and pauses the run; taking a card grants tier 1, closes the overlay and resumes; mission 2 is on the notebook page (`hud.mission_page`); a level-up plus its landed gift pack picked up opens the weapons gift screen (run paused, power-up overlay closed); taking a weapon resumes.
+2. `test_overlays_never_open_together_mission_during_weapon_choice`: a gift for a mission completed while a weapon choice is open waits (`pending`), and opens after the weapon choice; never both open.
+3. `test_overlays_never_open_together_weapon_choice_during_overlay`: a weapon choice picked up while the overlay is open is held and shown when the overlay closes; never both open. This is the queueing documented in PowerUpOffers.
+4. `test_restart_resets_missions_and_clears_power_ups`: Restart from the pause screen gives a new run on mission 1 with no owned power-ups, overlay closed, run unpaused.
+
+Tests: the new file alone passes 4/4. Python unit tests: 842 run, OK (1 skipped). Full GUT suite: 201 scripts, 2423 tests, all passing, 1275125 asserts, TESTS PASSED. Third set (tool checks) ran inside the Python run above. Nothing new to picture: this is a test only, so there are no screenshots. No failure found for the owning agents.
+
+QA round 1: all four criteria pass. GUT suite re-run in the folder: 201 scripts, 2423 tests, all passing, TESTS PASSED (new file included). Python unittest discover on tools: 614 tests OK. `python tools/qa_check.py` was refused by the permission system (not on the pre-approved list), so I ran the test sets directly; I did not run its document/screenshot lines. Test-only ticket, so no screenshots are needed.
+- 2026-11-01, in-qa → done: QA passed every criterion (goal G-009).

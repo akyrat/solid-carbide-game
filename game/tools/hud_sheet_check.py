@@ -21,7 +21,8 @@ from PIL import Image
 
 OUTLINE = (8, 8, 15)
 GREENBULL = [(104, 220, 96), (247, 208, 52)]
-EXEMPT_OUTLINE = ("clock_digit", "viewers_fire", "likes_heart")
+# The notebook page's checkbox, tick and cross-off stroke (T-464) are pen marks in ink, not outlined pieces.
+EXEMPT_OUTLINE = ("clock_digit", "viewers_fire", "likes_heart", "mission_checkbox", "mission_tick", "mission_cross")
 BREAK_SHARE = 0.15      # Visual style lets lighter highlight pixels break the dark outline, a few of them
 CORNER_RADIUS = 2       # the sheet's stepped panel corner
 PANELS = ("clock_panel", "viewers_panel", "subgoal_frame", "live_badge")

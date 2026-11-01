@@ -107,7 +107,9 @@ func follow(at: Vector2) -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"effects.wreck")
 	advance(delta)
+	Perf.end(&"effects.wreck")
 
 
 ## Ages the effect by `delta` seconds: new puffs, old ones gone. Tests call it by hand.
@@ -165,11 +167,14 @@ func _snap(v: Vector2) -> Vector2:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.wreck")
 	if not _playing:
+		if Perf.on: Perf.each_end(&"draw.wreck")
 		return
 	for p in puffs:
 		_draw_puff(p)
 	_draw_flames()
+	if Perf.on: Perf.each_end(&"draw.wreck")
 
 
 func _draw_puff(p: Dictionary) -> void:

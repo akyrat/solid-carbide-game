@@ -353,7 +353,9 @@ func _apply_step() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"hud.viewers")
 	advance(delta)
+	Perf.end(&"hud.viewers")
 
 
 ## Moves everything on by `dt` seconds (the frame's delta; tests call it directly).

@@ -1,7 +1,7 @@
 ---
 id: G-009
 title: Mission packs and driving power-ups, as decided by the board on 202...
-status: ready-to-play
+status: done
 art_cap: 40
 art_used: 4
 iteration: 13
