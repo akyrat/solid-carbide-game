@@ -22,13 +22,24 @@ This imports the project, then runs every test under `game/tests/` headless (no 
 
 To run only some tests, add GUT options after the command. For example, `-gselect=test_sample` runs only test scripts whose name contains `test_sample`, and `-gunit_test_name=drift` runs only tests whose name contains `drift`.
 
+### The parallel run (T-487)
+
+A full run (`bash game/tools/run_tests.sh` with no extra arguments) is split over several headless Godot processes, because one process took 20 to 25 minutes. The script imports the project once, then `game/tools/run_tests_parallel.py` finds every `tests/**/test_*.gd`, deals the scripts into shards balanced by each script's last measured time (`game/tools/test_times.json`; a script not in it is weighed by its file size), and starts one Godot per shard with `-gconfig= -gtest=<its scripts>` plus the same pre and post run hooks as `.gutconfig.json`. Each process has its own process id, so `RunPaths` gives it its own `user://test_runs/<pid>/` folder and the processes never share a file.
+
+- **Number of processes:** `GUT_JOBS=N bash game/tools/run_tests.sh` (default 12). `GUT_JOBS=1` runs the old single process, as does any extra argument (`-gselect=`, `-gunit_test_name=`, `-gtest=`): those filter inside one GUT run.
+- **Output:** a shard that passed prints nothing; a shard that failed prints its whole GUT output (failing test names included) under `===== shard N FAILED =====`. Then one summary (`Scripts`, `Tests`, `Passing Tests`, `Failing Tests`, `Risky/Pending`, summed over all shards) and `TESTS PASSED`, or `TESTS FAILED (exit N)`.
+- **Exit codes:** 0 all passed; the failing shard's GUT code otherwise; 124 time limit (`GUT_TIME_LIMIT`, applies to the whole run); 3 a script failed to parse or load; 4 a shard printed no summary (crashed).
+- **New test scripts** need nothing: they are found by name. `python game/tools/run_tests_parallel.py --measure --jobs 8` (with `GODOT_BIN` set) times every script alone and rewrites `test_times.json`; do it now and then so the shards stay balanced (a stale table only costs speed, never correctness). `--list` prints the shards.
+- A test that writes `user://` files must still use `RunPaths`; one that writes a fixed name would now collide between its own shards.
+- `run_tests.ps1` is unchanged and still runs one process.
+
 ### Never call a method on a node that may be freed (T-281)
 
 After an `await` (a frame, a timer), a node the game freed with `queue_free()` is gone. Calling any method on it, even `is_queued_for_deletion()`, can crash the whole engine (exit **139**, signal 11) instead of failing the test, and only in some runs, depending on whether its memory was reused. Always check `is_instance_valid(node)` first, for example `assert_true(not is_instance_valid(p) or p.is_queued_for_deletion())`, never the other way round. That is what made the suite crash at `test_it_goes_away_after_its_life` in `tests/unit/hud/test_combo_broken_popup.gd` in most runs before T-281.
 
 ### Time limit (T-137)
 
-A run that goes past **900 seconds** is stopped by the runner itself (only the Godot process it started, and its children), which prints `TIME LIMIT: the test run went past 900 seconds and was stopped` and exits with code **124**. A full run takes about 90 to 110 seconds on a quiet computer and 270 to 306 seconds when it is busy with several agents (2026-10-21), so 900 is comfortably above it. To change it, set `GUT_TIME_LIMIT` (seconds) for one run, for example `GUT_TIME_LIMIT=1200 bash game/tools/run_tests.sh`. To see the limit work, run `bash game/tools/check_time_limit.sh` (default 10 seconds): it runs GUT on `game/tools/hang_fixture/test_hang.gd`, a test that hangs forever on purpose and lives outside `tests/` so the normal suite never runs it, then checks the exit code, the message and that no Godot process is left behind.
+A run that goes past **1500 seconds** (900 before T-437) is stopped by the runner itself (only the Godot process it started, and its children), which prints `TIME LIMIT: the test run went past 1500 seconds and was stopped` and exits with code **124**. To change it, set `GUT_TIME_LIMIT` (seconds) for one run, for example `GUT_TIME_LIMIT=1200 bash game/tools/run_tests.sh`. To see the limit work, run `bash game/tools/check_time_limit.sh` (default 10 seconds): it runs GUT on `game/tools/hang_fixture/test_hang.gd`, a test that hangs forever on purpose and lives outside `tests/` so the normal suite never runs it, then checks the exit code, the message and that no Godot process is left behind.
 
 ### Per-run test files (T-137)
 

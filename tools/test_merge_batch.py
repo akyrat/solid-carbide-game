@@ -346,7 +346,7 @@ class RunTestsScriptTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             fake = Path(d) / "godot.sh"
             fake.write_text("#!/usr/bin/env bash\nsleep 5\n", encoding="utf-8", newline="\n")
-            env = dict(os.environ, GODOT_BIN=str(fake), GUT_TIME_LIMIT="1")
+            env = dict(os.environ, GODOT_BIN=str(fake), GUT_TIME_LIMIT="1", GUT_JOBS="1")  # T-487: the single-process path
             r = subprocess.run([bash, str(self.SCRIPT)], capture_output=True, text=True, env=env, timeout=60)
             self.assertEqual(r.returncode, 124, r.stderr)
             self.assertIn("went past 1 seconds", r.stderr)

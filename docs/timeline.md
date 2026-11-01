@@ -3135,3 +3135,8 @@ Entry format:
 - Decision or change: The Music and SFX buses are defined up front in default_bus_layout.tres, so the web build routes them to the speakers; music starts after the first click; a headless Chrome check proves it. SFX stay off (the board).
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-476
+
+## 2026-11-01: A faster Godot test set
+- Decision or change: run_tests.sh runs the Godot test scripts in GUT_JOBS parallel headless processes (default 12), sharded by measured times: about 3 minutes instead of 25, same 2526 tests; GUT_JOBS=1 or -gselect keeps the single process.
+- Documents touched: none
+- Tasks: T-487
