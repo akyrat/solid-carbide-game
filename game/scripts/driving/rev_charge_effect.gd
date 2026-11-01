@@ -1,23 +1,29 @@
 extends Node2D
-## The Rev Charge placeholder effect (task T-460), drawn in code until the art
-## ticket replaces it. The run draws it over the car. Two parts, at the car's rear:
-## - while charging: a glow at the car's rear that grows with the charge
-##   (heat yellows and oranges, Visual style, HUD palette "for heat and fire")
-##   and pulses once the charge is full;
+## The Rev Charge effect (task T-460; its art is T-466's, replacing the code-drawn
+## placeholder). The run draws it over the car. Two parts, at the car's rear:
+## - while charging: a heat glow that grows with the charge in four steps and
+##   pulses once the charge is full;
 ## - while boosting: speed lines streaming back from the rear (light
-##   blue-grey), fading out as the boost runs down.
+##   blue-grey), shorter as the boost runs down.
+## glow_radius() and speed_lines() remain as the logic the tests read.
 ## Nothing shows when the power-up is not owned, or after the boost ends.
 ## Set `view_transform` to the view's projection and call bind(car). Reads the
 ## car's rev_charge each frame; it changes no driving.
 
 const PX_PER_UNIT := 16.0
-## Glow colours, from the outside in (Visual style, the burning likes bar's yellows and oranges).
-const GLOW_OUTER := Color8(255, 153, 20, 90)
-const GLOW_MID := Color8(255, 184, 41, 150)
-const GLOW_CORE := Color8(255, 224, 77, 220)
-const GLOW_HOT := Color8(255, 250, 209, 255)
-## Speed lines (Visual style, the light blue-grey for labels).
-const LINE_COLOUR := Color8(235, 242, 255, 230)
+## The art (task T-466, game/tools/build_rev_charge.py): one row per screen direction
+## (16, row 0 points right), columns: charge 25/50/75/100 %, two full-charge pulse
+## frames, then the boost's five frames. Drawn at 0.5, like the car.
+const SHEET := preload("res://art/driving/rev_charge/rev_charge.png")
+const CELL := 80
+const DIRECTIONS := 16
+const CHARGE_FRAMES := 4
+const PULSE_FRAMES := 2
+const BOOST_FRAMES := 5
+const ART_SCALE := 0.5
+## Where the glow's centre and the lines' leading ends sit, texels right of the cell's centre.
+const CHARGE_ANCHOR_TEXELS := Vector2(10.0, 0.0)
+const BOOST_ANCHOR_TEXELS := Vector2(26.0, 0.0)
 
 ## How far behind the car's centre the rear is, in units (the car is 3 long).
 @export var behind_units := 1.6
@@ -36,6 +42,10 @@ var view_transform := Transform2D.IDENTITY:
 var time := 0.0
 
 var _car: Node = null
+
+
+func _init() -> void:
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
 func _process(delta: float) -> void:
@@ -112,20 +122,39 @@ func speed_lines() -> Array:
 	return out
 
 
+## The sheet column now (charge frames 0-3 by the charge, 4-5 pulsing when full,
+## then the boost's frames as it runs down), or -1 when nothing shows.
+func frame_now() -> int:
+	if charge_visible():
+		var f: float = _rc().charge_fraction()
+		if f >= 1.0:
+			return CHARGE_FRAMES + (int(time * 8.0) % PULSE_FRAMES)
+		return clampi(ceili(f * CHARGE_FRAMES) - 1, 0, CHARGE_FRAMES - 1)
+	if boost_visible():
+		var used: float = 1.0 - _rc().boost_fraction_left()
+		return CHARGE_FRAMES + PULSE_FRAMES + clampi(int(used * BOOST_FRAMES), 0, BOOST_FRAMES - 1)
+	return -1
+
+
+## The sheet row for the car's heading: the closest screen direction.
+func direction_row() -> int:
+	var screen := view_transform.basis_xform(Vector2.from_angle(_car.model.rotation))
+	var step := TAU / float(DIRECTIONS)
+	return posmod(roundi(screen.angle() / step), DIRECTIONS)
+
+
 func _draw() -> void:
 	if _car == null or not is_instance_valid(_car):
 		return
-	if charge_visible():
-		var at := rear_point()
-		var r := glow_radius()
-		draw_circle(at, r, GLOW_OUTER)
-		draw_circle(at, r * 0.72, GLOW_MID)
-		draw_circle(at, r * 0.45, GLOW_CORE)
-		if _rc().charge_fraction() >= 1.0:
-			draw_circle(at, r * 0.25, GLOW_HOT)
-	if boost_visible():
-		var fade: float = 0.35 + 0.65 * _rc().boost_fraction_left()
-		var c := LINE_COLOUR
-		c.a *= fade
-		for seg in speed_lines():
-			draw_line(seg[0], seg[1], c, 2.0)
+	var frame := frame_now()
+	if frame < 0:
+		return
+	# The art points right and trails left; its anchor (the glow's centre, or the
+	# lines' leading ends) goes at the car's rear.
+	var row := direction_row()
+	var anchor_texels := CHARGE_ANCHOR_TEXELS if charge_visible() else BOOST_ANCHOR_TEXELS
+	var angle := float(row) * TAU / float(DIRECTIONS)
+	var centre := rear_point() - (anchor_texels * ART_SCALE).rotated(angle)
+	var half := CELL * ART_SCALE * 0.5
+	var src := Rect2(frame * CELL, row * CELL, CELL, CELL)
+	draw_texture_rect_region(SHEET, Rect2(centre - Vector2(half, half), Vector2(half, half) * 2.0), src)

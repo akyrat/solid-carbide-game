@@ -252,6 +252,27 @@ func test_the_effect_shows_while_charging_and_boosting_and_stops_after() -> void
 	assert_eq(fx.speed_lines().size(), 0)
 
 
+func test_the_effect_picks_art_frames_by_charge_and_boost() -> void:
+	var car := _car(1)
+	var fx = EffectScript.new()
+	_world.add_child(fx)
+	fx.bind(car)
+	assert_eq(fx.frame_now(), -1, "nothing shows before")
+	_steps(car, 150, true, false)
+	_steps(car, 10, true, true)
+	assert_between(fx.frame_now(), 0, EffectScript.CHARGE_FRAMES - 1, "a charge step while charging")
+	_steps(car, _secs(car, car.rev_charge.charge_seconds), true, true)
+	assert_between(fx.frame_now(), EffectScript.CHARGE_FRAMES,
+		EffectScript.CHARGE_FRAMES + EffectScript.PULSE_FRAMES - 1, "a pulse frame when full")
+	_steps(car, 1, true, false)
+	assert_gte(fx.frame_now(), EffectScript.CHARGE_FRAMES + EffectScript.PULSE_FRAMES, "a boost frame")
+	_steps(car, _secs(car, car.rev_charge.boost_seconds) + 2, true, false)
+	assert_eq(fx.frame_now(), -1, "nothing after the boost")
+	assert_eq(EffectScript.SHEET.get_width(), EffectScript.CELL * (EffectScript.CHARGE_FRAMES
+		+ EffectScript.PULSE_FRAMES + EffectScript.BOOST_FRAMES), "the sheet has every column")
+	assert_eq(EffectScript.SHEET.get_height(), EffectScript.CELL * EffectScript.DIRECTIONS)
+
+
 func test_the_effect_shows_nothing_without_the_power_up() -> void:
 	var car := _car(0)
 	var fx = EffectScript.new()
