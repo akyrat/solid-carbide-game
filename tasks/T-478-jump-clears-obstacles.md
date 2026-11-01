@@ -1,7 +1,7 @@
 ---
 id: T-478
 title: Jump: the Space hop clears obstacles lower than the car
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd, game/scripts/driving/jump_power_up.gd, game/data/power_ups.json, tasks/T-461-jump-space-makes-a-small-hop.md]
 files_expected_to_change: [game/scripts/driving/, game/tests/unit/, docs/drifting.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -43,14 +43,14 @@ The board's review: own the Jump, hop over a boulder, and hit a tall building.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test shows the car hopping (Jump power-up, tier 1) over a boulder lower than the hop's height, with no bounce and no hit_obstacle. (QA: pass)
-- [ ] A test shows the same car, too low or on the ground, bouncing off that boulder as today. (QA: pass)
-- [ ] A test shows a building taller than the hop still blocks the car in the air, and the map's edge always does. (QA: pass)
-- [ ] A test shows the car never ends a physics step inside an obstacle when it lands. (QA: pass)
-- [ ] The result notes list each obstacle kind with its height and whether each Jump tier clears it. (QA: pass)
-- [ ] A GIF or screenshots of the car hopping over a boulder are saved and listed in the result notes. (QA: pass)
+- [ ] A test shows the car hopping (Jump power-up, tier 1) over a boulder lower than the hop's height, with no bounce and no hit_obstacle. (QA: pass; round 2: test_jump_real_run.gd loads game.tscn, start_run, Kaiju City map boulders; tier 1 hop pressed at the nose clears every clean-lane boulder, no hit)
+- [ ] A test shows the same car, too low or on the ground, bouncing off that boulder as today. (QA: pass; round 2: same real drive with no press hits the boulder; a press 2.5 units late bounces)
+- [ ] A test shows a building taller than the hop still blocks the car in the air, and the map's edge always does. (QA: pass; round 2: test_jump_clears_obstacles.gd wall and edge blocks in the air still green)
+- [ ] A test shows the car never ends a physics step inside an obstacle when it lands. (QA: pass; round 2: real-run landing tests stand at the obstacle top height, drive off the far edge, no hit)
+- [ ] The result notes list each obstacle kind with its height and whether each Jump tier clears it. (QA: pass; round 2: table updated with collision heights per tier)
+- [ ] A GIF or screenshots of the car hopping over a boulder are saved and listed in the result notes. (QA: pass; round 2: real_run_hop_boulder_barrier_landing.gif is the real game, HUD and map boulders, car mid-hop)
 - [ ] docs/drifting.md (Content) describes how the hop clears obstacles. (QA: pass)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; QA run: GUT 2510/2510 in 210 scripts, game/tools 849 OK, tools 633 OK. The agent's notes list 2326/191, an older count)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; round 2: GUT 2526/2526 in 213 scripts, game/tools 858 OK, tools 635 OK)
 - [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
@@ -137,3 +137,5 @@ Written by the agent when it finishes.
 **Counts:** GUT 2526/2526 (after merging master); `game/tools` unittest 858 OK (1 skipped); `tools` unittest 635 OK.
 **GIF and screenshots (real run):** `art-archive/T-478/screenshots/real_run_hop_boulder_barrier_landing.gif` (a hop over a boulder, over a barrier, and a hop that lands on a boulder and drives off it) and `real_run_montage.png` (12 frames from it). Fixture: `game/tests/fixtures/jump_boulder_gif.tscn`. The earlier fixture GIF was replaced.
 **Files:** `game/scripts/level/mvp_map.gd`, `game/scripts/run/run.gd`, `game/scripts/level/elevation_sample_map.gd`, the tests and fixture above, `docs/drifting.md` (Content, "The Jump clears obstacles (task T-478)").
+- 2026-11-01, in-progress → in-qa: Real-run fix: rising hop clears boulders and barriers at a natural press, lands on top; real-run tests and GIF; all tests green.
+- 2026-11-01, in-qa → needs-playtest: QA round 2 pass: real-run Jump clears boulders and barriers, lands on top; GUT 2526, py 858+635 OK
