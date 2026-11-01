@@ -40,12 +40,13 @@ func _screens(g: Node) -> Array:
 	return g.get_children().filter(func(c): return c != g.music)
 
 
-## Goes to slide 3 with the arrows, sets the checkbox and presses the slides' Start.
+## Goes to slide 4 with the arrows, sets the checkbox and presses the slides' Start.
 func _finish_slides(tick: bool) -> void:
 	var t: TutorialSlides = game.tutorial
 	t.right_arrow.pressed.emit()
 	t.right_arrow.pressed.emit()
-	assert_eq(t.current, 2, "on the last slide")
+	t.right_arrow.pressed.emit()
+	assert_eq(t.current, 3, "on the last slide")
 	t.dont_show_checkbox.button_pressed = tick
 	t.start_button.pressed.emit()
 

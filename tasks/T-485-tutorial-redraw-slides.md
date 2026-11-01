@@ -1,7 +1,7 @@
 ---
 id: T-485
 title: Build the redrawn tutorial slides: four slides with keycaps, the loop chain, the clips, missions and the run timeline
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -64,10 +64,23 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-01, Open → In progress
+
+Started: the UI Agent builds the four redrawn slides (clips and text merged in).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, T-485: the four redrawn tutorial slides are built to the approved draft.
+
+- **Screen:** `game/scripts/menu/tutorial_slides.gd` rewritten: a 1280 x 720 stage scaled and centred to the window (`_fit`), four slides (Drive, Tricks bring gift packs, Missions, Survive the stream), kicker, Bangers headline with a pink offset shadow, arrows, four dots, a Skip button (shared small button) that jumps to slide 4. Slide 3 reuses the HUD's own `MissionPage` (3x) with a ticked and an open sample line; slide 4's bar is a gradient texture (cyan, pink, red in the last eighth). Go live is the shared button with the LIVE badge at 2x; Don't show again is the shared checkbox. Start behaviour, only-fresh-key-presses and the focus order are as before (slide 4 focuses Go live).
+- **Text:** every word from `tutorial_text.json` (headlines, labels, captions upcased for display through `Label.uppercase`; the file's text unchanged), power-up names and notebook sample lines from `screen_texts.json`. Retired keys (`slide1.controls`, `slide1.drift`, `slide2.chain`, `slide2.gift`, `slide3.goal`) are not used (a test checks the source). Only numbers are in code (sample viewer count 1,284, the times 8:00, 4:00, 1:00). The drift rule is split on "+" and "=" with the W as a keycap.
+- **Clips:** Godot does not play GIFs, so `game/tools/gif_to_sheet.py` (test `game/tools/test_gif_to_sheet.py`) turns each GIF into `<name>_sheet.png` (frame grid, RGBA, 1:1 pixels) and `<name>_sheet.json` (frame size, columns, each frame's own duration in ms read from the GIF: drift has an 80 ms first frame then 40 ms, the others 60 ms). `ClipPlayer` (`game/scripts/menu/clip_player.gd`) draws the frame by region with nearest filtering, loops, loads the sheet when its slide first shows and only advances while visible. In Godot they play correctly (screenshots show the car mid-drift, tyre marks, the ramp). Cost: sheets are 4800 x 4800 at most; about 214 MB of texture memory once all four are loaded (loaded lazily); worth a look on the web build.
+- **Other changes:** `tests/fixtures/tutorial_slides_demo.gd` sets the window to 1280 x 720, new `tutorial_slides_demo_4.tscn`; `test_shared_button.gd` now counts 5 shared buttons on the slides (two arrows, Skip, Go live, checkbox); `test_tutorial_flow.gd` goes to slide 4. Docs: `docs/hud-and-menus.md` (Content, "The four redrawn slides (T-485)", the clips entry), `game/docs/hud-and-menus/tutorial-slides.md`.
+- **Judgment calls for the board's playtest:** step 1 shows the long drift illustration; the step captions and the missions line are in the default font (not upcased), as in the draft; weapons on the gift pack are gun, molotov, bricks, underglow; the kaiju is drawn at 0.75x (168 px); the Skip button is the shared small plate rather than the draft's plain text.
+- **Screenshots (1280 x 720):** `art-archive/T-485/screenshots/slide1.png`, `slide2.png`, `slide3.png`, `slide4.png`. The draft: `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/89bfdaa9-8914-40ee-9f4b-4fc6ef5a226d/scratchpad/tutorial/approved/tutorial-redraft-v3-approved.html`.
+- **Tests I ran (QA runs the full set):** `test_tutorial_slides` 24 of 24 (280 asserts), `test_shared_button` 12 of 12, `test_tutorial_flow` 8 of 8, `test_tutorial_setting` 3 of 3, `test_tutorial_clips` 4 of 4, and `python -m unittest game/tools/test_gif_to_sheet.py` OK. Note for the team: `-gtest=res://...` runs the whole suite here (GUT ignored it); `-gselect=<file name without .gd>` runs one file. My first foreground run therefore started the full set and was left running until the tool stopped it; one orphan Godot process (pid 14216, from `run_tests.sh`) may still be running and ends on its own at the time limit; I was not allowed to kill it.
+- Nothing under game/data/levels/ touched. Documents affected: docs/hud-and-menus.md, game/docs/hud-and-menus/tutorial-slides.md.
