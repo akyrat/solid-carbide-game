@@ -1,7 +1,7 @@
 ---
 id: T-477
 title: Rusty Overcoat: a minion the overcoat kills still hits the car
-status: open
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/enemies.md, game/scripts/enemies/overcoat_contact.gd, game/scripts/enemies/minion.gd, game/scripts/enemies/kaiju.gd, tasks/T-463-rusty-overcoat-the-car-damages-minions.md]
 files_expected_to_change: [game/scripts/enemies/minion.gd, game/scripts/enemies/kaiju.gd, game/tests/unit/, docs/enemies.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,17 +45,25 @@ The board's review: own Rusty Overcoat with neon zone and wiper, drive into mini
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test with Rusty Overcoat owned (each tier) shows a minion that touches the car damages it, including when the overcoat's damage kills that minion in the same step. (QA: pass / fail)
-- [ ] A test shows a minion already damaged by a weapon, then killed by the overcoat on touch, still damages the car. (QA: pass / fail)
-- [ ] A test shows the car's invulnerability after a hit still stops a second hit, with and without the overcoat. (QA: pass / fail)
-- [ ] The existing Rusty Overcoat tests (T-463) still pass, changed only where they expected no damage to the car. (QA: pass / fail)
-- [ ] docs/enemies.md says the overcoat never stops an enemy's hit on the car. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [x] A test with Rusty Overcoat owned (each tier) shows a minion that touches the car damages it, including when the overcoat's damage kills that minion in the same step. (QA: pass - test_a_minion_the_overcoat_kills_still_hits_the_car covers tiers 1-4, passes)
+- [x] A test shows a minion already damaged by a weapon, then killed by the overcoat on touch, still damages the car. (QA: pass - test_a_weapon_damaged_minion_killed_on_touch_still_hits_the_car passes)
+- [x] A test shows the car's invulnerability after a hit still stops a second hit, with and without the overcoat. (QA: pass - invulnerability test with and without overcoat passes)
+- [x] The existing Rusty Overcoat tests (T-463) still pass, changed only where they expected no damage to the car. (QA: pass - T-463 tests unchanged and green)
+- [x] docs/enemies.md says the overcoat never stops an enemy's hit on the car. (QA: pass - docs/enemies.md line added)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - game/tools 849 OK (1 skipped), tools 633 OK, GUT 2506/2506)
+- [x] Nothing under game/data/levels/ is changed or committed. (QA: pass - no levels files in diff)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Open → In progress
+
+Started: a minion the overcoat kills still hits the car.
+
+### 2026-11-01, Needs playtest
+
+Passed QA: a minion the overcoat kills still hits the car. Ready for the board to play.
 
 ## Style review
 
@@ -64,3 +72,10 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done (Enemy Behavior Agent). Confirmed cause: in `contact_step()` of `minion.gd` and `kaiju.gd`, `OvercoatContact.hit()` ran first, and the `if _dead: return false` right after it skipped `state.damage_car()` and the knockback whenever the overcoat's damage killed the enemy in that step (tier 3 and up kill a fresh minion in one touch). Fix: removed that early return in both files; the car's invulnerability and the contact cooldown checks are unchanged, and the overcoat's numbers and cooldown are untouched. Nothing else stopped the damage: `OvercoatContact` only calls `take_damage`, and `RunState.damage_car` has no overcoat check. Note: a killed kaiju wins the run, and `damage_car` does nothing once the run is over, so the kaiju case is tested through the return value plus a hit with health left.
+Tests (`game/tests/unit/enemies/test_rusty_overcoat.gd`, 12 tests, all pass): every tier's kill-on-touch minion still hits the car; weapon-damaged minion killed on touch hits; invulnerability stops a second hit with and without the overcoat; kaiju. Existing T-463 tests unchanged. docs/enemies.md updated.
+Test sets: GUT full run 2506 tests, 2505 passed, 1 failed (my own first kaiju test, which I then fixed; that file re-run alone: 12/12 pass; the full run was not repeated after the fix, it takes about 17 minutes); `game/tools` unittest OK; `tools` unittest 633 tests OK. Nothing under game/data/levels/ touched.
+- 2026-11-01, in-progress → in-qa: Overcoat-killed enemies now still hit the car; tests added, all pass
+- 2026-11-01, in-qa → needs-playtest: QA pass: all 7 criteria; GUT 2506/2506, game/tools 849 OK, tools 633 OK
+- 2026-11-01, needs-playtest → done: The board played it: LGTM (2026-11-01).

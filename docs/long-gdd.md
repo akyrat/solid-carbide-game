@@ -1275,7 +1275,7 @@ What the game does on the elevation map, following the decision "Enemies jump do
 
 Following Drifting, Decisions, "Driving power-ups". Numbers: `game/data/power_ups.json`, `rusty_overcoat` (all proposals for the board's playtest). How it is built: `game/docs/enemies/minions.md`, "Rusty Overcoat".
 
-- **The rule:** with Rusty Overcoat owned, a minion whose body touches the car's takes the owned tier's `contact_damage` (2 / 3 / 4 / 5; a minion has 4 health), with the usual red hit flash, and dies and drops coins as from any damage. The same level rule as the minion's own contact damage applies (the car within 1 unit of the minion's height). The minion still hits the car as before. Without the power-up, contact deals the minion no damage.
+- **The rule:** with Rusty Overcoat owned, a minion whose body touches the car's takes the owned tier's `contact_damage` (2 / 3 / 4 / 5; a minion has 4 health), with the usual red hit flash, and dies and drops coins as from any damage. The same level rule as the minion's own contact damage applies (the car within 1 unit of the minion's height). The minion still hits the car as before. The overcoat never stops an enemy's hit on the car, not even when its damage kills the enemy in that same step (T-477). Without the power-up, contact deals the minion no damage.
 - **Repeat (proposal, open question for the board):** each enemy can be hit again only after the tier's `repeat_cooldown_seconds` (0.5 / 0.5 / 0.4 / 0.3 s), counted per enemy, so driving through a crowd hits each minion once per cooldown and a minion stuck to the car does not melt in one frame. The car's invulnerability after a hit does not stop it (that only protects the car).
 - **The kaiju (proposal, open question for the board):** hit only when the tier's `hits_kaiju` is true, which is tier 4 only; it then takes the tier's damage on the same repeat cooldown.
 
@@ -2072,7 +2072,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `df1eccd97ed77c36cda63b4e8379d456c023a059da292b39f38aa30710bd1772` |
 | `drifting.md` | `e9a2ea1633acfabdd0445d6d7ee5150243ecda4b80b9492a9bc238e156b62dca` |
 | `level-design.md` | `0cae47e3f39f663510d0f09e6b5e66c483cc83668a087513a378a9e93b03b71e` |
-| `enemies.md` | `5183f30a962ab39dccbd0ee0c14bd0acaa2739795eefbfda78d80bcd785e2c2b` |
+| `enemies.md` | `a70324c963a1b9bf92582224ce73fd6c5fba7accb5df8bdf5f237d078f62c15c` |
 | `weapons.md` | `69a3236a31a446ccf1141530bf1269a68298f27931b2c583241e5075a5ca5934` |
 | `garage-design.md` | `06e33390bbfb2ccd72ff922846486588bd136c9736364ed5f3d2fd4698d51dac` |
 | `visual-style.md` | `7452d4b4cbe58da57c2d81a33bead311dd9ccf346da6b106ca1ded22b29f77d4` |

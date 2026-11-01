@@ -291,8 +291,8 @@ func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 		return false
 	# T-463 Rusty Overcoat: only when the owned tier's hits_kaiju is true.
 	overcoat_cooldown = OvercoatContact.hit(self, state, overcoat_cooldown, true)
-	if _dead:
-		return false
+	# The overcoat never stops the enemy's own hit on the car (T-477): it hits even when the
+	# overcoat's damage just killed it.
 	# The car's invulnerability after a hit (T-334): no hit and no knockback, so the
 	# car can drive out of a swarm. It is what spaces the hits now.
 	if state != null and state.has_method("is_invulnerable") and state.is_invulnerable():

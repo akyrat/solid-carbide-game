@@ -3075,3 +3075,8 @@ Entry format:
 - Decision or change: The driving power-up overlay's cards have no take button; the whole card is clicked, sharing the level-up screen's card behaviour (GiftCardClick). The board approved it after playing.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-475
+
+## 2026-11-01: Rusty Overcoat no longer makes the car invincible
+- Decision or change: A minion or the kaiju the overcoat kills on touch still hits the car; the overcoat only adds damage. The board approved it after playing.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-477

@@ -163,3 +163,62 @@ func test_no_power_up_the_kaiju_takes_nothing() -> void:
 	var before: float = k.health
 	k.contact_step(DT, run.car, run.state)
 	assert_eq(k.health, before)
+
+
+# T-477: the overcoat never stops the enemy's own hit on the car.
+func test_a_minion_the_overcoat_kills_still_hits_the_car() -> void:
+	for tier in range(1, 5):
+		run.state.start_run()
+		_own(tier)
+		var m := _touching_minion()
+		m.health = 1.0
+		var before: float = run.state.health
+		assert_true(m.contact_step(DT, run.car, run.state), "tier %d: it hits the car" % tier)
+		assert_true(m.is_dead(), "tier %d: and the overcoat killed it" % tier)
+		assert_lt(run.state.health, before, "tier %d: the car lost health" % tier)
+
+
+func test_a_weapon_damaged_minion_killed_on_touch_still_hits_the_car() -> void:
+	_own(3)
+	var m := _touching_minion()
+	m.take_damage(1.0, "neon_zone")
+	assert_false(m.is_dead())
+	var before: float = run.state.health
+	m.contact_step(DT, run.car, run.state)
+	assert_true(m.is_dead())
+	assert_lt(run.state.health, before)
+
+
+func test_invulnerability_still_stops_a_second_hit_with_and_without_overcoat() -> void:
+	for tier in [0, 3]:
+		run.state.start_run()
+		if tier > 0:
+			_own(tier)
+		var a := _touching_minion()
+		a.health = 1.0
+		assert_true(a.contact_step(DT, run.car, run.state))
+		var after_first: float = run.state.health
+		assert_true(run.state.is_invulnerable())
+		var b := _touching_minion()
+		b.health = 1.0
+		assert_false(b.contact_step(DT, run.car, run.state), "tier %d: no second hit" % tier)
+		assert_eq(run.state.health, after_first)
+
+
+func test_the_kaiju_the_overcoat_kills_still_gets_its_hit_in() -> void:
+	# Killing the kaiju wins the run, and damage_car() does nothing once the run is over, so
+	# the proof is the hit going through while the kaiju has a little health left.
+	_own(4)
+	var k := _kaiju()
+	var dmg: float = pu.at("rusty_overcoat", 4)["contact_damage"]
+	k.health = dmg + 1.0
+	var before: float = run.state.health
+	assert_true(k.contact_step(DT, run.car, run.state), "it hits the car")
+	assert_lt(run.state.health, before)
+	# And the same step with the kill in it: the step still reaches the car's hit.
+	_keep_car_healthy()
+	k.contact_cooldown = 0.0
+	k.overcoat_cooldown = 0.0
+	k.health = dmg
+	assert_true(k.contact_step(DT, run.car, run.state), "killed in the step, it still hits")
+	assert_true(k.is_dead())
