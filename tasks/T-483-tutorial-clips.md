@@ -1,7 +1,7 @@
 ---
 id: T-483
 title: Record the tutorial clips: a zoomed-out drift, a long drift, an alt drift, and a ramp jump with hang time and an air spin
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -98,4 +98,4 @@ All four are under the 1.5 MB aim. The three clips whose camera follows the car 
 **Tests:** `game/tools/test_record_tutorial_clips.py` (crop, assembly at the clip size and loop, then the four committed GIFs and records: size, under 1.5 MB, the ramp record's airtime and half turn, the alt record's trick) and `game/tests/unit/test_tutorial_clips.gd` (the four scenes load with a drive, the drift clip is zoomed out with a held camera, the ramp ground is valid, and the real car driven the way the clip drives it takes off from the ramp, with more than the minimum airtime and over 180 degrees turned). Results: `python -m unittest discover -s game/tools -p "test_*.py"`: 864 tests OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"`: 633 tests OK; GUT (`GUT_TIME_LIMIT=1800 ... run_tests.sh`): 2518 tests in 213 scripts, all passing.
 
 **Documents changed:** `docs/hud-and-menus.md` (Content, "Tutorial clips (T-483)"). No game script or scene was changed; nothing under `game/data/levels/` was touched. Open for the board's playtest: the rooftop's textured art makes the ramp clip look busier than the plain grid; the clips' frame rates (16.7 against 25) are a size trade-off.
-
+- 2026-11-01, in-progress → in-qa: Four tutorial clips recorded (drift zoomed out, long drift, alt drift, ramp jump 1.12 s air, 264 deg); recorder, tests and docs in; all three test sets pass
