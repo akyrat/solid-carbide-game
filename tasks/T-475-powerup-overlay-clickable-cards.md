@@ -1,7 +1,7 @@
 ---
 id: T-475
 title: The driving power-up overlay's cards are clicked directly, like the gift pack's
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -53,10 +53,24 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-01, Open → In progress
+
+Started: power-up cards become clickable, like the gift pack's.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the UI agent.
+
+- `game/scripts/ui/power_up_screen.gd`: the Take power-up button is gone. Each card gets `GiftCardClick.attach(panel, body, frame, take.bind(id))` (T-474's click area); the card dict now has `click` instead of `button`. The build-up turns the click areas off and on with `set_active`, as on the level-up screen. Dead button constants removed. Keyboard handling is unchanged.
+- Shared card behaviour (one implementation): `game/scripts/ui/gift_card_click.gd` (`GiftCardClick`, hover tint, press drop, click anywhere on the card). Both `level_up_screen.gd` and `power_up_screen.gd` call `GiftCardClick.attach`.
+- Tests (`game/tests/unit/test_power_up_screen.gd`): the button-text check became "no take button" (no `button` key, no `TakeButton` node); the button-press test now presses the card's click area; new tests: a real mouse click anywhere on a card takes it, cards ignore the mouse during the build-up, hover brightens the frame and press drops the card. Keyboard tests (Enter, Space, A/D, held key, echo) unchanged and pass.
+- Docs: `docs/hud-and-menus.md` (Content, Power-up overlay: no button, whole card clicked; take_button text noted as unused) and `game/docs/hud-and-menus/level-up-screen.md` (card dict, input).
+- Screenshots in `art-archive/T-475/screenshots/`: `power_up_hover.png` (right card hovered, left selected), `power_up_selected.png` (second card selected by keyboard). Fixtures: `game/tests/fixtures/t475_hover_demo.tscn`, `t475_selected_demo.tscn` (the existing `power_up_screen_demo.gd` got a `hover_card` option).
+- The `power_ups.take_button` text stays in `data/screen_texts.json`, now unused (not mine to remove).
+- Nothing under game/data/levels/ touched.
+- Test counts: see below.
+- Test counts: game/tools unittest 849 OK (1 skipped); tools unittest 633 OK; GUT 2505 of 2505 passing (the first full run had 1 failing test, my own real-click test, fixed; a later run hit the 1500 s limit only because it shared the machine with the Python sets; the last run alone passed).

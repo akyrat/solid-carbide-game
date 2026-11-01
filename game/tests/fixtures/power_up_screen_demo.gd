@@ -11,6 +11,8 @@ extends Node
 @export var highlight_moves: int = 0
 ## A light backdrop over the world and under the HUD and overlay (T-464's light-ground shot).
 @export var light: bool = false
+## T-475: hover this card with the mouse (-1 none).
+@export var hover_card: int = -1
 
 
 func _ready() -> void:
@@ -42,3 +44,5 @@ func _ready() -> void:
 	state.missions.mission_completed.emit(0)
 	run.power_up_screen.skip_animation()
 	run.power_up_screen.move_highlight(highlight_moves)
+	if hover_card >= 0:
+		run.power_up_screen.cards[hover_card].click.mouse_entered.emit()
