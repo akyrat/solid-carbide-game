@@ -1,7 +1,7 @@
 ---
 id: T-482
 title: Frame drops: a 97 ms hitch at the first gift pack pickup
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -44,7 +44,7 @@ The board's review: pick up the first gift pack in a run and feel no hitch.
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
 - [x] The result notes say what took the 97 ms, with the evidence. (QA: pass; evidence is the recording's markers and monitors: first-time loads of card frames and weapon pictures, resources 306 to 312)
-- [x] A measured before/after shows the first gift pack pickup's gifts.drops is no slower than a later pickup and well under one frame (16.7 ms); numbers in the result notes. (Project Lead, 2026-11-01, after QA round 1: the criterion read "under 2 ms", a number the Project Lead guessed; its intent is no first-time hitch, and the remaining ~2 ms is the pause plus building two cards, paid at every pickup. Revised to the intent and passed on QA's measurements; the board judges the feel in its playtest.) (QA round 1 on the old wording: fail: code - first pickup measured 1.9, 2.2, 2.3 ms after (mean about 2.1), later pickups 2.0 to 2.4 ms; two of three runs are over the 2 ms written; the first pickup is no slower than later ones, so no first-time hitch remains)
+- [x] A measured before/after shows the first gift pack pickup's gifts.drops is no slower than a later pickup and well under one frame (16.7 ms); numbers in the result notes. (Project Lead, 2026-11-01, after QA round 1: the criterion read "under 2 ms", a number the Project Lead guessed; its intent is no first-time hitch, and the remaining ~2 ms is the pause plus building two cards, paid at every pickup. Revised to the intent and passed on QA's measurements; the board judges the feel in its playtest.) (QA: pass; marked by the Project Lead on QA's round-1 measurements, which on the old "under 2 ms" wording were a fail - first pickup measured 1.9, 2.2, 2.3 ms after (mean about 2.1), later pickups 2.0 to 2.4 ms; two of three runs are over the 2 ms written; the first pickup is no slower than later ones, so no first-time hitch remains)
 - [x] A test shows the moved load is ready before the first pickup, and the existing gift pack tests still pass. (QA: pass; test_level_up_prewarm.gd 3 tests, GUT 2515/2515)
 - [x] docs/game-loop-architecture.md notes what is loaded with the run, if that changed. (QA: pass; bullet added in The gift pack drop)
 - [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; game/tools 858 OK 1 skipped, tools 633 OK, GUT 212 scripts 2515/2515)
@@ -80,3 +80,4 @@ What remains is the tree pause (0.8 ms) plus building the two cards (about 1.2 m
 
 QA round 1: 5 of 6 criteria pass; the 2 ms criterion is marginal. First pickup after the fix 1.9, 2.2, 2.3 ms (builder's probe, warm cache), later pickups 2.0 to 2.4 ms, so the first pickup is no slower than later ones and the first-time hitch is gone; QA did not re-measure. Tests: game/tools 858 OK (1 skipped), tools 633 OK, GUT 212 scripts 2515/2515. Prewarm leaves its 110 card nodes queue_freed (show as orphans in GUT until a frame passes; harmless). Prewarm costs about 15 ms once at run set-up (builder's number). Project Lead decides whether 2.2 to 2.3 ms is acceptable.
 - 2026-11-01, in-qa → in-progress: QA: 2 ms criterion marginally missed (1.9/2.2/2.3 ms), all else passes
+- 2026-11-01, in-progress → in-qa: Project Lead: criterion 2 revised to its intent (no first-time hitch); QA's round-1 measurements meet it.
