@@ -2062,6 +2062,34 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 | Right arrow, accessible label | `arrow.right` | Next slide |
 | Pause screen button | `button.trick_list` | Trick list |
 | Trick list panel, back control | `button.back` | Back |
+| (T-484) The redrawn four-slide tutorial's text. Stored in sentence case, shown in capitals in the display font; the older rows above marked unused are no longer shown. | | |
+| Every slide, kicker pattern | `kicker.pattern` | {n} / {total} · {topic} |
+| Slide 1, kicker topic | `kicker.controls` | Controls |
+| Slide 2, kicker topic | `kicker.loop` | How you get stronger |
+| Slide 3, kicker topic | `kicker.missions` | Missions |
+| Slide 4, kicker topic | `kicker.goal` | The goal |
+| Slide 1, headline | `slide1.title` | Drive |
+| Slide 1, W keycap | `slide1.key_w` | Gas |
+| Slide 1, A keycap | `slide1.key_a` | Left |
+| Slide 1, S keycap | `slide1.key_s` | Brake |
+| Slide 1, D keycap | `slide1.key_d` | Right |
+| Slide 1, drift rule | `slide1.drift_rule` | W + turn = drift |
+| Slide 2, headline | `slide2.title` | Tricks bring gift packs |
+| Slide 2, step 1 title | `slide2.step1_title` | Pull tricks |
+| Slide 2, step 1 caption | `slide2.step1_caption` | Drifts, spins, air. |
+| Slide 2, step 2 title | `slide2.step2_title` | Live viewers pile in |
+| Slide 2, step 2 caption | `slide2.step2_caption` | Live viewers love a show. |
+| Slide 2, step 3 title | `slide2.step3_title` | Hit a sub goal |
+| Slide 2, step 3 caption | `slide2.step3_caption` | Live viewers become subs. |
+| Slide 2, step 4 title | `slide2.step4_title` | Gift pack |
+| Slide 2, step 4 caption | `slide2.step4_caption` | A new weapon that fires itself. |
+| Slide 2, ramp clip caption (the other two clips use `trick.extended_drift` and `trick.alternate_drift`) | `slide2.clip_ramp` | HANG TIME! + AIR 180! |
+| Slide 3, headline | `slide3.title` | Missions power your car |
+| Slide 3, line beside the notebook | `slide3.missions` | The notebook on the left gives you one mission at a time: clear it, then pick a driving power-up. |
+| Slide 4, headline | `slide4.title` | Survive the stream |
+| Slide 4, last-minute zone label | `slide4.kaiju` | The kaiju! |
+| Skip control, top right | `button.skip` | Skip |
+| Unused since T-484 (kept in the file, marked unused) | `slide1.controls`, `slide1.drift`, `slide2.chain`, `slide2.gift`, `slide3.goal` | the UI ticket removes their use |
 
 **The slides screen (task T-382).** Three full-screen slides on the main menu's dark background, a pale pink arrow triangle on each side (hidden where there is no slide to go to) and three squares at the bottom showing which slide it is. Slide 1: the two controls lines, centred. Slide 2: the seven tricks in a grid of four columns, each a still illustration (64 x 48 pixels drawn at 3 times, nearest) with its name below, then the two loop lines; until the art tickets' PNGs are in, each shows a code-made placeholder (blue picture, pink arrow). Slide 3: the goal line, the "Don't show again" checkbox and the Start button. Pressing Start sends the checkbox state to the screen flow, which starts the run and, when it is ticked, saves `tutorial_hidden` in the settings. Keys: left/right arrow or A/D move between slides, Enter presses the focused control (proposal). The trick list is its own scene so the pause screen can reuse it. How it is built: `game/docs/hud-and-menus/tutorial-slides.md`.
 
@@ -2092,4 +2120,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `06e33390bbfb2ccd72ff922846486588bd136c9736364ed5f3d2fd4698d51dac` |
 | `visual-style.md` | `7452d4b4cbe58da57c2d81a33bead311dd9ccf346da6b106ca1ded22b29f77d4` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
-| `hud-and-menus.md` | `b4879c12fb921397cb9c2b2efc739f338248dcee1a99709da29b81fac259384f` |
+| `hud-and-menus.md` | `c3a7f56a6b1d96f0df4ac33a1ed9845d07c93debc2c8c367d3560e71fcc6360b` |
