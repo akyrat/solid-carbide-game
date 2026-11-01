@@ -1,7 +1,7 @@
 ---
 id: T-476
 title: The browser build on itch.io plays no sound and no music
-status: in-progress
+status: in-qa
 from: project-lead
 to: sfx
 lead: Greenbull
@@ -80,3 +80,4 @@ Written by the agent when it finishes.
 **Tests.** `game/tests/unit/test_web_audio_buses.gd` (GUT) and `game/tools/test_web_audio_check.py`. Counts: see the last line below.
 
 **Test counts:** game/tools unittest 777 OK (1 skipped); tools unittest 633 OK; GUT 2396 of 2396 passing (199 scripts, includes the 4 new tests), TESTS PASSED. Nothing pushed; nothing under game/data/levels/ touched.
+- 2026-11-01, in-progress → in-qa: Web build silent: runtime-added buses not routed in web sample mode; fixed with default_bus_layout.tres; browser check passes
