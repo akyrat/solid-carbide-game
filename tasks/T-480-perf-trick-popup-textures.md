@@ -1,7 +1,7 @@
 ---
 id: T-480
 title: Frame drops: trick popups build their textures while drawing
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -86,3 +86,4 @@ Written by the agent when it finishes.
 **Also added**: `game/tools/bench_popup_frames.gd` (the benchmark), `game/tools/dump_popup_hashes.gd` (golden hashes). Nothing under game/data/levels/ or game/perf/ touched.
 
 **Documents affected**: docs/hud-and-menus.md (Trick popups), game/docs/hud-and-menus/popups.md.
+- 2026-11-01, in-progress → in-qa: Popup pictures built ahead of drawing; draw lookups max 37 to 0.3 ms; all tests pass
