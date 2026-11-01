@@ -1,0 +1,24 @@
+{
+  "clip": "ramp_jump",
+  "task": "T-483",
+  "fixture": "res://tests/fixtures/tutorial_clip_ramp_jump.tscn",
+  "script": "game/tests/fixtures/tutorial_clip_demo.gd",
+  "recorder": "game/tools/record_tutorial_clips.py",
+  "size_px": [
+    480,
+    320
+  ],
+  "fps": 16.7,
+  "frames": 51,
+  "seconds": 3.06,
+  "bytes": 1433801,
+  "scale": "none (1 screen pixel = 1 GIF pixel, a crop of the 1152 x 648 window)",
+  "tricks": [
+    "trick air_one_eighty at step 135"
+  ],
+  "air": [
+    "airtime 1.12 s (HANG TIME! pays from 0.30 s)",
+    "landed at step 136 after 56 air steps (1.12 s), turned 264 degrees"
+  ],
+  "how": "the real car (car.gd) and its art on the plain grid, driven by scripted inputs; Godot movie maker, every 3th physics step kept"
+}

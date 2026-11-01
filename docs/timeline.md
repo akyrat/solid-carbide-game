@@ -3110,3 +3110,8 @@ Entry format:
 - Decision or change: The Godot test set (about 25 minutes) is measured and sped up, for example by running its scripts in parallel, keeping one entry point and every test.
 - Documents touched: tasks/README.md
 - Tasks: T-487
+
+## 2026-11-01: The tutorial clips are recorded
+- Decision or change: Four clips of the real car on a plain grid, recorded by script: a zoomed-out drift (slide 1), a long drift, an alt drift and a ramp jump with hang time and an air 180 (slide 2). The board approved them on the draft page.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-483

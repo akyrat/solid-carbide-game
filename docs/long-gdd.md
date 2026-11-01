@@ -2067,6 +2067,12 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 
 Proposals for the board to judge: the Start button reads "Go live" (loop score 9) where the board's word is "Start"; swap it in `button.start` if "Start" is wanted, like the main menu. Slide 2's single line failed the loop (card_desc is 90 characters at most; best 7), so it is two lines.
 
+#### Tutorial clips (T-483; recordings for the redrawn slides)
+
+Decisions, "The tutorial slides are redrawn, with clips of the real car". Four looping GIFs of the real car (its code and art, driven by scripted inputs) on the drift prototype's plain grid, 480 x 320 pixels, one shared palette, 25 frames a second for the drift clip (camera held still) and 16.7 for the other three (every third physics step, to stay under 1.5 MB), nothing else on screen (no HUD, popups, enemies, city or test room): `game/art/tutorial/clips/drift.gif` (slide 1: zoomed out, the camera held still, the car driving straight, breaking into a drift with W + A, its tyre marks tracing the path from where the drift starts), `long_drift.gif`, `alt_drift.gif` (a forward drift W + A, then a backward one S + A, which counts as ALT DRIFT!) and `ramp_jump.gif` (slide 2: the elevation test scene's ramp, hang time and an air spin in one clip). Each has a record JSON beside it (`<name>.json`: size, frames, seconds, bytes, the tricks and the airtime the run printed). Nothing in the game uses them yet; the UI task puts them on the slides.
+
+**Re-recording:** from the repo root, `python game/tools/record_tutorial_clips.py` (needs a real window, not headless; Godot's movie maker, about 15 seconds a clip; `--only NAME ...` records some, `--no-archive` skips copying the take to `art-archive/T-483/takes/`). The fixture scenes are `game/tests/fixtures/tutorial_clip_<name>.tscn` (script `tutorial_clip_demo.gd`: the inputs, the zoom, the camera and the start are exported values in each scene).
+
 ### References
 
 - The screens and how they connect (main menu, run, garage): Game loop architecture, Decisions.
@@ -2086,4 +2092,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `06e33390bbfb2ccd72ff922846486588bd136c9736364ed5f3d2fd4698d51dac` |
 | `visual-style.md` | `7452d4b4cbe58da57c2d81a33bead311dd9ccf346da6b106ca1ded22b29f77d4` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
-| `hud-and-menus.md` | `e62dc2130140f0b1a5aee81b9a115cb6b8b89b93495d96603831253a944c7dd1` |
+| `hud-and-menus.md` | `b4879c12fb921397cb9c2b2efc739f338248dcee1a99709da29b81fac259384f` |
