@@ -1,0 +1,21 @@
+{
+  "clip": "drift",
+  "task": "T-483",
+  "fixture": "res://tests/fixtures/tutorial_clip_drift.tscn",
+  "script": "game/tests/fixtures/tutorial_clip_demo.gd",
+  "recorder": "game/tools/record_tutorial_clips.py",
+  "size_px": [
+    480,
+    320
+  ],
+  "fps": 25.0,
+  "frames": 150,
+  "seconds": 6.0,
+  "bytes": 140530,
+  "scale": "none (1 screen pixel = 1 GIF pixel, a crop of the 1152 x 648 window)",
+  "tricks": [
+    "trick extended_drift at step 130"
+  ],
+  "air": [],
+  "how": "the real car (car.gd) and its art on the plain grid, driven by scripted inputs; Godot movie maker, every 2th physics step kept"
+}
