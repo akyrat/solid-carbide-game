@@ -1,7 +1,7 @@
 ---
 id: T-483
 title: Record the tutorial clips: a zoomed-out drift, a long drift, an alt drift, and a ramp jump with hang time and an air spin
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -102,3 +102,4 @@ All four are under the 1.5 MB aim. The three clips whose camera follows the car 
 - 2026-11-01, in-qa → in-progress: QA round 1: all criteria pass; paperwork fail only: art-archive/T-483/screenshots/ is empty (qa_check screenshots red). Copy the four GIFs there and list them in the result notes.
 
 QA round 1 paperwork fixes: the four final GIFs and one frame of each (PNG) are in art-archive/T-483/screenshots/ (drift.gif, long_drift.gif, alt_drift.gif, ramp_jump.gif, and <name>_frame.png). docs/hud-and-menus.md now says 25 fps for the drift clip and 16.7 fps for the other three. No code changed.
+- 2026-11-01, in-progress → in-qa: Paperwork fixed: screenshots archived, doc frame rates corrected
