@@ -1,7 +1,7 @@
 ---
 id: T-481
 title: Frame drops: car physics spikes to ~28 ms together with the bricks weapon
-status: in-qa
+status: flagged-for-review
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, tasks/T-468-run-performance-recorder.md, game/docs/game-loop/perf-recorder.md, game/scripts/weapons/weapons.gd, game/scripts/driving/car.gd]
 files_expected_to_change: [game/scripts/weapons/, game/scripts/driving/car.gd, game/tests/unit/, docs/weapons.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -44,10 +44,10 @@ The board's review: play a run with the bricks weapon and feel no hitches.
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
 - [ ] The result notes say what made car.physics and weapon.bricks spike together, and what weapon_reset did, with the evidence. (QA: pass; notes give the cause with measured segments and the recording; weapon_reset is a start-of-run event at frame 0)
-- [ ] A measured before/after (recorder or scripted benchmark with the bricks weapon firing near the car) shows car.physics under 2 ms and weapon.bricks under 2 ms at their worst; numbers in the result notes. (QA: fail: code - my headless runs of test_bricks_perf: worst car.physics_step 3.18 ms and 3.84 ms, over the 2 ms limit; worst bricks.step 1.29 and 1.53 ms, under 2 ms. The notes themselves say the strict car number needs the board's machine, so car.physics under 2 ms is not shown)
-- [ ] The existing weapon and car tests pass unchanged, so the bricks weapon and the car behave as before. (QA: fail: code - res://tests/unit/test_trick_popup_prebuild.gd test_a_shown_popup_has_every_picture_before_it_draws fails at lines 110, 113, 119, reproduced alone; cause is the call_deferred texture() in trick_popups.gd, the born picture is no longer made when the popup is shown; the test is master's/T-480's)
+- [ ] A measured before/after (recorder or scripted benchmark with the bricks weapon firing near the car) shows car.physics under 2 ms and weapon.bricks under 2 ms at their worst; numbers in the result notes. (QA: fail: code - round 2, three headless runs of test_bricks_perf: worst car.physics_step on the first landing 2.61, 1.92, 2.32 ms (two of three over 2 ms); later landings 0.71 to 1.92 ms; flat step 0.52 to 0.70 ms; worst bricks.step 1.36, 1.47, 0.57 ms, under 2 ms. Round 1: 3.18 and 3.84 ms)
+- [ ] The existing weapon and car tests pass unchanged, so the bricks weapon and the car behave as before. (QA: pass; round 2: test_trick_popup_prebuild 10/10; the changed test waits one frame and keeps every assertion, and the picture is still made before the popup's first draw (call_deferred runs before the frame draws); QA agrees it keeps its meaning. Round 1 failed on this test)
 - [ ] docs/weapons.md notes anything about how the bricks weapon handles its bodies, if that changed. (QA: pass; docs/weapons.md has the Bricks bodies-and-cost note)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: fail: code - Godot set 2544 of 2545 passing, the failure is test_trick_popup_prebuild above; tools/ unchanged so the tools set is not required; game/tools set not reached because qa_check stopped at the red Godot set)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: fail: code - round 2: the full Godot and game/tools sets were not completed (single-process run on this branch did not finish inside QA's limit), so not shown; round 1: Godot 2544 of 2545, the failure was test_trick_popup_prebuild, now fixed)
 - [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; no game/data/levels path in the branch diff)
 
 ## Updates
@@ -114,3 +114,4 @@ docs/weapons.md (Bricks, Bodies and cost) corrected to match the merged code: T-
 - Evidence: art-archive/T-481/screenshots/step_times_before_after.png (chart of before and after per landing; the "before" rounds 2 to 5 are typical values from the profiling runs, rounds 0 and 1 and the bricks column are measured).
 - Tests run (selected): test_trick_popup_prebuild 10, test_bricks_perf 3, test_popup_art_fast_paths 2, test_trick_popup_art 13, test_trick_popups 35, test_trick_popups_heat 12, test_combo_broken_popup 11: all pass.
 - 2026-11-01, in-progress → in-qa: QA fixes: prebuild test, lettering glyph cache, chart
+- 2026-11-01, in-qa → flagged-for-review: QA round 2: criterion 2 fails. test_bricks_perf x3 headless: first-landing car.physics_step 2.61, 1.92, 2.32 ms (2 of 3 over 2 ms), later landings 0.71-1.92, flat 0.52-0.70, bricks.step max 1.47 (ok). Prebuild test passes 10/10. Full Godot set did not finish in QA time.
