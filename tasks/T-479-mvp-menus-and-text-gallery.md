@@ -1,7 +1,7 @@
 ---
 id: T-479
 title: The board's MVP pass: a gallery of every screen and a list of every player-facing text
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -56,6 +56,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-01, Open → In progress
+
+Started: the screen gallery and text list for the board's MVP pass.
 
 ## Style review
 
