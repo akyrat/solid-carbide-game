@@ -3025,3 +3025,18 @@ Entry format:
 - Decision or change: The board played goal G-009's build and approved it ("looks good"). Merged: 30 missions per run (5 fixed, 25 generated) on a notebook page on the HUD, with checkboxes, live counts and crossing off; a completed mission pauses the run and offers 2 driving power-ups on their own overlay; the four power-ups with tiers (Rev Charge, Jump, Bouncy Bumpers, Rusty Overcoat), their icons, the notebook and overlay art and Rev Charge's effect (4 PixelLab generations of a 40 cap). The board confirmed the car takes no damage while jumping over enemies. Found in the playtest, fixed in follow-up tickets: Rusty Overcoat made the car take no damage (a minion the overcoat kills on touch skipped its hit on the car), and the Jump doesn't clear obstacles yet.
 - Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/visual-style.md`, `docs/enemies.md`
 - Tasks: T-455, T-456, T-457, T-458, T-459, T-460, T-461, T-462, T-463, T-464, T-465, T-466, T-467 (goal G-009)
+
+## 2026-11-01: Rusty Overcoat no longer makes the car invincible
+- Decision or change: A minion the overcoat kills on touch still hits the car; the overcoat only adds damage to enemies.
+- Documents touched: docs/enemies.md
+- Tasks: T-477
+
+## 2026-11-01: The Jump clears obstacles
+- Decision or change: With the Jump power-up, the car hops over obstacles lower than it; taller ones and the map's edge still block.
+- Documents touched: docs/drifting.md
+- Tasks: T-478
+
+## 2026-11-01: The board's MVP pass through every menu and text
+- Decision or change: Before the MVP release the board reviews every screen and every player-facing text; a script builds the screen gallery and the text inventory for it.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-479

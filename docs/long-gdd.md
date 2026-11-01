@@ -303,6 +303,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - **No drift smoke or tyre marks in the air** (board, 2026-10-21, after playing the full game on the elevation map): while the car is airborne it leaves no drift smoke and no tyre marks, even if the drift keys are held; both come back when it lands (tyre marks: board, 2026-10-21, same day). (T-206)
 - **Every ramp launches the car off its top** (board, 2026-10-30, audit): leaving a ramp through its top end launches the car, whether or not anything stands at the top, and the faster the car, the higher it flies, so a fast car reaches roofs it couldn't before. Leaving a ramp over its long side is still a fall. (T-411)
 - **Driving power-ups** (board, 2026-10-31): the car can gain driving abilities during a run, as gifts for completed missions (Game loop architecture, Decisions, "Mission packs"). Each has an icon and an upgrade progression (tiers, like the weapons); the tiers and their numbers are the Driving & Drift Agent's proposals for the playtest. The four: **Rev Charge**: hold accelerate (W) and brake (S) at the same time to charge a powerful boost that fires when the brake is released, with a visible charging and boost effect. **Jump**: press Space to do a small hop (its airtime counts towards missions). **Bouncy Bumpers**: increase the bounce distance from crashing into obstacles (the wall bounce, T-435). **Rusty Overcoat**: the car deals damage to enemies on contact. (goal G-009)
+- **The Jump clears obstacles** (board, 2026-11-01, after playing goal G-009): with the Jump power-up, Space hops the car over obstacles: it passes over an obstacle while it is higher than the obstacle's top, and meets it as a wall when it is lower. Taller buildings and the map's edge still block it. The car already takes no damage from enemies while it is above them (the board confirmed it in the playtest). Rusty Overcoat only adds damage to the enemies it touches: it never stops their hit on the car (the board found it made the car take no damage at all).
 
 ### Content
 
@@ -1873,6 +1874,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **One button style across the game** (board, 2026-10-31): every button the player meets (main menu, garage, tutorial slides, level-up screen, pause screen and the end-of-run recap) shares one look and one feel that match the game: the same shape, art, font, colours and outline from the HUD style sheet (Visual style, Content), and the same behaviour when hovered, selected with the keyboard, pressed and disabled. The board's own tools (the level creator and the tuning panel) keep their look. The exact look and feel are the agents' proposals for the board's playtest. (T-446, T-447)
 - **The player can move the HUD's pieces** (board, 2026-10-31): from the in-game settings (the pause screen), the player can edit the HUD's placement: drag each HUD piece to where they want it, reset the layout to the default, and keep it, saved on this computer like the other settings. Which pieces can move, how they snap and the controls are the agents' proposals for the playtest. (T-452, T-453)
 - **Gift menu cards are clicked directly** (board, 2026-10-31): every gift menu (the level-up gift pack's weapon choices and the driving power-up overlay) has no Take it button on its cards: the whole card is clicked to take it, and it shows it can be, reacting to hover and to keyboard selection; the keyboard keeps working as before. (T-474, T-475)
+- **The board passes through every menu and text before the MVP** (board, 2026-11-01): before the MVP release the board reviews every screen the player can meet and every piece of player-facing text, item by item. A script builds the material for it: a screenshot of every screen and a list of every text, rebuilt after each change.
 
 ### Content
 
@@ -2067,11 +2069,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `df1eccd97ed77c36cda63b4e8379d456c023a059da292b39f38aa30710bd1772` |
-| `drifting.md` | `81b2b23f86ae37facb44d975b3b1ec0d6bbd08426861ad5e12b1afb8c5e8f6cd` |
+| `drifting.md` | `e9a2ea1633acfabdd0445d6d7ee5150243ecda4b80b9492a9bc238e156b62dca` |
 | `level-design.md` | `0cae47e3f39f663510d0f09e6b5e66c483cc83668a087513a378a9e93b03b71e` |
 | `enemies.md` | `5183f30a962ab39dccbd0ee0c14bd0acaa2739795eefbfda78d80bcd785e2c2b` |
 | `weapons.md` | `69a3236a31a446ccf1141530bf1269a68298f27931b2c583241e5075a5ca5934` |
 | `garage-design.md` | `06e33390bbfb2ccd72ff922846486588bd136c9736364ed5f3d2fd4698d51dac` |
 | `visual-style.md` | `7452d4b4cbe58da57c2d81a33bead311dd9ccf346da6b106ca1ded22b29f77d4` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
-| `hud-and-menus.md` | `065f2ab032701a7aa000807092f962dcd491e4874398806a6e6aa9471dc892ff` |
+| `hud-and-menus.md` | `0d7d930ea584e24dcd5d76baa449acd9a94bd03b40271e037c0a0baf76cc0e23` |
