@@ -56,4 +56,10 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added `game/tests/unit/game/test_missions_power_ups_run.gd` (4 tests, 47 asserts, all pass; no game code changed). All from the main game scene (game.tscn, Start pressed on the menu):
+1. `test_mission_one_to_power_up_to_mission_two_to_weapons_gift`: mission 1 (a 4 s drift, fed through `missions.on_trick`) opens the power-up overlay with 2 cards and pauses the run; taking a card grants tier 1, closes the overlay and resumes; mission 2 is on the notebook page (`hud.mission_page`); a level-up plus its landed gift pack picked up opens the weapons gift screen (run paused, power-up overlay closed); taking a weapon resumes.
+2. `test_overlays_never_open_together_mission_during_weapon_choice`: a gift for a mission completed while a weapon choice is open waits (`pending`), and opens after the weapon choice; never both open.
+3. `test_overlays_never_open_together_weapon_choice_during_overlay`: a weapon choice picked up while the overlay is open is held and shown when the overlay closes; never both open. This is the queueing documented in PowerUpOffers.
+4. `test_restart_resets_missions_and_clears_power_ups`: Restart from the pause screen gives a new run on mission 1 with no owned power-ups, overlay closed, run unpaused.
+
+Tests: the new file alone passes 4/4. Python unit tests: 842 run, OK (1 skipped). Full GUT suite: 201 scripts, 2423 tests, all passing, 1275125 asserts, TESTS PASSED. Third set (tool checks) ran inside the Python run above. Nothing new to picture: this is a test only, so there are no screenshots. No failure found for the owning agents.
