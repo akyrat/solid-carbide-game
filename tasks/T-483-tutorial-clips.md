@@ -100,3 +100,5 @@ All four are under the 1.5 MB aim. The three clips whose camera follows the car 
 **Documents changed:** `docs/hud-and-menus.md` (Content, "Tutorial clips (T-483)"). No game script or scene was changed; nothing under `game/data/levels/` was touched. Open for the board's playtest: the rooftop's textured art makes the ramp clip look busier than the plain grid; the clips' frame rates (16.7 against 25) are a size trade-off.
 - 2026-11-01, in-progress → in-qa: Four tutorial clips recorded (drift zoomed out, long drift, alt drift, ramp jump 1.12 s air, 264 deg); recorder, tests and docs in; all three test sets pass
 - 2026-11-01, in-qa → in-progress: QA round 1: all criteria pass; paperwork fail only: art-archive/T-483/screenshots/ is empty (qa_check screenshots red). Copy the four GIFs there and list them in the result notes.
+
+QA round 1 paperwork fixes: the four final GIFs and one frame of each (PNG) are in art-archive/T-483/screenshots/ (drift.gif, long_drift.gif, alt_drift.gif, ramp_jump.gif, and <name>_frame.png). docs/hud-and-menus.md now says 25 fps for the drift clip and 16.7 fps for the other three. No code changed.
