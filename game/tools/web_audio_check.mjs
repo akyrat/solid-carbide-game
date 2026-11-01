@@ -6,10 +6,14 @@
 // "[audio] music playing" and "[audio] engine playing" lines (see game/scripts/game/web_audio_log.gd).
 import http from "node:http"; import fs from "node:fs"; import path from "node:path";
 import { spawn } from "node:child_process";
+import { verdict, sfxEnabledFrom } from "./web_audio_rules.mjs";
 const args = process.argv.slice(2);
 const dir = args[0];
 const opt = (n, d) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : d; };
 const chrome = opt("--chrome", "C:/Program Files/Google/Chrome/Application/chrome.exe");
+// --sfx on|off overrides; by default sfx_enabled is read from game/data/sfx.json next to this script.
+const sfxOpt = opt("--sfx", "");
+const sfxOn = sfxOpt ? sfxOpt === "on" : sfxEnabledFrom(fs.readFileSync(new URL("../data/sfx.json", import.meta.url), "utf8"));
 const port = +opt("--port", 8099), dbg = port + 1;
 const types = { ".html": "text/html", ".js": "text/javascript", ".wasm": "application/wasm", ".png": "image/png" };
 const srv = http.createServer((q, r) => {
@@ -56,6 +60,8 @@ try {
   if (process.env.EVAL) console.log("EVAL:", await ev(process.env.EVAL));
   console.log("final contexts:", await state(), "buffer sources started:", await ev("window.__starts"), "worklet nodes:", await ev("window.__wk"), "output taps:", await ev("window.__an.length"), "output peak:", await ev("window.__peak()"));
   console.log("---- console ----\n" + logs.join("\n"));
-  ok = /\[audio\] music playing/.test(logs.join("\n")) && /\[audio\] engine playing/.test(logs.join("\n")) && (await state()).includes("running");
+  const v = verdict(logs.join("\n"), JSON.parse(await state()), sfxOn);
+  ok = v.ok;
+  console.log("sfxOn:", sfxOn, "|", v.notes.join("; "));
   console.log("RESULT:", ok ? "PASS" : "FAIL");
 } finally { proc.kill(); srv.close(); try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} process.exit(ok ? 0 : 1); }
