@@ -3160,3 +3160,18 @@ Entry format:
 - Decision or change: Mission 1 asks for one unbroken drift of 2 seconds instead of 4; a run test that drifted 4 s now starts at mission 5; the board played it.
 - Documents touched: none
 - Tasks: T-488
+
+## 2026-11-01: The trick list's rules and key recipe notes
+- Decision or change: The Narrative Theme Agent writes each trick's one-line rule and the short notes under its keycap recipe, from the Project Lead's draft.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-489
+
+## 2026-11-01: Clips for every trick, with key timelines
+- Decision or change: The Driving & Drift Agent records clips for FULL 360!, AIR 360!, HANG TIME! and THREAD THE NEEDLE!, and writes which keys are held on every frame of every clip.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-490
+
+## 2026-11-01: The trick list shows each trick's keys and clip
+- Decision or change: The UI Agent adds a live key pad to every clip (slide 2 and the trick list) and rebuilds the trick list with each trick's clip and keycap recipe.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-491
