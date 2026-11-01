@@ -1,7 +1,7 @@
 ---
 id: T-476
 title: The browser build on itch.io plays no sound and no music
-status: in-progress
+status: in-qa
 from: project-lead
 to: sfx
 lead: Greenbull
@@ -99,3 +99,4 @@ RESULT: PASS
 (Earlier, with the switch temporarily on, the engine line `[audio] engine playing=true` appeared in a run.)
 
 Test counts after the merge: game/tools unittest 865 OK (1 skipped); tools unittest 633 OK; GUT 2516 of 2516 passing (212 scripts), TESTS PASSED (GUT_TIME_LIMIT=1800).
+- 2026-11-01, in-progress → in-qa: Browser check now requires the engine line only when sfx_enabled; passes on the merged build; all three test sets green
