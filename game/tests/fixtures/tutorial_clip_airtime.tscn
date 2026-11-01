@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/tutorial_clip_demo.gd" id="1_demo"]
+
+[node name="TutorialClipAirtime" type="Node"]
+script = ExtResource("1_demo")
+clip = "airtime"
+zoom = 16.0
+start_units = Vector2(48, 0)
+start_rotation = 3.14159
+warm_steps = 60
+tail_steps = 15
+parts = [[1, true, 0.0, "air", 0.0]]

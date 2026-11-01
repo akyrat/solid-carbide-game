@@ -3180,3 +3180,8 @@ Entry format:
 - Decision or change: Each trick's one-line rule and the short notes and badges under its keycap recipe (none for thread the needle), through the style loop (all 8+), notes 20 characters at most.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-489
+
+## 2026-11-01: Clips for every trick, with key timelines
+- Decision or change: Clips of the real car for FULL 360!, AIR 360! (a taller ramp, base air-turn speed), HANG TIME! (no spin) and THREAD THE NEEDLE!, and keys_per_frame in every clip's sheet JSON for the live key pad; the approved clips' images are unchanged.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-490

@@ -52,6 +52,20 @@ def page_name(stem, n):
     return f"{stem}_sheet.png" if n == 0 else f"{stem}_sheet_{n}.png"
 
 
+def keys_for_sheet(keys, durations, seconds):
+    """The record's key timeline (one entry per recorded frame) for the sheet's frames. The GIF writer
+    merges identical neighbouring frames into one longer frame (the drift clip's empty start), so a
+    sheet frame takes the keys of the recorded frame at its start time."""
+    if len(keys) == len(durations):
+        return list(keys)
+    frame_ms = 1000.0 * seconds / len(keys)
+    out, t = [], 0
+    for d in durations:
+        out.append(keys[min(len(keys) - 1, int(round(t / frame_ms)))])
+        t += d
+    return out
+
+
 def convert(gif_path):
     gif_path = Path(gif_path)
     frames, durations = read_gif(gif_path)
@@ -76,6 +90,13 @@ def convert(gif_path):
         "durations_ms": durations,
         "seconds": sum(durations) / 1000.0,
     }
+    # T-490: the key timeline the recorder wrote into the clip's record (<name>.json), one entry per frame.
+    record = gif_path.with_name(gif_path.stem + ".json")
+    if record.exists():
+        rec = json.loads(record.read_text())
+        keys = rec.get("keys_per_frame")
+        if keys:
+            meta["keys_per_frame"] = keys_for_sheet(keys, durations, rec.get("seconds", 0.0))
     gif_path.with_name(gif_path.stem + "_sheet.json").write_text(json.dumps(meta, indent=2) + "\n")
     return names, meta
 

@@ -40,6 +40,8 @@ extends Node
 @export var marks_lifetime := 6.0
 ## Steps after the last part before the scene quits.
 @export var tail_steps := 0
+## ramp clips: the ground file (empty: the scene's own, tutorial_ramp.json).
+@export var ramp_data := ""
 
 ## [steps, W, steer, S]. A = +1, D = -1; S (optional 4th entry) is the reverse key.
 ## A part with the 4th entry "aim", then x and y (units), steers toward that point.
@@ -61,11 +63,20 @@ var _airtime := 0.0
 var _tail := -1
 var _rot_before := 0.0
 var _camera_px := Vector2.ZERO
+var _needle: ThreadTheNeedle
+## thread_the_needle: the two boulders' centres (units) and their diameter.
+@export var needle_boulders: Array[Vector2] = []
+@export var needle_diameter := 3.0
+## The key timeline (T-490): per physics step, which of W, A, S, D the script held ("" for none);
+## printed once at the end as "keys ..." for the recorder.
+var _keys: Array[String] = []
 
 
 func _ready() -> void:
-	if clip == "ramp_jump":
+	if _is_ramp():
 		scene = preload("res://tests/fixtures/tutorial_ramp_scene.gd").new()
+		if ramp_data != "":
+			scene.data_path = ramp_data
 		add_child(scene)
 		scene.place_car(start_units, start_rotation)
 		scene.camera_follow.dynamic = false
@@ -88,6 +99,8 @@ func _ready() -> void:
 		scene.car.model.set_position(start_units)
 		scene.car.model.rotation = start_rotation
 		scene.car._sync_from_model()
+	if clip == "thread_the_needle":
+		_build_needle()
 	# A lighter plain ground (the grid's own colours are dark navy, where the dark tyre marks do not read);
 	# the grid's origin dot takes the ground's colour. Drawing only.
 	scene.ground.ground_color = ground_color
@@ -114,10 +127,7 @@ func _ready() -> void:
 	for i in warm_steps:
 		car.physics_step()
 	_fix_camera()
-	if clip == "ramp_jump":
-		scene.sync_view()
-	else:
-		scene.sync_view()
+	scene.sync_view()
 	_fix_camera()
 	_reset_interp()
 	_frames = 0
@@ -125,9 +135,44 @@ func _ready() -> void:
 	_next_part()
 
 
+## thread_the_needle: two paired boulders on the plain grid (script-drawn like the test room's), a gap
+## between them; the real ThreadTheNeedle (thread_the_needle.gd) watches the car's line across the gap.
+func _build_needle() -> void:
+	var layout := {"pattern_copies": [], "pairs": [{"id": "pair-1", "a": "boulder-1", "b": "boulder-2"}]}
+	var u := 16.0
+	var body := StaticBody2D.new()
+	body.name = "NeedleBoulders"
+	body.collision_layer = scene.CarScript.LAYER_OBSTACLES
+	body.collision_mask = 0
+	scene.physics_world.add_child(body)
+	var drawing := Node2D.new()
+	drawing.set_script(preload("res://tests/fixtures/tutorial_needle_drawing.gd"))
+	drawing.transform = scene.view_transform()
+	scene.view_root.add_child(drawing)
+	var i := 0
+	for c in needle_boulders:
+		i += 1
+		layout.pattern_copies.append({"id": "boulder-%d" % i, "boulders": [{"x": c.x, "y": c.y, "diameter": needle_diameter}]})
+		var cs := CollisionShape2D.new()
+		var circle := CircleShape2D.new()
+		circle.radius = needle_diameter / 2.0 * u
+		cs.shape = circle
+		cs.position = c * u
+		body.add_child(cs)
+		drawing.circles.append([c * u, needle_diameter / 2.0 * u])
+	drawing.queue_redraw()
+	_needle = ThreadTheNeedle.new(layout, ComboData.new().needle_rules())
+	_needle.threaded.connect(func(_id: String) -> void:
+		print("tutorial_clip_demo: trick thread_the_needle at step %d" % _frames))
+
+
+func _is_ramp() -> bool:
+	return clip in ["ramp_jump", "airtime", "air_three_sixty"]
+
+
 func _drawn(units: Vector2) -> Vector2:
 	var px: Vector2 = units * 16.0
-	return scene.ISO_TRANSFORM * px if clip == "ramp_jump" else scene.view_transform() * px
+	return scene.ISO_TRANSFORM * px if _is_ramp() else scene.view_transform() * px
 
 
 func _fix_camera() -> void:
@@ -137,7 +182,7 @@ func _fix_camera() -> void:
 
 func _reset_interp() -> void:
 	scene.camera.reset_physics_interpolation()
-	if clip == "ramp_jump":
+	if _is_ramp():
 		scene.car_sprite.reset_physics_interpolation()
 		scene.shadow.reset_physics_interpolation()
 	else:
@@ -157,7 +202,30 @@ func _next_part() -> void:
 		_part, _frames, str(p), car.model.get_position(), rad_to_deg(car.model.rotation)])
 
 
+func _keys_now() -> String:
+	var inp: Array = car.scripted_input
+	var k := ""
+	if inp[0]:
+		k += "W"
+	if float(inp[2]) > 0.3:
+		k += "A"
+	if inp[1]:
+		k += "S"
+	if float(inp[2]) < -0.3:
+		k += "D"
+	return k
+
+
+func _quit() -> void:
+	print("tutorial_clip_demo: keys " + ",".join(_keys))
+	get_tree().quit()
+
+
 func _on_stepped() -> void:
+	_keys.append(_keys_now())
+	if _needle != null:
+		_needle.touching(car.held_contacts())
+		_needle.observe(car.model.get_position(), car.airborne, car.model.dt)
 	_frames += 1
 	_fix_camera()
 	if car.airborne:
@@ -173,7 +241,7 @@ func _on_stepped() -> void:
 	if _tail >= 0:
 		_tail -= 1
 		if _tail <= 0:
-			get_tree().quit()
+			_quit()
 		return
 	var p: Array = parts[_part]
 	# An "aim" part: W held, steering toward the point (4th entry "aim", then x and y in units) until the car

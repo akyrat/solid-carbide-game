@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Records the tutorial slides' four clips of the real car (task T-483).
+"""Records the tutorial clips of the real car (task T-483; T-490 added four more, a key timeline for each and the frame sheets).
 
 Usage, from the repo root (needs a real window, not headless, and Pillow):
 
@@ -34,9 +34,36 @@ FPS = 50
 KEEP_EVERY = 2          # 50 -> 25 frames per second
 # The clips whose camera follows the car redraw the whole frame each time, so their GIFs are bigger:
 # they keep every 3rd step (16.7 frames per second) to stay near the 1.5 MB aim.
-CLIP_EVERY = {"long_drift": 3, "alt_drift": 3, "ramp_jump": 3}
+CLIP_EVERY = {"long_drift": 3, "alt_drift": 3, "ramp_jump": 3, "three_sixty": 3, "air_three_sixty": 3, "airtime": 3, "thread_the_needle": 3}
 MAX_BYTES = 1_500_000   # the board's aim for a slide
-CLIPS = ["drift", "long_drift", "alt_drift", "ramp_jump"]
+CLIPS = ["drift", "long_drift", "alt_drift", "ramp_jump", "three_sixty", "air_three_sixty", "airtime", "thread_the_needle"]
+# T-490: what each new clip's recorded take must show: (tricks that must fire, tricks that must not).
+# "airtime" is the HANG TIME! line the fixture prints ("airtime N s"), not a detector id.
+EXPECT = {
+    "three_sixty": (["three_sixty"], []),
+    "air_three_sixty": (["air_three_sixty", "airtime"], []),
+    "airtime": (["airtime"], ["air_one_eighty", "air_three_sixty"]),
+    "thread_the_needle": (["thread_the_needle"], []),
+}
+
+
+def keys_per_frame(keys: list[str], every: int, frames: int) -> list[str]:
+    """The key timeline: for GIF frame i, the keys the script held on physics step i * every
+    (a string of W, A, S, D; "" for none). `keys` is one entry per physics step."""
+    out = []
+    for i in range(frames):
+        j = min(i * every, len(keys) - 1)
+        out.append(keys[j] if keys else "")
+    return out
+
+
+def check_expect(name: str, tricks: list[str], air: list[str]) -> list[str]:
+    """Problems with a take's tricks (empty list: fine)."""
+    need, forbid = EXPECT.get(name, ([], []))
+    seen = " | ".join(tricks + air)
+    bad = [f"missing {t}" for t in need if t not in seen]
+    bad += [f"unwanted {t}" for t in forbid if t in seen]
+    return bad
 REPO = Path(__file__).resolve().parents[2]
 GAME = REPO / "game"
 FIXTURE = "res://tests/fixtures/tutorial_clip_%s.tscn"
@@ -89,13 +116,15 @@ def record(name: str, out_dir: Path, archive: Path | None, keep_frames: bool = F
                "--fixed-fps", str(FPS), FIXTURE % name]
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
         log = [l.split("tutorial_clip_demo: ", 1)[1] for l in proc.stdout.splitlines() if "tutorial_clip_demo: " in l]
+        keys_line = [l for l in log if l.startswith("keys ")]
+        keys = keys_line[-1][5:].split(",") if keys_line else []
         gif = out_dir / f"{name}.gif"
         every = CLIP_EVERY.get(name, KEEP_EVERY)
         n = assemble(tmp, gif, every=every)
         size = gif.stat().st_size
         record_data = {
             "clip": name,
-            "task": "T-483",
+            "task": "T-483" if name in CLIPS[:4] else "T-490",
             "fixture": FIXTURE % name,
             "script": "game/tests/fixtures/tutorial_clip_demo.gd",
             "recorder": "game/tools/record_tutorial_clips.py",
@@ -107,9 +136,17 @@ def record(name: str, out_dir: Path, archive: Path | None, keep_frames: bool = F
             "scale": "none (1 screen pixel = 1 GIF pixel, a crop of the 1152 x 648 window)",
             "tricks": [l for l in log if l.startswith("trick ")],
             "air": [l for l in log if l.startswith("airtime") or l.startswith("landed")],
+            "keys_per_frame": keys_per_frame(keys, every, n),
             "how": "the real car (car.gd) and its art on the plain grid, driven by scripted inputs; Godot movie maker, every %dth physics step kept" % every + "",
         }
+        record_data["problems"] = check_expect(name, record_data["tricks"], record_data["air"])
         (out_dir / f"{name}.json").write_text(json.dumps(record_data, indent=2) + "\n")
+        try:
+            from gif_to_sheet import convert
+        except ImportError:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            from gif_to_sheet import convert
+        convert(gif)
         if archive is not None:
             archive.mkdir(parents=True, exist_ok=True)
             k = len(list(archive.glob(f"{name}_take*.gif"))) + 1
@@ -137,6 +174,9 @@ def main(argv=None) -> int:
         flag = "" if d["bytes"] <= MAX_BYTES else "  (over 1.5 MB!)"
         print(f"{name}: {d['frames']} frames, {d['seconds']} s, {d['bytes']} bytes{flag}")
         bad += d["bytes"] > MAX_BYTES
+        for pr in d["problems"]:
+            print(f"  PROBLEM: {pr}")
+        bad += len(d["problems"])
     return 1 if bad else 0
 
 
