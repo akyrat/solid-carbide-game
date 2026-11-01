@@ -1,7 +1,7 @@
 ---
 id: T-480
 title: Frame drops: trick popups build their textures while drawing
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, tasks/T-468-run-performance-recorder.md, game/docs/game-loop/perf-recorder.md, game/scripts/hud/trick_popups.gd]
 files_expected_to_change: [game/scripts/hud/trick_popups.gd, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,13 +43,13 @@ The board's review: play a run with many tricks and broken combos and feel no hi
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The result notes say what made draw.popup expensive, with the evidence. (QA: pass / fail)
-- [ ] A measured before/after (the recorder or a scripted benchmark) shows `draw.popup` under 1 ms a call at its worst, including a broken popup's first frame; numbers in the result notes. (QA: pass / fail)
-- [ ] A test shows a popup (normal and broken) looks the same as before: same texture size and pixels as today's build for a sample of texts. (QA: pass / fail)
-- [ ] A test shows the texture cache stays bounded over many different popup texts. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content, Trick popups) notes the textures are built ahead of drawing. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] The result notes say what made draw.popup expensive, with the evidence. (QA: pass)
+- [ ] A measured before/after (the recorder or a scripted benchmark) shows `draw.popup` under 1 ms a call at its worst, including a broken popup's first frame; numbers in the result notes. (QA: pass; rerun: draw lookups max 0.25 ms, 0 of 4689 over 1 ms)
+- [ ] A test shows a popup (normal and broken) looks the same as before: same texture size and pixels as today's build for a sample of texts. (QA: pass)
+- [ ] A test shows the texture cache stays bounded over many different popup texts. (QA: pass)
+- [ ] docs/hud-and-menus.md (Content, Trick popups) notes the textures are built ahead of drawing. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GUT_TIME_LIMIT=1500 GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; game/tools 858 OK, tools 633 OK, GUT passed)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -87,3 +87,6 @@ Written by the agent when it finishes.
 
 **Documents affected**: docs/hud-and-menus.md (Trick popups), game/docs/hud-and-menus/popups.md.
 - 2026-11-01, in-progress → in-qa: Popup pictures built ahead of drawing; draw lookups max 37 to 0.3 ms; all tests pass
+
+**QA round 1:** all criteria pass. Web build (thread support off; Godot log: "single-threaded"): exported the Web preset outside game/ and ran it in headless Chrome: menu, Start, a run reached the HUD, no console errors or exceptions. Not seen: an actual popup (no scripted way to trigger a trick). With no threads `WorkerThreadPool.add_task` runs the bake inline on the main thread, so there the pictures are built synchronously: prewarm bakes 63 pictures at HUD start (127 ms measured on desktop, likely several times that in wasm, once at load) and each show_popup bakes its frames inline, so a novel hot popup still hitches in the frame it is shown on the Web build (as before, moved from draw to show). Works, but the spike fix is only real on desktop. Bench rerun: show_popup median 4.0 ms, max 9.7 ms; draw lookups max 0.25 ms, 0 calls over 1 ms. Tests: game/tools 858 OK (1 skipped), tools 633 OK, GUT passed.
+- 2026-11-01, in-qa → needs-playtest: QA pass: draw lookups max 0.25 ms, all tests green; Web build (no threads) bakes inline so hot popups still hitch there
