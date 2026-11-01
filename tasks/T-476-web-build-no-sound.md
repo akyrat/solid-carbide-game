@@ -82,3 +82,20 @@ Written by the agent when it finishes.
 **Test counts:** game/tools unittest 777 OK (1 skipped); tools unittest 633 OK; GUT 2396 of 2396 passing (199 scripts, includes the 4 new tests), TESTS PASSED. Nothing pushed; nothing under game/data/levels/ touched.
 - 2026-11-01, in-progress → in-qa: Web build silent: runtime-added buses not routed in web sample mode; fixed with default_bus_layout.tres; browser check passes
 - 2026-11-01, in-qa → in-progress: QA fail (code): web_audio_check.mjs prints RESULT: FAIL on the committed state because sfx_enabled is false so no engine line appears; require the engine line only when SFX are on. All else passes.
+
+### QA round 1 fix (criterion 3)
+
+The check no longer requires the engine line when the sound effects are off. `game/tools/web_audio_rules.mjs` holds the pass rule (`verdict`) and reads `sfx_enabled` from `game/data/sfx.json` (`sfxEnabledFrom`); `--sfx on|off` overrides. Music line plus a running context always; the engine line only when `sfx_enabled` is true. The switch and the SFX default volume are untouched (the board confirmed on 2026-11-01 that sound effects stay off). Master merged into the branch (the only snag was an untracked .uid file; no conflicts). Python tests added for both cases (`game/tools/test_web_audio_check.py`).
+
+Browser check on the committed, merged state (fresh Web export):
+```
+before click, contexts: ["suspended"]
+after click, contexts: ["running"]
+final contexts: ["running"] buffer sources started: 1 worklet nodes: 2 output taps: 2 output peak: 0.048
+log: [audio] music playing=true
+sfxOn: false | SFX are off by the board's switch (sfx_enabled false in data/sfx.json, T-388): the engine line is not required
+RESULT: PASS
+```
+(Earlier, with the switch temporarily on, the engine line `[audio] engine playing=true` appeared in a run.)
+
+Test counts after the merge: game/tools unittest 865 OK (1 skipped); tools unittest 633 OK; GUT 2516 of 2516 passing (212 scripts), TESTS PASSED (GUT_TIME_LIMIT=1800).
