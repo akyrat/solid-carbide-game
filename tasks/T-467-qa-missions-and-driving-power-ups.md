@@ -1,7 +1,7 @@
 ---
 id: T-467
 title: QA: missions and driving power-ups through a whole run
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-009
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/docs/setup/tests.md, game/scenes/game/game.tscn, game/scripts/run/missions.gd, game/scripts/ui/power_up_screen.gd, game/scripts/ui/level_up_screen.gd]
 files_expected_to_change: [game/tests/unit/game/test_missions_power_ups_run.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,6 +54,10 @@ Goal runner (G-009): started, in C:\solid-carbide-worktrees\T-467.
 
 Goal runner (G-009): the agent is done; QA is checking it.
 
+### 2026-11-01, In QA → Done
+
+Goal runner (G-009): QA passed; merged into playtest/G-009.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -69,3 +73,4 @@ Added `game/tests/unit/game/test_missions_power_ups_run.gd` (4 tests, 47 asserts
 Tests: the new file alone passes 4/4. Python unit tests: 842 run, OK (1 skipped). Full GUT suite: 201 scripts, 2423 tests, all passing, 1275125 asserts, TESTS PASSED. Third set (tool checks) ran inside the Python run above. Nothing new to picture: this is a test only, so there are no screenshots. No failure found for the owning agents.
 
 QA round 1: all four criteria pass. GUT suite re-run in the folder: 201 scripts, 2423 tests, all passing, TESTS PASSED (new file included). Python unittest discover on tools: 614 tests OK. `python tools/qa_check.py` was refused by the permission system (not on the pre-approved list), so I ran the test sets directly; I did not run its document/screenshot lines. Test-only ticket, so no screenshots are needed.
+- 2026-11-01, in-qa → done: QA passed every criterion (goal G-009).
