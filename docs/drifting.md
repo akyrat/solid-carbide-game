@@ -288,6 +288,17 @@ The decision is in Decisions ("Driving power-ups"); the tier numbers are above. 
 - **Note on the tier reasons (for Game Data and the board):** at the base air turn rate (240 degrees a second) the tier 1 hop already fits an air 180 (200 degrees), and the tier 4 hop (320 degrees) does not quite fit an air 360 without the garage's air turn upgrade. The tier numbers are unchanged; the playtest decides.
 - Screenshots and GIF: `art-archive/T-461/screenshots/`.
 
+### The Jump clears obstacles (task T-478)
+
+The decision is in Decisions ("The Jump clears obstacles"). How it is built: `game/scripts/level/mvp_map.gd` (`obstacle_heights`, `obstacle_floor`, `update_car_obstacles`) and `game/scripts/driving/car_height.gd` (`floor_height`).
+
+- **The rule:** every boulder and prop has a bottom and a top (the ground it stands on, up to its height). The car passes over it while its height is at the top (within 0.05 units) or above, and meets it as a wall, with the bounce, when it is lower. Walls (skyscrapers) and the map's edge have no top: they block at any height. Short buildings are platforms of 3 units: a hop that stays below 3 meets their side as before.
+- **Heights:** a prop's is its `height_units` in `creator_assets.json`; a boulder (the map's and the meteors') is **0.8 units** high (proposal for the playtest: lower than the car's 1, so a tier 1 hop, 1.04 at its peak, clears it; its width stays its 3-unit diameter). The hop's peak: tier 1 1.04, tier 2 1.5, tier 3 2.04, tier 4 2.67.
+- **What each tier clears:** boulder (0.8) and the small props (0.9, 0.95): every tier. Props of 1.2 to 1.5: tier 2 and up. A prop of 2.2: tier 4. Props of 3.3 and 5.35, the 3-unit platforms, the skyscrapers (30) and the map's edge: no tier.
+- **Timing:** the hop must be at the obstacle's top before the car reaches it: at tier 1 that takes about 0.2 s after Space, so a car at full speed presses Space at least about 6 to 7 units short of a boulder. Pressed later, the car meets the boulder as a wall.
+- **Never landing inside** (proposal): the car lands on the obstacle it is over, at its top, and drives along it like on a low platform; off its edge it falls to the ground. It is never put inside an obstacle by a landing.
+- Screenshots and GIF: `art-archive/T-478/screenshots/`.
+
 ### Bouncy Bumpers (task T-462)
 
 The decision is in Decisions ("Driving power-ups"); the tier numbers (×1.4 / 1.8 / 2.2 / 2.6) are above. How it is built: `game/docs/driving/collisions.md`, "Bouncy Bumpers (T-462)".

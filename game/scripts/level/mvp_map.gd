@@ -85,6 +85,10 @@ const PLACEMENT_STEP := 0.1
 const CHALLENGES_ENABLED := false
 ## Fallback boulder size (units across) if the layout data has no boulder.
 const DEFAULT_BOULDER_DIAMETER := 3.0
+## Task T-478 (Drifting, Content, "The Jump clears obstacles"): how high a boulder stands, units
+## (proposal): lower than the car (1), so a tier 1 hop (peak about 1.04) clears it. Its width is
+## still its diameter.
+const BOULDER_HEIGHT_UNITS := 0.8
 ## The boulder sprites (T-065): variants, their opaque boxes and outlines.
 const BOULDER_ART_PATH := "res://art/boulders/boulders.json"
 ## The building atlas and its list (task T-064); without it the placeholder boxes stay.
@@ -393,7 +397,7 @@ func _build_boulders() -> void:
 			var b0: Dictionary = copy.boulders[0]
 			var g := ground_height_at(Vector2(float(b0.x), float(b0.y)))
 			body.set_meta("base_units", g)
-			body.set_meta("top_units", g + float(b0.diameter))
+			body.set_meta("top_units", g + BOULDER_HEIGHT_UNITS)
 		physics_root.add_child(body)
 		var j := 0
 		for b in copy.boulders:
@@ -893,7 +897,7 @@ func obstacle_heights(body: Node) -> Array:
 	if body.has_meta("base_units"):
 		return [float(body.get_meta("base_units")), float(body.get_meta("top_units"))]
 	if body in meteor_boulder_bodies:
-		return [0.0, boulder_diameter()]
+		return [0.0, BOULDER_HEIGHT_UNITS]
 	return [-INF, INF]
 
 
@@ -931,6 +935,23 @@ func update_car_obstacles(the_car: PhysicsBody2D, height: float) -> void:
 	for body in _passing.keys():
 		if not is_instance_valid(body):
 			_passing.erase(body)
+
+
+## Task T-478: the top (units) of the highest obstacle the car overlaps and is over (its height
+## is at the obstacle's top, less the margin), 0 when none. The car lands on it and drives along
+## it instead of landing inside it (car.gd floor_query).
+func obstacle_floor(the_car: PhysicsBody2D, height: float) -> float:
+	if the_car == null or not is_instance_valid(the_car):
+		return 0.0
+	var overlapping := _overlapping(the_car)
+	var top := 0.0
+	for body in overlapping:
+		if not (body in prop_bodies or body in boulder_bodies or body in meteor_boulder_bodies):
+			continue
+		var t := float(obstacle_heights(body)[1])
+		if height >= t - OBSTACLE_HEIGHT_MARGIN:
+			top = maxf(top, t)
+	return top
 
 
 ## True while the car passes over or under `body` (update_car_obstacles).

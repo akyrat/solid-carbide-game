@@ -484,6 +484,7 @@ func _build_world() -> void:
 	var the_map: Node2D = map
 	var the_car = car
 	car.stepped.connect(func() -> void: the_map.update_car_obstacles(the_car, the_car.height))
+	car.floor_query = func() -> float: return the_map.obstacle_floor(the_car, the_car.height)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car

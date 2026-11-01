@@ -1,7 +1,7 @@
 ---
 id: T-478
 title: Jump: the Space hop clears obstacles lower than the car
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -57,6 +57,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-01, Open → In progress
+
+Started: the Jump clears obstacles lower than the car.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -64,3 +68,27 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Done (Driving & Drift Agent).** Findings first: the pass-over-by-height machinery already existed (T-405: `mvp_map.gd` `update_car_obstacles`, props and boulders as collision exceptions by height). What stopped the hop was the numbers: a boulder's height was its 3-unit diameter and the tier 1 hop peaks at 1.04, so nothing but the smallest props was clearable, and a car that landed over an obstacle was left inside it, sliding out.
+
+**How it works now**
+- Boulders (the map's and the meteors') are **0.8 units high** (`BOULDER_HEIGHT_UNITS`, proposal; width stays the 3-unit diameter), lower than the car's 1. The car passes over an obstacle once its height is at the top (minus 0.05) or above; lower, it meets it as a wall with the bounce and `hit_obstacle`, as before. Walls (skyscrapers) and the map's edge block at any height; 3-unit platforms (short buildings) keep their side-wall rule.
+- Never landing inside (proposal): `mvp_map.gd obstacle_floor()` gives the top of the obstacle the car overlaps and is over; car.gd's `floor_query` asks it just before the height step, and `car_height.gd` (`floor_height`, `set_floor`) lands the car on that top, lets it drive along it, and makes it fall when it leaves the edge. Wired in run.gd and elevation_sample_map.gd.
+- Jump numbers unchanged. Timing at tier 1: the hop reaches 0.75 about 0.2 s after Space, so Space must be pressed roughly 6 to 7 units short of a boulder at speed; later, it bounces (tested).
+
+**Obstacle table** (hop peaks: tier 1 1.04, tier 2 1.5, tier 3 2.04, tier 4 2.67)
+| Obstacle | Height | Clears |
+|---|---|---|
+| Boulder (map and meteor) | 0.8 (proposed) | all tiers |
+| Props 0.9, 0.95 (creator_assets.json height_units) | 0.9, 0.95 | all tiers |
+| Props 1.2 to 1.5 | 1.2 to 1.5 | tier 2 and up (1.5 is borderline at tier 2) |
+| Prop 2.2 | 2.2 | tier 4 |
+| Props 3.3 and 5.35 | 3.3, 5.35 | none |
+| Short buildings (platforms) | 3.0 | none (side is a wall below 3) |
+| Skyscrapers | 30 (wall) | none |
+| Map's edge | infinite | never |
+
+**Tests:** new `game/tests/unit/test_jump_clears_obstacles.gd` (8 tests: hop clears boulder with no hit and never inside; ground and too-late and no-power-up bounce; lands on top; wall and edge block in the air; table). Counts: GUT 2326/2326 (191 scripts); `game/tools` unittest 849 OK (1 skipped); `tools` unittest 633 OK.
+**Files:** car.gd, car_height.gd, mvp_map.gd, run.gd, elevation_sample_map.gd, tests/fixtures/jump_boulder_demo.gd and jump_boulder_gif.tscn, docs/drifting.md (Content, "The Jump clears obstacles (task T-478)").
+**GIF and screenshots:** `art-archive/T-478/screenshots/jump_over_boulder.gif`, `jump_over_boulder_montage.png`.
+**Note for the board's playtest:** the boulder is drawn big (3 wide, taller than 0.8 looks), so a hop over it reads as flying over a tall rock; the car's sprite also draws behind the boulder sprite for a moment mid-hop (depth order, not changed here). If 0.8 feels wrong, it is one constant.
