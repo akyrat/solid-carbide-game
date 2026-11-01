@@ -15,6 +15,7 @@
 | `tests/fixtures/` | Scenes and files that exist only for tests |
 | `tools/` | Test runner, screenshot tool, audio import checker, Freesound downloader, PixelLab client, sprite rule checker, placeholder car sheet generator, final car sheet builder, effect art builders (level-up particles, drift mark, drift smoke, gift pack placeholders) and shared shell helpers. Not game code |
 | `addons/gut/` | The GUT test framework (9.6.1). Do not edit |
+| `perf/` | Performance recordings, one folder per run (T-468, `game/docs/game-loop/perf-recorder.md`). Git-ignored, and Godot ignores it (`.gdignore`) |
 
 The `.godot/` folder is Godot's cache. It is git-ignored and rebuilt automatically. Keep the `.uid` files Godot creates next to scripts: they belong in git.
 

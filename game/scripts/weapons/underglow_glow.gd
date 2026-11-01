@@ -42,9 +42,12 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"weapon.underglow_glow")
 	if not visible:
+		Perf.end(&"weapon.underglow_glow")
 		return
 	set_time(time + delta)
+	Perf.end(&"weapon.underglow_glow")
 
 
 func set_time(t: float) -> void:
@@ -189,15 +192,19 @@ func build_image(frame: int) -> Image:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.underglow")
 	if radius_px <= 0.0:
+		if Perf.on: Perf.each_end(&"draw.underglow")
 		return
 	if look.use_sprite:
 		var tex: Texture2D = ART_TEXTURE
 		var size := tex.get_size() * art_scale()
 		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
+		if Perf.on: Perf.each_end(&"draw.underglow")
 		return
 	var f := maxi(_frame, 0)
 	if not _cache.has(f):
 		_cache[f] = ImageTexture.create_from_image(build_image(f))
 	var t: ImageTexture = _cache[f]
 	draw_texture(t, -t.get_size() / 2.0)
+	if Perf.on: Perf.each_end(&"draw.underglow")

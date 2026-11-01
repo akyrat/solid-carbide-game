@@ -73,4 +73,6 @@ func outline() -> PackedVector2Array:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.car_shadow")
 	draw_colored_polygon(outline(), COLOR)
+	if Perf.on: Perf.each_end(&"draw.car_shadow")

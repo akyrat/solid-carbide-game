@@ -605,14 +605,18 @@ func south_face() -> PackedVector2Array:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.platform")
 	if block.is_empty() or art_sprite != null:
+		if Perf.on: Perf.each_end(&"draw.platform")
 		return
 	if is_building():
 		for f in building_faces():
 			draw_polygon(f.points, PackedColorArray([Color.WHITE]), f.uvs, f.texture)
+		if Perf.on: Perf.each_end(&"draw.platform")
 		return
 	if style != null:
 		_draw_textured()
+		if Perf.on: Perf.each_end(&"draw.platform")
 		return
 	var r := rect()
 	var h := corner_heights()
@@ -648,3 +652,4 @@ func _draw() -> void:
 	for c in [[ne, h[1]], [r.end, h[2]], [sw, h[3]]]:
 		if float(c[1]) > 0.001:
 			draw_line(drawn(c[0], 0.0), drawn(c[0], c[1]), EDGE_COLOR, 1.0)
+	if Perf.on: Perf.each_end(&"draw.platform")

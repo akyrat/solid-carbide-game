@@ -90,6 +90,7 @@ func _init() -> void:
 		var w: Node = script.new()
 		w.rack = self
 		w.name = w.weapon_id.capitalize().replace(" ", "")
+		w.perf_zone = StringName("weapon." + w.weapon_id)  # its zone for the perf recorder (T-468)
 		weapons[w.weapon_id] = w
 		add_child(w)
 
@@ -237,7 +238,9 @@ func upgrade(weapon_id: String) -> bool:
 
 
 func _physics_process(delta: float) -> void:
+	Perf.begin(&"weapons.step")
 	step(delta)
+	Perf.end(&"weapons.step")
 
 
 ## One physics step: each projectile in flight, then each owned weapon. Nothing happens
@@ -255,7 +258,9 @@ func step(dt: float) -> void:
 			continue
 		if _mode() == MODE_STOPPED:
 			return  # the run ended in this step (T-414): nothing later damages anything
+		if Perf.on: Perf.each_begin(&"weapons.projectile")
 		p.step(dt)
+		if Perf.on: Perf.each_end(&"weapons.projectile")
 		if p.is_done():
 			projectiles.erase(p)
 			p.queue_free()
@@ -264,10 +269,13 @@ func step(dt: float) -> void:
 		if mode == MODE_STOPPED:
 			return
 		if w.is_owned():
+			var zone: StringName = w.perf_zone if "perf_zone" in w else &"weapon"  # tests' stand-ins have none
+			Perf.begin(zone)
 			if mode == MODE_WRECKED:
 				w.step_wrecked(dt)
 			else:
 				w.step(dt)
+			Perf.end(zone)
 
 
 ## How the weapons step now (T-414): MODE_RUNNING while the run is going,

@@ -69,7 +69,9 @@ func _on_defeated(_coins: int) -> void:
 
 
 func _physics_process(_dt: float) -> void:
+	Perf.begin(&"hud.kaiju_bar")
 	_follow()
+	Perf.end(&"hud.kaiju_bar")
 
 
 ## Sits above the kaiju's drawing, as wide as it is. Hides when there is no
@@ -100,6 +102,7 @@ func divider_x(i: int) -> float:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.kaiju_bar")
 	var w := bar_width
 	var left := -w / 2.0
 	var top := -BAR_HEIGHT
@@ -115,3 +118,4 @@ func _draw() -> void:
 	# Thin black dividers at every 10%.
 	for i in range(1, DIVISIONS):
 		draw_rect(Rect2(left + divider_x(i) - 0.5, top, 1.0, BAR_HEIGHT), LINE_COLOR)
+	if Perf.on: Perf.each_end(&"draw.kaiju_bar")

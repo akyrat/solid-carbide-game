@@ -91,7 +91,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"effects.drift_smoke")
 	advance(delta)
+	Perf.end(&"effects.drift_smoke")
 
 
 ## Makes smoke after the car's every physics step. `marks` (optional) is the
@@ -101,7 +103,9 @@ func _process(delta: float) -> void:
 func bind(car: Node, marks: Object = null) -> void:
 	tyre_source = marks
 	car.stepped.connect(func() -> void:
-		emit_step(smokes(car), car.model.get_position(), car.model.rotation, car.model.dt))
+		Perf.begin(&"effects.drift_smoke_emit")
+		emit_step(smokes(car), car.model.get_position(), car.model.rotation, car.model.dt)
+		Perf.end(&"effects.drift_smoke_emit"))
 
 
 ## Whether `car` makes smoke this step: drifting and not airborne (a car
@@ -209,7 +213,9 @@ func _size_at(p: Dictionary, age: float) -> float:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.drift_smoke")
 	if puff_texture == null:
+		if Perf.on: Perf.each_end(&"draw.drift_smoke")
 		return
 	var tex_size := puff_texture.get_size()
 	for p in _puffs:
@@ -219,3 +225,4 @@ func _draw() -> void:
 			continue
 		var size := tex_size * s
 		draw_texture_rect(puff_texture, Rect2(_drawn_at(p, age) - size * 0.5, size), false, puff_color)
+	if Perf.on: Perf.each_end(&"draw.drift_smoke")

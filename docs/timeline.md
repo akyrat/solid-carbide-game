@@ -3055,3 +3055,8 @@ Entry format:
 - Decision or change: The board's recorded run showed a 97 ms hitch at the first gift pack pickup; its load moves to the run's start.
 - Documents touched: docs/game-loop-architecture.md
 - Tasks: T-482
+
+## 2026-11-01: A performance recorder for the board's runs
+- Decision or change: The game can record a run's frame times and a Chrome trace (--record-perf, off by default) and a script names what causes its frame drops. The board's first recorded run found three causes: trick popups building textures while drawing, car physics spiking with the bricks weapon, and a hitch at the first gift pack (T-480, T-481, T-482).
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-468

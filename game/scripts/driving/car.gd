@@ -183,7 +183,9 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	Perf.begin(&"car.physics")
 	physics_step()
+	Perf.end(&"car.physics")
 
 
 ## Task T-461: a Space press (not a held key's repeats) is kept for the next
@@ -273,7 +275,9 @@ func physics_step() -> void:
 		# tricks (T-219) count it. Reads only.
 		tricks.observe(model, w, s, steer, rotation_before, height_model.airborne)
 		tricks.observe_air(height_model.airborne, model.rotation - rotation_before, model.dt)
+	Perf.begin(&"car.stepped_listeners")
 	stepped.emit()
+	Perf.end(&"car.stepped_listeners")
 
 
 ## The car crashed (task T-315; the run scene calls it on RunState.crashed):

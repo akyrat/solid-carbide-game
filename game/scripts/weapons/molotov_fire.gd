@@ -178,6 +178,7 @@ func colours() -> Array:
 
 
 func _draw() -> void:
+	if Perf.on: Perf.each_begin(&"draw.molotov_fire")
 	var tex: Texture2D = ART_FLIP_TEXTURE if _flicker % 2 == 1 else ART_TEXTURE
 	if tex != null:
 		# The final art (T-175): the fire ellipse as the iso view shows the circle
@@ -189,6 +190,7 @@ func _draw() -> void:
 		draw_set_transform_matrix(ISO_TRANSFORM.affine_inverse())
 		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
 		draw_set_transform_matrix(Transform2D.IDENTITY)
+		if Perf.on: Perf.each_end(&"draw.molotov_fire")
 		return
 	var r := radius * PX_PER_UNIT
 	draw_circle(Vector2.ZERO, r + 1.0, FIRE_OUTLINE, true, -1.0, false)
@@ -201,3 +203,4 @@ func _draw() -> void:
 		var p := Vector2.from_angle(a) * r * 0.75
 		draw_rect(Rect2(p - Vector2(2, 2), Vector2(4, 4)), FIRE_INNER)
 	draw_circle(Vector2.ZERO, r * 0.25, FIRE_CORE, true, -1.0, false)
+	if Perf.on: Perf.each_end(&"draw.molotov_fire")

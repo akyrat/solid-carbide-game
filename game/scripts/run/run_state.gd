@@ -297,7 +297,9 @@ func start_run() -> void:
 
 
 func _process(delta: float) -> void:
+	Perf.begin(&"run.clock")
 	advance(delta)
+	Perf.end(&"run.clock")
 
 
 ## Moves the clock forward by `seconds`. Does nothing once the run has ended.

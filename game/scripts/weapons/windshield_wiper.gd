@@ -402,7 +402,9 @@ class WiperDrawing:
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 	func _draw() -> void:
+		if Perf.on: Perf.each_begin(&"draw.wiper")
 		if arm_px.length() < 0.5:
+			if Perf.on: Perf.each_end(&"draw.wiper")
 			return
 		var sheet: Texture2D = ART_SHEET
 		if sheet != null:
@@ -413,6 +415,7 @@ class WiperDrawing:
 			var src := Rect2(Vector2(i % ART_COLS, i / ART_COLS) * cell, cell)
 			var size := cell * ART_SCALE * art_k  # T-286: grows with the arm's length
 			draw_texture_rect_region(sheet, Rect2(-size / 2.0, size), src)
+			if Perf.on: Perf.each_end(&"draw.wiper")
 			return
 		var blade_start := arm_px * 0.2
 		draw_line(Vector2.ZERO, arm_px, OUTLINE_COLOUR, 5.0, false)
@@ -420,3 +423,4 @@ class WiperDrawing:
 		draw_line(blade_start, arm_px, BLADE_COLOUR, 3.0, false)
 		draw_rect(Rect2(-3.0, -3.0, 6.0, 6.0), OUTLINE_COLOUR, true)
 		draw_rect(Rect2(-2.0, -2.0, 4.0, 4.0), ARM_COLOUR, true)
+		if Perf.on: Perf.each_end(&"draw.wiper")
