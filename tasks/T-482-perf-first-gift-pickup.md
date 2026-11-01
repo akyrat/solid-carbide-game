@@ -1,7 +1,7 @@
 ---
 id: T-482
 title: Frame drops: a 97 ms hitch at the first gift pack pickup
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -86,3 +86,4 @@ QA round 1: 5 of 6 criteria pass; the 2 ms criterion is marginal. First pickup a
 - 2026-11-01, in-qa → in-progress: QA: 2 ms criterion marginally missed (1.9/2.2/2.3 ms), all else passes
 - 2026-11-01, in-progress → in-qa: Project Lead: criterion 2 revised to its intent (no first-time hitch); QA's round-1 measurements meet it.
 - 2026-11-01, in-qa → needs-playtest: All criteria pass after the Project Lead's revision of criterion 2.
+- 2026-11-01, needs-playtest → done: The board played it: LGTM (2026-11-01).
