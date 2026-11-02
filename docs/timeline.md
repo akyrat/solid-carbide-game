@@ -3355,3 +3355,8 @@ Entry format:
 - Decision or change: The rain toggle's label, Rain.
 - Documents touched: none
 - Tasks: T-506
+
+## 2026-11-02: Rain over the map
+- Decision or change: Rain over the map with a saved on/off setting.
+- Documents touched: docs/level-design.md
+- Tasks: T-507

@@ -1,7 +1,7 @@
 ---
 id: T-507
 title: Rain over the map
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md]
 files_expected_to_change: [game/scripts/, game/scenes/, game/data/, game/tests/unit/, docs/level-design.md, game/docs/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,14 +41,14 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A run shows rain over the visible map, falling at a slant, with splashes on the ground (screenshots on a street and on a rooftop). (QA: pass / fail)
-- [ ] The rain is drawn over the map and enemies and under the HUD (screenshot and a test of the draw order or layers). (QA: pass / fail)
-- [ ] A unit test: with rain_enabled false no rain draws; switching it on or off takes effect at once; the setting is saved and loaded like the other settings, default true. (QA: pass / fail)
-- [ ] Its numbers (density, speed, angle, splashes) come from a JSON data file. (QA: pass / fail)
-- [ ] The headless frame time with and without rain is in the result notes, and rain adds no more than about 1 ms per frame. (QA: pass / fail)
-- [ ] Driving and enemies are unchanged (the existing driving and enemy tests pass). (QA: pass / fail)
-- [ ] docs/level-design.md (Content) describes the rain. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
+- [ ] A run shows rain over the visible map, falling at a slant, with splashes on the ground (screenshots on a street and on a rooftop). (QA: pass; slanted streaks visible on street and rooftop screenshots)
+- [ ] The rain is drawn over the map and enemies and under the HUD (screenshot and a test of the draw order or layers). (QA: pass; HUD clean above rain, layer test in test_rain)
+- [ ] A unit test: with rain_enabled false no rain draws; switching it on or off takes effect at once; the setting is saved and loaded like the other settings, default true. (QA: pass; test_rain covers it, test sets green)
+- [ ] Its numbers (density, speed, angle, splashes) come from a JSON data file. (QA: pass; game/data/rain.json)
+- [ ] The headless frame time with and without rain is in the result notes, and rain adds no more than about 1 ms per frame. (QA: pass; on 6.898 ms vs off 6.900 ms, rain's own work about 0.21 ms)
+- [ ] Driving and enemies are unchanged (the existing driving and enemy tests pass). (QA: pass; full test sets pass)
+- [ ] docs/level-design.md (Content) describes the rain. (QA: pass; documents check shows the file changed)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; 2 test sets passed)
 
 ## Updates
 
@@ -61,6 +61,10 @@ Started: rain over the map with a placeholder look and a saved on/off setting.
 ### 2026-11-02, In progress → In QA
 
 Rain built: placeholder drops and splashes over the map, under the HUD, numbers in rain.json, saved rain_enabled setting (on by default); adds about 0.2 ms a frame; works in the web build.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 8 criteria; test sets green; rain over map, under HUD, about 0.2 ms a frame. Ready for the board's playtest in the combined build.
 
 ## Style review
 
@@ -97,3 +101,4 @@ Done: rain over the map with a placeholder look drawn in code, its numbers in a 
 **Documents affected**: `docs/level-design.md` (Content, "Rain"), `game/docs/level/rain.md` (new).
 
 **Files**: `game/scripts/level/rain.gd`, `game/data/rain.json`, `game/scripts/ui/game_settings.gd`, `game/scripts/run/run.gd`, `game/tests/unit/test_rain.gd`, `game/tests/fixtures/rain_demo.gd`, `rain_demo_street.tscn`, `rain_demo_rooftop.tscn`, `game/tools/bench_rain.gd`, `bench_rain.sh`, `game/docs/level/rain.md`, `docs/level-design.md`, `art-archive/T-507/screenshots/`.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
