@@ -1,7 +1,7 @@
 ---
 id: T-503
 title: Icons: Rusty Paintjob's spray can and the Polarized Steering Wheel
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -62,6 +62,10 @@ The board keeps the spray can's v1; the steering wheel icon is next.
 ### 2026-11-02, Flagged for review → In progress
 
 The board keeps v4 for the wheel. Screenshots, then QA.
+
+### 2026-11-02, In progress → In QA
+
+Icons in: spray can v1, wheel v4 (the board's picks).
 
 ## Style review
 
