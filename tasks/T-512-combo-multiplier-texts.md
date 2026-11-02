@@ -1,7 +1,7 @@
 ---
 id: T-512
 title: Texts for the combo multiplier beside the car
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -225,3 +225,4 @@ QA round 1: criteria 1-4 pass; criterion 5 fails (code): game/tools test_text_in
 QA round 1 fix: added screen entries to game/tools/text_inventory.py (recap_text:peak_value, multiplier_text:multiplier/gain/loss/unused); test_text_inventory.py passes (8).
 
 QA round 2: all five criteria pass. Both test sets pass on 29442ab9 (the text inventory test is green); documents check passes. The missing screenshots folder is accepted by the Project Lead for this text-only ticket.
+- 2026-11-02, needs-playtest → done: The board played the combined build (2026-11-02): combo lgtm.
