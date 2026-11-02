@@ -1,7 +1,7 @@
 ---
 id: T-508
 title: The rain toggle in the settings
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -50,10 +50,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started on top of T-507's rain and T-506's label.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done: a Rain checkbox in the pause screen (the game's only settings screen; the main menu has none), in the checkbox row after Dynamic camera, shared checkbox style. Label from data/pause_text.json rain_label (T-506). Starts from GameSettings.load_rain_enabled(); toggling calls save_rain_enabled, so the rain shows or hides at once (T-507 notifier) and the choice is saved. Mouse and keyboard work like the other checkboxes. Tests: game/tests/unit/test_pause_rain_toggle.gd 5/5 (label, default on, saved and read back, real mouse click, keyboard Space, rain layer in a run); test_pause_screen, test_pause_camera_controls, test_pause_slider_saves, test_rain pass. Full set for QA. Screenshots: art-archive/T-508/screenshots/pause_screen_game.png and pause_screen_prototype.png. Documents affected: docs/hud-and-menus.md. Files: game/scripts/ui/pause_screen.gd, game/tests/unit/test_pause_rain_toggle.gd, docs/hud-and-menus.md.
