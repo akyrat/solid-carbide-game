@@ -72,7 +72,7 @@ func _expected_available() -> Array:
 		var w: Node = rack.get_weapon(id)
 		if not w.is_owned():
 			out.append("get_" + id)
-		elif w.tier < w.max_tier():  # 8, Bricks 7 (T-496)
+		elif w.tier < w.max_tier():  # 8 for every weapon
 			out.append("upgrade_" + id)
 	return out
 
@@ -168,8 +168,8 @@ func test_seeded_level_ups_draw_two_different_available_ids_and_cover_them_all()
 				seen[id] = true
 			assert_true(offers.choose(ids[pick.randi_range(0, ids.size() - 1)]))
 			assert_false(state.is_waiting_for_choice())
-	# 7 gun upgrades + 3 weapons x 8 + Bricks x 7 + the wiper x 8 (T-496, T-499).
-	assert_eq(level_ups, SEEDS * 46, "every run takes every tier before the choices run out")
+	# 7 gun upgrades + 5 weapons x 8 (Bricks' tier 8 since T-498, the wiper's since T-499).
+	assert_eq(level_ups, SEEDS * 47, "every run takes every tier before the choices run out")
 	for id in OffersScript.ALL_IDS:
 		assert_true(seen.has(id), "%s offered at least once" % id)
 
@@ -234,7 +234,7 @@ func test_each_weapon_reaches_its_own_top_tier_and_stops_there() -> void:
 		assert_eq(w.tier, top)
 	assert_eq(rack.gun.tier, 8, "the gun's top tier")
 	assert_eq(rack.molotov.tier, 8)
-	assert_eq(rack.bricks.tier, 7, "Bricks ends at 7 until T-498")
+	assert_eq(rack.bricks.tier, 8, "Bricks ends at 8 (T-498: Widest Wave)")
 	assert_eq(rack.wiper.tier, 8, "the wiper reaches 8 (T-499)")
 
 
@@ -256,19 +256,20 @@ func test_a_gift_pack_never_offers_a_weapon_at_its_own_top_tier() -> void:
 	assert_eq(shown[0][1], ["upgrade_gun"])
 
 
-## T-496: Bricks has 7 tiers for now: the offers walk them to tier 7 and then stop.
-func test_bricks_is_never_offered_past_its_last_tier() -> void:
-	for id in ["bricks"]:
+## T-498, T-499: every weapon has 8 tiers: the offers walk each to its last tier and then stop.
+func test_bricks_and_wiper_are_never_offered_past_their_last_tier() -> void:
+	for id in ["bricks", "wiper"]:
 		_new_run(1)
 		var w: Node = rack.get_weapon(id)
-		assert_eq(w.max_tier(), 7, id)
-		w.set_tier(6)
-		assert_true(offers.available_offers().has("upgrade_" + id), "%s at tier 6: offered" % id)
+		var last := 8
+		assert_eq(w.max_tier(), last, id)
+		w.set_tier(last - 1)
+		assert_true(offers.available_offers().has("upgrade_" + id), "%s one tier short: offered" % id)
 		assert_true(w.upgrade())
-		assert_eq(w.tier, 7)
-		assert_false(offers.available_offers().has("upgrade_" + id), "%s at tier 7: not offered" % id)
+		assert_eq(w.tier, last)
+		assert_false(offers.available_offers().has("upgrade_" + id), "%s at its last tier: not offered" % id)
 		assert_false(offers.available_offers().has("get_" + id))
-		assert_false(w.upgrade(), "%s: no tier 8 yet" % id)
+		assert_false(w.upgrade(), "%s: no tier past %d" % [id, last])
 
 
 # ---- One left, none left ---------------------------------------------------------------------
@@ -368,19 +369,20 @@ func test_bricks_is_offered_and_its_upgrades_raise_the_boards_numbers() -> void:
 	assert_eq(shown[-1][1], ["get_bricks"])
 	assert_true(offers.choose("get_bricks"))
 	var data := WeaponData.new()
-	for t in range(1, 8):
+	for t in range(1, 9):
 		if t > 1:
 			_level_up()
 			assert_eq(shown[-1][1], ["upgrade_bricks"], "tier %d offered" % t)
 			assert_true(offers.choose("upgrade_bricks"))
 		assert_eq(b.tier, t)
 		var want: Dictionary = data.bricks_at(t)
-		for k in ["damage", "radius", "knockback_distance", "min_air_seconds", "cooldown"]:
+		for k in ["damage", "radius", "knockback_distance", "min_air_seconds", "cooldown", "rings"]:
 			assert_almost_eq(float(b.stats[k]), float(want[k]), 1e-9, "tier %d %s" % [t, k])
 	assert_true(b.is_max_tier())
-	assert_almost_eq(float(b.stats["radius"]), 4.0 * 1.4 * 1.5, 1e-9, "tier 7's radius (T-496)")
+	assert_almost_eq(float(b.stats["radius"]), 4.0 * 1.4 * 1.5 * 3.0, 1e-9, "tier 8's radius (T-498: Widest Wave)")
+	assert_eq(int(b.stats["rings"]), 3)
 	_level_up()
-	assert_eq(shown.size(), 7, "nothing left to offer at tier 7 (T-498 adds tier 8)")
+	assert_eq(shown.size(), 8, "nothing left to offer at tier 8")
 
 
 func test_a_choice_not_on_offer_is_refused() -> void:

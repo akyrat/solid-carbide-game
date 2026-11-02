@@ -371,13 +371,16 @@ func test_the_waves_colours_are_opaque_and_none_of_greenbulls() -> void:
 # --- T-325's art -----------------------------------------------------------------------
 
 func test_every_tiers_radius_has_its_wave_sheet() -> void:
-	for t in range(1, 8):
+	for t in range(1, data.max_tier("bricks") + 1):
 		var r: float = data.bricks_at(t)["radius"]
 		var path: String = Bricks.BricksWave.art_path(r)
 		assert_true(ResourceLoader.exists(path), "tier %d (radius %.2f): %s" % [t, r, path])
 		var tex: Texture2D = Bricks.BricksWave.sheet_for(r)
 		assert_not_null(tex)
-		assert_eq(tex.get_width() % Bricks.BricksWave.FRAMES, 0, "%s splits into the frames" % path)
+		if int(data.bricks_at(t)["rings"]) > 1:
+			assert_false(Bricks.BricksWave.record_for(r).is_empty(), "tier %d: the widest wave's strip record" % t)
+		else:
+			assert_eq(tex.get_width() % Bricks.BricksWave.FRAMES, 0, "%s splits into the frames" % path)
 	assert_null(Bricks.BricksWave.sheet_for(123.4), "no sheet for a radius no tier has")
 
 
@@ -413,3 +416,111 @@ func test_a_wider_tier_shows_a_wider_sheet() -> void:
 	bricks.send_wave(_car() + Vector2(20, 0))
 	assert_gt(bricks.last_wave.frame_size.x, small.x)
 	assert_eq(bricks.last_wave.sheet, Bricks.BricksWave.sheet_for(8.4))
+
+
+# --- T-498: tier 8, Widest Wave ----------------------------------------------------------
+
+func test_tier_8_is_the_widest_wave_three_times_tier_7() -> void:
+	assert_eq(data.max_tier("bricks"), 8)
+	bricks.set_tier(7)
+	var r7: float = bricks.radius()
+	assert_eq(bricks.rings(), 1)
+	bricks.set_tier(8)
+	assert_eq(bricks.tier, 8)
+	assert_almost_eq(bricks.radius(), r7 * 3.0, 1e-9, "the radius x3")
+	assert_almost_eq(bricks.radius(), 25.2, 1e-9)
+	assert_eq(bricks.rings(), 3, "three crash rings")
+	for k in [1, 2, 3]:
+		assert_almost_eq(bricks.ring_radius(k), r7 * k, 1e-9, "ring %d at the tier 7 radius x%d" % [k, k])
+	assert_eq(bricks.ring_reach_seconds(1), 0.0, "the inner ring on the landing")
+	assert_lt(bricks.ring_reach_seconds(2), bricks.ring_reach_seconds(3))
+
+
+## The step (after the landing step) at which each enemy was first hit; -1: never.
+func _hit_steps(enemies: Array, steps: int) -> Array:
+	var out := []
+	for e in enemies:
+		out.append(0 if e.damage_taken.size() > 0 else -1)
+	for i in steps:
+		rack.step(DT)
+		for j in enemies.size():
+			if out[j] < 0 and enemies[j].damage_taken.size() > 0:
+				out[j] = i + 1
+	return out
+
+
+func test_the_widest_wave_reaches_the_outer_rings_later_and_hits_each_enemy_once() -> void:
+	bricks.set_tier(8)
+	var c := _car()
+	var near := _place(FakeMinion.new(), c + Vector2(3.0, 0.0))     # ring 1, pushed 9 units out into ring 2
+	var mid := _place(FakeEnemy.new(), c + Vector2(0.0, -12.0))      # ring 2
+	var far := _place(FakeEnemy.new(), c + Vector2(-23.0, 0.0))      # ring 3, near the outer edge
+	var kaiju := _place(FakeMinion.new(), c + Vector2(0.0, 26.0))    # its body reaches into ring 3
+	kaiju.as_kaiju(2.0)
+	var outside := _place(FakeEnemy.new(), c + Vector2(28.0, 0.0))
+	var rings := []
+	bricks.ring_hit.connect(func(_at: Vector2, k: int, n: int) -> void: rings.append([k, n]))
+	_air(0.5)
+	assert_eq(near.damage_taken.size(), 1, "the inner ring hits on the landing")
+	assert_eq(mid.damage_taken.size(), 0, "the middle ring has not got there yet")
+	var steps := _hit_steps([near, mid, far, kaiju], 60)
+	assert_eq(steps[0], 0)
+	assert_gt(steps[1], steps[0], "the middle ring later than the inner")
+	assert_gt(steps[2], steps[1], "the outer ring later still")
+	assert_eq(steps[3], steps[2], "the kaiju with the outer ring")
+	assert_almost_eq(steps[1] * DT, bricks.ring_reach_seconds(2), DT + 1e-6, "when the drawn wave reaches ring 2")
+	assert_almost_eq(steps[2] * DT, bricks.ring_reach_seconds(3), DT + 1e-6, "when the drawn wave reaches ring 3")
+	for e in [near, mid, far, kaiju]:
+		assert_eq(e.damage_taken.size(), 1, "hit exactly once per landing")
+		assert_almost_eq(float(e.damage_taken[0]), 13.5, 1e-9)
+	assert_eq(outside.damage_taken.size(), 0, "outside the widest radius: untouched")
+	assert_eq(near.pushes.size(), 1, "the minion pushed once, by the ring that hit it")
+	assert_lt((near.position / 16.0 - c).length(), bricks.ring_radius(2), "pushed into ring 2's reach, and not hit again")
+	assert_eq(kaiju.pushes.size(), 0, "the kaiju is never pushed")
+	assert_eq(rings, [[1, 1], [2, 1], [3, 2]], "each ring reports its own hits")
+	assert_true(bricks.pending_rings.is_empty())
+
+
+func test_a_new_run_drops_the_rings_still_to_come() -> void:
+	bricks.set_tier(8)
+	var far := _place(FakeEnemy.new(), _car() + Vector2(-20.0, 0.0))
+	_air(0.5)
+	assert_eq(bricks.pending_rings.size(), 2)
+	rack.reset_for_run()
+	assert_true(bricks.pending_rings.is_empty())
+	for i in 50:
+		rack.step(DT)
+	assert_eq(far.damage_taken.size(), 0)
+
+
+func test_the_widest_wave_shows_its_three_ring_sheet_strip_by_strip() -> void:
+	bricks.set_tier(8)
+	bricks.send_wave(_car())
+	var w: Node2D = bricks.last_wave
+	assert_eq(w.sheet, Bricks.BricksWave.sheet_for(25.2))
+	var rec: Dictionary = Bricks.BricksWave.record_for(25.2)
+	assert_eq(w.frames, rec["frames"])
+	assert_gt(w.frames, Bricks.BricksWave.FRAMES, "longer than one ring: the wave travels out")
+	assert_eq(w.runs.size(), w.frames)
+	assert_gte(w.art_centre.x, 25.2 * sqrt(2.0) * 32.0, "the outer ring fits the frame")
+	# Every strip lies inside the atlas and the frame.
+	for a in w.runs:
+		for i in range(0, a.size(), 5):
+			assert_true(a[i] + a[i + 4] <= w.sheet.get_width() and a[i + 1] + w.cell <= w.sheet.get_height())
+			assert_true(a[i + 2] + a[i + 4] <= int(w.frame_size.x))
+	var seen := []
+	var steps := 0
+	while is_instance_valid(w) and not w.is_done():
+		var f: int = w.frame_index()
+		if seen.is_empty() or seen[-1] != f:
+			seen.append(f)
+		rack.step(DT)
+		steps += 1
+	assert_eq(seen, range(w.frames), "every frame in order")
+	assert_almost_eq(steps * DT, w.frames * Bricks.BricksWave.FRAME_SECONDS, DT + 1e-6)
+	# The ring timing the game hits by is the sheet's (build_bricks_wave.py).
+	var json = JSON.parse_string(FileAccess.get_file_as_string("res://art/weapons/bricks_wave_r25_2.json"))
+	for k in [1, 2, 3]:
+		var reach := float(json["ring_reach_seconds"][k - 1])
+		if k > 1:
+			assert_almost_eq(bricks.ring_reach_seconds(k), reach, 1e-6, "ring %d" % k)

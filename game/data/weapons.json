@@ -1,5 +1,5 @@
 {
-  "_comment": "The five MVP weapons: the gun and the flamethrower, copied from the Unity prototype (docs/weapons/unity-weapons-report.md, sections 2 to 5) with the board's fixes (docs/weapons.md, Decisions): damage is never rounded, the flame area is the same size in every direction, missed bullets are removed once past the gun's range. Distances in units (1 unit = the car's width), times in seconds. A tier is 'effect' plus 'value'; effects add up in tier order. Tier 1 is getting the weapon; tiers 2 to max_tier are its upgrades (max_tier: 8 for every weapon without its own; the gun's own is 8 too, and Bricks and the wiper stop at tier 7 until T-498 and T-499 add their tier 8). The gun and the flamethrower never push enemies; of the five only the wiper pushes (knockback_distance, minions only, never the kaiju). The underglow entry is the Game Data Agent's proposal (T-166) for the board's playtest; the gun, flamethrower, molotov, bricks and wiper tiers are the board's own upgrade trees (docs/weapons.md, Decisions, 'The board's own upgrade trees', 2026-11-02; T-496); wiper sweep_arc_degrees is the semicircle, sweep_degrees_per_second how fast the arm turns, hit_cooldown the seconds before the same enemy can be hit again.",
+  "_comment": "The five MVP weapons: the gun and the flamethrower, copied from the Unity prototype (docs/weapons/unity-weapons-report.md, sections 2 to 5) with the board's fixes (docs/weapons.md, Decisions): damage is never rounded, the flame area is the same size in every direction, missed bullets are removed once past the gun's range. Distances in units (1 unit = the car's width), times in seconds. A tier is 'effect' plus 'value'; effects add up in tier order. Tier 1 is getting the weapon; tiers 2 to max_tier are its upgrades (max_tier: 8 for every weapon without its own; the gun's own is 8 too, Bricks' own is 8 too since T-498, and the wiper stops at tier 7 until T-499 adds its tier 8). The gun and the flamethrower never push enemies; of the five only the wiper pushes (knockback_distance, minions only, never the kaiju). The underglow entry is the Game Data Agent's proposal (T-166) for the board's playtest; the gun, flamethrower, molotov, bricks and wiper tiers are the board's own upgrade trees (docs/weapons.md, Decisions, 'The board's own upgrade trees', 2026-11-02; T-496); wiper sweep_arc_degrees is the semicircle, sweep_degrees_per_second how fast the arm turns, hit_cooldown the seconds before the same enemy can be hit again.",
   "max_tier": 8,
   "gun": {
     "_comment": "The gun (Weapons, Decisions, 'The gun one-shots minions and grows in bullets, speed and targets', 2026-10-30; T-408). damage 4 = a minion's health (enemies.json minion.health), so one bullet kills one. max_tier is the gun's own last tier (8, the same as the top-level max_tier; T-496). targets_per_volley is how many enemies a volley aims at: 1 all run (the whole volley at one target, bullets delay_between_bullets apart; a bullet whose target died before it left aims at the closest living enemy instead). The board dropped Multi-Target Mode (2026-11-02, T-496), so no tier uses set_targets, though the code still understands it. fire_rate_multiplier 1.2 is the '20% faster' of the level-up cards (T-412); tier 8 is x4 (Exposure for Everyone). The old range and pierce tiers are gone; range stays 12.",
@@ -104,22 +104,24 @@
     ]
   },
   "bricks": {
-    "_comment": "Bricks (Weapons, Decisions, 2026-10-28; base numbers proposed in T-323, tiers 2 to 7 the board's own tree of 2026-11-02, T-496; tier 8, Widest Wave, comes with T-498; reasons in docs/weapons.md, Content, 'Bricks'). Each time the car lands after being in the air for at least min_air_seconds, one impact wave goes out around it: every enemy within radius takes damage once and minions are pushed knockback_distance away (never the kaiju). The same wave whatever the height of the fall (first build). Offered at level-ups since T-324 built the weapon (scripts/weapons/bricks.gd): offered_in_level_ups is true and 'bricks' is in WEAPON_ORDER and ALL_IDS in level_up_offers.gd.",
+    "_comment": "Bricks (Weapons, Decisions, 2026-10-28; base numbers proposed in T-323, tiers 2 to 7 the board's own tree of 2026-11-02, T-496; tier 8, Widest Wave, T-498; reasons in docs/weapons.md, Content, 'Bricks'). widest_wave (tier 8 only, T-498): the radius times value, and the wave becomes value rings, at the tier 7 radius times 1, 2 and 3; the inner ring hits on the landing, as every tier's wave does, and each outer ring ring_interval seconds after the one inside it reaches its radius (the first outer ring 0.35 s + ring_interval after the landing, when the drawn wave gets there; ring_interval is T-498's proposal for the playtest). Each enemy is hit once per landing, by the first ring that reaches it. Each time the car lands after being in the air for at least min_air_seconds, one impact wave goes out around it: every enemy within radius takes damage once and minions are pushed knockback_distance away (never the kaiju). The same wave whatever the height of the fall (first build). Offered at level-ups since T-324 built the weapon (scripts/weapons/bricks.gd): offered_in_level_ups is true and 'bricks' is in WEAPON_ORDER and ALL_IDS in level_up_offers.gd.",
     "offered_in_level_ups": true,
-    "max_tier": 7,
+    "max_tier": 8,
     "damage": 6,
     "radius": 4,
     "knockback_distance": 4,
     "knockback_kaiju": false,
     "min_air_seconds": 0.3,
     "cooldown": 0.5,
+    "ring_interval": 0.15,
     "tiers": [
       { "tier": 2, "effect": "radius_multiplier", "value": 1.4 },
       { "tier": 3, "effect": "damage_multiplier", "value": 1.5 },
       { "tier": 4, "effect": "knockback_multiplier", "value": 1.5 },
       { "tier": 5, "effect": "radius_multiplier", "value": 1.5 },
       { "tier": 6, "effect": "damage_multiplier", "value": 1.5 },
-      { "tier": 7, "effect": "knockback_multiplier", "value": 1.5 }
+      { "tier": 7, "effect": "knockback_multiplier", "value": 1.5 },
+      { "tier": 8, "effect": "widest_wave", "value": 3 }
     ]
   }
 }
