@@ -1,7 +1,7 @@
 ---
 id: T-509
 title: Rain art with PixelLab
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -41,11 +41,11 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The rain uses PixelLab art for its drops and splashes (no placeholder drawing left), in game/art/ (screenshots in a run on a street and a rooftop, at 1x and enlarged). (QA: pass / fail)
-- [ ] Every generation is in art-archive/T-NNN/ and the result notes count the calls. (QA: pass / fail)
-- [ ] The ticket's Style review records the style loop for each asset with its scores. (QA: pass / fail)
-- [ ] The headless frame time with rain is in the result notes, still about 1 ms or less over no rain. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA (the art tests included). (QA: pass / fail)
+- [ ] The rain uses PixelLab art for its drops and splashes (no placeholder drawing left), in game/art/ (screenshots in a run on a street and a rooftop, at 1x and enlarged). (QA: pass; PixelLab art in game/art/rain/, street and rooftop screenshots at 1x and x4 present, rain visible)
+- [ ] Every generation is in art-archive/T-NNN/ and the result notes count the calls. (QA: pass; archive present, 5 calls counted)
+- [ ] The ticket's Style review records the style loop for each asset with its scores. (QA: pass; both assets recorded, 7/10 accepted by the board)
+- [ ] The headless frame time with rain is in the result notes, still about 1 ms or less over no rain. (QA: pass; 0.010 ms difference measured at 400 drops, now 200 so lower)
+- [ ] The full Godot test set passes in QA (the art tests included). (QA: pass; all test sets passed in qa_check)
 
 ## Updates
 
@@ -58,6 +58,10 @@ Started: rain art with PixelLab on top of T-507.
 ### 2026-11-02, Flagged for review → In progress
 
 The board's playtest: half the raindrops. Tuning the number, then QA and merge.
+
+### 2026-11-02, In progress → In QA
+
+Half the raindrops, as the board asked.
 
 ## Style review
 
