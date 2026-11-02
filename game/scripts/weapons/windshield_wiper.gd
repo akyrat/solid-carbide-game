@@ -86,6 +86,12 @@ var drawing: Node2D = null
 var grow := SizeGrow.new()
 ## True when the arm turned back at an end during the last step.
 var _turned_this_step := false
+## T-499: true for the back wiper (tier 8), a second instance of this script that
+## the front one makes and steps: the same stats, pivot on the car's tail, the arm
+## mirrored (it points behind the car and turns the other way).
+var is_back := false
+## The back wiper (null below tier 8), on the front wiper only.
+var back_wiper: Node = null
 
 
 func _init() -> void:
@@ -116,6 +122,7 @@ func _car() -> Node2D:
 # --- Tiers and runs --------------------------------------------------------
 
 func apply_tier() -> void:
+	_sync_back_wiper()
 	stats = data.wiper_at(maxi(tier, 1))
 	stats["damage"] = boosted_damage(float(stats["damage"]))
 	# T-286: a longer arm grows from the old length to the new one.
@@ -129,6 +136,26 @@ func apply_tier() -> void:
 		last_hit.clear()
 		_reset_sweep()
 	_update_drawing()
+
+
+## T-499: the back wiper exists from tier 8 and is an exact copy of this one
+## (same tier, so the same stats); below it, or when this wiper is lost, it is off.
+func _sync_back_wiper() -> void:
+	if is_back:
+		return
+	var want: bool = tier >= 1 and bool(data.wiper_at(tier)["back_wiper"])
+	if not want and back_wiper == null:
+		return
+	if back_wiper == null:
+		back_wiper = get_script().new()
+		back_wiper.is_back = true
+		back_wiper.name = "BackWiper"
+		back_wiper.rack = rack
+		back_wiper.enemy_hit.connect(func(e, a, p): enemy_hit.emit(e, a, p))
+		add_child(back_wiper)
+	back_wiper.rack = rack
+	back_wiper._via_upgrade = _via_upgrade
+	back_wiper.set_tier(tier if want else 0)
 
 
 func reset_for_run() -> void:
@@ -149,6 +176,8 @@ func _reset_sweep() -> void:
 ## One physics step of `dt` seconds (the rack calls it while owned and the run
 ## is going, after the car has moved).
 func step(dt: float) -> void:
+	if back_wiper != null and back_wiper.is_owned():
+		back_wiper.step(dt)
 	grow.advance(dt)
 	if _car() == null:
 		return
@@ -236,7 +265,14 @@ func car_rotation() -> float:
 ## The car's forward direction (flat world, unit length).
 func forward() -> Vector2:
 	var r := car_rotation()
-	return Vector2(cos(r), sin(r))
+	var f := Vector2(cos(r), sin(r))
+	return -f if is_back else f
+
+
+## +1 for the front wiper, -1 for the back one, whose arm turns the other way
+## (a mirror image of the front one, T-499).
+func turn_sign() -> float:
+	return -1.0 if is_back else 1.0
 
 
 ## The arm's pivot on the car's nose (flat world, units).
@@ -256,7 +292,7 @@ func car_height() -> float:
 ## The arm's direction in the world at `angle_deg` from the car's facing.
 func arm_direction(angle_deg: float = NAN) -> Vector2:
 	var a := sweep_angle if is_nan(angle_deg) else angle_deg
-	return forward().rotated(deg_to_rad(a))
+	return forward().rotated(deg_to_rad(a) * turn_sign())
 
 
 ## The arm's tip now (flat world, units).
@@ -277,7 +313,7 @@ func _touches_swept(e: Node, lo: float, hi: float) -> bool:
 	if d <= r + EPS:
 		return true
 	# The swept wedge (out to the tip's path plus the body's radius).
-	var a := rad_to_deg(forward().angle_to(rel))
+	var a := rad_to_deg(forward().angle_to(rel)) * turn_sign()
 	if a >= lo - EPS and a <= hi + EPS:
 		return true
 	# The arm where it started and ended this step: the body touching it.
@@ -333,7 +369,7 @@ func _ensure_drawing() -> void:
 	if view == null:
 		return
 	drawing = WiperDrawing.new()
-	drawing.name = "WindshieldWiper"
+	drawing.name = "BackWiper" if is_back else "WindshieldWiper"
 	drawing.visible = false
 	view.add_child(drawing)
 

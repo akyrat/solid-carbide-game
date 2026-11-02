@@ -58,8 +58,8 @@ func test_tier_count_per_weapon() -> void:
 	for i in 7:
 		assert_eq(int(gun_tiers[i].tier), i + 2)
 	for weapon in ["flamethrower", "underglow", "molotov", "wiper", "bricks"]:
-		# The wiper ends at tier 7 until T-499 adds its tier 8 (Bricks' came with T-498).
-		var last := 7 if weapon in ["wiper"] else 8
+		# Every weapon ends at tier 8 (Bricks' came with T-498, the wiper's with T-499).
+		var last := 8
 		assert_eq(w.max_tier(weapon), last, weapon)
 		var tiers := w.tiers(weapon)
 		assert_eq(tiers.size(), last - 1)
@@ -117,7 +117,7 @@ func test_five_weapons_each_with_eight_tiers() -> void:
 			count += 1
 			var last := int(raw[k].get("max_tier", raw["max_tier"]))
 			assert_eq(raw[k].tiers.size() + 1, last, "%s has base plus its upgrade tiers" % k)
-			assert_eq(last, 7 if k in ["wiper"] else 8, "%s's last tier (T-496: the wiper 7 until T-499; Bricks 8 since T-498)" % k)
+			assert_eq(last, 8, "%s's last tier (every weapon 8 since T-498 and T-499)" % k)
 	assert_eq(count, 6, "the five MVP weapons and Bricks")
 
 
@@ -224,7 +224,7 @@ func test_tiers_match_the_boards_trees() -> void:
 		"flamethrower": [["size_multiplier", 1.2], ["damage_multiplier", 1.2], ["size_multiplier", 1.3], ["add_burn_flash_seconds", 1], ["size_multiplier", 1.3], ["add_burn_flash_seconds", 1], ["always_on", 1]],
 		"molotov": [["fire_radius_multiplier", 1.2], ["throw_interval_multiplier", 0.8], ["add_molotovs", 1], ["add_molotovs", 1], ["throw_interval_multiplier", 0.7], ["fire_radius_multiplier", 1.3], ["add_molotovs", 1]],
 		"bricks": [["radius_multiplier", 1.4], ["damage_multiplier", 1.5], ["knockback_multiplier", 1.5], ["radius_multiplier", 1.5], ["damage_multiplier", 1.5], ["knockback_multiplier", 1.5], ["widest_wave", 3]],
-		"wiper": [["length_multiplier", 1.2], ["sweep_speed_multiplier", 1.25], ["knockback_multiplier", 1.5], ["length_multiplier", 1.3], ["sweep_speed_multiplier", 1.3], ["length_multiplier", 1.3]],
+		"wiper": [["length_multiplier", 1.2], ["sweep_speed_multiplier", 1.25], ["knockback_multiplier", 1.5], ["length_multiplier", 1.3], ["sweep_speed_multiplier", 1.3], ["length_multiplier", 1.3], ["add_back_wiper", 1]],
 	}
 	for weapon in want:
 		var tiers := w.tiers(weapon)

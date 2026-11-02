@@ -3315,3 +3315,8 @@ Entry format:
 - Decision or change: Bricks tier 8: a x3 wave with two extra crash rings, hitting ring by ring.
 - Documents touched: `docs/weapons.md`
 - Tasks: T-498
+
+## 2026-11-02: Wiper tier 8, the back wiper
+- Decision or change: Wiper tier 8 adds a mirrored back wiper.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-499
