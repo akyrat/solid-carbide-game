@@ -179,9 +179,14 @@ func _build_row(id: String) -> Control:
 	return panel
 
 
-## The upgrade's icon: its PNG when the file exists and loads, else the placeholder.
+## The upgrade's icon: the imported texture (the only form an exported build has, T-511), else the raw PNG
+## (tests that point icon_dir at a plain folder), else the placeholder.
 static func icon_texture(id: String) -> Texture2D:
 	var path := "%s/%s.png" % [icon_dir, id]
+	if ResourceLoader.exists(path):
+		var res: Variant = load(path)
+		if res is Texture2D:
+			return res
 	var real := ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
 	if FileAccess.file_exists(real):
 		var img := Image.load_from_file(real)

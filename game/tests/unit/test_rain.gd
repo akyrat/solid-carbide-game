@@ -1,5 +1,5 @@
 extends GutTest
-## Task T-507: rain over the map. The rain_enabled setting (default true, saved with the other
+## Task T-507: rain over the map. The rain_enabled setting (default false since T-510, saved with the other
 ## settings), its effect at once, the numbers from data/rain.json, the drawing order in the run
 ## (over the world, under the HUD), and the rain moving along its slant with splashes.
 
@@ -28,9 +28,25 @@ func _rain() -> CanvasLayer:
 
 # --- The setting ---
 
-func test_setting_defaults_to_true() -> void:
-	assert_true(GameSettings.DEFAULT_RAIN_ENABLED)
-	assert_true(GameSettings.load_rain_enabled())
+func test_setting_defaults_to_false() -> void:
+	assert_false(GameSettings.DEFAULT_RAIN_ENABLED)
+	assert_false(GameSettings.load_rain_enabled())
+
+
+func test_saved_settings_without_the_rain_key_read_false() -> void:
+	GameSettings.save_zoom(10.0)
+	assert_false(GameSettings.load_rain_enabled())
+
+
+func test_no_rain_draws_in_a_new_players_run() -> void:
+	var run: Node2D = RunScene.instantiate()
+	add_child_autofree(run)
+	run.car.use_keyboard = false
+	await wait_process_frames(4)
+	assert_false(run.rain.enabled)
+	assert_false(run.rain.visible)
+	assert_eq(run.rain.draw_count, 0)
+	assert_eq(run.rain.drops.size(), 0)
 
 
 func test_setting_round_trip() -> void:
@@ -56,7 +72,7 @@ func test_a_bad_saved_value_reads_as_the_default() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("graphics", "rain_enabled", "yes")
 	cfg.save(TEST_PATH)
-	assert_true(GameSettings.load_rain_enabled())
+	assert_false(GameSettings.load_rain_enabled())
 
 
 # --- Showing and hiding ---
@@ -78,6 +94,7 @@ func test_no_rain_draws_when_disabled() -> void:
 
 
 func test_rain_draws_when_enabled() -> void:
+	GameSettings.save_rain_enabled(true)
 	var r := _rain()
 	assert_true(r.enabled)
 	await wait_process_frames(4)
@@ -87,6 +104,7 @@ func test_rain_draws_when_enabled() -> void:
 
 
 func test_saving_the_setting_switches_the_rain_at_once() -> void:
+	GameSettings.save_rain_enabled(true)
 	var r := _rain()
 	await wait_process_frames(2)
 	GameSettings.save_rain_enabled(false)
@@ -206,6 +224,7 @@ func test_run_draws_rain_over_the_world_and_under_the_hud() -> void:
 	var run: Node2D = RunScene.instantiate()
 	add_child_autofree(run)
 	run.car.use_keyboard = false
+	GameSettings.save_rain_enabled(true)
 	var rain: CanvasLayer = run.get_node("Rain")
 	assert_eq(rain, run.rain)
 	assert_gt(rain.layer, 0, "over the map, the car and the enemies (the default canvas, layer 0)")
@@ -214,7 +233,7 @@ func test_run_draws_rain_over_the_world_and_under_the_hud() -> void:
 	assert_false(run.view_root is CanvasLayer)
 	assert_false(run.minions is CanvasLayer, "enemies draw on the world's canvas")
 	await wait_process_frames(3)
-	assert_gt(rain.draw_count, 0, "it rains in a run by default")
+	assert_gt(rain.draw_count, 0, "it rains in a run when the setting is on")
 	GameSettings.save_rain_enabled(false)
 	assert_false(rain.visible, "the run's rain hides as soon as the setting is saved off")
 
@@ -232,6 +251,7 @@ func test_the_rain_uses_the_art_not_the_placeholder() -> void:
 
 
 func test_drops_use_all_variants_and_draw() -> void:
+	GameSettings.save_rain_enabled(true)
 	var r := _rain()
 	r.set_process(false)
 	r.step(0.0)
