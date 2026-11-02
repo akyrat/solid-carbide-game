@@ -1832,6 +1832,7 @@ The player is Stunt Driver, sent by the sponsor Greenbull to cities hit by human
 - The first map is downtown Tokyo under attack from the kaiju, the final boss: a giant monster in the style of Godzilla that is not called Godzilla. Its name is still to come from the board; until then it is "the kaiju". The city has put up a few alert banners about it.
 - The city's people are not shown for now: only the signs they put up (the alert banners, picture-only).
 - **Subs** (board, 2026-10-28): the stream's audience shows in two ways. **Live viewers** are the hype of the moment (the combo, rising with tricks and crashing with crashes). **Subs** are what the stream builds up: drifting brings them, and every full **sub goal** gets Greenbull to send a gift pack. "Subs" replaces "likes" in every player-facing text, and in Text rules, rule 2 (the vocabulary). (T-331)
+- **The combo multiplier instead of live viewers** (board, 2026-11-02; Game loop architecture, Decisions, "Back to the combo multiplier; tricks pay subs"): the board found the live viewers confusing, so the combo shows again as its multiplier (x2.50) beside the car, and tricks pay subs as well as raising it. The player no longer sees "live viewers" or "WATCHING"; subs and the sub goal stay. Text rules, rule 2, follows. Being played in a playtest build before it merges. (T-512, T-513, T-514)
 
 ### Content
 
@@ -1840,7 +1841,7 @@ The player is Stunt Driver, sent by the sponsor Greenbull to cities hit by human
 The text style guide: every piece of player-facing text is checked against these rules, each written once here (with Visual style's Rules, the style guide the style loop scores against; `tasks/README.md`, "The style loop"). Each rule condenses a decision; when the decision changes, its rule changes with it. Rules marked *(script)* are checked by a script, the others by the Style Evaluator.
 
 1. **Tone:** satirical, ironic and tongue-in-cheek. It makes fun of soulless corporate language, social media and brand obsession. Greenbull is out of touch and focused on profit, never evil and never sincere; the fun should feel slightly unethical. The city's people and their fear are never the joke. No grimdark, gore or earnest heroics. (Decisions, "Tone"; Content, "The alert banners")
-2. **Vocabulary** *(script, banned words)*: the player sees "subs" for what they earn toward a gift pack and "live viewers" for the audience counter, never "likes", "XP" or "points", and no "Hype Lv" or hype level (board, 2026-10-28); the weapon reward is a "gift pack"; the player is "Stunt Driver"; the sponsor is "Greenbull", never "Redgull" (its old name); the run is a livestream to Greenbull's audience; the monster is "the kaiju", never "Godzilla" and never given a name. (Decisions)
+2. **Vocabulary** *(script, banned words)*: the player sees "subs" for what they earn toward a gift pack and the combo's multiplier (x2.50) for the hype of the moment (no "live viewers" counter since 2026-11-02, Decisions), never "likes", "XP" or "points", and no "Hype Lv" or hype level (board, 2026-10-28); the weapon reward is a "gift pack"; the player is "Stunt Driver"; the sponsor is "Greenbull", never "Redgull" (its old name); the run is a livestream to Greenbull's audience; the monster is "the kaiju", never "Godzilla" and never given a name. (Decisions)
 3. **Who speaks:** Greenbull's voice is for Greenbull's things (gift packs, level-up, garage, the stream). The city never speaks in Greenbull's voice: its signs are picture-only. No line takes the form "Greenbull says ..." (HUD and menus, Decisions, "No "Greenbull says ..." lines"). No real brands. (Decisions; Visual style, Decisions, "City brief")
 4. **Format and length, by kind of text** *(script)*:
    - **Trick and combo popups:** one short line in capitals ending in "!", like LONG DRIFT!, AIR 360! and COMBO BROKEN! (HUD and menus, Content, "Trick popups", "Combo broken popup")
@@ -2197,5 +2198,5 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `weapons.md` | `513bbdf945efac0df29c508a3060ba57b6ed94adf26f26d286cdcb5c7a677fd0` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
 | `visual-style.md` | `f7cb0dc3b397467995a7f0ee0cbe532266fcc10a400acc5dc1f079cdecc9c1ea` |
-| `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
+| `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
 | `hud-and-menus.md` | `cd5f29319fc56f237b1cd80c96e71adfee6a5367fdbbb58d2e4a7d9b915f763d` |
