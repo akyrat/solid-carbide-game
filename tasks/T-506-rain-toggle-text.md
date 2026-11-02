@@ -1,7 +1,7 @@
 ---
 id: T-506
 title: Text for the rain toggle in the settings
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -49,10 +49,24 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started: the rain toggle's label.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Run by `tools/style_loop/run.py` on 2026-11-02: text, kind label, brief `art-archive/T-506/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+### Round 1
+
+- Version 1: "Rain"
+- Script checks: 4 of 4 pass
+- Score: 9/10
+- Reason: "Rain" breaks no rule I can find. The script checks pass: no banned words, no Greenbull line, one line, sentence case. It matches the brief: short, plain settings voice, no end punctuation, no on/off words. It sits well beside "Camera smoothing" and "Dynamic camera", and it names the thing the checkbox switches. I did not open the Text rules to check for anything the script can't test. The one point off is that "Rain" is a bare noun, a bit terser than the neighbouring two-word labels. That is not a rule break and needs no fix.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Rain", copied to `art-archive/T-506/label.txt`): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added key `rain_label` = "Rain" in `game/data/pause_text.json` (the file of the pause screen's settings texts; the ticket named screen_texts.json, but the other settings labels are in pause_text.json). The other settings checkboxes (Camera smoothing, Dynamic camera) have no on/off words, so the rain toggle has none either: label only. Style loop: round 1, score 9/10, 4 of 4 script checks pass (Style review). Tests: game/tests/unit/test_rain_label_text.gd and test_pause_screen pass. Not shown in-game yet (T-508 reads the key); fixture image: art-archive/T-506/screenshots/rain_label_text.png. Note: a hook refused one chained timeout-wrapped --import command; I reran it on its own, as its message said.
