@@ -1,7 +1,7 @@
 ---
 id: T-509
 title: Rain art with PixelLab
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/level-design.md]
 files_expected_to_change: [game/art/, art-archive/, game/data/, game/tests/unit/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ The board's playtest: half the raindrops. Tuning the number, then QA and merge.
 ### 2026-11-02, In progress → In QA
 
 Half the raindrops, as the board asked.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 5 criteria; ready for the board's final play.
 
 ## Style review
 
@@ -297,3 +301,4 @@ Done: rain art swapped in for the placeholder.
 - 2026-11-02, flagged-for-review → in-progress: The board, 2026-11-02, after playing the combined build: rain less intense, about half the raindrops on screen. Everything else LGTM.
 
 Board's tweak (2026-11-02, after playing the combined build): "rain should be less intense (like half the raindrops currently on screen)". Changed data/rain.json drops_per_screen 400 to 200 (T-507 started at 220); splash numbers unchanged, since splashes come from ending drops, so they halve too. test_rain.gd 20/20. Street and rooftop screenshots retaken in art-archive/T-509/screenshots/. No PixelLab calls.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM. Rain at half the drops (the board's tweak).
