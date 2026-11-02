@@ -1,7 +1,7 @@
 ---
 id: T-503
 title: Icons: Rusty Paintjob's spray can and the Polarized Steering Wheel
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, game/art/power_ups/]
 files_expected_to_change: [game/art/power_ups/, art-archive/, game/tests/unit/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -66,6 +66,10 @@ The board keeps v4 for the wheel. Screenshots, then QA.
 ### 2026-11-02, In progress → In QA
 
 Icons in: spray can v1, wheel v4 (the board's picks).
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 5 criteria; both icons (can v1, wheel v4) are in and shown on the overlay cards. Ready for the board's playtest.
 
 ## Style review
 
