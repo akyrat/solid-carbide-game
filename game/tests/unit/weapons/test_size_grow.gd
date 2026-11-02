@@ -110,10 +110,10 @@ func test_each_weapon_grows_from_the_old_size_to_the_data_size() -> void:
 
 
 func test_every_size_tier_in_the_data_grows_to_its_size() -> void:
-	var size_tiers := {"wiper": [2, 6], "underglow": [2, 5, 8], "flamethrower": [2, 4, 6]}
+	var size_tiers := {"wiper": [2, 5, 7], "underglow": [2, 5, 8], "flamethrower": [2, 4, 6]}
 	for id in size_tiers:
 		var w = _own(id)
-		for t in range(2, 9):
+		for t in range(2, w.max_tier() + 1):  # T-496: the wiper ends at 7 for now
 			w.upgrade()
 			var prev := _data_size(id, t - 1)
 			var new := _data_size(id, t)

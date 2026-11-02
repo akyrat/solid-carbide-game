@@ -122,16 +122,17 @@ func test_meteor_attacks_in_the_kaiju_minute() -> void:
 
 func test_kaiju_time_to_kill_matches_result_notes() -> void:
 	# [gun tier, flame tier (0 = no flame), garage damage bonus level, seconds]
-	# T-408 (2026-10-30): the gun's damage 4 (a minion's health) and its new tiers
-	# (11, bullets/speed/targets) roughly halve the gun's share; numbers in T-408's result notes.
+	# T-408 (2026-10-30): the gun's damage 4 (a minion's health). T-496 (2026-11-02): the board's
+	# own 8-tier gun (+1 bullet at 2, 3 and 6; fire rate x1.2 at 4, 5 and 7; x4 at 8; one target).
+	# The numbers are worked out from the data by _kaiju_seconds (500 health, flame 30% on target).
 	var cases := [
 		[1, 0, 0, 157.5],   # start of a run: the gun alone, never upgraded
 		[4, 4, 0, 33.5],    # average run (level 8): flame, gun tier 4, flame tier 4
 		[4, 4, 5, 26.8],    # the same with garage damage bonus level 5 (+25%)
-		[6, 6, 0, 29.4],    # top level (12): gun tier 6, flame tier 6
-		[8, 0, 0, 22.3],    # gun tier 8, no flame
-		[8, 4, 10, 12.8],   # gun tier 8, flame tier 4, garage bonus maxed (+50%)
-		[11, 0, 0, 16.0],   # the gun's last tier alone
+		[6, 6, 0, 23.2],    # top level (12): gun tier 6, flame tier 6
+		[8, 0, 0, 7.3],     # gun tier 8 (x4 fire rate), no flame
+		[8, 4, 10, 4.6],    # gun tier 8, flame tier 4, garage bonus maxed (+50%)
+		[7, 0, 0, 23.6],    # gun tier 7 alone
 	]
 	for c in cases:
 		assert_almost_eq(_kaiju_seconds(c[0], c[1], c[2]), c[3], 0.05,
