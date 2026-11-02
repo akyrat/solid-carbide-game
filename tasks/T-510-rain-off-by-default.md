@@ -1,7 +1,7 @@
 ---
 id: T-510
 title: Rain off by default
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-507-rain-over-the-map.md]
 files_expected_to_change: [game/scripts/, game/tests/unit/, game/docs/, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -73,3 +73,4 @@ Default changed: GameSettings.DEFAULT_RAIN_ENABLED false (game_settings.gd). Tes
 QA round 1: 5 of 6 pass (tests green, screenshot shows unticked Rain, no rain). FAIL (paperwork): docs/hud-and-menus.md line 194 still says rain_enabled is on by default; change to off by default (T-510). docs/long-gdd.md copies regenerate at merge.
 
 QA round 2: criterion 4 now passes (docs/hud-and-menus.md line 194 says off by default; no other doc outside the generated long GDD says on by default). All 6 criteria pass.
+- 2026-11-02, in-qa → done: The board asked for rain off by default and a push to itch straight after QA (2026-11-02).
