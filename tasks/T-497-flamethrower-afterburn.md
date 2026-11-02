@@ -1,7 +1,7 @@
 ---
 id: T-497
 title: Hot Take Exhaust afterburn: burning enemies keep taking damage
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -54,6 +54,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started in parallel: real afterburn for the flamethrower.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -61,3 +65,22 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Weapon Behavior Agent, 2026-11-02.
+
+**What changed (game/scripts/weapons/flamethrower/exhaust_flamethrower.gd).** The burn is now the flame's damage. Each burning enemy has its own entry in `burning` with `left` (burn seconds left) and `tick` (seconds since its last hit). Every step `_age_burns()` runs first (in `step()` and `step_wrecked()`): each burn's clock runs and every `tick_interval` the enemy takes one hit of `stats.damage` (the flame's damage now, after tiers and the garage bonus), inside the flame or not; at the end of the burn (a hit due on that very step still lands) the tint and burn flames go. Then, while the flame is on, an enemy touching it that is not burning takes the entering hit and starts burning; one already burning only has its burn time set back to full (`_refresh_burn()`, no extra hit). So the burn counts from the last step an enemy touched the flame, and every hit comes from one clock per enemy: at most one flame hit per tick. The shared `tick_timer` is gone. The entering step counts on the enemy's clock, so an enemy that stays inside gets exactly the old rhythm (entering hit + one every 0.2 s); one entering mid-cycle now gets its next hit a full tick after entering instead of at the next shared tick. Burns keep hitting while the car is wrecked (Weapons, Decisions, "Weapons during the wreck": burning enemies keep going). weapons.json untouched; tests set `burn_flash_seconds` in the stats directly.
+
+**Tests (all run, all pass):**
+- `bash game/tools/run_tests.sh -gselect=test_exhaust_flamethrower.gd`: 36/36 passing (6 new: `test_afterburn_at_tier_1_hits_every_tick_for_the_burn_time_then_stops` (AC1, flame on and off), `test_afterburn_hits_are_the_flames_current_damage`, `test_two_more_seconds_of_burn_keep_it_burning_two_seconds_longer` (AC2), `test_an_enemy_inside_and_burning_takes_one_hit_per_tick` (AC3, also going in and out every 3 steps), `test_re_entering_the_flame_refreshes_the_burn` (AC4), `test_tint_and_burn_flames_stay_on_for_exactly_the_burn_time` (AC5, 0.38, 1.0 and 2.38 s)). `test_entering_hit_flashes_the_enemy_for_the_burn_time` changed: the enemy stays inside through the 0.2 s linger, so its burn now ends linger + burn time later.
+- `-gselect=test_weapons_wreck.gd`: 13/13 (1 new: `test_a_burning_enemy_keeps_taking_damage_during_the_wreck`).
+- `-gselect=test_burn_flames.gd`: 7/7 (unchanged).
+
+**Screenshots (AC8):** `art-archive/T-497/screenshots/afterburn_frame_60.png` and `afterburn_frame_120.png`: three minions moved out of the flame, in front of the car, still burning (burn time 2.38 s set in the stats, tier 6 flame); three on the right never touched it. `afterburn_frame_220.png`: the same after the burn is over. Fixture `game/tests/fixtures/weapons/flame_afterburn_demo.gd` / `flame_afterburn_shot.tscn` (the run scene directly, mission overlay disconnected).
+
+**Documents updated:** docs/weapons.md (Content, the exhaust flamethrower: "Damage and afterburn"), game/docs/weapons/flamethrower.md (each step, tests, "See the afterburn").
+
+**For the Project Lead / playtest:**
+- Weapons, Decisions, "Weapons during the wreck" still says (T-414 proposal) "the flamethrower's burn tints already on enemies run out"; with afterburn they also keep doing damage, as the same entry's "burning enemies keep going" says. That Decisions line is the Project Lead's to reword if wanted; Content is updated.
+- The Content tiers line and the summary still say "burn flash" for tier 5; left for T-496, which changes those tiers, to avoid a conflict.
+- Seen in the screenshots: the burn flames cover a minion entirely, and the orange tint also tints the flames (they are a child of the sprite). With afterburn they now show for the whole burn time outside the flame (up to 2.38 s at tier 7), so this look is more visible than before. Existing art behaviour, not changed here.
+- The old fixture `tests/fixtures/weapons/flame_hit_area_shot.tscn` (T-267) no longer runs: `game.run` is null after pressing Start (the menu flow changed since). Not fixed here (outside this ticket).
