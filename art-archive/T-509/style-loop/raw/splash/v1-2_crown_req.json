@@ -1,0 +1,9 @@
+{
+  "description": "a single small raindrop splash on wet ground, pixel art water effect, a crown of 3 tiny droplets thrown up and out above a flat wide oval ripple ring, pale blue-white droplets, light blue-grey ring, darker desaturated blue far edge of the ring, isometric view from above at an angle, no outline, night, transparent background",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "isometric": true,
+  "outline": "lineless",
+  "shading": "flat shading",
+  "detail": "low detail"
+}
