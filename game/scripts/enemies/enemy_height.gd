@@ -32,6 +32,12 @@ const SUB_STEP := 0.25
 ## How far (units) the car's height may be from the enemy's ground for its
 ## contact damage to hit (a proposal for the playtest).
 const LEVEL_TOLERANCE := 1.0
+## T-515 (Enemies, Decisions, "Even the lowest Jump clears a minion"): how far (units) the car's
+## height may be from a minion's ground for the minion's contact damage to hit the car (a
+## proposal for the playtest). Tighter than LEVEL_TOLERANCE so the Jump's lowest tier (peak
+## about 1.04, car clear above 0.5 for about 0.6 s) hops over a minion. A car and a minion on
+## the same ramp differ by about 0.25 per unit of distance, so they still touch at their level.
+const MINION_CONTACT_TOLERANCE := 0.5
 
 const _PROBES := [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
 ## T-444: every height below is read through the ground's quick lookup (enemy_ground_index.gd,
@@ -172,6 +178,12 @@ static func _slide(ground, from: Vector2, motion: Vector2, radius: float, body_h
 ## included) is at the level of an enemy standing on ground `enemy_ground`.
 static func at_car_level(enemy_ground: float, car_height: float) -> bool:
 	return absf(car_height - enemy_ground) <= LEVEL_TOLERANCE
+
+
+## True when a car at `car_height` is low enough for a minion standing on `enemy_ground` to hit
+## it (T-515: MINION_CONTACT_TOLERANCE; the kaiju, meteors and crowding keep at_car_level).
+static func minion_can_hit(enemy_ground: float, car_height: float) -> bool:
+	return absf(car_height - enemy_ground) <= MINION_CONTACT_TOLERANCE
 
 
 ## The car's height (units): car.height on a map with heights, else 0.

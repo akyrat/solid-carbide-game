@@ -351,8 +351,8 @@ func touches_car(car_centre_units: Vector2, car_rotation: float) -> bool:
 ## (0, none: enemies.json no longer has it, T-333): the car loses contact_damage through `state.damage_car()` and is
 ## knocked back away from the minion through `car.apply_knockback()`.
 ## On a map with heights (T-207) only when the car is at its level
-## (EnemyHeight.at_car_level: a car on a rooftop above it, or high in the air,
-## is not hit). Returns true when it hit this step.
+## (EnemyHeight.minion_can_hit, T-515: a car on a rooftop above it, or more than 0.5 units
+## up in the air, is not hit). Returns true when it hit this step.
 func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	contact_cooldown = maxf(contact_cooldown - dt, 0.0)
 	overcoat_cooldown = maxf(overcoat_cooldown - dt, 0.0)
@@ -361,7 +361,7 @@ func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if not touches_car(car_units, car.rotation):
 		return false
-	if ground != null and not EnemyHeightScript.at_car_level(body_height(), EnemyHeightScript.car_height(car)):
+	if ground != null and not EnemyHeightScript.minion_can_hit(body_height(), EnemyHeightScript.car_height(car)):
 		return false
 	# T-463 Rusty Overcoat: the car damages the minion it touches (before the car's own
 	# invulnerability, which only protects the car).
