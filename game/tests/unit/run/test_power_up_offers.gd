@@ -36,7 +36,8 @@ func _max_out(id: String) -> void:
 
 
 func test_a_fresh_car_can_be_offered_every_power_up() -> void:
-	assert_eq(offers.available_offers(), ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat"])
+	assert_eq(offers.available_offers(), ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat",
+			"polarized_steering_wheel"])
 	for id in offers.available_offers():
 		assert_eq(offers.offered_tier(id), 1, "a power-up not owned is offered at tier 1")
 
@@ -51,7 +52,7 @@ func test_an_owned_power_up_is_offered_at_its_next_tier() -> void:
 func test_a_power_up_at_its_last_tier_is_never_offered() -> void:
 	_max_out("jump")
 	_max_out("rev_charge")
-	assert_eq(offers.available_offers(), ["bouncy_bumpers", "rusty_overcoat"])
+	assert_eq(offers.available_offers(), ["bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel"])
 	for s in 40:
 		offers.rng.seed = s
 		var ids := offers.compute_offers()
@@ -80,7 +81,7 @@ func test_a_completed_mission_opens_a_gift_of_two() -> void:
 
 
 func test_with_one_power_up_left_the_gift_offers_it_alone() -> void:
-	for id in ["rev_charge", "jump", "bouncy_bumpers"]:
+	for id in ["rev_charge", "jump", "bouncy_bumpers", "polarized_steering_wheel"]:
 		_max_out(id)
 	state.grant_power_up("rusty_overcoat")
 	state.missions.mission_completed.emit(3)
@@ -132,3 +133,27 @@ func test_a_new_run_drops_the_gift() -> void:
 	state.start_run()
 	assert_false(offers.is_showing())
 	assert_eq(offers.pending.size(), 0)
+
+
+## T-502: the Polarized Steering Wheel is in the mission gift's pool like the others,
+## offered at tier 1, then its next tiers, never past tier 4.
+func test_the_polarized_steering_wheel_is_a_mission_gift() -> void:
+	assert_true(offers.available_offers().has("polarized_steering_wheel"))
+	assert_eq(offers.offered_tier("polarized_steering_wheel"), 1)
+	var drawn := false
+	for s in 60:
+		offers.rng.seed = s
+		if offers.compute_offers().has("polarized_steering_wheel"):
+			drawn = true
+			break
+	assert_true(drawn, "some gift draws it")
+	for id in ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat"]:
+		_max_out(id)
+	state.missions.mission_completed.emit(4)
+	assert_eq(ready_calls.size(), 1)
+	assert_eq(ready_calls[0][1], ["polarized_steering_wheel"])
+	assert_true(offers.choose("polarized_steering_wheel"))
+	assert_eq(state.power_up_tier("polarized_steering_wheel"), 1, "taking it gives tier 1")
+	_max_out("polarized_steering_wheel")
+	assert_eq(state.power_up_tier("polarized_steering_wheel"), 4)
+	assert_false(offers.available_offers().has("polarized_steering_wheel"), "never past tier 4")
