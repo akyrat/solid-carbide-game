@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-502]
+depends_on: []
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, game/art/power_ups/]
 files_expected_to_change: [game/art/power_ups/, art-archive/, game/tests/unit/]
