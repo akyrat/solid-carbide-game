@@ -79,9 +79,8 @@ func test_values_are_the_ones_before_t428() -> void:
 		"sub_goal": [20, Color(0.92, 0.95, 1.0), Color(0.03, 0.03, 0.06), 6],
 		"weapon_count": [32, Color(1, 1, 1), Color(0, 0, 0), 8],
 		"air_counter": [30, Color(1, 1, 1), Color(0, 0, 0), 8],
-		"viewers_unit": [14, Color("#33e1ff"), Color(0.03, 0.03, 0.06), 6],
-		"viewers_flight": [30, Color("#33e1ff"), Color(0.03, 0.03, 0.06), 6],
-		"viewers_drop": [24, Color("#ff5010"), Color(0.03, 0.03, 0.06), 6],
+		"multiplier_flight": [30, Color("#33e1ff"), Color(0.03, 0.03, 0.06), 6],
+		"multiplier_drop": [24, Color("#ff5010"), Color(0.03, 0.03, 0.06), 6],
 		"level_up_title": [40, Color8(246, 250, 232), Color8(14, 22, 18), 6],
 	}
 	for role_name in old:
@@ -221,8 +220,7 @@ func test_hud_labels_use_the_style() -> void:
 	_assert_role(hud.sub_goal.label, "sub_goal")
 	_assert_role(hud.airtime_counter.number_label, "air_counter")
 	_assert_role(hud.drift_counter.number_label, "air_counter")
-	_assert_role(hud.viewers_counter.unit_label, "viewers_unit", hud.viewers_counter.color)
-	_assert_role(hud.viewers_counter.number_label, "viewers_number")
+	_assert_role(hud.multiplier_tag.number_label, "multiplier_number")
 
 
 func test_weapon_counts_use_the_style() -> void:
@@ -236,24 +234,24 @@ func test_weapon_counts_use_the_style() -> void:
 		_assert_role(hud.weapon_icons.rows[id].count, "weapon_count")
 
 
-func test_viewers_number_follows_the_heat_steps() -> void:
+func test_multiplier_number_follows_the_heat_steps() -> void:
 	var hud := _hud()
-	var vc := hud.viewers_counter
-	var sizes: Array = vc.cfg.get("number_sizes", HudStyle.VIEWERS_NUMBER_SIZES)
+	var vc := hud.multiplier_tag
+	var sizes: Array = vc.cfg.get("number_sizes", HudStyle.MULTIPLIER_NUMBER_SIZES)
 	assert_eq(vc.number_label.get_theme_font_size("font_size"), int(sizes[0]))
 	assert_eq(vc.number_label.get_theme_color("font_color"), vc.color)
-	assert_eq(vc.number_label.get_theme_constant("outline_size"), int(HudStyle.role("viewers_number")["outline"]))
+	assert_eq(vc.number_label.get_theme_constant("outline_size"), int(HudStyle.role("multiplier_number")["outline"]))
 
 
 func test_flight_and_drop_use_the_style() -> void:
-	var f := ViewersFlight.new()
+	var f := MultiplierFlight.new()
 	add_child_autofree(f)
-	f.setup("+12K", HudStyle.VIEWERS_COLOR, Vector2.ZERO, func() -> Vector2: return Vector2.ZERO, 0.5, 90.0)
-	_assert_role(f.label, "viewers_flight")
-	var d := ViewersDrop.new()
+	f.setup("+12K", HudStyle.MULTIPLIER_COLOR, Vector2.ZERO, func() -> Vector2: return Vector2.ZERO, 0.5, 90.0)
+	_assert_role(f.label, "multiplier_flight")
+	var d := MultiplierDrop.new()
 	add_child_autofree(d)
-	d.setup("-12K", HudStyle.VIEWERS_CRASH_COLOR, Vector2.ZERO, 0.9, 70.0)
-	_assert_role(d, "viewers_drop")
+	d.setup("-12K", HudStyle.MULTIPLIER_CRASH_COLOR, Vector2.ZERO, 0.9, 70.0)
+	_assert_role(d, "multiplier_drop")
 
 
 func test_heat_look_on_a_label() -> void:

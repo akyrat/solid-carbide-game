@@ -1,10 +1,10 @@
-class_name ViewersDrop
+class_name MultiplierDrop
 extends Label
-## A crash's "-{viewers lost}" (T-336): it appears on the live viewers counter in the
+## A crash's "-x{lost}" (T-336, T-514): it appears on the multiplier beside the car in the
 ## warning red and drops away from it, falling faster as it goes and fading, then
 ## frees itself. Pausable.
 
-const FONT_SIZE := HudStyle.VIEWERS_DROP_SIZE
+const FONT_SIZE := HudStyle.MULTIPLIER_DROP_SIZE
 
 var age := 0.0
 var seconds := 0.9
@@ -13,7 +13,7 @@ var start := Vector2.ZERO
 
 
 func _init() -> void:
-	name = "ViewersDrop"
+	name = "MultiplierDrop"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 
@@ -23,7 +23,7 @@ func setup(t: String, color: Color, at: Vector2, drop_seconds: float, drop_px: f
 	text = t
 	seconds = maxf(drop_seconds, 0.01)
 	fall = drop_px
-	HudStyle.apply(self, "viewers_drop", color)
+	HudStyle.apply(self, "multiplier_drop", color)
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	size = get_combined_minimum_size()
 	start = Vector2(at.x - size.x / 2.0, at.y - size.y)
@@ -50,6 +50,6 @@ func advance(dt: float) -> void:
 
 
 func _process(dt: float) -> void:
-	if Perf.on: Perf.each_begin(&"hud.viewers_drop")
+	if Perf.on: Perf.each_begin(&"hud.multiplier_drop")
 	advance(dt)
-	if Perf.on: Perf.each_end(&"hud.viewers_drop")
+	if Perf.on: Perf.each_end(&"hud.multiplier_drop")

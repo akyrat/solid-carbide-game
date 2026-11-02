@@ -90,7 +90,7 @@ SCREEN_BY_FILE = {
     "scripts/hud/trick_popups.gd": "HUD (popups over the car)",
     "scripts/hud/weapon_icons.gd": "HUD (weapon icons)",
     "scripts/hud/mission_page.gd": "HUD, mission notebook page",
-    "scripts/hud/viewers_counter.gd": "HUD (viewers counter)",
+    "scripts/hud/multiplier_tag.gd": "HUD (multiplier beside the car)",
     "scripts/hud/sub_goal.gd": "HUD (sub goal)",
     "scripts/hud/kaiju_health_bar.gd": "HUD (kaiju health bar)",
     "scripts/hud/airtime_counter.gd": "HUD (airtime counter)",

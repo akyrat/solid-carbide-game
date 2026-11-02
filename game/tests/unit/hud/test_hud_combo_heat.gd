@@ -4,7 +4,7 @@ extends GutTest
 ## the likes bar on fire only at the top step, the look following the combo
 ## down, the comic font with the words unchanged, not the heart's red, the layout
 ## holding at the top step and the effects standing still while paused.
-## Since T-336 the combo counter is the live viewers counter (test_hud_viewers_counter.gd):
+## Since T-514 the combo shows as the multiplier beside the car (test_hud_multiplier_tag.gd):
 ## here the heat steps, the likes bar's fire and the counter's carried-over heat look.
 
 const RUN := preload("res://scenes/run/run.tscn")
@@ -58,13 +58,13 @@ func test_thresholds_are_named_constants() -> void:
 
 
 func test_each_step_is_bigger_than_the_one_before() -> void:
-	# T-336: the viewers counter's number grows at each heat step (hud.json number_sizes).
+	# T-514: the multiplier number grows at each heat step (hud.json number_sizes).
 	var r := _run()
 	var hud: Hud = r.hud
 	var sizes: Array[int] = []
 	for m: float in [1.5, 2.0, 3.0, 4.0]:
 		_show(hud, m)
-		sizes.append(_font_size(hud.viewers_counter.number_label))
+		sizes.append(_font_size(hud.multiplier_tag.number_label))
 	for i in range(1, 4):
 		assert_gt(sizes[i], sizes[i - 1], "step %d bigger than step %d" % [i, i - 1])
 
@@ -127,13 +127,13 @@ func test_a_collision_cuts_the_heat() -> void:
 	assert_eq(hud.combo_step(), ComboHeat.step_for(r.state.combo))
 	assert_lt(hud.combo_step(), 3, "a hit drops the heat")
 	assert_false(hud.fire_on(), "and puts the fire out")
-	assert_eq(hud.viewers_counter.step, hud.combo_step(), "the viewers counter cools down with it")
+	assert_eq(hud.multiplier_tag.step, hud.combo_step(), "the multiplier cools down with it")
 
 
 func test_comic_font_with_the_words_unchanged() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
-	for l: Label in [hud.viewers_counter.number_label, hud.viewers_counter.unit_label, hud.sub_goal.label]:
+	for l: Label in [hud.multiplier_tag.number_label, hud.sub_goal.label]:
 		var f := l.get_theme_font("font") as FontFile
 		assert_not_null(f, "%s has a font file" % l.name)
 		assert_eq(f.get_font_name(), "Bangers", "%s in Bangers" % l.name)
@@ -155,12 +155,12 @@ func test_no_heart_red() -> void:
 	# The colours really used on screen, over many animation frames.
 	var r := _run()
 	var hud: Hud = r.hud
-	var number := hud.viewers_counter.number_label
+	var number := hud.multiplier_tag.number_label
 	for m: float in [1.5, 2.0, 3.0, 6.0]:
 		_show(hud, m)
 		for f in 30:
-			hud.viewers_counter.time = f * ComboHeat.FLICKER_FRAME
-			hud.viewers_counter._animate()
+			hud.multiplier_tag.time = f * ComboHeat.FLICKER_FRAME
+			hud.multiplier_tag._animate()
 			_assert_not_red(number.get_theme_color("font_color"), "counter at x%s" % m)
 			var glow := number.get_theme_color("font_shadow_color")
 			if glow.a > 0.0:
@@ -213,8 +213,8 @@ func test_layout_holds_at_the_top_step() -> void:
 		for f in 12:
 			hud.combo_heat.time = f * ComboHeat.FLICKER_FRAME
 			hud.combo_heat._animate()
-			var combo := hud.viewers_counter.get_global_rect()
-			assert_true(view.encloses(combo), "%s: viewers counter inside the screen" % where)
+			var combo := hud.multiplier_tag.get_global_rect()
+			assert_true(view.encloses(combo), "%s: multiplier inside the screen" % where)
 			var fire := hud.likes_fire.get_global_rect()
 			assert_true(view.encloses(fire), "%s: the flames inside the screen" % where)
 			assert_false(fire.intersects(combo), "%s: the flames stay clear of the counter" % where)
@@ -231,14 +231,14 @@ func test_effects_stand_still_while_paused() -> void:
 	var heat_t := hud.combo_heat.time
 	var fire_t := hud.likes_fire.time
 	var fire_f := hud.likes_fire.frame
-	var scale := hud.viewers_counter.number_label.scale
-	var counter_t := hud.viewers_counter.time
+	var scale := hud.multiplier_tag.number_label.scale
+	var counter_t := hud.multiplier_tag.time
 	await wait_process_frames(20)
 	assert_eq(hud.combo_heat.time, heat_t, "the pulse stands still")
 	assert_eq(hud.likes_fire.time, fire_t, "the flames stand still")
 	assert_eq(hud.likes_fire.frame, fire_f)
-	assert_eq(hud.viewers_counter.number_label.scale, scale, "the counter's pulse stands still")
-	assert_eq(hud.viewers_counter.time, counter_t)
+	assert_eq(hud.multiplier_tag.number_label.scale, scale, "the counter's pulse stands still")
+	assert_eq(hud.multiplier_tag.time, counter_t)
 	get_tree().paused = false
 	await wait_process_frames(20)
 	assert_gt(hud.combo_heat.time, heat_t, "moving again once unpaused")
@@ -267,4 +267,4 @@ func test_in_a_run_started_from_the_main_menu() -> void:
 	assert_true(hud.fire_on())
 	await wait_process_frames(2)
 	assert_true(hud.likes_fire.is_visible_in_tree(), "the fire shows in the game")
-	assert_true(hud.viewers_counter.is_visible_in_tree())
+	assert_true(hud.multiplier_tag.is_visible_in_tree())

@@ -223,7 +223,7 @@ func test_run_scene_drift_pays_its_combo_once_when_it_ends() -> void:
 	assert_almost_eq(run.state.combo, 1.0 + c.drift_amount(seconds), 0.000001, "one payment, scaled by its length")
 	assert_gt(run.state.combo, 1.0)
 	var texts: Array = run.trick_popups.popups().map(func(p) -> String: return p.text)
-	assert_eq(texts.filter(func(t: String) -> bool: return t == TrickPopups.trick_text("extended_drift", TrickPopups.trick_viewers(run.state.combo - 1.0, run.state.combo))).size(), 1, "the popup shows the amount (T-336: as viewers)")
+	assert_eq(texts.filter(func(t: String) -> bool: return t == TrickPopups.trick_text("extended_drift", run.state.combo - 1.0)).size(), 1, "the popup shows the amount (T-336: as viewers)")
 
 
 func test_new_run_resets_xp_and_level() -> void:

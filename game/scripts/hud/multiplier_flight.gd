@@ -1,15 +1,12 @@
-class_name ViewersFlight
+class_name MultiplierFlight
 extends Control
-## A trick's "+12K" with the viewers' eye, flying from its popup into the live viewers
-## counter (T-336). It leaves the popup at `from` (HUD pixels), flies on an arc over
+## A trick's "+x0.5", flying from its popup into the multiplier beside the car (T-336, T-514). It leaves the popup at `from` (HUD pixels), flies on an arc over
 ## `seconds`, speeding up as it goes and shrinking a little, and sends `arrived` when
 ## it reaches the counter's number, then frees itself. Pausable.
 
 signal arrived
 
-const FONT_SIZE := HudStyle.VIEWERS_FLIGHT_SIZE
-const EYE_PATH := "res://art/hud/eye_icon.png"
-const EYE_GAP := 3
+const FONT_SIZE := HudStyle.MULTIPLIER_FLIGHT_SIZE
 ## The scale at the end of the flight.
 const END_SCALE := 0.85
 
@@ -25,11 +22,10 @@ var done := false
 ## HUD's scale itself, and its arc grows with it.
 var base_scale := 1.0
 var label: Label
-var eye: TextureRect
 
 
 func _init() -> void:
-	name = "ViewersFlight"
+	name = "MultiplierFlight"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	top_level = true
@@ -43,23 +39,12 @@ func setup(text: String, color: Color, start: Vector2, target: Callable, flight_
 	label = Label.new()
 	label.name = "Amount"
 	label.text = text
-	HudStyle.apply(label, "viewers_flight", color)
+	HudStyle.apply(label, "multiplier_flight", color)
 	label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(label)
 	var ls := label.get_combined_minimum_size()
 	label.size = ls
-	var tex: Texture2D = load(EYE_PATH)
-	eye = TextureRect.new()
-	eye.name = "Eye"
-	eye.texture = tex
-	eye.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	eye.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	eye.stretch_mode = TextureRect.STRETCH_SCALE
-	eye.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	eye.size = tex.get_size() * 2  # 2x, like the counter's eye: about the letters' height
-	eye.position = Vector2(ls.x + EYE_GAP, floorf((ls.y - eye.size.y) / 2.0))
-	add_child(eye)
-	size = Vector2(eye.position.x + eye.size.x, ls.y)
+	size = ls
 	pivot_offset = size / 2.0
 	_place()
 
@@ -94,6 +79,6 @@ func advance(dt: float) -> void:
 
 
 func _process(dt: float) -> void:
-	if Perf.on: Perf.each_begin(&"hud.viewers_flight")
+	if Perf.on: Perf.each_begin(&"hud.multiplier_flight")
 	advance(dt)
-	if Perf.on: Perf.each_end(&"hud.viewers_flight")
+	if Perf.on: Perf.each_end(&"hud.multiplier_flight")

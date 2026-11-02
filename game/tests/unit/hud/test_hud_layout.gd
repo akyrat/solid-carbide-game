@@ -70,7 +70,6 @@ func _parts(hud: Hud) -> Dictionary:
 		"hearts": hud.heart_row.get_global_rect(),
 		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
-		"viewers": hud.viewers_counter.get_global_rect(),
 		"clock": hud.timer_clock.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 	}
@@ -107,10 +106,9 @@ func _assert_sub_goal(hud: Hud, where: String) -> void:
 	assert_lte(label.end.y, r.end.y + 0.5, "%s: the label fits in the 180" % where)
 	assert_almost_eq(label.get_center().x, square.get_center().x, 1.0, "%s: the label centred under it" % where)
 	assert_true(Rect2(Vector2.ZERO, view).encloses(label), "%s: the label on screen" % where)
-	var vc := hud.viewers_counter.get_global_rect()
-	assert_true(Rect2(Vector2.ZERO, view).encloses(vc), "%s: viewers counter on screen" % where)
-	assert_almost_eq(view.x - vc.end.x, 0.0, 40.0, "%s: viewers counter at the right edge" % where)
-	assert_almost_eq(view.y - vc.end.y, 0.0, 40.0, "%s: viewers counter at the bottom edge" % where)
+	var tag := hud.multiplier_tag.get_global_rect()
+	assert_true(Rect2(Vector2.ZERO, view).encloses(tag), "%s: the multiplier is on screen" % where)
+	assert_almost_eq(tag.get_center().x, view.x / 2.0 + hud.multiplier_tag.offset.x * hud.hud_scale(), 2.0, "%s: left of the car" % where)
 
 
 func _assert_no_overlaps(hud: Hud, where: String) -> void:
@@ -183,7 +181,7 @@ func test_clear_of_the_middle() -> void:
 		await get_tree().process_frame
 		var view := Vector2(size)
 		var middle := Rect2(view * 0.5 - Vector2(250, 150), Vector2(500, 250))
-		for n: String in ["hearts", "sub goal", "weapon icons", "viewers"]:
+		for n: String in ["hearts", "sub goal", "weapon icons"]:
 			assert_false(_parts(hud)[n].intersects(middle),
 				"%dx%d: %s clear of the car and popups" % [size.x, size.y, n])
 
@@ -200,6 +198,6 @@ func test_clear_of_the_pause_strip_content() -> void:
 	await get_tree().process_frame
 	assert_true(pause.visible, "paused")
 	var content: Rect2 = pause.title_label.get_parent().get_global_rect()
-	for n: String in ["hearts", "sub goal", "weapon icons", "viewers", "clock", "coins"]:
+	for n: String in ["hearts", "sub goal", "weapon icons", "clock", "coins"]:
 		assert_false(_parts(hud)[n].intersects(content), "%s clear of the pause strip's text and slider" % n)
 	pause.toggle()

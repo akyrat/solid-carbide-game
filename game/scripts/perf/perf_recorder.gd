@@ -677,7 +677,7 @@ func _counts() -> PackedInt32Array:
 	out[23] = _n(_prop(run, "wreck_effect"), "puffs")
 	var hud = _prop(run, "hud")
 	out[24] = _n(_prop(hud, "reactions"), "items")
-	out[25] = _n(_prop(hud, "viewers_counter"), "flights")
+	out[25] = _n(_prop(hud, "multiplier_tag"), "flights")
 	return out
 
 
