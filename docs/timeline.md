@@ -3375,3 +3375,18 @@ Entry format:
 - Decision or change: Images the game loads at runtime load from the exported pack, so the garage icons show on itch.io.
 - Documents touched: docs/garage-design.md
 - Tasks: T-511
+
+## 2026-11-02: Texts for the combo multiplier
+- Decision or change: The multiplier, trick amounts, recap peak and tutorial lines are written for the combo multiplier instead of viewers.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-512
+
+## 2026-11-02: Tricks pay subs
+- Decision or change: Each trick pays subs straight away as well as raising the combo multiplier; the amounts are proposals for the playtest.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-513
+
+## 2026-11-02: The multiplier beside the car
+- Decision or change: The live viewers counter is gone; the combo multiplier shows beside the car and trick popups show the multiplier they add.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-514
