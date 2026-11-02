@@ -3450,3 +3450,8 @@ Entry format:
 - Decision or change: An optional Drift Guide shows a gray fading arrow of the drift's predicted path (1 s ahead) during a drift.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-517
+
+## 2026-11-02: Drift Guide checkbox
+- Decision or change: The pause settings have a Drift Guide checkbox, off by default.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-518
