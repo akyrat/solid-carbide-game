@@ -55,7 +55,7 @@ const DRIFT_OFFSET := Vector2(70, 30)
 ## page's, times the HUD size slider's share (hud_size / 100). Textures under the root are
 ## drawn with nearest filtering, so the pixel art stays hard-edged at any scale. The world
 ## camera is never touched (HUD and menus, Content, "The HUD scales with the window").
-const LAYOUT_SIZE := Vector2(1152, 648)
+const LAYOUT_SIZE := UiScale.BASE  # 1152 x 648, shared with every screen (T-494)
 
 ## The scaled area every HUD piece is in (T-431).
 var root: Control
@@ -139,8 +139,8 @@ func _build_root() -> void:
 
 ## The HUD's scale for a window of `view` pixels at a HUD size of `size_percent` (T-431).
 static func scale_for(view: Vector2, size_percent: float) -> float:
-	var fit := minf(view.x / LAYOUT_SIZE.x, view.y / LAYOUT_SIZE.y)
-	return maxf(fit, 0.01) * clampf(size_percent, GameSettings.MIN_HUD_SIZE, GameSettings.MAX_HUD_SIZE) / 100.0
+	var fit := UiScale.fit(view, LAYOUT_SIZE)  # the rule every screen shares (T-494)
+	return fit * clampf(size_percent, GameSettings.MIN_HUD_SIZE, GameSettings.MAX_HUD_SIZE) / 100.0
 
 
 ## The HUD's scale now: screen pixels per layout page pixel.

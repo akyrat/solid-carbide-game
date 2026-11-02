@@ -113,7 +113,7 @@ func fit(view: Vector2 = Vector2.ZERO) -> void:
 	column.size = Vector2.ZERO  # shrink to the natural minimum size
 	var natural := column.get_combined_minimum_size()
 	column.size = natural
-	var s := maxf(minf(view.x / maxf(natural.x, 1.0), view.y / maxf(natural.y, 1.0)), 0.05)
+	var s := maxf(UiScale.fit(view, natural.max(Vector2.ONE)), 0.05)  # the shared rule (T-494)
 	column.scale = Vector2(s, s)
 	column.position = (view - natural * s) / 2.0
 

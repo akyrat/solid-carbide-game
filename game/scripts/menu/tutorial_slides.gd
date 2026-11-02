@@ -139,9 +139,7 @@ func _ready() -> void:
 func _fit() -> void:
 	if stage == null:
 		return
-	var s := minf(size.x / STAGE.x, size.y / STAGE.y)
-	if s <= 0.0:
-		s = 1.0
+	var s := UiScale.fit(size, STAGE) if size.x > 0.0 and size.y > 0.0 else 1.0  # the shared rule (T-494)
 	stage.scale = Vector2(s, s)
 	stage.position = ((size - STAGE * s) / 2.0).floor()
 

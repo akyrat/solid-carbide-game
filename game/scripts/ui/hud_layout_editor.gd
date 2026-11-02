@@ -144,20 +144,26 @@ func release() -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			if press(event.position):
+			if press(_to_screen(event.position)):
 				accept_event()
 		elif dragging != "":
 			release()
 			accept_event()
 	elif event is InputEventMouseMotion:
 		if dragging != "":
-			drag_to(event.position)
+			drag_to(_to_screen(event.position))
 			accept_event()
 		else:
-			var h := piece_at(event.position)
+			var h := piece_at(_to_screen(event.position))
 			if h != _hover:
 				_hover = h
 				queue_redraw()
+
+
+## A point in this editor's own pixels as a screen point (the editor is scaled with the pause
+## screen, T-494, while the HUD pieces are measured in screen pixels).
+func _to_screen(local_point: Vector2) -> Vector2:
+	return get_global_transform() * local_point
 
 
 func _process(_delta: float) -> void:
@@ -168,8 +174,11 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if hud == null:
 		return
+	# The editor sits in the pause screen's scaled area (T-494): frames are drawn in its own pixels.
+	var to_local := get_global_transform().affine_inverse()
 	for id in HudLayout.PIECES:
-		var r := screen_rect(id)
+		var sr := screen_rect(id)
+		var r := Rect2(to_local * sr.position, to_local.basis_xform(sr.size))
 		if id == dragging:
 			draw_rect(r, FRAME_DRAG_FILL, true)
 		elif id == _hover:
