@@ -3320,3 +3320,8 @@ Entry format:
 - Decision or change: Wiper tier 8 adds a mirrored back wiper.
 - Documents touched: `docs/weapons.md`
 - Tasks: T-499
+
+## 2026-11-02: Flamethrower afterburn
+- Decision or change: Burning enemies keep taking flame damage after leaving the flame.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-497
