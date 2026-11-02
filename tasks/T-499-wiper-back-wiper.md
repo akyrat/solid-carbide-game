@@ -1,7 +1,7 @@
 ---
 id: T-499
 title: Wiper Blade tier 8: a back wiper
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -53,10 +53,21 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started on top of T-495 and T-496 (built on their branch).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+T-499 done (Weapon Behavior Agent).
+- weapons.json wiper: max_tier 8, tier 8 effect `add_back_wiper`. wiper_at(8)["back_wiper"] is true; offers reach tier 8 (level_up_offers uses each weapon's max_tier).
+- windshield_wiper.gd: the front wiper makes a second instance of the same script (`back_wiper`, `is_back`) at tier 8 with the same tier and stats, steps it, re-emits its enemy_hit. Back one: forward() reversed (pivot on the tail, arm behind the car), turn_sign() -1 (mirror image across the cross axis), own last_hit/pass_index/drawing, same sheet art. Gone below tier 8 / new run.
+- Tests: 4 new in test_windshield_wiper.gd (one vs two wipers with equal stats; enemy behind hit only at tier 8; own hit cooldown and mirrored; same art). Updated for wiper max 8: test_weapon_data, test_level_up_offers (46 level-ups per run), test_size_grow (wiper size tiers 2,5,7: stale from T-496, fixed). Ran only: test_windshield_wiper, test_weapon_data, test_level_up_offers, test_weapons_wreck, test_weapon_levels, test_size_grow, test_weapon_art: all pass.
+- Docs: docs/weapons.md (Content wiper paragraph, built-wiper Tiers bullet, level-up offers), game/docs/weapons/windshield-wiper.md.
+- Screenshots: art-archive/T-499/screenshots/both_wipers_60/75/90.png (the others, _130 to _300, are from failed fixture attempts: tutorial/menu runs with no wiper; ignore). Fixture tests/fixtures/weapons/wiper_back_demo.tscn.
+- Proposal for playtest: "mirrored" = mirror image across the car's cross axis (the arms form a V, sweeping opposite ways), not a 180-degree turn of the front one. If the board wants both to sweep the same rotational way, remove turn_sign().
+- Could not rm the stale screenshots (safety check refused rm on art-archive/T-499/screenshots/*); left for you to delete if wanted.
