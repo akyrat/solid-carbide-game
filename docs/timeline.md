@@ -3350,3 +3350,8 @@ Entry format:
 - Decision or change: PixelLab rain drops and splashes; the board halved the drops after playing.
 - Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`, `docs/visual-style.md`
 - Tasks: T-509
+
+## 2026-11-02: The rain toggle's label
+- Decision or change: The rain toggle's label, Rain.
+- Documents touched: none
+- Tasks: T-506

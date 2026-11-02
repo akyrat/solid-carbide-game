@@ -1,7 +1,7 @@
 ---
 id: T-506
 title: Text for the rain toggle in the settings
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -78,3 +78,4 @@ Run by `tools/style_loop/run.py` on 2026-11-02: text, kind label, brief `art-arc
 ## Result notes
 
 Added key `rain_label` = "Rain" in `game/data/pause_text.json` (the file of the pause screen's settings texts; the ticket named screen_texts.json, but the other settings labels are in pause_text.json). The other settings checkboxes (Camera smoothing, Dynamic camera) have no on/off words, so the rain toggle has none either: label only. Style loop: round 1, score 9/10, 4 of 4 script checks pass (Style review). Tests: game/tests/unit/test_rain_label_text.gd and test_pause_screen pass. Not shown in-game yet (T-508 reads the key); fixture image: art-archive/T-506/screenshots/rain_label_text.png. Note: a hook refused one chained timeout-wrapped --import command; I reran it on its own, as its message said.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
