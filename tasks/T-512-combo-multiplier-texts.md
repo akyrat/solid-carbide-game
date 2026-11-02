@@ -1,7 +1,7 @@
 ---
 id: T-512
 title: Texts for the combo multiplier beside the car
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: texts for the combo multiplier.
+
+### 2026-11-02, In progress → In QA
+
+Multiplier texts written, all scored 8+; keys listed for T-514.
 
 ## Style review
 
