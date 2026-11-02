@@ -40,3 +40,7 @@ Nothing else changes; an empty path keeps the placeholder.
 ## Cost
 
 `bash game/tools/bench_rain.sh [--blocks=6] [--frames=300]` plays the game's run headless (car parked, weapons off, minions seeded), switches the rain on and off in alternating blocks through the saved setting, gives the rain a 1920 x 1080 screen's load, and prints the frame times with and without rain and the rain's own time per frame (`last_process_usec + last_draw_usec`). Headless uses the dummy renderer, so this is the CPU side only. T-507's numbers are in its result notes.
+
+## The art (T-509)
+
+`data/rain.json` names `drop_texture` (`res://art/rain/rain_drops.png`, a strip of `drop_variants` = 3 drops of 8 x 16) and `splash_texture` (`rain_splash.png`, a strip of `splash_frames` = 4 frames of 12 x 8, impact at the bottom middle). Each drop picks a variant at random. Empty texture names fall back to the code-drawn placeholder. Retuned for the art: 400 drops per 1080p screen, splash chance 0.45, most splashes 90, splash life 0.32 s. Frame time: `game/tools/bench_rain.sh`, rain's own work about 0.4 ms a frame, no measurable headless difference.

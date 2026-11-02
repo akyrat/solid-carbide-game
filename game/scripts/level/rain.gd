@@ -16,7 +16,7 @@ extends CanvasLayer
 ##   and a small three-frame splash, made once as textures (make_drop_image, make_splash_image),
 ##   so a frame draws one texture per drop and per splash, which the renderer batches. No
 ##   shaders, no particles: it works the same in the web export. T-509's swap: set
-##   "drop_texture" and "splash_texture" (a strip of "splash_frames" frames) in data/rain.json.
+##   "drop_texture" (a strip of "drop_variants" drops) and "splash_texture" (a strip of "splash_frames" frames) in data/rain.json.
 ## - Numbers: data/rain.json (load_config(); RainData defaults when a key is missing).
 ## - The setting: GameSettings.load_rain_enabled() on ready, and every save of it
 ##   (GameSettings.notifier) shows or hides the rain at once. While hidden it neither moves
@@ -49,6 +49,7 @@ const DEFAULTS := {
 	"drop_texture": "",
 	"splash_texture": "",
 	"splash_frames": 3,
+	"drop_variants": 1,
 }
 
 ## The look's numbers (DEFAULTS overlaid with data/rain.json).
@@ -110,6 +111,7 @@ func load_config(path: String = DATA_PATH) -> void:
 		drop_texture = ImageTexture.create_from_image(make_drop_image(
 			int(config.drop_length), float(config.angle_deg),
 			_colour(config.drop_colour), _colour(config.drop_highlight_colour)))
+		config.drop_variants = 1
 	splash_texture = _load_texture(str(config.splash_texture))
 	if splash_texture == null:
 		splash_texture = ImageTexture.create_from_image(make_splash_image(_colour(config.splash_colour)))
@@ -188,6 +190,7 @@ func step(delta: float) -> void:
 			var n := _new_drop(false)
 			d.p = n.p
 			d.life = n.life
+			d.v = n.v
 		else:
 			d.p += move
 
@@ -197,6 +200,7 @@ func _new_drop(spread_life: bool) -> Dictionary:
 	return {
 		"p": Vector2(_rng.randf() * _field.x, _rng.randf() * _field.y),
 		"life": _rng.randf() * life if spread_life else life,
+		"v": _rng.randi() % maxi(1, int(config.drop_variants)),
 	}
 
 
@@ -221,8 +225,15 @@ func _on_draw() -> void:
 	draw_count += 1
 	var px := pixel_size()
 	_canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2(px, px))
+	var variants: int = maxi(1, int(config.drop_variants))
+	var dw := float(drop_texture.get_width()) / variants
+	var dh := float(drop_texture.get_height())
 	for d in drops:
-		_canvas.draw_texture(drop_texture, to_screen_art(d.p, px))
+		var at := to_screen_art(d.p, px)
+		if variants == 1:
+			_canvas.draw_texture(drop_texture, at)
+		else:
+			_canvas.draw_texture_rect_region(drop_texture, Rect2(at, Vector2(dw, dh)), Rect2(d.v * dw, 0, dw, dh))
 	var frames: int = maxi(1, int(config.splash_frames))
 	var fw := float(splash_texture.get_width()) / frames
 	var fh := float(splash_texture.get_height())

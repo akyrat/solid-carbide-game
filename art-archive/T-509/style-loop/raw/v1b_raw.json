@@ -1,0 +1,36 @@
+{
+  "file": "v1b_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "falling rain, four separate thin diagonal rain streaks, each a 1 pixel wide straight line slanting from upper right down to lower left, bright pale blue-white at the top end, blue-grey in the middle, dark desaturated blue at the bottom end, no outline, no drops, no splash, pixel art rain effect, transparent background",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "text_guidance_scale": 8
+  },
+  "prompt": "falling rain, four separate thin diagonal rain streaks, each a 1 pixel wide straight line slanting from upper right down to lower left, bright pale blue-white at the top end, blue-grey in the middle, dark desaturated blue at the bottom end, no outline, no drops, no splash, pixel art rain effect, transparent background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-02T16:21:36+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "art-archive/T-509/brief_drops.md"
+  ],
+  "task": "T-509",
+  "job_status": null,
+  "notes": "T-509 v1 call 2: v1_raw was a vertical outlined teardrop; asking for several diagonal streaks to crop from",
+  "generator": "game/tools/pixellab_client.py"
+}

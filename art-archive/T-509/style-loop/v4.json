@@ -1,0 +1,15 @@
+{
+  "file": "v4.png",
+  "task": "T-509",
+  "version": 4,
+  "refine_of": "v3-2.png (score 7/10)",
+  "size": "24x16 (3 frames of 8x16), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_this_version": 0,
+  "generations_total_so_far": 2,
+  "script": "python game/tools/build_rain_drops_v2.py --version 4 (tests: game/tools/test_build_rain_drops_v2.py, versions 2, 3 and 4, all pass)",
+  "changes": "variant 2 is 2 px wide on rows 3 to 9 only (was 2 to 12): 23 pixels (was 27), never wider than 2 px; variant 3 now has a 4-step ramp (near-white 249,250,254 head, white-blue 215,235,253, cyan 182,222,254, mid blue 140,164,214 tail pixel), 7 rows, 2 px on 3 rows, 10 pixels, still the brightest; variant 1 unchanged from v3",
+  "colours": "6 on the sheet (same as v3); 6, 6 and 4 per frame",
+  "preview": "art-archive/T-509/screenshots/v4_preview_x12.png (nearest-neighbour x12, dark and light background; review only)",
+  "script_checks": "game/tools/style_rules.py art --size 8x16 --frames 3 --max-colors 12: all pass"
+}
