@@ -1,7 +1,7 @@
 ---
 id: T-496
 title: Weapon data for the board's upgrade trees
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/weapons/starting_gun.gd, game/scripts/weapons/level_up_offers.gd]
 files_expected_to_change: [game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/weapons/level_up_offers.gd, game/tests/unit/, docs/weapons.md, game/docs/weapons/]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -66,6 +66,10 @@ QA failed: stale tests pin old tier values (Godot test_size_grow, test_enemy_dat
 ### 2026-11-02, In progress → In QA
 
 QA round 1 fixes in: two stale tests updated, T-495's text-table fix merged in. QA round 2 for both.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA round 2 passed: all criteria pass, tests green. Ready for the board's playtest with T-495 to T-499.
 
 ## Style review
 
