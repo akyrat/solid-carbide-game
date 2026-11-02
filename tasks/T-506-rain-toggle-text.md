@@ -1,7 +1,7 @@
 ---
 id: T-506
 title: Text for the rain toggle in the settings
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/hud-and-menus.md, game/data/screen_texts.json]
 files_expected_to_change: [game/data/screen_texts.json, game/tests/unit/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started: the rain toggle's label.
 ### 2026-11-02, In progress → In QA
 
 Rain toggle label 'Rain' written as pause_text.json key rain_label, style loop 9/10; no on/off words (other checkboxes have none).
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 3 criteria; ready for the board's playtest.
 
 ## Style review
 
