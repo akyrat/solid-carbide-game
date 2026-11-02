@@ -3300,3 +3300,8 @@ Entry format:
 - Decision or change: The rain's drops and splashes are made with PixelLab, generously, through the style loop.
 - Documents touched: docs/level-design.md, docs/visual-style.md
 - Tasks: T-509
+
+## 2026-11-02: Card text for the board's weapon trees
+- Decision or change: The board's titles kept; missing card texts written and wrong numbers fixed.
+- Documents touched: docs/weapons.md
+- Tasks: T-495
