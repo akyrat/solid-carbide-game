@@ -1,7 +1,7 @@
 ---
 id: T-516
 title: Drift Guide checkbox label
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, tasks/T-506-rain-toggle-text.md, tasks/README.md]
 files_expected_to_change: [game/data/pause_text.json, game/tools/text_inventory.py, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ Started: the Drift Guide label.
 ### 2026-11-02, In progress → In QA
 
 Drift Guide label added to pause_text.json (the board's words, style 8/10), documented, test passes.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed; the label shows in T-518's combined Drift Guide build.
 
 ## Style review
 
