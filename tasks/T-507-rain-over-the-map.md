@@ -1,7 +1,7 @@
 ---
 id: T-507
 title: Rain over the map
-status: open
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -54,10 +54,46 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started: rain over the map with a placeholder look and a saved on/off setting.
+
+### 2026-11-02, In progress → In QA
+
+Rain built: placeholder drops and splashes over the map, under the HUD, numbers in rain.json, saved rain_enabled setting (on by default); adds about 0.2 ms a frame; works in the web build.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+### Level/Challenge Design Agent, 2026-11-02
+
+Done: rain over the map with a placeholder look drawn in code, its numbers in a JSON file, and the saved setting `rain_enabled` (default true) that shows or hides it at once.
+
+**What was built**
+- `game/scripts/level/rain.gd`: a CanvasLayer "Rain" at layer 5, added by `run.gd` (`run.rain`) just before the HUD: over the world (map, car, enemies on layer 0), under the HUD (10) and every screen above it. Drops fall at a slant (18 degrees, tops to the right) in a screen-sized field that wraps round and shifts with the camera, so the rain moves with the map. Drops that end leave small three-frame splashes where they are, on the street or a rooftop alike. One art pixel = round(zoom * 16 / 32) screen px (min 1), on the map art's grid. Placeholder: opaque pale blue-grey pixels (streak with a lighter tip; splash), no Greenbull colours, made once as textures, drawn with `draw_texture` (batched). No shaders or particles.
+- `game/data/rain.json`: drops per 1080p screen 220, fall speed 900 art px/s, angle 18, streak length 10, drop life 0.25 to 0.9 s, splash chance 0.35, max splashes 60, splash life 0.24 s, colours, and `drop_texture` / `splash_texture` / `splash_frames` slots for T-509's art (empty = placeholder). Proposals for the playtest.
+- `game/scripts/ui/game_settings.gd`: `load_rain_enabled()` / `save_rain_enabled(on)`, section `graphics`, key `rain_enabled`, default true, in the same settings file; `GameSettings.notifier.rain_enabled_changed` fires on each save, and the rain follows it in the same frame (hidden, processing off, no drops). T-508's toggle only needs to call `save_rain_enabled`.
+- Driving and enemies untouched: the only run.gd change adds the rain node.
+
+**Frame time (headless, `bash game/tools/bench_rain.sh`)**: the game's run on its map, car parked, weapons off, minions seeded, rain switched on and off through the saved setting in 6 alternating blocks of 300 frames, the rain given a 1920 x 1080 screen's load (220 drops), dummy renderer (CPU side only).
+- Rain on: mean 6.898 ms, median 6.901 ms, p95 8.935 ms (840 frames).
+- Rain off: mean 6.900 ms, median 6.901 ms, p95 9.068 ms (840 frames).
+- Difference: mean -0.002 ms, median 0.000 ms (the headless frame is paced at about 6.9 ms, so the difference is within noise).
+- The rain's own work per frame (its _process + _draw, measured inside rain.gd): mean 0.21 ms, median 0.20 ms, p95 0.28 ms. Two earlier runs: mean 0.37 and 0.28 ms. Well under the 1 ms aim.
+
+**Web export**: exported the Web preset to a scratch folder and ran it in headless Chrome (Compatibility renderer, WebGL 2): `node game/tools/web_audio_check.mjs` PASS with no errors, and a scratch CDP script that pressed Start, skipped the tutorial and Go Live took `art-archive/T-507/screenshots/web_export_run.png`: it rains in the browser, no console errors. (That build had splash chance 0.5, tried briefly and set back to 0.35.)
+
+**Screenshots** (`art-archive/T-507/screenshots/`): `street.png` (spawn point on Kaiju City, minions coming in, HUD on top), `rooftop.png` (roof-1, height 3), `street_crop_x4.png` and `rooftop_crop_x4.png` (enlarged, nearest-neighbour: streaks and a splash), `web_export_run.png`. Fixtures: `game/tests/fixtures/rain_demo_street.tscn` and `rain_demo_rooftop.tscn` (`bash game/tools/screenshot.sh res://tests/fixtures/rain_demo_street.tscn <out.png> 240`), on `game/data/level/kaiju_city_map.json`; nothing in `game/data/levels/` read or written.
+
+**Refusal**: a hook refused retaking the screenshots after a data tweak (`timeout 120 bash game/tools/screenshot.sh ...` in a loop; the guard could not tell `timeout` would not write a ticket). I did not retry it another way; I set the tweak (splash chance 0.5) back to 0.35 so the screenshots taken earlier match the data.
+
+**Weak points / for the playtest**: the rain is light and thin at the default zoom (1 screen px per art px at 1080p), so it reads less on the light rooftops than on the dark streets; density, length and colours are all in rain.json. Splashes are drawn on whatever is under them, not tested against the map's ground or rooftop shapes. Trick popups (world-space) are under the rain, as everything in the world is.
+
+**Tests** (`game/tests/unit/test_rain.gd`, 18 tests): setting default true, round trip, saved with the other settings, bad value; rain starts off when saved off; no drawing while off; drawing while on; saving the setting switches it in the same frame both ways; numbers from rain.json and from another file; slant angle and speed; splashes from ending drops and their life; moving with the map; opaque placeholder pixels; no Greenbull colours; pixel size from zoom; in the run, Rain layer above the world and below the HUD and level-up screen, enemies and view on the world's canvas, rain drawn by default, hidden at once when saved off. Run: test_rain 18/18, and the related files test_tutorial_setting 3/3, test_pause_slider_saves 8/8, test_camera_options 20/20, test_sfx_off 7/7, test_popups_above_buildings 6/6, test_drift_smoke 19/19, test_elevation_sample_map 17/17. The full set is for QA.
+
+**Documents affected**: `docs/level-design.md` (Content, "Rain"), `game/docs/level/rain.md` (new).
+
+**Files**: `game/scripts/level/rain.gd`, `game/data/rain.json`, `game/scripts/ui/game_settings.gd`, `game/scripts/run/run.gd`, `game/tests/unit/test_rain.gd`, `game/tests/fixtures/rain_demo.gd`, `rain_demo_street.tscn`, `rain_demo_rooftop.tscn`, `game/tools/bench_rain.gd`, `bench_rain.sh`, `game/docs/level/rain.md`, `docs/level-design.md`, `art-archive/T-507/screenshots/`.
