@@ -93,7 +93,10 @@ func test_level_up_and_pause_buttons_are_shared() -> void:
 	assert_eq(_all_shared(screen, "level-up"), 0, "T-474: no Take it buttons, the cards are clicked")
 	# Pause: Trick list, Edit HUD layout (T-453), Restart, Exit, the trick list's Back, the two
 	# camera checkboxes, and the HUD layout editor's Reset layout and Done (T-453).
-	assert_eq(_all_shared(pause, "pause"), 9)
+	# T-505: and the God mode page's Back and a - and + on each of its rows (the entry itself
+	# only exists once God mode is unlocked).
+	var god_page_buttons: int = 1 + 2 * pause.god_mode_page.rows.size()
+	assert_eq(_all_shared(pause, "pause"), 9 + god_page_buttons)
 
 
 func test_recap_buttons_are_shared() -> void:

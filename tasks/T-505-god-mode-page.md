@@ -1,7 +1,7 @@
 ---
 id: T-505
 title: God mode: the secret settings entry and its page
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -52,10 +52,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started on top of T-501's texts and T-504's God mode logic.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. God mode page and entry.
+- game/scripts/ui/god_mode_page.gd (class GodModePage): the page. Rows built from run.god_mode.entries() (no hard-coded list); icon, name (recap weapon names / power-up names), tier text from pause_text.json (god_mode_tier_format, god_mode_not_owned), - and + call god.step(); Back and Escape close. Buttons are the shared button; dimmed (not disabled) at the ends so keyboard focus is never lost. Keyboard: explicit chain (up/down same side then Back, left/right swap - and +), WASD through KeyNav.handle_wasd.
+- game/scripts/ui/pause_screen.gd: the God mode entry (god_mode_button) is created at the end of the run buttons row only when GodMode.unlocked (checked at pause and on unlocked_changed, so N pressed on the pause screen also shows it); before N it does not exist. open_god_mode() hides the strip and opens the page; Escape/resume close it.
+- Texts all from game/data/pause_text.json god_mode_* keys (T-501). Page sits at y=56 so a fifth power-up (T-502) still fits 648.
+- Tests: game/tests/unit/game/test_god_mode_page.gd, 8 passed (no entry before N, entry after, open/back, rows equal entries (6 weapons + all power-ups), tier text, -/+ limits through the API incl. gun >= 1, keyboard chain, Escape, shared buttons, no placeholders). test_shared_button.gd updated (pause screen now holds the page's buttons), 12 passed; test_pause_screen.gd and test_pause_restart_exit.gd pass.
+- Screenshots: art-archive/T-505/screenshots/god_mode_{settings,page}_{1152x648,1920x1080}.png (fixtures tests/fixtures/t505_*).
+- Docs: docs/hud-and-menus.md, Decisions, "A secret God mode": "As built" note added.
