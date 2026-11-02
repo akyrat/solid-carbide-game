@@ -3440,3 +3440,8 @@ Entry format:
 - Decision or change: A minion's contact damage needs the car within 0.5 units of its ground, so even Jump tier 1 hops over one.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-515
+
+## 2026-11-02: Drift Guide label
+- Decision or change: The pause screen's checkbox reads "Drift Guide".
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-516

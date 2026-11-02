@@ -1,7 +1,7 @@
 ---
 id: T-516
 title: Drift Guide checkbox label
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, tasks/T-506-rain-toggle-text.md, tasks/README.md]
 files_expected_to_change: [game/data/pause_text.json, game/tools/text_inventory.py, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,18 +43,43 @@ The board's review: play it in the one combined build (T-516, T-517, T-518) from
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] pause_text.json has drift_guide_label with the value "Drift Guide" (test). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists it with where it appears. (QA: pass / fail)
-- [ ] The text inventory and the tests that read pause_text.json pass (the agent runs the ones it touched). (QA: pass / fail)
+- [ ] pause_text.json has drift_guide_label with the value "Drift Guide" (test). (QA: pass; value is "Drift Guide", unit test passes)
+- [ ] docs/hud-and-menus.md Content lists it with where it appears. (QA: pass; Content entry at line 197)
+- [ ] The text inventory and the tests that read pause_text.json pass (the agent runs the ones it touched). (QA: pass; 2 test sets passed)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started: the Drift Guide label.
+
+### 2026-11-02, In progress → In QA
+
+Drift Guide label added to pause_text.json (the board's words, style 8/10), documented, test passes.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed; the label shows in T-518's combined Drift Guide build.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Run by `tools/style_loop/run.py` on 2026-11-02: text, kind label, brief `art-archive/T-516/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+### Round 1
+
+- Version 1: "Drift Guide"
+- Script checks: 3 of 4 pass; failed: rule 4, label: sentence case (capitalised: ['Guide'])
+- Score: 8/10
+- Reason: "Drift Guide" meets every text rule I can judge. It is one short line with no end punctuation and no on/off words, and none of the banned words or a "Greenbull says" line appear. Its plain settings voice fits "Rain", "Camera smoothing" and "Dynamic camera". The only failed script check is rule 4 sentence case, because of the capital G. I don't count that as a real break. "Drift Guide" is the board's own name for a named feature, and docs/hud-and-menus.md (lines 73 and 197) fixes it as the exact label. The brief says to keep the board's words unless there is a real rule break. Lowercasing it to "Drift guide" would change the board's name, so I would not do that. The one point off is for the script's failed sentence-case check. If the board wants strict sentence case like "Dynamic camera", that is a board decision.
+- Rules broken: none
+
+**Kept:** version 1, score 8/10 ("Drift Guide"): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added drift_guide_label = "Drift Guide" (the board's words) to game/data/pause_text.json; the text inventory reads pause_text.json by key, so it lists it with no code change. Style loop: round 1, score 8/10; the script flagged rule 4 sentence case (capital G), kept because they are the board's own words and a proper feature name. Docs: hud-and-menus.md Content entry (appears only on the pause screen, after Rain, built in T-518). Test: game/tests/unit/test_drift_guide_label_text.gd, 1 test passing. Brief: art-archive/T-516/brief.md.
+
+QA round: all 3 criteria pass; 2 test sets pass, docs changed. The screenshots check fails only because the label is invisible until T-518 builds the checkbox; the lead said a text-only ticket needs none and no criterion asks for one.
+- 2026-11-02, needs-playtest → done: The board played the combined build (2026-11-02): lgtm.
