@@ -1,0 +1,22 @@
+{
+  "task": "T-509",
+  "version": 1,
+  "file": "art-archive/T-509/style-loop/v1.png",
+  "size": "24x16 (3 frames of 8x16, one variant each)",
+  "pixellab_calls": [
+    {
+      "endpoint": "/create-image-pixflux",
+      "request": "art-archive/T-509/style-loop/v1_req.json",
+      "raw": "art-archive/T-509/style-loop/v1_raw.png",
+      "record": "art-archive/T-509/style-loop/v1_raw.json",
+      "usage": "1 generation"
+    }
+  ],
+  "script": "python game/tools/build_rain_drops.py --src art-archive/T-509/style-loop/v1_raw.png --out art-archive/T-509/style-loop/v1.png",
+  "how": "PixelLab drew three round, upright teardrops 3-4 px wide (not slanted streaks), so cropping them could not meet the brief. The script places three slanted streaks pixel by pixel (1 px sideways per 3 rows, top leaning right, ~18 degrees) using only 8 colours sampled from the PixelLab image: darkest blue-grey tail at the top, near-white blue head at the bottom. Nothing scaled; alpha 0 or 255; corners transparent.",
+  "variants": ["1: thin 1-px streak, 12 rows", "2: 2-px body, 14 rows (right column one shade darker)", "3: short bright streak, 7 rows"],
+  "script_checks": "game/tools/style_rules.py art --size 8x16 --frames 3 --max-colors 12: all pass",
+  "preview": "art-archive/T-509/screenshots/v1_preview.png",
+  "consulted": ["docs/visual-style.md (Content, Rules)", "docs/level-design.md (Decisions, Rain over the map)", "docs/extended-narrative.md", "art-archive/T-509/brief_drops.md"],
+  "note": "A second pixflux call for T-509 at 16:19:43 wrote art-archive/T-509/style-loop/raw/ (another session working in the same folder); it is not part of this version."
+}
