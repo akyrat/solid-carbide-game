@@ -92,8 +92,8 @@ func test_level_up_and_pause_buttons_are_shared() -> void:
 	assert_gt(screen.cards.size(), 0)
 	assert_eq(_all_shared(screen, "level-up"), 0, "T-474: no Take it buttons, the cards are clicked")
 	# Pause: Trick list, Edit HUD layout (T-453), Restart, Exit, the trick list's Back, the two
-	# camera checkboxes, and the HUD layout editor's Reset layout and Done (T-453).
-	assert_eq(_all_shared(pause, "pause"), 9)
+	# camera checkboxes, T-508's Rain checkbox, and the HUD layout editor's Reset layout and Done (T-453).
+	assert_eq(_all_shared(pause, "pause"), 10)
 
 
 func test_recap_buttons_are_shared() -> void:

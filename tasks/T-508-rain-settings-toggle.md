@@ -1,7 +1,7 @@
 ---
 id: T-508
 title: The rain toggle in the settings
-status: in-qa
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/hud-and-menus.md]
 files_expected_to_change: [game/scenes/, game/scripts/ui/, game/scripts/menu/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Started on top of T-507's rain and T-506's label.
 ### 2026-11-02, In progress → In QA
 
 Rain checkbox in the pause settings; saved and applied at once.
+
+### 2026-11-02, In QA → In progress
+
+QA round 1 failed: test_shared_button.gd expects 9 pause buttons, now 10 (Rain checkbox); docs/hud-and-menus.md not updated. Criteria 1-3 pass.
 
 ## Style review
 
