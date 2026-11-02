@@ -1,7 +1,7 @@
 ---
 id: T-491
 title: The trick list shows each trick's clip, live key pad and keycap recipe; slide 2's clips get the key pad
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/menu/tutorial_slides.gd, game/scripts/menu/clip_player.gd, game/data/tutorial_text.json, game/docs/hud-and-menus/pause-screen.md, C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/89bfdaa9-8914-40ee-9f4b-4fc6ef5a226d/scratchpad/tricks/tricks.template.html]
 files_expected_to_change: [game/scripts/menu/, game/scenes/menu/, game/scripts/hud/, game/data/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -81,3 +81,4 @@ Project Lead review fixes: (1) key pad unlit keys now dark #33384f with muted le
 
 QA round 1 fixes: (1) trick list rows are no longer Buttons: a TrickRow Control (inner class in trick_list.gd) that is focusable and handles click and Enter/Space (ui_accept), draws its own look (same as before); API kept (pressed signal, button_pressed, set_pressed_no_signal). test_shared_button.gd unchanged, passes 12/12. New test for rows not being BaseButton and Enter selecting. (2) Screenshots retaken waiting until the detail name label reads the trick, then 1.5 s and 4 drawn frames; all six trick_list_*.png checked by eye in a montage and match their names. Tests with -gselect all pass: test_shared_button 12, pause_trick_list 8, pause_screen 10, trick_list 6, tutorial_slides 26, key_pad 3, trick_list_recipes 9.
 - 2026-11-02, in-progress → in-qa: QA round 1 fixes: rows not Buttons, screenshots retaken
+- 2026-11-02, in-qa → done: QA round 2 passed; the board approved merging straight after QA
