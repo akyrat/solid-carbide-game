@@ -1,7 +1,7 @@
 ---
 id: T-510
 title: Rain off by default
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -50,10 +50,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started: rain off by default, then QA, merge and itch push.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Default changed: GameSettings.DEFAULT_RAIN_ENABLED false (game_settings.gd). Tests: test_rain.gd (22 pass; new: default false, saved settings without the key false, a new player's run draws no rain; tests needing rain save true first) and test_pause_rain_toggle.gd (all pass; checkbox starts unticked, toggles now go on then off, saved true is kept). Docs: game/docs/level/rain.md and docs/level-design.md Content say off by default. Screenshot: art-archive/T-510/screenshots/new_player_no_rain.png (fixture tests/fixtures/rain_default_off_demo.tscn): paused run, no rain, Rain unticked. Nothing written in game/data/levels/.
