@@ -1,7 +1,7 @@
 ---
 id: T-495
 title: Level-up card text for the board's weapon upgrade trees
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -87,7 +87,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] Card texts marked unchanged in the description are identical, unless the result notes name a number that became wrong and its correction. (QA: pass; unchanged texts verbatim, only Hot Drop tier 5 corrected and named)
 - [ ] Every number or count in a card text matches the Decisions entry (checked by hand at least for Hot Drop tiers 4, 5 and 8, Gun tier 6 and Wiper Blade tier 4). (QA: pass; Hot Drop 4 +1, 5 "3 at once", 8 +1; gun tier 6 "4 in all"; wiper tier 4 "6 to 9" matches knockback base 6 x1.5)
 - [ ] The three empty texts (Wiper Blade tiers 5, 7, 8) are written, and the style loop's scores are in the result notes. (QA: pass; scores 8, 8, 9, plus Hot Drop tier 5 at 9; in Style review and result notes)
-- [ ] The Godot unit tests that cover level-up texts pass (-gselect on those test files). (QA: fail: code - on T-496's branch (T-495 is its base) Godot test_level_up_screen passes, but the python test game/tools/test_check_level_up_texts.py test_the_real_files_match_t171s_table_with_t301s_texts is red (20 diffs, e.g. upgrade_molotov.tier4.title 'Another one' != 'Spicier Fire'): it compares level_up_texts.gd against T-171's old table and was not updated for the new texts. Also red on that run: Godot test_size_grow and test_enemy_data, which T-496 owns)
+- [ ] The Godot unit tests that cover level-up texts pass (-gselect on those test files). (QA: pass; round 2, checked with the T-496 run, where all test sets pass. On T-495 alone the only red test is test_level_up_screen.gd expecting the old 11 gun tiers (gun tiers 8 to 10 empty), which T-496's data removes; the python text-table test is fixed and green)
 
 ## Updates
 
@@ -104,6 +104,10 @@ Card text for the board's trees is in; 3 Wiper texts written, Hot Drop tier 5 co
 ### 2026-11-02, In QA → In progress
 
 QA failed: python test_check_level_up_texts is stale vs the new texts; and docs/weapons.md (documents_affected) not changed on the branch, either change it or drop it from the list.
+
+### 2026-11-02, In progress → In QA
+
+Text-table test updated to the new trees.
 
 ## Style review
 
@@ -189,3 +193,5 @@ Final titles and texts (all the board's titles exactly; unchanged texts verbatim
 Tests: updated game/tests/unit/test_level_up_screen.gd (moved tier numbers, the new key count 96, Bricks tier 8 text). test_level_up_screen.gd: 48 of 49 pass. The one failure, test_every_choice_and_tier_the_offers_can_produce_has_text, is the gun at tier 8: the gun's code still has 11 tiers, so it offers a tier 9 card with no text now; T-496 (gun to 8 tiers) clears it.
 Screenshot: art-archive/T-495/screenshots/level_up_wiper5_molotov5.png (level-up screen with Even Longer Blade and ANOTHER ONE). The style-loop brief and output files are in art-archive/T-495/.
 Documents affected: docs/weapons.md needs no change (the Decisions entry already holds the tree).
+
+Updated game/tools/test_check_level_up_texts.py: the real-file test now pins the board's new trees (NEW_TREES, tiers 2 to 8, no gun 9 to 11) and checks only the get cards and underglow against T-171's table. 6 tests pass.
