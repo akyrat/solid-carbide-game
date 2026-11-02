@@ -12,7 +12,7 @@ user_facing_text: yes
 changes_visuals: yes
 board_approved_art: no
 depends_on: []
-documents_affected: [docs/weapons.md]
+documents_affected: []
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/ui/level_up_texts.gd, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/tests/unit/]
 model: sonnet
