@@ -1,7 +1,7 @@
 ---
 id: T-493
 title: A scan of every screen at several resolutions that lists what doesn't scale
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/tools/screen_gallery.py, game/tools/screen_gallery.gd]
 files_expected_to_change: [game/tools/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -70,3 +70,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 Scan built: game/tools/screen_gallery.py --sizes (one Godot run per size, root window resized via --resolution + --size; screen_gallery.gd now records each screen's visible content Controls) and game/tools/scaling_report.py (maths, report, contact sheets). Run on master's code: 19 screens x 5 sizes took 94 s. 3840x2160 is clamped to 3840x2130 by the 2560x1440 monitor (maths uses the real size). Report: art-archive/T-493/scaling_report.md + scaling_report.json; 19 contact sheets in art-archive/T-493/contact_sheets/<screen>.png. FLAGGED (worst ratio of coverage vs 1280x720, 16 of 19): main_menu 0.11, recap_win 0.21, recap_time_up 0.23, recap_wreck 0.23, power_up_overlay 0.26, level_up_gift_pack 0.29, pause_trick_list 0.46, pause_screen 0.50, pause_hud_layout_editor 0.69, garage 0.74 (only on 3440x1440 ultrawide), HUD screens (hud_run_start, hud_mission_page, hud_trick_popup, hud_combo_broken, time_up_screen, wreck) 0.74 (only ultrawide; HUD holds ~1.0 on 16:9, so it is the aspect effect, lowest priority). Not flagged: tutorial slides 1-3 (full-screen). Menu, recap, power-up, level-up and pause pieces keep fixed pixel sizes, so they shrink with the window area. Tests: python -m unittest game.tools.test_scaling_report game.tools.test_screen_gallery, 13 OK. Docs: docs/hud-and-menus.md (Scaling scan bullet). Nothing under game/data/levels touched. Per-size PNG folders deleted (regenerable in about 90 s).
 - 2026-11-02, in-progress → in-qa: Scan report ready
+- 2026-11-02, in-qa → done: Approved in the board's swipe deck (tooling)
