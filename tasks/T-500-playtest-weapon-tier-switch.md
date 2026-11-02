@@ -1,7 +1,7 @@
 ---
 id: T-500
 title: Playtest switch: start a run with every weapon at a chosen tier
-status: in-qa
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, game/data/playtest.json, game/scripts/weapons/weapons.gd, game/scripts/weapons/level_up_offers.gd]
 files_expected_to_change: [game/data/playtest.json, game/scripts/weapons/weapons.gd, game/tests/unit/, game/docs/weapons/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started: a playtest-only switch to start every weapon at tier 8, so the board ca
 ### 2026-11-02, In progress → In QA
 
 weapon_tier_at_start added (0 = off); tests pass.
+
+### 2026-11-02, In QA → Done
+
+QA passed all 5 criteria; tests green. No board review line, so done.
 
 ## Style review
 
