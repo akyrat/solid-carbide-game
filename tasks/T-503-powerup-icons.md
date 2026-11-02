@@ -1,7 +1,7 @@
 ---
 id: T-503
 title: Icons: Rusty Paintjob's spray can and the Polarized Steering Wheel
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -58,6 +58,10 @@ Started: spray can and steering wheel icons with PixelLab (up to 8 generations).
 ### 2026-11-02, Flagged for review → In progress
 
 The board keeps the spray can's v1; the steering wheel icon is next.
+
+### 2026-11-02, Flagged for review → In progress
+
+The board keeps v4 for the wheel. Screenshots, then QA.
 
 ## Style review
 
@@ -265,3 +269,6 @@ Board decision 2026-11-02: keep Rusty Paintjob v1 (6/10) as the spray can icon; 
 - 2026-11-02, in-progress → flagged-for-review: the style loop kept version 4 (score 7/10), still below 8 after 3 refines; every version is in its Style review
 
 Wheel style loop (Run 2): 4 PixelLab generations (v1, v2 at 4/10 with 61 colours, v3 6/10, v4 7/10); kept v4 (7/10) and the loop copied it to game/art/power_ups/polarized_steering_wheel.png (32x32 RGBA), replacing T-502's placeholder. Total PixelLab generations for T-503: 5 (can 1, wheel 4). The generator had 3 more refusals in this run (a cp -n plus python check, and two pixelart_workbench calls); stopped there and told the Project Lead. Screenshots and the overlay/HUD check not done yet.
+- 2026-11-02, flagged-for-review → in-progress: The board, 2026-11-02: keep v4 (7/10) as the Polarized Steering Wheel's icon; no more generations.
+
+Board decisions 2026-11-02: keep Rusty Paintjob v1 (6/10, spray can) and Polarized Steering Wheel v4 (7/10), no more generations. Both are in game/art/power_ups/ (rusty_overcoat.png, polarized_steering_wheel.png, 32x32 RGBA); old can and placeholder wheel kept in art-archive/T-503/old/. PixelLab generations: 5 in all (can 1, wheel 4). Screenshots in art-archive/T-503/screenshots/: overlay_hud_2x.png (power-up overlay over the HUD, both new icons), overlay_icons_zoom.png, icons_enlarged_dark_light.png (both icons at 10x on dark and light), overlay_raw.png. The HUD itself shows no power-up icons; they appear on the overlay cards. Tests: test_power_up_screen.gd 22/22; python test_build_power_up_icon_rusty_paintjob and test_draw_power_up_icon_polarized_steering_wheel 17/17 (the latter's old test that the game file equals the placeholder drawing now checks size and mode of the PixelLab icon). No refusals in this step.
