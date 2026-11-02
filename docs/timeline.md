@@ -3360,3 +3360,8 @@ Entry format:
 - Decision or change: Rain over the map with a saved on/off setting.
 - Documents touched: docs/level-design.md
 - Tasks: T-507
+
+## 2026-11-02: The rain toggle
+- Decision or change: A Rain checkbox in the pause settings.
+- Documents touched: none
+- Tasks: T-508
