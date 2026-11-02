@@ -1,7 +1,7 @@
 ---
 id: T-518
 title: Drift Guide checkbox in the pause settings
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-516, T-517]
+depends_on: []
 documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, tasks/T-508-rain-settings-toggle.md, tasks/README.md]
 files_expected_to_change: [game/scripts/, game/tests/unit/, docs/hud-and-menus.md]
@@ -54,6 +54,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-02, Open → In progress
+
+Started on top of T-516 and T-517 (both in QA).
 
 ## Style review
 
