@@ -1,0 +1,36 @@
+{
+  "file": "v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a single thin slanted raindrop streak, pale blue-white bright head at the top, mid blue-grey body, dark desaturated blue fading tail at the bottom, the streak leans with its top to the right and bottom to the lower left about 18 degrees from vertical, 1 to 2 pixels wide, pixel art rain effect, no outline, transparent background, night",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "text_guidance_scale": 8
+  },
+  "prompt": "a single thin slanted raindrop streak, pale blue-white bright head at the top, mid blue-grey body, dark desaturated blue fading tail at the bottom, the streak leans with its top to the right and bottom to the lower left about 18 degrees from vertical, 1 to 2 pixels wide, pixel art rain effect, no outline, transparent background, night",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-02T16:20:01+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "art-archive/T-509/brief_drops.md"
+  ],
+  "task": "T-509",
+  "job_status": null,
+  "notes": "T-509 v1: single raindrop streak at 32x32, cropped into 8x16 frames",
+  "generator": "game/tools/pixellab_client.py"
+}

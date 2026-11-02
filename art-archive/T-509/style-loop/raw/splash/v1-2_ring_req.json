@@ -1,0 +1,9 @@
+{
+  "description": "a single flat oval water ripple ring on wet ground, pixel art rain effect, thin 1 pixel ring much wider than tall, pale blue-white near side, light blue-grey sides, darker desaturated blue far edge, isometric view from above at an angle, no outline, night, transparent background",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "isometric": true,
+  "outline": "lineless",
+  "shading": "flat shading",
+  "detail": "low detail"
+}

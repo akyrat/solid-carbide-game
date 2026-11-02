@@ -3345,3 +3345,8 @@ Entry format:
 - Decision or change: Rusty Paintjob's spray can (v1) and the steering wheel (v4), the board's picks.
 - Documents touched: none
 - Tasks: T-503
+
+## 2026-11-02: Rain art
+- Decision or change: PixelLab rain drops and splashes; the board halved the drops after playing.
+- Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`, `docs/visual-style.md`
+- Tasks: T-509

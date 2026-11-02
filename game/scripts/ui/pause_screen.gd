@@ -76,6 +76,8 @@ var _hud_size_value_label: Label
 var _value_label: Label
 var smoothing_check: CheckBox
 var dynamic_check: CheckBox
+## The rain checkbox (T-508): the saved setting rain_enabled, label from data/pause_text.json.
+var rain_check: CheckBox
 ## The temporary tuning row: shown only while the dynamic camera is on.
 var tuning_row: HBoxContainer
 var set_min_button: Button
@@ -489,6 +491,10 @@ func _build_camera_controls(box: VBoxContainer) -> void:
 	dynamic_check = _make_check("DynamicCheck", TEXT_DYNAMIC)
 	dynamic_check.toggled.connect(_on_dynamic_toggled)
 	checks.add_child(dynamic_check)
+	rain_check = _make_check("RainCheck", pause_text("rain_label"))
+	rain_check.set_pressed_no_signal(GameSettingsScript.load_rain_enabled())
+	rain_check.toggled.connect(_on_rain_toggled)
+	checks.add_child(rain_check)
 	tuning_row = HBoxContainer.new()
 	tuning_row.name = "TuningRow"
 	tuning_row.add_theme_constant_override("separation", 8)
@@ -581,6 +587,10 @@ func refresh_camera_controls() -> void:
 	tuning_row.visible = cam.is_dynamic()
 	min_label.text = "%.1f" % cam.get_dynamic_min()
 	max_label.text = "%.1f" % cam.get_dynamic_max()
+
+
+func _on_rain_toggled(on: bool) -> void:
+	GameSettingsScript.save_rain_enabled(on)  # the rain follows the notifier at once
 
 
 func _on_smoothing_toggled(on: bool) -> void:

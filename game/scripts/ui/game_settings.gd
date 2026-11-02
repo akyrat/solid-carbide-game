@@ -299,3 +299,37 @@ static func apply_music_volume(volume: float) -> void:
 	var gain := clampf(volume, 0.0, 100.0) / 100.0
 	AudioServer.set_bus_mute(i, gain <= 0.0)
 	AudioServer.set_bus_volume_db(i, linear_to_db(maxf(gain, 0.0001)))
+
+
+## Whether it rains over the map during a run (task T-507; Level design, Decisions, "Rain over
+## the map"), in section "graphics", key "rain_enabled". On by default. T-508's settings toggle
+## saves it; the rain (rain.gd) hears every save through `notifier` and shows or hides at once.
+const DEFAULT_RAIN_ENABLED := true
+
+
+## Tells the nodes that follow a setting (the rain) when it is saved. A static signal holder,
+## since a static class has no signals of its own.
+class Notifier:
+	extends RefCounted
+	signal rain_enabled_changed(on: bool)
+
+
+static var notifier := Notifier.new()
+
+
+static func load_rain_enabled() -> bool:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_RAIN_ENABLED
+	var v = cfg.get_value("graphics", "rain_enabled", DEFAULT_RAIN_ENABLED)
+	return v if v is bool else DEFAULT_RAIN_ENABLED
+
+
+## Saves the rain setting, keeping the other settings, and tells the rain at once.
+static func save_rain_enabled(on: bool) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("graphics", "rain_enabled", on)
+	var ok := cfg.save(path) == OK
+	notifier.rain_enabled_changed.emit(on)
+	return ok

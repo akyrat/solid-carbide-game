@@ -84,6 +84,19 @@ The map the main menu's Start plays (task T-372; Decisions, "The board's own lev
 
 How the run loads it: `game/docs/level/game-map.md`.
 
+### Rain
+
+Built in T-507 (Decisions, "Rain over the map"); its PixelLab art came in T-509 (Visual style, Content, "The rain": 3 drop variants and a 4-frame splash, density 200 drops a screen after the board's halving, splash chance 0.45) and the settings toggle in T-508. Proposals for the playtest.
+
+- **What the player sees:** steady light rain for the whole run, over the whole visible map: thin streaks falling down the screen at a slant (leaning about 18 degrees, tops to the right), and small splashes where drops end, on whatever is drawn there, the street or a rooftop. It moves with the map as the camera follows the car.
+- **Where it draws:** over the map, the car and the enemies, under the HUD and every screen above it.
+- **Placeholder look** (kept in code as the fallback when `rain.json` names no textures, since T-509 it is not used): drawn in code, opaque pale blue-grey pixels (a 1-pixel streak with a lighter tip, and a three-frame splash), on the map art's pixel grid; none of Greenbull's colours.
+- **Its numbers** are data in `game/data/rain.json`: drops per 1080p screen (220), fall speed (900 art px a second), angle (18 degrees), streak length (10 art px), drop life, splash chance (0.35), most splashes at once (60), splash life, colours, and the slots for T-509's textures.
+- **On or off:** the saved setting `rain_enabled` (on by default), saved with the other settings; it shows or hides the rain at once. It changes nothing in driving or enemies.
+- **Cost:** about 0.2 to 0.4 ms a frame of the rain's own work with a 1080p screen's drops, and no measurable change in the headless frame time (T-507's result notes). It uses nothing the web build lacks and was seen raining in the web export.
+
+How it works: `game/docs/level/rain.md`.
+
 ### MVP challenges
 
 The board's sketches of the 3 MVP challenges, one per arrow path. They show the general shape only; the fitted versions on the map are the Level/Challenge Design Agent's (Decisions). Each drawing's data (boulders and arrow points, in units from the sheet's centre) is in a `.json` file next to its picture. The pale band is the 3-unit corridor, the white dot is the start, and the arrowhead is the finish.

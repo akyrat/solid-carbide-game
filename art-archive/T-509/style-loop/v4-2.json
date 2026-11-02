@@ -1,0 +1,22 @@
+{
+  "file": "v4-2.png",
+  "asset": "rain splash animation (brief: art-archive/T-509/brief_splash.md)",
+  "task": "T-509",
+  "version": 4,
+  "refines": "v3-3.png (Style Evaluator 7/10: frame 1 has 12 pixels, heavy for 'a small dot with a tiny ring', trim to about 6-8; frame 4 only 3 colours, keep the darker far-edge shade and a few droplet pixels)",
+  "size": "48x8 (4 frames of 12x8, one row, played once in order), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_this_version": 0,
+  "generations_total": 2,
+  "script": "game/tools/build_rain_splash.py (default --version 4). Tests: game/tools/test_build_rain_splash.py, 16 pass",
+  "change": "Free script fix. Frame 1 trimmed from 12 to 8 pixels: the white-and-cyan dot in a tiny 4x3 ring (same as v1's frame 1). Frame 4 keeps the darkest far edge (9) and gains 2 dim droplets (4, mid blue-grey) that have fallen on from frame 3's droplets, so it has 4 tones and 10 pixels. Frames 2 and 3 unchanged. Opaque pixels per frame: 8, 21, 22, 10. 9 colours in all.",
+  "pixel_map_legend": {".": "transparent", "W": "(252,254,252) near white", "C": "(202,251,251) cyan hint", "1": "(228,246,255) palest blue-white", "2": "(202,232,255) pale blue-white", "3": "(143,197,232) light blue-grey", "4": "(114,167,204) mid blue-grey", "7": "(103,154,192) darker blue-grey", "8": "(92,141,176) dark desaturated blue", "9": "(70,104,134) darkest desaturated blue"},
+  "pixel_map": {
+    "frame 1 (impact: dot in a tiny 4x3 ring, 8 px)": ["............", "............", "............", "............", "............", ".....88.....", "....4WC4....", ".....22....."],
+    "frame 2 (crown: 3 droplets, 8x3 ring)": ["............", "......W.....", "..W......1..", "...2....2...", "...3....3...", "...878878...", "..4......4..", "...312213..."],
+    "frame 3 (widest ring 10x4, 2 falling droplets)": ["............", "............", "..1.........", ".........2..", "...888888...", ".77......77.", ".44......44.", "...321123..."],
+    "frame 4 (fading broken ring, darkest far edge, 2 dim droplets)": ["............", "............", "............", "..4.........", "....9..9.4..", ".8........8.", "..........8.", "...7..77...."]
+  },
+  "preview": "art-archive/T-509/screenshots/v4-2_preview_x12.png (nearest-neighbour x12 on a dark and a light background)",
+  "script_checks": "game/tools/style_rules.py art --size 12x8 --frames 4 --max-colors 12: all 21 pass"
+}

@@ -1,0 +1,38 @@
+{
+  "file": "v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "three separate thin slanted raindrop streaks side by side, pixel art rain effect, each streak 1 to 2 pixels wide, top leaning right and bottom toward lower left, bright near-white pale blue head, pale blue-grey body, dark desaturated blue tail, no outline, night, transparent background",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "lineless",
+    "shading": "flat shading",
+    "detail": "low detail"
+  },
+  "prompt": "three separate thin slanted raindrop streaks side by side, pixel art rain effect, each streak 1 to 2 pixels wide, top leaning right and bottom toward lower left, bright near-white pale blue head, pale blue-grey body, dark desaturated blue tail, no outline, night, transparent background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-02T16:20:15+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "docs/extended-narrative.md"
+  ],
+  "task": "T-509",
+  "job_status": null,
+  "notes": "T-509 style loop v1: raw 32x32 of three rain streaks, cropped by script into 24x16 sheet",
+  "generator": "game/tools/pixellab_client.py"
+}

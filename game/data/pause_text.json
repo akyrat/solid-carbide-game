@@ -1,5 +1,5 @@
 {
-	"_comment": "The pause screen's slider labels written as data (T-426). hud_size_label is the HUD size slider's label, shown at the left of the slider like 'Camera zoom level' and 'Music volume'. The slider's value reads as a bare number at the right end like the other sliders, so there is no hud_size_value key. The older labels are still constants in scripts/ui/pause_screen.gd. T-452 adds the HUD layout editor's four texts: hud_layout_button (pause screen button that opens the editor), hud_layout_hint (one-line hint while editing), hud_layout_reset (resets to the default layout), hud_layout_done (finishes editing, back to the pause screen). T-501 adds the secret God mode page (HUD and menus, Decisions, 'A secret God mode'): god_mode_button (the hidden settings entry), god_mode_title, god_mode_subtitle (line under the title), god_mode_weapons_heading and god_mode_power_ups_heading (the two groups), god_mode_tier_format (slots {tier} and {max}), god_mode_not_owned (tier 0), god_mode_back (back button), god_mode_minus and god_mode_plus (the symbols on a row's - and + buttons; T-505).",
+	"_comment": "The pause screen's slider labels written as data (T-426). hud_size_label is the HUD size slider's label, shown at the left of the slider like 'Camera zoom level' and 'Music volume'. The slider's value reads as a bare number at the right end like the other sliders, so there is no hud_size_value key. The older labels are still constants in scripts/ui/pause_screen.gd. T-452 adds the HUD layout editor's four texts: hud_layout_button (pause screen button that opens the editor), hud_layout_hint (one-line hint while editing), hud_layout_reset (resets to the default layout), hud_layout_done (finishes editing, back to the pause screen). T-501 adds the secret God mode page (HUD and menus, Decisions, 'A secret God mode'): god_mode_button (the hidden settings entry), god_mode_title, god_mode_subtitle (line under the title), god_mode_weapons_heading and god_mode_power_ups_heading (the two groups), god_mode_tier_format (slots {tier} and {max}), god_mode_not_owned (tier 0), god_mode_back (back button), god_mode_minus and god_mode_plus (the symbols on a row's - and + buttons; T-505). T-506 adds rain_label, the label of the rain checkbox (Level design, Decisions, 'Rain over the map'); the other checkboxes have no on/off words, so neither does this one. Scored 9 in the style loop.",
 	"hud_size_label": "HUD size",
 	"hud_layout_button": "Edit HUD layout",
 	"hud_layout_hint": "Drag a piece to move it.",
@@ -14,5 +14,6 @@
 	"god_mode_not_owned": "Not owned",
 	"god_mode_back": "Back",
 	"god_mode_minus": "−",
-	"god_mode_plus": "+"
+	"god_mode_plus": "+",
+	"rain_label": "Rain"
 }

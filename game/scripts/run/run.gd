@@ -86,6 +86,8 @@ const PickupMagnetScript := preload("res://scripts/run/pickup_magnet.gd")
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 ## The car's round shadow on the ground (task T-187), drawn with the elevation map only.
 const CarShadowScript := preload("res://scripts/driving/car_shadow.gd")
+## The rain over the map (task T-507, rain.gd): over the world, under the HUD.
+const RainScript := preload("res://scripts/level/rain.gd")
 
 ## Which map a run plays on (task T-206): true, the elevation sample map's
 ## layout with its rooftops and ramps; false, the MVP map (as before T-206).
@@ -211,6 +213,9 @@ var elevation = null
 ## The car's round shadow (car_shadow.gd), child "CarShadow" of the run, just
 ## before View; shown on the elevation map only.
 var shadow: Node2D
+## The rain (task T-507, rain.gd), a CanvasLayer child "Rain" of the run between the world
+## (layer 0) and the HUD (layer 10); it follows GameSettings' rain_enabled at once.
+var rain: CanvasLayer
 
 
 func _ready() -> void:
@@ -291,6 +296,8 @@ func _ready() -> void:
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
 
+	rain = RainScript.new()
+	add_child(rain)
 	hud = HudScene.instantiate()
 	add_child(hud)
 	hud.bind(state)

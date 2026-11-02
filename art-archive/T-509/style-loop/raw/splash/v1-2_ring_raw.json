@@ -1,0 +1,40 @@
+{
+  "file": "v1-2_ring_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a single flat oval water ripple ring on wet ground, pixel art rain effect, thin 1 pixel ring much wider than tall, pale blue-white near side, light blue-grey sides, darker desaturated blue far edge, isometric view from above at an angle, no outline, night, transparent background",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "isometric": true,
+    "outline": "lineless",
+    "shading": "flat shading",
+    "detail": "low detail"
+  },
+  "prompt": "a single flat oval water ripple ring on wet ground, pixel art rain effect, thin 1 pixel ring much wider than tall, pale blue-white near side, light blue-grey sides, darker desaturated blue far edge, isometric view from above at an angle, no outline, night, transparent background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-02T16:25:53+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-509/brief_splash.md"
+  ],
+  "task": "T-509",
+  "job_status": null,
+  "notes": "splash style loop v1 source (ring)",
+  "generator": "game/tools/pixellab_client.py"
+}
