@@ -1,0 +1,41 @@
+{
+  "file": "rusty_paintjob_v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "pixel art game icon, a single upright rusty spray paint can, front view, nozzle cap on top with a small puff of spray mist, cylindrical body of blue-grey metal with orange-brown rust patches and flaking paint, bright metal rim at top and bottom, small cyan and magenta neon glints, dark almost-black outline, light from top-left, centred, filling the frame, no text, no label",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "pixel art game icon, a single upright rusty spray paint can, front view, nozzle cap on top with a small puff of spray mist, cylindrical body of blue-grey metal with orange-brown rust patches and flaking paint, bright metal rim at top and bottom, small cyan and magenta neon glints, dark almost-black outline, light from top-left, centred, filling the frame, no text, no label",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-02T16:29:07+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "game/art/power_ups/",
+    "art-archive/T-503/old/rusty_overcoat_old.png",
+    "art-archive/T-465/pixellab/rusty_overcoat_v1.params.json"
+  ],
+  "task": "T-503",
+  "job_status": null,
+  "notes": "Rusty Paintjob spray can icon, style loop v1",
+  "generator": "game/tools/pixellab_client.py"
+}

@@ -3340,3 +3340,8 @@ Entry format:
 - Decision or change: A secret God mode entry in the pause settings opens a page to set every tier.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-505
+
+## 2026-11-02: Two power-up icons
+- Decision or change: Rusty Paintjob's spray can (v1) and the steering wheel (v4), the board's picks.
+- Documents touched: none
+- Tasks: T-503
