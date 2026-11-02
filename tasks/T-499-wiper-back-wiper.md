@@ -1,7 +1,7 @@
 ---
 id: T-499
 title: Wiper Blade tier 8: a back wiper
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -73,6 +73,10 @@ Stale pin fixed; T-499 now stacks on T-498.
 
 QA round 2 passed all 7 criteria and the full test sets; ready for the board's playtest with T-495 to T-499.
 
+### 2026-11-02, Needs playtest
+
+QA round 2 passed. Waits for the board's playtest with T-495 to T-498.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -89,3 +93,4 @@ T-499 done (Weapon Behavior Agent).
 - Could not rm the stale screenshots (safety check refused rm on art-archive/T-499/screenshots/*); left for you to delete if wanted.
 
 QA round 1 fix: merged T-498 into this branch (every weapon has 8 tiers); stale pins updated in test_level_up_screen (7 + 5*8 choices), test_level_up_offers (47 level-ups), test_weapon_data. Tests pass: weapon_data, level_up_offers, level_up_screen, windshield_wiper, bricks, size_grow, weapons_wreck, test_check_level_up_texts.py.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
