@@ -3245,3 +3245,8 @@ Entry format:
 - Decision or change: Wiper Blade tier 8 adds a mirrored copy of the wiper behind the car.
 - Documents touched: docs/weapons.md
 - Tasks: T-499
+
+## 2026-11-02: Playtest switch for weapon tiers
+- Decision or change: A playtest-only switch starts every weapon at a chosen tier, for the board's playtest of the new weapon trees.
+- Documents touched: game/data/playtest.json
+- Tasks: T-500
