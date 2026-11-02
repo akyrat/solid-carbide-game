@@ -1,7 +1,7 @@
 ---
 id: T-515
 title: Even the lowest Jump clears a minion
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -52,10 +52,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started: even the lowest Jump clears a minion (car contact tolerance ~0.5).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: EnemyHeight.MINION_CONTACT_TOLERANCE = 0.5 (a proposal, named constant with comment) and EnemyHeight.minion_can_hit(); Minion.contact_step uses it. LEVEL_TOLERANCE (1.0) is untouched: kaiju contact, kaiju_meteors, minion crowding, and weapons (1.5) keep theirs. Jump tiers unchanged. New test file game/tests/unit/enemies/test_minion_contact_tolerance.gd (7 tests): the real hop-curve test failed on old code (clear 0.00 s) and passes now (clear 0.56 s of the 0.83 s hop; analytic 0.60 s); ground still hit; ramp: car and minion on the same ramp differ by ~0.25 per unit of distance, far under 0.5, still hit; rooftop car safe; kaiju still hits at 0.9 up; LEVEL_TOLERANCE 1.0, weapons 1.5, MINION_CONTACT_TOLERANCE 0.5 asserted. Also ran test_enemies_on_heights, test_minions, test_rusty_overcoat, test_kaiju, test_jump_clears_obstacles: all pass. docs/enemies.md Content 'Contact damage at the car's level' updated. GIF: art-archive/T-515/screenshots/jump_over_minion.gif (+ hop_frame_20/30.png; made with the new fixture tests/fixtures/jump_over_minion_demo and game/tools/record_jump_minion_gif.sh). Note: a first screenshot attempt left stale hop_frame PNGs that I overwrote (an rm was refused by the hook, not worked around). Nothing in game/data/levels touched.
