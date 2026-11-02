@@ -72,7 +72,7 @@ func _expected_available() -> Array:
 		var w: Node = rack.get_weapon(id)
 		if not w.is_owned():
 			out.append("get_" + id)
-		elif w.tier < w.max_tier():  # 8, Bricks and the wiper 7 (T-496)
+		elif w.tier < w.max_tier():  # 8, Bricks 7 (T-496)
 			out.append("upgrade_" + id)
 	return out
 
@@ -168,8 +168,8 @@ func test_seeded_level_ups_draw_two_different_available_ids_and_cover_them_all()
 				seen[id] = true
 			assert_true(offers.choose(ids[pick.randi_range(0, ids.size() - 1)]))
 			assert_false(state.is_waiting_for_choice())
-	# 7 gun upgrades + 3 weapons x 8 + Bricks and the wiper x 7 (T-496).
-	assert_eq(level_ups, SEEDS * 45, "every run takes every tier before the choices run out")
+	# 7 gun upgrades + 3 weapons x 8 + Bricks x 7 + the wiper x 8 (T-496, T-499).
+	assert_eq(level_ups, SEEDS * 46, "every run takes every tier before the choices run out")
 	for id in OffersScript.ALL_IDS:
 		assert_true(seen.has(id), "%s offered at least once" % id)
 
@@ -235,7 +235,7 @@ func test_each_weapon_reaches_its_own_top_tier_and_stops_there() -> void:
 	assert_eq(rack.gun.tier, 8, "the gun's top tier")
 	assert_eq(rack.molotov.tier, 8)
 	assert_eq(rack.bricks.tier, 7, "Bricks ends at 7 until T-498")
-	assert_eq(rack.wiper.tier, 7, "the wiper ends at 7 until T-499")
+	assert_eq(rack.wiper.tier, 8, "the wiper reaches 8 (T-499)")
 
 
 func test_a_gift_pack_never_offers_a_weapon_at_its_own_top_tier() -> void:
@@ -256,9 +256,9 @@ func test_a_gift_pack_never_offers_a_weapon_at_its_own_top_tier() -> void:
 	assert_eq(shown[0][1], ["upgrade_gun"])
 
 
-## T-496: Bricks and the wiper have 7 tiers for now: the offers walk them to tier 7 and then stop.
-func test_bricks_and_wiper_are_never_offered_past_their_last_tier() -> void:
-	for id in ["bricks", "wiper"]:
+## T-496: Bricks has 7 tiers for now: the offers walk them to tier 7 and then stop.
+func test_bricks_is_never_offered_past_its_last_tier() -> void:
+	for id in ["bricks"]:
 		_new_run(1)
 		var w: Node = rack.get_weapon(id)
 		assert_eq(w.max_tier(), 7, id)
@@ -275,7 +275,7 @@ func test_bricks_and_wiper_are_never_offered_past_their_last_tier() -> void:
 
 func test_one_choice_when_only_one_is_left() -> void:
 	_max_all_but(["wiper"])
-	rack.wiper.set_tier(6)
+	rack.wiper.set_tier(7)
 	_level_up()
 	assert_eq(shown[0][1], ["upgrade_wiper"])
 	assert_true(offers.choose("upgrade_wiper"))

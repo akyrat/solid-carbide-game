@@ -20,7 +20,7 @@ func is_ok() -> bool:
 
 
 ## A weapon's last tier: its own "max_tier" when its entry has one (
-## 7 for Bricks and the wiper until T-498 and T-499), otherwise the shared top-level one (8). No weapon id: the shared one.
+## 7 for Bricks until T-498), otherwise the shared top-level one (8). No weapon id: the shared one.
 func max_tier(weapon: String = "") -> int:
 	if weapon != "" and _data.has(weapon) and _data[weapon] is Dictionary and _data[weapon].has("max_tier"):
 		return int(_data[weapon]["max_tier"])
@@ -185,13 +185,15 @@ func bricks_offered() -> bool:
 
 
 ## What the windshield wiper does at `tier`: damage, length, sweep_arc_degrees,
-## sweep_degrees_per_second, hit_cooldown, knockback_distance, knockback_kaiju.
+## sweep_degrees_per_second, hit_cooldown, knockback_distance, knockback_kaiju, and
+## back_wiper (true from tier 8, T-499: a second wiper behind the car).
 func wiper_at(tier: int) -> Dictionary:
 	var w: Dictionary = _data["wiper"]
 	var damage := float(w["damage"])
 	var length := float(w["length"])
 	var speed := float(w["sweep_degrees_per_second"])
 	var knock := float(w["knockback_distance"])
+	var back := false
 	for t in tiers("wiper"):
 		if int(t["tier"]) > tier:
 			continue
@@ -200,7 +202,9 @@ func wiper_at(tier: int) -> Dictionary:
 			"damage_multiplier": damage *= float(t["value"])
 			"sweep_speed_multiplier": speed *= float(t["value"])
 			"knockback_multiplier": knock *= float(t["value"])
+			"add_back_wiper": back = true
 	return {
+		"back_wiper": back,
 		"damage": damage,
 		"length": length,
 		"sweep_arc_degrees": float(w["sweep_arc_degrees"]),
