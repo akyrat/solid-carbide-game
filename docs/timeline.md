@@ -3190,3 +3190,18 @@ Entry format:
 - Decision or change: A live W A S D key pad on every clip (slide 2 and the trick list), lit from each clip's keys_per_frame; the trick list becomes seven selectable rows with the selected trick's clip, pad, rule and keycap recipe (none for thread the needle), the recipe structure in game/data/trick_recipes.json.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-491
+
+## 2026-11-02: Arrow keys in the main menu and the garage
+- Decision or change: The board asks for arrow-key control of the main menu and the garage; the UI Agent builds it.
+- Documents touched: docs/hud-and-menus.md, docs/garage-design.md
+- Tasks: T-492
+
+## 2026-11-02: A scan for screens that don't scale
+- Decision or change: The screen gallery captures every screen at five resolutions and reports what shrinks as the window grows.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-493
+
+## 2026-11-02: Every screen scales with the window
+- Decision or change: The level-up and pause screens, and every other screen the scan flags, scale with the window by the HUD's rule.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-494
