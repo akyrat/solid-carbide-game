@@ -1,7 +1,7 @@
 ---
 id: T-503
 title: Icons: Rusty Paintjob's spray can and the Polarized Steering Wheel
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -280,3 +280,4 @@ Wheel style loop (Run 2): 4 PixelLab generations (v1, v2 at 4/10 with 61 colours
 - 2026-11-02, flagged-for-review → in-progress: The board, 2026-11-02: keep v4 (7/10) as the Polarized Steering Wheel's icon; no more generations.
 
 Board decisions 2026-11-02: keep Rusty Paintjob v1 (6/10, spray can) and Polarized Steering Wheel v4 (7/10), no more generations. Both are in game/art/power_ups/ (rusty_overcoat.png, polarized_steering_wheel.png, 32x32 RGBA); old can and placeholder wheel kept in art-archive/T-503/old/. PixelLab generations: 5 in all (can 1, wheel 4). Screenshots in art-archive/T-503/screenshots/: overlay_hud_2x.png (power-up overlay over the HUD, both new icons), overlay_icons_zoom.png, icons_enlarged_dark_light.png (both icons at 10x on dark and light), overlay_raw.png. The HUD itself shows no power-up icons; they appear on the overlay cards. Tests: test_power_up_screen.gd 22/22; python test_build_power_up_icon_rusty_paintjob and test_draw_power_up_icon_polarized_steering_wheel 17/17 (the latter's old test that the game file equals the placeholder drawing now checks size and mode of the PixelLab icon). No refusals in this step.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM. Icons: spray can v1 and wheel v4, the board's picks.
