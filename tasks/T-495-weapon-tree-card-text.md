@@ -1,7 +1,7 @@
 ---
 id: T-495
 title: Level-up card text for the board's weapon upgrade trees
-status: in-qa
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/ui/level_up_texts.gd, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/tests/unit/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -100,6 +100,10 @@ Started: card text for the board's weapon trees comes first; T-496 waits for it.
 ### 2026-11-02, In progress → In QA
 
 Card text for the board's trees is in; 3 Wiper texts written, Hot Drop tier 5 count fixed; style loop 8 to 9.
+
+### 2026-11-02, In QA → In progress
+
+QA failed: python test_check_level_up_texts is stale vs the new texts; and docs/weapons.md (documents_affected) not changed on the branch, either change it or drop it from the list.
 
 ## Style review
 
