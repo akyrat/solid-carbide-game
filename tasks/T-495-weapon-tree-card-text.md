@@ -1,7 +1,7 @@
 ---
 id: T-495
 title: Level-up card text for the board's weapon upgrade trees
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/ui/level_up_texts.gd, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/tests/unit/]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -108,6 +108,10 @@ QA failed: python test_check_level_up_texts is stale vs the new texts; and docs/
 ### 2026-11-02, In progress → In QA
 
 Text-table test updated to the new trees.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA round 2 passed: all criteria pass (test criterion checked with T-496's green run). Ready for the board's playtest.
 
 ## Style review
 
