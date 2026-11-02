@@ -9,6 +9,17 @@
     "air_three_sixty": 0.5,
     "thread_the_needle": 0.5
   },
+  "trick_subs": {
+    "_comment": "T-513 (Game loop architecture, Decisions, \"Back to the combo multiplier; tricks pay subs\"): the subs (XP, the same as the run's levels use) each trick pays straight away, on top of raising the multiplier. Proposals for the playtest. One drift second is 10 subs at x1 and the first level needs 30, so a 360 (5) is half a drift second and the big tricks (10) a whole one. extended_drift and airtime are 0: the drift already pays its subs by the second (run.json drift_xp_per_second) and the airtime trick is a small, frequent hop; raise them here to make them pay too. multiplied_by_combo: true multiplies the subs by the multiplier as it stood just before the trick raised it (like the drift's subs, so a high combo makes every trick worth more, and the first trick of a combo pays plain); false pays the flat number.",
+    "multiplied_by_combo": true,
+    "three_sixty": 5.0,
+    "alternate_drift": 10.0,
+    "air_one_eighty": 5.0,
+    "air_three_sixty": 10.0,
+    "thread_the_needle": 10.0,
+    "extended_drift": 0.0,
+    "airtime": 0.0
+  },
   "thread_the_needle": {
     "_comment": "T-272, proposals for the playtest (Level design, Decisions, \"Thread the needle\"). Worth (trick_add.thread_the_needle): 0.5, as ALT DRIFT! and AIR 360!, twice a FULL 360!, since it needs a line aimed through a gap the board placed. repeat_seconds: the same pair pays again on a later pass in either direction, once this long has gone by since it last paid, so weaving back and forth over the line does not pay every crossing. counts_in_air: a pass in the air (a jump through the gap) counts too; the car can't fly over the obstacles themselves, since a car in the air crashes into them as on the ground. touch_window_seconds and clear_seconds: a touch of either obstacle in the window before the car crosses the line, or until clear_seconds after it, voids the pass (the crash cuts the combo as always); the trick pays clear_seconds after the crossing.",
     "repeat_seconds": 3.0,
