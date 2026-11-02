@@ -3400,3 +3400,8 @@ Entry format:
 - Decision or change: The garage icons load through Godot's imported textures, so they show in the web build on itch.io.
 - Documents touched: none
 - Tasks: T-511
+
+## 2026-11-02: Texts for the combo multiplier
+- Decision or change: Texts for the multiplier beside the car, trick amounts (+x), the recap's Peak combo and the tutorial, replacing the live viewers.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-512

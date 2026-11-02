@@ -2004,6 +2004,7 @@ Task T-331 (Extended narrative, Decisions, "Subs"; each line scored 8 or more in
 - **Live badge** on the live viewers counter: `LIVE` (`TEXT_LIVE_BADGE`). T-339's badge art carries the word in its pixels; the counter uses the art (T-336).
 - **Viewers unit** after the counter's number: `WATCHING` (`TEXT_VIEWERS_UNIT`), for example "20,000 WATCHING". On the counter it sits under the number (T-336, a proposal).
 - **A trick's viewers** on its popup: `+{amount}` (T-082's text, `ADDED_TEXT`), {amount} being the viewers it brought in T-332's short format (T-336). **The viewers a crash lost**, dropping from the counter: `-{amount}` (`LOST_TEXT`, the board's "-{viewers lost}", T-336).
+- **The combo multiplier's texts** (T-512, board 2026-11-02, "The multiplier beside the car"; in `game/data/multiplier_text.json`, each line scored 8 or more): `multiplier` = `x{multiplier}` beside the car (two decimals, for example x2.50, no label word); `gain` = `+x{amount}` on a trick popup, the multiplier the trick added (for example +x0.5), replacing the viewers amount; `loss` = `-x{amount}`, what a crash cut from the multiplier (optional). The live viewers badge `LIVE` (`TEXT_LIVE_BADGE`) and `WATCHING` (`TEXT_VIEWERS_UNIT`) are unused once T-514 removes the counter, as are the two viewers amount lines above. The recap's peak line is now "Peak combo" (`recap_text.json` `heading.combo`, also `runs_list_text.json` `column.combo`) with its value `peak_value` = `x{multiplier}`. The tutorial lines that said live viewers are rewritten (see "Tutorial slides and trick list": `slide2.step2_title` "Tricks pump the multiplier", `step2_caption` "Each trick bumps the multiplier.", `step3_caption` "Tricks and drifts earn subs that fill the sub goal.", and the unused `slide1.controls` and `slide2.chain`).
 - **Subs word** (`TEXT_LIKES`, value renamed): `Subs`, replaced "Likes" in the likes row; the row went in T-337, so the HUD no longer shows the word on its own (the sub goal label ends in SUBS).
 - **Reward popup:** `TRENDING! +{subs} SUBS!`, replaces "Trending! +{likes} Likes".
 - **Molotov tier 6 card aside:** "Linger for subs." replaces "Linger for likes."
@@ -2199,4 +2200,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
 | `visual-style.md` | `f7cb0dc3b397467995a7f0ee0cbe532266fcc10a400acc5dc1f079cdecc9c1ea` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `cd5f29319fc56f237b1cd80c96e71adfee6a5367fdbbb58d2e4a7d9b915f763d` |
+| `hud-and-menus.md` | `3d474d5dfecfddbad2e51374f09401fd632ff5d4b03bf8123735c88eb0081900` |
