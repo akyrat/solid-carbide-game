@@ -1,7 +1,7 @@
 ---
 id: T-505
 title: God mode: the secret settings entry and its page
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started on top of T-501's texts and T-504's God mode logic.
+
+### 2026-11-02, In progress → In QA
+
+God mode entry and page are in (only after N, rows from T-504's entries, shared buttons, keyboard and mouse); tests pass, screenshots saved.
 
 ## Style review
 
