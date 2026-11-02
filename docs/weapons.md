@@ -152,7 +152,7 @@ What the built weapon does in the game (built in task T-324). It follows Decisio
 - `upgrade_bricks.tier7.title`: Shove Factor II
 - `upgrade_bricks.tier7.desc`: Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach.
 - `upgrade_bricks.tier8.title`: Widest Wave
-- `upgrade_bricks.tier8.desc`: Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout.
+- `upgrade_bricks.tier8.desc`: Your landing wave reaches its widest yet. Brace for impact! (the board's, 2026-11-02, T-495)
 
 ### The neon underglow (built in task T-168)
 
