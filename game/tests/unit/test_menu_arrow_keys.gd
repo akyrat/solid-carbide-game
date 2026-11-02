@@ -162,3 +162,52 @@ func test_garage_a_maxed_upgrade_is_skipped_and_hands_on_the_selection() -> void
 	assert_eq(_focus(), g.rows[ids[1]].buy, "selection moved on from the maxed upgrade")
 	_press(KEY_UP)
 	assert_eq(_focus(), g.back_button, "up from the second goes past the maxed first to Back")
+
+
+func test_wasd_menu_moves_like_the_arrows() -> void:
+	var m := _menu()
+	_press(KEY_S)
+	assert_eq(_focus(), m.garage_button)
+	_press(KEY_S)
+	assert_eq(_focus(), m.exit_button)
+	_press(KEY_S)
+	assert_eq(_focus(), m.start_button, "S wraps round")
+	_press(KEY_W)
+	assert_eq(_focus(), m.exit_button, "W wraps round")
+	_press(KEY_A)
+	_press(KEY_D)
+	assert_eq(_focus(), m.exit_button, "A and D keep the selection")
+
+
+func test_wasd_menu_space_and_enter_still_press() -> void:
+	var m := _menu()
+	watch_signals(m)
+	_press(KEY_S)
+	_press(KEY_SPACE)
+	assert_signal_emitted(m, "garage_pressed")
+
+
+func test_wasd_garage_walks_every_button() -> void:
+	var g := _garage(100000)
+	var ids: Array = GarageData.UPGRADES
+	for i in range(1, ids.size()):
+		_press(KEY_S)
+		assert_eq(_focus(), g.rows[ids[i]].buy)
+	_press(KEY_S)
+	assert_eq(_focus(), g.back_button)
+	_press(KEY_S)
+	assert_eq(_focus(), g.rows[ids[0]].buy, "wraps to the top")
+	_press(KEY_W)
+	assert_eq(_focus(), g.back_button)
+	_press(KEY_A)
+	_press(KEY_D)
+	assert_eq(_focus(), g.back_button)
+
+
+func test_wasd_a_held_key_repeat_does_nothing() -> void:
+	var m := _menu()
+	get_viewport().push_input(_key(KEY_S, true, true))
+	assert_eq(_focus(), m.start_button)
+	var g := _garage(100000)
+	get_viewport().push_input(_key(KEY_S, true, true))
+	assert_eq(_focus(), g.rows[GarageData.UPGRADES[0]].buy)

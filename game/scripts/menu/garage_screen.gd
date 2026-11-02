@@ -271,3 +271,8 @@ func refresh() -> void:
 			row.buy.disabled = not info.can_buy
 			row.status.text = "" if info.can_buy else TOO_POOR_TEXT
 	_update_focus_chain()
+
+
+## W, A, S, D move the selection like the arrow keys (T-492).
+func _unhandled_key_input(event: InputEvent) -> void:
+	KeyNav.handle_wasd(event, self)

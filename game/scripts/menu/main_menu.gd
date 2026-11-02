@@ -129,3 +129,8 @@ func _make_button(node_name: String, text: String, parent: Node) -> Button:
 	HudStyle.style_button(button)  # the shared button (T-446)
 	parent.add_child(button)
 	return button
+
+
+## W, A, S, D move the selection like the arrow keys (T-492).
+func _unhandled_key_input(event: InputEvent) -> void:
+	KeyNav.handle_wasd(event, self)
