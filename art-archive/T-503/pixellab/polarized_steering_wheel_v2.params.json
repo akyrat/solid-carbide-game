@@ -1,0 +1,9 @@
+{
+  "description": "pixel art game icon, one round car steering wheel seen from the front, thick dark blue-grey rim forming a full circle with a near-black outline, three clearly defined light steel spokes meeting a large round metal hub in the centre, bright neon cyan highlight pixels along the left half of the rim, bright neon magenta highlight pixels along the right half of the rim, light-blue glossy specular highlights on the top-left of the rim, small stepped neon glow pixels around the outside of the rim, light from top-left, high contrast, neon at night, centred, filling the frame, no text, no logo",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "outline": "single color black outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}

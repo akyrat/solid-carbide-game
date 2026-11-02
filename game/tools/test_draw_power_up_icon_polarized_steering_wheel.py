@@ -45,10 +45,12 @@ class TestDraw(unittest.TestCase):
         self.assertIn(self.im.getpixel((16, 16))[:3], {pw.MAGENTA, pw.CYAN, pw.MAGENTA_DARK, pw.CYAN_DARK})
         self.assertEqual(self.im.getpixel((10, 9))[3], 0, "a hole between the spokes")
 
-    def test_the_game_file_is_this_drawing(self):
+    def test_the_game_file_is_the_pixellab_icon(self):
+        # T-503 swapped the placeholder drawing for the PixelLab icon (style loop v4).
         self.assertTrue(os.path.exists(ICON))
-        game = Image.open(ICON).convert("RGBA")
-        self.assertEqual(list(game.getdata()), self.px)
+        game = Image.open(ICON)
+        self.assertEqual(game.size, (32, 32))
+        self.assertEqual(game.mode, "RGBA")
 
 
 if __name__ == "__main__":
