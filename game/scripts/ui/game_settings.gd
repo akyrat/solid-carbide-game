@@ -302,9 +302,9 @@ static func apply_music_volume(volume: float) -> void:
 
 
 ## Whether it rains over the map during a run (task T-507; Level design, Decisions, "Rain over
-## the map"), in section "graphics", key "rain_enabled". On by default. T-508's settings toggle
+## the map"), in section "graphics", key "rain_enabled". Off by default (T-510). T-508's settings toggle
 ## saves it; the rain (rain.gd) hears every save through `notifier` and shows or hides at once.
-const DEFAULT_RAIN_ENABLED := true
+const DEFAULT_RAIN_ENABLED := false
 
 
 ## Tells the nodes that follow a setting (the rain) when it is saved. A static signal holder,

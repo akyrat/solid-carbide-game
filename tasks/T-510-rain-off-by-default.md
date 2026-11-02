@@ -1,7 +1,7 @@
 ---
 id: T-510
 title: Rain off by default
-status: open
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-507-rain-over-the-map.md]
 files_expected_to_change: [game/scripts/, game/tests/unit/, game/docs/, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,16 +39,28 @@ The board, 2026-11-02, after playing the rain (docs/level-design.md, Decisions, 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: with no saved setting (and with saved settings that lack the rain key), rain_enabled is false and no rain draws in a run. (QA: pass / fail)
-- [ ] A unit test: a saved rain_enabled true still shows rain; ticking the checkbox still turns it on at once and saves it. (QA: pass / fail)
-- [ ] The pause screen's Rain checkbox starts unticked for a new player (test). (QA: pass / fail)
-- [ ] No doc in docs/ or game/docs/ still says the rain is on by default. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] A screenshot of a new player's run with no rain and the unticked checkbox, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: with no saved setting (and with saved settings that lack the rain key), rain_enabled is false and no rain draws in a run. (QA: pass)
+- [ ] A unit test: a saved rain_enabled true still shows rain; ticking the checkbox still turns it on at once and saves it. (QA: pass)
+- [ ] The pause screen's Rain checkbox starts unticked for a new player (test). (QA: pass)
+- [ ] No doc in docs/ or game/docs/ still says the rain is on by default. (QA: pass, round 2)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass)
+- [ ] A screenshot of a new player's run with no rain and the unticked checkbox, under art-archive/T-NNN/screenshots/. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-02, Open → In progress
+
+Started: rain off by default, then QA, merge and itch push.
+
+### 2026-11-02, In progress → In QA
+
+Rain now defaults to off; tests, docs and a new-player screenshot are in. Ready for QA, merge and the itch push.
+
+### 2026-11-02, In QA
+
+QA passed on round 2 (one doc line fixed). Merging with T-511, then itch push.
 
 ## Style review
 
@@ -56,4 +68,9 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Default changed: GameSettings.DEFAULT_RAIN_ENABLED false (game_settings.gd). Tests: test_rain.gd (22 pass; new: default false, saved settings without the key false, a new player's run draws no rain; tests needing rain save true first) and test_pause_rain_toggle.gd (all pass; checkbox starts unticked, toggles now go on then off, saved true is kept). Docs: game/docs/level/rain.md and docs/level-design.md Content say off by default. Screenshot: art-archive/T-510/screenshots/new_player_no_rain.png (fixture tests/fixtures/rain_default_off_demo.tscn): paused run, no rain, Rain unticked. Nothing written in game/data/levels/.
+
+QA round 1: 5 of 6 pass (tests green, screenshot shows unticked Rain, no rain). FAIL (paperwork): docs/hud-and-menus.md line 194 still says rain_enabled is on by default; change to off by default (T-510). docs/long-gdd.md copies regenerate at merge.
+
+QA round 2: criterion 4 now passes (docs/hud-and-menus.md line 194 says off by default; no other doc outside the generated long GDD says on by default). All 6 criteria pass.
+- 2026-11-02, in-qa → done: The board asked for rain off by default and a push to itch straight after QA (2026-11-02).

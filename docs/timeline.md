@@ -3390,3 +3390,8 @@ Entry format:
 - Decision or change: The live viewers counter is gone; the combo multiplier shows beside the car and trick popups show the multiplier they add.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-514
+
+## 2026-11-02: Rain off by default
+- Decision or change: The rain is off by default; the player turns it on in the pause settings.
+- Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`
+- Tasks: T-510

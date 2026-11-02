@@ -6,7 +6,7 @@ Task T-507 (Level design, Decisions, "Rain over the map"; Content, "Rain"). The 
 
 - `scripts/level/rain.gd`: the rain, a `CanvasLayer` named `Rain`.
 - `data/rain.json`: its numbers (read by `load_config()`; a missing key keeps the default in `rain.gd`'s `DEFAULTS`).
-- `scripts/ui/game_settings.gd`: `load_rain_enabled()` and `save_rain_enabled(on)`, section `graphics`, key `rain_enabled`, default true; `GameSettings.notifier.rain_enabled_changed(on)` fires on every save.
+- `scripts/ui/game_settings.gd`: `load_rain_enabled()` and `save_rain_enabled(on)`, section `graphics`, key `rain_enabled`, default false (T-510); `GameSettings.notifier.rain_enabled_changed(on)` fires on every save.
 - `scripts/run/run.gd`: adds the rain (`run.rain`) just before the HUD.
 - `tests/unit/test_rain.gd`: the tests.
 - `tools/bench_rain.sh` (`bench_rain.gd`): the headless cost check.

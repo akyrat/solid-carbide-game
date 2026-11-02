@@ -23,22 +23,22 @@ func _ps():
 	return p.pause_screen
 
 
-func test_label_from_data_and_checked_by_default() -> void:
+func test_label_from_data_and_unticked_by_default() -> void:
 	var ps = _ps()
 	assert_eq(ps.rain_check.text, ps.pause_text("rain_label"))
 	assert_ne(ps.rain_check.text, "")
-	assert_true(ps.rain_check.button_pressed)
+	assert_false(ps.rain_check.button_pressed, "a new player starts with no rain")
 	assert_eq(ps.rain_check.get_parent(), ps.dynamic_check.get_parent(), "next to the camera checkboxes")
 
 
 func test_toggle_saves_and_survives_a_restart() -> void:
 	var ps = _ps()
-	ps.rain_check.button_pressed = false
-	assert_false(GameSettings.load_rain_enabled())
-	var ps2 = _ps()
-	assert_false(ps2.rain_check.button_pressed, "a new screen reads the saved choice")
-	ps2.rain_check.button_pressed = true
+	ps.rain_check.button_pressed = true
 	assert_true(GameSettings.load_rain_enabled())
+	var ps2 = _ps()
+	assert_true(ps2.rain_check.button_pressed, "a new screen reads the saved choice")
+	ps2.rain_check.button_pressed = false
+	assert_false(GameSettings.load_rain_enabled())
 
 
 func _open() -> Object:
@@ -65,12 +65,12 @@ func test_mouse_click_toggles() -> void:
 	win.size = Vector2i(1152, 648)
 	var ps = await _open()
 	await _click(ps.rain_check)
-	var off_ok: bool = not GameSettings.load_rain_enabled()
-	await _click(ps.rain_check)
 	var on_ok: bool = GameSettings.load_rain_enabled()
+	await _click(ps.rain_check)
+	var off_ok: bool = not GameSettings.load_rain_enabled()
 	win.size = old_size
-	assert_true(off_ok, "a click switches the rain off and saves it")
-	assert_true(on_ok, "a second click switches it on")
+	assert_true(off_ok, "a click switches the rain on and saves it")
+	assert_true(on_ok, "a second click switches it off")
 
 
 func test_keyboard_accept_toggles() -> void:
@@ -84,7 +84,7 @@ func test_keyboard_accept_toggles() -> void:
 		ev.pressed = down
 		ps.rain_check.get_viewport().push_input(ev)
 		await wait_process_frames(1)
-	assert_false(GameSettings.load_rain_enabled())
+	assert_true(GameSettings.load_rain_enabled())
 
 
 func test_rain_in_a_run_hides_at_once() -> void:
@@ -96,6 +96,8 @@ func test_rain_in_a_run_hides_at_once() -> void:
 		pending("no run node")
 		return
 	var ps = game.pause_screen
+	ps.rain_check.button_pressed = true
+	assert_true(run.rain.visible)
 	ps.rain_check.button_pressed = false
 	assert_false(run.rain.visible)
 	ps.rain_check.button_pressed = true
