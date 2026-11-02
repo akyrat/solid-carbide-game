@@ -34,3 +34,5 @@ No string is written in the scripts. `TrickList.text("<dotted key>")` reads `dat
 ## Tests and screenshots
 
 `tests/unit/test_tutorial_slides.gd` (four slides in order, dots, arrows, Skip, the signal with the box on and off, every text against the file, the retired keys unused, the clips' frames and timing, the pictures' files, keys, focus, Enter on Go live), `tests/unit/test_trick_list.gd` (names, placeholders, a PNG at the fixed path), `tests/unit/test_tutorial_setting.gd`. Screenshots: `bash game/tools/screenshot.sh res://tests/fixtures/tutorial_slides_demo.tscn out.png 40` (and `_2`, `_3`, `_4` for slides 2 to 4; the fixture sets the window to 1280 x 720).
+
+**Key pad (task T-491).** `scripts/menu/key_pad.gd` (`KeyPad.attach(clip_player, key_px)`) draws a W A S D pad in a clip's bottom-right corner and lights the keys of `ClipPlayer.held_keys()` (the sheet JSON's `keys_per_frame`), refreshed on `ClipPlayer.frame_changed`. Slide 2's three clips have one; slide 1's does not. The trick list scene is no longer on slide 2 (it is only in the pause screen).

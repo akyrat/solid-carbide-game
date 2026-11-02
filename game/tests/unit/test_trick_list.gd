@@ -75,8 +75,8 @@ func test_illustration_is_drawn_nearest_at_a_whole_scale() -> void:
 	list = _make(TMP)
 	var pic: TextureRect = list.pictures["airtime"]
 	assert_eq(pic.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
-	assert_eq(pic.custom_minimum_size, Vector2(TrickList.ILLUSTRATION_SIZE * TrickList.SCALE))
-	assert_eq(TrickList.SCALE, 3)
+	assert_eq(pic.custom_minimum_size, Vector2(TrickList.ILLUSTRATION_SIZE * TrickList.LIST_SCALE))
+	assert_eq(TrickList.LIST_SCALE, 1)
 	assert_eq(pic.stretch_mode, TextureRect.STRETCH_SCALE)
 	for id in TrickList.TRICK_IDS:
 		assert_eq(list.pictures[id].texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, id)

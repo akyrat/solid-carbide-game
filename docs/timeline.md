@@ -3185,3 +3185,8 @@ Entry format:
 - Decision or change: Clips of the real car for FULL 360!, AIR 360! (a taller ramp, base air-turn speed), HANG TIME! (no spin) and THREAD THE NEEDLE!, and keys_per_frame in every clip's sheet JSON for the live key pad; the approved clips' images are unchanged.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-490
+
+## 2026-11-02: The trick list shows each trick's keys and clip
+- Decision or change: A live W A S D key pad on every clip (slide 2 and the trick list), lit from each clip's keys_per_frame; the trick list becomes seven selectable rows with the selected trick's clip, pad, rule and keycap recipe (none for thread the needle), the recipe structure in game/data/trick_recipes.json.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-491
