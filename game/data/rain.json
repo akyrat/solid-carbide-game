@@ -1,6 +1,6 @@
 {
   "_comment": "The rain over the map (T-507; Level design, Content, 'Rain'). Proposals for the playtest. T-509: PixelLab art (game/art/rain/): rain_drops.png, 3 variants of 8 x 16 side by side; rain_splash.png, 4 frames of 12 x 8. Empty texture = the code-drawn placeholder. Sizes and speeds are in art pixels (32 per unit; scaled with the camera zoom). See game/docs/level/rain.md.",
-  "drops_per_screen": 400,
+  "drops_per_screen": 200,
   "fall_speed": 900.0,
   "angle_deg": 18.0,
   "drop_length": 10,

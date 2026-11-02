@@ -86,7 +86,7 @@ How the run loads it: `game/docs/level/game-map.md`.
 
 ### Rain
 
-Built in T-507 (Decisions, "Rain over the map"); its PixelLab art came in T-509 (Visual style, Content, "The rain": 3 drop variants and a 4-frame splash, density raised to 400 drops a screen, splash chance 0.45) and the settings toggle in T-508. Proposals for the playtest.
+Built in T-507 (Decisions, "Rain over the map"); its PixelLab art came in T-509 (Visual style, Content, "The rain": 3 drop variants and a 4-frame splash, density 200 drops a screen after the board's halving, splash chance 0.45) and the settings toggle in T-508. Proposals for the playtest.
 
 - **What the player sees:** steady light rain for the whole run, over the whole visible map: thin streaks falling down the screen at a slant (leaning about 18 degrees, tops to the right), and small splashes where drops end, on whatever is drawn there, the street or a rooftop. It moves with the map as the camera follows the car.
 - **Where it draws:** over the map, the car and the enemies, under the HUD and every screen above it.

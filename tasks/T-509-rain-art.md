@@ -1,7 +1,7 @@
 ---
 id: T-509
 title: Rain art with PixelLab
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: rain art with PixelLab on top of T-507.
+
+### 2026-11-02, Flagged for review → In progress
+
+The board's playtest: half the raindrops. Tuning the number, then QA and merge.
 
 ## Style review
 
@@ -286,3 +290,6 @@ Done: rain art swapped in for the placeholder.
 **Tests**: `test_rain.gd` 20/20 (2 new: art in use, all 3 variants drawn); `game/tools/test_build_rain_*.py` 54 passed.
 
 **Documents affected**: `docs/visual-style.md`, `docs/level-design.md`, `game/docs/level/rain.md`.
+- 2026-11-02, flagged-for-review → in-progress: The board, 2026-11-02, after playing the combined build: rain less intense, about half the raindrops on screen. Everything else LGTM.
+
+Board's tweak (2026-11-02, after playing the combined build): "rain should be less intense (like half the raindrops currently on screen)". Changed data/rain.json drops_per_screen 400 to 200 (T-507 started at 220); splash numbers unchanged, since splashes come from ending drops, so they halve too. test_rain.gd 20/20. Street and rooftop screenshots retaken in art-archive/T-509/screenshots/. No PixelLab calls.
