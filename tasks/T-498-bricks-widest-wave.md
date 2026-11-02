@@ -1,7 +1,7 @@
 ---
 id: T-498
 title: Bricks tier 8: the widest wave with two extra crash rings
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -66,6 +66,10 @@ Bricks tier 8 built: radius 25.2 in three crash rings travelling out (hits at 0,
 
 QA passed all 8 criteria, all tests green, three rings seen inner to outer. Ready for the board's playtest.
 
+### 2026-11-02, Needs playtest
+
+QA passed (8/8): three rings inner to outer, every radius has its sheet. Waits for the board's playtest with T-495 to T-499.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -101,3 +105,4 @@ Tests run (only the files touched):
 - `python -m unittest test_build_bricks_wave` (game/tools): 14/14 passed (new `WidestWave`: timing, three rings drawn inner to outer, the inner ring the tier 7 wave, pixel rules).
 
 Documents affected: docs/weapons.md (Content, Bricks), game/docs/weapons/bricks.md.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
