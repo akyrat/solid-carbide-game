@@ -99,6 +99,7 @@ func _ready() -> void:
 	resized.connect(func(): fit())
 	refresh()
 	fit()
+	_first_focus()
 
 
 ## T-470: scales and centres the column so all of it (every Buy button, Back, coins) is on screen at any
@@ -208,6 +209,48 @@ func _on_buy(id: String) -> void:
 	refresh()  # also when refused, so the message is up to date
 
 
+## T-492: the keyboard selection starts on the first upgrade's Buy (or Back when every upgrade is maxed).
+func _first_focus() -> void:
+	var order := focus_order()
+	if not order.is_empty():
+		order[0].grab_focus()
+
+
+## The buttons the arrow keys walk, top to bottom: every Buy that is not hidden (a disabled
+## "Not enough coins" one stays, so the selection can rest on it), then Back.
+func focus_order() -> Array:
+	var order: Array = []
+	for id in GarageData.UPGRADES:
+		var buy: Button = rows[id].buy
+		if buy.focus_mode != Control.FOCUS_NONE:
+			order.append(buy)
+	order.append(back_button)
+	return order
+
+
+## Rebuilds the arrow-key chain after the state changed; a Buy that just got hidden (maxed) hands
+## the selection to the next button in the list.
+func _update_focus_chain() -> void:
+	var owner_control := get_viewport().gui_get_focus_owner() if is_inside_tree() else null
+	var previous: Array = []
+	for id in GarageData.UPGRADES:
+		previous.append(rows[id].buy)
+	var lost: Control = owner_control if owner_control in previous else null
+	for id in GarageData.UPGRADES:
+		var buy: Button = rows[id].buy
+		buy.focus_mode = Control.FOCUS_NONE if progress.info(id).maxed else Control.FOCUS_ALL
+	var order := focus_order()
+	KeyNav.chain_column(order)
+	if lost != null and lost.focus_mode == Control.FOCUS_NONE:
+		var idx := previous.find(lost)
+		var target: Control = back_button
+		for j in range(idx + 1, previous.size()):
+			if previous[j].focus_mode != Control.FOCUS_NONE:
+				target = previous[j]
+				break
+		target.grab_focus()
+
+
 ## Redraws every label and button from the save/buy state.
 func refresh() -> void:
 	coins_label.text = COINS_TEXT.replace("{n}", str(progress.get_coins()))
@@ -227,3 +270,9 @@ func refresh() -> void:
 			row.status.add_theme_color_override("font_color", Color(1.0, 0.5, 0.5))
 			row.buy.disabled = not info.can_buy
 			row.status.text = "" if info.can_buy else TOO_POOR_TEXT
+	_update_focus_chain()
+
+
+## W, A, S, D move the selection like the arrow keys (T-492).
+func _unhandled_key_input(event: InputEvent) -> void:
+	KeyNav.handle_wasd(event, self)

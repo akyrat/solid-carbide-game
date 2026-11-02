@@ -3215,3 +3215,8 @@ Entry format:
 - Decision or change: A shared UiScale helper (the HUD's rule) scales the main menu, recaps, pause screen with its trick list and layout editor, level-up and power-up screens; every 16:9 screen keeps 0.99-1.00 of its share; the board kept ultrawide's height-decides rule and the hard-edged 4K text.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-494
+
+## 2026-11-02: Arrow keys and WASD in the main menu and the garage
+- Decision or change: The arrows and W, A, S, D move the selection in the main menu and the garage (wrapping), Enter or Space presses, the first button is selected on opening; reviewed in the board's swipe deck.
+- Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
+- Tasks: T-492
