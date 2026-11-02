@@ -3310,3 +3310,8 @@ Entry format:
 - Decision or change: The board's tier lists from the Upgrade Tree Workshop are in weapons.json; the gun has 8 tiers and aims one target at a time.
 - Documents touched: `docs/weapons.md`
 - Tasks: T-496
+
+## 2026-11-02: Bricks tier 8, the widest wave
+- Decision or change: Bricks tier 8: a x3 wave with two extra crash rings, hitting ring by ring.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-498

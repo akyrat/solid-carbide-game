@@ -20,7 +20,7 @@ func is_ok() -> bool:
 
 
 ## A weapon's last tier: its own "max_tier" when its entry has one (
-## 7 for Bricks and the wiper until T-498 and T-499), otherwise the shared top-level one (8). No weapon id: the shared one.
+## 7 for the wiper until T-499; Bricks 8 since T-498), otherwise the shared top-level one (8). No weapon id: the shared one.
 func max_tier(weapon: String = "") -> int:
 	if weapon != "" and _data.has(weapon) and _data[weapon] is Dictionary and _data[weapon].has("max_tier"):
 		return int(_data[weapon]["max_tier"])
@@ -156,12 +156,16 @@ func molotov_at(tier: int) -> Dictionary:
 
 
 ## What Bricks' landing wave does at `tier`: damage, radius, knockback_distance, knockback_kaiju,
-## min_air_seconds (the shortest time in the air that counts as a landing), cooldown.
+## min_air_seconds (the shortest time in the air that counts as a landing), cooldown,
+## rings (1, or tier 8's widest_wave value: the wave is that many rings, the outer
+## radius split evenly; T-498) and ring_interval (seconds between the rings reaching
+## their radii).
 func bricks_at(tier: int) -> Dictionary:
 	var b: Dictionary = _data["bricks"]
 	var damage := float(b["damage"])
 	var radius := float(b["radius"])
 	var knock := float(b["knockback_distance"])
+	var rings := 1
 	for t in tiers("bricks"):
 		if int(t["tier"]) > tier:
 			continue
@@ -169,6 +173,9 @@ func bricks_at(tier: int) -> Dictionary:
 			"radius_multiplier": radius *= float(t["value"])
 			"damage_multiplier": damage *= float(t["value"])
 			"knockback_multiplier": knock *= float(t["value"])
+			"widest_wave":
+				radius *= float(t["value"])
+				rings *= roundi(float(t["value"]))
 	return {
 		"damage": damage,
 		"radius": radius,
@@ -176,6 +183,8 @@ func bricks_at(tier: int) -> Dictionary:
 		"knockback_kaiju": bool(b["knockback_kaiju"]),
 		"min_air_seconds": float(b["min_air_seconds"]),
 		"cooldown": float(b["cooldown"]),
+		"rings": rings,
+		"ring_interval": float(b.get("ring_interval", 0.15)),
 	}
 
 

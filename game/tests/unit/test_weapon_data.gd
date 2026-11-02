@@ -58,8 +58,8 @@ func test_tier_count_per_weapon() -> void:
 	for i in 7:
 		assert_eq(int(gun_tiers[i].tier), i + 2)
 	for weapon in ["flamethrower", "underglow", "molotov", "wiper", "bricks"]:
-		# Bricks and the wiper end at tier 7 until T-498 and T-499 add their tier 8.
-		var last := 7 if weapon in ["wiper", "bricks"] else 8
+		# The wiper ends at tier 7 until T-499 adds its tier 8 (Bricks' came with T-498).
+		var last := 7 if weapon in ["wiper"] else 8
 		assert_eq(w.max_tier(weapon), last, weapon)
 		var tiers := w.tiers(weapon)
 		assert_eq(tiers.size(), last - 1)
@@ -117,7 +117,7 @@ func test_five_weapons_each_with_eight_tiers() -> void:
 			count += 1
 			var last := int(raw[k].get("max_tier", raw["max_tier"]))
 			assert_eq(raw[k].tiers.size() + 1, last, "%s has base plus its upgrade tiers" % k)
-			assert_eq(last, 7 if k in ["bricks", "wiper"] else 8, "%s's last tier (T-496: Bricks and the wiper 7 until T-498/T-499)" % k)
+			assert_eq(last, 7 if k in ["wiper"] else 8, "%s's last tier (T-496: the wiper 7 until T-499; Bricks 8 since T-498)" % k)
 	assert_eq(count, 6, "the five MVP weapons and Bricks")
 
 
@@ -179,8 +179,14 @@ func test_bricks_numbers_and_tiers() -> void:
 	# The wave kills a minion (health 4) outright from the first tier.
 	var minion_health := float(GameData.load_file("enemies").data.minion.health)
 	assert_true(b1.damage >= minion_health)
-	# Same tier count as the wiper; the shortest air time is the airtime trick's.
-	assert_eq(w.tiers("bricks").size(), w.tiers("wiper").size())
+	# Tier 8, Widest Wave (T-498): the radius x3, three rings; the shortest air time is the airtime trick's.
+	assert_eq(w.tiers("bricks").size(), 7)
+	assert_eq(b7.rings, 1)
+	var b8 := w.bricks_at(8)
+	assert_almost_eq(b8.radius, b7.radius * 3.0, 0.0001)
+	assert_eq(b8.rings, 3)
+	assert_almost_eq(b8.damage, b7.damage, 0.0001)
+	assert_almost_eq(b8.knockback_distance, b7.knockback_distance, 0.0001)
 	assert_eq(b1.min_air_seconds, float(GameData.load_file("combo").data.airtime.min_seconds))
 
 
@@ -217,7 +223,7 @@ func test_tiers_match_the_boards_trees() -> void:
 		"gun": [["add_bullets", 1], ["add_bullets", 1], ["fire_rate_multiplier", 1.2], ["fire_rate_multiplier", 1.2], ["add_bullets", 1], ["fire_rate_multiplier", 1.2], ["fire_rate_multiplier", 4]],
 		"flamethrower": [["size_multiplier", 1.2], ["damage_multiplier", 1.2], ["size_multiplier", 1.3], ["add_burn_flash_seconds", 1], ["size_multiplier", 1.3], ["add_burn_flash_seconds", 1], ["always_on", 1]],
 		"molotov": [["fire_radius_multiplier", 1.2], ["throw_interval_multiplier", 0.8], ["add_molotovs", 1], ["add_molotovs", 1], ["throw_interval_multiplier", 0.7], ["fire_radius_multiplier", 1.3], ["add_molotovs", 1]],
-		"bricks": [["radius_multiplier", 1.4], ["damage_multiplier", 1.5], ["knockback_multiplier", 1.5], ["radius_multiplier", 1.5], ["damage_multiplier", 1.5], ["knockback_multiplier", 1.5]],
+		"bricks": [["radius_multiplier", 1.4], ["damage_multiplier", 1.5], ["knockback_multiplier", 1.5], ["radius_multiplier", 1.5], ["damage_multiplier", 1.5], ["knockback_multiplier", 1.5], ["widest_wave", 3]],
 		"wiper": [["length_multiplier", 1.2], ["sweep_speed_multiplier", 1.25], ["knockback_multiplier", 1.5], ["length_multiplier", 1.3], ["sweep_speed_multiplier", 1.3], ["length_multiplier", 1.3]],
 	}
 	for weapon in want:
