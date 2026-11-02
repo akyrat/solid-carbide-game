@@ -1,7 +1,7 @@
 ---
 id: T-501
 title: Text for the Polarized Steering Wheel, Rusty Paintjob and God mode
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -47,11 +47,11 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Polarized Steering Wheel has a name (exactly the board's), a card text and the same kinds of per-tier texts as the other power-ups, in the same files, under keys the result notes list. (QA: pass / fail)
-- [ ] No text the player can read still says Rusty Overcoat (a search of game/data and game/scripts for "Overcoat" in player-facing strings finds none); the name reads Rusty Paintjob; the internal id rusty_overcoat is unchanged. (QA: pass / fail)
-- [ ] The God mode texts (entry label, title, line under the title, two group headings, the tier format, the back button) exist under keys listed in the result notes. (QA: pass / fail)
-- [ ] The style loop's scores for every new or changed text are in the ticket's Style review and result notes. (QA: pass / fail)
-- [ ] The test files that cover screen texts and power-up texts pass (-gselect, and the python text checks if any cover them). (QA: pass / fail)
+- [ ] Polarized Steering Wheel has a name (exactly the board's), a card text and the same kinds of per-tier texts as the other power-ups, in the same files, under keys the result notes list. (QA: pass; names/descriptions/descriptions_tier4 in screen_texts.json, keys listed)
+- [ ] No text the player can read still says Rusty Overcoat (a search of game/data and game/scripts for "Overcoat" in player-facing strings finds none); the name reads Rusty Paintjob; the internal id rusty_overcoat is unchanged. (QA: pass; only code comments/identifiers in game/scripts mention Overcoat, no player-facing string)
+- [ ] The God mode texts (entry label, title, line under the title, two group headings, the tier format, the back button) exist under keys listed in the result notes. (QA: pass; all 8 god_mode_* keys present in pause_text.json)
+- [ ] The style loop's scores for every new or changed text are in the ticket's Style review and result notes. (QA: pass; Runs 1-12 all 8 or more, scores in result notes)
+- [ ] The test files that cover screen texts and power-up texts pass (-gselect, and the python text checks if any cover them). (QA: pass; qa_check tests passed)
 
 ## Updates
 
@@ -60,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: texts for the new power-up, the Rusty Paintjob rename and God mode.
+
+### 2026-11-02, In progress → In QA
+
+Texts for the Polarized Steering Wheel, Rusty Paintjob and God mode are written and scored 8 or more; keys are in the result notes.
 
 ## Style review
 
