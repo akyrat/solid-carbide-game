@@ -1,7 +1,7 @@
 ---
 id: T-518
 title: Drift Guide checkbox in the pause settings
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, tasks/T-508-rain-settings-toggle.md, tasks/README.md]
 files_expected_to_change: [game/scripts/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started on top of T-516 and T-517 (both in QA).
 ### 2026-11-02, In progress → In QA
 
 Drift Guide checkbox is in the pause settings after Rain, off by default, switching the guide at once and saving; row still fits; ready to play in the combined build.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed (round 2). Combined build: Drift Guide (T-516..T-518) + minion jump fix (T-515): C:\solid-carbide-worktrees\T-518\game\project.godot
 
 ## Style review
 
