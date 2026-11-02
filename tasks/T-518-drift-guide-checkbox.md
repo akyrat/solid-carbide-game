@@ -1,7 +1,7 @@
 ---
 id: T-518
 title: Drift Guide checkbox in the pause settings
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -80,3 +80,4 @@ QA round 1: all criteria pass except the full Godot set. Combined branch (T-515.
 QA round 1 fix: test_shared_button.gd pause count 10 -> 11 + god_page_buttons, comment updated. The QA note names only this one red test (the 2712 figure is test count vs the one failing test; no second red named). Ran test_shared_button (12 pass) and all test_pause* files (51 pass).
 
 QA round 2: after the UI agent's fix to test_shared_button.gd, qa_check on the combined branch (T-515..T-518 + master): Godot set and game/tools set all green, no red test; documents and screenshots pass. All 7 criteria pass.
+- 2026-11-02, needs-playtest → done: The board played the combined build (2026-11-02): lgtm.
