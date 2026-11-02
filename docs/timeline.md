@@ -3330,3 +3330,8 @@ Entry format:
 - Decision or change: Texts for the Polarized Steering Wheel, the Rusty Paintjob rename and God mode.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-501
+
+## 2026-11-02: The Polarized Steering Wheel
+- Decision or change: A fifth driving power-up: a burst when the car accelerates again in a new direction; tier 4 adds Bricks' wave.
+- Documents touched: docs/drifting.md
+- Tasks: T-502

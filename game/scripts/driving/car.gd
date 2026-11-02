@@ -23,6 +23,7 @@ const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const CarHeight := preload("res://scripts/driving/car_height.gd")
 const RevCharge := preload("res://scripts/driving/rev_charge.gd")
 const JumpPowerUp := preload("res://scripts/driving/jump_power_up.gd")
+const PolarizedWheel := preload("res://scripts/driving/polarized_steering_wheel.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -87,6 +88,11 @@ var rev_charge = RevCharge.new()
 ## small hop through height_model.hop(). Does nothing until jump.set_tier()
 ## gives it a tier > 0 (the run sets it from RunState.power_up_tier("jump")).
 var jump = JumpPowerUp.new()
+## The Polarized Steering Wheel (task T-502, polarized_steering_wheel.gd): let go of
+## W, steer, press W again with the nose turned away from the travel: a speed burst
+## (tier 4: a shock, which the run turns into Bricks' wave). Does nothing until
+## polarized.set_tier() gives it a tier > 0 (the run sets it from RunState).
+var polarized = PolarizedWheel.new()
 ## Bouncy Bumpers (task T-462): the owned tier (0 = not owned) and its
 ## bounce_distance_multiplier from power_ups.json (1.0 when not owned). A wall
 ## bounce carries the car that many times further: the bounce speed (and its
@@ -225,6 +231,7 @@ func physics_step() -> void:
 		steer = 0.0
 		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
 		rev_charge.reset()
+		polarized.reset()  # T-502: and the Polarized Steering Wheel's coast and burst
 		_jump_pressed = false
 	# T-461: Jump (nothing at all when not owned). Before the model's update, so
 	# the hop's first step is already in the air (air turn rate, no driving).
@@ -234,9 +241,12 @@ func physics_step() -> void:
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
 	model.airborne = height_model.airborne
 	rev_charge.before_step(model)
+	polarized.before_step(model)
 	model.update_velocity(w, s, steer)
 	# T-460: Rev Charge (nothing at all when not owned).
 	rev_charge.step(model, w, s, rotation_before, height_model.airborne, model.dt)
+	# T-502: the Polarized Steering Wheel (nothing at all when not owned).
+	polarized.step(model, w, s, rotation_before, height_model.airborne, model.dt, model.get_position())
 	if _pending_knockback != Vector2.ZERO:
 		model.vx += _pending_knockback.x
 		model.vy += _pending_knockback.y
@@ -361,6 +371,7 @@ func _end_drift_on_hit(impact: float) -> void:
 		model.is_drifting = false
 		# T-460 (proposal): a wall hit also ends a running Rev Charge boost; the charge is kept.
 		rev_charge.end_boost()
+		polarized.end_burst()  # T-502 (proposal): a wall hit ends a burst too
 
 
 ## Reflects the velocity off a surface with outward normal n (see _bounce) and

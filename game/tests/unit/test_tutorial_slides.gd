@@ -292,18 +292,19 @@ func test_the_pictures_are_the_games_own_art() -> void:
 			"res://art/hud/live_badge.png", "res://art/hud/mission_page.png",
 			"res://art/tutorial/tricks/extended_drift.png", "res://art/hud/weapon_icons.png",
 			"res://art/power_ups/rev_charge.png", "res://art/power_ups/jump.png",
-			"res://art/power_ups/bouncy_bumpers.png", "res://art/power_ups/rusty_overcoat.png"]:
+			"res://art/power_ups/bouncy_bumpers.png", "res://art/power_ups/rusty_overcoat.png",
+			"res://art/power_ups/polarized_steering_wheel.png"]:
 		assert_true(slides.picture_paths.has(expected), expected)
 	assert_eq(slides.gift_packs.size(), 4, "four gift packs on the timeline")
 	assert_not_null(slides.kaiju_picture.texture)
 	assert_eq(slides.step_pictures.size(), 4)
 
 
-func test_slide_three_has_the_notebook_page_and_the_four_power_ups() -> void:
+func test_slide_three_has_the_notebook_page_and_the_five_power_ups() -> void:
 	assert_eq(slides.notebook_page.rows.size(), 2)
 	assert_true(slides.notebook_page.rows[0].ticked, "one ticked line")
 	assert_false(slides.notebook_page.rows[1].ticked, "one open line")
-	assert_eq(slides.power_up_labels.keys().size(), 4)
+	assert_eq(slides.power_up_labels.keys().size(), PowerUpData.IDS.size(), "every power-up (five since T-502)")
 	var names: Dictionary = JSON.parse_string(
 		FileAccess.get_file_as_string("res://data/screen_texts.json"))["power_ups"]["names"]
 	for id in slides.power_up_labels:

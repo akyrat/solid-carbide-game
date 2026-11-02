@@ -101,7 +101,7 @@ func test_each_description_names_the_offered_tiers_numbers() -> void:
 func test_an_owned_power_up_s_card_shows_its_next_tier() -> void:
 	state.grant_power_up("jump")
 	state.grant_power_up("rev_charge")
-	for id in ["bouncy_bumpers", "rusty_overcoat"]:
+	for id in ["bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel"]:
 		while state.power_up_tier(id) < data.max_tier(id):
 			state.grant_power_up(id)
 	_open()
@@ -317,3 +317,23 @@ func test_hover_brightens_the_frame_and_press_drops_the_card() -> void:
 	c.click.mouse_exited.emit()
 	assert_eq(frame.modulate, Color.WHITE)
 	assert_eq(c.body.position.y, float(0))
+
+
+## T-502: the Polarized Steering Wheel's card uses T-501's texts, its burst as a whole
+## percent from the tier's numbers, and the tier 4 line (the shock) at tier 4.
+func test_the_polarized_steering_wheel_card_texts() -> void:
+	assert_eq(PowerUpScreen.name_of("polarized_steering_wheel"), "Polarized Steering Wheel")
+	var want := {1: 20, 2: 30, 3: 40}
+	for tier in want:
+		var pct := roundi((float(data.at("polarized_steering_wheel", tier)["burst_speed_multiplier"]) - 1.0) * 100.0)
+		assert_eq(pct, want[tier], "tier %d is the proposal" % tier)
+		assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", tier),
+				"Lift, steer, gas a new way: +%d%% speed burst. Whiplash is a feature." % pct)
+	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", 4),
+			"Lift, steer, gas: +45% speed, a shock that hits and shoves minions. Synergy.")
+	for tier in range(1, 5):
+		var text := PowerUpScreen.describe(data, "polarized_steering_wheel", tier)
+		assert_false(text.contains("{"), "no slot left unfilled at tier %d" % tier)
+	# The other power-ups keep their one line at tier 4.
+	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", 4),
+			"The car deals 5 damage to minions it touches. Rust: now a feature.")

@@ -255,6 +255,7 @@ The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers 
 - **Rev Charge:** charge time to full 1.6 / 1.3 / 1.0 / 0.7 s; boost speed ×1.5 / 1.6 / 1.75 / 1.9 for 0.8 / 1.0 / 1.2 / 1.5 s. Slow and short at first, so the idea shows; the top tier is cheap to use mid-drift.
 - **Jump:** takeoff speed 5 / 6 / 7 / 8 (hop height, hence airtime) with a cooldown of 2.0 / 1.7 / 1.4 / 1.1 s. The first hop is enough for the airtime missions, the third for an air 180, the fourth for an air 360.
 - **Bouncy Bumpers:** the T-435 wall bounce distance ×1.4 / 1.8 / 2.2 / 2.6.
+- **Polarized Steering Wheel** (task T-502): a burst of +20 / +30 / +40 / +45% speed for 0.5 s; tier 4 adds the shock (Bricks' tier 1 wave). Details in "The Polarized Steering Wheel (task T-502)" below.
 - **Rusty Overcoat:** contact damage 2 / 3 / 4 / 5 (a minion has 4 health, T-408), a per-enemy repeat cooldown of 0.5 / 0.5 / 0.4 / 0.3 s, and the kaiju is hit only at tier 4. **Open questions for the board:** the repeat cooldown (so a crowd does not melt each frame) and whether the kaiju is hit.
 - **When every power-up is at its last tier** (`offer_when_exhausted`): the mission gift is skipped, with no overlay and no pause, and the run goes on. Reason: an overlay with nothing to choose would only interrupt the run.
 
@@ -312,6 +313,25 @@ The decision is in Decisions ("Driving power-ups"); the tier numbers (×1.4 / 1.
   - **The bounce's maximum scales the same way:** a hit faster than the hardest-hit cap bounces like one at the cap, and that bounce is also times the factor, so the farthest bounce is the factor times today's (about 1.75 × 2.6 = 4.5 units at tier 4).
   - **Everything else is unchanged:** the drift still ends on a hit, the combo still cuts, W still pulls the car back at the same rate.
 - Screenshots: `art-archive/T-462/screenshots/` (bounce distance per tier).
+
+### The Polarized Steering Wheel (task T-502)
+
+The decision is in Decisions ("Rusty Paintjob and the Polarized Steering Wheel"). How it is built: `game/docs/driving/drift.md`, "Polarized Steering Wheel (T-502)". Its card texts are T-501's (HUD and menus); its icon is a script-drawn placeholder (a steering wheel with a cyan and magenta hub) until T-503's art.
+
+- **What it does:** with the power-up owned, letting go of W, steering, then pressing W again while the car's nose points at least 60 degrees away from where the car is moving gives a short speed burst: for 0.5 s the car's forward speed is held at least at the tier's multiplier (x1.2 / 1.3 / 1.4 / 1.45, so +20 / +30 / +40 / +45%) times the speed it carried into the press (cruise speed, 11 units/s, at the least). After a lift from near top speed and a steer of about 75 degrees (about 0.4 s), the car carries about 12.4 units/s, so the burst is about 14.8 / 16.1 / 17.3 / 17.9 units/s forward (measured in the tests; top speed is 16.5). Afterwards the car slows back to its top speed on its own, as after Rev Charge.
+- **Tier 4, the shock:** every tier 4 burst also sets off Bricks' normal wave where the car is: Bricks' tier 1 wave (radius 4, damage 6, minions pushed 4 units away, the kaiju damaged and never pushed), drawn with Bricks' r4 wave sheet, whether or not the car has Bricks; owning Bricks at a higher tier (even its widest wave) does not change it. Its numbers are read from Bricks' tier 1 in the weapons data, so they follow Bricks. The garage damage bonus applies to it, as to every weapon.
+- **Without it:** pressing W again after a coast does nothing new.
+- **The look:** the cruise boost's motion lines, stronger: three sets side by side across the car instead of one, looping for the whole half second.
+- **The proposals for the playtest** (Driving & Drift Agent's calls; numbers in `power_ups.json` with reasons):
+  - **The angle:** at least 60 degrees between the nose and the direction of travel at the press (the board's start), on every tier.
+  - **The coast may last 1.2 s** at most from letting go of W to pressing it again: enough to swing the nose round 180 degrees at the turn rate, short enough to read as one move. A longer coast gives no burst.
+  - **S during the coast cancels it:** braking or reversing is not a coast, so S then W (the car moving backwards, nose forwards) is no burst.
+  - **The car must be moving at least 2 units/s** (a standing car has no direction to turn away from), and on the ground: a press in the air does nothing.
+  - **The burst's size comes from the speed carried in**, so keeping speed through the turn pays. No cooldown: each new lift, steer and press gives a new burst (and at tier 4 a new shock).
+  - **Walls and the wreck:** a wall, building, boulder or ground-side hit ends a running burst (as for Rev Charge); the wreck drops it.
+  - **Holding W throughout never bursts,** however far a drift turns the nose: the press of W is the trigger.
+- **Where it appears:** in the mission gift's pool like the other four, and on the tutorial's missions slide with them.
+- Screenshots: `art-archive/T-502/screenshots/` (the burst, the tier 4 shock, the overlay cards at tiers 1 and 4, the tutorial slide, the placeholder icon).
 
 ### Trick prototype (reference)
 
