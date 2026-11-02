@@ -1,7 +1,7 @@
 ---
 id: T-505
 title: God mode: the secret settings entry and its page
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/hud/hud_style.gd]
 files_expected_to_change: [game/scenes/, game/scripts/ui/, game/scripts/menu/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -67,6 +67,10 @@ QA round 1: fail on criterion 4. The - and + button texts are hard-coded in god_
 ### 2026-11-02, In progress → In QA
 
 Glyphs from text keys, bigger and readable.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA round 2 passed: all criteria pass; - and + now come from text keys and are readable. Ready for the board's playtest.
 
 ## Style review
 
