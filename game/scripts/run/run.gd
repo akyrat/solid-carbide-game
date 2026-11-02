@@ -74,7 +74,10 @@ const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 ## The driving power-up gift (task T-459): its choices, and the overlay that shows them.
 const PowerUpOffersScript := preload("res://scripts/run/power_up_offers.gd")
+const GodModeScript := preload("res://scripts/run/god_mode.gd")
 const PowerUpScreenScript := preload("res://scripts/ui/power_up_screen.gd")
+## The Polarized Steering Wheel's tier 4 shock (T-502): Bricks' wave at the car.
+const PolarizedShockScript := preload("res://scripts/driving/polarized_shock.gd")
 ## The gift pack drop (task T-144): a helicopter drops a package per level-up; driving over it opens the level-up screen.
 const GiftDropsScript := preload("res://scripts/run/gift_drops.gd")
 ## The pickup magnet (task T-222): pulls coins, gift packs and health drops near the car to it.
@@ -179,8 +182,12 @@ var weapons: Node
 var level_up_screen: CanvasLayer
 ## The driving power-up gift's choices (task T-459, power_up_offers.gd): child "PowerUpOffers".
 var power_up_offers: PowerUpOffers
+## God mode (task T-504, god_mode.gd): child "GodMode".
+var god_mode: Node
 ## The driving power-up overlay (task T-459, power_up_screen.gd): child "PowerUpScreen".
 var power_up_screen: CanvasLayer
+## The Polarized Steering Wheel's tier 4 shock (T-502, polarized_shock.gd): child "PolarizedShock".
+var polarized_shock: Node
 ## The sound effects (task T-077, run_sounds.gd): child "Sounds".
 var sounds: Node
 ## The gift pack drop (task T-144, gift_drops.gd): child "GiftDrops", drawn
@@ -318,6 +325,12 @@ func _ready() -> void:
 	add_child(weapons)
 	weapons.bind(self)
 	hud.bind_weapons(weapons)
+	# The Polarized Steering Wheel's tier 4 shock (T-502): Bricks' code, the rack's enemies.
+	polarized_shock = PolarizedShockScript.new()
+	polarized_shock.name = "PolarizedShock"
+	add_child(polarized_shock)
+	if car != null and is_instance_valid(car):
+		polarized_shock.bind(weapons, car)
 	# The level-up screen (T-052) opens when the car drives over the gift pack's
 	# package (T-144, gift_drops below), which pauses the run for the weapon
 	# choice; a level-up itself no longer pauses (the switch stays off).
@@ -336,6 +349,11 @@ func _ready() -> void:
 	power_up_screen.name = "PowerUpScreen"
 	add_child(power_up_screen)
 	power_up_screen.setup(power_up_offers)
+	# God mode (T-504): the secret N key and the tier API.
+	god_mode = GodModeScript.new()
+	god_mode.name = "GodMode"
+	add_child(god_mode)
+	god_mode.bind(self)
 	level_up_screen.hold = power_up_offers.is_showing
 	power_up_offers.closed.connect(level_up_screen.show_held)
 	# Rev Charge (T-460): the car's charge follows the owned tier.
@@ -669,13 +687,18 @@ func set_zoom(orthographic_size: float) -> void:
 	camera_follow.set_base_size(orthographic_size)  # applies the zoom
 
 
-## Rev Charge (task T-460) and Jump (task T-461): gives the car the owned tiers (0 = not
+## Rev Charge (task T-460), Jump (task T-461), Bouncy Bumpers (T-462) and the
+## Polarized Steering Wheel (T-502): gives the car the owned tiers (0 = not
 ## owned; a new run's power-ups start at 0, RunState.start_run).
 func _apply_rev_charge_tier() -> void:
 	if car != null and is_instance_valid(car):
 		car.rev_charge.set_tier(state.power_up_tier("rev_charge"))
 		car.jump.set_tier(state.power_up_tier("jump"))
 		car.set_bouncy_bumpers_tier(state.power_up_tier("bouncy_bumpers"))
+		# T-502: the Polarized Steering Wheel, and its tier 4 shock bound to this car.
+		car.polarized.set_tier(state.power_up_tier("polarized_steering_wheel"))
+		if polarized_shock != null and weapons != null:
+			polarized_shock.bind(weapons, car)
 
 
 ## Reads the saved camera options (task T-123) and applies them at once.

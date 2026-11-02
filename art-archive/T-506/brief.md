@@ -1,0 +1,1 @@
+Brief for T-506. A settings label in the pause screen (the in-game settings), next to the "Camera smoothing" and "Dynamic camera" checkboxes: the label of a checkbox that turns the rain over the map on or off. Checkboxes have no on/off words, only the label. Plain settings voice: short, sentence case, no end punctuation, no Greenbull line. Candidate: "Rain".

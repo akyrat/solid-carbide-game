@@ -1,0 +1,39 @@
+{
+  "file": "polarized_steering_wheel_v4_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "pixel art game icon, one large round car steering wheel seen from the front, the wheel touches almost the whole 32x32 frame, about 28 pixels wide, centred, thick dark blue-grey rim with a near-black outline broken by white highlight pixels on the top-left, three steel spokes and a round hub with a glossy highlight, the left half of the rim glows bright neon cyan, the right half of the rim glows bright hot neon magenta pink, a clear split between cyan and magenta halves, bright glowing pixels with stepped darker cyan and magenta halo pixels, strong contrast, vivid neon colours at night, retro arcade, no text, no logo",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "pixel art game icon, one large round car steering wheel seen from the front, the wheel touches almost the whole 32x32 frame, about 28 pixels wide, centred, thick dark blue-grey rim with a near-black outline broken by white highlight pixels on the top-left, three steel spokes and a round hub with a glossy highlight, the left half of the rim glows bright neon cyan, the right half of the rim glows bright hot neon magenta pink, a clear split between cyan and magenta halves, bright glowing pixels with stepped darker cyan and magenta halo pixels, strong contrast, vivid neon colours at night, retro arcade, no text, no logo",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-02T16:46:24+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "game/art/power_ups/",
+    "art-archive/T-503/style-loop/v3-2.png"
+  ],
+  "task": "T-503",
+  "job_status": null,
+  "notes": "Polarized Steering Wheel icon, style loop v4 (refine 3, last; new generation, colours then reduced by script)",
+  "generator": "game/tools/pixellab_client.py"
+}

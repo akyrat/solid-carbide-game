@@ -62,7 +62,7 @@ const ART_KAIJU := "res://art/kaiju/kaiju_s.png"
 const ART_LIVE := "res://art/hud/live_badge.png"
 const ART_TRICK := "res://art/tutorial/tricks/%s.png"
 const ART_POWER_UP := "res://art/power_ups/%s.png"
-const POWER_UPS: Array[String] = ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat"]
+const POWER_UPS: Array[String] = ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel"]
 const SCREEN_TEXTS := "res://data/screen_texts.json"
 ## The run's length in minutes and where the gift packs sit on the timeline (fractions).
 const RUN_MINUTES := 8
@@ -513,7 +513,9 @@ func _build_slide3() -> Control:
 	for id in POWER_UPS:
 		var fig := VBoxContainer.new()
 		fig.add_theme_constant_override("separation", 8)
-		fig.add_child(_picture(ART_POWER_UP % id, Vector2(96, 96)))
+		var pic := _picture(ART_POWER_UP % id, Vector2(96, 96))
+		pic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER  # T-502: square under a wide name
+		fig.add_child(pic)
 		var l := _label(String(names.get(id, "")), false, 19, INK, true)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		fig.add_child(l)

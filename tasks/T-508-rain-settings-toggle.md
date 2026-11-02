@@ -1,7 +1,7 @@
 ---
 id: T-508
 title: The rain toggle in the settings
-status: open
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -11,12 +11,12 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-506, T-507]
+depends_on: []
 documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/hud-and-menus.md]
 files_expected_to_change: [game/scenes/, game/scripts/ui/, game/scripts/menu/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -41,14 +41,34 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The settings show a rain toggle with T-506's label, in every settings screen the other settings appear in (screenshots). (QA: pass / fail)
-- [ ] A test: switching it sets rain_enabled, the rain shows or hides at once, and the choice survives a restart (saved). (QA: pass / fail)
-- [ ] Keyboard and mouse both work on it, like the other settings. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
+- [ ] The settings show a rain toggle with T-506's label, in every settings screen the other settings appear in (screenshots). (QA: pass; Rain checkbox shows in the pause screen's settings with T-506's label; the pause screen is the only settings screen with checkboxes, the other CheckBox/CheckButton uses are the tutorial's "don't show again" and the dev tuning panel)
+- [ ] A test: switching it sets rain_enabled, the rain shows or hides at once, and the choice survives a restart (saved). (QA: pass; test_pause_rain_toggle.gd passes in the full run)
+- [ ] Keyboard and mouse both work on it, like the other settings. (QA: pass; the mouse click and Space key tests pass)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; round 2: both test sets pass, test_shared_button count fixed to 10; documents line passes, docs/hud-and-menus.md changed)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-02, Open → In progress
+
+Started on top of T-507's rain and T-506's label.
+
+### 2026-11-02, In progress → In QA
+
+Rain checkbox in the pause settings; saved and applied at once.
+
+### 2026-11-02, In QA → In progress
+
+QA round 1 failed: test_shared_button.gd expects 9 pause buttons, now 10 (Rain checkbox); docs/hud-and-menus.md not updated. Criteria 1-3 pass.
+
+### 2026-11-02, In progress → In QA
+
+Button count and docs fixed.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA round 2 passed: all 4 criteria pass, tests green.
 
 ## Style review
 
@@ -56,4 +76,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done: a Rain checkbox in the pause screen (the game's only settings screen; the main menu has none), in the checkbox row after Dynamic camera, shared checkbox style. Label from data/pause_text.json rain_label (T-506). Starts from GameSettings.load_rain_enabled(); toggling calls save_rain_enabled, so the rain shows or hides at once (T-507 notifier) and the choice is saved. Mouse and keyboard work like the other checkboxes. Tests: game/tests/unit/test_pause_rain_toggle.gd 5/5 (label, default on, saved and read back, real mouse click, keyboard Space, rain layer in a run); test_pause_screen, test_pause_camera_controls, test_pause_slider_saves, test_rain pass. Full set for QA. Screenshots: art-archive/T-508/screenshots/pause_screen_game.png and pause_screen_prototype.png. Documents affected: docs/hud-and-menus.md. Files: game/scripts/ui/pause_screen.gd, game/tests/unit/test_pause_rain_toggle.gd, docs/hud-and-menus.md.
+
+QA round 1 fixes: test_shared_button pause count 9 to 10 (T-508's Rain checkbox), and the docs/hud-and-menus.md Rain checkbox bullet, which had been lost, now committed. test_shared_button 12/12, test_pause_rain_toggle 5/5.

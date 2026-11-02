@@ -1,5 +1,5 @@
 {
-  "_comment": "Driving power-ups (Drifting, Decisions, 'Driving power-ups', board 2026-10-31). The four are the board's; every tier number is a proposal (Driving & Drift's call by the docs, written on its behalf by Game Data) for the board's playtest. Tier 1 is what the gift gives; later tiers are 'the next tier' offers. Distances in units (1 unit = the car's width), times in seconds.",
+  "_comment": "Driving power-ups (Drifting, Decisions, 'Driving power-ups', board 2026-10-31). The five are the board's (the fifth, the Polarized Steering Wheel: board 2026-11-02, Drifting, Decisions, 'Rusty Paintjob and the Polarized Steering Wheel'); every tier number is a proposal (Driving & Drift's call by the docs, written on its behalf by Game Data) for the board's playtest. Tier 1 is what the gift gives; later tiers are 'the next tier' offers. Distances in units (1 unit = the car's width), times in seconds.",
   "max_tier": 4,
   "offer_when_exhausted": {
     "action": "skip_gift",
@@ -45,6 +45,16 @@
         {"tier": 2, "contact_damage": 3.0, "repeat_cooldown_seconds": 0.5, "hits_kaiju": false, "proposal": true, "reason": "Two touches kill a minion."},
         {"tier": 3, "contact_damage": 4.0, "repeat_cooldown_seconds": 0.4, "hits_kaiju": false, "proposal": true, "reason": "One touch kills a minion."},
         {"tier": 4, "contact_damage": 5.0, "repeat_cooldown_seconds": 0.3, "hits_kaiju": true, "proposal": true, "reason": "Top tier also scrapes the kaiju (open question for the board)."}
+      ]
+    },
+    "polarized_steering_wheel": {
+      "name_id": "polarized_steering_wheel",
+      "icon": "res://art/power_ups/polarized_steering_wheel.png",
+      "tiers": [
+        {"tier": 1, "burst_speed_multiplier": 1.2, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+20% for half a second: felt as a kick, small enough that the lift-steer-gas move is a skill, not a must. Shared by every tier: W pressed again with the nose at least 60 degrees from where the car moves (the board's start), at most 1.2 s after letting go of W (long enough to swing the nose round 180 degrees at the turn rate, short enough to read as one move; S held during the coast cancels it), on the ground, the car moving at least 2 units/s (a stopped car has no direction); the burst holds the forward speed at least at the multiplier x the speed carried into the press (cruise speed at the least) for 0.5 s; no cooldown."},
+        {"tier": 2, "burst_speed_multiplier": 1.3, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+30%: the kick starts to carry the car out of a turn."},
+        {"tier": 3, "burst_speed_multiplier": 1.4, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+40%: a clear dash out of every redirect."},
+        {"tier": 4, "burst_speed_multiplier": 1.45, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 1, "proposal": true, "reason": "+45% (only a little more: the shock is this tier's prize) and Bricks' tier 1 wave at the car on every burst (shock_bricks_tier 1: radius 4, damage 6, minions pushed 4, the kaiju damaged and never pushed, read from weapons.json so it follows Bricks), owned or not."}
       ]
     }
   }

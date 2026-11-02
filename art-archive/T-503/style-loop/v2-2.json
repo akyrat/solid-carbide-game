@@ -1,0 +1,39 @@
+{
+  "file": "v2-2.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "pixel art game icon, one round car steering wheel seen from the front, thick dark blue-grey rim forming a full circle with a near-black outline, three clearly defined light steel spokes meeting a large round metal hub in the centre, bright neon cyan highlight pixels along the left half of the rim, bright neon magenta highlight pixels along the right half of the rim, light-blue glossy specular highlights on the top-left of the rim, small stepped neon glow pixels around the outside of the rim, light from top-left, high contrast, neon at night, centred, filling the frame, no text, no logo",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "pixel art game icon, one round car steering wheel seen from the front, thick dark blue-grey rim forming a full circle with a near-black outline, three clearly defined light steel spokes meeting a large round metal hub in the centre, bright neon cyan highlight pixels along the left half of the rim, bright neon magenta highlight pixels along the right half of the rim, light-blue glossy specular highlights on the top-left of the rim, small stepped neon glow pixels around the outside of the rim, light from top-left, high contrast, neon at night, centred, filling the frame, no text, no logo",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-02T16:44:40+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "game/art/power_ups/",
+    "art-archive/T-503/style-loop/v1-2.png"
+  ],
+  "task": "T-503",
+  "job_status": null,
+  "notes": "Polarized Steering Wheel icon, style loop v2 (refine 1, new generation from the evaluator's reason)",
+  "generator": "game/tools/pixellab_client.py"
+}
