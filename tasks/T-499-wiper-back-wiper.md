@@ -1,7 +1,7 @@
 ---
 id: T-499
 title: Wiper Blade tier 8: a back wiper
-status: in-qa
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/weapons/windshield_wiper.gd, game/data/weapons.json]
 files_expected_to_change: [game/data/weapons.json, game/scripts/weapons/windshield_wiper.gd, game/scripts/data/weapon_data.gd, game/tests/unit/, docs/weapons.md, game/docs/weapons/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started on top of T-495 and T-496 (built on their branch).
 
 Back wiper built (tier 8, mirrored, own hit cooldown); tests and screenshots in; ready for QA.
 
+### 2026-11-02, In QA → In progress
+
+QA failed round 1: test_level_up_screen.gd line 581 still expects 45 level-up choices, now 46 with wiper tier 8; everything else passes. The other 2 reds are known T-496 pins.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -75,3 +79,5 @@ T-499 done (Weapon Behavior Agent).
 - Screenshots: art-archive/T-499/screenshots/both_wipers_60/75/90.png (the others, _130 to _300, are from failed fixture attempts: tutorial/menu runs with no wiper; ignore). Fixture tests/fixtures/weapons/wiper_back_demo.tscn.
 - Proposal for playtest: "mirrored" = mirror image across the car's cross axis (the arms form a V, sweeping opposite ways), not a 180-degree turn of the front one. If the board wants both to sweep the same rotational way, remove turn_sign().
 - Could not rm the stale screenshots (safety check refused rm on art-archive/T-499/screenshots/*); left for you to delete if wanted.
+
+QA round 1 fix: merged T-498 into this branch (every weapon has 8 tiers); stale pins updated in test_level_up_screen (7 + 5*8 choices), test_level_up_offers (47 level-ups), test_weapon_data. Tests pass: weapon_data, level_up_offers, level_up_screen, windshield_wiper, bricks, size_grow, weapons_wreck, test_check_level_up_texts.py.
