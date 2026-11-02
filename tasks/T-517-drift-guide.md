@@ -65,4 +65,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. drift_guide.gd (under the car in the run), GameSettings drift_guide_enabled (off default; GameSettings.save_drift_guide_enabled(on) is the function T-518 calls, applies at once via notifier), CarModel.duplicate_state(), Car.last_input, data/drift_guide.json (_comment, proposals), game/docs/driving/drift_guide.md, docs/drifting.md Content. Prediction: 1 s ahead, input held; matches real car within 0.01 units (test). Walls: path ends at Car.test_move hit; ramps/jumps/Space/Rev Charge not predicted; air = not drifting so it fades. Tests: test_drift_guide (10), test_car_collisions, test_rain pass. Screenshots: art-archive/T-517/screenshots/left.png, right.png (fixtures drift_guide_left/right.tscn).
