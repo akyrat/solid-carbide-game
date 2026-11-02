@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-495]
+depends_on: []
 documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/weapons/starting_gun.gd, game/scripts/weapons/level_up_offers.gd]
 files_expected_to_change: [game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/weapons/level_up_offers.gd, game/tests/unit/, docs/weapons.md, game/docs/weapons/]
@@ -36,6 +36,8 @@ A task is not done until every document listed in documents_affected has been up
 The board, 2026-11-02 (docs/weapons.md, Decisions, "The board's own upgrade trees"): put the board's tier lists into game/data/weapons.json for the gun, Hot Take Exhaust, Hot Drop, Bricks tiers 2 to 7 and Wiper Blade tiers 2 to 7, in the board's order, with the board's numbers. All of these use effects the game already understands for that weapon (data only). Bricks tier 8 (T-498) and Wiper Blade tier 8 (T-499) need new code and are added by those tasks; leave them out here, so Bricks and Wiper end at tier 7 until then (check the level-up offers stop at a weapon's last tier and don't break on a 7-tier weapon). The gun drops to 8 tiers (its own max_tier 8) and its targets stay 1 all run: no set_targets tier remains. The gun's single-target stream (each bullet, as it leaves, aims at its target if it is alive, otherwise at the closest living enemy) is already built (T-408) and is what the board wants; check it still holds with more bullets and the x4 fire rate. Update every _comment in weapons.json and every place in docs/weapons.md (Content) and game/docs/weapons/ that states the old tiers or numbers, and the tests that pin old tier values. Never write, move or commit anything in game/data/levels/. SFX stay off.
 
 The board's review: play the new weapon trees in one build with T-495 to T-499 together (levelling each weapon to tier 8 with the playtest switches), from this ticket's folder, before merging.
+
+Built on T-495's branch: the card text it needs is already here, and depends_on is cleared so it can start while T-495 waits for QA. T-495 and T-496 go to QA together once this is done, because T-495's level-up screen test expects the old 11 gun tiers until this task's data lands.
 
 ## Acceptance criteria
 
