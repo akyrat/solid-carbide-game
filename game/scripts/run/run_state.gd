@@ -925,6 +925,24 @@ func grant_power_up(id: String) -> int:
 	return tier
 
 
+## God mode (T-504): sets power-up `id` straight to `tier` (0 = not owned, up to its last
+## tier), as if the gifts had given it. Sends power_ups_changed when it changed. Returns the
+## tier now; -1, changing nothing, for an unknown id.
+func set_power_up_tier(id: String, tier: int) -> int:
+	if _power_up_data == null:
+		_power_up_data = PowerUpData.new()
+	if not _power_up_data.is_ok() or not _power_up_data.ids().has(id):
+		return -1
+	var t := clampi(tier, 0, _power_up_data.max_tier(id))
+	if t != power_up_tier(id):
+		if t == 0:
+			_power_ups.erase(id)
+		else:
+			_power_ups[id] = t
+		power_ups_changed.emit()
+	return t
+
+
 func _record_trick(trick_id: String) -> void:
 	_tricks_done[trick_id] = int(_tricks_done.get(trick_id, 0)) + 1
 	_highest_combo = maxf(_highest_combo, combo)
