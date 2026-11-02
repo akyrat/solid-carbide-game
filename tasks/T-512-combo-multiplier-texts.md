@@ -1,7 +1,7 @@
 ---
 id: T-512
 title: Texts for the combo multiplier beside the car
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/extended-narrative.md, tasks/README.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,6 +36,8 @@ A task is not done until every document listed in documents_affected has been up
 Write the player-facing text the switch back to the combo multiplier needs, through the style loop, into the game's text files (where the HUD, recap and tutorial texts already live), and list them in docs/hud-and-menus.md Content. Pieces: (1) the multiplier beside the car, its format (for example "x2.50"; any label word is your call, short); (2) a trick popup's amount: the multiplier it added (for example "+x0.5"), replacing the viewers amount; (3) a crash's loss on the multiplier, if it shows one (replacing "-{viewers}"); (4) the recap's peak line, now the peak multiplier (replacing "Peak engagement" with viewers); (5) the tutorial slides that say "live viewers" (slide1.controls, slide2.chain, slide2.step2_title, slide2.step2_caption, slide2.step3_caption and any other): rewrite them for tricks raise the multiplier, tricks and drifting bring subs, subs fill the sub goal; (6) anything else in the game's text files that names viewers or WATCHING (grep for it), each replaced or marked unused. Keep the keys the code reads; add new keys where needed and list them in the result notes for the UI Agent (T-514).
 
 The board, 2026-11-02: the live viewers are confusing; back to the combo multiplier number, shown beside the car; tricks also pay subs. Decisions: docs/game-loop-architecture.md, "Back to the combo multiplier; tricks pay subs", and docs/hud-and-menus.md, "The multiplier beside the car". The board plays T-512..T-514 together in one playtest build before anything merges. Never write, move or commit anything in game/data/levels/. SFX stay off. Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` (your ticket's id). If a hook or the permission system refuses an action, stop and tell the Project Lead; never get around it with another tool or command.
+
+The board's review: play it in the one combined build (T-512, T-513, T-514) from C:\solid-carbide-worktrees\T-514\game\project.godot before merging.
 
 ## Acceptance criteria
 
@@ -58,6 +60,10 @@ Started: texts for the combo multiplier.
 ### 2026-11-02, In progress → In QA
 
 Multiplier texts written, all scored 8+; keys listed for T-514.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed; waiting for the board's playtest in T-514's combined build.
 
 ## Style review
 
