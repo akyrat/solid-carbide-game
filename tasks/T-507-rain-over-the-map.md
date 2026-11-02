@@ -1,7 +1,7 @@
 ---
 id: T-507
 title: Rain over the map
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md]
 files_expected_to_change: [game/scripts/, game/scenes/, game/data/, game/tests/unit/, docs/level-design.md, game/docs/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: rain over the map with a placeholder look and a saved on/off setting.
 
 Rain built: placeholder drops and splashes over the map, under the HUD, numbers in rain.json, saved rain_enabled setting (on by default); adds about 0.2 ms a frame; works in the web build.
 
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 8 criteria; test sets green; rain over map, under HUD, about 0.2 ms a frame. Ready for the board's playtest in the combined build.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -97,3 +101,4 @@ Done: rain over the map with a placeholder look drawn in code, its numbers in a 
 **Documents affected**: `docs/level-design.md` (Content, "Rain"), `game/docs/level/rain.md` (new).
 
 **Files**: `game/scripts/level/rain.gd`, `game/data/rain.json`, `game/scripts/ui/game_settings.gd`, `game/scripts/run/run.gd`, `game/tests/unit/test_rain.gd`, `game/tests/fixtures/rain_demo.gd`, `rain_demo_street.tscn`, `rain_demo_rooftop.tscn`, `game/tools/bench_rain.gd`, `bench_rain.sh`, `game/docs/level/rain.md`, `docs/level-design.md`, `art-archive/T-507/screenshots/`.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
