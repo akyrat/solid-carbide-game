@@ -1,7 +1,7 @@
 ---
 id: T-502
 title: Driving power-up: the Polarized Steering Wheel
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -100,3 +100,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Honest notes for the playtest:** the stronger lines are clearly denser than the cruise boost's but still modest; T-503 or an effect ticket may want a real burst effect. The burst also triggers the normal cruise boost lines on the same press (W below cruise speed snaps up), which is fine but means two effects overlap.
 
 **Documents affected:** docs/drifting.md (Content: the tier list and a new section "The Polarized Steering Wheel (task T-502)"), game/docs/driving/drift.md ("Polarized Steering Wheel (T-502)"). Not mine, for the Project Lead: docs/hud-and-menus.md still lists four power-ups (T-501 noted it). No SFX, nothing in game/data/levels/.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
