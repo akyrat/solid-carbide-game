@@ -97,6 +97,7 @@ func _ready() -> void:
 	start_button.pressed.connect(func(): start_pressed.emit())
 	garage_button.pressed.connect(func(): garage_pressed.emit())
 	exit_button.pressed.connect(func(): exit_pressed.emit())
+	KeyNav.chain_column([start_button, garage_button, exit_button])  # T-492
 	start_button.grab_focus()
 
 
