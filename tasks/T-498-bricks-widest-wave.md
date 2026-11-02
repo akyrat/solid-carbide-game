@@ -1,7 +1,7 @@
 ---
 id: T-498
 title: Bricks tier 8: the widest wave with two extra crash rings
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/weapons/bricks.gd, game/data/weapons.json]
 files_expected_to_change: [game/data/weapons.json, game/scripts/weapons/bricks.gd, game/scripts/data/weapon_data.gd, game/art/weapons/, game/tools/, game/tests/unit/, docs/weapons.md, game/docs/weapons/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started on top of T-495 and T-496 (built on their branch).
 ### 2026-11-02, In progress → In QA
 
 Bricks tier 8 built: radius 25.2 in three crash rings travelling out (hits at 0, 0.5, 0.65 s, each enemy once), script-drawn sheet, tests pass; ready for QA.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 8 criteria, all tests green, three rings seen inner to outer. Ready for the board's playtest.
 
 ## Style review
 
