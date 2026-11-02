@@ -1,7 +1,7 @@
 ---
 id: T-496
 title: Weapon data for the board's upgrade trees
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -71,6 +71,10 @@ QA round 1 fixes in: two stale tests updated, T-495's text-table fix merged in. 
 
 QA round 2 passed: all criteria pass, tests green. Ready for the board's playtest with T-495 to T-499.
 
+### 2026-11-02, Needs playtest
+
+QA round 2 passed. Waits for the board's playtest with T-495 to T-499.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -92,3 +96,4 @@ Done by the Game Data Agent (2026-11-02). Code, data, docs, tests and screenshot
 - Refusals: a hook refused inline python on the task file and the Edit of the task file was denied; I stopped and wrote these notes through task_notes.py as instructed.
 
 QA round 1 fixes: test_size_grow (wiper size tiers 2, 5, 7; loop to max_tier), test_enemy_data kill times worked out from the new gun tiers (6/6: 23.2 s, 8 alone: 7.3 s, 8/4/+50%: 4.6 s, tier 7 alone: 23.6 s); docs/weapons.md T-412 list no longer has gun tiers 6 to 11. Both test files pass.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
