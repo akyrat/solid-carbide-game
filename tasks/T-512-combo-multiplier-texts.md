@@ -41,11 +41,11 @@ The board, 2026-11-02: the live viewers are confusing; back to the combo multipl
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every text listed in the description exists in the game's text files with its key, and docs/hud-and-menus.md Content lists each with where it appears. (QA: pass / fail)
-- [ ] Each new or rewritten line scored 8 or more in the style loop (the Style review section shows the scores). (QA: pass / fail)
-- [ ] No text in game/data/*.json that the player sees still says viewers or WATCHING, except keys the result notes mark as unused after T-514. (QA: pass / fail)
-- [ ] The result notes list every key, new or changed, for T-514. (QA: pass / fail)
-- [ ] The Godot tests that read these text files pass (the agent runs the ones it touched). (QA: pass / fail)
+- [ ] Every text listed in the description exists in the game's text files with its key, and docs/hud-and-menus.md Content lists each with where it appears. (QA: pass)
+- [ ] Each new or rewritten line scored 8 or more in the style loop (the Style review section shows the scores). (QA: pass)
+- [ ] No text in game/data/*.json that the player sees still says viewers or WATCHING, except keys the result notes mark as unused after T-514. (QA: pass)
+- [ ] The result notes list every key, new or changed, for T-514. (QA: pass)
+- [ ] The Godot tests that read these text files pass (the agent runs the ones it touched). (QA: fail: code - game/tools test_text_inventory fails (reran alone, same result): 'data/multiplier_text.json' and 'data/recap_text.json' have screen '(unlisted)'; game/tools/text_inventory.py needs a screen entry for multiplier_text and for recap_text:peak_value)
 
 ## Updates
 
