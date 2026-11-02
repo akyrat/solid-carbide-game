@@ -1,7 +1,7 @@
 ---
 id: T-513
 title: Tricks pay subs
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [docs/game-loop-architecture.md, game/data/combo.json, game/data/run.json, tasks/README.md]
 files_expected_to_change: [game/scripts/, game/data/combo.json, game/data/run.json, game/tests/unit/, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: tricks pay subs.
 ### 2026-11-02, In progress → In QA
 
 Tricks now pay subs straight away (5/10 per trick, multiplied by the combo; numbers in combo.json trick_subs); signal trick_subs_paid for the HUD.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed; waiting for the board's playtest in T-514's combined build.
 
 ## Style review
 

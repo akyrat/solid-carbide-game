@@ -1,7 +1,7 @@
 ---
 id: T-512
 title: Texts for the combo multiplier beside the car
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/extended-narrative.md, tasks/README.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Started: texts for the combo multiplier.
 ### 2026-11-02, In progress → In QA
 
 Multiplier texts written, all scored 8+; keys listed for T-514.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed; waiting for the board's playtest in T-514's combined build.
 
 ## Style review
 
