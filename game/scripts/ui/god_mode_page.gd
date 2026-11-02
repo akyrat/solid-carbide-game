@@ -18,8 +18,10 @@ const TEXT_POWER_UPS_KEY := "god_mode_power_ups_heading"
 const TEXT_TIER_KEY := "god_mode_tier_format"
 const TEXT_NOT_OWNED_KEY := "god_mode_not_owned"
 const TEXT_BACK_KEY := "god_mode_back"
-## Where the page starts: higher than the pause strip (92), so a fifth power-up still fits 648.
-const PAGE_TOP := 56.0
+## Where the page starts: higher than the pause strip (92), with tight rows,, so a fifth power-up still fits 648.
+const PAGE_TOP := 24.0
+const SYMBOL_SIZE := 34
+const SYMBOL_BUTTON_WIDTH := 52.0
 const ICON_SIZE := 24
 const NAME_WIDTH := 200.0
 const TIER_WIDTH := 110.0
@@ -46,7 +48,7 @@ func setup(the_god: Node) -> void:
 	style.set_content_margin_all(10.0)
 	add_theme_stylebox_override("panel", style)
 	_box = VBoxContainer.new()
-	_box.add_theme_constant_override("separation", 3)
+	_box.add_theme_constant_override("separation", 0)
 	add_child(_box)
 	_power_up_data = PowerUpData.new()
 	_build()
@@ -95,6 +97,16 @@ func _button(node_name: String, text: String) -> Button:
 	return b
 
 
+## A - or + button: the shared button with a bigger symbol and room for it.
+func _symbol_button(node_name: String, text: String) -> Button:
+	var b := _button(node_name, text)
+	b.add_theme_font_size_override("font_size", SYMBOL_SIZE)
+	b.add_theme_constant_override("outline_size", 1)  # the shared 4 px outline fills a symbol in
+	HudStyle.button_padding(b, 12, 0)  # the plate keeps its look; the room goes to the symbol
+	b.custom_minimum_size = Vector2(SYMBOL_BUTTON_WIDTH, 0)
+	return b
+
+
 func _add_row(e: Dictionary) -> void:
 	var kind: String = e.kind
 	var id: String = e.id
@@ -120,10 +132,10 @@ func _add_row(e: Dictionary) -> void:
 	tier_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tier_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(tier_label)
-	var minus := _button("Minus_%s" % id, "-")
+	var minus := _symbol_button("Minus_%s" % id, pause_text("god_mode_minus"))
 	minus.pressed.connect(func(): god.step(kind, id, -1))
 	row.add_child(minus)
-	var plus := _button("Plus_%s" % id, "+")
+	var plus := _symbol_button("Plus_%s" % id, pause_text("god_mode_plus"))
 	plus.pressed.connect(func(): god.step(kind, id, 1))
 	row.add_child(plus)
 	rows.append({"kind": kind, "id": id, "name_label": name_label, "tier_label": tier_label,
@@ -156,16 +168,17 @@ static func tier_text(tier: int, last: int) -> String:
 	return pause_text(TEXT_TIER_KEY).replace("{tier}", str(tier)).replace("{max}", str(last))
 
 
-## Re-reads every tier from GodMode and dims the buttons that would do nothing.
+## Re-reads every tier from GodMode and marks the buttons that would do nothing.
 func refresh() -> void:
 	for r in rows:
 		var tier: int = god.current_tier(r.kind, r.id)
 		var last: int = god.last_tier(r.kind, r.id)
 		var low: int = god.min_tier(r.kind, r.id)
 		r.tier_label.text = tier_text(tier, last)
-		# Never disabled, so the keyboard focus is not lost at an end; just dimmed.
-		r.minus.modulate.a = 0.4 if tier <= low else 1.0
-		r.plus.modulate.a = 0.4 if tier >= last else 1.0
+		# Never disabled or dimmed, so the symbols stay readable and the keyboard focus is not
+		# lost at an end: a press there just does nothing.
+		r.minus.set_meta("at_end", tier <= low)
+		r.plus.set_meta("at_end", tier >= last)
 
 
 ## Up and down walk the rows on the same side (- or +) then Back, wrapping; left and right swap
