@@ -58,6 +58,10 @@ Started: rain off by default, then QA, merge and itch push.
 
 Rain now defaults to off; tests, docs and a new-player screenshot are in. Ready for QA, merge and the itch push.
 
+### 2026-11-02, In QA
+
+QA passed on round 2 (one doc line fixed). Merging with T-511, then itch push.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
