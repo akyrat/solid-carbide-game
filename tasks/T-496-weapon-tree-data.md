@@ -82,3 +82,5 @@ Done by the Game Data Agent (2026-11-02). Code, data, docs, tests and screenshot
 - Docs: docs/weapons.md (gun, flamethrower with "+1 s burn", molotov, wiper, bricks, offers, size-grow list; old Decisions marked superseded), game/docs/weapons/{starting-gun,flamethrower,bricks}.md, game/docs/data/game-data.md. Long GDD to regenerate at merge.
 - Screenshots: art-archive/T-496/screenshots/level_up_a.png (gun Exposure for Everyone + molotov Quick Fire), level_up_b.png (flamethrower + wiper), level_up_c.png (bricks + molotov), from fixtures tests/fixtures/level_up_t496_{a,b,c}.tscn.
 - Refusals: a hook refused inline python on the task file and the Edit of the task file was denied; I stopped and wrote these notes through task_notes.py as instructed.
+
+QA round 1 fixes: test_size_grow (wiper size tiers 2, 5, 7; loop to max_tier), test_enemy_data kill times worked out from the new gun tiers (6/6: 23.2 s, 8 alone: 7.3 s, 8/4/+50%: 4.6 s, tier 7 alone: 23.6 s); docs/weapons.md T-412 list no longer has gun tiers 6 to 11. Both test files pass.
