@@ -1,7 +1,7 @@
 ---
 id: T-517
 title: The Drift Guide: a predicted-path arrow during a drift
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -76,3 +76,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Done. drift_guide.gd (under the car in the run), GameSettings drift_guide_enabled (off default; GameSettings.save_drift_guide_enabled(on) is the function T-518 calls, applies at once via notifier), CarModel.duplicate_state(), Car.last_input, data/drift_guide.json (_comment, proposals), game/docs/driving/drift_guide.md, docs/drifting.md Content. Prediction: 1 s ahead, input held; matches real car within 0.01 units (test). Walls: path ends at Car.test_move hit; ramps/jumps/Space/Rev Charge not predicted; air = not drifting so it fades. Tests: test_drift_guide (10), test_car_collisions, test_rain pass. Screenshots: art-archive/T-517/screenshots/left.png, right.png (fixtures drift_guide_left/right.tscn).
 
 QA round 1: all 7 criteria pass. Test sets pass, document changed, screenshots left.png and right.png show a gray fading arrow in each drift. test_drift_guide checks off/default, shows only while drifting with fades, prediction within 0.01 units, steering change next step; data has _comment.
+- 2026-11-02, needs-playtest → done: The board played the combined build (2026-11-02): lgtm.
