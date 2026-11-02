@@ -204,8 +204,8 @@ func test_a_real_minion_is_damaged_and_knocked_back() -> void:
 func test_the_tier_1_push_is_6_units_and_the_last_tier_9() -> void:
 	# T-266: about twice the car's length (3 units long) at the first level.
 	assert_eq(float(data.wiper_at(1)["knockback_distance"]), 6.0)
-	assert_almost_eq(float(data.wiper_at(5)["knockback_distance"]), 9.0, 1e-9, "tier 5 still x1.5")
-	assert_almost_eq(float(data.wiper_at(8)["knockback_distance"]), 9.0, 1e-9)
+	assert_almost_eq(float(data.wiper_at(4)["knockback_distance"]), 9.0, 1e-9, "tier 4 is x1.5 (T-496)")
+	assert_almost_eq(float(data.wiper_at(7)["knockback_distance"]), 9.0, 1e-9)
 	rack.upgrade("wiper")
 	var m: Node = run.minions.spawn_minion_at(_ahead(1.0))
 	m.max_health = 100.0
@@ -370,11 +370,11 @@ func test_playtest_switch_is_read_from_the_data_file() -> void:
 
 func test_each_tier_sets_the_datas_values() -> void:
 	rack.upgrade("wiper")
-	for t in range(1, data.max_tier() + 1):
+	for t in range(1, data.max_tier("wiper") + 1):
 		wiper.set_tier(t)
 		assert_eq(wiper.stats, data.wiper_at(t), "tier %d values" % t)
 	wiper.set_tier(1)
-	for t in range(2, data.max_tier() + 1):
+	for t in range(2, data.max_tier("wiper") + 1):
 		assert_true(rack.upgrade("wiper"), "upgrade to tier %d" % t)
 	assert_false(rack.upgrade("wiper"), "no upgrade past the last tier")
 
@@ -382,7 +382,7 @@ func test_each_tier_sets_the_datas_values() -> void:
 func test_damage_bonus_multiplies_every_tier() -> void:
 	rack.upgrade("wiper")
 	rack.set_damage_bonus(50.0)
-	for t in range(1, data.max_tier() + 1):
+	for t in range(1, data.max_tier("wiper") + 1):
 		wiper.set_tier(t)
 		assert_almost_eq(float(wiper.stats["damage"]), data.wiper_at(t)["damage"] * 1.5, 1e-9)
 
@@ -410,9 +410,6 @@ func test_tier_6_changes_what_weapons_json_says() -> void:
 func test_tier_7_changes_what_weapons_json_says() -> void:
 	_check_tier(7)
 
-
-func test_tier_8_changes_what_weapons_json_says() -> void:
-	_check_tier(8)
 
 
 const TIER_KEYS := {
@@ -553,3 +550,74 @@ func test_blade_colours_are_opaque_and_not_heart_red() -> void:
 			var dh := absf(c.h - red.h)
 			assert_true(c.s < 0.35 or minf(dh, 1.0 - dh) * 360.0 > 30.0, "colour %s is not the heart's red" % c)
 		assert_false(c.r > c.g + 0.2 and c.r > c.b + 0.2, "colour %s is not a red" % c)
+
+
+# --- Tier 8: the back wiper (T-499) -----------------------------------------------------------
+
+func _to_tier(t: int) -> void:
+	rack.upgrade("wiper")
+	for i in range(2, t + 1):
+		rack.upgrade("wiper")
+
+
+func test_one_wiper_below_tier_8_and_two_at_tier_8() -> void:
+	assert_eq(data.max_tier("wiper"), 8)
+	assert_true(data.wiper_at(8)["back_wiper"])
+	assert_false(data.wiper_at(7)["back_wiper"])
+	_to_tier(7)
+	assert_null(wiper.back_wiper, "one wiper at tier 7")
+	rack.upgrade("wiper")
+	assert_eq(wiper.tier, 8)
+	var b = wiper.back_wiper
+	assert_not_null(b, "two wipers at tier 8")
+	assert_true(b.is_back and b.is_owned())
+	for k in ["length", "sweep_degrees_per_second", "damage", "knockback_distance", "sweep_arc_degrees", "hit_cooldown"]:
+		assert_eq(float(b.stats[k]), float(wiper.stats[k]), k)
+	_step(100)  # the arm's growth is over
+	assert_almost_eq(b.length(), wiper.length(), 1e-9)
+	assert_lt(b.forward().dot(wiper.forward()), -0.999, "faces the other way")
+	assert_lt((b.pivot_units() - _car()).dot(wiper.forward()), 0.0, "pivot at the tail")
+	assert_lt((b.tip_units() - _car()).dot(wiper.forward()), 0.0, "tip behind the car")
+	wiper.set_tier(7)
+	assert_false(b.is_owned(), "lost below tier 8")
+
+
+func test_back_wiper_hits_an_enemy_behind_only_at_tier_8() -> void:
+	_to_tier(7)
+	var behind := _place(FakeBigEnemy.new(), _car() - wiper.forward() * 3.5)
+	behind.radius_units = 0.3
+	_step(_steps_for(_pass_seconds() * 3.0))
+	assert_eq(behind.damage_taken.size(), 0, "tier 7: nothing behind is hit")
+	rack.upgrade("wiper")
+	_step(_steps_for(_pass_seconds() * 3.0))
+	assert_gt(behind.damage_taken.size(), 0, "tier 8: the back wiper hits it")
+	assert_eq(float(behind.damage_taken[0]), float(wiper.stats["damage"]))
+
+
+func test_back_wiper_has_its_own_hit_cooldown_and_mirrors_the_front() -> void:
+	_to_tier(8)
+	var b = wiper.back_wiper
+	assert_almost_eq(b.sweep_angle, wiper.sweep_angle, 1e-9, "same sweep angle")
+	# A true mirror across the car's cross axis: the arm's along-car part is opposite, the sideways part the same-sign flip.
+	var f: Vector2 = wiper.arm_direction()
+	var k: Vector2 = b.arm_direction()
+	assert_almost_eq(k.dot(wiper.forward()), -f.dot(wiper.forward()), 1e-6)
+	assert_almost_eq(k.dot(wiper.forward().orthogonal()), -f.dot(wiper.forward().orthogonal()) * -1.0, 1e-6)
+	var front := _place(FakeBigEnemy.new(), _ahead(1.0))
+	front.radius_units = 0.3
+	var back := _place(FakeBigEnemy.new(), _car() - wiper.forward() * 1.5)
+	back.radius_units = 0.3
+	_step(_steps_for(_pass_seconds() * 1.2))
+	assert_gt(front.damage_taken.size(), 0, "front wiper hits ahead")
+	assert_gt(back.damage_taken.size(), 0, "back wiper hits behind")
+	assert_ne(wiper.last_hit, b.last_hit, "each has its own hit record")
+
+
+func test_back_wiper_draws_with_the_same_art() -> void:
+	_to_tier(8)
+	_step(2)
+	var b = wiper.back_wiper
+	assert_not_null(b.drawing)
+	assert_true(b.drawing.visible)
+	assert_ne(b.drawing, wiper.drawing)
+	assert_eq(b.drawing.get_script(), wiper.drawing.get_script(), "the same blade drawing (same sheet)")

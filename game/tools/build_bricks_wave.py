@@ -17,6 +17,9 @@ frame, the ring easing out from START_RADIUS to the radius in RING_SECONDS, then
 thinning and crumbling away; dust puffs kicked up behind the ring grow, rise and
 shrink; brick chips hop out and drop. Nothing fades: pixels appear or go.
 
+T-498: tier 8's widest wave (three rings, inner to outer) is one sheet too, but a
+sparse one: see "the widest wave" below.
+
 Commands (from the repo root):
   python game/tools/build_bricks_wave.py build                  # every radius into game/art/weapons/
   python game/tools/build_bricks_wave.py build --radius 4 --out X.png   # one sheet (style loop versions)
@@ -88,17 +91,34 @@ SEED = 325
 
 # --- radii and names -------------------------------------------------------------
 
-def tier_radii(path=WEAPONS_JSON):
-    """Every damage radius Bricks' tiers 1 to 8 reach (weapons.json `bricks`: the base
-    radius times each `radius_multiplier` up to the tier), rounded to 0.01, ascending."""
+def tier_waves(path=WEAPONS_JSON):
+    """Every wave Bricks' tiers reach (weapons.json `bricks`): {radius: rings}. The
+    radius is the base radius times each `radius_multiplier` and `widest_wave` up to
+    the tier, rounded to 0.01; rings is 1, or a widest_wave's value (T-498: the wave
+    becomes that many rings, at the earlier radius times 1, 2, 3 ...)."""
     b = json.loads(Path(path).read_text(encoding="utf-8"))["bricks"]
-    r, out = float(b["radius"]), set()
-    out.add(round(r, 2))
+    r, rings, out = float(b["radius"]), 1, {}
+    out[round(r, 2)] = rings
     for t in sorted(b.get("tiers", []), key=lambda t: t["tier"]):
         if t.get("effect") == "radius_multiplier":
             r *= float(t["value"])
-        out.add(round(r, 2))
-    return sorted(out)
+        elif t.get("effect") == "widest_wave":
+            r *= float(t["value"])
+            rings *= int(round(float(t["value"])))
+        out[round(r, 2)] = rings
+    return out
+
+
+def tier_radii(path=WEAPONS_JSON):
+    """Every damage radius Bricks' tiers reach, ascending (see tier_waves)."""
+    return sorted(tier_waves(path))
+
+
+def ring_interval(path=WEAPONS_JSON):
+    """Seconds between one ring of a widest wave reaching its radius and the next
+    (weapons.json bricks.ring_interval; bricks.gd hits each ring at that time)."""
+    b = json.loads(Path(path).read_text(encoding="utf-8"))["bricks"]
+    return float(b.get("ring_interval", 0.15))
 
 
 def sheet_name(radius):
@@ -114,10 +134,29 @@ def frame_size(radius):
 
 # --- timing (bricks.gd BricksWave) ---------------------------------------------------
 
-def ring_radius(f, radius):
-    t = min(f * FRAME_SECONDS / RING_SECONDS, 1.0)
+def ring_radius(f, radius, start=START_RADIUS, travel=RING_SECONDS):
+    """The ring's radius at frame f: eases out from `start` to `radius` in `travel` seconds."""
+    t = min(f * FRAME_SECONDS / travel, 1.0)
     e = 1.0 - (1.0 - t) * (1.0 - t)
-    return START_RADIUS + (radius - START_RADIUS) * e
+    return start + (radius - start) * e
+
+
+def _x_ranges(cx, w, y_off, d_lo, d_hi, slack=2):
+    """Art-pixel x ranges of the row at offset y_off from the centre whose ground
+    distance can lie in [d_lo, d_hi] (a superset, `slack` px wider each side; the exact
+    test is the caller's). One range across the middle, or two either side of it."""
+    b = y_off / (ART_PX / 2)
+    hi2 = 2 * d_hi * d_hi - b * b
+    if hi2 < 0:
+        return []
+    a_hi = math.sqrt(hi2) * ART_PX
+    lo2 = 2 * max(d_lo, 0.0) ** 2 - b * b
+    x1 = max(0, int(cx - a_hi) - slack)
+    x2 = min(w, int(cx + a_hi) + slack + 1)
+    if lo2 <= 0:
+        return [range(x1, x2)]
+    a_lo = math.sqrt(lo2) * ART_PX
+    return [range(x1, min(x2, int(cx - a_lo) + slack + 1)), range(max(x1, int(cx + a_lo) - slack), x2)]
 
 
 def ground_dist(x, y):
@@ -136,13 +175,23 @@ def _hash(x, y, f):
 
 # --- drawing -------------------------------------------------------------------------
 
-def draw_frame(f, radius, rnd_puffs, rnd_chips):
+def draw_frame(f, radius, rnd_puffs, rnd_chips, ring=None):
+    """One frame of one ring. `ring` (T-498, a widest wave's outer rings): start (the
+    radius it eases out from), inner (where its dust and chips start), travel (seconds
+    to reach `radius`), frames (its own frame count), limit (the sheet's radius, the
+    halo's bound). None: T-325's single wave (START_RADIUS, 0, RING_SECONDS, FRAMES,
+    radius)."""
+    ring = ring or {}
+    start = ring.get("start", START_RADIUS)
+    inner = ring.get("inner", 0.0)
+    travel = ring.get("travel", RING_SECONDS)
+    n_frames = ring.get("frames", FRAMES)
     w, h, (cx, cy) = frame_size(radius)
     px = [[None] * w for _ in range(h)]
-    life = (f + 0.5) / FRAMES
-    travelling = f * FRAME_SECONDS < RING_SECONDS - 1e-9
-    after = 0 if travelling else f - round(RING_SECONDS / FRAME_SECONDS)   # frames since the ring stopped
-    rr = ring_radius(f, radius)
+    life = (f + 0.5) / n_frames
+    travelling = f * FRAME_SECONDS < travel - 1e-9
+    after = 0 if travelling else f - round(travel / FRAME_SECONDS)   # frames since the ring stopped
+    rr = ring_radius(f, radius, start, travel)
     a_i = min(after, len(AFTER_WIDTH) - 1)
     bw = 0.34 if travelling else AFTER_WIDTH[a_i]
     core = 0.15 if travelling else 0.11          # the white leading edge, units (3 px at the ellipse's ends)
@@ -168,7 +217,8 @@ def draw_frame(f, radius, rnd_puffs, rnd_chips):
         hw = int(r_out * math.sqrt(2) * ART_PX) + 2
         hh = int(r_out * math.sqrt(2) * ART_PX / 2) + 2
         for y in range(max(0, cy - hh), min(h, cy + hh + 1)):
-            for x in range(max(0, cx - hw), min(w, cx + hw + 1)):
+            for x in (x for xr in _x_ranges(cx, w, y - cy, r_out - width, r_out) for x in xr
+                      if cx - hw <= x <= cx + hw):
                 d = ground_dist(x - cx, y - cy)
                 if not (r_out - width <= d <= r_out):
                     continue
@@ -190,26 +240,30 @@ def draw_frame(f, radius, rnd_puffs, rnd_chips):
                 px[y][x] = c
 
     band(rr, bw)
-    if travelling and rr > START_RADIUS + 0.5:
-        band(rr * 0.7, 0.07, inner_only_grey=True)
+    if travelling and rr > start + 0.5:
+        band(rr * 0.7 if inner <= 0 else inner + (rr - inner) * 0.7, 0.07, inner_only_grey=True)
     _outline(px)
     # A second navy pixel on the ring's outer edge, so the white core stands off any ground.
-    add = []
-    for y in range(max(1, cy - int(rr * 23) - 4), min(h - 1, cy + int(rr * 23) + 5)):
-        for x in range(1, w - 1):
-            if px[y][x] is None and OUTLINE in (px[y][x - 1], px[y][x + 1], px[y - 1][x], px[y + 1][x]):
-                if ground_dist(x - cx, y - cy) > rr:
-                    add.append((x, y))
+    add = set()
+    y_lo, y_hi = max(1, cy - int(rr * 23) - 4), min(h - 1, cy + int(rr * 23) + 5)
+    for y in range(max(0, y_lo - 1), min(h, y_hi + 1)):
+        row = px[y]
+        for x in [x for x, c in enumerate(row) if c is not None and c == OUTLINE]:
+            for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+                if y_lo <= ny < y_hi and 1 <= nx < w - 1 and px[ny][nx] is None:
+                    if ground_dist(nx - cx, ny - cy) > rr:
+                        add.add((nx, ny))
     for x, y in add:
         px[y][x] = OUTLINE
     # The glow's halo: checker-dithered steps just outside and inside the ring, no blur
     # (rule 5). The first step is pale blue on a checker, the second a sparser darker blue.
     if halo_steps:
-        limit = radius + (MARGIN - 1) / (math.sqrt(2) * ART_PX)   # the halo stays inside the frame
+        limit = ring.get("limit", radius) + (MARGIN - 1) / (math.sqrt(2) * ART_PX)   # the halo stays inside the frame
         hw = int((rr + HALO_2) * math.sqrt(2) * ART_PX) + 2
         hh = int((rr + HALO_2) * math.sqrt(2) * ART_PX / 2) + 2
         for y in range(max(0, cy - hh), min(h, cy + hh + 1)):
-            for x in range(max(0, cx - hw), min(w, cx + hw + 1)):
+            for x in (x for xr in _x_ranges(cx, w, y - cy, rr - bw - HALO_2, rr + HALO_2) for x in xr
+                      if cx - hw <= x <= cx + hw):
                 if px[y][x] is not None or broken(x - cx, y - cy):
                     continue
                 d = ground_dist(x - cx, y - cy)
@@ -249,7 +303,7 @@ def draw_frame(f, radius, rnd_puffs, rnd_chips):
     for kind, s in sprites:
         u, v = math.cos(s["a"]), math.sin(s["a"])
         if kind == "puff":
-            d = s["frac"] * min(rr, radius)
+            d = inner + s["frac"] * (min(rr, radius) - inner)
             gx, gy = iso(u * d, v * d)
             grow = min(life / 0.3, 1.0) if life < 0.3 else max(0.0, 1.0 - (life - 0.3) / 0.7)
             r = s["size"] * grow
@@ -260,7 +314,7 @@ def draw_frame(f, radius, rnd_puffs, rnd_chips):
             if life >= 0.86:
                 continue
             l = life / 0.86
-            d = s["frac"] * radius * l
+            d = inner + s["frac"] * (radius - inner) * l
             gx, gy = iso(u * d, v * d)
             hop = s["hop"] * 4.0 * l * (1.0 - l)
             placed.append((gy, kind, (cx + gx, cy + gy - hop), 0, s))
@@ -274,16 +328,16 @@ def draw_frame(f, radius, rnd_puffs, rnd_chips):
 
 
 def _outline(px, colour=OUTLINE):
+    """Every empty pixel next to a drawn one (not of `colour`) becomes `colour`. Walks
+    only the drawn pixels (T-498: a widest wave's frames are mostly empty)."""
     h, w = len(px), len(px[0])
-    add = []
+    add = set()
     for y in range(h):
         row = px[y]
-        for x in range(w):
-            if row[x] is None:
-                for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
-                    if 0 <= nx < w and 0 <= ny < h and px[ny][nx] not in (None, colour):
-                        add.append((x, y))
-                        break
+        for x in [x for x, c in enumerate(row) if c is not None and c != colour]:
+            for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+                if 0 <= nx < w and 0 <= ny < h and px[ny][nx] is None:
+                    add.add((nx, ny))
     for x, y in add:
         px[y][x] = colour
 
@@ -401,16 +455,17 @@ def _chip(px, x, y, phase, small=False):
     _stamp(px, x, y, (CHIP_SMALL if small else CHIP_SHAPES)[phase], CHIP_COLOURS)
 
 
-def scatter():
-    """The puffs and chips (the same pattern at every radius, scaled with it)."""
-    rnd = random.Random(SEED)
+def scatter(seed=SEED, n_puffs=PUFFS, n_chips=CHIPS):
+    """The puffs and chips (the same pattern at every radius, scaled with it; a widest
+    wave's outer rings have their own, more of them round the longer ring)."""
+    rnd = random.Random(seed)
     puffs = []
-    for i in range(PUFFS):
-        puffs.append({"a": math.tau * (i + rnd.uniform(-0.3, 0.3)) / PUFFS, "frac": rnd.uniform(0.55, 0.95),
+    for i in range(n_puffs):
+        puffs.append({"a": math.tau * (i + rnd.uniform(-0.3, 0.3)) / n_puffs, "frac": rnd.uniform(0.55, 0.95),
                       "size": rnd.uniform(8.0, 12.0), "rise": rnd.uniform(14.0, 26.0), "dx": rnd.uniform(-2, 2)})
     chips = []
-    for i in range(CHIPS):
-        chips.append({"a": math.tau * (i + rnd.uniform(-0.4, 0.4)) / CHIPS, "frac": rnd.uniform(0.3, 0.85),
+    for i in range(n_chips):
+        chips.append({"a": math.tau * (i + rnd.uniform(-0.4, 0.4)) / n_chips, "frac": rnd.uniform(0.3, 0.85),
                       "hop": rnd.uniform(16.0, 36.0), "spin": rnd.randrange(4), "small": i % 3 == 2})
     return puffs, chips
 
@@ -447,12 +502,167 @@ def build_sheet(radius):
     return rows, record
 
 
-def write_sheet(radius, out_png):
-    rows, record = build_sheet(radius)
+# --- the widest wave (T-498) ------------------------------------------------------------
+#
+# Tier 8 (Widest Wave, board, 2026-11-02): the radius times 3 and two extra crash rings
+# round the usual one, the wave travelling from the inner ring out. Ring k (1 to rings)
+# is drawn at its own radius (the tier 7 radius times k) by draw_frame: ring 1 is the
+# tier 7 wave as it is (12 frames); ring k > 1 sets off when ring k - 1 reaches its
+# radius, eases out from there to its own in ring_interval seconds (weapons.json, when
+# bricks.gd hits it), then crumbles like the first. Its dust and chips are its own, more
+# of them round the longer ring. One frame of all of it is 2304 x 1250 art pixels, too
+# big for a one-row sheet (27 000 px wide, 130 MB in memory), and almost all of it is
+# empty, so the sheet keeps only the CELL-high strips that hold pixels, packed into an
+# atlas ATLAS_WIDTH wide; the record lists each frame's strips ("runs": atlas x, atlas y,
+# frame x, frame y, width; all CELL high), and bricks.gd draws a frame strip by strip.
+
+CELL = 16
+ATLAS_WIDTH = 4096
+
+
+def widest_timing(rings, interval):
+    """[(first frame, frame count, travel seconds)] for rings 1 to `rings`, and the
+    sheet's frame count."""
+    out = [(0, FRAMES, RING_SECONDS)]
+    reach = RING_SECONDS
+    for _ in range(2, rings + 1):
+        out.append((round(reach / FRAME_SECONDS), round(interval / FRAME_SECONDS) + len(AFTER_WIDTH), interval))
+        reach += interval
+    return out, max(s + n for s, n, _ in out)
+
+
+def ring_reach_seconds(rings, interval):
+    """Seconds after the landing at which ring k (1 to rings) reaches its radius."""
+    return [RING_SECONDS + k * interval for k in range(rings)]
+
+
+def draw_widest_frame(f, radius, rings, interval, scatters=None):
+    """Frame f of a widest wave as an (h, w, 4) uint8 array (rows, then columns)."""
+    import numpy as np
+    W, H, (CX, CY) = frame_size(radius)
+    canvas = np.zeros((H, W, 4), dtype=np.uint8)
+    timing, _ = widest_timing(rings, interval)
+    r1 = round(radius / rings, 2)
+    scatters = scatters or {k: scatter() if k == 1 else scatter(SEED + k, PUFFS * k, CHIPS * k)
+                            for k in range(1, rings + 1)}
+    for k in range(rings, 0, -1):   # the outer rings first, the inner ones drawn over them
+        first, n, travel = timing[k - 1]
+        fl = f - first
+        if fl < (0 if k == 1 else 1) or fl >= n:
+            continue   # an outer ring shows once it has left the ring inside it
+        rk = round(r1 * k, 2)
+        ring = None if k == 1 else {"start": r1 * (k - 1), "inner": r1 * (k - 1), "travel": travel, "frames": n}
+        px = draw_frame(fl, rk, *scatters[k], ring=ring)
+        _, _, (cx, cy) = frame_size(rk)
+        ox, oy = CX - cx, CY - cy
+        for y, row in enumerate(px):
+            for x in [x for x, c in enumerate(row) if c is not None]:
+                canvas[y + oy, x + ox] = row[x] + (255,)
+    return canvas
+
+
+def build_widest(radius, rings, interval):
+    """The widest wave's atlas (an (h, w, 4) uint8 array) and its record."""
+    import numpy as np
+    W, H, centre = frame_size(radius)
+    _, total = widest_timing(rings, interval)
+    r1 = round(radius / rings, 2)
+    scatters = {k: scatter() if k == 1 else scatter(SEED + k, PUFFS * k, CHIPS * k) for k in range(1, rings + 1)}
+    strips, runs = [], []   # strips: (frame, y, x, width) to copy; runs: per frame
+    shelf_x, shelf_y = 0, 0
+    frames = []
+    for f in range(total):
+        fr = draw_widest_frame(f, radius, rings, interval, scatters)
+        frames.append(fr)
+        mine = []
+        for y in range(0, H, CELL):
+            band = fr[y:y + CELL, :, 3]
+            full = [bool(band[:, x:x + CELL].any()) for x in range(0, W, CELL)]
+            c = 0
+            while c < len(full):
+                if not full[c]:
+                    c += 1
+                    continue
+                e = c
+                while e < len(full) and full[e]:
+                    e += 1
+                x0, width = c * CELL, min(e * CELL, W) - c * CELL
+                if shelf_x + width > ATLAS_WIDTH:
+                    shelf_x, shelf_y = 0, shelf_y + CELL
+                mine.append([shelf_x, shelf_y, x0, y, width])
+                strips.append((f, y, x0, width, shelf_x, shelf_y))
+                shelf_x += width
+                c = e
+        runs.append(mine)
+    atlas = np.zeros((shelf_y + CELL, ATLAS_WIDTH, 4), dtype=np.uint8)
+    for f, y, x0, width, ax, ay in strips:
+        part = frames[f][y:y + CELL, x0:x0 + width]
+        atlas[ay:ay + part.shape[0], ax:ax + width] = part
+    record = {
+        "file": sheet_name(radius) + ".png",
+        "task": "T-498",
+        "generator": "game/tools/build_bricks_wave.py (script-drawn, no PixelLab)",
+        "radius_units": radius,
+        "rings": rings,
+        "ring_radii_units": [round(r1 * k, 2) for k in range(1, rings + 1)],
+        "ring_interval": interval,
+        "ring_reach_seconds": [round(t, 4) for t in ring_reach_seconds(rings, interval)],
+        "frames": total,
+        "frame_width": W,
+        "frame_height": H,
+        "centre": list(centre),
+        "layout": "runs",
+        "cell": CELL,
+        "atlas_width": ATLAS_WIDTH,
+        "atlas_height": int(atlas.shape[0]),
+        "runs": runs,
+        "frame_seconds": FRAME_SECONDS,
+        "ring_seconds": RING_SECONDS,
+        "start_radius_units": START_RADIUS,
+        "art_px_per_unit": ART_PX,
+        "draw_scale": 0.5,
+        "resources_consulted": ["docs/visual-style.md", "docs/weapons.md", "docs/extended-narrative.md",
+                                "game/scripts/weapons/bricks.gd", "game/art/weapons/bricks_wave_r8_4.png"],
+    }
+    return atlas, record
+
+
+def frames_of(atlas, record):
+    """A runs sheet's frames, rebuilt as (h, w, 4) uint8 arrays (previews, tests)."""
+    import numpy as np
+    out = []
+    for runs in record["runs"]:
+        fr = np.zeros((record["frame_height"], record["frame_width"], 4), dtype=np.uint8)
+        for ax, ay, fx, fy, width in runs:
+            part = atlas[ay:ay + record["cell"], ax:ax + width]
+            h = min(part.shape[0], fr.shape[0] - fy)
+            fr[fy:fy + h, fx:fx + width] = part[:h]
+        out.append(fr)
+    return out
+
+
+def write_png_array(path, arr):
+    """write_png for an (h, w, 4) uint8 array (the same PNG, built fast)."""
+    import struct
+    import zlib
+    h, w = arr.shape[0], arr.shape[1]
+    raw = b"".join(b"\x00" + arr[y].tobytes() for y in range(h))
+    ch = lambda t, b: struct.pack(">I", len(b)) + t + b + struct.pack(">I", zlib.crc32(t + b))
+    Path(path).write_bytes(b"\x89PNG\r\n\x1a\n" + ch(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0))
+                           + ch(b"IDAT", zlib.compress(raw, 9)) + ch(b"IEND", b""))
+
+
+def write_sheet(radius, out_png, rings=1, interval=None):
     out_png = Path(out_png)
     out_png.parent.mkdir(parents=True, exist_ok=True)
-    write_png(out_png, rows)
-    out_png.with_suffix(".json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    if rings > 1:
+        atlas, record = build_widest(radius, rings, ring_interval() if interval is None else interval)
+        write_png_array(out_png, atlas)
+        rows = None
+    else:
+        rows, record = build_sheet(radius)
+        write_png(out_png, rows)
+    out_png.with_suffix(".json").write_text(json.dumps(record, indent=2 if rings == 1 else 1) + "\n", encoding="utf-8")
     return rows, record
 
 
@@ -460,6 +670,8 @@ def check_rows(rows, record):
     """Rule checks on one sheet: [(name, ok, detail)]."""
     out = []
     w, h = record["frame_width"] * record["frames"], record["frame_height"]
+    if record.get("layout") == "runs":
+        w, h = record["atlas_width"], record["atlas_height"]
     out.append(("sheet size", len(rows) == h and len(rows[0]) == w, "%dx%d" % (len(rows[0]), len(rows))))
     alphas = {p[3] for r in rows for p in r}
     out.append(("opaque or transparent", alphas <= {0, 255}, str(sorted(alphas))))
@@ -477,6 +689,10 @@ def preview(png, out, scale=2, frames=None):
     frames: (first, last) to show only those frames (a close-up)."""
     from PIL import Image
     im = Image.open(png).convert("RGBA")
+    record = json.loads(Path(png).with_suffix(".json").read_text(encoding="utf-8")) \
+        if Path(png).with_suffix(".json").is_file() else {}
+    if record.get("layout") == "runs":
+        return preview_widest(png, record, out, frames)
     if frames:
         fw = im.size[0] // FRAMES
         im = im.crop((frames[0] * fw, 0, (frames[1] + 1) * fw, im.size[1]))
@@ -486,6 +702,27 @@ def preview(png, out, scale=2, frames=None):
     canvas.alpha_composite(im, (0, 0))
     canvas.alpha_composite(im, (0, h))
     canvas = canvas.resize((w * scale, h * 2 * scale), Image.NEAREST)
+    canvas.convert("RGB").save(out)
+
+
+def preview_widest(png, record, out, frames=None, columns=6, shrink=4):
+    """A widest wave's frames on the asphalt's dark grey, `columns` a row, each shown at
+    1/`shrink` (nearest neighbour; 4 is half the run's own size), numbered."""
+    import numpy as np
+    from PIL import Image, ImageDraw
+    atlas = np.array(Image.open(png).convert("RGBA"))
+    all_frames = frames_of(atlas, record)
+    first, last = frames or (0, len(all_frames) - 1)
+    chosen = list(range(first, last + 1))
+    fw, fh = record["frame_width"] // shrink, record["frame_height"] // shrink
+    rows = (len(chosen) + columns - 1) // columns
+    canvas = Image.new("RGBA", (fw * min(columns, len(chosen)), fh * rows), (40, 42, 52, 255))
+    draw = ImageDraw.Draw(canvas)
+    for i, f in enumerate(chosen):
+        im = Image.fromarray(all_frames[f], "RGBA").resize((fw, fh), Image.NEAREST)
+        x, y = (i % columns) * fw, (i // columns) * fh
+        canvas.alpha_composite(im, (x, y))
+        draw.text((x + 6, y + 4), "frame %d  %.2f s" % (f, f * FRAME_SECONDS), fill=(230, 230, 230, 255))
     canvas.convert("RGB").save(out)
 
 
@@ -506,12 +743,12 @@ def main(argv=None):
         if a.radius is not None or a.out:
             if a.radius is None or not a.out:
                 ap.error("--radius and --out go together")
-            write_sheet(a.radius, a.out)
+            write_sheet(a.radius, a.out, tier_waves().get(round(a.radius, 2), 1))
             print("wrote", a.out)
             return 0
-        for r in tier_radii():
+        for r, rings in sorted(tier_waves().items()):
             path = OUT_DIR / (sheet_name(r) + ".png")
-            write_sheet(r, path)
+            write_sheet(r, path, rings)
             print("wrote", path.relative_to(REPO).as_posix())
         return 0
     if a.cmd == "preview":

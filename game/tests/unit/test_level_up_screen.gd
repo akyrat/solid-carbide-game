@@ -99,9 +99,9 @@ func test_level_up_opens_two_cards_with_the_approved_text() -> void:
 func test_exact_text_for_known_cards() -> void:
 	assert_eq(Texts.TEXTS["get_flamethrower.title"], "Hot Take Exhaust")
 	assert_eq(Texts.TEXTS["upgrade_gun.tier5.desc"], "Fires 20% faster again. Engagement waits for no one.")
-	assert_eq(Texts.TEXTS["upgrade_gun.tier11.title"], "Everyone Gets Exposure")
+	assert_eq(Texts.TEXTS["upgrade_gun.tier8.title"], "Exposure for Everyone")
 	assert_eq(Texts.TEXTS["levelup.take"], "Take it")
-	assert_eq(Texts.TEXTS.size(), 32 + 48 + 16 + 6, "T-051's 32 rows, T-171's 24 cards (T-173), T-322's 8 Bricks cards and T-412's 3 more gun cards")
+	assert_eq(Texts.TEXTS.size(), 96, "T-495: the board's trees, tiers 2 to 8 for every weapon, no gun tiers 9 to 11")
 
 
 func test_upgrade_card_shows_the_next_tier_text() -> void:
@@ -578,7 +578,7 @@ func _set_tier(w: String, tier: int) -> void:
 
 func test_every_choice_and_tier_the_offers_can_produce_has_text() -> void:
 	var choices := _every_choice()
-	assert_eq(choices.size(), 10 + 5 * 8, "gun tiers 1-10 (T-408: last tier 11), the others 0-7")
+	assert_eq(choices.size(), 7 + 5 * 8, "gun tiers 1-7, every other weapon 0-7 (Bricks' tier 8: T-498, the wiper's: T-499)")
 	var seen_ids := {}
 	for c in choices:
 		_set_tier(c[0], c[1])
@@ -596,9 +596,9 @@ func test_t171s_texts_word_for_word() -> void:
 	assert_eq(Texts.TEXTS["get_underglow.title"], "Neon Underglow")
 	assert_eq(Texts.TEXTS["upgrade_underglow.tier6.desc"], "Glow damage up another 50%, to 4.5. Peak aesthetic.")
 	assert_eq(Texts.TEXTS["get_molotov.desc"], "Throws a molotov every 3 seconds. Fire lasts 3 seconds. Very shareable.")
-	assert_eq(Texts.TEXTS["upgrade_molotov.tier8.title"], "Triple Drop")
-	assert_eq(Texts.TEXTS["upgrade_wiper.tier5.desc"], "Knockback up 50%, from 6 to 9. Minions only, never the kaiju.")
-	assert_eq(Texts.TEXTS["upgrade_wiper.tier8.title"], "Faster Sweep II")
+	assert_eq(Texts.TEXTS["upgrade_molotov.tier8.title"], "MOREEEE")
+	assert_eq(Texts.TEXTS["upgrade_wiper.tier4.desc"], "Knockback up 50%, from 6 to 9. Minions only, never the kaiju.")
+	assert_eq(Texts.TEXTS["upgrade_wiper.tier6.title"], "Faster Sweep II")
 	for w in ["underglow", "molotov", "wiper"]:
 		for suffix in [".title", ".desc"]:
 			assert_true(Texts.TEXTS.has("get_" + w + suffix))
@@ -615,7 +615,7 @@ const BRICKS_TEXTS := {
 	"upgrade_bricks.tier5": ["Wider Wave II", "Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint."],
 	"upgrade_bricks.tier6": ["Harder Landing II", "Your landing wave hits harder again. Greenbull is trademarking the thud."],
 	"upgrade_bricks.tier7": ["Shove Factor II", "Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach."],
-	"upgrade_bricks.tier8": ["Widest Wave", "Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout."],
+	"upgrade_bricks.tier8": ["Widest Wave", "Your landing wave reaches its widest yet. Brace for impact!"],
 }
 
 

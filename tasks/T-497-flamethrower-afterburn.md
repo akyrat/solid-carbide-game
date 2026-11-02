@@ -70,6 +70,10 @@ Built: burning enemies keep taking flame damage after leaving the flame, one hit
 
 QA passed: all 8 criteria and both test sets green; ready for the board's playtest with T-495 to T-499.
 
+### 2026-11-02, Needs playtest
+
+QA passed (8/8). Waits for the board's playtest with T-495 to T-499 together.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
