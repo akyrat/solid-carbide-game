@@ -1,7 +1,7 @@
 ---
 id: T-513
 title: Tricks pay subs
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [docs/game-loop-architecture.md, game/data/combo.json, game/data/run.json, tasks/README.md]
 files_expected_to_change: [game/scripts/, game/data/combo.json, game/data/run.json, game/tests/unit/, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,6 +36,8 @@ A task is not done until every document listed in documents_affected has been up
 Each trick (the ones in game/data/combo.json trick_add: FULL 360, ALT DRIFT, AIR 180, AIR 360, THREAD THE NEEDLE; and the drift's own pay and airtime if you judge they count as tricks, say so) now also pays subs straight away, into the sub goal (the same XP the run's levels use), on top of raising the multiplier as today. Propose the numbers for the playtest in game/data (for example a trick_subs table in combo.json or run.json, with a _comment), and whether the multiplier multiplies them (a proposal; say why). Keep everything else about the combo and the subs as it is (drain, cuts, drift pay). Expose a signal or value the HUD can use to show the subs a trick paid (the UI Agent's T-514 shows them going into the sub goal). Update docs/game-loop-architecture.md Content (the combo and subs sections) with what was built and the proposals.
 
 The board, 2026-11-02: the live viewers are confusing; back to the combo multiplier number, shown beside the car; tricks also pay subs. Decisions: docs/game-loop-architecture.md, "Back to the combo multiplier; tricks pay subs", and docs/hud-and-menus.md, "The multiplier beside the car". The board plays T-512..T-514 together in one playtest build before anything merges. Never write, move or commit anything in game/data/levels/. SFX stay off. Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` (your ticket's id). If a hook or the permission system refuses an action, stop and tell the Project Lead; never get around it with another tool or command.
+
+The board's review: play it in the one combined build (T-512, T-513, T-514) from C:\solid-carbide-worktrees\T-514\game\project.godot before merging.
 
 ## Acceptance criteria
 
@@ -59,6 +61,10 @@ Started: tricks pay subs.
 ### 2026-11-02, In progress → In QA
 
 Tricks now pay subs straight away (5/10 per trick, multiplied by the combo; numbers in combo.json trick_subs); signal trick_subs_paid for the HUD.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed; waiting for the board's playtest in T-514's combined build.
 
 ## Style review
 
