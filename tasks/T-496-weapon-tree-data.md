@@ -1,7 +1,7 @@
 ---
 id: T-496
 title: Weapon data for the board's upgrade trees
-status: open
+status: in-qa
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -54,6 +54,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-02, In progress → In QA
+
+Weapon data in; bricks and wiper stop at tier 7 until T-498/T-499.
 
 ## Style review
 
