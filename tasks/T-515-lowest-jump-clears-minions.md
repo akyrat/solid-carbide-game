@@ -1,7 +1,7 @@
 ---
 id: T-515
 title: Even the lowest Jump clears a minion
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: even the lowest Jump clears a minion (car contact tolerance ~0.5).
+
+### 2026-11-02, In progress → In QA
+
+Minions now hit the car only within 0.5 units of height, so a tier 1 hop clears one for ~0.6 s; tests and GIF in the ticket.
 
 ## Style review
 
