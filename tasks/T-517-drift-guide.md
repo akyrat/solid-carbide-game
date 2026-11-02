@@ -43,13 +43,13 @@ The board's review: play it in the one combined build (T-516, T-517, T-518) from
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: with the setting off (and with no saved setting) no guide draws during a drift. (QA: pass / fail)
-- [ ] A unit test: with it on, the guide shows only while drifting, and fades in and out at a drift's start and end. (QA: pass / fail)
-- [ ] A unit test: the predicted path matches where the real car goes when the input is held for the predicted time, within a tolerance the result notes give. (QA: pass / fail)
-- [ ] A unit test: changing the steering mid-drift changes the predicted path the same frame or the next. (QA: pass / fail)
-- [ ] Its numbers live in game/data with a _comment; docs/drifting.md Content describes the guide and points to them. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots (or a GIF) of the guide during a left and a right drift, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: with the setting off (and with no saved setting) no guide draws during a drift. (QA: pass)
+- [ ] A unit test: with it on, the guide shows only while drifting, and fades in and out at a drift's start and end. (QA: pass)
+- [ ] A unit test: the predicted path matches where the real car goes when the input is held for the predicted time, within a tolerance the result notes give. (QA: pass)
+- [ ] A unit test: changing the steering mid-drift changes the predicted path the same frame or the next. (QA: pass)
+- [ ] Its numbers live in game/data with a _comment; docs/drifting.md Content describes the guide and points to them. (QA: pass)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass)
+- [ ] Screenshots (or a GIF) of the guide during a left and a right drift, under art-archive/T-NNN/screenshots/. (QA: pass)
 
 ## Updates
 
@@ -70,3 +70,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. drift_guide.gd (under the car in the run), GameSettings drift_guide_enabled (off default; GameSettings.save_drift_guide_enabled(on) is the function T-518 calls, applies at once via notifier), CarModel.duplicate_state(), Car.last_input, data/drift_guide.json (_comment, proposals), game/docs/driving/drift_guide.md, docs/drifting.md Content. Prediction: 1 s ahead, input held; matches real car within 0.01 units (test). Walls: path ends at Car.test_move hit; ramps/jumps/Space/Rev Charge not predicted; air = not drifting so it fades. Tests: test_drift_guide (10), test_car_collisions, test_rain pass. Screenshots: art-archive/T-517/screenshots/left.png, right.png (fixtures drift_guide_left/right.tscn).
+
+QA round 1: all 7 criteria pass. Test sets pass, document changed, screenshots left.png and right.png show a gray fading arrow in each drift. test_drift_guide checks off/default, shows only while drifting with fades, prediction within 0.01 units, steering change next step; data has _comment.
