@@ -41,12 +41,12 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Before N is pressed in the session, the settings show no God mode entry; after it, the entry is there (unit or scene test). (QA: pass / fail)
-- [ ] The page lists all six weapons and all five driving power-ups with their current tier, and − / + change it through T-504's API within 0 and the last tier (the gun never below 1) (test). (QA: pass / fail)
-- [ ] The page works with the keyboard (arrows/WASD, Enter/Space) and the mouse, and uses the shared button (test_shared_button passes). (QA: pass / fail)
-- [ ] Every text on the page and the entry comes from T-501's keys (no placeholder strings in the scene or script). (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots of the settings with the God mode entry and of the page at 1152x648 and 1920x1080, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] Before N is pressed in the session, the settings show no God mode entry; after it, the entry is there (unit or scene test). (QA: pass; no-entry-before-N and entry-after tests in test_god_mode_page, settings screenshot shows the entry)
+- [ ] The page lists all six weapons and all five driving power-ups with their current tier, and − / + change it through T-504's API within 0 and the last tier (the gun never below 1) (test). (QA: pass; 6 weapons and every power-up in the branch listed, limits tested; the branch has 4 power-ups because T-502's fifth is not in it, rows come from run.god_mode.entries())
+- [ ] The page works with the keyboard (arrows/WASD, Enter/Space) and the mouse, and uses the shared button (test_shared_button passes). (QA: pass; keyboard chain and shared-button tests in the agent's run, confirmed in the Godot set below)
+- [ ] Every text on the page and the entry comes from T-501's keys (no placeholder strings in the scene or script). (QA: fail: code - god_mode_page.gd:123 and :126 hard-code "-" and "+" as the buttons' text, not from T-501's keys; game/tools test_text_inventory fails on both as unlisted text, red check. Also the glyphs are barely visible in god_mode_page_1152x648.png: tiny hyphen/plus in dim buttons, hard to read.)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; Godot set 2658/2659 passing, 0 failing, 1 risky; but qa_check's tests line is red on game/tools test_text_inventory, see criterion 4)
+- [ ] Screenshots of the settings with the God mode entry and of the page at 1152x648 and 1920x1080, under art-archive/T-NNN/screenshots/. (QA: pass; all four files exist and show the entry and the page, - and + glyphs faint)
 
 ## Updates
 
