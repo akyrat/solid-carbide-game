@@ -1,7 +1,7 @@
 ---
 id: T-515
 title: Even the lowest Jump clears a minion
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [docs/enemies.md, docs/drifting.md, game/scripts/enemies/enemy_height.gd, game/data/power_ups.json, tasks/README.md]
 files_expected_to_change: [game/scripts/enemies/, game/data/, game/tests/unit/, docs/enemies.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started: even the lowest Jump clears a minion (car contact tolerance ~0.5).
 ### 2026-11-02, In progress → In QA
 
 Minions now hit the car only within 0.5 units of height, so a tier 1 hop clears one for ~0.6 s; tests and GIF in the ticket.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed. Play: C:\solid-carbide-worktrees\T-515\game\project.godot, God mode (N) Jump tier 1, hop over minions.
 
 ## Style review
 
