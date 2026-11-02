@@ -77,3 +77,5 @@ Done. God mode page and entry.
 - Tests: game/tests/unit/game/test_god_mode_page.gd, 8 passed (no entry before N, entry after, open/back, rows equal entries (6 weapons + all power-ups), tier text, -/+ limits through the API incl. gun >= 1, keyboard chain, Escape, shared buttons, no placeholders). test_shared_button.gd updated (pause screen now holds the page's buttons), 12 passed; test_pause_screen.gd and test_pause_restart_exit.gd pass.
 - Screenshots: art-archive/T-505/screenshots/god_mode_{settings,page}_{1152x648,1920x1080}.png (fixtures tests/fixtures/t505_*).
 - Docs: docs/hud-and-menus.md, Decisions, "A secret God mode": "As built" note added.
+
+Round 1 fix: - and + now come from pause_text.json keys god_mode_minus (U+2212) and god_mode_plus, read through pause_text(); text inventory test passes. Symbols in Bangers (shared button rule) at size 34 with a 1 px outline, wider buttons, never dimmed; page moved up (y=24, tight rows) so a fifth power-up still fits 648. Screenshots retaken; test_god_mode_page 8 and test_shared_button 12 pass.
