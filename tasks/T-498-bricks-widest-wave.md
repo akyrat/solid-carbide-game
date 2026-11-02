@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-495, T-496]
+depends_on: []
 documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/weapons/bricks.gd, game/data/weapons.json]
 files_expected_to_change: [game/data/weapons.json, game/scripts/weapons/bricks.gd, game/scripts/data/weapon_data.gd, game/art/weapons/, game/tools/, game/tests/unit/, docs/weapons.md, game/docs/weapons/]
