@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-496]
+depends_on: []
 documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/weapons/flamethrower/exhaust_flamethrower.gd, game/docs/weapons/flamethrower.md]
 files_expected_to_change: [game/scripts/weapons/flamethrower/, game/tests/unit/, docs/weapons.md, game/docs/weapons/flamethrower.md]
@@ -33,7 +33,9 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-The board, 2026-11-02 (docs/weapons.md, Decisions, "The board's own upgrade trees"): the flamethrower's burn time becomes real afterburn. Today an enemy hit by the flame flashes orange for burn_flash_seconds and takes damage only while inside the flame. Now an enemy that leaves the flame keeps taking the flame's damage (its current damage, after upgrades) every tick_interval for its burn time, while the orange tint and the burn flames on it show. Re-entering the flame refreshes the burn time; an enemy never takes more than one flame hit per tick (inside the flame or burning, not both). Tiers 5 and 7 (+1 s each, T-496's data) lengthen it. The weapons-during-the-wreck rule holds: burns already on enemies keep going. Explain the behaviour in game/docs/weapons/flamethrower.md and docs/weapons.md Content (the exhaust flamethrower). Never write, move or commit anything in game/data/levels/. SFX stay off.
+The board, 2026-11-02 (docs/weapons.md, Decisions, "The board's own upgrade trees"): the flamethrower's burn time becomes real afterburn. Today an enemy hit by the flame flashes orange for burn_flash_seconds and takes damage only while inside the flame. Now an enemy that leaves the flame keeps taking the flame's damage (its current damage, after upgrades) every tick_interval for its burn time, while the orange tint and the burn flames on it show. Re-entering the flame refreshes the burn time; an enemy never takes more than one flame hit per tick (inside the flame or burning, not both). Tiers 5 and 7 (+1 s each, T-496's data) lengthen it. This task starts in parallel with T-495 and T-496 (no depends_on): test with burn times set directly in the stats, not through the new tier list. The weapons-during-the-wreck rule holds: burns already on enemies keep going. Explain the behaviour in game/docs/weapons/flamethrower.md and docs/weapons.md Content (the exhaust flamethrower). Never write, move or commit anything in game/data/levels/. SFX stay off.
+
+The board's review: play the new weapon trees in one build with T-495 to T-499 together (levelling each weapon to tier 8 with the playtest switches), from this ticket's folder, before merging.
 
 ## Acceptance criteria
 

@@ -76,6 +76,8 @@ Wiper Blade tier 8: title "Back Wiper"; card text "" (the board's)
 
 Run the style loop on the texts you write or change. List every final title and card text, tier by tier, in the result notes. Never write, move or commit anything in game/data/levels/. SFX stay off.
 
+The board's review: play the new weapon trees in one build with T-495 to T-499 together (levelling each weapon to tier 8 with the playtest switches), from this ticket's folder, before merging.
+
 ## Acceptance criteria
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.

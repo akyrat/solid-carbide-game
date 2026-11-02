@@ -35,6 +35,8 @@ A task is not done until every document listed in documents_affected has been up
 
 The board, 2026-11-02 (docs/weapons.md, Decisions, "The board's own upgrade trees"): Wiper Blade tier 8 (Back Wiper) adds a second wiper at the back of the car: an exact copy of the front one with all its upgrades (length, sweep speed, knockback, damage), sweeping behind the car, mirrored, with the same blade art. Each wiper hits on its own (its own hit cooldown per enemy). Add the tier to weapons.json (a new effect for this tier, your choice of name) and describe it in docs/weapons.md Content (the windshield wiper) and game/docs/weapons/. Never write, move or commit anything in game/data/levels/. SFX stay off.
 
+The board's review: play the new weapon trees in one build with T-495 to T-499 together (levelling each weapon to tier 8 with the playtest switches), from this ticket's folder, before merging.
+
 ## Acceptance criteria
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
