@@ -1,7 +1,7 @@
 ---
 id: T-516
 title: Drift Guide checkbox label
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: the Drift Guide label.
+
+### 2026-11-02, In progress → In QA
+
+Drift Guide label added to pause_text.json (the board's words, style 8/10), documented, test passes.
 
 ## Style review
 
