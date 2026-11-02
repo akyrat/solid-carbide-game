@@ -1,7 +1,7 @@
 ---
 id: T-516
 title: Drift Guide checkbox label
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -82,3 +82,4 @@ Run by `tools/style_loop/run.py` on 2026-11-02: text, kind label, brief `art-arc
 Added drift_guide_label = "Drift Guide" (the board's words) to game/data/pause_text.json; the text inventory reads pause_text.json by key, so it lists it with no code change. Style loop: round 1, score 8/10; the script flagged rule 4 sentence case (capital G), kept because they are the board's own words and a proper feature name. Docs: hud-and-menus.md Content entry (appears only on the pause screen, after Rain, built in T-518). Test: game/tests/unit/test_drift_guide_label_text.gd, 1 test passing. Brief: art-archive/T-516/brief.md.
 
 QA round: all 3 criteria pass; 2 test sets pass, docs changed. The screenshots check fails only because the label is invisible until T-518 builds the checkbox; the lead said a text-only ticket needs none and no criterion asks for one.
+- 2026-11-02, needs-playtest → done: The board played the combined build (2026-11-02): lgtm.
