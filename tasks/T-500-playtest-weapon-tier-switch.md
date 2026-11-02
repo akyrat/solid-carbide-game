@@ -1,7 +1,7 @@
 ---
 id: T-500
 title: Playtest switch: start a run with every weapon at a chosen tier
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -49,10 +49,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started: a playtest-only switch to start every weapon at tier 8, so the board can play the new trees.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added `weapon_tier_at_start` (int, 0 = off) to game/data/playtest.json (_comment updated; all_weapons_at_start stays false). weapons.gd: static `weapon_tier_at_start()` plus `weapon_tier_override` for tests; in reset_for_run(), when all_weapons_at_start is on and the tier is above 1, every weapon is upgraded in order until min(tier, max_tier()) (max read from each weapon, nothing hard-coded). Documented in game/docs/weapons/shared.md. New test file game/tests/unit/weapons/test_weapon_tier_at_start.gd (8 tests: tier 8 equals levelling in order with same stats, cap, tier 2, switch alone does nothing, tier 0 as before, offers never offer a last-tier weapon, committed file off). Ran test_weapon_tier_at_start.gd (8/8) and test_level_up_offers.gd (30/30) with -gselect. No SFX or levels changes.
