@@ -1,7 +1,7 @@
 ---
 id: T-499
 title: Wiper Blade tier 8: a back wiper
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/weapons/windshield_wiper.gd, game/data/weapons.json]
 files_expected_to_change: [game/data/weapons.json, game/scripts/weapons/windshield_wiper.gd, game/scripts/data/weapon_data.gd, game/tests/unit/, docs/weapons.md, game/docs/weapons/]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -68,6 +68,10 @@ QA failed round 1: test_level_up_screen.gd line 581 still expects 45 level-up ch
 ### 2026-11-02, In progress → In QA
 
 Stale pin fixed; T-499 now stacks on T-498.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA round 2 passed all 7 criteria and the full test sets; ready for the board's playtest with T-495 to T-499.
 
 ## Style review
 
