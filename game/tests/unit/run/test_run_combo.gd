@@ -112,15 +112,17 @@ func test_a_challenge_gives_likes_times_the_multiplier() -> void:
 func test_a_drift_second_gives_likes_times_the_multiplier() -> void:
 	state.add_trick("three_sixty")
 	var m := state.combo
+	var start_xp := state.xp  # T-513: the trick paid its subs already
 	for i in 50:
 		state.drift_step(true, 0.02)
-	assert_almost_eq(state.xp, data.drift_xp_per_second() * m, 0.000001)
+	assert_almost_eq(state.xp - start_xp, data.drift_xp_per_second() * m, 0.000001)
 
 
 func test_add_xp_is_multiplied_too() -> void:
 	state.add_trick("three_sixty")
+	var start_xp := state.xp  # T-513: the trick paid its subs already
 	state.add_xp(2.0)
-	assert_almost_eq(state.xp, 2.0 * state.combo, 0.000001)
+	assert_almost_eq(state.xp - start_xp, 2.0 * state.combo, 0.000001)
 
 
 func test_a_wall_hit_cuts_the_combo_by_50_percent() -> void:

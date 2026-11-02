@@ -3405,3 +3405,8 @@ Entry format:
 - Decision or change: Texts for the multiplier beside the car, trick amounts (+x), the recap's Peak combo and the tutorial, replacing the live viewers.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-512
+
+## 2026-11-02: Tricks pay subs
+- Decision or change: Each trick pays subs straight away (5 or 10, times the combo) as well as raising the multiplier.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-513

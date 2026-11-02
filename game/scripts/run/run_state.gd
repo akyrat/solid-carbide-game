@@ -79,6 +79,9 @@ signal level_up_choice_made(new_level: int)
 signal combo_trick(trick_id: String, added: float, multiplier: float)
 ## The combo multiplier changed (a trick, a collision, the drain, or a new
 ## run). For the HUD's combo counter (T-083) and enemy spawning (T-085).
+## A trick paid subs straight away (T-513): `trick_id` the trick, `subs` what it really
+## added to the sub goal (after the multiplier). For the HUD (T-514). Sent just after combo_trick.
+signal trick_subs_paid(trick_id: String, subs: float)
 signal combo_changed(multiplier: float)
 ## A crash cut a combo that was going (T-245): a collision or any damage took
 ## the multiplier down (not the drain, and not when there was no combo to cut).
@@ -521,6 +524,7 @@ func add_trick(trick_id: String, seconds := 0.0) -> void:
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(trick_id, combo - before, combo)
+	_pay_trick_subs(trick_id, before)
 	if combo != before:
 		combo_changed.emit(combo)
 
@@ -543,8 +547,21 @@ func add_airtime_trick(seconds: float) -> void:
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(TrickDetector.TRICK_AIRTIME, combo - before, combo)
+	_pay_trick_subs(TrickDetector.TRICK_AIRTIME, before)
 	if combo != before:
 		combo_changed.emit(combo)
+
+
+## Pays the trick's subs (T-513; combo.json trick_subs) into the sub goal, multiplied by the
+## multiplier from before the trick when the data says so. Sends trick_subs_paid.
+func _pay_trick_subs(trick_id: String, multiplier_before: float) -> void:
+	var subs := _combo_data.trick_subs(trick_id)
+	if subs <= 0.0 or is_max_level():
+		return
+	if _combo_data.trick_subs_multiplied():
+		subs *= multiplier_before
+	_gain_xp(subs)
+	trick_subs_paid.emit(trick_id, subs)
 
 
 ## The thread the needle trick's id (task T-272): the popup's key and combo.json's trick_add key.
@@ -565,6 +582,7 @@ func add_needle_trick() -> void:
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(TRICK_THREAD_THE_NEEDLE, combo - before, combo)
+	_pay_trick_subs(TRICK_THREAD_THE_NEEDLE, before)
 	if combo != before:
 		combo_changed.emit(combo)
 
