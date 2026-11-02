@@ -182,14 +182,14 @@ func test_the_revive_is_invulnerable_for_the_usual_second() -> void:
 	assert_true(state.is_wrecked(), "after it, a hit wrecks it again")
 
 
-func test_the_combo_stays_cut_and_viewers_keep_their_peak() -> void:
+func test_the_combo_stays_cut_and_the_peak_combo_is_kept() -> void:
 	state.add_trick("three_sixty")
-	var peak: float = state.recap().peak_viewers
+	var peak: float = state.recap().highest_combo
 	_lose_last_heart()
 	var combo := state.combo
 	state.heal_car(1.0)
 	assert_eq(state.combo, combo, "the combo the fatal hit left")
-	assert_gte(float(state.recap().peak_viewers), peak, "the peak is not lost")
+	assert_gte(float(state.recap().highest_combo), peak, "the peak is not lost")
 
 
 func test_no_pickup_no_revive_and_the_wreck_ends_as_before() -> void:

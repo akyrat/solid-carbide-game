@@ -104,13 +104,13 @@ func _hud() -> void:
 	run.power_up_screen.visible = false  # the overlay opens on each completed mission
 	await _frames(10)
 	await _shot("hud_mission_page", "Run: mission 1 done, mission 2 half way, so the notebook page shows a count.")
-	# Popups over the car: a trick with its viewers, a score and the cracked combo broken.
+	# Popups over the car: a trick with its multiplier add, a score and the cracked combo broken.
 	run.power_up_screen.visible = false
 	var state: RunState = run.state
 	for i in 3:
 		state.add_trick("three_sixty")
 	await _frames(14)
-	await _shot("hud_trick_popup", "Run: a trick popup with its viewers over the car.")
+	await _shot("hud_trick_popup", "Run: a trick popup with its multiplier add over the car.")
 	state.combo_broken.emit()
 	await _frames(10)
 	await _shot("hud_combo_broken", "Run: the combo broken popup.")

@@ -110,46 +110,44 @@ func test_the_enemies_show_their_own_sprites() -> void:
 	assert_eq(screen.enemy_rows.minion.image.custom_minimum_size, RecapScreen.SLOT)
 
 
-## Quick tuning (board, 2026-10-29): Peak engagement is the peak live viewers, not a multiplier.
-func test_peak_engagement_shows_the_peak_viewers_as_the_counter_writes_them() -> void:
-	var curve := ViewersData.new()
+## T-514 (T-512's text): the recap's peak is the highest combo multiplier, written as the HUD writes it.
+func test_peak_combo_shows_the_highest_multiplier_as_the_tag_writes_it() -> void:
 	_show(_sample())
-	assert_eq(screen.peak_label.text, curve.format(236026.0))
-	assert_eq(screen.peak_label.text, "236K")
-	assert_false(screen.peak_label.text.begins_with("x"), "not a multiplier")
-	var heat := mini(curve.step_for_viewers(236026.0), ComboHeat.STEPS.size() - 1)
-	assert_eq(screen.combo_heat.step, heat, "the counter's heat step for that number")
+	assert_eq(screen.peak_label.text, RecapScreen.text("peak_value").format({"multiplier": "3.40"}))
+	assert_eq(screen.peak_label.text, "x3.40")
+	var heat := ComboHeat.step_for(3.4)
+	assert_eq(screen.combo_heat.step, heat, "the multiplier's heat step for that number")
 	assert_eq(screen.peak_label.get_theme_color("font_color"), ComboHeat.STEPS[heat].color)
 	var s := _sample()
-	s.peak_viewers = 1234567.0
+	s.highest_combo = 6.0
 	_show(s)
-	assert_eq(screen.peak_label.text, curve.format(1234567.0))
-	assert_eq(screen.combo_heat.step, ComboHeat.STEPS.size() - 1, "the fire number takes the top look")
+	assert_eq(screen.peak_label.text, "x6.00")
+	assert_eq(screen.combo_heat.step, ComboHeat.STEPS.size() - 1, "the cap takes the top look")
 
 
-func test_a_low_peak_takes_the_viewers_colour() -> void:
+func test_a_low_peak_takes_the_multiplier_colour() -> void:
 	var s := _sample()
-	s.peak_viewers = 2500.0
+	s.highest_combo = 1.0
 	_show(s)
-	assert_eq(screen.peak_label.text, ViewersData.new().format(2500.0))
+	assert_eq(screen.peak_label.text, "x1.00")
 	assert_eq(screen.combo_heat.step, 0)
-	assert_eq(screen.peak_label.get_theme_color("font_color"), RecapScreen.viewers_color())
-	assert_eq(RecapScreen.viewers_color(), Color("#33e1ff"))
+	assert_eq(screen.peak_label.get_theme_color("font_color"), RecapScreen.multiplier_color())
+	assert_eq(RecapScreen.multiplier_color(), Color("#33e1ff"))
 
 
-func test_an_older_summary_without_peak_viewers_uses_its_highest_combo() -> void:
+func test_an_older_summary_with_peak_viewers_still_loads_and_shows_its_highest_combo() -> void:
 	var s := _sample()
-	s.erase("peak_viewers")
+	s["peak_viewers"] = 236026.0
 	_show(s)
-	var curve := ViewersData.new()
-	assert_eq(screen.peak_label.text, curve.format(curve.viewers_for(3.4)))
+	assert_eq(screen.peak_label.text, "x3.40")
+	s.erase("highest_combo")
+	_show(s)
+	assert_eq(screen.peak_label.text, "x1.00", "no combo recorded: no combo")
 
 
-func test_the_eye_shows_beside_the_number() -> void:
+func test_no_viewers_eye_beside_the_number() -> void:
 	_show(_sample())
-	var eye: TextureRect = screen.sections.combo.find_child("Eye", true, false)
-	assert_not_null(eye)
-	assert_eq(eye.texture.resource_path, RecapScreen.EYE_PATH)
+	assert_null(screen.sections.combo.find_child("Eye", true, false), "T-514: the eye went with the viewers")
 
 
 func test_a_run_with_no_kills_or_tricks_leaves_those_sections_out() -> void:
@@ -178,10 +176,10 @@ func test_every_label_comes_from_the_text_file() -> void:
 		allowed.append((_file_texts().tier as String).format({"tier": n}))
 	_show(_sample())
 	var count_form := RegEx.create_from_string("^x[0-9]+$")
-	var viewers_number := ViewersData.new().format(236026.0)
+	var peak_number := RecapScreen.text("peak_value").format({"multiplier": "3.40"})
 	for l: Label in _labels(screen):
-		var ok: bool = l.text in allowed or count_form.search(l.text) != null or l.text == viewers_number
-		assert_true(ok, "label '%s' is from recap_text.json, the HUD's x{n} form or the viewers number" % l.text)
+		var ok: bool = l.text in allowed or count_form.search(l.text) != null or l.text == peak_number
+		assert_true(ok, "label '%s' is from recap_text.json, the HUD's x{n} form or the peak value" % l.text)
 	assert_eq(screen.continue_button.text, _file_texts().button.continue)
 	assert_eq(screen.close_button.tooltip_text, _file_texts().button.close)
 	assert_eq(screen.close_button.text, "", "the X is a picture, not text")
@@ -283,8 +281,8 @@ func test_a_scripted_run_shows_its_own_sample() -> void:
 	assert_eq(screen.trick_rows.three_sixty.count.text, "x2")
 	assert_eq(screen.trick_rows.alternate_drift.count.text, "x1")
 	assert_eq(screen.trick_rows.thread_the_needle.count.text, "x1")
-	assert_eq(r.peak_viewers, RunState.peak_viewers_for(r.highest_combo))
-	assert_eq(screen.peak_label.text, ViewersData.new().format(r.peak_viewers))
+	assert_false(r.has("peak_viewers"), "T-514: the summary keeps only the highest combo")
+	assert_eq(screen.peak_label.text, RecapScreen.text("peak_value").format({"multiplier": MultiplierTag.format_number(r.highest_combo)}))
 	assert_eq(screen.weapon_rows.keys(), ["gun", "molotov"])
 	assert_eq(screen.weapon_rows.gun.tier.text, _file_texts().tier.format({"tier": 3}))
 	assert_eq(screen.weapon_rows.molotov.image.texture, LevelUpScreen.weapon_image("molotov"))

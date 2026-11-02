@@ -3410,3 +3410,8 @@ Entry format:
 - Decision or change: Each trick pays subs straight away (5 or 10, times the combo) as well as raising the multiplier.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-513
+
+## 2026-11-02: The multiplier beside the car
+- Decision or change: The live viewers counter is gone; the combo multiplier shows beside the car, hidden at x1 (the board's tweak).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-514

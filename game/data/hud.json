@@ -1,16 +1,19 @@
 {
   "_comment": "T-335, the HUD's numbers. The run timer's clock (HUD and menus, Decisions, 'The HUD looks like a livestream'): its digits are green above the first switch point, then yellow, orange and red as the time nears 0:00. Proposals from the board's layout page; the board judges them in playtests. above_seconds: the colour holds while the time left is strictly above this; the last step (red) has no limit. layout: game pixels at 1152 x 648 (the board's saved page), anchored to the bottom-left corner.",
-  "viewers_counter": {
-    "_comment": "T-336, the live viewers counter (HUD and menus, Decisions, 'The HUD looks like a livestream' and 'Tricks bring viewers, shown in one colour'). layout: the board's layout page at 1152 x 648, anchored to the bottom-right corner. color: the viewers colour (T-339's panel rim and eye, #33e1ff), used for nothing else in the HUD. The rest are proposals for the playtest: number_sizes per look step (0 base, 1 to 3 the heat steps; the fire step uses the last), detach_seconds (how long after a trick popup shows its amount leaves it), flight_seconds and flight_arc (the arc's height in pixels), bump_seconds and bump_scale (the pop when an amount lands), flash_seconds, crash_flash_seconds, drop_seconds and drop_px (the '-{viewers}' falling away on a crash), crash_color (the combo broken popup's warning red-orange).",
-    "layout": { "x": 896, "y": 560, "w": 240, "h": 72, "reference_w": 1152, "reference_h": 648 },
+  "multiplier_tag": {
+    "_comment": "T-514, the combo multiplier beside the car (HUD and menus, Decisions, 'The multiplier beside the car'); replaces the live viewers counter (T-336). Proposals for the playtest. offset: where the number's centre sits from the car's centre on screen, in HUD pixels at 1152 x 648 (left of the car, level with it; the airtime and drift counters are on its right). color: the multiplier colour (the old viewers cyan), used for the number at the base step, for a trick popup's amount and its flight; the heat steps use ComboHeat's colours. crash_color: the crash flash and the '-x{amount}' drop. number_sizes per look step (0 base, 1 to 3 the heat steps, 4 at the cap uses the last). fire_from: the multiplier from which the reactions run at their fire rate and the look is the top step's (the cap). detach_seconds (how long after a trick popup shows its amount leaves it), flight_seconds and flight_arc (the arc's height in pixels), bump_seconds and bump_scale (the pop when an amount lands), flash_seconds, crash_flash_seconds, drop_seconds and drop_px. fade_seconds: the number is hidden while the combo is at x1.00 (board, quick tuning 2026-11-02) and fades in or out over this long. count_rate_per_second: how fast the shown number eases to the multiplier (share of the gap closed per second).",
+    "offset": { "x": -130, "y": -8 },
     "color": "#33e1ff",
     "crash_color": "#ff5010",
-    "number_sizes": [28, 30, 32, 34],
+    "number_sizes": [30, 34, 38, 42],
+    "fire_from": 6.0,
+    "fade_seconds": 0.2,
+    "count_rate_per_second": 10.0,
     "detach_seconds": 0.3,
     "flight_seconds": 0.55,
     "flight_arc": 90.0,
     "bump_seconds": 0.25,
-    "bump_scale": 0.18,
+    "bump_scale": 0.3,
     "flash_seconds": 0.25,
     "crash_flash_seconds": 0.45,
     "drop_seconds": 0.9,
@@ -26,7 +29,7 @@
     ]
   },
   "reactions": {
-    "_comment": "T-351, the reaction icons (HUD and menus, Decisions, 'The HUD looks like a livestream'). All proposals for the playtest; the board asked for more and more noticeable ones, from the side where the viewers counter is (quick tuning, 2026-10-28). cap: most icons on screen at once. alpha: their opacity. icon_scale: screen pixels per art pixel. rates_per_second: groups of floaters per second for each look step of the live viewers counter (0 base, 1 to 3 the heat steps, 4 fire at 1,000,000); 0 means none. Each group is group_min to group_max icons, and the gap to the next is the mean (1 / rate) times a random share between gap_min_share and gap_max_share, so the gaps are uneven. Floaters start below the bottom edge at a random x between lane_from and lane_to of the screen width (about the viewers counter's width, 0.76 to 0.99 of it, so the right side only), rise at rise_min to rise_max pixels per second up to near the top, swaying wobble_px at wobble_hz, popping from pop_from to full size over pop_seconds, fading in over fade_in and out from fade_out_from of their life. The burst: burst_count icons out of the sub goal square at burst_speed_min to burst_speed_max pixels per second, slowed by burst_drag, drifting up at burst_rise, lasting burst_seconds_min to burst_seconds_max. The bad reactions (T-356, when a crash cuts the combo): bad_count icons, a mix of the six bad ones, start one after another over bad_seconds from the viewers counter's height in the same lane, rising bad_rise_min to bad_rise_max pixels per second (faster than the floaters), lasting bad_life_min to bad_life_max, swaying bad_wobble_px.",
+    "_comment": "T-351, the reaction icons (HUD and menus, Decisions, 'The HUD looks like a livestream'). All proposals for the playtest; the board asked for more and more noticeable ones, from the right side (quick tuning, 2026-10-28). cap: most icons on screen at once. alpha: their opacity. icon_scale: screen pixels per art pixel. rates_per_second: groups of floaters per second for each look step of the multiplier beside the car (0 base, 1 to 3 the heat steps, 4 at the x6 cap); 0 means none. Each group is group_min to group_max icons, and the gap to the next is the mean (1 / rate) times a random share between gap_min_share and gap_max_share, so the gaps are uneven. Floaters start below the bottom edge at a random x between lane_from and lane_to of the screen width (the right side, 0.76 to 0.99 of it, so the right side only), rise at rise_min to rise_max pixels per second up to near the top, swaying wobble_px at wobble_hz, popping from pop_from to full size over pop_seconds, fading in over fade_in and out from fade_out_from of their life. The burst: burst_count icons out of the sub goal square at burst_speed_min to burst_speed_max pixels per second, slowed by burst_drag, drifting up at burst_rise, lasting burst_seconds_min to burst_seconds_max. The bad reactions (T-356, when a crash cuts the combo): bad_count icons, a mix of the six bad ones, start one after another over bad_seconds from the multiplier's height in the right-side lane, rising bad_rise_min to bad_rise_max pixels per second (faster than the floaters), lasting bad_life_min to bad_life_max, swaying bad_wobble_px.",
     "cap": 60,
     "alpha": 0.9,
     "icon_scale": 2,

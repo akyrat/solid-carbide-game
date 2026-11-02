@@ -55,7 +55,6 @@ const CLIPS_SLIDE2: Array = [
 	["ramp_jump", "slide2.clip_ramp"],
 ]
 ## Art the slides draw (all the game's own files).
-const ART_EYE := "res://art/hud/eye_icon.png"
 const ART_SUBS := "res://art/hud/subs_icon.png"
 const ART_PACKAGE := "res://art/gift_pack/package.png"
 const ART_KAIJU := "res://art/kaiju/kaiju_s.png"
@@ -67,8 +66,8 @@ const SCREEN_TEXTS := "res://data/screen_texts.json"
 ## The run's length in minutes and where the gift packs sit on the timeline (fractions).
 const RUN_MINUTES := 8
 const GIFT_AT: Array[float] = [0.14, 0.33, 0.52, 0.70]
-## The numbers in the notebook sample and the viewer count; sample figures, not words.
-const SAMPLE_VIEWERS := "1,284"
+## The numbers in the notebook sample and the multiplier panel; sample figures, not words.
+const SAMPLE_MULTIPLIER := 2.5
 const SAMPLE_GOALS: Array = [
 	{"trick": "extended_drift", "kind": "duration", "amount": 4.0, "done": 4.0, "completed": true},
 	{"trick": "alternate_drift", "kind": "count", "amount": 10.0, "done": 2.0, "completed": false},
@@ -366,7 +365,7 @@ func _build_slide2() -> Control:
 	chain.name = "Chain"
 	chain.add_theme_constant_override("separation", 12)
 	column.add_child(chain)
-	var pics: Array[Control] = [_pic_trick(), _pic_viewers(), _pic_subs(), _pic_gift()]
+	var pics: Array[Control] = [_pic_trick(), _pic_multiplier(), _pic_subs(), _pic_gift()]
 	for i in range(4):
 		step_pictures.append(pics[i])
 		chain.add_child(_step(i + 1, pics[i]))
@@ -436,14 +435,12 @@ func _pic_trick() -> Control:
 	return _picture(ART_TRICK % STEP_TRICK, Vector2(128, 96))
 
 
-func _pic_viewers() -> Control:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
-	var eye := _picture(ART_EYE, Vector2(48, 33))
-	eye.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(eye)
-	row.add_child(_label(SAMPLE_VIEWERS, true, 16, INK, false))
-	return row
+## Slide 2, step 2 (T-514): the multiplier as it shows beside the car, in its text and colour.
+func _pic_multiplier() -> Control:
+	var l := _label(MultiplierTag.multiplier_text(SAMPLE_MULTIPLIER), false, 34, HudStyle.MULTIPLIER_COLOR, false)
+	l.add_theme_color_override("font_outline_color", HudStyle.DARK)
+	l.add_theme_constant_override("outline_size", 8)
+	return l
 
 
 ## The sub goal ring (a gold arc round the subs icon), drawn in code with the HUD's own icon.

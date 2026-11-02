@@ -16,10 +16,11 @@ extends Control
 ## - the title, by how the run ended (`title.win`, `title.time_up`, `title.wreck`);
 ## - Takedowns: each enemy type with its sprite (the first frame of its south-facing
 ##   sheet), its name and "x{count}";
-## - Peak engagement: the run's peak live viewers (board, 2026-10-29, quick tuning),
-##   written as the HUD's live viewers counter writes it (ViewersData.format: 236K,
-##   1.02M) with the viewers' eye, in the counter's look for that number (the
-##   viewers colour at the base, ComboHeat's heat colours, glow and pulse above);
+## - Peak combo (T-514, T-512's text): the run's peak combo multiplier, written as the HUD
+##   writes it beside the car (`peak_value`, "x4.25"), in the multiplier's look for that
+##   number (the multiplier colour at the base, ComboHeat's heat colours, glow and pulse
+##   above). Summaries saved with a `peak_viewers` still load: it is not read, the peak is
+##   `highest_combo`;
 ## - Tricks landed: each trick as its trick popup (TrickPopupArt, the plain look)
 ##   with "x{count}";
 ## - Weapons used: each weapon with its level-up card image, its name and its tier (`tier`).
@@ -70,9 +71,6 @@ const CLOSE_GRID := [
 ]
 ## The trick popups' size style here.
 const TRICK_STYLE := "normal"
-## The viewers' eye beside the peak viewers (T-339's art, as on the HUD counter).
-const EYE_PATH := "res://art/hud/eye_icon.png"
-const EYE_SCALE := 3
 ## The pop-in: a section shows over these alpha steps, one per FRAME seconds,
 ## starting STAGGER seconds after the previous one.
 const FRAME := 0.04
@@ -95,7 +93,7 @@ var enemy_rows: Dictionary = {}
 var trick_rows: Dictionary = {}
 ## id to {image: TextureRect, name: Label, tier: Label}.
 var weapon_rows: Dictionary = {}
-## The peak viewers number (the "combo" section).
+## The peak combo multiplier (the "combo" section).
 var peak_label: Label
 var combo_heat: ComboHeat
 var _content: Control
@@ -337,61 +335,46 @@ func _build_enemies(parent: Control) -> void:
 
 
 func _build_combo(parent: Control) -> void:
-	var peak := peak_viewers(summary)
-	var curve := ViewersData.new()
-	# The live viewers counter's look for that number (T-336): its heat step (the fire
-	# step takes the top heat look), the viewers colour at the base step.
-	var heat := mini(curve.step_for_viewers(peak), ComboHeat.STEPS.size() - 1)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	var eye := TextureRect.new()
-	eye.name = "Eye"
-	eye.texture = load(EYE_PATH)
-	eye.custom_minimum_size = eye.texture.get_size() * EYE_SCALE
-	eye.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	eye.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	eye.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(eye)
+	var peak := peak_multiplier(summary)
+	# The multiplier's look for that number (T-514): its heat step, the multiplier colour at
+	# the base step.
+	var heat := ComboHeat.step_for(peak)
 	# A holder of fixed size, so the pulse's scale is never reset by a container.
 	var holder := Control.new()
 	holder.name = "PeakHolder"
-	holder.custom_minimum_size = Vector2(170, 70)
-	row.add_child(holder)
+	holder.custom_minimum_size = Vector2(200, 70)
 	peak_label = Label.new()
-	peak_label.name = "PeakViewers"
-	peak_label.text = curve.format(peak)
+	peak_label.name = "PeakMultiplier"
+	peak_label.text = text("peak_value").format({"multiplier": MultiplierTag.format_number(peak)})
 	peak_label.add_theme_font_override("font", Hud.comic_font())
-	peak_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	peak_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	peak_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	peak_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	peak_label.resized.connect(func(): peak_label.pivot_offset = Vector2(0.0, peak_label.size.y / 2.0))
+	peak_label.resized.connect(func(): peak_label.pivot_offset = peak_label.size / 2.0)
 	holder.add_child(peak_label)
 	combo_heat = ComboHeat.new()
 	combo_heat.process_mode = Node.PROCESS_MODE_INHERIT
 	holder.add_child(combo_heat)
 	combo_heat.setup(peak_label, null)
 	if heat > 0:
-		combo_heat.set_multiplier(ComboHeat.THRESHOLDS[heat - 1])
+		combo_heat.set_multiplier(peak)
 	else:
-		peak_label.add_theme_color_override("font_color", viewers_color())
+		peak_label.add_theme_color_override("font_color", multiplier_color())
 	var wrap := CenterContainer.new()
-	wrap.add_child(row)
+	wrap.add_child(holder)
 	_section(parent, "combo", wrap, true)
 
 
-## The run's peak live viewers: `peak_viewers` (T-320 quick tuning), or, for a summary
-## saved before it existed, the viewers for its `highest_combo` on the same curve
-## (RunState.peak_viewers_for), so an older run shows the same kind of number.
-static func peak_viewers(s: Dictionary) -> float:
-	if s.has("peak_viewers"):
-		return float(s.peak_viewers)
-	return RunState.peak_viewers_for(float(s.get("highest_combo", 1.0)))
+## The run's peak combo multiplier: `highest_combo`, at least 1 (no combo). An older summary
+## with a `peak_viewers` (T-320) has the same `highest_combo`, so it loads and shows it.
+static func peak_multiplier(s: Dictionary) -> float:
+	return maxf(float(s.get("highest_combo", 1.0)), 1.0)
 
 
-## The live viewers counter's colour (hud.json viewers_counter.color).
-static func viewers_color() -> Color:
+## The multiplier's colour (hud.json multiplier_tag.color).
+static func multiplier_color() -> Color:
 	var r := GameData.load_file("hud")
-	var cfg: Dictionary = r.data.get("viewers_counter", {}) if r.ok else {}
+	var cfg: Dictionary = r.data.get("multiplier_tag", {}) if r.ok else {}
 	return Color(String(cfg.get("color", "#33e1ff")))
 
 

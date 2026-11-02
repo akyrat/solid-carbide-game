@@ -470,7 +470,6 @@ func _hud_parts(hud: Hud) -> Dictionary:
 		"hearts": hud.heart_row.get_global_rect(),
 		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
-		"viewers": hud.viewers_counter.get_global_rect(),
 		"timer": hud.timer_label.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 		"fire": hud.likes_fire.get_global_rect(),
@@ -629,7 +628,6 @@ func test_t453_arrows_stay_clear_of_moved_hud_pieces() -> void:
 		await wait_process_frames(2)
 		var hud: Hud = run.hud
 		var area: Vector2 = hud.root.size
-		hud.move_piece("viewers", Vector2(area.x - 256.0, area.y / 2.0 - 36.0))  # right edge, middle
 		hud.move_piece("clock", Vector2(area.x / 2.0 - 100.0, 16.0))  # top centre
 		hud.move_piece("sub_goal", Vector2(16.0, area.y / 2.0 - 40.0))  # left edge, middle
 		hud.move_piece("coins", Vector2(area.x / 2.0 - 54.0, area.y - 52.0))  # bottom centre

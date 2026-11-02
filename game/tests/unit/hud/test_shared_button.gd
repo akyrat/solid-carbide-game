@@ -105,7 +105,7 @@ func test_recap_buttons_are_shared() -> void:
 	add_child_autofree(screen)
 	screen.show_summary({"result": "win", "loss_reason": "", "time_survived": 300.0, "coins": 4,
 		"likes": 9, "level": 2, "enemies_slain": {"minion": 3}, "tricks": {}, "highest_combo": 1.0,
-		"peak_viewers": 1000.0, "weapons": {}})
+		"weapons": {}})
 	assert_eq(_all_shared(screen, "recap"), 2, "Continue and the X")
 
 

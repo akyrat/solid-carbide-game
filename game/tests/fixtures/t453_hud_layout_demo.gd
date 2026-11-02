@@ -1,7 +1,6 @@
 extends Node
-## Screenshot fixture for T-453: a run with the player's HUD layout. It drags four pieces the
-## way the editor does (the clock to the top centre, the viewers counter to the right edge's
-## middle, the sub goal to the left edge under the weapons, the coins to the bottom centre),
+## Screenshot fixture for T-453: a run with the player's HUD layout. It drags three pieces the
+## way the editor does (the clock to the top centre, the sub goal to the left edge under the weapons, the coins to the bottom centre),
 ## saves the layout through the editor's Done, then either keeps the editor open mid-drag
 ## (`editing`) or rebuilds the run from the saved settings and shows it running. Drawn in a
 ## SubViewport of `shot_size` and saved to art-archive/T-453/screenshots/<out_name>.png. The saves
@@ -33,7 +32,6 @@ func _ready() -> void:
 	ps.open_hud_layout()
 	var ed: HudLayoutEditor = ps.hud_layout_editor
 	_drag(ed, "clock", func(a: Vector2, s: Vector2): return Vector2(a.x / 2.0 - s.x / 2.0, 16.0))
-	_drag(ed, "viewers", func(a: Vector2, s: Vector2): return Vector2(a.x - s.x - 16.0, a.y / 2.0 - s.y / 2.0))
 	_drag(ed, "sub_goal", func(a: Vector2, s: Vector2): return Vector2(170.0, a.y - s.y - 16.0))
 	_drag(ed, "coins", func(a: Vector2, s: Vector2): return Vector2(a.x / 2.0 - s.x / 2.0, a.y - s.y - 16.0))
 	if editing:

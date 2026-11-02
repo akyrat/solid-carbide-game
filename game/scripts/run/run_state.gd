@@ -978,25 +978,11 @@ func _record_trick(trick_id: String) -> void:
 ##   enemies_slain: {enemy type: kills}, e.g. {"minion": 40, "kaiju": 1}
 ##   tricks: {trick id: times completed} (every id the combo counts)
 ##   highest_combo: the highest multiplier reached
-##   peak_viewers: the live viewers counter's highest number (T-320 quick tuning,
-##     board 2026-10-29): the viewers for highest_combo on T-332's curve
-##     (ViewersData.viewers_for), the number the counter counts up to, without its wobble
 ##   weapons: {weapon id: {"tier": tier it ended on, "kills": kills it made}}
 func recap() -> Dictionary:
 	if not _final_recap.is_empty():
 		return _final_recap.duplicate(true)
 	return _build_recap()
-
-
-## The live viewers for a combo multiplier (T-332's curve, the counter's target), for
-## the recap's peak viewers (T-320). Whole viewers.
-static func peak_viewers_for(multiplier: float) -> float:
-	if _viewers_curve == null:
-		_viewers_curve = ViewersData.new()
-	return _viewers_curve.viewers_for(maxf(multiplier, 1.0))
-
-
-static var _viewers_curve: ViewersData = null
 
 
 func _build_recap() -> Dictionary:
@@ -1015,6 +1001,5 @@ func _build_recap() -> Dictionary:
 		"enemies_slain": _slain.duplicate(),
 		"tricks": _tricks_done.duplicate(),
 		"highest_combo": _highest_combo,
-		"peak_viewers": peak_viewers_for(_highest_combo),
 		"weapons": weapons_out,
 	}

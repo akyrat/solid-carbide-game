@@ -136,17 +136,14 @@ func test_minion_remembers_the_weapon_that_hit_it_last() -> void:
 	assert_eq(MinionScript.ENEMY_TYPE, "minion")
 
 
-## T-320 quick tuning (board, 2026-10-29): the summary keeps the peak live viewers, the
-## counter's number for the highest combo on T-332's curve.
-func test_the_summary_keeps_the_peak_viewers() -> void:
-	var curve := ViewersData.new()
-	assert_eq(state.recap().peak_viewers, curve.base_viewers(), "no combo: the base viewers")
+## T-514: the summary keeps the highest combo (the peak shown in the recap); no viewers.
+func test_the_summary_keeps_the_highest_combo_and_no_viewers() -> void:
+	assert_false(state.recap().has("peak_viewers"))
 	for i in 5:
 		state.add_trick("three_sixty")
 	var peak := state.combo
 	state.collision()
 	var r := state.recap()
-	assert_eq(r.peak_viewers, curve.viewers_for(peak), "the peak, not the viewers after the crash")
-	assert_gt(r.peak_viewers, curve.base_viewers())
+	assert_eq(r.highest_combo, peak, "the peak, not the combo after the crash")
 	var back: Dictionary = JSON.parse_string(JSON.stringify(r))
-	assert_eq(float(back.peak_viewers), r.peak_viewers, "saved with the run history as JSON")
+	assert_eq(float(back.highest_combo), r.highest_combo, "saved with the run history as JSON")

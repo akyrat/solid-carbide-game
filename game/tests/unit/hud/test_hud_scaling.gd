@@ -15,7 +15,7 @@ const SIZES: Array[Vector2i] = [
 ## of the height, the sub goal).
 const ANCHORS := {
 	"hearts": "tl", "weapon icons": "tl", "coins": "bl", "clock": "bl",
-	"viewers": "br", "sub goal": "r"}
+	"sub goal": "r"}
 ## Screen pixels of slack (the pieces round to whole pixels).
 const EPS := 1.5
 
@@ -56,7 +56,6 @@ func _parts(hud: Hud) -> Dictionary:
 		"hearts": hud.heart_row.get_global_rect(),
 		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
-		"viewers": hud.viewers_counter.get_global_rect(),
 		"clock": hud.timer_clock.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 	}
@@ -140,15 +139,10 @@ func test_follows_a_window_resize() -> void:
 	_assert_fits(hud, Vector2(3440, 1440), "resized to 3440x1440")
 
 
-func test_sub_goal_moves_up_clear_of_the_viewers_when_big() -> void:
-	var hud := _hud_at(Vector2i(1152, 648), GameSettings.MAX_HUD_SIZE)
+func test_sub_goal_is_not_moved_by_the_hud_size() -> void:
+	var big := _hud_at(Vector2i(1152, 648), GameSettings.MAX_HUD_SIZE)
 	await get_tree().process_frame
-	var sg := hud.sub_goal.get_global_rect()
-	var vc := hud.viewers_counter.get_global_rect()
-	assert_lt(sg.end.y, vc.position.y, "the sub goal stays above the viewers counter")
-	var normal := _hud_at(Vector2i(1152, 648))
-	await get_tree().process_frame
-	assert_eq(normal.sub_goal.offset_top, 0.0, "at 100 the sub goal is not moved")
+	assert_eq(big.sub_goal.offset_top, 0.0, "T-514: no counter under the sub goal, nothing to clear")
 
 
 ## Every CanvasItem under the HUD resolves to nearest filtering (set, or inherited from the
@@ -215,5 +209,5 @@ func test_bursts_and_flights_follow_the_scale() -> void:
 	var centre := hud.sub_goal.get_global_rect().get_center()
 	var local := hud.to_layout(centre)
 	assert_almost_eq(local * hud.hud_scale(), centre, Vector2(0.01, 0.01), "screen to layout pixels")
-	var f := hud.viewers_counter.fly_in("+1K", 10.0, Vector2(960, 540))
+	var f := hud.multiplier_tag.fly_in("+x0.5", 0.5, Vector2(960, 540))
 	assert_almost_eq(f.base_scale, hud.hud_scale(), 0.0001, "the flight is drawn at the HUD's scale")

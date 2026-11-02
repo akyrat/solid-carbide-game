@@ -24,6 +24,6 @@ func _ready() -> void:
 		"likes": 900, "level": 5,
 		"enemies_slain": {"minion": 42, "kaiju": 1},
 		"tricks": {"three_sixty": 3, "airtime": 7, "thread_the_needle": 1},
-		"highest_combo": 3.4, "peak_viewers": 236026.0,
+		"highest_combo": 3.4, 
 		"weapons": {"gun": {"tier": 4, "kills": 30}, "wiper": {"tier": 2, "kills": 12}},
 	})

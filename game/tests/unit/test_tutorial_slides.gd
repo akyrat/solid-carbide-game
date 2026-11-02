@@ -194,6 +194,7 @@ func test_no_word_on_the_slides_comes_from_code() -> void:
 	for n in texts["power_ups"]["names"].values():
 		allowed[String(n).to_lower()] = true
 	allowed[String(texts["missions"]["header"]).to_lower()] = true
+	allowed[MultiplierTag.multiplier_text(TutorialSlides.SAMPLE_MULTIPLIER).to_lower()] = true  # T-514: slide 2, step 2
 	for row in slides.notebook_page.rows:
 		allowed[(row as Node).get_node("Text").text.to_lower()] = true
 	for k in slides.kickers:
@@ -287,7 +288,7 @@ func test_the_pictures_are_the_games_own_art() -> void:
 		assert_true(path.begins_with("res://art/"), path)
 		assert_true(path.ends_with(".png"), path)
 		assert_true(ResourceLoader.exists(path), path)
-	for expected in ["res://art/hud/eye_icon.png", "res://art/hud/subs_icon.png",
+	for expected in ["res://art/hud/subs_icon.png",
 			"res://art/gift_pack/package.png", "res://art/kaiju/kaiju_s.png",
 			"res://art/hud/live_badge.png", "res://art/hud/mission_page.png",
 			"res://art/tutorial/tricks/extended_drift.png", "res://art/hud/weapon_icons.png",

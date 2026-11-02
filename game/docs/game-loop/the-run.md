@@ -152,7 +152,7 @@ The drain runs with the clock (`advance()`), so it stops while the run is paused
 | `enemies_slain` | `{enemy type: kills}`, types `"minion"` and `"kaiju"` (`ENEMY_TYPE` on each enemy script) |
 | `tricks` | `{trick id: count}`, every id the combo counts, including `"airtime"` and `"thread_the_needle"` |
 | `highest_combo` | The highest multiplier reached |
-| `peak_viewers` | The live viewers counter's peak: `RunState.peak_viewers_for(highest_combo)`, i.e. `ViewersData.viewers_for` on T-332's curve, whole viewers, no wobble (T-320 quick tuning, 2026-10-29) |
+| `peak_viewers` | Removed in T-514: the recap shows `highest_combo`. Saved runs that carry it still load; it is not read. |
 | `weapons` | `{weapon id: {"tier": tier it ended on, "kills": kills}}` for the owned weapons |
 
 Feeding it: `enemy_slain(enemy_type, weapon_id)` (the minion spawner and the kaiju boss call it when an enemy dies; ignored once the run ended), `add_trick`, `add_airtime_trick` and `add_needle_trick` count tricks. Weapons pass their id to `take_damage(amount, source)`, so an enemy knows `last_hit_by`; the kill goes to the weapon that struck the last blow. The weapon list comes from `state.weapons_source` (set by the rack: `Weapons.owned_tiers()`). Damage per weapon is not counted.
