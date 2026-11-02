@@ -41,12 +41,12 @@ The board's review: play a run with God mode (N) giving Jump tier 1 and hop over
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test that fails on today's code: a car hopping with Jump tier 1 straight over a minion standing still takes no contact damage when the hop is timed with the minion under the car's middle (and a test with the real hop's height curve: the car is clear of the minion for at least 0.5 s of the hop). (QA: pass / fail)
-- [ ] A unit test: a car on the ground touching a minion still takes contact damage; a car on a ramp touching a minion on the same ramp still takes it. (QA: pass / fail)
-- [ ] A unit test: the kaiju's contact, the meteors' miss rule, the minions' crowding and the weapons' levels are unchanged (their tolerances unchanged). (QA: pass / fail)
-- [ ] The new tolerance lives in data or a named constant with a comment, and docs/enemies.md Content describes it. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] A screenshot or GIF of the car hopping over a minion with tier 1, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test that fails on today's code: a car hopping with Jump tier 1 straight over a minion standing still takes no contact damage when the hop is timed with the minion under the car's middle (and a test with the real hop's height curve: the car is clear of the minion for at least 0.5 s of the hop). (QA: pass)
+- [ ] A unit test: a car on the ground touching a minion still takes contact damage; a car on a ramp touching a minion on the same ramp still takes it. (QA: pass)
+- [ ] A unit test: the kaiju's contact, the meteors' miss rule, the minions' crowding and the weapons' levels are unchanged (their tolerances unchanged). (QA: pass)
+- [ ] The new tolerance lives in data or a named constant with a comment, and docs/enemies.md Content describes it. (QA: pass)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass)
+- [ ] A screenshot or GIF of the car hopping over a minion with tier 1, under art-archive/T-NNN/screenshots/. (QA: pass)
 
 ## Updates
 
@@ -67,3 +67,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Built: EnemyHeight.MINION_CONTACT_TOLERANCE = 0.5 (a proposal, named constant with comment) and EnemyHeight.minion_can_hit(); Minion.contact_step uses it. LEVEL_TOLERANCE (1.0) is untouched: kaiju contact, kaiju_meteors, minion crowding, and weapons (1.5) keep theirs. Jump tiers unchanged. New test file game/tests/unit/enemies/test_minion_contact_tolerance.gd (7 tests): the real hop-curve test failed on old code (clear 0.00 s) and passes now (clear 0.56 s of the 0.83 s hop; analytic 0.60 s); ground still hit; ramp: car and minion on the same ramp differ by ~0.25 per unit of distance, far under 0.5, still hit; rooftop car safe; kaiju still hits at 0.9 up; LEVEL_TOLERANCE 1.0, weapons 1.5, MINION_CONTACT_TOLERANCE 0.5 asserted. Also ran test_enemies_on_heights, test_minions, test_rusty_overcoat, test_kaiju, test_jump_clears_obstacles: all pass. docs/enemies.md Content 'Contact damage at the car's level' updated. GIF: art-archive/T-515/screenshots/jump_over_minion.gif (+ hop_frame_20/30.png; made with the new fixture tests/fixtures/jump_over_minion_demo and game/tools/record_jump_minion_gif.sh). Note: a first screenshot attempt left stale hop_frame PNGs that I overwrote (an rm was refused by the hook, not worked around). Nothing in game/data/levels touched.
+
+QA round 1: all six criteria pass. qa_check: 2 test sets pass, docs changed, 3 screenshots. Test file reviewed: hop-curve test (clear >= 0.5 s), ground/ramp/rooftop, tolerances unchanged (1.0, weapons 1.5, minion 0.5) and kaiju-at-0.9 tests match the criteria. Constant named with comment; docs/enemies.md updated. GIF and frames present. Note: meteors and crowding are covered only by the LEVEL_TOLERANCE/at_car_level assertion.
