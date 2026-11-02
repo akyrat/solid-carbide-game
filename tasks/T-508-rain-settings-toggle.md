@@ -1,7 +1,7 @@
 ---
 id: T-508
 title: The rain toggle in the settings
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -79,3 +79,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Done: a Rain checkbox in the pause screen (the game's only settings screen; the main menu has none), in the checkbox row after Dynamic camera, shared checkbox style. Label from data/pause_text.json rain_label (T-506). Starts from GameSettings.load_rain_enabled(); toggling calls save_rain_enabled, so the rain shows or hides at once (T-507 notifier) and the choice is saved. Mouse and keyboard work like the other checkboxes. Tests: game/tests/unit/test_pause_rain_toggle.gd 5/5 (label, default on, saved and read back, real mouse click, keyboard Space, rain layer in a run); test_pause_screen, test_pause_camera_controls, test_pause_slider_saves, test_rain pass. Full set for QA. Screenshots: art-archive/T-508/screenshots/pause_screen_game.png and pause_screen_prototype.png. Documents affected: docs/hud-and-menus.md. Files: game/scripts/ui/pause_screen.gd, game/tests/unit/test_pause_rain_toggle.gd, docs/hud-and-menus.md.
 
 QA round 1 fixes: test_shared_button pause count 9 to 10 (T-508's Rain checkbox), and the docs/hud-and-menus.md Rain checkbox bullet, which had been lost, now committed. test_shared_button 12/12, test_pause_rain_toggle 5/5.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
