@@ -41,9 +41,9 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The rain toggle's label (and on/off words if the other toggles have them) exists under keys listed in the result notes, in the same file as the other settings texts. (QA: pass / fail)
-- [ ] The style loop's score is in the Style review and the result notes. (QA: pass / fail)
-- [ ] The test files that cover screen texts pass (-gselect). (QA: pass / fail)
+- [ ] The rain toggle's label (and on/off words if the other toggles have them) exists under keys listed in the result notes, in the same file as the other settings texts. (QA: pass; rain_label = "Rain" in game/data/pause_text.json, listed in result notes, no on/off words as other checkboxes have none)
+- [ ] The style loop's score is in the Style review and the result notes. (QA: pass; 9/10 in both)
+- [ ] The test files that cover screen texts pass (-gselect). (QA: pass; qa_check: 2 test sets passed, tools set skipped)
 
 ## Updates
 
