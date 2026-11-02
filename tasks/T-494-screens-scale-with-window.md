@@ -1,7 +1,7 @@
 ---
 id: T-494
 title: Every screen scales with the window: the gift pack screen, the pause screen, and all the scan finds
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md]
 files_expected_to_change: [game/scripts/, game/scenes/, game/tests/unit/, docs/hud-and-menus.md, game/docs/hud-and-menus/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -82,3 +82,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
   - Nothing under game/data/levels/ touched.
   - Documents affected: docs/hud-and-menus.md (Content, "The HUD scales with the window": the screens now scale too, and how), game/docs/hud-and-menus/hud.md ("Every screen scales with the window").
 - 2026-11-02, in-progress → in-qa: Ready for the board's swipe deck
+- 2026-11-02, in-qa → done: Approved in the board's swipe deck: every card ok, ultrawide and 4K text kept as built
