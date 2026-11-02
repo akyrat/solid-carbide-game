@@ -12,11 +12,11 @@ user_facing_text: yes
 changes_visuals: yes
 board_approved_art: no
 depends_on: []
-documents_affected: [docs/weapons.md]
+documents_affected: []
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/ui/level_up_texts.gd, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/tests/unit/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -82,12 +82,12 @@ The board's review: play the new weapon trees in one build with T-495 to T-499 t
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/scripts/ui/level_up_texts.gd has a title and a non-empty card text for every tier 2 to 8 of gun, flamethrower, molotov, bricks and wiper, keyed by the new tier numbers, and no keys left for gun tiers 9 to 11. (QA: pass / fail)
-- [ ] Every title is exactly the board's title from the list in the description. (QA: pass / fail)
-- [ ] Card texts marked unchanged in the description are identical, unless the result notes name a number that became wrong and its correction. (QA: pass / fail)
-- [ ] Every number or count in a card text matches the Decisions entry (checked by hand at least for Hot Drop tiers 4, 5 and 8, Gun tier 6 and Wiper Blade tier 4). (QA: pass / fail)
-- [ ] The three empty texts (Wiper Blade tiers 5, 7, 8) are written, and the style loop's scores are in the result notes. (QA: pass / fail)
-- [ ] The Godot unit tests that cover level-up texts pass (-gselect on those test files). (QA: pass / fail)
+- [ ] game/scripts/ui/level_up_texts.gd has a title and a non-empty card text for every tier 2 to 8 of gun, flamethrower, molotov, bricks and wiper, keyed by the new tier numbers, and no keys left for gun tiers 9 to 11. (QA: pass; all 35 tiers present with non-empty text, no gun tier 9 to 11)
+- [ ] Every title is exactly the board's title from the list in the description. (QA: pass; all 35 titles checked)
+- [ ] Card texts marked unchanged in the description are identical, unless the result notes name a number that became wrong and its correction. (QA: pass; unchanged texts verbatim, only Hot Drop tier 5 corrected and named)
+- [ ] Every number or count in a card text matches the Decisions entry (checked by hand at least for Hot Drop tiers 4, 5 and 8, Gun tier 6 and Wiper Blade tier 4). (QA: pass; Hot Drop 4 +1, 5 "3 at once", 8 +1; gun tier 6 "4 in all"; wiper tier 4 "6 to 9" matches knockback base 6 x1.5)
+- [ ] The three empty texts (Wiper Blade tiers 5, 7, 8) are written, and the style loop's scores are in the result notes. (QA: pass; scores 8, 8, 9, plus Hot Drop tier 5 at 9; in Style review and result notes)
+- [ ] The Godot unit tests that cover level-up texts pass (-gselect on those test files). (QA: fail: code - on T-496's branch (T-495 is its base) Godot test_level_up_screen passes, but the python test game/tools/test_check_level_up_texts.py test_the_real_files_match_t171s_table_with_t301s_texts is red (20 diffs, e.g. upgrade_molotov.tier4.title 'Another one' != 'Spicier Fire'): it compares level_up_texts.gd against T-171's old table and was not updated for the new texts. Also red on that run: Godot test_size_grow and test_enemy_data, which T-496 owns)
 
 ## Updates
 
@@ -96,6 +96,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: card text for the board's weapon trees comes first; T-496 waits for it.
+
+### 2026-11-02, In progress → In QA
+
+Card text for the board's trees is in; 3 Wiper texts written, Hot Drop tier 5 count fixed; style loop 8 to 9.
+
+### 2026-11-02, In QA → In progress
+
+QA failed: python test_check_level_up_texts is stale vs the new texts; and docs/weapons.md (documents_affected) not changed on the branch, either change it or drop it from the list.
 
 ## Style review
 
