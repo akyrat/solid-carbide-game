@@ -1,7 +1,7 @@
 ---
 id: T-498
 title: Bricks tier 8: the widest wave with two extra crash rings
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started on top of T-495 and T-496 (built on their branch).
+
+### 2026-11-02, In progress → In QA
+
+Bricks tier 8 built: radius 25.2 in three crash rings travelling out (hits at 0, 0.5, 0.65 s, each enemy once), script-drawn sheet, tests pass; ready for QA.
 
 ## Style review
 
