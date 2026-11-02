@@ -1,7 +1,7 @@
 ---
 id: T-506
 title: Text for the rain toggle in the settings
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: the rain toggle's label.
+
+### 2026-11-02, In progress → In QA
+
+Rain toggle label 'Rain' written as pause_text.json key rain_label, style loop 9/10; no on/off words (other checkboxes have none).
 
 ## Style review
 
