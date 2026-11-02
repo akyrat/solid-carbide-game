@@ -1,7 +1,7 @@
 ---
 id: T-504
 title: God mode: set each weapon's and power-up's tier in the current run
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/weapons/weapons.gd, game/scripts/data/power_up_data.gd, game/data/playtest.json]
 files_expected_to_change: [game/project.godot, game/scripts/, game/tests/unit/, game/docs/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started: God mode's logic (N unlocks it; set tiers in the current run).
 ### 2026-11-02, In progress → In QA
 
 God mode logic is in: N unlocks it for the session, and run.god_mode sets any weapon or power-up tier at once (documented in game/docs/game-loop/the-run.md); 9 tests pass.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA: all 6 criteria pass, tests green. Only the script's screenshots line fails: this is logic-only, nothing to show.
 
 ## Style review
 
