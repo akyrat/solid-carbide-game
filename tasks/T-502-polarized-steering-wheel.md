@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-501]
+depends_on: []
 documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/data/power_ups.json, game/scripts/data/power_up_data.gd, game/scripts/weapons/bricks.gd]
 files_expected_to_change: [game/data/power_ups.json, game/scripts/, game/art/power_ups/, game/tests/unit/, docs/drifting.md, game/docs/]
