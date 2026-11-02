@@ -41,14 +41,14 @@ The board's review: play the new weapon trees in one build with T-495 to T-499 t
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] weapons.json bricks has tier 8 with the new effect and value 3, and bricks reaches tier 8 in the level-up offers; the tier 8 card is T-495's text. (QA: pass / fail)
-- [ ] A unit test: at tier 8 the wave's radius is 3 times the tier 7 radius. (QA: pass / fail)
-- [ ] A unit test: an enemy near the outer edge is hit later than one near the car (when the wave reaches its ring), every enemy in reach is hit exactly once per landing, and the kaiju is damaged but never pushed. (QA: pass / fail)
-- [ ] Every radius the bricks tiers reach (tiers 1 to 8) has a wave sheet in game/art/weapons/ (no placeholder ring), and the tier 8 sheet shows 3 rings drawn inner to outer. (QA: pass / fail)
-- [ ] The landing frame time at tier 8, measured headless, is in the result notes. (QA: pass / fail)
-- [ ] docs/weapons.md (Bricks) describes tier 8. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots or a frame strip of the tier 8 wave, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] weapons.json bricks has tier 8 with the new effect and value 3, and bricks reaches tier 8 in the level-up offers; the tier 8 card is T-495's text. (QA: pass; tier 8 widest_wave value 3, max_tier 8, card is T-495 text)
+- [ ] A unit test: at tier 8 the wave's radius is 3 times the tier 7 radius. (QA: pass; test_bricks.gd radius 3x tier 7)
+- [ ] A unit test: an enemy near the outer edge is hit later than one near the car (when the wave reaches its ring), every enemy in reach is hit exactly once per landing, and the kaiju is damaged but never pushed. (QA: pass; test_bricks.gd: outer later, once each, kaiju not pushed)
+- [ ] Every radius the bricks tiers reach (tiers 1 to 8) has a wave sheet in game/art/weapons/ (no placeholder ring), and the tier 8 sheet shows 3 rings drawn inner to outer. (QA: pass; sheets r4.0 to r25.2 present, frame strip shows 3 rings inner to outer)
+- [ ] The landing frame time at tier 8, measured headless, is in the result notes. (QA: pass; landing times in result notes)
+- [ ] docs/weapons.md (Bricks) describes tier 8. (QA: pass; Tier 8 bullet in docs/weapons.md)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; full sets green)
+- [ ] Screenshots or a frame strip of the tier 8 wave, under art-archive/T-NNN/screenshots/. (QA: pass; 3 screenshots, 3 rings seen)
 
 ## Updates
 
