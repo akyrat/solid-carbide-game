@@ -78,6 +78,8 @@ var smoothing_check: CheckBox
 var dynamic_check: CheckBox
 ## The rain checkbox (T-508): the saved setting rain_enabled, label from data/pause_text.json.
 var rain_check: CheckBox
+## The Drift Guide checkbox (T-518): the saved setting drift_guide_enabled, label from data/pause_text.json.
+var drift_guide_check: CheckBox
 ## The temporary tuning row: shown only while the dynamic camera is on.
 var tuning_row: HBoxContainer
 var set_min_button: Button
@@ -495,6 +497,10 @@ func _build_camera_controls(box: VBoxContainer) -> void:
 	rain_check.set_pressed_no_signal(GameSettingsScript.load_rain_enabled())
 	rain_check.toggled.connect(_on_rain_toggled)
 	checks.add_child(rain_check)
+	drift_guide_check = _make_check("DriftGuideCheck", pause_text("drift_guide_label"))
+	drift_guide_check.set_pressed_no_signal(GameSettingsScript.load_drift_guide_enabled())
+	drift_guide_check.toggled.connect(_on_drift_guide_toggled)
+	checks.add_child(drift_guide_check)
 	tuning_row = HBoxContainer.new()
 	tuning_row.name = "TuningRow"
 	tuning_row.add_theme_constant_override("separation", 8)
@@ -591,6 +597,10 @@ func refresh_camera_controls() -> void:
 
 func _on_rain_toggled(on: bool) -> void:
 	GameSettingsScript.save_rain_enabled(on)  # the rain follows the notifier at once
+
+
+func _on_drift_guide_toggled(on: bool) -> void:
+	GameSettingsScript.save_drift_guide_enabled(on)  # the guide follows the notifier at once
 
 
 func _on_smoothing_toggled(on: bool) -> void:
