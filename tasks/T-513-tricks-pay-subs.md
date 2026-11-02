@@ -37,6 +37,8 @@ Each trick (the ones in game/data/combo.json trick_add: FULL 360, ALT DRIFT, AIR
 
 The board, 2026-11-02: the live viewers are confusing; back to the combo multiplier number, shown beside the car; tricks also pay subs. Decisions: docs/game-loop-architecture.md, "Back to the combo multiplier; tricks pay subs", and docs/hud-and-menus.md, "The multiplier beside the car". The board plays T-512..T-514 together in one playtest build before anything merges. Never write, move or commit anything in game/data/levels/. SFX stay off. Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` (your ticket's id). If a hook or the permission system refuses an action, stop and tell the Project Lead; never get around it with another tool or command.
 
+The board's review: play it in the one combined build (T-512, T-513, T-514) from C:\solid-carbide-worktrees\T-514\game\project.godot before merging.
+
 ## Acceptance criteria
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.

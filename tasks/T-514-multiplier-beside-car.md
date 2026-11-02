@@ -1,7 +1,7 @@
 ---
 id: T-514
 title: The combo multiplier beside the car, viewers counter gone
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, docs/game-loop-architecture.md, game/scripts/hud/hud.gd, tasks/README.md]
 files_expected_to_change: [game/scripts/hud/, game/scripts/menu/, game/data/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,6 +36,8 @@ A task is not done until every document listed in documents_affected has been up
 Remove the live viewers counter (T-336) from the HUD and show the combo as its multiplier number beside the car, following it on screen (docs/hud-and-menus.md, Decisions, "The multiplier beside the car"), using T-512's texts. Trick popups show the multiplier they added, flying into the multiplier by the car, which bumps on arrival. The subs a trick pays (T-513, built in parallel; take its signal once it lands, or read the XP change) visibly go into the sub goal. Re-point what used the viewers: the reactions' heat steps and the fire look become multiplier steps (ComboHeat thresholds), the bad reactions rise from the multiplier (or a place you propose), a crash shows on the multiplier, the recap shows the peak multiplier (peak_viewers becomes or sits beside a peak multiplier; keep old saves loading), and the tutorial slide 2 panel with the eye icon shows the multiplier. Remove the viewers code you replace (ViewersData, viewers.json) only if nothing else reads it; say what you removed. Proposals for the playtest: the multiplier's place relative to the car, size, colour and heat look. Update docs/hud-and-menus.md Content (the counter, popups, reactions, recap, tutorial) and the HUD layout notes. When T-513 is done, merge its branch into yours so the board plays one build (the Project Lead may do this step with the QA agent).
 
 The board, 2026-11-02: the live viewers are confusing; back to the combo multiplier number, shown beside the car; tricks also pay subs. Decisions: docs/game-loop-architecture.md, "Back to the combo multiplier; tricks pay subs", and docs/hud-and-menus.md, "The multiplier beside the car". The board plays T-512..T-514 together in one playtest build before anything merges. Never write, move or commit anything in game/data/levels/. SFX stay off. Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` (your ticket's id). If a hook or the permission system refuses an action, stop and tell the Project Lead; never get around it with another tool or command.
+
+The board's review: play it in the one combined build (T-512, T-513, T-514) from C:\solid-carbide-worktrees\T-514\game\project.godot before merging.
 
 ## Acceptance criteria
 
@@ -60,6 +62,10 @@ Started on top of T-512's texts (T-512 is in QA).
 ### 2026-11-02, In progress → In QA
 
 T-514 built and committed: multiplier beside the car replaces the viewers counter (popups, bump, crash, reactions, recap, tutorial, docs); touched tests pass, screenshots in art-archive/T-514/screenshots. Ready for QA and the combined playtest with T-512/T-513.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed. Combined playtest build (T-512, T-513, T-514): C:\solid-carbide-worktrees\T-514\game\project.godot
 
 ## Style review
 
