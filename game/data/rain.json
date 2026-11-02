@@ -1,0 +1,30 @@
+{
+  "_comment": "The rain over the map (T-507; Level design, Content, 'Rain'). Proposals for the playtest; T-509 swaps in PixelLab art and may retune them. Sizes and speeds are in art pixels (32 per unit; the rain scales them with the camera zoom). See game/docs/level/rain.md.",
+  "drops_per_screen": 220,
+  "fall_speed": 900.0,
+  "angle_deg": 18.0,
+  "drop_length": 10,
+  "drop_life_min": 0.25,
+  "drop_life_max": 0.9,
+  "splash_chance": 0.35,
+  "max_splashes": 60,
+  "splash_life": 0.24,
+  "drop_colour": [
+    170,
+    190,
+    220
+  ],
+  "drop_highlight_colour": [
+    215,
+    228,
+    245
+  ],
+  "splash_colour": [
+    190,
+    206,
+    232
+  ],
+  "drop_texture": "",
+  "splash_texture": "",
+  "splash_frames": 3
+}
