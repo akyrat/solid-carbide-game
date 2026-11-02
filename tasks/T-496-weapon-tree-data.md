@@ -43,13 +43,13 @@ Built on T-495's branch: the card text it needs is already here, and depends_on 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] weapons.json tiers match the Decisions entry for gun (tiers 2 to 8), flamethrower (2 to 8), molotov (2 to 8), bricks (2 to 7) and wiper (2 to 7): effect and value per tier, checked by a unit test. (QA: pass / fail)
-- [ ] The gun's max_tier is 8 and no gun tier uses set_targets; a unit test shows a gun at tier 8 aims at one target at a time, and a bullet whose target died before it left aims at the closest living enemy. (QA: pass / fail)
-- [ ] A unit test shows the level-up offers never offer bricks or wiper past their last tier. (QA: pass / fail)
-- [ ] Neon Underglow's block in weapons.json is unchanged. (QA: pass / fail)
-- [ ] docs/weapons.md Content and game/docs/weapons/ no longer state the removed tiers (Multi-Target Mode, turn speed, the molotov damage and fire-duration tiers, the wiper damage tiers). (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots of the level-up screen offering a changed card for at least three weapons, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] weapons.json tiers match the Decisions entry for gun (tiers 2 to 8), flamethrower (2 to 8), molotov (2 to 8), bricks (2 to 7) and wiper (2 to 7): effect and value per tier, checked by a unit test. (QA: pass; data matches the Decisions entry, test_tiers_match_the_boards_trees passes)
+- [ ] The gun's max_tier is 8 and no gun tier uses set_targets; a unit test shows a gun at tier 8 aims at one target at a time, and a bullet whose target died before it left aims at the closest living enemy. (QA: pass; max_tier 8, no set_targets; both starting_gun tests pass)
+- [ ] A unit test shows the level-up offers never offer bricks or wiper past their last tier. (QA: pass; test_bricks_and_wiper_are_never_offered_past_their_last_tier)
+- [ ] Neon Underglow's block in weapons.json is unchanged. (QA: pass; identical to master's block)
+- [ ] docs/weapons.md Content and game/docs/weapons/ no longer state the removed tiers (Multi-Target Mode, turn speed, the molotov damage and fire-duration tiers, the wiper damage tiers). (QA: pass; Content and game/docs/weapons/ are updated. The T-412 card-text list in docs/weapons.md still lists the old gun tiers 6 to 11 but is labelled as gone since T-495/T-496: Project Lead may tidy it)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: fail: code - Godot set 2613 of 2615 pass; 2 red, each rerun alone with the same result: tests/unit/weapons/test_size_grow.gd test_every_size_tier_in_the_data_grows_to_its_size still pins the old wiper tiers (tier 5 keeps size, 6 grows, 7 keeps size; data now 5 grows, 6 no, 7 grows), and tests/unit/test_enemy_data.gd test_kaiju_time_to_kill_matches_result_notes pins old gun-tier kill times (gun 6/8/11 cases). Python game/tools set: 904 of 905 pass, the red one is test_check_level_up_texts.test_the_real_files_match_t171s_table_with_t301s_texts, comparing level_up_texts.gd to an old table, 20 diffs from T-495's new texts (e.g. molotov tier4 'Another one' vs 'Spicier Fire'))
+- [ ] Screenshots of the level-up screen offering a changed card for at least three weapons, under art-archive/T-NNN/screenshots/. (QA: pass; 3 screenshots, cards for gun, molotov, flamethrower, wiper, bricks)
 
 ## Updates
 
