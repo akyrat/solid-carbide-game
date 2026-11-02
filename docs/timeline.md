@@ -3220,3 +3220,28 @@ Entry format:
 - Decision or change: The arrows and W, A, S, D move the selection in the main menu and the garage (wrapping), Enter or Space presses, the first button is selected on opening; reviewed in the board's swipe deck.
 - Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
 - Tasks: T-492
+
+## 2026-11-02: Card text for the board's weapon trees
+- Decision or change: The board's titles stay as written; the Narrative Theme Agent fills the missing card texts and fixes wrong numbers.
+- Documents touched: docs/weapons.md
+- Tasks: T-495
+
+## 2026-11-02: Weapon data for the board's trees
+- Decision or change: The board's weapon upgrade trees go into weapons.json; the gun loses multi-target and has 8 tiers.
+- Documents touched: docs/weapons.md
+- Tasks: T-496
+
+## 2026-11-02: Flamethrower afterburn
+- Decision or change: Burning enemies keep taking flame damage for the burn time after leaving the flame.
+- Documents touched: docs/weapons.md
+- Tasks: T-497
+
+## 2026-11-02: Bricks widest wave
+- Decision or change: Bricks tier 8 is a x3 wave with two extra crash rings, hitting ring by ring.
+- Documents touched: docs/weapons.md
+- Tasks: T-498
+
+## 2026-11-02: Back wiper
+- Decision or change: Wiper Blade tier 8 adds a mirrored copy of the wiper behind the car.
+- Documents touched: docs/weapons.md
+- Tasks: T-499
