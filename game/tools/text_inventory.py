@@ -46,6 +46,11 @@ CODE_TEXT_TABLES = {"scripts/ui/level_up_texts.gd": "TEXTS"}
 SCREEN_BY_PREFIX = {
     "pause_text:": "Pause screen (settings)",
     "pause_text:hud_layout": "Pause screen, HUD layout editor",
+    "recap_text:peak_value": "End-of-run recap (peak combo)",
+    "multiplier_text:multiplier": "HUD, combo multiplier beside the car",
+    "multiplier_text:gain": "Trick popups (multiplier added)",
+    "multiplier_text:loss": "HUD, combo multiplier beside the car (crash loss)",
+    "multiplier_text:unused": "Unused (live viewers counter, gone)",
     "recap_text:title": "End-of-run recap",
     "recap_text:heading": "End-of-run recap",
     "recap_text:button": "End-of-run recap",

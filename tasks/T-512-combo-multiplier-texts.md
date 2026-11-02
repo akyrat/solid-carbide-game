@@ -41,11 +41,11 @@ The board, 2026-11-02: the live viewers are confusing; back to the combo multipl
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every text listed in the description exists in the game's text files with its key, and docs/hud-and-menus.md Content lists each with where it appears. (QA: pass / fail)
-- [ ] Each new or rewritten line scored 8 or more in the style loop (the Style review section shows the scores). (QA: pass / fail)
-- [ ] No text in game/data/*.json that the player sees still says viewers or WATCHING, except keys the result notes mark as unused after T-514. (QA: pass / fail)
-- [ ] The result notes list every key, new or changed, for T-514. (QA: pass / fail)
-- [ ] The Godot tests that read these text files pass (the agent runs the ones it touched). (QA: pass / fail)
+- [ ] Every text listed in the description exists in the game's text files with its key, and docs/hud-and-menus.md Content lists each with where it appears. (QA: pass)
+- [ ] Each new or rewritten line scored 8 or more in the style loop (the Style review section shows the scores). (QA: pass)
+- [ ] No text in game/data/*.json that the player sees still says viewers or WATCHING, except keys the result notes mark as unused after T-514. (QA: pass)
+- [ ] The result notes list every key, new or changed, for T-514. (QA: pass)
+- [ ] The Godot tests that read these text files pass (the agent runs the ones it touched). (QA: pass; round 2: test sets pass after 29442ab9)
 
 ## Updates
 
@@ -213,3 +213,9 @@ Run by `tools/style_loop/run.py` on 2026-11-02: text, kind label, brief `C:/User
 ## Result notes
 
 Texts done, all scored 8+ (Style review). New file game/data/multiplier_text.json: multiplier='x{multiplier}' (beside car, 2 decimals, no label), gain='+x{amount}' (trick popup; replaces ADDED_TEXT; loop scored '+X{amount}!' 9, '!' dropped), loss='-x{amount}' (replaces LOST_TEXT, optional), unused=[TEXT_LIVE_BADGE LIVE, TEXT_VIEWERS_UNIT WATCHING]. recap_text.json: heading.combo='Peak combo' (was Peak engagement), NEW peak_value='x{multiplier}'. runs_list_text.json: column.combo='Peak combo'. tutorial_text.json changed: slide2.step2_title='Tricks pump the multiplier', slide2.step2_caption='Each trick bumps the multiplier.', slide2.step3_caption='Tricks and drifts earn subs that fill the sub goal.', slide2.chain='Tricks raise your multiplier. Tricks and drifting bring subs.' (still UNUSED), slide1.controls rewritten (still UNUSED). For T-514: remove uses of TEXT_LIVE_BADGE/TEXT_VIEWERS_UNIT/ADDED_TEXT/LOST_TEXT viewers lines in hud.gd/trick_popups.gd; the viewers_counter/reaction comments in hud.json and viewers.json still name viewers (comments, not shown). Open for the Project Lead: Extended narrative rule 2 and the Subs bullet still say 'live viewers' for the counter; docs/hud-and-menus.md older paragraphs (Livestream HUD texts, Recap screen peak engagement) describe the old counter. Tests run: test_recap_screen, test_tutorial_slides pass. Only hud-and-menus.md Content updated.
+
+QA round 1: criteria 1-4 pass; criterion 5 fails (code): game/tools test_text_inventory.test_the_real_game_has_text_in_both_lists_and_every_screen_is_listed is red, reproduced alone: data/multiplier_text.json and data/recap_text.json are '(unlisted)'. Fix in game/tools/text_inventory.py: add a screen for multiplier_text and for recap_text:peak_value. Also no screenshots in art-archive/T-512/screenshots/ (paperwork). Documents check passes. Godot set not confirmed: qa_check stopped at the first red set.
+
+QA round 1 fix: added screen entries to game/tools/text_inventory.py (recap_text:peak_value, multiplier_text:multiplier/gain/loss/unused); test_text_inventory.py passes (8).
+
+QA round 2: all five criteria pass. Both test sets pass on 29442ab9 (the text inventory test is green); documents check passes. The missing screenshots folder is accepted by the Project Lead for this text-only ticket.
