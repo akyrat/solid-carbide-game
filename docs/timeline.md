@@ -3415,3 +3415,8 @@ Entry format:
 - Decision or change: The live viewers counter is gone; the combo multiplier shows beside the car, hidden at x1 (the board's tweak).
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-514
+
+## 2026-11-02: Even the lowest Jump clears a minion
+- Decision or change: A minion's contact damage needs the car within about 0.5 units of its ground, so even the first Jump tier hops over one.
+- Documents touched: docs/enemies.md
+- Tasks: T-515

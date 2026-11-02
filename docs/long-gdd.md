@@ -1242,6 +1242,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **A red flash when an enemy takes damage** (board, 2026-10-30): every enemy (minions and the kaiju) flashes red when a weapon or the car hits it, the same red flash the car shows when it loses a heart (Game loop architecture, Decisions). Its length and shade match the car's; for the kaiju, whether it flashes on every hit or only in its vulnerable window is a proposal. Built in T-404 (see Content, "The red flash").
 - **Meteors hit minions and push pickups aside** (board, 2026-10-30, audit): a meteor that lands on minions damages them; coins and health pickups where a boulder appears are pushed out of its way. A meteor misses a car more than 1 unit above it, the same rule as contact damage.
 - **The kaiju only takes paths it fits through** (board, 2026-10-30, audit; a bug): the kaiju plans its way round buildings for its own size, so it never heads into a gap too narrow for it. It also keeps its body off rooftops', ramps' and the map's edges, and drops off a rooftop from a little way back from the edge (board, 2026-10-30, after playing build J: keep the edge rule; T-419).
+- **Even the lowest Jump clears a minion** (board, 2026-11-02; a bug): the board still couldn't jump over enemies, expecting even the first Jump tier to clear one. The first tier's hop peaks at about 1.04 units, barely over the 1 unit of the contact rule ("Contact damage at the car's level", Content), so it was clear for only about 0.17 s. A minion's contact damage now needs the car within about **0.5 units** of its ground (the agent's proposal for the playtest), its own setting for the car's contact only: the minions' crowding, the weapons' levels, the kaiju's contact and the meteors keep theirs. The Jump's tiers are unchanged. (T-515)
 
 ### Content
 
@@ -2195,7 +2196,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `20e82cc3b490d6c2f810f500b57fdec8c10a6f9f267f0077bab998e7a851eec3` |
 | `drifting.md` | `f8f14c03956b4a84e293d9c4f084101496c3981ffeac71d576bf201cca678524` |
 | `level-design.md` | `cbbe31da1d8f5cdc297297c989c2a9ef7b43fa30094f13d33c919968320a020f` |
-| `enemies.md` | `a70324c963a1b9bf92582224ce73fd6c5fba7accb5df8bdf5f237d078f62c15c` |
+| `enemies.md` | `c99ba3c90433b4b06c50bcaafe3410206a877c69d07a147bba10a4ea46f64908` |
 | `weapons.md` | `513bbdf945efac0df29c508a3060ba57b6ed94adf26f26d286cdcb5c7a677fd0` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
 | `visual-style.md` | `f7cb0dc3b397467995a7f0ee0cbe532266fcc10a400acc5dc1f079cdecc9c1ea` |
