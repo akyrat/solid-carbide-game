@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/t505_god_mode_shot.gd" id="1"]
+
+[node name="Shot" type="Node"]
+script = ExtResource("1")
+open_page = false
+window_width = 1920
+window_height = 1080

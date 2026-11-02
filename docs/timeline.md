@@ -3335,3 +3335,8 @@ Entry format:
 - Decision or change: A fifth driving power-up: a burst when the car accelerates again in a new direction; tier 4 adds Bricks' wave.
 - Documents touched: docs/drifting.md
 - Tasks: T-502
+
+## 2026-11-02: God mode's page
+- Decision or change: A secret God mode entry in the pause settings opens a page to set every tier.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-505

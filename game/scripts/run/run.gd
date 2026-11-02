@@ -74,6 +74,7 @@ const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 ## The driving power-up gift (task T-459): its choices, and the overlay that shows them.
 const PowerUpOffersScript := preload("res://scripts/run/power_up_offers.gd")
+const GodModeScript := preload("res://scripts/run/god_mode.gd")
 const PowerUpScreenScript := preload("res://scripts/ui/power_up_screen.gd")
 ## The Polarized Steering Wheel's tier 4 shock (T-502): Bricks' wave at the car.
 const PolarizedShockScript := preload("res://scripts/driving/polarized_shock.gd")
@@ -179,6 +180,8 @@ var weapons: Node
 var level_up_screen: CanvasLayer
 ## The driving power-up gift's choices (task T-459, power_up_offers.gd): child "PowerUpOffers".
 var power_up_offers: PowerUpOffers
+## God mode (task T-504, god_mode.gd): child "GodMode".
+var god_mode: Node
 ## The driving power-up overlay (task T-459, power_up_screen.gd): child "PowerUpScreen".
 var power_up_screen: CanvasLayer
 ## The Polarized Steering Wheel's tier 4 shock (T-502, polarized_shock.gd): child "PolarizedShock".
@@ -339,6 +342,11 @@ func _ready() -> void:
 	power_up_screen.name = "PowerUpScreen"
 	add_child(power_up_screen)
 	power_up_screen.setup(power_up_offers)
+	# God mode (T-504): the secret N key and the tier API.
+	god_mode = GodModeScript.new()
+	god_mode.name = "GodMode"
+	add_child(god_mode)
+	god_mode.bind(self)
 	level_up_screen.hold = power_up_offers.is_showing
 	power_up_offers.closed.connect(level_up_screen.show_held)
 	# Rev Charge (T-460): the car's charge follows the owned tier.

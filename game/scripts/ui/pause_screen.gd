@@ -47,6 +47,7 @@ const HUD_LAYOUT_HINT_KEY := "hud_layout_hint"
 const HUD_LAYOUT_RESET_KEY := "hud_layout_reset"
 const HUD_LAYOUT_DONE_KEY := "hud_layout_done"
 ## The HUD size slider's step, in percent (T-431, a proposal for the playtest).
+const GOD_MODE_BUTTON_KEY := "god_mode_button"
 const HUD_SIZE_STEP := 5.0
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
 const LABEL_WIDTH := 170.0
@@ -92,6 +93,11 @@ var trick_list: TrickList
 ## editor it opens. Both exist only when the target has a HUD (a run; not the drift prototype).
 var hud_layout_button: Button
 var hud_layout_editor: HudLayoutEditor
+## The secret God mode (T-505): the settings entry (made only once God mode is unlocked, so
+## before N it does not exist) and its page.
+var god_mode_button: Button
+var god_mode_page: GodModePage
+var _run_row: HBoxContainer
 var _root: Control
 var _dim: ColorRect
 var strip: PanelContainer
@@ -172,6 +178,7 @@ func setup(t: Node) -> void:
 	_build_run_buttons(box)
 	_build_trick_panel()
 	_build_hud_layout_editor()
+	_build_god_mode()
 	visible = false
 
 
@@ -227,6 +234,7 @@ func close_trick_list() -> void:
 func _build_run_buttons(box: VBoxContainer) -> void:
 	var row := HBoxContainer.new()
 	row.name = "RunButtonsRow"
+	_run_row = row
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 24)
 	box.add_child(row)
@@ -354,6 +362,47 @@ func _build_hud_layout_editor() -> void:
 		pause_text(HUD_LAYOUT_DONE_KEY))
 	hud_layout_editor.done.connect(_on_hud_layout_done)
 	_root.add_child(hud_layout_editor)
+
+
+## The God mode page (T-505), only for a run (it has T-504's god_mode). The entry itself is
+## added at the end of the run buttons row once God mode is unlocked, now or later (N can be
+## pressed with this screen open).
+func _build_god_mode() -> void:
+	var god = target.get("god_mode") if target != null else null
+	if god == null or not is_instance_valid(god):
+		return
+	god_mode_page = GodModePage.new()
+	god_mode_page.setup(god)
+	god_mode_page.closed.connect(_on_god_mode_closed)
+	_root.add_child(god_mode_page)
+	god.unlocked_changed.connect(refresh_god_mode_entry)
+	refresh_god_mode_entry()
+
+
+## Adds the God mode entry (the shared button, last in the row) if God mode is unlocked.
+func refresh_god_mode_entry() -> void:
+	if god_mode_page == null or god_mode_button != null or not GodMode.unlocked:
+		return
+	god_mode_button = _make_game_button("GodModeButton", pause_text(GOD_MODE_BUTTON_KEY))
+	god_mode_button.pressed.connect(open_god_mode)
+	_run_row.add_child(god_mode_button)
+
+
+func is_god_mode_open() -> bool:
+	return god_mode_page != null and god_mode_page.is_open()
+
+
+func open_god_mode() -> void:
+	if god_mode_page == null:
+		return
+	strip.visible = false
+	god_mode_page.open()
+
+
+func _on_god_mode_closed() -> void:
+	strip.visible = true
+	if visible and god_mode_button != null:
+		god_mode_button.grab_focus()
 
 
 func is_hud_layout_open() -> bool:
@@ -556,7 +605,9 @@ func _on_set_max() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(ACTION_PAUSE):
 		# While the trick list panel is open, Escape goes back to the pause screen (T-386).
-		if visible and is_trick_list_open():
+		if visible and is_god_mode_open():
+			god_mode_page.close()
+		elif visible and is_trick_list_open():
 			close_trick_list()
 		elif visible and is_hud_layout_open():
 			hud_layout_editor.finish()  # Escape is Done (T-453)
@@ -597,6 +648,7 @@ func toggle() -> void:
 
 
 func pause() -> void:
+	refresh_god_mode_entry()
 	zoom_slider.set_value_no_signal(target.zoom)
 	_update_value_label()
 	var h = _hud()
@@ -614,6 +666,8 @@ func resume() -> void:
 	save_pending()
 	if is_trick_list_open():
 		close_trick_list()
+	if is_god_mode_open():
+		god_mode_page.close()
 	if is_hud_layout_open():
 		hud_layout_editor.finish()
 	_camera_follows_while_paused(false)
