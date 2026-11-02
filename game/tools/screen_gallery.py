@@ -2,6 +2,7 @@
 """The screen gallery (task T-479): one 1280 x 720 screenshot of every screen the player can meet.
 
   python game/tools/screen_gallery.py [--out screenshots/mvp-gallery] [--no-text]
+  python game/tools/screen_gallery.py --sizes --out art-archive/T-493   (the scaling scan, T-493)
 
 Runs game/tools/screen_gallery.gd in a real Godot window (not headless; about a minute), then
 checks the manifest.json it wrote against the PNGs on disk and prints the screens saved and any
@@ -20,6 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import scaling_report  # noqa: E402
 import text_inventory  # noqa: E402
 
 SIZE = (1280, 720)
@@ -46,7 +48,7 @@ def png_size(path):
     return struct.unpack(">II", head[16:24])
 
 
-def check_manifest(out_dir):
+def check_manifest(out_dir, size=SIZE):
     """Problems with a gallery folder: [] when the manifest lists real 1280 x 720 PNGs only."""
     out_dir = Path(out_dir)
     path = out_dir / "manifest.json"
@@ -64,17 +66,68 @@ def check_manifest(out_dir):
         png = out_dir / s.get("file", "")
         if not png.is_file():
             problems.append(f"{s.get('name')}: {s.get('file')} is not on disk")
-        elif png_size(png) != SIZE:
-            problems.append(f"{s.get('name')}: {s.get('file')} is {png_size(png)}, not {SIZE}")
+        elif png_size(png) != tuple(size):
+            problems.append(f"{s.get('name')}: {s.get('file')} is {png_size(png)}, not {tuple(size)}")
     for n in manifest.get("not_reached", []):
         if not n.get("name") or not n.get("reason"):
             problems.append(f"not_reached entry without name and reason: {n}")
     return problems
 
 
+def run_gallery(binary, game, out, size):
+    """One Godot run with the root window resized to size (any monitor)."""
+    cmd = [binary, "--path", str(game), "--resolution", f"{size[0]}x{size[1]}", "-s", "res://tools/screen_gallery.gd",
+           "--", f"--out={out.as_posix()}", f"--size={size[0]}x{size[1]}"]
+    return subprocess.run(cmd, timeout=TIMEOUT_SECONDS).returncode
+
+
+def scan_sizes(binary, game, out):
+    """--sizes: the gallery at each of scaling_report.SIZES, then the report and a contact sheet per screen."""
+    import time
+    from PIL import Image
+    t0 = time.time()
+    manifests, bad = {}, 0
+    for size in scaling_report.SIZES:
+        sub = out / f"{size[0]}x{size[1]}"
+        sub.mkdir(parents=True, exist_ok=True)
+        for old in list(sub.glob("*.png")) + [sub / "manifest.json"]:
+            old.unlink(missing_ok=True)
+        bad += run_gallery(binary, game, sub, size) != 0
+        mf = sub / "manifest.json"
+        got = tuple(json.loads(mf.read_text(encoding="utf-8")).get("actual_window", size)) if mf.exists() else size
+        for p in check_manifest(sub, got):
+            print(f"  problem at {size[0]}x{size[1]}:", p)
+            bad += 1
+        if (sub / "manifest.json").exists():
+            manifests[size] = json.loads((sub / "manifest.json").read_text(encoding="utf-8"))
+    report = scaling_report.build_report(manifests)
+    sheets = out / "contact_sheets"
+    sheets.mkdir(exist_ok=True)
+    for name in report["order"]:
+        ims, labels = [], []
+        for size, m in manifests.items():
+            hit = next((s for s in m["screens"] if s["name"] == name), None)
+            if hit:
+                ims.append(Image.open(out / f"{size[0]}x{size[1]}" / hit["file"]))
+                labels.append(f"{size[0]}x{size[1]}")
+        if ims:
+            scaling_report.contact_sheet(ims, labels, sheets / f"{name}.png")
+    secs = time.time() - t0
+    actual = {f"{s[0]}x{s[1]}": m.get("actual_window") for s, m in manifests.items()}
+    note = f"Captured by resizing the root window to each size (actual windows: {actual}). Scan took {secs:.0f} s."
+    scaling_report.save_json(report, out / "scaling_report.json")
+    scaling_report.write_markdown(report, out / "scaling_report.md", note)
+    flagged = [n for n in report["order"] if report["screens"][n]["flagged"]]
+    print(note)
+    print(f"{len(flagged)} of {len(report['order'])} screens shrink: {', '.join(flagged)}")
+    print(f"report: {out / 'scaling_report.md'}")
+    return 0 if not bad else 1
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--out", default=str(ROOT / "screenshots" / "mvp-gallery"))
+    ap.add_argument("--sizes", action="store_true", help="the scaling scan: capture at 5 sizes, write scaling_report.md/.json and contact sheets into --out")
     ap.add_argument("--no-text", action="store_true", help="skip the text inventory")
     args = ap.parse_args(argv)
     out = Path(args.out).resolve()
@@ -87,9 +140,10 @@ def main(argv=None):
         return 2
     game = ROOT / "game"
     subprocess.run([binary, "--headless", "--path", str(game), "--import"], capture_output=True, timeout=TIMEOUT_SECONDS)
-    cmd = [binary, "--path", str(game), "--resolution", f"{SIZE[0]}x{SIZE[1]}", "-s", "res://tools/screen_gallery.gd",
-           "--", f"--out={out.as_posix()}"]
-    result = subprocess.run(cmd, timeout=TIMEOUT_SECONDS)
+    if args.sizes:
+        return scan_sizes(binary, game, out)
+    result = subprocess.run([binary, "--path", str(game), "--resolution", f"{SIZE[0]}x{SIZE[1]}", "-s", "res://tools/screen_gallery.gd",
+                             "--", f"--out={out.as_posix()}"], timeout=TIMEOUT_SECONDS)
     problems = check_manifest(out)
     manifest = out / "manifest.json"
     if manifest.exists():

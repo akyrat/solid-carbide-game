@@ -3205,3 +3205,8 @@ Entry format:
 - Decision or change: The level-up and pause screens, and every other screen the scan flags, scale with the window by the HUD's rule.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-494
+
+## 2026-11-02: A scan for screens that don't scale
+- Decision or change: screen_gallery.py --sizes captures every screen at five resolutions and reports what shrinks as the window grows; it flagged 16 of 19 screens.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-493
