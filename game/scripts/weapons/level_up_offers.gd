@@ -9,7 +9,7 @@ extends Node
 ##
 ## Choice ids (the screen maps each to its text), one pair per weapon:
 ##   "get_<weapon>"      gives the weapon (tier 1) while the car does not have it
-##   "upgrade_<weapon>"  the owned weapon's next tier, until its last tier (from the data: 8, Bricks and the wiper 7 until T-498 and T-499)
+##   "upgrade_<weapon>"  the owned weapon's next tier, until its last tier (from the data: 8, the wiper 7 until T-499)
 ## The weapons are gun, flamethrower, underglow, molotov, wiper and (T-324)
 ## bricks. The gun is
 ## always owned, so it has only "upgrade_gun".
