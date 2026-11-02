@@ -1,7 +1,7 @@
 ---
 id: T-507
 title: Rain over the map
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: rain over the map with a placeholder look and a saved on/off setting.
+
+### 2026-11-02, In progress → In QA
+
+Rain built: placeholder drops and splashes over the map, under the HUD, numbers in rain.json, saved rain_enabled setting (on by default); adds about 0.2 ms a frame; works in the web build.
 
 ## Style review
 
