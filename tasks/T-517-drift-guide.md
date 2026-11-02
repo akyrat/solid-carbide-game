@@ -1,7 +1,7 @@
 ---
 id: T-517
 title: The Drift Guide: a predicted-path arrow during a drift
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [docs/drifting.md, docs/visual-style.md, game/scripts/game/game_settings.gd, tasks/README.md]
 files_expected_to_change: [game/scripts/driving/, game/scripts/game/game_settings.gd, game/data/, game/tests/unit/, game/docs/, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: the Drift Guide arrow.
 ### 2026-11-02, In progress → In QA
 
 Drift Guide built: gray predicted-path arrow during a drift, off by default; T-518 calls GameSettings.save_drift_guide_enabled(on). Ready for QA.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed; play it in T-518's combined Drift Guide build.
 
 ## Style review
 
