@@ -48,7 +48,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] Its label comes from drift_guide_label, not hard-coded (test). (QA: pass)
 - [ ] Keyboard navigation reaches it like the other checkboxes (test). (QA: pass)
 - [ ] docs/hud-and-menus.md Content describes the checkbox. (QA: pass)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: fail: code - game/tests/unit/hud/test_shared_button.gd line 100 expects 10 + god page buttons for the pause screen, but the new Drift Guide checkbox makes it 11 (34 vs 33); test not updated; full Godot set 2710/2712, reproduced on rerun)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; round 2, full Godot set green); test not updated; full Godot set 2710/2712, reproduced on rerun)
 - [ ] A screenshot of the pause screen with the checkbox, and of a drift with the guide on, under art-archive/T-NNN/screenshots/. (QA: pass)
 
 ## Updates
@@ -74,3 +74,5 @@ Built: drift_guide_check in pause_screen.gd, 4th checkbox in the settings row af
 QA round 1: all criteria pass except the full Godot set. Combined branch (T-515..T-518 + master): Godot set 2710/2712 passing; 1 red: test_shared_button.gd test_level_up_and_pause_buttons_are_shared (line 100, pause shared buttons 34, expected 33): the count 10 + god page buttons needs 11 now that the Drift Guide checkbox adds one (same fix T-508 did for Rain). Reproduced on rerun. Screenshots reviewed: pause row of four fits, Drift Guide ticked; guide arc visible in drift. Docs updated. T-518's own 6 tests pass.
 
 QA round 1 fix: test_shared_button.gd pause count 10 -> 11 + god_page_buttons, comment updated. The QA note names only this one red test (the 2712 figure is test count vs the one failing test; no second red named). Ran test_shared_button (12 pass) and all test_pause* files (51 pass).
+
+QA round 2: after the UI agent's fix to test_shared_button.gd, qa_check on the combined branch (T-515..T-518 + master): Godot set and game/tools set all green, no red test; documents and screenshots pass. All 7 criteria pass.
