@@ -1,7 +1,7 @@
 ---
 id: T-511
 title: Garage icons (and other images loaded from disk) missing in the web build
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, game/scripts/menu/garage_screen.gd, game/export_presets.cfg, game/tools/web_audio_check.mjs, docs/working-with-the-board.md]
 files_expected_to_change: [game/scripts/menu/, game/scripts/level/building_towers.gd, game/tests/unit/, game/tools/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -69,3 +69,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Fixed garage_screen.gd icon_texture(): ResourceLoader.exists + load() first (the imported texture, the only form an export holds), then raw PNG, then placeholder (tests with a plain icon_dir still work). main_menu.gd _load_splash and trick_list.gd _load_illustration already try ResourceLoader first (raw-PNG branch only a fallback): no change. building_towers.gd load_texture already calls load() first; its Image fallback is only reached on a missing resource: no change. Test: test_garage_icons.gd test_res_icons_load_as_imported_textures (icon resource_path must be the res:// path); fails on old code, passes now. Ran bash game/tools/run_tests.sh -gselect=test_garage_icons.gd: 6/6 pass. Web export (Web preset to a folder outside game/) driven in headless Chrome with new game/tools/web_garage_shot.mjs: garage shows all five real icons. Screenshots: art-archive/T-511/screenshots/garage.png and menu.png. Nothing touched in game/data/levels/.
 
 QA round 1: all six criteria pass; test sets pass; code read confirms main_menu._load_splash, trick_list._load_illustration and building_towers.load_texture try ResourceLoader/load() first; screenshots garage.png (five real icons) and menu.png checked.
+- 2026-11-02, in-qa → done: The board reported missing garage icons on itch; merged straight after QA for the itch push (2026-11-02).
