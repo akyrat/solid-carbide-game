@@ -1,7 +1,7 @@
 ---
 id: T-505
 title: God mode: the secret settings entry and its page
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -87,3 +87,4 @@ Done. God mode page and entry.
 - Docs: docs/hud-and-menus.md, Decisions, "A secret God mode": "As built" note added.
 
 Round 1 fix: - and + now come from pause_text.json keys god_mode_minus (U+2212) and god_mode_plus, read through pause_text(); text inventory test passes. Symbols in Bangers (shared button rule) at size 34 with a 1 px outline, wider buttons, never dimmed; page moved up (y=24, tight rows) so a fifth power-up still fits 648. Screenshots retaken; test_god_mode_page 8 and test_shared_button 12 pass.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
