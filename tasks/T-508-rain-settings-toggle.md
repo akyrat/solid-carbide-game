@@ -1,7 +1,7 @@
 ---
 id: T-508
 title: The rain toggle in the settings
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/hud-and-menus.md]
 files_expected_to_change: [game/scenes/, game/scripts/ui/, game/scripts/menu/, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -65,6 +65,10 @@ QA round 1 failed: test_shared_button.gd expects 9 pause buttons, now 10 (Rain c
 ### 2026-11-02, In progress → In QA
 
 Button count and docs fixed.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA round 2 passed: all 4 criteria pass, tests green.
 
 ## Style review
 
