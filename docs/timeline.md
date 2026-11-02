@@ -3365,3 +3365,8 @@ Entry format:
 - Decision or change: A Rain checkbox in the pause settings.
 - Documents touched: none
 - Tasks: T-508
+
+## 2026-11-02: Rain off by default
+- Decision or change: The rain is off by default; the player turns it on in the pause settings.
+- Documents touched: docs/level-design.md
+- Tasks: T-510
