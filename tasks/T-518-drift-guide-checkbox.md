@@ -1,7 +1,7 @@
 ---
 id: T-518
 title: Drift Guide checkbox in the pause settings
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -59,10 +59,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started on top of T-516 and T-517 (both in QA).
 
+### 2026-11-02, In progress → In QA
+
+Drift Guide checkbox is in the pause settings after Rain, off by default, switching the guide at once and saving; row still fits; ready to play in the combined build.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: drift_guide_check in pause_screen.gd, 4th checkbox in the settings row after Rain; label pause_text('drift_guide_label'); state GameSettings.load_drift_guide_enabled() (off by default); toggle calls save_drift_guide_enabled(on), applying at once via the notifier. Same CheckBox as the others, so keyboard (Space/Enter) and mouse work. The row of four fits the strip, no wrapping (screenshot). Tests: game/tests/unit/test_pause_drift_guide_toggle.gd (6 pass: label from data, default off, saved true shown ticked, toggle saves, mouse click, keyboard, notifier emits at once); test_pause_rain_toggle still passes. Docs: docs/hud-and-menus.md Content updated. Screenshots in art-archive/T-518/screenshots/: pause_checkbox.png (new fixture tests/fixtures/pause_drift_guide_demo, test settings file), drift_guide_on_left.png, drift_guide_on_right.png (T-517 fixtures). Note: run_tests.sh -gselect used (direct gut_cmdln hangs here).
