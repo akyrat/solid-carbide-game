@@ -1,7 +1,7 @@
 ---
 id: T-492
 title: Arrow keys work in the main menu and the garage
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -64,3 +64,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. New game/scripts/ui/key_nav.gd (KeyNav.chain_column: explicit up/down neighbours with wrap, left/right stay). Main menu chains Start/Garage/Exit (focus already started on Start). Garage: first Buy selected on open; focus_order walks every visible Buy (disabled 'too poor' ones stay selectable) then Back; a maxed upgrade's hidden Buy gets FOCUS_NONE, chain rebuilt on refresh, selection moves to the next. Layout and sizes untouched. Tests: new game/tests/unit/test_menu_arrow_keys.gd 10/10 (walk, wrap, left/right, Enter/Space, Back, too-poor, maxed skip, held key does nothing); test_main_menu 9/9, test_garage_screen 8/8, test_garage_fit 3/3. Docs: hud-and-menus.md (Main menu), garage-design.md (Keyboard). Screenshots 1280x720 in art-archive/T-492/screenshots/: menu_1_start, menu_2_garage, menu_3_exit, garage_1_first, garage_2_upgrade2 to garage_5_upgrade5, garage_6_back (checked by eye: focus plate visible on each). Nothing touched in game/data/levels/.
+- 2026-11-02, in-progress → in-qa: Ready for the board's swipe deck
