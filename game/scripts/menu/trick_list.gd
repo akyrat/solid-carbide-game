@@ -168,29 +168,55 @@ func rebuild() -> void:
 	select(selected if selected in TRICK_IDS else TRICK_IDS[0])
 
 
-func _make_row(id: String) -> Button:
-	var row := Button.new()
-	row.name = "Row_" + id
-	row.toggle_mode = true
-	row.custom_minimum_size = Vector2(ROW_WIDTH, ILLUSTRATION_SIZE.y * LIST_SCALE + 6)
-	row.focus_mode = Control.FOCUS_ALL
-	for state in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
+## A list entry that selects a trick (not a Button: the shared button style is for buttons).
+## Focusable; a click, Enter or Space presses it; it draws its own selected, hover and focus looks.
+class TrickRow extends Control:
+	signal pressed
+	var button_pressed := false
+	var _hover := false
+
+	func _init() -> void:
+		focus_mode = Control.FOCUS_ALL
+		mouse_filter = Control.MOUSE_FILTER_STOP
+		mouse_entered.connect(func(): _hover = true; queue_redraw())
+		mouse_exited.connect(func(): _hover = false; queue_redraw())
+		focus_entered.connect(queue_redraw)
+		focus_exited.connect(queue_redraw)
+
+	func set_pressed_no_signal(value: bool) -> void:
+		button_pressed = value
+		queue_redraw()
+
+	func _gui_input(event: InputEvent) -> void:
+		var mb := event as InputEventMouseButton
+		if mb != null and mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
+			pressed.emit()
+			accept_event()
+		elif event.is_action_pressed("ui_accept"):
+			pressed.emit()
+			accept_event()
+
+	func _draw() -> void:
 		var box := StyleBoxFlat.new()
 		box.set_corner_radius_all(4)
-		match state:
-			"normal":
-				box.bg_color = Color("171a2c")
-			"hover":
-				box.bg_color = Color("22263d")
-			"focus":
-				box.draw_center = false
-				box.set_border_width_all(2)
-				box.border_color = KEY_HI
-			_:
-				box.bg_color = Color("2a2f47")
-				box.set_border_width_all(2)
-				box.border_color = PINK
-		row.add_theme_stylebox_override(state, box)
+		box.bg_color = Color("2a2f47") if button_pressed else (Color("22263d") if _hover else Color("171a2c"))
+		if button_pressed:
+			box.set_border_width_all(2)
+			box.border_color = Color("ff5fae")
+		draw_style_box(box, Rect2(Vector2.ZERO, size))
+		if has_focus():
+			var f := StyleBoxFlat.new()
+			f.set_corner_radius_all(4)
+			f.draw_center = false
+			f.set_border_width_all(2)
+			f.border_color = Color("f6c9de")
+			draw_style_box(f, Rect2(Vector2.ZERO, size))
+
+
+func _make_row(id: String) -> Control:
+	var row := TrickRow.new()
+	row.name = "Row_" + id
+	row.custom_minimum_size = Vector2(ROW_WIDTH, ILLUSTRATION_SIZE.y * LIST_SCALE + 6)
 	var inner := HBoxContainer.new()
 	inner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	inner.offset_left = 4

@@ -110,3 +110,15 @@ func test_the_clip_is_freed_when_hidden_and_loaded_again_when_shown() -> void:
 	list.show()
 	assert_not_null(list.clip_player.sheet, "read again when shown")
 	assert_eq(list.key_pad.held, list.clip_player.held_keys())
+
+
+func test_rows_are_focusable_list_entries_not_buttons() -> void:
+	for id in TrickList.TRICK_IDS:
+		var row: Control = list.rows[id]
+		assert_false(row is BaseButton, id)
+		assert_eq(row.focus_mode, Control.FOCUS_ALL)
+	var ev := InputEventAction.new()
+	ev.action = "ui_accept"
+	ev.pressed = true
+	list.rows["airtime"]._gui_input(ev)
+	assert_eq(list.selected, "airtime", "Enter or Space selects")
