@@ -312,6 +312,7 @@ const DEFAULT_RAIN_ENABLED := false
 class Notifier:
 	extends RefCounted
 	signal rain_enabled_changed(on: bool)
+	signal drift_guide_enabled_changed(on: bool)
 
 
 static var notifier := Notifier.new()
@@ -332,4 +333,29 @@ static func save_rain_enabled(on: bool) -> bool:
 	cfg.set_value("graphics", "rain_enabled", on)
 	var ok := cfg.save(path) == OK
 	notifier.rain_enabled_changed.emit(on)
+	return ok
+
+
+## Whether the Drift Guide is on (task T-517; Drifting, Decisions, "The Drift Guide"), in section
+## "graphics", key "drift_guide_enabled". Off by default. The pause screen's checkbox (T-518)
+## calls save_drift_guide_enabled; the guide (drift_guide.gd) hears every save through
+## `notifier` and shows or hides at once.
+const DEFAULT_DRIFT_GUIDE_ENABLED := false
+
+
+static func load_drift_guide_enabled() -> bool:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_DRIFT_GUIDE_ENABLED
+	var v = cfg.get_value("graphics", "drift_guide_enabled", DEFAULT_DRIFT_GUIDE_ENABLED)
+	return v if v is bool else DEFAULT_DRIFT_GUIDE_ENABLED
+
+
+## Saves the Drift Guide setting, keeping the other settings, and tells the guide at once.
+static func save_drift_guide_enabled(on: bool) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("graphics", "drift_guide_enabled", on)
+	var ok := cfg.save(path) == OK
+	notifier.drift_guide_enabled_changed.emit(on)
 	return ok

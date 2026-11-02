@@ -580,6 +580,15 @@ The decision is in Decisions ("Rusty Paintjob and the Polarized Steering Wheel")
 - **Where it appears:** in the mission gift's pool like the other four, and on the tutorial's missions slide with them.
 - Screenshots: `art-archive/T-502/screenshots/` (the burst, the tier 4 shock, the overlay cards at tiers 1 and 4, the tutorial slide, the placeholder icon).
 
+#### The Drift Guide (task T-517)
+
+The optional arrow of the decision "The Drift Guide" (Decisions, above; proposals for the playtest). Code: `game/scripts/driving/drift_guide.gd`, numbers: `game/data/drift_guide.json` (a `_comment` explains each); how it works: `game/docs/driving/drift_guide.md`.
+
+- **Setting:** `drift_guide_enabled` in `GameSettings` (section "graphics"), **off by default**. `GameSettings.save_drift_guide_enabled(on)` switches it **at once** (the guide hears the save through `GameSettings.notifier`); the pause screen's checkbox (T-518) calls it. No checkbox in T-517.
+- **Prediction:** a copy of the car's own model (`CarModel.duplicate_state()`) is stepped 1 s ahead (50 steps) with the input the car used on its last step (`Car.last_input`), recomputed after every car step, so it bends in the same frame the steering changes and matches the real car to 0.01 units. No effect on the real car.
+- **Walls:** the path stops where the car's body would hit an obstacle (`Car.test_move`). **Ramps and jumps:** the path is flat (no height, no Space press predicted); in the air the car is not drifting, so the arrow fades out. **The end of the drift:** with the input held the drift never ends, so the arrow simply fades out when the real drift ends.
+- **Look:** a gray arrow (shaft 0.5 units wide, head 1.0 long and 1.3 wide) flat on the isometric ground under the car, in flat bands of opacity, fainter towards the tip (hard edges, no gradient); fades in over 0.15 s when a drift starts and out over 0.3 s when it ends.
+
 #### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.
@@ -2197,7 +2206,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `20e82cc3b490d6c2f810f500b57fdec8c10a6f9f267f0077bab998e7a851eec3` |
-| `drifting.md` | `2ede5e3a209a9cd20ab358ae187be0f42d02167b2f4f4e352251755054fc0e05` |
+| `drifting.md` | `048b145f45637cfde061075069f586945c1d2f7e3f5d14a8b725c7a73d849e0f` |
 | `level-design.md` | `cbbe31da1d8f5cdc297297c989c2a9ef7b43fa30094f13d33c919968320a020f` |
 | `enemies.md` | `e976afdbcef0c3dbb004440a0e0a14cf28263f7e6ef3d5ee5a92fa1a88720c77` |
 | `weapons.md` | `513bbdf945efac0df29c508a3060ba57b6ed94adf26f26d286cdcb5c7a677fd0` |

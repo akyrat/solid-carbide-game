@@ -147,6 +147,9 @@ var floor_query := Callable()
 var use_keyboard := true
 ## [W held, S held, steer] used when use_keyboard is false.
 var scripted_input := [false, false, 0.0]
+## The input the last physics step used: [w, s, steer] (task T-517, the Drift Guide predicts
+## with it). Dead keys (input_enabled false) read as nothing held.
+var last_input := [false, false, 0.0]
 ## When false, no input reaches the car (T-360, the wreck: the controls go
 ## dead when the last heart is gone): every step runs as if no key were held,
 ## so the car keeps the movement it had and coasts with its normal physics.
@@ -233,6 +236,7 @@ func physics_step() -> void:
 		rev_charge.reset()
 		polarized.reset()  # T-502: and the Polarized Steering Wheel's coast and burst
 		_jump_pressed = false
+	last_input = [w, s, steer]
 	# T-461: Jump (nothing at all when not owned). Before the model's update, so
 	# the hop's first step is already in the air (air turn rate, no driving).
 	jump.step(height_model, _jump_pressed, model.dt)
