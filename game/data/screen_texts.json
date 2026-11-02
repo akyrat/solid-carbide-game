@@ -32,15 +32,21 @@
       "rev_charge": "Rev Charge",
       "jump": "Jump",
       "bouncy_bumpers": "Bouncy Bumpers",
-      "rusty_overcoat": "Rusty Overcoat"
+      "rusty_overcoat": "Rusty Paintjob",
+      "polarized_steering_wheel": "Polarized Steering Wheel"
     },
     "names_comment": "Each power-up's name on its overlay card (the board's names, kept as the style loop scored them 9).",
     "descriptions": {
       "rev_charge": "Hold W+S {charge_seconds}s, let go of S: {boost_seconds}s boost. Brakes, now monetized.",
       "jump": "Press Space to hop. Next hop in {cooldown_seconds} s. Airtime clips better than braking.",
       "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles. Crashes are content too.",
-      "rusty_overcoat": "The car deals {contact_damage} damage to minions it touches. Rust: now a feature."
+      "rusty_overcoat": "The car deals {contact_damage} damage to minions it touches. Rust: now a feature.",
+      "polarized_steering_wheel": "Lift, steer, gas a new way: +{burst_percent}% speed burst. Whiplash is a feature."
     },
+    "descriptions_tier4": {
+      "polarized_steering_wheel": "Lift, steer, gas: +{burst_percent}% speed, a shock that hits and shoves minions. Synergy."
+    },
+    "descriptions_tier4_comment": "T-501: the Polarized Steering Wheel's tier 4 card text, which replaces its descriptions entry at tier 4 (the shock). Slot: burst_percent.",
     "descriptions_comment": "One template per power-up, shown on its card for the tier offered; the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."
   }
 }

@@ -3325,3 +3325,8 @@ Entry format:
 - Decision or change: Burning enemies keep taking flame damage after leaving the flame.
 - Documents touched: `docs/weapons.md`
 - Tasks: T-497
+
+## 2026-11-02: Text for the new power-up, the rename and God mode
+- Decision or change: Texts for the Polarized Steering Wheel, the Rusty Paintjob rename and God mode.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-501

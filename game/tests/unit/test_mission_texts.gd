@@ -71,7 +71,7 @@ func test_every_power_up_has_a_name_and_a_description() -> void:
 	assert_eq(texts.power_ups.names.rev_charge, "Rev Charge")
 	assert_eq(texts.power_ups.names.jump, "Jump")
 	assert_eq(texts.power_ups.names.bouncy_bumpers, "Bouncy Bumpers")
-	assert_eq(texts.power_ups.names.rusty_overcoat, "Rusty Overcoat")
+	assert_eq(texts.power_ups.names.rusty_overcoat, "Rusty Paintjob")
 
 
 func test_descriptions_have_a_number_slot_and_no_greenbull_says() -> void:
