@@ -43,13 +43,13 @@ The board's review: play it in the one combined build (T-516, T-517, T-518) from
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: the checkbox starts unticked for a new player and shows a saved true as ticked. (QA: pass / fail)
-- [ ] A unit test: ticking it turns the guide on at once and saves it; unticking turns it off. (QA: pass / fail)
-- [ ] Its label comes from drift_guide_label, not hard-coded (test). (QA: pass / fail)
-- [ ] Keyboard navigation reaches it like the other checkboxes (test). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes the checkbox. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] A screenshot of the pause screen with the checkbox, and of a drift with the guide on, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: the checkbox starts unticked for a new player and shows a saved true as ticked. (QA: pass)
+- [ ] A unit test: ticking it turns the guide on at once and saves it; unticking turns it off. (QA: pass)
+- [ ] Its label comes from drift_guide_label, not hard-coded (test). (QA: pass)
+- [ ] Keyboard navigation reaches it like the other checkboxes (test). (QA: pass)
+- [ ] docs/hud-and-menus.md Content describes the checkbox. (QA: pass)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: fail: code - game/tests/unit/hud/test_shared_button.gd line 100 expects 10 + god page buttons for the pause screen, but the new Drift Guide checkbox makes it 11 (34 vs 33); test not updated; full Godot set 2710/2712, reproduced on rerun)
+- [ ] A screenshot of the pause screen with the checkbox, and of a drift with the guide on, under art-archive/T-NNN/screenshots/. (QA: pass)
 
 ## Updates
 
@@ -70,3 +70,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Built: drift_guide_check in pause_screen.gd, 4th checkbox in the settings row after Rain; label pause_text('drift_guide_label'); state GameSettings.load_drift_guide_enabled() (off by default); toggle calls save_drift_guide_enabled(on), applying at once via the notifier. Same CheckBox as the others, so keyboard (Space/Enter) and mouse work. The row of four fits the strip, no wrapping (screenshot). Tests: game/tests/unit/test_pause_drift_guide_toggle.gd (6 pass: label from data, default off, saved true shown ticked, toggle saves, mouse click, keyboard, notifier emits at once); test_pause_rain_toggle still passes. Docs: docs/hud-and-menus.md Content updated. Screenshots in art-archive/T-518/screenshots/: pause_checkbox.png (new fixture tests/fixtures/pause_drift_guide_demo, test settings file), drift_guide_on_left.png, drift_guide_on_right.png (T-517 fixtures). Note: run_tests.sh -gselect used (direct gut_cmdln hangs here).
+
+QA round 1: all criteria pass except the full Godot set. Combined branch (T-515..T-518 + master): Godot set 2710/2712 passing; 1 red: test_shared_button.gd test_level_up_and_pause_buttons_are_shared (line 100, pause shared buttons 34, expected 33): the count 10 + god page buttons needs 11 now that the Drift Guide checkbox adds one (same fix T-508 did for Rain). Reproduced on rerun. Screenshots reviewed: pause row of four fits, Drift Guide ticked; guide arc visible in drift. Docs updated. T-518's own 6 tests pass.
