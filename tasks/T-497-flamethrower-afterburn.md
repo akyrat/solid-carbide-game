@@ -41,14 +41,14 @@ The board's review: play the new weapon trees in one build with T-495 to T-499 t
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: an enemy that leaves the flame at tier 1 takes the flame's damage every tick_interval for burn_flash_seconds, then stops. (QA: pass / fail)
-- [ ] A unit test: with burn +2 s (tier 7) the same enemy keeps taking damage for burn_flash_seconds + 2 s. (QA: pass / fail)
-- [ ] A unit test: an enemy inside the flame and burning takes one hit per tick, not two. (QA: pass / fail)
-- [ ] A unit test: re-entering the flame refreshes the burn time. (QA: pass / fail)
-- [ ] The orange tint and burn flames stay on for exactly the burn time (unit test). (QA: pass / fail)
-- [ ] docs/weapons.md (the exhaust flamethrower) and game/docs/weapons/flamethrower.md describe the afterburn. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots of burning minions outside the flame, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: an enemy that leaves the flame at tier 1 takes the flame's damage every tick_interval for burn_flash_seconds, then stops. (QA: pass; test_afterburn_at_tier_1_hits_every_tick_for_the_burn_time_then_stops exists and the suite is green)
+- [ ] A unit test: with burn +2 s (tier 7) the same enemy keeps taking damage for burn_flash_seconds + 2 s. (QA: pass; test_two_more_seconds_of_burn_keep_it_burning_two_seconds_longer exists and the suite is green)
+- [ ] A unit test: an enemy inside the flame and burning takes one hit per tick, not two. (QA: pass; test_an_enemy_inside_and_burning_takes_one_hit_per_tick exists and the suite is green)
+- [ ] A unit test: re-entering the flame refreshes the burn time. (QA: pass; test_re_entering_the_flame_refreshes_the_burn exists and the suite is green)
+- [ ] The orange tint and burn flames stay on for exactly the burn time (unit test). (QA: pass; test_tint_and_burn_flames_stay_on_for_exactly_the_burn_time exists and the suite is green)
+- [ ] docs/weapons.md (the exhaust flamethrower) and game/docs/weapons/flamethrower.md describe the afterburn. (QA: pass; both docs have the afterburn text)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; both test sets pass in qa_check)
+- [ ] Screenshots of burning minions outside the flame, under art-archive/T-NNN/screenshots/. (QA: pass; 3 screenshots in art-archive/T-497/screenshots/)
 
 ## Updates
 
@@ -61,6 +61,10 @@ Started in parallel: real afterburn for the flamethrower.
 ### 2026-11-02, In progress → In QA
 
 Afterburn built: enemies keep burning and taking the flame's damage every tick for the burn time after leaving it; tests and screenshots in.
+
+### 2026-11-02, In QA
+
+Built: burning enemies keep taking flame damage after leaving the flame, one hit per tick. QA running.
 
 ## Style review
 
