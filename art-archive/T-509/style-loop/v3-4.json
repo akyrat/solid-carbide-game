@@ -1,0 +1,16 @@
+{
+  "file": "v3-4.png",
+  "asset": "rain splash animation (brief: art-archive/T-509/brief_splash.md)",
+  "task": "T-509",
+  "version": 3,
+  "refines": "v2-3_alt.png (Style Evaluator 7/10: frame 1 thin at 8 pixels; droplets should be clearly distinct; far edge should be the darker desaturated blue; confirm 10x4 ring and bottom-centre impact)",
+  "size": "48x8 (4 frames of 12x8, one row), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_this_version": 0,
+  "generations_total_splash_this_session": 2,
+  "script": "game/tools/build_rain_splash_v3.py (tests: game/tools/test_build_rain_splash_v3.py, 7 pass)",
+  "changes": "frame 1: 14 pixels (was 8): 6x3 ring around the white/cyan dot plus a 2-pixel spurt rising from it. Far edge of the ring in frames 1-3 now a darker desaturated blue (72,110,142), darkened by script from the ring drawing's darkest sampled colour, so far edge < sides < near side in brightness. frame 2: the 3 droplets each have transparent pixels all round (none touches the ring or another). frame 4: 9 pixels, broken ring in three dark tones. Frame 3's 10x4 ellipse kept.",
+  "facts": "build_rain_splash_v3.py facts: pixels 14/19/20/9, colours per frame 6/6/6/3, 9 in the sheet; frame 3 ring 10x4; every frame has a bottom-row pixel at x5 or x6, frames 1-3 symmetric about x5.5; 0 semi-transparent; corners clear",
+  "script_checks": "game/tools/style_rules.py art --size 12x8 --frames 4 --max-colors 12: 21 of 21 pass",
+  "preview": "art-archive/T-509/screenshots/v3-4_preview_x12.png"
+}
