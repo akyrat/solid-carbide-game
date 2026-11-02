@@ -1,7 +1,7 @@
 ---
 id: T-497
 title: Hot Take Exhaust afterburn: burning enemies keep taking damage
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started in parallel: real afterburn for the flamethrower.
+
+### 2026-11-02, In progress → In QA
+
+Afterburn built: enemies keep burning and taking the flame's damage every tick for the burn time after leaving it; tests and screenshots in.
 
 ## Style review
 
