@@ -1,7 +1,7 @@
 ---
 id: T-501
 title: Text for the Polarized Steering Wheel, Rusty Paintjob and God mode
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, game/data/screen_texts.json, game/data/power_ups.json]
 files_expected_to_change: [game/data/screen_texts.json, game/tests/unit/, game/tools/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,10 @@ Started: texts for the new power-up, the Rusty Paintjob rename and God mode.
 ### 2026-11-02, In progress → In QA
 
 Texts for the Polarized Steering Wheel, Rusty Paintjob and God mode are written and scored 8 or more; keys are in the result notes.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 5 criteria; ready for the board's combined playtest.
 
 ## Style review
 
@@ -272,3 +276,4 @@ Style loop scores are in the Style review. All kept at 8 or more; no flags.
 **Tests:** -gselect=test_mission_texts.gd passes (4 tests, 77 asserts). The text checks in the style loop all passed.
 
 **Documents affected (Project Lead, mine are not edited):** docs/hud-and-menus.md still says "Rusty Overcoat" in "Power-up names" (line ~168), "Power-up descriptions" (~169) and the card order (~176); it needs the new name and the fifth power-up's texts. docs/drifting.md and docs/enemies.md, docs/visual-style.md mention the old name as history or internal id; left as is. Code comments in game/scripts say "Rusty Overcoat" (not player-facing), left for T-502/T-503.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
