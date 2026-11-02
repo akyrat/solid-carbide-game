@@ -1,7 +1,7 @@
 ---
 id: T-502
 title: Driving power-up: the Polarized Steering Wheel
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started on top of T-501's texts.
+
+### 2026-11-02, In progress → In QA
+
+Polarized Steering Wheel built: burst +20/30/40/45% for 0.5 s after lift-steer-gas at 60 degrees or more, tier 4 Bricks tier 1 shock; tests and screenshots in.
 
 ## Style review
 
