@@ -1,7 +1,7 @@
 ---
 id: T-513
 title: Tricks pay subs
-status: open
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -52,10 +52,18 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-02, Open → In progress
+
+Started: tricks pay subs.
+
+### 2026-11-02, In progress → In QA
+
+Tricks now pay subs straight away (5/10 per trick, multiplied by the combo; numbers in combo.json trick_subs); signal trick_subs_paid for the HUD.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: each trick pays subs straight away into the sub goal, on top of its multiplier add. Numbers (proposals, game/data/combo.json trick_subs with _comment): FULL 360 5, ALT DRIFT 10, AIR 180 5, AIR 360 10, THREAD THE NEEDLE 10; extended_drift 0 and airtime 0 (the drift already pays by the second via drift_xp_per_second; airtime is a small frequent hop; raise in the table to make them pay). multiplied_by_combo true: subs are multiplied by the multiplier as it stood just before the trick raised it (like drift subs: high combo makes tricks worth more, first trick pays plain); false = flat. Why: one drift second is 10 subs at x1, level 2 needs 30, so a 360 is half a drift second, big tricks a full one. HUD signal for T-514: RunState.trick_subs_paid(trick_id, subs), sent just after combo_trick, subs = what really reached the goal (after multiplier; nothing at max level or when 0). Code: run_state.gd _pay_trick_subs(), combo_data.gd trick_subs()/trick_subs_multiplied(). Doc: game-loop-architecture.md Content, combo section. Tests run (all pass): new test_trick_subs (4: each trick pays its subs and add, multiplied, zero-sub trick, multiplier add/cut/drift pay unchanged); updated test_run_combo and test_run_likes_drain (they assumed tricks pay no XP); also ran test_crash_pays_trick, test_run_likes, test_combo_data, test_missions, test_run_recap, test_run_hearts, test_wreck, test_wreck_decides_loss, test_thread_the_needle, test_screen_flow, test_hud_combo_heat/reactions/viewers_counter/layout, test_combo_broken_popup: all green. Screenshot: art-archive/T-513/screenshots/trick_fills_sub_goal.png (sub goal 30/30 after ALT DRIFT and THREAD THE NEEDLE; fixture game/tests/fixtures/trick_subs_demo.tscn). Nothing in game/data/levels touched.
