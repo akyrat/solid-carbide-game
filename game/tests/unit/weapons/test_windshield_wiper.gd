@@ -204,8 +204,8 @@ func test_a_real_minion_is_damaged_and_knocked_back() -> void:
 func test_the_tier_1_push_is_6_units_and_the_last_tier_9() -> void:
 	# T-266: about twice the car's length (3 units long) at the first level.
 	assert_eq(float(data.wiper_at(1)["knockback_distance"]), 6.0)
-	assert_almost_eq(float(data.wiper_at(5)["knockback_distance"]), 9.0, 1e-9, "tier 5 still x1.5")
-	assert_almost_eq(float(data.wiper_at(8)["knockback_distance"]), 9.0, 1e-9)
+	assert_almost_eq(float(data.wiper_at(4)["knockback_distance"]), 9.0, 1e-9, "tier 4 is x1.5 (T-496)")
+	assert_almost_eq(float(data.wiper_at(7)["knockback_distance"]), 9.0, 1e-9)
 	rack.upgrade("wiper")
 	var m: Node = run.minions.spawn_minion_at(_ahead(1.0))
 	m.max_health = 100.0
@@ -370,11 +370,11 @@ func test_playtest_switch_is_read_from_the_data_file() -> void:
 
 func test_each_tier_sets_the_datas_values() -> void:
 	rack.upgrade("wiper")
-	for t in range(1, data.max_tier() + 1):
+	for t in range(1, data.max_tier("wiper") + 1):
 		wiper.set_tier(t)
 		assert_eq(wiper.stats, data.wiper_at(t), "tier %d values" % t)
 	wiper.set_tier(1)
-	for t in range(2, data.max_tier() + 1):
+	for t in range(2, data.max_tier("wiper") + 1):
 		assert_true(rack.upgrade("wiper"), "upgrade to tier %d" % t)
 	assert_false(rack.upgrade("wiper"), "no upgrade past the last tier")
 
@@ -382,7 +382,7 @@ func test_each_tier_sets_the_datas_values() -> void:
 func test_damage_bonus_multiplies_every_tier() -> void:
 	rack.upgrade("wiper")
 	rack.set_damage_bonus(50.0)
-	for t in range(1, data.max_tier() + 1):
+	for t in range(1, data.max_tier("wiper") + 1):
 		wiper.set_tier(t)
 		assert_almost_eq(float(wiper.stats["damage"]), data.wiper_at(t)["damage"] * 1.5, 1e-9)
 
@@ -410,9 +410,6 @@ func test_tier_6_changes_what_weapons_json_says() -> void:
 func test_tier_7_changes_what_weapons_json_says() -> void:
 	_check_tier(7)
 
-
-func test_tier_8_changes_what_weapons_json_says() -> void:
-	_check_tier(8)
 
 
 const TIER_KEYS := {

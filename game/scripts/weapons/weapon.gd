@@ -5,7 +5,7 @@ extends Node
 ## ones once per physics step and resets them at the start of every run.
 ##
 ## A weapon's tier is 0 (not owned), 1 (just got it) up to its last tier in
-## the data (WeaponData.max_tier(weapon_id): 8, the gun 11, T-408): the tiers
+## the data (WeaponData.max_tier(weapon_id): 8, Bricks and the wiper 7 until T-498 and T-499): the tiers
 ## above 1 are its upgrades, from res://data/weapons.json
 ## through WeaponData. Change tiers from code with set_tier() or upgrade();
 ## offering them at a level-up is the level-up task's (T-043).

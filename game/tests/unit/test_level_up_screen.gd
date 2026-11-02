@@ -578,7 +578,7 @@ func _set_tier(w: String, tier: int) -> void:
 
 func test_every_choice_and_tier_the_offers_can_produce_has_text() -> void:
 	var choices := _every_choice()
-	assert_eq(choices.size(), 10 + 5 * 8, "gun tiers 1-10 (T-408: last tier 11), the others 0-7")
+	assert_eq(choices.size(), 7 + 3 * 8 + 2 * 7, "gun tiers 1-7, flamethrower/underglow/molotov 0-7, Bricks and wiper 0-6 (T-496)")
 	var seen_ids := {}
 	for c in choices:
 		_set_tier(c[0], c[1])

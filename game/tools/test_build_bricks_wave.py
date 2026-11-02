@@ -13,12 +13,12 @@ import style_rules as rules  # noqa: E402
 
 class TierRadii(unittest.TestCase):
     def test_radii_follow_the_tiers_multipliers(self):
-        self.assertEqual(bw.tier_radii(), [4.0, 4.8, 6.0, 7.8])
+        self.assertEqual(bw.tier_radii(), [4.0, 5.6, 8.4])
 
     def test_names_match_the_games_lookup(self):
         # bricks.gd BricksWave.art_path: the radius to one decimal, "." as "_".
         self.assertEqual(bw.sheet_name(4.0), "bricks_wave_r4_0")
-        self.assertEqual(bw.sheet_name(4 * 1.2 * 1.25 * 1.3), "bricks_wave_r7_8")
+        self.assertEqual(bw.sheet_name(4 * 1.4 * 1.5), "bricks_wave_r8_4")
 
     def test_timing_matches_bricks_gd(self):
         gd = (bw.GAME / "scripts" / "weapons" / "bricks.gd").read_text(encoding="utf-8")

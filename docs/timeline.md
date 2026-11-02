@@ -3305,3 +3305,8 @@ Entry format:
 - Decision or change: The board's titles kept; missing card texts written and wrong numbers fixed.
 - Documents touched: docs/weapons.md
 - Tasks: T-495
+
+## 2026-11-02: The board's weapon trees in the data
+- Decision or change: The board's tier lists from the Upgrade Tree Workshop are in weapons.json; the gun has 8 tiers and aims one target at a time.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-496
