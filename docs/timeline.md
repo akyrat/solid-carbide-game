@@ -3370,3 +3370,8 @@ Entry format:
 - Decision or change: The rain is off by default; the player turns it on in the pause settings.
 - Documents touched: docs/level-design.md
 - Tasks: T-510
+
+## 2026-11-02: Garage icons in the web build
+- Decision or change: Images the game loads at runtime load from the exported pack, so the garage icons show on itch.io.
+- Documents touched: docs/garage-design.md
+- Tasks: T-511
