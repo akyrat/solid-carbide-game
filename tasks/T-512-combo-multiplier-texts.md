@@ -45,7 +45,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] Each new or rewritten line scored 8 or more in the style loop (the Style review section shows the scores). (QA: pass)
 - [ ] No text in game/data/*.json that the player sees still says viewers or WATCHING, except keys the result notes mark as unused after T-514. (QA: pass)
 - [ ] The result notes list every key, new or changed, for T-514. (QA: pass)
-- [ ] The Godot tests that read these text files pass (the agent runs the ones it touched). (QA: fail: code - game/tools test_text_inventory fails (reran alone, same result): 'data/multiplier_text.json' and 'data/recap_text.json' have screen '(unlisted)'; game/tools/text_inventory.py needs a screen entry for multiplier_text and for recap_text:peak_value)
+- [ ] The Godot tests that read these text files pass (the agent runs the ones it touched). (QA: pass; round 2: test sets pass after 29442ab9)
 
 ## Updates
 
@@ -217,3 +217,5 @@ Texts done, all scored 8+ (Style review). New file game/data/multiplier_text.jso
 QA round 1: criteria 1-4 pass; criterion 5 fails (code): game/tools test_text_inventory.test_the_real_game_has_text_in_both_lists_and_every_screen_is_listed is red, reproduced alone: data/multiplier_text.json and data/recap_text.json are '(unlisted)'. Fix in game/tools/text_inventory.py: add a screen for multiplier_text and for recap_text:peak_value. Also no screenshots in art-archive/T-512/screenshots/ (paperwork). Documents check passes. Godot set not confirmed: qa_check stopped at the first red set.
 
 QA round 1 fix: added screen entries to game/tools/text_inventory.py (recap_text:peak_value, multiplier_text:multiplier/gain/loss/unused); test_text_inventory.py passes (8).
+
+QA round 2: all five criteria pass. Both test sets pass on 29442ab9 (the text inventory test is green); documents check passes. The missing screenshots folder is accepted by the Project Lead for this text-only ticket.
