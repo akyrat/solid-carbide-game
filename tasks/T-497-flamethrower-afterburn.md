@@ -1,7 +1,7 @@
 ---
 id: T-497
 title: Hot Take Exhaust afterburn: burning enemies keep taking damage
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -100,3 +100,4 @@ Weapon Behavior Agent, 2026-11-02.
 - The Content tiers line and the summary still say "burn flash" for tier 5; left for T-496, which changes those tiers, to avoid a conflict.
 - Seen in the screenshots: the burn flames cover a minion entirely, and the orange tint also tints the flames (they are a child of the sprite). With afterburn they now show for the whole burn time outside the flame (up to 2.38 s at tier 7), so this look is more visible than before. Existing art behaviour, not changed here.
 - The old fixture `tests/fixtures/weapons/flame_hit_area_shot.tscn` (T-267) no longer runs: `game.run` is null after pressing Start (the menu flow changed since). Not fixed here (outside this ticket).
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
