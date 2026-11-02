@@ -3420,3 +3420,18 @@ Entry format:
 - Decision or change: A minion's contact damage needs the car within about 0.5 units of its ground, so even the first Jump tier hops over one.
 - Documents touched: docs/enemies.md
 - Tasks: T-515
+
+## 2026-11-02: Drift Guide label
+- Decision or change: The pause screen's Drift Guide checkbox reads "Drift Guide", the board's words.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-516
+
+## 2026-11-02: The Drift Guide
+- Decision or change: An optional Drift Guide, off by default, shows a gray fading arrow of the drift's predicted path during a drift.
+- Documents touched: docs/drifting.md
+- Tasks: T-517
+
+## 2026-11-02: Drift Guide checkbox
+- Decision or change: The pause settings get a Drift Guide checkbox, off by default.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-518
