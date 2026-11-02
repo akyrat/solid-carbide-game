@@ -57,9 +57,14 @@ const DEFAULT_TARGET_RADIUS_UNITS := 0.5
 ## every weapon at the start of a run (T-172).
 const PLAYTEST_FILE := "playtest"
 const ALL_WEAPONS_KEY := "all_weapons_at_start"
+## With all_weapons_at_start on, every weapon starts at this tier (capped at its own
+## max_tier); 0 = off (T-500).
+const WEAPON_TIER_KEY := "weapon_tier_at_start"
 
 ## Tests set this to 0 (off) or 1 (on) to override "all_weapons_at_start"; -1 reads the file.
 static var all_weapons_override := -1
+## Tests set this to a tier (0 off) to override "weapon_tier_at_start"; -1 reads the file.
+static var weapon_tier_override := -1
 
 const MODE_RUNNING := 0
 const MODE_WRECKED := 1
@@ -173,6 +178,13 @@ func reset_for_run() -> void:
 		for w in weapons.values():
 			if not w.is_owned():
 				w.upgrade()
+		# T-500 (data/playtest.json "weapon_tier_at_start"): then every weapon up to
+		# that tier, capped at its own last tier, with each tier applied in order.
+		var target := weapon_tier_at_start()
+		if target > 1:
+			for w in weapons.values():
+				while w.tier < target and w.upgrade():
+					pass
 
 
 ## The playtest switch: data/playtest.json "all_weapons_at_start" (or all_weapons_override).
@@ -184,6 +196,17 @@ static func all_weapons_switch_on() -> bool:
 		return false
 	var v := GameData.get_value(r.data, ALL_WEAPONS_KEY)
 	return v.ok and bool(v.data)
+
+
+## The playtest switch: data/playtest.json "weapon_tier_at_start" (0 = off).
+static func weapon_tier_at_start() -> int:
+	if weapon_tier_override >= 0:
+		return weapon_tier_override
+	var r := GameData.load_file(PLAYTEST_FILE)
+	if not r.ok:
+		return 0
+	var v := GameData.get_value(r.data, WEAPON_TIER_KEY)
+	return maxi(0, int(v.data)) if v.ok else 0
 
 
 ## The factor every weapon's damage is multiplied by: 1 + bonus / 100.
