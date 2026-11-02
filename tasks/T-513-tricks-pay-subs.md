@@ -41,12 +41,12 @@ The board, 2026-11-02: the live viewers are confusing; back to the combo multipl
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: each trick in trick_add adds its proposed subs to the run's XP when it pays, on top of its multiplier add. (QA: pass / fail)
-- [ ] A unit test: the multiplier's own behaviour (add, cut, drain, drift pay multiplied) is unchanged. (QA: pass / fail)
-- [ ] The numbers live in game/data with a _comment, not in code; the result notes give them and the reasoning. (QA: pass / fail)
-- [ ] docs/game-loop-architecture.md Content describes how tricks pay subs and points to the data. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] A screenshot of a run where a trick fills the sub goal, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: each trick in trick_add adds its proposed subs to the run's XP when it pays, on top of its multiplier add. (QA: pass)
+- [ ] A unit test: the multiplier's own behaviour (add, cut, drain, drift pay multiplied) is unchanged. (QA: pass)
+- [ ] The numbers live in game/data with a _comment, not in code; the result notes give them and the reasoning. (QA: pass)
+- [ ] docs/game-loop-architecture.md Content describes how tricks pay subs and points to the data. (QA: pass)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass)
+- [ ] A screenshot of a run where a trick fills the sub goal, under art-archive/T-NNN/screenshots/. (QA: pass)
 
 ## Updates
 
