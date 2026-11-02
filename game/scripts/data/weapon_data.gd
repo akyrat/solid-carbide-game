@@ -19,8 +19,8 @@ func is_ok() -> bool:
 	return error == ""
 
 
-## A weapon's last tier: its own "max_tier" when its entry has one (the gun: 11,
-## T-408), otherwise the shared top-level one (8). No weapon id: the shared one.
+## A weapon's last tier: its own "max_tier" when its entry has one (
+## 7 for Bricks and the wiper until T-498 and T-499), otherwise the shared top-level one (8). No weapon id: the shared one.
 func max_tier(weapon: String = "") -> int:
 	if weapon != "" and _data.has(weapon) and _data[weapon] is Dictionary and _data[weapon].has("max_tier"):
 		return int(_data[weapon]["max_tier"])

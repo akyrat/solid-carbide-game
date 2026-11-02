@@ -9,17 +9,18 @@ extends "res://scripts/weapons/weapon.gd"
 ## check, one interval later (the gun looks only once per interval, as in the
 ## prototype). Some: it fires a volley.
 ##
-## Targeting rule (T-408; Weapons, Content, "The starting gun"): the enemies in
-## range sorted closest first, and the tier's `targets` (1, 3 from tier 6, 5 at
-## tier 11) says how many of them a volley aims at.
-## - One target (below tier 6): the volley's bullets leave delay_between_bullets
-##   apart, each at the closest enemy in range that is still alive and not
-##   already doomed (the bullets in flight at it carry at least its health), so
-##   no bullet is spent on a minion that is dead or about to be. When every enemy
-##   in range is doomed it goes at its queued target (or where it was last seen).
-## - Several (tier 6 on): the closest `targets` enemies; bullet 1 goes to the
-##   closest, bullet 2 to the second closest and so on, round them again when
-##   there are more bullets than targets. The whole volley leaves at once.
+## Targeting rule (T-408, T-496): the enemies in range sorted closest first, and
+## the tier's `targets` says how many of them a volley aims at. The data gives 1
+## at every tier (the board dropped Multi-Target Mode, T-496), so:
+## - One target: the volley's bullets leave delay_between_bullets apart, each at
+##   the closest enemy in range that is still alive and not already doomed (the
+##   bullets in flight at it carry at least its health), so no bullet is spent on
+##   a minion that is dead or about to be. When every enemy in range is doomed it
+##   goes at its queued target (or where it was last seen).
+## - Several (only if the stats say so; no tier does now): the closest `targets`
+##   enemies; bullet 1 goes to the closest, bullet 2 to the second closest and so
+##   on, round them again when there are more bullets than targets. The whole
+##   volley leaves at once.
 ## Each bullet is aimed from the car's centre at its target's centre at that
 ## moment (no leading).
 ##
@@ -125,7 +126,7 @@ func step(dt: float) -> void:
 		fire_at(t.position_units(), t)
 
 
-## How many enemies a volley aims at, at the current tier (1, 3 or 5).
+## How many enemies a volley aims at, at the current tier (1 at every tier of the data).
 func targets_per_volley() -> int:
 	return int(stats.get("targets", 1))
 

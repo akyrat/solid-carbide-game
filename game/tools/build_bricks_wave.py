@@ -89,7 +89,7 @@ SEED = 325
 # --- radii and names -------------------------------------------------------------
 
 def tier_radii(path=WEAPONS_JSON):
-    """Every damage radius Bricks' tiers 1 to 8 reach (weapons.json `bricks`: the base
+    """Every damage radius Bricks' tiers reach (weapons.json `bricks`: the base
     radius times each `radius_multiplier` up to the tier), rounded to 0.01, ascending."""
     b = json.loads(Path(path).read_text(encoding="utf-8"))["bricks"]
     r, out = float(b["radius"]), set()

@@ -102,14 +102,14 @@ func test_a_new_run_has_no_bricks_and_upgrade_gives_it() -> void:
 	assert_true("bricks" in rack.owned_ids())
 
 
-func test_the_tiers_are_t323s_numbers() -> void:
-	for t in range(1, 9):
+func test_the_tiers_are_the_boards_numbers() -> void:
+	for t in range(1, 8):
 		bricks.set_tier(t)
 		var want: Dictionary = data.bricks_at(t)
 		for k in want:
 			assert_eq(bricks.stats[k], want[k], "tier %d %s" % [t, k])
 	assert_almost_eq(float(data.bricks_at(1)["radius"]), 4.0, 1e-9)
-	assert_almost_eq(float(data.bricks_at(8)["damage"]), 13.5, 1e-9)
+	assert_almost_eq(float(data.bricks_at(7)["damage"]), 13.5, 1e-9)
 
 
 # --- The wave ------------------------------------------------------------------------
@@ -345,9 +345,9 @@ func test_the_wave_is_drawn_growing_to_the_radius_then_gone() -> void:
 
 
 func test_a_wider_tier_draws_a_wider_ring() -> void:
-	bricks.set_tier(8)
+	bricks.set_tier(7)
 	_air(0.5)
-	assert_almost_eq(bricks.last_wave.radius, 7.8, 1e-9)
+	assert_almost_eq(bricks.last_wave.radius, 8.4, 1e-9)
 
 
 func test_the_wave_is_drawn_at_the_grounds_height() -> void:
@@ -371,7 +371,7 @@ func test_the_waves_colours_are_opaque_and_none_of_greenbulls() -> void:
 # --- T-325's art -----------------------------------------------------------------------
 
 func test_every_tiers_radius_has_its_wave_sheet() -> void:
-	for t in range(1, 9):
+	for t in range(1, 8):
 		var r: float = data.bricks_at(t)["radius"]
 		var path: String = Bricks.BricksWave.art_path(r)
 		assert_true(ResourceLoader.exists(path), "tier %d (radius %.2f): %s" % [t, r, path])
@@ -409,7 +409,7 @@ func test_a_wider_tier_shows_a_wider_sheet() -> void:
 	rack.upgrade("bricks")
 	bricks.send_wave(_car())
 	var small: Vector2 = bricks.last_wave.frame_size
-	bricks.set_tier(8)
+	bricks.set_tier(7)
 	bricks.send_wave(_car() + Vector2(20, 0))
 	assert_gt(bricks.last_wave.frame_size.x, small.x)
-	assert_eq(bricks.last_wave.sheet, Bricks.BricksWave.sheet_for(7.8))
+	assert_eq(bricks.last_wave.sheet, Bricks.BricksWave.sheet_for(8.4))
