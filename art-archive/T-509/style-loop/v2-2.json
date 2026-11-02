@@ -1,0 +1,15 @@
+{
+  "file": "v2-2.png",
+  "task": "T-509",
+  "version": 2,
+  "refine_of": "v1.png (score 6/10)",
+  "size": "24x16 (3 frames of 8x16), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_this_version": 0,
+  "generations_total_so_far": 2,
+  "script": "game/tools/build_rain_drops_v2.py (tests: game/tools/test_build_rain_drops_v2.py, 7 pass); separate file because build_rain_drops.py was being edited by another run",
+  "changes": "darkest tail colour (54,57,72) dropped (darkest is now 85,119,157); frames 1 and 2 span 15 and 16 rows with exactly 5 px lean; frame 2 is 2 px wide only on its body rows; frame 3 is short (7 rows) and the brightest (whites and cyan only, 2-px white core)",
+  "colours": "6, all sampled from PixelLab's T-509 generations (raw/v1_raw.png, raw/v1b_raw.png)",
+  "preview": "art-archive/T-509/screenshots/v2-2_preview_x12.png (nearest-neighbour x12, dark and light background; review only)",
+  "script_checks": "game/tools/style_rules.py art --size 8x16 --frames 3 --max-colors 12: all pass"
+}

@@ -1,0 +1,15 @@
+{
+  "file": "v1.png",
+  "task": "T-509",
+  "version": 1,
+  "size": "24x16 (3 frames of 8x16), RGBA 8-bit",
+  "pixellab_calls": [
+    {"record": "raw/v1_raw.json", "endpoint": "/create-image-pixflux", "size": "32x32", "generations": 1, "result": "vertical teardrop with a black outline, no lean; only its colours were used"},
+    {"record": "raw/v1b_raw.json", "endpoint": "/create-image-pixflux", "size": "32x32", "generations": 1, "result": "three 1-px streaks at 45 degrees, too steep; colours used"}
+  ],
+  "generations_total": 2,
+  "script": "game/tools/build_rain_drops.py (tests: game/tools/test_build_rain_drops.py), run before a later edit of that file added VARIANTS_V2",
+  "method": "the streaks were redrawn pixel by pixel at the brief's lean (1 px left every 3 rows, about 18 degrees) in 7 colours sampled from the two generations; nothing scaled",
+  "consulted": ["docs/visual-style.md (Content, Rules)", "docs/level-design.md (Decisions, Rain over the map)", "art-archive/T-509/brief_drops.md"],
+  "script_checks": "game/tools/style_rules.py art --size 8x16 --frames 3 --max-colors 12: all pass"
+}

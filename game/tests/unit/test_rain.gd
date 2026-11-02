@@ -217,3 +217,29 @@ func test_run_draws_rain_over_the_world_and_under_the_hud() -> void:
 	assert_gt(rain.draw_count, 0, "it rains in a run by default")
 	GameSettings.save_rain_enabled(false)
 	assert_false(rain.visible, "the run's rain hides as soon as the setting is saved off")
+
+
+# --- The PixelLab art (T-509) ---
+
+func test_the_rain_uses_the_art_not_the_placeholder() -> void:
+	var r := _rain()
+	assert_eq(str(r.config.drop_texture), "res://art/rain/rain_drops.png")
+	assert_eq(str(r.config.splash_texture), "res://art/rain/rain_splash.png")
+	assert_eq(r.drop_texture.get_size(), Vector2(24, 16), "3 drop variants of 8 x 16")
+	assert_eq(int(r.config.drop_variants), 3)
+	assert_eq(r.splash_texture.get_size(), Vector2(48, 8), "4 splash frames of 12 x 8")
+	assert_eq(int(r.config.splash_frames), 4)
+
+
+func test_drops_use_all_variants_and_draw() -> void:
+	var r := _rain()
+	r.set_process(false)
+	r.step(0.0)
+	var seen := {}
+	for d in r.drops:
+		seen[d.v] = true
+	assert_eq(seen.size(), 3, "every variant is in use")
+	var drawn: int = r.draw_count
+	r._canvas.queue_redraw()
+	await wait_process_frames(2)
+	assert_gt(r.draw_count, drawn)
