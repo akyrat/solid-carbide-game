@@ -61,4 +61,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the Game Data Agent (2026-11-02). Code, data, docs, tests and screenshots committed in 4396fe64.
+
+- game/data/weapons.json: gun tiers 2 to 8 (+1 bullet, +1, x1.2 rate, x1.2, +1 bullet, x1.2, x4), flamethrower 2 to 8 (size x1.2, damage x1.2, size x1.3, +1 s burn, size x1.3, +1 s burn, always on), molotov 2 to 8 (radius x1.2, interval x0.8, +1, +1, interval x0.7, radius x1.3, +1), bricks 2 to 7 (radius x1.4, damage x1.5, knockback x1.5, radius x1.5, damage x1.5, knockback x1.5), wiper 2 to 7 (length x1.2, sweep x1.25, knockback x1.5, length x1.3, sweep x1.3, length x1.3). Gun max_tier 8, no set_targets tier. Neon Underglow untouched (a unit test pins it). All _comment fields updated.
+- Bricks and the wiper each got their own `max_tier: 7`, so the level-up offers stop there until T-498 and T-499 add tier 8 and raise it to 8.
+- Data only for the numbers: every effect already existed in WeaponData. "+1 s burn" uses `add_burn_flash_seconds` (T-497 makes it afterburn). The flame turn-speed effect and the gun's set_targets stay in the code, unused by any tier.
+- Single-target stream: no code change. At tier 8 (4 bullets, a volley every 0.234 s) each bullet re-aims at the closest living enemy if its target died. Tests: test_no_gun_tier_sets_targets_and_tier_8_aims_at_one_at_a_time, test_tier_8_a_dead_target_hands_the_next_bullet_to_the_closest_living.
+- Offers stop at each weapon's last tier: new test that bricks and wiper are never offered past tier 7.
+- Bricks wave art: new radii 4.0, 5.6, 8.4 needed sheets; built with the free script `python game/tools/build_bricks_wave.py build` (no PixelLab): bricks_wave_r5_6 and bricks_wave_r8_4 added. Old r4_8, r6_0, r7_8 kept, unused. T-498's tier 8 needs its own sheet from the same script.
+- Note for the playtest: Bricks tier 7 radius is 8.4 units (old tier 8 was 7.8).
+- Tests changed: test_weapon_data, test_starting_gun, test_level_up_offers, test_level_up_screen (T-495's count now 7+3*8+2*7), test_bricks, test_windshield_wiper, tools/test_build_bricks_wave.py. Run in the foreground, all passing: test_weapon_data, test_starting_gun, test_level_up_offers, test_level_up_screen, test_molotovs, test_windshield_wiper, test_bricks, test_exhaust_flamethrower, test_all_weapons_run, test_weapon_levels, test_damage_bonus, test_neon_underglow, test_weapons_wreck, test_weapon_art; python test_build_bricks_wave (10 ok). Full set not run (QA).
+- Docs: docs/weapons.md (gun, flamethrower with "+1 s burn", molotov, wiper, bricks, offers, size-grow list; old Decisions marked superseded), game/docs/weapons/{starting-gun,flamethrower,bricks}.md, game/docs/data/game-data.md. Long GDD to regenerate at merge.
+- Screenshots: art-archive/T-496/screenshots/level_up_a.png (gun Exposure for Everyone + molotov Quick Fire), level_up_b.png (flamethrower + wiper), level_up_c.png (bricks + molotov), from fixtures tests/fixtures/level_up_t496_{a,b,c}.tscn.
+- Refusals: a hook refused inline python on the task file and the Edit of the task file was denied; I stopped and wrote these notes through task_notes.py as instructed.
