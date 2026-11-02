@@ -1,7 +1,7 @@
 ---
 id: T-494
 title: Every screen scales with the window: the gift pack screen, the pause screen, and all the scan finds
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -77,3 +77,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
   - **T-492:** in main_menu.gd and garage_screen.gd only one line each changed (layout and scale), so the merge with T-492's focus work should be clean.
   - Nothing under game/data/levels/ touched.
   - Documents affected: docs/hud-and-menus.md (Content, "The HUD scales with the window": the screens now scale too, and how), game/docs/hud-and-menus/hud.md ("Every screen scales with the window").
+- 2026-11-02, in-progress → in-qa: Ready for the board's swipe deck
