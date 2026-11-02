@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-506, T-507]
+depends_on: []
 documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/hud-and-menus.md]
 files_expected_to_change: [game/scenes/, game/scripts/ui/, game/scripts/menu/, game/tests/unit/, docs/hud-and-menus.md]
