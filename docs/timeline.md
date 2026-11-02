@@ -3250,3 +3250,8 @@ Entry format:
 - Decision or change: A playtest-only switch starts every weapon at a chosen tier, for the board's playtest of the new weapon trees.
 - Documents touched: game/data/playtest.json
 - Tasks: T-500
+
+## 2026-11-02: Playtest switch for weapon tiers
+- Decision or change: A playtest-only switch, weapon_tier_at_start, starts every weapon at a chosen tier (capped at its last tier) when all_weapons_at_start is on, so the board can play the new weapon trees at their top tiers.
+- Documents touched: none
+- Tasks: T-500
