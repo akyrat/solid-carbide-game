@@ -1,7 +1,7 @@
 ---
 id: T-500
 title: Playtest switch: start a run with every weapon at a chosen tier
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -39,11 +39,11 @@ So the board can play the new weapon trees (T-495 to T-499) at their top tiers w
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/playtest.json has weapon_tier_at_start: 0 and its _comment describes it; all_weapons_at_start stays false. (QA: pass / fail)
-- [ ] A unit test: with all_weapons_at_start true and weapon_tier_at_start 8, every weapon starts the run at min(8, its max_tier) with the same stats as levelling it up tier by tier. (QA: pass / fail)
-- [ ] A unit test: with weapon_tier_at_start 0, a run starts as before (gun at tier 1 only). (QA: pass / fail)
-- [ ] A unit test: the level-up offers never offer a weapon already at its last tier. (QA: pass / fail)
-- [ ] The Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
+- [ ] game/data/playtest.json has weapon_tier_at_start: 0 and its _comment describes it; all_weapons_at_start stays false. (QA: pass; verified in the file)
+- [ ] A unit test: with all_weapons_at_start true and weapon_tier_at_start 8, every weapon starts the run at min(8, its max_tier) with the same stats as levelling it up tier by tier. (QA: pass; test_tier_8_puts_every_weapon_at_min_8_and_its_max_tier)
+- [ ] A unit test: with weapon_tier_at_start 0, a run starts as before (gun at tier 1 only). (QA: pass; test_tier_0_starts_as_before_gun_at_tier_1_only)
+- [ ] A unit test: the level-up offers never offer a weapon already at its last tier. (QA: pass; test_offers_never_offer_a_weapon_at_its_last_tier)
+- [ ] The Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; qa_check test sets passed)
 
 ## Updates
 
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: a playtest-only switch to start every weapon at tier 8, so the board can play the new trees.
+
+### 2026-11-02, In progress → In QA
+
+weapon_tier_at_start added (0 = off); tests pass.
 
 ## Style review
 
