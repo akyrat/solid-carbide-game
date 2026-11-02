@@ -41,13 +41,13 @@ The board reviews this in the Project Lead's swipe deck (board, 2026-11-02): no 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Tests show the arrow keys move the selection through every button of the main menu, and through the garage's upgrades and its Buy and Back buttons, in a sensible order, and Enter and Space press the selected one. (QA: pass / fail)
-- [ ] Tests show a screen opens with its first button selected, and a key held when it opens does nothing. (QA: pass / fail)
-- [ ] The selection is visible on every focusable item (screenshots listed in the result notes). (QA: pass / fail)
-- [ ] The mouse still works (the existing main menu and garage tests pass). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Main menu) and docs/garage-design.md say how the keyboard works there. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent, with -gselect), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] Tests show the arrow keys move the selection through every button of the main menu, and through the garage's upgrades and its Buy and Back buttons, in a sensible order, and Enter and Space press the selected one. (QA: pass; no QA agent, the board reviewed in its swipe deck 2026-11-02 and asked for WASD too, added without a second review at its word; test_menu_arrow_keys 14/14 with the WASD tests)
+- [ ] Tests show a screen opens with its first button selected, and a key held when it opens does nothing. (QA: pass; tests in test_menu_arrow_keys, held key checked with a key-repeat event)
+- [ ] The selection is visible on every focusable item (screenshots listed in the result notes). (QA: pass; 9 screenshots in art-archive/T-492/screenshots/, shown to the board in the deck)
+- [ ] The mouse still works (the existing main menu and garage tests pass). (QA: pass; test_main_menu 9/9, test_garage_screen 8/8, test_garage_fit 3/3)
+- [ ] docs/hud-and-menus.md (Main menu) and docs/garage-design.md say how the keyboard works there. (QA: pass; both describe the arrows and WASD)
+- [ ] The tests for the changed code pass (the agent, with -gselect), with the counts in the result notes. (QA: pass; counts in the result notes; the merge's full run re-checks)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; no such path in the branch diff)
 
 ## Updates
 
