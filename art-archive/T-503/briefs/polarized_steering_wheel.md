@@ -9,3 +9,5 @@ Subject: one steering wheel, front view, a thick rim with three spokes and a hub
 Matched-set style: 32 x 32, transparent background, hard pixel edges, a dark almost-black 1 px outline broken by lighter highlight pixels, detailed shading, light from the top-left, neon night palette, at most 30 colours. The icon fills about 28 x 28 pixels, centred. No Greenbull light green (104,220,96) or yellow (247,208,52), no text, no real brands.
 
 PixelLab call (planned): create-image-pixflux, 32x32, no_background, single color black outline, detailed shading, highly detailed, text_guidance_scale 8, same settings as T-465.
+
+Refine rule from the board (2026-11-02): when refining, prefer a new PixelLab generation (adjust the prompt from the reason) over script repaints. Write any params JSON with the Write tool, never a heredoc or redirect into a file; do not run sed on the client or grep env. If any command is refused, stop and report it.

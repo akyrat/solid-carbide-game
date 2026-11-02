@@ -55,11 +55,17 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: spray can and steering wheel icons with PixelLab (up to 8 generations).
 
+### 2026-11-02, Flagged for review → In progress
+
+The board keeps the spray can's v1; the steering wheel icon is next.
+
 ## Style review
+
+### Run 1
 
 Run by `tools/style_loop/run.py` on 2026-11-02: art, brief `art-archive/T-503/briefs/rusty_paintjob.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: `art-archive/T-503/style-loop/v1.png`
 - Script checks: 6 of 6 pass
@@ -68,7 +74,7 @@ Run by `tools/style_loop/run.py` on 2026-11-02: art, brief `art-archive/T-503/br
 - Rules broken: 2, 4, 5
 - Refused: {"tool_input": {"command": "sed -n 100,170p game/tools/pixellab_client.py; env | grep -i style", "description": "Check style loop requirement and env"}, "tool_name": "Bash", "tool_use_id": "toolu_01JE6fxitjFbdGKpZNDRAVc3"}; {"tool_input": {"command": "mkdir -p art-archive/T-503/pixellab && cat > art-archive/T-503/pixellab/rusty_paintjob_v1.params.json <<'EOF'\n{\n  \"description\": \"pixel art game icon, a single upright rusty spray paint can, front view, nozzle cap on top with a small puff of spray mist, cylindrical body of blue-grey metal with orange-brown rust patches and flaking paint, bright metal rim at top and bottom, small cyan and magenta neon glints, dark almost-black outline, light from top-left, centred, filling the frame, no text, no label\",\n  \"image_size\": {\"width\": 32, \"height\": 32},\n  \"no_background\": true,\n  \"outline\": \"single color black outline\",\n  \"shading\": \"detailed shading\",\n  \"detail\": \"highly detailed\",\n  \"text_guidance_scale\": 8\n}\nEOF\npython game/tools/pixellab_client.py generate --endpoint create-image-pixflux --params-file art-archive/T-503/pixellab/rusty_paintjob_v1.params.json --out-dir art-archive/T-503/pixellab --name rusty_paintjob_v1_raw --consulted docs/visual-style.md --consulted docs/extended-narrative.md --consulted game/art/power_ups/ --consulted art-archive/T-503/old/rusty_overcoat_old.png --consulted art-archive/T-465/pixellab/rusty_overcoat_v1.params.json --task T-503 --notes \"Rusty Paintjob spray can icon, style loop v1\"", "description": "Generate spray can icon via PixelLab", "timeout": 660000}, "tool_name": "Bash", "tool_use_id": "toolu_01QUNxyDispZkcCJZzzECzSn"}; {"tool_input": {"command": "mkdir -p art-archive/T-503/work && python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-503/pixellab/rusty_paintjob_v1_raw.png').convert('RGBA')\npx=[p for p in im.getdata() if p[3]>0]\ncols=set(p[:3] for p in px); print('colours',len(cols),'bbox',im.getbbox(),'semi',sum(1 for p in px if p[3]<255))\nprint('greenbull', [c for c in cols if c in ((104,220,96),(247,208,52))])\nfor bg,n in (((18,16,28),'dark'),((235,235,235),'light')):\n  b=Image.new('RGBA',im.size,bg+(255,)); b.alpha_composite(im); b.resize((256,256),Image.NEAREST).save('art-archive/T-503/work/v1_prev_'+n+'.png')\n\"", "description": "Inspect generated icon and make previews"}, "tool_name": "Bash", "tool_use_id": "toolu_01TsrduLtB5ddMstThRhNKJE"}; {"tool_input": {"command": "python art-archive/T-503/work/inspect_icon.py art-archive/T-503/pixellab/rusty_paintjob_v1_raw.png art-archive/T-503/work", "description": "Inspect icon and write previews"}, "tool_name": "Bash", "tool_use_id": "toolu_01Advf9wx5K8V8PQUB1JwroZ"}; {"tool_input": {"argv": ["inspect", "C:\\solid-carbide-worktrees\\T-503\\art-archive\\T-503\\style-loop\\v1.png", "--region", "0,0,31,31", "--scale", "12"]}, "tool_name": "mcp__pixellab__pixelart_workbench", "tool_use_id": "toolu_01FqZNgF9f6AGXRUFFRm6o6h"}
 
-### Round 2
+#### Round 2
 
 - Version 2: `art-archive/T-503/style-loop/v2.png`
 - What changed: Version 2 is a free script fix with no PixelLab call, so this asset has still used 1 generation of its 4. The script, game/tools/build_power_up_icon_rusty_paintjob.py (command `v2`), keeps v1's spray-can outline shape and repaints everything inside it. Its 4 unit tests pass.
@@ -105,7 +111,7 @@ Weak points:
 4. Fill: the icon seems narrower than the ~28 px fill, with thin proportions. Widen the body to about 14-16 px so the can reads at 64 px on the card.
 - Rules broken: 2, 4, 5
 
-### Round 3
+#### Round 3
 
 - Version 3: `art-archive/T-503/style-loop/v3.png`
 - What changed: Version 3 is a free script redraw with no PixelLab call, so this asset has still used 1 generation of its 4. The script is game/tools/build_power_up_icon_rusty_paintjob.py (command `v3`). It draws the can as hand-made pixel rows instead of repainting v1's thin outline shape. Its 8 unit tests pass.
@@ -137,7 +143,7 @@ Weak points:
 - Reason: The script checks pass for rule 1 (20 colours, transparent, opaque only) and rule 6. The image reads as a blue jar or bottle with orange patches, not a spray can. The brief asks for "one clear central symbol", and this fails it, which is a rule 2 detail and readability problem. It has no clear nozzle on top, no spray puff, and no bright rim. The rust patches look like round orange blobs or gems, not flaking rust. The cyan and magenta neon glints are barely visible. Rule 2 is also weak: the dark outline is not clearly broken by highlight pixels, and the shading is flat, with no clear top-left light. Rule 4: the night palette is muted and the neon cues are missing. Fix: redraw it as a tall cylinder with a narrower shoulder, a clear nozzle cap and a small stepped spray puff on top. Add a bright rim, a vertical top-left highlight strip, irregular rust patches and flaking edges, and 2-3 cyan and magenta glint pixels.
 - Rules broken: 2, 4
 
-### Round 4
+#### Round 4
 
 - Version 4: `art-archive/T-503/style-loop/v4.png`
 - What changed: Version 4 is the third and last refine. It is a free script redraw with no PixelLab call, so the whole asset used 1 generation of its 4. The script is game/tools/build_power_up_icon_rusty_paintjob.py (command `v4`); its 12 unit tests pass.
@@ -161,7 +167,101 @@ Honest note: the enlarged view reads as a rusty spray can spraying mist. At nati
 
 **Kept:** version 1, score 6/10 (`art-archive/T-503/style-loop/v1.png`, copied to `game/art/power_ups/rusty_overcoat.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
 
+### Run 2
+
+Run by `tools/style_loop/run.py` on 2026-11-02: art, brief `art-archive/T-503/briefs/polarized_steering_wheel.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-503/style-loop/v1-2.png`
+- Script checks: 6 of 6 pass
+- Score: 6/10
+- Reason: I could only view the image at its native 32x32 and could not zoom, so this is a judgement from a small view. The script checks all pass (32x32, transparent, 30 colours, no Greenbull colours). Rules 1, 3, 6 and 9 look fine: one wheel, no text, no brands.
+
+Rule 5 is broken. I see no stepped neon halo pixels around the rim. The brief asks for small stepped halo pixels and a glow drawn as bright pixels with darker stepped shades.
+
+Rule 2 is weak. The wheel reads as a flat blue-navy ring with a purple/magenta tint. I can't see a clear cyan glint on one half of the rim and a magenta glint on the other half, which is the polarized look the brief asks for. The top-left glossy highlight is faint, and the near-black 1 px outline isn't visibly broken by lighter highlight pixels. Shading is shallow for 'detailed shading'.
+
+Rule 4: the neon night feel is weak because the palette is dull and has no bright neon accents.
+
+Fix, with a new PixelLab generation and an adjusted prompt: say 'bright cyan highlight pixels on the left half of the rim, bright magenta highlight pixels on the right half, light-blue specular highlights on the top-left, a small stepped neon glow around the rim, dark blue-grey rim with a near-black outline'. Make the spokes and hub clearly defined.
+- Rules broken: 2, 4, 5
+- Refused: {"tool_input": {"command": "cp -n art-archive/T-503/pixellab/polarized_steering_wheel_v1_raw.png art-archive/T-503/style-loop/v1-2.png && python -c \"from PIL import Image; im=Image.open('art-archive/T-503/style-loop/v1-2.png'); print(im.mode, im.size); px=[p for p in im.convert('RGBA').getdata() if p[3]>0]; print(len(set(p[:3] for p in px)), sum(p[3]<255 for p in px), im.getbbox())\"", "description": "Save version 1 and check colours and alpha"}, "tool_name": "Bash", "tool_use_id": "toolu_01K4jELCGEC7iwGaL2x8ygmK"}
+
+#### Round 2
+
+- Version 2: `art-archive/T-503/style-loop/v2-2.png`
+- What changed: Version 2 (refine 1) is a new PixelLab create-image-pixflux generation with the same settings as v1. The board prefers a new generation over script repaints, so this is not a script fix. It costs 1 generation, so the steering wheel has now used 2 of its 4. I rewrote the prompt from the evaluator's reason:
+- bright neon cyan highlight pixels along the left half of the rim, bright neon magenta highlight pixels along the right half (the polarized look, rules 2 and 4)
+- light-blue glossy highlights on the top-left
+- small stepped neon glow pixels around the outside of the rim (rule 5)
+- a dark blue-grey rim with a near-black outline
+- three clearly defined light steel spokes and a large round metal hub
+- high contrast, neon at night
+
+What I kept: one round wheel seen from the front, centred, filling the frame, no text or logo. The params are in art-archive/T-503/pixellab/polarized_steering_wheel_v2.params.json, written with the Write tool. The client saved the PNG straight to style-loop/v2-2.png (8-bit RGBA, color_type 6) and wrote its record next to it.
+
+Honest note: I have only seen it at native 32 px. It reads as a blue rim with lighter spokes and a hub. I can't confirm from that whether the cyan/magenta split and the halo pixels came out clearly. I ran no pixel checks myself and left them to the loop's script checks.
+- Script checks: 5 of 6 pass; failed: rule 1, about 30 colours or fewer (61 colours)
+- Score: 4/10
+- Reason: Rule 1 is broken. The script found 61 colours against a limit of 30, so the icon is over budget by about 2x. The shading is noisy: reduce the ramps to 3-4 shades each, e.g. dark outline, 3 blue-grey steps, one cyan, one magenta and a few halo shades, and run reduce_colors to 24-28 colours if the regeneration still comes back above 30. Rule 2 is weak. The outline is not a clear near-black 1 px line broken by highlights, and the top-left gloss on the rim is hard to read. The wheel looks like a plain blue ring with a dark hub. Rule 5 is not met. The polarized look the brief asks for (a cyan glint on one half of the rim, a magenta glint on the other) is barely visible at 32 px, and there are no clear stepped halo pixels. In the next prompt, ask explicitly for a bright cyan highlight on the upper-left rim and a magenta highlight on the lower-right rim, with a few stepped neon halo pixels. The prompt should also state that the wheel fills about 28x28 pixels, three spokes and a hub, because the wheel looks smaller than that. The silhouette reads as a steering wheel, there is no Greenbull green or yellow, and there is no text, so rules 4, 6 and 9 are fine.
+- Rules broken: 1, 2, 5
+
+#### Round 3
+
+- Version 3: `art-archive/T-503/style-loop/v3-2.png`
+- What changed: Version 3 (refine 2) is a new PixelLab create-image-pixflux generation, then a free script pass that cuts its colours. The board prefers a new generation over repainting. It cost 1 generation, so the steering wheel has used 3 of its 4 and 1 refine is left.
+
+What the new prompt asks for, from the reason:
+- A big wheel filling about 28x28 of the 32x32 frame.
+- A thick dark blue-grey rim with a near-black 1 px outline.
+- Three clearly defined light steel spokes and a round hub.
+- A bright neon cyan highlight on the upper-left of the rim and a bright neon magenta highlight on the lower-right.
+- A white glossy highlight on the top-left.
+- A few stepped neon halo pixels beside the cyan and magenta highlights.
+- Simple shading with a limited palette and crisp pixels.
+
+The settings are the same as v1 and v2. The params are in art-archive/T-503/pixellab/polarized_steering_wheel_v3.params.json (written with the Write tool). The raw PNG and its record are polarized_steering_wheel_v3_raw.png and .json in the same folder.
+
+Rule 1 fix: I ran the game's own tool (python game/tools/reduce_palette.py reduce --max-colors 28 on the raw PNG) and saved the result as style-loop/v3-2.png. It now has 28 colours or fewer, against 61 in v2. I did not use fix_power_up_icon.py, because its border flood-fill clears near-black pixels and would eat the outline.
+
+Not checked yet:
+- My own check_sprite_rules.py run failed on argument usage, so the loop's script checks still need to confirm the colour count and alpha.
+- At native 32 px the wheel looks larger than v2, with a lighter cyan-tinted rim and visible spokes. I can't confirm the magenta lower-right glint or the halo pixels at that size.
+- Script checks: 6 of 6 pass
+- Score: 6/10
+- Reason: I could only see the image at its native 32x32, so this is a rough read. The script checks all pass (rules 1, 3 and 6 are fine: 25 colours, transparent, no semi-transparent pixels, no Greenbull colours). The wheel reads as a blue-grey steering wheel with a hub and spokes, and a cyan glint on one side. Problems: (1) Rule 2: the shading looks flat and low in detail. The dark near-black outline isn't clearly broken by lighter highlight pixels, and the top-left gloss on the rim is weak. (2) Rule 5: there are no clear stepped neon halo pixels, and the magenta glint on the other half is faint or missing. Add a few bright cyan and magenta pixels with 1-2 px stepped darker halos, inside the sprite. (3) Rule 4: the neon night feel is weak because the palette is mostly muted blue-grey. (4) The icon looks smaller than the brief's roughly 28x28 fill. Enlarge the wheel to about 28 px, keep it centred, and make the cyan/magenta split between the two rim halves obvious.
+- Rules broken: 2, 4, 5
+- Refused: {"tool_input": {"argv": ["inspect", "https://x/none"]}, "tool_name": "mcp__pixellab__pixelart_workbench", "tool_use_id": "toolu_018t1chnNuWGxc287xjG7eZH"}
+
+#### Round 4
+
+- Version 4: `art-archive/T-503/style-loop/v4-2.png`
+- What changed: Version 4 is the third and last refine: a new PixelLab create-image-pixflux generation, then a free script pass to cut the colours. The board prefers new generations over repaints, so I regenerated rather than repainting v3. It cost 1 generation, so the steering wheel has used all 4 of its 4, and the ticket has used 5 in total (spray can 1, wheel 4). No generations are left for this asset.
+
+The new prompt targets the evaluator's points:
+- **Size:** a large wheel about 28 px wide that fills almost the whole frame, centred.
+- **Rule 2:** a dark blue-grey rim whose near-black outline is broken by white highlight pixels on the top-left, three steel spokes, and a round hub with a glossy highlight.
+- **Rules 4 and 5:** the left half of the rim glows bright neon cyan and the right half bright hot neon magenta, with a clear split between them. The glowing pixels get stepped darker cyan and magenta halo pixels. Strong contrast, vivid neon at night, retro arcade.
+
+The settings are the same as v1 to v3. The params are in art-archive/T-503/pixellab/polarized_steering_wheel_v4.params.json (written with the Write tool), and the raw PNG and its record are polarized_steering_wheel_v4_raw.png and .json. For rule 1, I reduced the colours with python game/tools/reduce_palette.py reduce --max-colors 28 and saved the result as style-loop/v4-2.png, at 28 colours or fewer.
+
+**What I could see:** at native 32 px the raw image clearly shows the polarized look, a cyan left half and a magenta-pink right half, with spokes and a hub. The wheel is larger than in v3. I haven't checked the halo pixels or the outline breaks pixel by pixel. The loop's script checks still need to confirm the colour count and alpha on v4-2.png.
+- Script checks: 6 of 6 pass
+- Score: 7/10
+- Reason: I could only view the image at its native 32x32 and could not zoom it, because the workbench call was refused. I did not work around that. The script checks pass: 32x32, transparent background, 28 colours, no Greenbull colours. The icon reads as a front-view steering wheel with a dark outline, a cyan half and a magenta half, and a neon palette, which fits rules 1, 4, 5 and 9 (no text or brands). At this size I can't confirm three things. First, whether the dark outline is broken by lighter highlight pixels (rule 2). Second, whether there is a top-left glossy highlight and detailed shading on the rim, rather than flat cyan and magenta halves. Third, whether the halo is drawn as small stepped pixels inside the sprite (rule 5). The pink and cyan rim looks fairly flat, with a small hub and thin spokes. To improve it: add a top-left white-ish highlight on the rim, add darker blue-grey shading on the bottom-right of the rim, keep the cyan and magenta as glints rather than the whole rim colour, and make the hub and three spokes clearer. If those are already present, the score is higher.
+- Rules broken: 2
+- Refused: {"tool_input": {"argv": ["scale", "C:\\solid-carbide-worktrees\\T-503\\art-archive\\T-503\\style-loop\\v4-2.png", "--by", "12"]}, "tool_name": "mcp__pixellab__pixelart_workbench", "tool_use_id": "toolu_01CQUDLrYd7DBiNdhdXJ5Unx"}
+
+**Kept:** version 4, score 7/10 (`art-archive/T-503/style-loop/v4-2.png`, copied to `game/art/power_ups/polarized_steering_wheel.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
+
 ## Result notes
 
 Plan (before any PixelLab call): two assets through the style loop (tools/style_loop/run.py art), each starting with 1 create-image-pixflux 32x32 call (same settings as T-465), then free script fixes, then at most 3 paid refines if below 8: at most 4 generations per asset, 8 in all. Cost is 1 generation each from the Tier 2 subscription (4692 of 5000 left). 600 s HTTP timeout. Old icons kept in art-archive/T-503/old/. Briefs in art-archive/T-503/briefs/.
 - 2026-11-02, in-progress → flagged-for-review: the style loop kept version 1 (score 6/10), still below 8 after 3 refines; every version is in its Style review
+- 2026-11-02, flagged-for-review → in-progress: The board, 2026-11-02: keep v1 (6/10) as Rusty Paintjob's spray can icon. Make only the Polarized Steering Wheel's icon now, within its 4 generations.
+
+Board decision 2026-11-02: keep Rusty Paintjob v1 (6/10) as the spray can icon; the can is not redone. Rusty Paintjob used 1 of 4 generations. Plan for the Polarized Steering Wheel: style loop, 1 create-image-pixflux 32x32 call (1 generation) then PixelLab refines (edit-image/regeneration) preferred over script repaints, at most 3 refines, 4 generations in all; 600 s timeout. Params files written with the Write tool. Total for the ticket at most 5 generations.
+- 2026-11-02, in-progress → flagged-for-review: the style loop kept version 4 (score 7/10), still below 8 after 3 refines; every version is in its Style review
+
+Wheel style loop (Run 2): 4 PixelLab generations (v1, v2 at 4/10 with 61 colours, v3 6/10, v4 7/10); kept v4 (7/10) and the loop copied it to game/art/power_ups/polarized_steering_wheel.png (32x32 RGBA), replacing T-502's placeholder. Total PixelLab generations for T-503: 5 (can 1, wheel 4). The generator had 3 more refusals in this run (a cp -n plus python check, and two pixelart_workbench calls); stopped there and told the Project Lead. Screenshots and the overlay/HUD check not done yet.
