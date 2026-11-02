@@ -1,7 +1,7 @@
 ---
 id: T-504
 title: God mode: set each weapon's and power-up's tier in the current run
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -71,3 +71,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. God mode logic: game/scripts/run/god_mode.gd (run.god_mode), input action god_mode_unlock (N) in project.godot, RunState.set_power_up_tier(). API (entries, current_tier, last_tier, min_tier, set_tier, step; signals unlocked_changed and tier_set; static GodMode.unlocked) documented in game/docs/game-loop/the-run.md, "God mode (T-504)". Power-ups are read from PowerUpData.ids(), not hard-coded. Tests: game/tests/unit/run/test_god_mode.gd, 9 passed (unlock via the action, weapon set equals level-up stats, lower then higher, 0 removes and the gun stays at 1, power-ups, offers and gifts offer only what is left, new run starts with the gun only). No docs/ change needed.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM. Its code reached master through T-505's branch; this merges its paperwork.
