@@ -151,6 +151,7 @@ func setup(the_offers: PowerUpOffers) -> void:
 	_root = Control.new()
 	_root.name = "PowerUpScreen"
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	UiScale.keep(_root)  # scales with the window like the HUD (T-494)
 	_root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_root)
 	_dim = ColorRect.new()

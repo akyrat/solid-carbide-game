@@ -40,6 +40,7 @@ var splash_rect: TextureRect
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	UiScale.keep(self)  # scales with the window like the HUD (T-494)
 
 	background =ColorRect.new()
 	background.name = "Background"

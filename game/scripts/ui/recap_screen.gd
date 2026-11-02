@@ -109,6 +109,7 @@ func _init() -> void:
 	name = "RecapScreen"
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	UiScale.keep(self)  # scales with the window like the HUD (T-494)
 
 
 ## The recap's texts (T-318's data file), read once.

@@ -3210,3 +3210,8 @@ Entry format:
 - Decision or change: screen_gallery.py --sizes captures every screen at five resolutions and reports what shrinks as the window grows; it flagged 16 of 19 screens.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-493
+
+## 2026-11-02: Every screen scales with the window
+- Decision or change: A shared UiScale helper (the HUD's rule) scales the main menu, recaps, pause screen with its trick list and layout editor, level-up and power-up screens; every 16:9 screen keeps 0.99-1.00 of its share; the board kept ultrawide's height-decides rule and the hard-edged 4K text.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-494

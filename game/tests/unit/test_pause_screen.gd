@@ -148,6 +148,10 @@ func test_slider_zooms_the_view_at_once_while_paused_in_the_prototype() -> void:
 ## Task T-389: with the SFX switch off (the MVP) the SFX row is hidden, kept in the code, and the
 ## rows below it close the gap; with the switch on it shows again.
 func test_sfx_row_hidden_with_the_switch_off_and_layout_closes_up() -> void:
+	# The pause screen scales with the window (T-494): measure it at the layout size, 1152 x 648.
+	var win := get_window()
+	var old_size := win.size
+	win.size = Vector2i(UiScale.BASE)
 	GameSettings.sfx_enabled_override = 0
 	var p := _scene()
 	p.pause_screen.pause()
@@ -165,3 +169,4 @@ func test_sfx_row_hidden_with_the_switch_off_and_layout_closes_up() -> void:
 	assert_true(q.pause_screen.sfx_slider.is_visible_in_tree(), "back with the switch on")
 	assert_gt(q.pause_screen.music_slider.get_global_rect().position.y, ps.music_slider.get_global_rect().position.y + 10.0, "music row lower when SFX shows")
 	GameSettings.sfx_enabled_override = -1
+	win.size = old_size

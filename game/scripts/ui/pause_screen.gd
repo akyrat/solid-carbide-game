@@ -107,6 +107,7 @@ func setup(t: Node) -> void:
 	_root = Control.new()
 	_root.name = "PauseScreen"
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	UiScale.keep(_root)  # scales with the window like the HUD (T-494)
 	add_child(_root)
 	var dim := ColorRect.new()
 	dim.color = HudStyle.PAUSE_DIM  # light, so the zoom shows behind it
