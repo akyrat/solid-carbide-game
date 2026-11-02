@@ -188,3 +188,62 @@ func test_no_text_written_in_the_code() -> void:
 		var src := FileAccess.get_file_as_string(path)
 		for bad in ["TEXT_LIVE_BADGE", "TEXT_VIEWERS_UNIT", "ADDED_TEXT", "LOST_TEXT"]:
 			assert_false(src.contains(bad), "%s still has %s" % [path, bad])
+
+
+# --- Hidden at x1 (the board, quick tuning 2026-11-02: "hide it if its at 1x") ---
+
+func test_hidden_at_x1_and_shown_above_it() -> void:
+	var hud := _hud()
+	var tag := hud.multiplier_tag
+	assert_false(tag.is_visible_now(), "hidden at the start")
+	assert_eq(tag.number_label.modulate.a, 0.0)
+	tag.set_multiplier(1.5)
+	for i in 30:
+		tag.advance(1.0 / 60.0)
+	assert_true(tag.is_visible_now())
+	assert_eq(tag.number_label.modulate.a, 1.0, "faded in")
+	tag.set_multiplier(1.0)
+	for i in 240:
+		tag.advance(1.0 / 60.0)
+	assert_eq(tag.number_label.modulate.a, 0.0, "hidden again once it has drained back to x1")
+
+
+func test_a_trick_amount_lands_on_it_as_it_appears() -> void:
+	var r := _run()
+	var tag: MultiplierTag = r.hud.multiplier_tag
+	await get_tree().process_frame
+	assert_false(tag.is_visible_now())
+	r.state.add_trick("alternate_drift")
+	assert_true(tag.wants_show(), "the trick's add shows it at once")
+	var p = r.trick_popups.popups().back()
+	p.advance(TrickPopups.DETACH_AT)
+	var f: MultiplierFlight = tag.flights[0]
+	for i in 12:
+		tag.advance(1.0 / 60.0)
+	assert_gt(tag.number_label.modulate.a, 0.5, "mostly in while the amount is still flying")
+	f.advance(f.seconds * 2.0)
+	assert_gt(tag.bump_left, 0.0)
+	for i in 30:
+		tag.advance(1.0 / 60.0)
+	assert_eq(tag.number_label.modulate.a, 1.0)
+
+
+func test_a_crash_to_x1_still_shows_its_flash_and_drop_then_hides() -> void:
+	var r := _run()
+	var tag: MultiplierTag = r.hud.multiplier_tag
+	r.state.add_trick("alternate_drift")
+	tag.release(tag.pending)
+	for i in 30:
+		tag.advance(1.0 / 60.0)
+	r.state.collision()
+	assert_true(tag.wants_show())
+	for i in 20:
+		tag.advance(1.0 / 60.0)
+	assert_gt(tag.number_label.modulate.a, 0.0, "the loss is seen")
+	tag.set_multiplier(1.0)  # the combo then drains back to x1
+	for d in tag.drops.duplicate():
+		d.advance(2.0)  # the drop has fallen away
+	await get_tree().process_frame
+	for i in 240:
+		tag.advance(1.0 / 60.0)
+	assert_eq(tag.number_label.modulate.a, 0.0)

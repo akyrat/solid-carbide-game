@@ -41,6 +41,9 @@ var bump_left := 0.0
 var flash_left := 0.0
 var flash_color := Color(1, 1, 1, 0)
 var flash_seconds := 0.25
+## The number's opacity: 0 while the combo is at x1.00 (the board, quick tuning 2026-11-02),
+## fading in once it rises above x1 and out when it is back at x1.
+var alpha := 0.0
 var flights: Array = []
 var drops: Array = []
 
@@ -125,6 +128,7 @@ func reset(m: float) -> void:
 	bump_left = 0.0
 	flash_left = 0.0
 	shown = count_target()
+	alpha = 1.0 if wants_show() else 0.0
 	_show_number()
 	_update_step()
 
@@ -213,6 +217,16 @@ func last_loss() -> float:
 	return maxf(previous_multiplier - multiplier, 0.0)
 
 
+## True while the number should be seen: the combo is above x1 (or the shown number has not
+## drained back to it yet), a crash is flashing or dropping its loss, or an amount is on its way.
+func wants_show() -> bool:
+	return multiplier > 1.0005 or shown > 1.005 or pending > 0.0 or flash_left > 0.0 or not drops.is_empty()
+
+
+func is_visible_now() -> bool:
+	return alpha > 0.0
+
+
 func is_flashing_red() -> bool:
 	return flash_left > 0.0
 
@@ -252,6 +266,11 @@ func advance(dt: float) -> void:
 	else:
 		shown += (target - shown) * (1.0 - exp(-rate * maxf(dt, 0.0)))
 	_show_number()
+	var fade := maxf(float(cfg.get("fade_seconds", 0.2)), 0.01)
+	var was := alpha
+	alpha = move_toward(alpha, 1.0 if wants_show() else 0.0, dt / fade)
+	if was <= 0.0 and alpha > 0.0:
+		bump_left = float(cfg.get("bump_seconds", 0.25))  # a pop as it appears
 	bump_left = maxf(bump_left - dt, 0.0)
 	flash_left = maxf(flash_left - dt, 0.0)
 	_animate()
@@ -283,6 +302,7 @@ func _animate() -> void:
 		return
 	var s := number_scale()
 	number_label.scale = Vector2(s, s)
+	number_label.modulate.a = alpha
 	var heat := mini(step, ComboHeat.STEPS.size() - 1)
 	var st: Dictionary = ComboHeat.STEPS[heat]
 	var frame := int(floorf(time / ComboHeat.FLICKER_FRAME))
