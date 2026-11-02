@@ -1,7 +1,7 @@
 ---
 id: T-492
 title: Arrow keys work in the main menu and the garage
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md, docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/garage-design.md, game/scripts/hud/hud_style.gd]
 files_expected_to_change: [game/scripts/menu/, game/scenes/menu/, game/scripts/garage/, game/scenes/garage/, game/tests/unit/, docs/hud-and-menus.md, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -71,3 +71,4 @@ Done. New game/scripts/ui/key_nav.gd (KeyNav.chain_column: explicit up/down neig
 - 2026-11-02, in-progress → in-qa: Ready for the board's swipe deck
 
 WASD added (board, 2026-11-02): KeyNav.handle_wasd, called from _unhandled_key_input in main_menu.gd and garage_screen.gd; fresh presses only (no key repeat), same chain and wrap. 4 new tests in test_menu_arrow_keys.gd: 14/14; test_main_menu 9/9, test_garage_screen 8/8; test_ui_scale.gd does not exist on this branch yet (T-494 not merged). Docs updated. Merge of master (T-494) still to do.
+- 2026-11-02, in-qa → done: The board's swipe deck: approved with WASD added, merged without a second review at its word
