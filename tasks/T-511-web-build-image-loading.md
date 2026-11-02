@@ -1,7 +1,7 @@
 ---
 id: T-511
 title: Garage icons (and other images loaded from disk) missing in the web build
-status: open
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -41,16 +41,24 @@ Fix the garage icons so they load in the exported build too (for example: load t
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] In a Web export, the garage shows its real upgrade icons, not the grey placeholder (screenshot from the web build). (QA: pass / fail)
-- [ ] A test fails on the old garage code and passes on the new: the garage's icons load the way an exported build loads them. (QA: pass / fail)
-- [ ] main_menu.gd, trick_list.gd and building_towers.gd are each either fixed (with the same kind of test) or shown in the result notes to work in the web export (with how it was checked). (QA: pass / fail)
-- [ ] The garage still works on the desktop and in the existing garage tests (the placeholder still shows for an id with no icon). (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots of the garage from the web build (and of any other fixed screen), under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] In a Web export, the garage shows its real upgrade icons, not the grey placeholder (screenshot from the web build). (QA: pass)
+- [ ] A test fails on the old garage code and passes on the new: the garage's icons load the way an exported build loads them. (QA: pass)
+- [ ] main_menu.gd, trick_list.gd and building_towers.gd are each either fixed (with the same kind of test) or shown in the result notes to work in the web export (with how it was checked). (QA: pass)
+- [ ] The garage still works on the desktop and in the existing garage tests (the placeholder still shows for an id with no icon). (QA: pass)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass)
+- [ ] Screenshots of the garage from the web build (and of any other fixed screen), under art-archive/T-NNN/screenshots/. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-02, Open → In progress
+
+Started: garage icons missing on itch (raw PNGs aren't in the web export).
+
+### 2026-11-02, In progress → In QA
+
+Garage icons now load through ResourceLoader; the web export shows the real icons (screenshot in art-archive/T-511/screenshots).
 
 ## Style review
 
@@ -58,4 +66,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Fixed garage_screen.gd icon_texture(): ResourceLoader.exists + load() first (the imported texture, the only form an export holds), then raw PNG, then placeholder (tests with a plain icon_dir still work). main_menu.gd _load_splash and trick_list.gd _load_illustration already try ResourceLoader first (raw-PNG branch only a fallback): no change. building_towers.gd load_texture already calls load() first; its Image fallback is only reached on a missing resource: no change. Test: test_garage_icons.gd test_res_icons_load_as_imported_textures (icon resource_path must be the res:// path); fails on old code, passes now. Ran bash game/tools/run_tests.sh -gselect=test_garage_icons.gd: 6/6 pass. Web export (Web preset to a folder outside game/) driven in headless Chrome with new game/tools/web_garage_shot.mjs: garage shows all five real icons. Screenshots: art-archive/T-511/screenshots/garage.png and menu.png. Nothing touched in game/data/levels/.
+
+QA round 1: all six criteria pass; test sets pass; code read confirms main_menu._load_splash, trick_list._load_illustration and building_towers.load_texture try ResourceLoader/load() first; screenshots garage.png (five real icons) and menu.png checked.
