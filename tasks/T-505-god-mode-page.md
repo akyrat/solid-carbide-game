@@ -1,7 +1,7 @@
 ---
 id: T-505
 title: God mode: the secret settings entry and its page
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -41,12 +41,12 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Before N is pressed in the session, the settings show no God mode entry; after it, the entry is there (unit or scene test). (QA: pass; no-entry-before-N and entry-after tests in test_god_mode_page, settings screenshot shows the entry)
-- [ ] The page lists all six weapons and all five driving power-ups with their current tier, and − / + change it through T-504's API within 0 and the last tier (the gun never below 1) (test). (QA: pass; 6 weapons and every power-up in the branch listed, limits tested; the branch has 4 power-ups because T-502's fifth is not in it, rows come from run.god_mode.entries())
-- [ ] The page works with the keyboard (arrows/WASD, Enter/Space) and the mouse, and uses the shared button (test_shared_button passes). (QA: pass; keyboard chain and shared-button tests in the agent's run, confirmed in the Godot set below)
-- [ ] Every text on the page and the entry comes from T-501's keys (no placeholder strings in the scene or script). (QA: fail: code - god_mode_page.gd:123 and :126 hard-code "-" and "+" as the buttons' text, not from T-501's keys; game/tools test_text_inventory fails on both as unlisted text, red check. Also the glyphs are barely visible in god_mode_page_1152x648.png: tiny hyphen/plus in dim buttons, hard to read.)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; Godot set 2658/2659 passing, 0 failing, 1 risky; but qa_check's tests line is red on game/tools test_text_inventory, see criterion 4)
-- [ ] Screenshots of the settings with the God mode entry and of the page at 1152x648 and 1920x1080, under art-archive/T-NNN/screenshots/. (QA: pass; all four files exist and show the entry and the page, - and + glyphs faint)
+- [ ] Before N is pressed in the session, the settings show no God mode entry; after it, the entry is there (unit or scene test). (QA: pass; round 2: no-entry-before-N and entry-after tests in test_god_mode_page still green, settings screenshot shows the entry)
+- [ ] The page lists all six weapons and all five driving power-ups with their current tier, and − / + change it through T-504's API within 0 and the last tier (the gun never below 1) (test). (QA: pass; round 2: 6 weapons and every power-up in the branch listed (screenshot shows 6 + 4), limits tested; the branch has 4 power-ups because T-502's fifth is not in it, rows come from run.god_mode.entries())
+- [ ] The page works with the keyboard (arrows/WASD, Enter/Space) and the mouse, and uses the shared button (test_shared_button passes). (QA: pass; round 2: keyboard chain and shared-button tests green in the Godot set)
+- [ ] Every text on the page and the entry comes from T-501's keys (no placeholder strings in the scene or script). (QA: pass; round 2: - and + now read from god_mode_minus and god_mode_plus in pause_text.json, text inventory test passes)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; round 2: qa_check tests line green, both test sets that apply passed)
+- [ ] Screenshots of the settings with the God mode entry and of the page at 1152x648 and 1920x1080, under art-archive/T-NNN/screenshots/. (QA: pass; round 2: all four files exist, the - and + glyphs are now clearly readable at both sizes)
 
 ## Updates
 
@@ -63,6 +63,10 @@ God mode entry and page are in (only after N, rows from T-504's entries, shared 
 ### 2026-11-02, In QA → In progress
 
 QA round 1: fail on criterion 4. The - and + button texts are hard-coded in god_mode_page.gd (lines 123, 126), so test_text_inventory in game/tools is red; the glyphs are also barely visible in the screenshot. Other criteria pass; Godot set 2658/2659 passing.
+
+### 2026-11-02, In progress → In QA
+
+Glyphs from text keys, bigger and readable.
 
 ## Style review
 
