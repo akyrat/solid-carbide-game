@@ -56,6 +56,8 @@ const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The placeholder boost effect (task T-008, boost_effect.gd).
 const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
+## The Drift Guide (task T-517, drift_guide.gd): the predicted-path arrow during a drift.
+const DriftGuideScript := preload("res://scripts/driving/drift_guide.gd")
 ## The Rev Charge placeholder effect (task T-460).
 const RevChargeEffectScript := preload("res://scripts/driving/rev_charge_effect.gd")
 ## The wreck's smoke and flames (task T-360, wreck_effect.gd; placeholders in code).
@@ -135,6 +137,8 @@ var drift_smoke: Node2D
 ## The placeholder boost effect (task T-008): streaks behind the car when W
 ## snaps it to cruise speed. Child "BoostEffect" of the View, under the car.
 var boost_effect: Node2D
+## The Drift Guide (T-517); follows GameSettings' drift_guide_enabled at once.
+var drift_guide: Node2D
 ## The Rev Charge placeholder effect (task T-460, rev_charge_effect.gd): a glow at
 ## the rear while charging, speed lines while boosting. Child "RevChargeEffect" of
 ## the View, drawn over the car.
@@ -253,6 +257,11 @@ func _ready() -> void:
 	boost_effect.view_transform = ISO_TRANSFORM
 	view_root.add_child(boost_effect)
 	view_root.move_child(boost_effect, car_sprite.get_index())  # under the car
+
+	drift_guide = DriftGuideScript.new()
+	drift_guide.view_transform = ISO_TRANSFORM
+	view_root.add_child(drift_guide)
+	view_root.move_child(drift_guide, car_sprite.get_index())  # under the car
 
 	rev_charge_effect = RevChargeEffectScript.new()
 	rev_charge_effect.name = "RevChargeEffect"
@@ -425,6 +434,7 @@ func _build_world() -> void:
 	# Back to the street's drawing until sync_view() places them (T-206).
 	drift_smoke.position = Vector2.ZERO
 	boost_effect.position = Vector2.ZERO
+	drift_guide.position = Vector2.ZERO
 	rev_charge_effect.position = Vector2.ZERO
 	car_sprite.set_in_air(false)
 	# Drift marks go on the ground: right after the ground tiles in the map's
@@ -478,6 +488,11 @@ func _build_world() -> void:
 	# Boost effect (T-008): when W snaps the car to cruise speed.
 	boost_effect.clear()
 	boost_effect.bind(car)
+	# Drift Guide (T-517): the path ends where the car would hit a wall (test_move, no side effects).
+	drift_guide.bind(car)
+	drift_guide.blocked = func(from_units: Vector2, to_units: Vector2) -> bool:
+		return car.test_move(Transform2D(car.rotation, from_units * CarScript.PX_PER_UNIT),
+				(to_units - from_units) * CarScript.PX_PER_UNIT)
 	# Rev Charge (T-460): the tier owned now, and its placeholder effect.
 	_apply_rev_charge_tier()
 	rev_charge_effect.bind(car)
@@ -661,6 +676,7 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
 	drift_smoke.position = lift
 	boost_effect.position = lift
+	drift_guide.position = lift
 	rev_charge_effect.position = lift
 	Perf.begin(&"level.car_depth_sort")
 	view_root.z_index = elevation.z_for(units, car.rotation, car.height)

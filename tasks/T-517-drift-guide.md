@@ -1,7 +1,7 @@
 ---
 id: T-517
 title: The Drift Guide: a predicted-path arrow during a drift
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -54,6 +54,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-02, Open → In progress
+
+Started: the Drift Guide arrow.
 
 ## Style review
 
