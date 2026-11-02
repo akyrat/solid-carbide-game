@@ -43,14 +43,14 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] power_ups.json has polarized_steering_wheel (or a similar id) with 4 tiers, each with its burst numbers and reasons, and tier 4 with the shock. (QA: pass / fail)
-- [ ] A unit test: letting go of W, steering, then pressing W again with the car facing at least the threshold angle away from its movement gives a burst; pressing W again with the car facing roughly where it moves gives none; holding W throughout gives none. (QA: pass / fail)
-- [ ] A unit test: the burst grows from tier 1 to 4 as in the data. (QA: pass / fail)
-- [ ] A unit test: at tier 4 a burst sets off one wave (radius 4, damage 6) that damages minions in reach and pushes them, damages the kaiju without pushing it, with or without Bricks owned; below tier 4 no wave. (QA: pass / fail)
-- [ ] The power-up appears in the mission gift offers like the others (unit test) and uses T-501's texts (no placeholder text). (QA: pass / fail)
-- [ ] docs/drifting.md (Content) describes it with its numbers. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots of the burst and of the tier 4 shock, and of the power-up overlay showing it, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] power_ups.json has polarized_steering_wheel (or a similar id) with 4 tiers, each with its burst numbers and reasons, and tier 4 with the shock. (QA: pass; data test green, 4 tiers and shock_bricks_tier in power_ups.json)
+- [ ] A unit test: letting go of W, steering, then pressing W again with the car facing at least the threshold angle away from its movement gives a burst; pressing W again with the car facing roughly where it moves gives none; holding W throughout gives none. (QA: pass; tests for burst, threshold, no burst facing forward, holding W)
+- [ ] A unit test: the burst grows from tier 1 to 4 as in the data. (QA: pass; test_the_burst_grows_from_tier_1_to_4_as_in_the_data)
+- [ ] A unit test: at tier 4 a burst sets off one wave (radius 4, damage 6) that damages minions in reach and pushes them, damages the kaiju without pushing it, with or without Bricks owned; below tier 4 no wave. (QA: pass; three wave tests, with and without Bricks, none below tier 4)
+- [ ] The power-up appears in the mission gift offers like the others (unit test) and uses T-501's texts (no placeholder text). (QA: pass; gift-pool test in test_power_up_offers.gd; overlay shot shows real T-501 text)
+- [ ] docs/drifting.md (Content) describes it with its numbers. (QA: pass; Content tier list and new section)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass; qa_check tests PASS, 2 sets)
+- [ ] Screenshots of the burst and of the tier 4 shock, and of the power-up overlay showing it, under art-archive/T-NNN/screenshots/. (QA: pass; viewed burst, shock and tier 4 overlay shots, 8 files)
 
 ## Updates
 
