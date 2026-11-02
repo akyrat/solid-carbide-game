@@ -1,7 +1,7 @@
 ---
 id: T-495
 title: Level-up card text for the board's weapon upgrade trees
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -113,6 +113,10 @@ Text-table test updated to the new trees.
 
 QA round 2 passed: all criteria pass (test criterion checked with T-496's green run). Ready for the board's playtest.
 
+### 2026-11-02, Needs playtest
+
+QA round 2 passed. Waits for the board's playtest with T-496 to T-499.
+
 ## Style review
 
 ### Run 1
@@ -199,3 +203,4 @@ Screenshot: art-archive/T-495/screenshots/level_up_wiper5_molotov5.png (level-up
 Documents affected: docs/weapons.md needs no change (the Decisions entry already holds the tree).
 
 Updated game/tools/test_check_level_up_texts.py: the real-file test now pins the board's new trees (NEW_TREES, tiers 2 to 8, no gun 9 to 11) and checks only the get cards and underglow against T-171's table. 6 tests pass.
+- 2026-11-02, needs-playtest → done: The board played the combined build on 2026-11-02: LGTM.
