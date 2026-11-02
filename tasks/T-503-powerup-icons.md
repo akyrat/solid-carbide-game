@@ -41,11 +41,11 @@ The board's review: play it in the one combined build with the weapon trees (T-4
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/art/power_ups/ has the spray can for rusty_overcoat and the steering wheel for the new power-up, the same size as the other icons; the old Rusty Overcoat icon is kept in art-archive. (QA: pass / fail)
-- [ ] Every generation is in art-archive/T-NNN/, and the result notes count them (at most 4 per asset, 8 in all). (QA: pass / fail)
-- [ ] The ticket's Style review records the style loop for both assets, with their scores. (QA: pass / fail)
-- [ ] The power-up overlay and the HUD show the new icons (screenshots on dark and light, enlarged). (QA: pass / fail)
-- [ ] The full Godot test set passes in QA (the art tests included). (QA: pass / fail)
+- [ ] game/art/power_ups/ has the spray can for rusty_overcoat and the steering wheel for the new power-up, the same size as the other icons; the old Rusty Overcoat icon is kept in art-archive. (QA: pass; both 32x32 RGBA, can identical to style-loop v1, wheel identical to v4-2, old can in art-archive/T-503/old/)
+- [ ] Every generation is in art-archive/T-NNN/, and the result notes count them (at most 4 per asset, 8 in all). (QA: pass; 5 generations counted in notes, can 1, wheel 4; raw files and params in art-archive/T-503/pixellab/)
+- [ ] The ticket's Style review records the style loop for both assets, with their scores. (QA: pass; Run 1 and Run 2 list every round with scores)
+- [ ] The power-up overlay and the HUD show the new icons (screenshots on dark and light, enlarged). (QA: pass; overlay_hud_2x.png shows both icons on the cards over the HUD, icons_enlarged_dark_light.png shows both on dark and light)
+- [ ] The full Godot test set passes in QA (the art tests included). (QA: pass; qa_check reports the 2 test sets run passed, tools set skipped)
 
 ## Updates
 
