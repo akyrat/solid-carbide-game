@@ -1,7 +1,7 @@
 ---
 id: T-502
 title: Driving power-up: the Polarized Steering Wheel
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/data/power_ups.json, game/scripts/data/power_up_data.gd, game/scripts/weapons/bricks.gd]
 files_expected_to_change: [game/data/power_ups.json, game/scripts/, game/art/power_ups/, game/tests/unit/, docs/drifting.md, game/docs/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Started on top of T-501's texts.
 ### 2026-11-02, In progress → In QA
 
 Polarized Steering Wheel built: burst +20/30/40/45% for 0.5 s after lift-steer-gas at 60 degrees or more, tier 4 Bricks tier 1 shock; tests and screenshots in.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed all 8 criteria; ready for the board's playtest in the combined build.
 
 ## Style review
 
