@@ -1,7 +1,7 @@
 ---
 id: T-514
 title: The combo multiplier beside the car, viewers counter gone
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -57,10 +57,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started on top of T-512's texts (T-512 is in QA).
 
+### 2026-11-02, In progress → In QA
+
+T-514 built and committed: multiplier beside the car replaces the viewers counter (popups, bump, crash, reactions, recap, tutorial, docs); touched tests pass, screenshots in art-archive/T-514/screenshots. Ready for QA and the combined playtest with T-512/T-513.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. The viewers counter is gone; MultiplierTag (game/scripts/hud/multiplier_tag.gd) shows T-512's 'x2.50' left of the car (130 px left, 8 up from the screen centre where the camera holds the car; hud.json multiplier_tag, proposals: size 30/34/38/42 by ComboHeat step, cyan base, step 4 at the x6 cap for the reactions, no fire art or panel). Trick popups show 'NAME +x0.5' (T-512 gain, multiplier colour, no eye); the amount flies into the number after 0.3 s, number bumps on arrival and counts in then. Crash: red flash + '-x1.5' drop (T-512 loss), bad reactions rise from the multiplier's height. Reactions step = tag step. Recap: 'Peak combo' + peak_value from highest_combo (no eye); old summaries with peak_viewers load (key ignored, no longer written). Tutorial slide 2 step 2 panel shows the multiplier text in cyan (SAMPLE_MULTIPLIER 2.5). Subs from tricks: shown by the sub goal's existing fill spring on the XP change; did not use T-513's trick_subs_paid (not merged here; nothing extra built, say if you want a dedicated sub flight). Removed: ViewersCounter, ViewersData, data/viewers.json, their tests, the viewers demo fixture and tools (record_viewers_counter.sh, viewers_counter_gif.py), Hud.TEXT_LIVE_BADGE/TEXT_VIEWERS_UNIT, TrickPopups.ADDED_TEXT/LOST_TEXT, RunState.peak_viewers_for, the 'viewers' HudLayout piece (saved layouts with it still load, ignored), HUD role viewers_unit. Kept (art, never deleted): art/hud viewers_panel, live_badge, eye_icon, viewers_fire_*. Texts: all from multiplier_text.json via MultiplierTag.text_for and recap_text.json; test_no_text_written_in_the_code greps the code. Docs: docs/hud-and-menus.md (Decisions, Content: HUD, counter, texts, reactions, recap, tutorial, scaling/layout mentions) and game/docs (hud, popups, recap-screen, game-data, the-run). Still mentioning viewers on purpose: older Decisions history lines, art tools (build_hud_livestream_art etc.), long GDD (regenerate on merge). Tests run (all pass): test_hud_multiplier_tag 11, test_hud_style 14, test_hud_combo_heat 13, test_hud_reactions 28, test_hud_scaling 9, test_hud_layout 7, test_hud_layout_editor 13, test_recap_screen 18, test_trick_popups 6, test_trick_popups_heat 12, test_trick_popup_prebuild 10 (multiplier-amount golden hashes re-recorded: no eye), test_air_tricks 36, test_airtime_trick 14, test_thread_the_needle 22, test_run_likes 18, test_run_recap 12, test_wreck 23, test_gift_drops 43, test_shared_button 12, test_tutorial_slides 26. Not run: test_game_data/text_inventory tests (text_inventory.py entry renamed). Screenshots: art-archive/T-514/screenshots/ hud_run_start, hud_trick_popup (multiplier beside car, popups with +x add), hud_combo_broken, recap_win (Peak combo x5.59), tutorial_slide_2. Observation: the screenshot shows x1.00 while popups hold their add (counts in on landing), by design. Never touched game/data/levels.
