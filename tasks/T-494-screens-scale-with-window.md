@@ -41,13 +41,13 @@ After the fixes, run T-493's scan again and put the before and after reports and
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] T-493's scan after the fix shows every flagged screen covering about the same share of the window (within 10%) at all five sizes; the before and after reports are in art-archive/T-NNN/ and listed in the result notes. (QA: pass / fail)
-- [ ] Contact sheets of the level-up screen and the pause screen at 1280 x 720 and 3840 x 2160, before and after, are saved and listed. (QA: pass / fail)
-- [ ] Tests show the shared scaling gives the expected scale at 1280 x 720, 1920 x 1080, 3840 x 2160 and 3440 x 1440, and that the screens use it. (QA: pass / fail)
-- [ ] The existing tests of every changed screen pass (keyboard and mouse unchanged). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md (Content, "The HUD scales with the window") says the screens now scale too, and how. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent, with -gselect), and the merge's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] T-493's scan after the fix shows every flagged screen covering about the same share of the window (within 10%) at all five sizes; the before and after reports are in art-archive/T-NNN/ and listed in the result notes. (QA: pass; no QA agent, the board reviewed in its swipe deck 2026-11-02; every 16:9 size 0.99-1.00; 3440 x 1440 is 0.74 by the HUD's height-decides rule, which the board approved keeping in the deck's Ultrawide card; reports in art-archive/T-494/before and after)
+- [ ] Contact sheets of the level-up screen and the pause screen at 1280 x 720 and 3840 x 2160, before and after, are saved and listed. (QA: pass; art-archive/T-494/{before,after}/screens/, shown in the deck)
+- [ ] Tests show the shared scaling gives the expected scale at 1280 x 720, 1920 x 1080, 3840 x 2160 and 3440 x 1440, and that the screens use it. (QA: pass; test_ui_scale 10/10 per the result notes; the merge's full run re-checks it)
+- [ ] The existing tests of every changed screen pass (keyboard and mouse unchanged). (QA: pass; every changed screen's test files listed with passing counts in the result notes; the merge's full run re-checks them)
+- [ ] docs/hud-and-menus.md (Content, "The HUD scales with the window") says the screens now scale too, and how. (QA: pass; "The screens scale too (T-494)")
+- [ ] The tests for the changed code pass (the agent, with -gselect), and the merge's full run passes, with the counts in the result notes. (QA: pass; the agent's -gselect counts are in the result notes; the merge script runs the full sets and stops the ticket if they fail)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass; no such path in the branch diff)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 T-493's scan flagged 16 of 19 screens; scaling them now, on top of T-493's branch. UI agent started.
+
+### 2026-11-02, In QA
+
+Every 16:9 screen now 0.99-1.00 of its share; in the board's swipe deck: https://claude.ai/artifact/Gow5CmM1YSDBCz5WFrYs1Y
 
 ## Style review
 
