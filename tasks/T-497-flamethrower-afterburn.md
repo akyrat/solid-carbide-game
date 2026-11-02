@@ -1,7 +1,7 @@
 ---
 id: T-497
 title: Hot Take Exhaust afterburn: burning enemies keep taking damage
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/scripts/weapons/flamethrower/exhaust_flamethrower.gd, game/docs/weapons/flamethrower.md]
 files_expected_to_change: [game/scripts/weapons/flamethrower/, game/tests/unit/, docs/weapons.md, game/docs/weapons/flamethrower.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Afterburn built: enemies keep burning and taking the flame's damage every tick f
 ### 2026-11-02, In QA
 
 Built: burning enemies keep taking flame damage after leaving the flame, one hit per tick. QA running.
+
+### 2026-11-02, In QA → Needs playtest
+
+QA passed: all 8 criteria and both test sets green; ready for the board's playtest with T-495 to T-499.
 
 ## Style review
 
