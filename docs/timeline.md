@@ -3255,3 +3255,48 @@ Entry format:
 - Decision or change: A playtest-only switch, weapon_tier_at_start, starts every weapon at a chosen tier (capped at its last tier) when all_weapons_at_start is on, so the board can play the new weapon trees at their top tiers.
 - Documents touched: none
 - Tasks: T-500
+
+## 2026-11-02: Text for the new power-up, the rename and God mode
+- Decision or change: The Narrative Theme Agent writes the Polarized Steering Wheel's texts, renames Rusty Overcoat to Rusty Paintjob and writes God mode's texts.
+- Documents touched: docs/drifting.md, docs/hud-and-menus.md
+- Tasks: T-501
+
+## 2026-11-02: The Polarized Steering Wheel
+- Decision or change: A fifth driving power-up: a speed burst when the car accelerates again in a new direction; tier 4 adds Bricks' wave.
+- Documents touched: docs/drifting.md
+- Tasks: T-502
+
+## 2026-11-02: Two power-up icons
+- Decision or change: A rusty spray can for Rusty Paintjob and a steering wheel for the Polarized Steering Wheel, made with PixelLab through the style loop.
+- Documents touched: docs/drifting.md
+- Tasks: T-503
+
+## 2026-11-02: God mode's logic
+- Decision or change: Pressing N in a run unlocks God mode for the session; an API sets each weapon's and power-up's tier in the current run.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-504
+
+## 2026-11-02: God mode's page
+- Decision or change: A secret settings entry, shown after N, opens a page to set every weapon's and power-up's tier.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-505
+
+## 2026-11-02: Text for the rain toggle
+- Decision or change: The Narrative Theme Agent writes the rain toggle's label.
+- Documents touched: docs/level-design.md
+- Tasks: T-506
+
+## 2026-11-02: Rain over the map
+- Decision or change: Steady rain over the map during a run, with a saved on/off setting.
+- Documents touched: docs/level-design.md
+- Tasks: T-507
+
+## 2026-11-02: Rain toggle
+- Decision or change: A settings toggle turns the rain on or off.
+- Documents touched: docs/level-design.md
+- Tasks: T-508
+
+## 2026-11-02: Rain art
+- Decision or change: The rain's drops and splashes are made with PixelLab, generously, through the style loop.
+- Documents touched: docs/level-design.md, docs/visual-style.md
+- Tasks: T-509
