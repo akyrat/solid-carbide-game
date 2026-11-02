@@ -1,7 +1,7 @@
 ---
 id: T-517
 title: The Drift Guide: a predicted-path arrow during a drift
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started: the Drift Guide arrow.
+
+### 2026-11-02, In progress → In QA
+
+Drift Guide built: gray predicted-path arrow during a drift, off by default; T-518 calls GameSettings.save_drift_guide_enabled(on). Ready for QA.
 
 ## Style review
 
