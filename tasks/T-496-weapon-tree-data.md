@@ -1,7 +1,7 @@
 ---
 id: T-496
 title: Weapon data for the board's upgrade trees
-status: in-qa
+status: in-progress
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/weapons/starting_gun.gd, game/scripts/weapons/level_up_offers.gd]
 files_expected_to_change: [game/data/weapons.json, game/scripts/data/weapon_data.gd, game/scripts/weapons/level_up_offers.gd, game/tests/unit/, docs/weapons.md, game/docs/weapons/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, In progress → In QA
 
 Weapon data in; bricks and wiper stop at tier 7 until T-498/T-499.
+
+### 2026-11-02, In QA → In progress
+
+QA failed: stale tests pin old tier values (Godot test_size_grow, test_enemy_data; python test_check_level_up_texts). Data and docs pass.
 
 ## Style review
 
