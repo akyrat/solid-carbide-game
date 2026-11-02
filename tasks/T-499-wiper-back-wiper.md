@@ -1,7 +1,7 @@
 ---
 id: T-499
 title: Wiper Blade tier 8: a back wiper
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -41,13 +41,13 @@ The board's review: play the new weapon trees in one build with T-495 to T-499 t
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] weapons.json wiper has tier 8 with the new effect, and the wiper reaches tier 8 in the level-up offers; the tier 8 card is T-495's text. (QA: pass / fail)
-- [ ] A unit test: below tier 8 there is one wiper; at tier 8 there are two, the second behind the car, with the same length, sweep speed, damage and knockback as the front one. (QA: pass / fail)
-- [ ] A unit test: an enemy behind the car is hit by the back wiper at tier 8 and not below it. (QA: pass / fail)
-- [ ] The back wiper uses the same blade art, mirrored (screenshot). (QA: pass / fail)
-- [ ] docs/weapons.md (the windshield wiper) describes tier 8. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots of the car with both wipers mid-sweep, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] weapons.json wiper has tier 8 with the new effect, and the wiper reaches tier 8 in the level-up offers; the tier 8 card is T-495's text. (QA: pass; max_tier 8, tier 8 add_back_wiper, offers use max_tier)
+- [ ] A unit test: below tier 8 there is one wiper; at tier 8 there are two, the second behind the car, with the same length, sweep speed, damage and knockback as the front one. (QA: pass; test_one_wiper_below_tier_8_and_two_at_tier_8)
+- [ ] A unit test: an enemy behind the car is hit by the back wiper at tier 8 and not below it. (QA: pass; test_back_wiper_hits_an_enemy_behind_only_at_tier_8)
+- [ ] The back wiper uses the same blade art, mirrored (screenshot). (QA: pass; both_wipers_75/90 show a wiper in front and one behind with the same blade art; test_back_wiper_draws_with_the_same_art)
+- [ ] docs/weapons.md (the windshield wiper) describes tier 8. (QA: pass; Content paragraph and Tiers describe it)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: fail: code - game/tests/unit/test_level_up_screen.gd line 581 still pins 7 + 3*8 + 2*7 = 45 choices; with wiper tier 8 it is 46, so test_every_choice_and_tier_the_offers_can_produce_has_text is red, a stale pin this ticket caused. The other reds are the 2 known T-496 pins (test_check_level_up_texts, test_kaiju_time_to_kill_matches_result_notes); test_size_grow passes. Godot 2617/2619, game/tools 1 fail)
+- [ ] Screenshots of the car with both wipers mid-sweep, under art-archive/T-NNN/screenshots/. (QA: pass; both_wipers_60/75/90)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-02, Open → In progress
 
 Started on top of T-495 and T-496 (built on their branch).
+
+### 2026-11-02, In progress → In QA
+
+Back wiper built (tier 8, mirrored, own hit cooldown); tests and screenshots in; ready for QA.
 
 ## Style review
 
