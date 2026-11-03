@@ -186,13 +186,12 @@ func test_a_minion_dies_on_the_second_tick_not_the_first() -> void:
 	assert_true(m.is_dead() or not is_instance_valid(m) or m.health <= 0.0, "dead on the second tick")
 
 
-## T-409: tiers 3 and 6 keep their multipliers from the new base: 3 and 4.5.
+## T-409, T-520: the damage multiplier keeps its multiplier from the new base: x2.25 at tier 3 (4.5).
 func test_later_tiers_keep_their_multipliers_from_the_new_base() -> void:
 	assert_almost_eq(float(data.underglow_at(1)["damage"]), 2.0, 1e-9)
 	assert_almost_eq(float(data.underglow_at(2)["damage"]), 2.0, 1e-9)
-	assert_almost_eq(float(data.underglow_at(3)["damage"]), 3.0, 1e-9)
-	assert_almost_eq(float(data.underglow_at(6)["damage"]), 4.5, 1e-9)
-	assert_almost_eq(float(data.underglow_at(8)["damage"]), 4.5, 1e-9)
+	assert_almost_eq(float(data.underglow_at(3)["damage"]), 4.5, 1e-9)
+	assert_almost_eq(float(data.underglow_at(5)["damage"]), 4.5, 1e-9)
 
 
 ## T-409: each tick pushes a surviving minion straight away from the car by the data's distance.
@@ -259,7 +258,7 @@ func test_no_damage_after_the_run_ends() -> void:
 
 func test_a_new_run_removes_the_underglow() -> void:
 	rack.upgrade("underglow")
-	glow.set_tier(6)
+	glow.set_tier(5)
 	_enemy_at(_off(1.0))
 	_step(5)
 	assert_true(glow.drawing.visible)
@@ -322,18 +321,6 @@ func test_tier_4_changes_what_weapons_json_says() -> void:
 
 func test_tier_5_changes_what_weapons_json_says() -> void:
 	_check_tier(5)
-
-
-func test_tier_6_changes_what_weapons_json_says() -> void:
-	_check_tier(6)
-
-
-func test_tier_7_changes_what_weapons_json_says() -> void:
-	_check_tier(7)
-
-
-func test_tier_8_changes_what_weapons_json_says() -> void:
-	_check_tier(8)
 
 
 ## Applies tier `want` from code and checks the change weapons.json's tier list
@@ -442,7 +429,7 @@ func test_zone_is_drawn_under_the_car_while_owned() -> void:
 	var want: Vector2 = Glow.ISO_TRANSFORM * (run.car.model.get_position() * 16.0)
 	assert_almost_eq(d.position.x, want.x, 0.01, "follows the car")
 	assert_almost_eq(d.position.y, want.y, 0.01)
-	glow.set_tier(8)
+	glow.set_tier(5)
 	assert_almost_eq(d.radius_px, data.underglow_at(8)["radius"] * 16.0, 1e-6, "grows with the radius tiers")
 
 

@@ -1,7 +1,13 @@
 {
-  "_comment": "XP and levels. xp_needed = XP to go from this level to the next (last level: none). Leftover XP carries over. Proposed numbers; the board judges them in playtests. T-328 (Game loop architecture, Decisions, 'More gift packs, earlier'): the early levels need far fewer likes (30, 45, 65, 95 for levels 2 to 5, was 100, 125, 156, 195), the last two are unchanged; total 3,501 for all 11 level-ups, was 4,255. challenge_xp (old MVP map only) keeps its share of the level's bar, capped at the old value, so one challenge still never skips a level the way it did not before.",
+  "_comment": "XP and levels. xp_needed = XP to go from this level to the next (last level: none). Leftover XP carries over. Proposed numbers; the board judges them in playtests. T-328 (Game loop architecture, Decisions, 'More gift packs, earlier'): the early levels need far fewer likes (30, 45, 65, 95 for levels 2 to 5, was 100, 125, 156, 195), the last two are unchanged; total 3,501 for all 11 level-ups, was 4,255. T-520 (the 4-minute run): 12 level-ups (max_level 13) in a new curve, 30, 45, 60, 80, 100, 130, 165, 210, 265, 335, 420, 520: total 2360, set for about 12 gift packs by 3:00 (build_pace below). Level 13 has no bar; what a full sub goal does once everything is maxed (heal) is T-521's. challenge_xp (old MVP map only) keeps its share of the level's bar, capped at the old value, so one challenge still never skips a level the way it did not before.",
+  "build_pace": {
+    "_comment": "T-520 (Game loop architecture, Decisions, 'A 4-minute run: 3 minutes to build, 1 minute of kaiju'): the pace the sub goals are set for, a proposal for the playtest. A player who drifts and does tricks steadily earns about subs_per_second: drifting about 60 percent of the time at an average multiplier of x2 (10 subs a drift second x2 x0.6 = 12 a second) plus a trick every 8 s paying about 7.5 subs x2 (trick_subs in combo.json, T-513: 5 for a 360 or an air 180, 10 for the others), about 1.9 a second, so 14 a second after rounding. Over build_seconds (180, the kaiju arrives at 3:00) that is 2,520 subs; the 12 sub goals below add up to 2360 (2:49 at that pace, so the 12th gift pack lands around 2:50 and a little drain or a few crashes still fit). target_gift_packs 12 = 3 weapons x 4 upgrades to their last tier (Weapons, Decisions, 'Shorter trees: 5 tiers'). The curve grows about 1.25 times a level from 30 (the old 11-level curve was 30 to 931 over 3,501): early packs come fast, the later ones need a real combo. max_level is 13 so there are 12 level-ups. Read by the unit test only (test_four_minute_run_data), not by the game.",
+    "subs_per_second": 14.0,
+    "build_seconds": 180,
+    "target_gift_packs": 12
+  },
   "drift_xp_per_second": 10,
-  "max_level": 12,
+  "max_level": 13,
   "carry_over_xp": true,
   "levels": [
     {
@@ -16,51 +22,56 @@
     },
     {
       "level": 3,
-      "xp_needed": 65,
+      "xp_needed": 60,
       "challenge_xp": 50
     },
     {
       "level": 4,
-      "xp_needed": 95,
+      "xp_needed": 80,
       "challenge_xp": 65
     },
     {
       "level": 5,
-      "xp_needed": 140,
+      "xp_needed": 100,
       "challenge_xp": 84
     },
     {
       "level": 6,
-      "xp_needed": 200,
+      "xp_needed": 130,
       "challenge_xp": 106
     },
     {
       "level": 7,
-      "xp_needed": 290,
+      "xp_needed": 165,
       "challenge_xp": 135
     },
     {
       "level": 8,
-      "xp_needed": 400,
+      "xp_needed": 210,
       "challenge_xp": 164
     },
     {
       "level": 9,
-      "xp_needed": 560,
+      "xp_needed": 265,
       "challenge_xp": 201
     },
     {
       "level": 10,
-      "xp_needed": 745,
+      "xp_needed": 335,
       "challenge_xp": 236
     },
     {
       "level": 11,
-      "xp_needed": 931,
+      "xp_needed": 420,
       "challenge_xp": 259
     },
     {
       "level": 12,
+      "xp_needed": 520,
+      "challenge_xp": 285
+    },
+    {
+      "level": 13,
       "xp_needed": 0,
       "challenge_xp": 285
     }

@@ -66,8 +66,8 @@ func test_count_shows_the_tier_and_updates() -> void:
 	assert_eq(icons.rows["gun"].count.text, "x2")
 	r.weapons.upgrade("gun")
 	assert_eq(icons.rows["gun"].count.text, "x3")
-	r.weapons.gun.set_tier(8)
-	assert_eq(icons.rows["gun"].count.text, "x8")
+	r.weapons.gun.set_tier(5)
+	assert_eq(icons.rows["gun"].count.text, "x5")
 	assert_eq(icons.order, ["gun"], "an upgrade does not add a second icon")
 	assert_eq(WeaponIcons.count_text(5), "x5")
 

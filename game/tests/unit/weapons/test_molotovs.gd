@@ -354,17 +354,6 @@ func test_tier_5_changes_what_weapons_json_says() -> void:
 	_check_tier(5)
 
 
-func test_tier_6_changes_what_weapons_json_says() -> void:
-	_check_tier(6)
-
-
-func test_tier_7_changes_what_weapons_json_says() -> void:
-	_check_tier(7)
-
-
-func test_tier_8_changes_what_weapons_json_says() -> void:
-	_check_tier(8)
-
 
 const STAT_KEYS := ["damage", "throw_interval", "molotovs_per_throw", "fire_radius", "fire_duration"]
 

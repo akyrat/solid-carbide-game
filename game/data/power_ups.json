@@ -1,6 +1,6 @@
 {
-  "_comment": "Driving power-ups (Drifting, Decisions, 'Driving power-ups', board 2026-10-31). The five are the board's (the fifth, the Polarized Steering Wheel: board 2026-11-02, Drifting, Decisions, 'Rusty Paintjob and the Polarized Steering Wheel'); every tier number is a proposal (Driving & Drift's call by the docs, written on its behalf by Game Data) for the board's playtest. Tier 1 is what the gift gives; later tiers are 'the next tier' offers. Distances in units (1 unit = the car's width), times in seconds.",
-  "max_tier": 4,
+  "_comment": "Driving power-ups (Drifting, Decisions, 'Driving power-ups', board 2026-10-31). The five are the board's (the fifth, the Polarized Steering Wheel: board 2026-11-02, Drifting, Decisions, 'Rusty Paintjob and the Polarized Steering Wheel'); every tier number is a proposal (Driving & Drift's call by the docs, written on its behalf by Game Data) for the board's playtest. Tier 1 is what the gift gives; tier 2 is the 'next tier' offer and the last. T-520 (Drifting, Decisions, 'Two tiers and three slots for the driving power-ups', board 2026-11-03, the 4-minute run): every power-up has 2 tiers, tier 2 equal to the old tier 4 (the old tiers 2 and 3 are gone). Distances in units (1 unit = the car's width), times in seconds.",
+  "max_tier": 2,
   "offer_when_exhausted": {
     "action": "skip_gift",
     "proposal": true,
@@ -12,9 +12,7 @@
       "icon": "res://art/power_ups/rev_charge.png",
       "tiers": [
         {"tier": 1, "charge_seconds": 1.6, "boost_speed_multiplier": 1.5, "boost_seconds": 0.8, "proposal": true, "reason": "Slow to charge, a short clear burst, so the first tier shows the idea."},
-        {"tier": 2, "charge_seconds": 1.3, "boost_speed_multiplier": 1.6, "boost_seconds": 1.0, "proposal": true, "reason": "Faster charge and a little more punch."},
-        {"tier": 3, "charge_seconds": 1.0, "boost_speed_multiplier": 1.75, "boost_seconds": 1.2, "proposal": true, "reason": "Charging mid-drift becomes cheap."},
-        {"tier": 4, "charge_seconds": 0.7, "boost_speed_multiplier": 1.9, "boost_seconds": 1.5, "proposal": true, "reason": "Top tier: a big boost any time, still shorter than the hype boost chain."}
+        {"tier": 2, "charge_seconds": 0.7, "boost_speed_multiplier": 1.9, "boost_seconds": 1.5, "proposal": true, "reason": "Top tier: a big boost any time, still shorter than the hype boost chain."}
       ]
     },
     "jump": {
@@ -22,9 +20,7 @@
       "icon": "res://art/power_ups/jump.png",
       "tiers": [
         {"tier": 1, "takeoff_speed": 5.0, "cooldown_seconds": 2.0, "proposal": true, "reason": "A small hop: about 0.6 s in the air with the car's gravity, enough for the airtime missions."},
-        {"tier": 2, "takeoff_speed": 6.0, "cooldown_seconds": 1.7, "proposal": true, "reason": "Higher hop, so air tricks fit in."},
-        {"tier": 3, "takeoff_speed": 7.0, "cooldown_seconds": 1.4, "proposal": true, "reason": "Long enough for an air 180."},
-        {"tier": 4, "takeoff_speed": 8.0, "cooldown_seconds": 1.1, "proposal": true, "reason": "Long enough for an air 360, jumping often."}
+        {"tier": 2, "takeoff_speed": 8.0, "cooldown_seconds": 1.1, "proposal": true, "reason": "Long enough for an air 360, jumping often."}
       ]
     },
     "bouncy_bumpers": {
@@ -32,9 +28,7 @@
       "icon": "res://art/power_ups/bouncy_bumpers.png",
       "tiers": [
         {"tier": 1, "bounce_distance_multiplier": 1.4, "proposal": true, "reason": "Multiplies the T-435 wall bounce distance; 1.4 is felt but not wild."},
-        {"tier": 2, "bounce_distance_multiplier": 1.8, "proposal": true, "reason": "Nearly doubles it."},
-        {"tier": 3, "bounce_distance_multiplier": 2.2, "proposal": true, "reason": "A crash throws the car back clear of the wall."},
-        {"tier": 4, "bounce_distance_multiplier": 2.6, "proposal": true, "reason": "Top tier: walls act like springs."}
+        {"tier": 2, "bounce_distance_multiplier": 2.6, "proposal": true, "reason": "Top tier: walls act like springs."}
       ]
     },
     "rusty_overcoat": {
@@ -42,9 +36,7 @@
       "icon": "res://art/power_ups/rusty_overcoat.png",
       "tiers": [
         {"tier": 1, "contact_damage": 2.0, "repeat_cooldown_seconds": 0.5, "hits_kaiju": false, "proposal": true, "reason": "Half a minion's health (4, T-408); open questions for the board: the per-enemy repeat cooldown (0.5 s here, so driving through a crowd does not melt it each frame) and whether the kaiju is hit (not at tier 1)."},
-        {"tier": 2, "contact_damage": 3.0, "repeat_cooldown_seconds": 0.5, "hits_kaiju": false, "proposal": true, "reason": "Two touches kill a minion."},
-        {"tier": 3, "contact_damage": 4.0, "repeat_cooldown_seconds": 0.4, "hits_kaiju": false, "proposal": true, "reason": "One touch kills a minion."},
-        {"tier": 4, "contact_damage": 5.0, "repeat_cooldown_seconds": 0.3, "hits_kaiju": true, "proposal": true, "reason": "Top tier also scrapes the kaiju (open question for the board)."}
+        {"tier": 2, "contact_damage": 5.0, "repeat_cooldown_seconds": 0.3, "hits_kaiju": true, "proposal": true, "reason": "Top tier also scrapes the kaiju (open question for the board)."}
       ]
     },
     "polarized_steering_wheel": {
@@ -52,9 +44,7 @@
       "icon": "res://art/power_ups/polarized_steering_wheel.png",
       "tiers": [
         {"tier": 1, "burst_speed_multiplier": 1.2, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+20% for half a second: felt as a kick, small enough that the lift-steer-gas move is a skill, not a must. Shared by every tier: W pressed again with the nose at least 60 degrees from where the car moves (the board's start), at most 1.2 s after letting go of W (long enough to swing the nose round 180 degrees at the turn rate, short enough to read as one move; S held during the coast cancels it), on the ground, the car moving at least 2 units/s (a stopped car has no direction); the burst holds the forward speed at least at the multiplier x the speed carried into the press (cruise speed at the least) for 0.5 s; no cooldown."},
-        {"tier": 2, "burst_speed_multiplier": 1.3, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+30%: the kick starts to carry the car out of a turn."},
-        {"tier": 3, "burst_speed_multiplier": 1.4, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+40%: a clear dash out of every redirect."},
-        {"tier": 4, "burst_speed_multiplier": 1.45, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 1, "proposal": true, "reason": "+45% (only a little more: the shock is this tier's prize) and Bricks' tier 1 wave at the car on every burst (shock_bricks_tier 1: radius 4, damage 6, minions pushed 4, the kaiju damaged and never pushed, read from weapons.json so it follows Bricks), owned or not."}
+        {"tier": 2, "burst_speed_multiplier": 1.45, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 1, "proposal": true, "reason": "+45% (only a little more: the shock is this tier's prize) and Bricks' tier 1 wave at the car on every burst (shock_bricks_tier 1: radius 4, damage 6, minions pushed 4, the kaiju damaged and never pushed, read from weapons.json so it follows Bricks), owned or not."}
       ]
     }
   }

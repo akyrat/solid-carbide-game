@@ -103,13 +103,13 @@ func test_a_new_run_has_no_bricks_and_upgrade_gives_it() -> void:
 
 
 func test_the_tiers_are_the_boards_numbers() -> void:
-	for t in range(1, 8):
+	for t in range(1, 6):
 		bricks.set_tier(t)
 		var want: Dictionary = data.bricks_at(t)
 		for k in want:
 			assert_eq(bricks.stats[k], want[k], "tier %d %s" % [t, k])
 	assert_almost_eq(float(data.bricks_at(1)["radius"]), 4.0, 1e-9)
-	assert_almost_eq(float(data.bricks_at(7)["damage"]), 13.5, 1e-9)
+	assert_almost_eq(float(data.bricks_at(4)["damage"]), 13.5, 1e-9)
 
 
 # --- The wave ------------------------------------------------------------------------
@@ -345,7 +345,7 @@ func test_the_wave_is_drawn_growing_to_the_radius_then_gone() -> void:
 
 
 func test_a_wider_tier_draws_a_wider_ring() -> void:
-	bricks.set_tier(7)
+	bricks.set_tier(4)
 	_air(0.5)
 	assert_almost_eq(bricks.last_wave.radius, 8.4, 1e-9)
 
@@ -412,26 +412,26 @@ func test_a_wider_tier_shows_a_wider_sheet() -> void:
 	rack.upgrade("bricks")
 	bricks.send_wave(_car())
 	var small: Vector2 = bricks.last_wave.frame_size
-	bricks.set_tier(7)
+	bricks.set_tier(4)
 	bricks.send_wave(_car() + Vector2(20, 0))
 	assert_gt(bricks.last_wave.frame_size.x, small.x)
 	assert_eq(bricks.last_wave.sheet, Bricks.BricksWave.sheet_for(8.4))
 
 
-# --- T-498: tier 8, Widest Wave ----------------------------------------------------------
+# --- T-498, T-520: tier 5, Widest Wave ----------------------------------------------------------
 
-func test_tier_8_is_the_widest_wave_three_times_tier_7() -> void:
-	assert_eq(data.max_tier("bricks"), 8)
-	bricks.set_tier(7)
+func test_tier_5_is_the_widest_wave_three_times_tier_4() -> void:
+	assert_eq(data.max_tier("bricks"), 5)
+	bricks.set_tier(4)
 	var r7: float = bricks.radius()
 	assert_eq(bricks.rings(), 1)
-	bricks.set_tier(8)
-	assert_eq(bricks.tier, 8)
+	bricks.set_tier(5)
+	assert_eq(bricks.tier, 5)
 	assert_almost_eq(bricks.radius(), r7 * 3.0, 1e-9, "the radius x3")
 	assert_almost_eq(bricks.radius(), 25.2, 1e-9)
 	assert_eq(bricks.rings(), 3, "three crash rings")
 	for k in [1, 2, 3]:
-		assert_almost_eq(bricks.ring_radius(k), r7 * k, 1e-9, "ring %d at the tier 7 radius x%d" % [k, k])
+		assert_almost_eq(bricks.ring_radius(k), r7 * k, 1e-9, "ring %d at the tier 4 radius x%d" % [k, k])
 	assert_eq(bricks.ring_reach_seconds(1), 0.0, "the inner ring on the landing")
 	assert_lt(bricks.ring_reach_seconds(2), bricks.ring_reach_seconds(3))
 
@@ -450,7 +450,7 @@ func _hit_steps(enemies: Array, steps: int) -> Array:
 
 
 func test_the_widest_wave_reaches_the_outer_rings_later_and_hits_each_enemy_once() -> void:
-	bricks.set_tier(8)
+	bricks.set_tier(5)
 	var c := _car()
 	var near := _place(FakeMinion.new(), c + Vector2(3.0, 0.0))     # ring 1, pushed 9 units out into ring 2
 	var mid := _place(FakeEnemy.new(), c + Vector2(0.0, -12.0))      # ring 2
@@ -482,7 +482,7 @@ func test_the_widest_wave_reaches_the_outer_rings_later_and_hits_each_enemy_once
 
 
 func test_a_new_run_drops_the_rings_still_to_come() -> void:
-	bricks.set_tier(8)
+	bricks.set_tier(5)
 	var far := _place(FakeEnemy.new(), _car() + Vector2(-20.0, 0.0))
 	_air(0.5)
 	assert_eq(bricks.pending_rings.size(), 2)
@@ -494,7 +494,7 @@ func test_a_new_run_drops_the_rings_still_to_come() -> void:
 
 
 func test_the_widest_wave_shows_its_three_ring_sheet_strip_by_strip() -> void:
-	bricks.set_tier(8)
+	bricks.set_tier(5)
 	bricks.send_wave(_car())
 	var w: Node2D = bricks.last_wave
 	assert_eq(w.sheet, Bricks.BricksWave.sheet_for(25.2))

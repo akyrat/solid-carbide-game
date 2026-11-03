@@ -54,7 +54,7 @@ func _keep_car_healthy() -> void:
 
 
 func test_each_tier_damages_a_touching_minion_and_flashes_red() -> void:
-	for tier in range(1, 5):
+	for tier in range(1, 3):
 		run.state.grant_power_up("rusty_overcoat")
 		assert_eq(run.state.power_up_tier("rusty_overcoat"), tier)
 		var m: Node = _touching_minion()
@@ -78,20 +78,20 @@ func test_the_car_still_gets_hit() -> void:
 	assert_lt(m.health, m.max_health)
 
 
-func test_tier_2_two_touches_kill_and_tier_3_one_touch_kills() -> void:
-	_own(3)
+func test_tier_1_two_touches_kill_and_tier_2_one_touch_kills() -> void:
+	_own(2)
 	var m := _touching_minion()
 	m.contact_step(DT, run.car, run.state)
-	assert_true(m.is_dead(), "tier 3: 4 damage kills a 4-health minion")
+	assert_true(m.is_dead(), "tier 2: 5 damage kills a 4-health minion")
 	run.state.start_run()
-	_own(2)
+	_own(1)
 	var m2 := _touching_minion()
 	m2.contact_step(DT, run.car, run.state)
 	assert_false(m2.is_dead())
 	for i in int(0.5 / DT) + 2:
 		_keep_car_healthy()
 		m2.contact_step(DT, run.car, run.state)
-	assert_true(m2.is_dead(), "tier 2: the second touch kills")
+	assert_true(m2.is_dead(), "tier 1: the second touch kills")
 
 
 func test_repeat_follows_the_per_enemy_cooldown() -> void:
@@ -119,7 +119,7 @@ func test_repeat_follows_the_per_enemy_cooldown() -> void:
 
 
 func test_not_touching_no_damage() -> void:
-	_own(4)
+	_own(2)
 	var m: Node = spawner.spawn_minion_at(_car_units() + Vector2(4.0, 0.0))
 	m.contact_step(DT, run.car, run.state)
 	assert_eq(m.health, m.max_health)
@@ -142,7 +142,7 @@ func _kaiju() -> Node:
 
 
 func test_the_kaiju_is_hit_only_where_the_data_says() -> void:
-	for tier in range(1, 5):
+	for tier in range(1, 3):
 		run.state.start_run()
 		_own(tier)
 		var k := _kaiju()
@@ -154,7 +154,7 @@ func test_the_kaiju_is_hit_only_where_the_data_says() -> void:
 		else:
 			assert_eq(k.health, before, "tier %d does not hit the kaiju" % tier)
 		k.queue_free()
-	assert_true(pu.at("rusty_overcoat", 4)["hits_kaiju"])
+	assert_true(pu.at("rusty_overcoat", 2)["hits_kaiju"])
 	assert_false(pu.at("rusty_overcoat", 1)["hits_kaiju"])
 
 
@@ -167,7 +167,7 @@ func test_no_power_up_the_kaiju_takes_nothing() -> void:
 
 # T-477: the overcoat never stops the enemy's own hit on the car.
 func test_a_minion_the_overcoat_kills_still_hits_the_car() -> void:
-	for tier in range(1, 5):
+	for tier in range(1, 3):
 		run.state.start_run()
 		_own(tier)
 		var m := _touching_minion()
@@ -179,7 +179,7 @@ func test_a_minion_the_overcoat_kills_still_hits_the_car() -> void:
 
 
 func test_a_weapon_damaged_minion_killed_on_touch_still_hits_the_car() -> void:
-	_own(3)
+	_own(2)
 	var m := _touching_minion()
 	m.take_damage(1.0, "neon_zone")
 	assert_false(m.is_dead())
@@ -190,7 +190,7 @@ func test_a_weapon_damaged_minion_killed_on_touch_still_hits_the_car() -> void:
 
 
 func test_invulnerability_still_stops_a_second_hit_with_and_without_overcoat() -> void:
-	for tier in [0, 3]:
+	for tier in [0, 2]:
 		run.state.start_run()
 		if tier > 0:
 			_own(tier)
@@ -208,9 +208,9 @@ func test_invulnerability_still_stops_a_second_hit_with_and_without_overcoat() -
 func test_the_kaiju_the_overcoat_kills_still_gets_its_hit_in() -> void:
 	# Killing the kaiju wins the run, and damage_car() does nothing once the run is over, so
 	# the proof is the hit going through while the kaiju has a little health left.
-	_own(4)
+	_own(2)
 	var k := _kaiju()
-	var dmg: float = pu.at("rusty_overcoat", 4)["contact_damage"]
+	var dmg: float = pu.at("rusty_overcoat", 2)["contact_damage"]
 	k.health = dmg + 1.0
 	var before: float = run.state.health
 	assert_true(k.contact_step(DT, run.car, run.state), "it hits the car")
