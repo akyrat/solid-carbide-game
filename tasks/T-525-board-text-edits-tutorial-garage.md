@@ -53,11 +53,11 @@ The board's review: play it from the ticket's folder (C:\solid-carbide-worktrees
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The seven texts have exactly the board's words (a test reads them from their files). (QA: pass / fail)
-- [ ] Tutorial slide 2 shows the new title and captions, and no caption where the board left it empty (screenshot). (QA: pass / fail)
-- [ ] The garage shows the new title and damage bonus description (screenshot). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content matches the new texts. (QA: pass / fail)
-- [ ] The text inventory and the tests that read these files pass (the agent runs the ones it touched). (QA: pass / fail)
+- [ ] The seven texts have exactly the board's words (a test reads them from their files). (QA: pass)
+- [ ] Tutorial slide 2 shows the new title and captions, and no caption where the board left it empty (screenshot). (QA: pass)
+- [ ] The garage shows the new title and damage bonus description (screenshot). (QA: pass)
+- [ ] docs/hud-and-menus.md Content matches the new texts. (QA: pass)
+- [ ] The text inventory and the tests that read these files pass (the agent runs the ones it touched). (QA: pass)
 
 ## Updates
 
