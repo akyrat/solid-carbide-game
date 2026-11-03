@@ -1,7 +1,7 @@
 ---
 id: T-531
 title: Minion deaths: death animation (code placeholder), physics green spill, knockable corpses that fade 2 s after their last hit
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -55,10 +55,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-03, Open → In progress
+
+Enemy agent: death animation placeholder, physics green spill, knockable corpses.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built. Corpse keeper (minion_corpses.gd), spill (minion_spill.gd), Minion corpse state, sprite death animation (code placeholder; art hook + frame layout in game/docs/enemies/minions.md 'Death': minion_death_{e,se,s,ne,n}.png, 8 frames 48x48 in a row, last frame = lying corpse). Numbers + reasons in enemies.json minion.death. Knockers: car (speed-scaled), bricks wave, wiper, Polarized wheel shock (via Bricks). Not the underglow (its ticks would pin corpses; open question in docs/enemies.md), gun/flame/molotov don't knock back. Caps: 24 whole corpses (oldest fades), 48 total, 80 droplets, 160 pools. Tests: tests/unit/enemies/test_minion_deaths.gd (23 pass); test_minions.gd's 'removed' assertion updated (corpse freed after fade). Full Godot set: 2761 tests, only my own one failed on first run (tolerance), fixed, rerun of that file passes. PERF: perf_sample_run (all weapons, from 2:00, 60 s, no vsync): corpses off mean 2.27 ms p99 8.79 max 21.5; on mean 2.16 p99 8.79 max 24.2 (weapons kill too few at once to matter; <=43 minions alive). Stress tools/corpse_bench.sh (kills 10 every 0.5 s with a 70-minion crowd, caps reached): corpse keeper step avg 0.4 ms, p99 1.4 ms; headless physics A/B is order-noisy (+-1.5 ms), so no clear loss. Screenshots: art-archive/T-531/screenshots (tools/death_shots.gd). Tools added: corpse_bench, death_shots, perf_sample_run --no-corpses. Note: Godot tests need GODOT_BIN since worktree has no .env.

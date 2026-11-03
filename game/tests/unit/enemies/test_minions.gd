@@ -305,6 +305,13 @@ func test_minion_dies_at_zero_health() -> void:
 	assert_eq(died.size(), 1, "dies once")
 	assert_false(spawner.minions.has(m), "no longer one of the run's minions")
 	assert_false(m.is_in_group("enemies"))
+	# T-531: the body stays as a corpse (tests/unit/enemies/test_minion_deaths.gd) and is freed
+	# when its 2 s and its fade are over.
+	assert_true(m.is_corpse(), "kept as a corpse")
+	spawner.enabled = true
+	spawner.visible_rect_override = Rect2(-100000, -100000, 200000, 200000)
+	for i in 160:
+		spawner.corpses.step(DT, run.car, Rect2())
 	await wait_process_frames(2)
 	assert_false(is_instance_valid(m), "removed")
 

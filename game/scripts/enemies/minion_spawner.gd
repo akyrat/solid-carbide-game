@@ -48,6 +48,7 @@ extends Node
 ## the heights, as before T-207.
 
 const MinionScript := preload("res://scripts/enemies/minion.gd")
+const CorpsesScript := preload("res://scripts/enemies/minion_corpses.gd")
 const MinionSpriteScript := preload("res://scripts/enemies/minion_sprite.gd")
 const CoinScript := preload("res://scripts/enemies/coin.gd")
 const CoinSpriteScript := preload("res://scripts/enemies/coin_sprite.gd")
@@ -118,6 +119,9 @@ var ground = null
 var navigation: RefCounted = null
 
 var minions: Array = []
+## T-531: the dead minions' bodies and their green spills (minion_corpses.gd); they are in no
+## list above, in no enemy group, and the weapons find them through the group "minion_corpses".
+var corpses = null
 var coins: Array = []
 ## The health pickups on the ground (T-220), found the way the coins are
 ## (also the group "health_pickups").
@@ -141,6 +145,7 @@ func _init() -> void:
 	_spawning = data.spawning()
 	_coins = data.coins()
 	_health_drops = data.health_drops()
+	corpses = CorpsesScript.new(data.minion_death())
 	_spawn_clock = INF
 	rng.randomize()
 
@@ -160,6 +165,7 @@ func bind(run: Node) -> void:
 	draw_root.y_sort_enabled = true
 	run.add_child(draw_root)
 	run.move_child(draw_root, run.view_root.get_index())
+	corpses.draw_root = draw_root
 	run.world_rebuilt.connect(_on_world_rebuilt)
 	if run.car != null:
 		_on_world_rebuilt()
@@ -169,12 +175,14 @@ func _on_world_rebuilt() -> void:
 	car = _run.car
 	map = _run.map
 	depth.set_map(map)
+	corpses.depth = depth
 	ground = null
 	navigation = null
 	var elevation = map.get("elevation") if map != null else null
 	if heights_enabled and elevation != null:
 		ground = elevation.ground_height
 		navigation = EnemyNavigationScript.for_map(map)
+	corpses.ground = ground
 	clear()
 
 
@@ -189,6 +197,7 @@ func clear() -> void:
 	for h in health_pickups:
 		if is_instance_valid(h):
 			h.queue_free()
+	corpses.clear()
 	minions.clear()
 	coins.clear()
 	health_pickups.clear()
@@ -318,6 +327,7 @@ func step(dt: float) -> void:
 	Perf.begin(&"minions.place_and_depth")
 	update_drawing()
 	Perf.end(&"minions.place_and_depth")
+	corpses.step(dt, car, _keep_rect())  # T-531
 	last_step_usec = Time.get_ticks_usec() - t0
 
 
@@ -554,6 +564,7 @@ func _on_minion_died(m: Node, at_units: Vector2) -> void:
 		state.enemy_slain(m.ENEMY_TYPE, m.last_hit_by)
 	minion_killed.emit(m, n)
 	if Perf.on: Perf.each_end(&"minions.death_drops")
+	corpses.adopt(m, at_units)  # T-531: the body stays, dying, as a corpse
 
 
 ## The visible screen, in the view's pixels (the camera's), or the override.
@@ -626,8 +637,7 @@ func is_free_spot(units: Vector2) -> bool:
 ## platform of T-405); that one is removed as before, so the rule is "has a path
 ## and is on another surface than the car" (before T-380 a path meant just that).
 func _despawn_far() -> void:
-	var v := visible_rect()
-	var keep := v.grow_individual(v.size.x, v.size.y, v.size.x, v.size.y)
+	var keep := _keep_rect()
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	var car_surface: int = navigation.surface_at(car_units) if navigation != null else -1
 	for m in minions.duplicate():
@@ -637,6 +647,13 @@ func _despawn_far() -> void:
 			continue
 		minions.erase(m)
 		m.queue_free()
+
+
+## The view's pixels a minion (or corpse) may be in: the visible screen and one more
+## screen round it.
+func _keep_rect() -> Rect2:
+	var v := visible_rect()
+	return v.grow_individual(v.size.x, v.size.y, v.size.x, v.size.y)
 
 
 ## Puts every sprite at its body's place in the view and in the depth order.

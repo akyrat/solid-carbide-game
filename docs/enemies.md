@@ -135,6 +135,18 @@ Following Drifting, Decisions, "Driving power-ups". Numbers: `game/data/power_up
 - **Repeat (proposal, open question for the board):** each enemy can be hit again only after the tier's `repeat_cooldown_seconds` (0.5 / 0.5 / 0.4 / 0.3 s), counted per enemy, so driving through a crowd hits each minion once per cooldown and a minion stuck to the car does not melt in one frame. The car's invulnerability after a hit does not stop it (that only protects the car).
 - **The kaiju (proposal, open question for the board):** hit only when the tier's `hits_kaiju` is true, which is tier 4 only; it then takes the tier's damage on the same repeat cooldown.
 
+### Minion deaths: an animation, a green spill, corpses (built in task T-531)
+
+Following Decisions, "Minion deaths". Numbers: `game/data/enemies.json`, `minion` > `death`, each a proposal for the board's playtest except the 2 seconds (reasons in that block's `_comment`). How it is built: `game/docs/enemies/minions.md`, "Death".
+
+- **The death animation (placeholder in code, PixelLab art by T-532):** the minion tips over sideways about its feet in 0.5 s, flattens and darkens a little, then lies. The frames T-532 delivers replace it per direction (`game/docs/enemies/minions.md`, "Death", lists the file names and frame layout).
+- **The spill:** 9 droplets burst out of the body in all directions (2.5 to 6 units a second along the ground, 4 to 8 up), fall under gravity and land after 0.3 to 0.7 s, 1 to 4 units away; each landing makes or feeds a small flat pool, which spreads out for a third of a second to at most 7 screen pixels across. Droplets land on the ground's real height: on a rooftop or a ramp the pool is drawn on it, and one thrown off an edge lands on the street below. It is hard-edged square pixels (2 screen pixels each), in a slimy acid green of its own (light 204,250,89; body 140,224,26; dark 77,140,20), clear of Greenbull's three brand greens.
+- **The corpse:** it stays where the minion died. The car drives into it and knocks it away from the car, as far as 0.25 units per unit of the car's speed, at least 1.5 and at most 8 units, and only when the car goes faster than 2 units a second. The bricks wave, the wiper and the Polarized Steering Wheel's shock knock it as far as they would a living minion (4 units at Bricks tier 1). Other weapons do not: the underglow ticks many times a second and would hold a corpse in place for good; the gun, the flamethrower and the molotovs are not knockback weapons. A knock is a slide that slows evenly to rest in 0.4 s (stopped by walls and rooftop edges).
+- **The fade:** 2 seconds after the corpse was last hit it fades out over 0.4 s and is freed, with its liquid. Every hit, even one while it fades, restarts the 2 seconds.
+- **What a corpse is not:** an enemy. It never damages the car, is never a weapon's target or aim, does not count as a kill again, is on no collision layer and blocks no minion's path. Coins and health drops fall at the moment of death, as before.
+- **Caps for big crowds (proposal):** at most 24 corpses that are not yet fading (the oldest starts to fade at once when a 25th dies), at most 48 counting the fading ones (past that the oldest is freed at once), at most 80 droplets and 160 pools alive; a death with no droplet room spills nothing.
+- **Open question for the board:** whether the underglow should knock corpses too (it would keep them from fading while a car sits in its glow).
+
 ## Open questions
 
 - Rusty Overcoat: is the per-enemy repeat cooldown right (0.5 / 0.5 / 0.4 / 0.3 s), and should the car hit the kaiju (tier 4 only now)? Both are proposals, judged in the board's playtest.

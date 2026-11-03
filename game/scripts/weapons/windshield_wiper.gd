@@ -202,11 +202,30 @@ func step(dt: float) -> void:
 				continue
 		last_hit[id] = [pass_index, 0.0]
 		_hit(e)
+	_knock_corpses(lo, hi, cooldown)
 	# Forget enemies hit in an earlier pass whose cooldown is over.
 	for id in last_hit.keys():
 		if int(last_hit[id][0]) != pass_index and float(last_hit[id][1]) >= cooldown - EPS:
 			last_hit.erase(id)
 	_update_drawing()
+
+
+## T-531: the arm also knocks minion corpses it sweeps over, on the same cooldown rule as a
+## living enemy (once a pass, and again only after the cooldown), restarting their fade timer.
+func _knock_corpses(lo: float, hi: float, cooldown: float) -> void:
+	for c in rack.corpses():
+		if not _touches_swept(c, lo, hi):
+			continue
+		var id: int = c.get_instance_id()
+		if last_hit.has(id):
+			var rec: Array = last_hit[id]
+			if int(rec[0]) == pass_index or float(rec[1]) < cooldown - EPS:
+				continue
+		last_hit[id] = [pass_index, 0.0]
+		var away: Vector2 = c.position_units() - car_units()
+		if away.length() < 0.001:
+			away = forward()
+		c.knock_by_weapon(away, float(stats["knockback_distance"]), weapon_id)
 
 
 ## Moves the arm one step, turning back at the ends (a new pass each time).
