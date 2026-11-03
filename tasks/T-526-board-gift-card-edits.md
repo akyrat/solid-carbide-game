@@ -89,9 +89,9 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 - [ ] Every text listed has exactly the board's words, trailing spaces trimmed (a test reads them from their files). (QA: pass; file texts match the list incl. the updated Rusty Paintjob line)
 - [ ] The power-up cards still fill their remaining {slots} with the tier's numbers, and a text without slots shows as written (test). (QA: pass)
-- [ ] Screenshots: a weapon gift pack and a power-up gift pack showing edited cards. (QA: fail: paperwork - no screenshots in art-archive/T-526/screenshots/)
+- [ ] Screenshots: a weapon gift pack and a power-up gift pack showing edited cards. (QA: pass; round 2: level_up_gift_pack.png and power_up_overlay.png present)
 - [ ] docs/hud-and-menus.md Content (and Weapons/Drifting where they quote card texts) match the new texts. (QA: pass)
-- [ ] The text inventory, level-up and power-up screen tests and the Python text checks pass. (QA: fail: code - Godot test_level_up_screen.gd test_t171s_texts_word_for_word still asserts old texts at lines 602-606 (underglow tier3 desc, molotov get desc, wiper tier4 desc, wiper tier3 title); 1 failing of 2738; Python tests pass)
+- [ ] The text inventory, level-up and power-up screen tests and the Python text checks pass. (QA: pass; round 2: qa_check tests all pass)
 
 ## Updates
 
