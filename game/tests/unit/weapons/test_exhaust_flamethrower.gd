@@ -522,7 +522,7 @@ func test_each_tier_sets_the_datas_values() -> void:
 ## reach is burnt only after the upgrade.
 func test_size_tiers_reach_further() -> void:
 	var car_y: float = _behind(0.0).y
-	for t in [2, 4, 6]:
+	for t in [2, 3]:  # T-520: the size tiers of the 5-tier tree
 		var before: Dictionary = data.flame_at(t - 1)
 		var after: Dictionary = data.flame_at(t)
 		assert_gt(after["size_multiplier"], before["size_multiplier"], "tier %d bigger" % t)
@@ -558,22 +558,22 @@ func test_tier_3_hotter_flame_deals_more_damage() -> void:
 	assert_almost_eq(float(e.damage_taken[0]), want, 1e-9, "2 x 1.2 = 2.4, not rounded")
 
 
-func test_tier_5_burn_flash_lasts_longer() -> void:
-	var short_s: float = data.flame_at(4)["burn_flash_seconds"]
-	var long_s: float = data.flame_at(5)["burn_flash_seconds"]
+func test_tier_4_burn_flash_lasts_longer() -> void:
+	var short_s: float = data.flame_at(3)["burn_flash_seconds"]
+	var long_s: float = data.flame_at(4)["burn_flash_seconds"]
 	assert_gt(long_s, short_s)
-	for t in [4, 5]:
+	for t in [3, 4]:
 		_fresh(t)
 		var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 		_hold(true, 1)
 		e.remove_from_group("enemies")
 		_hold(false, int(round(short_s / DT)) + 1)
-		if t == 4:
-			assert_false(flame.is_burning(e), "tier 4: flash over")
+		if t == 3:
+			assert_false(flame.is_burning(e), "tier 3: flash over")
 		else:
-			assert_true(flame.is_burning(e), "tier 5: still flashing")
+			assert_true(flame.is_burning(e), "tier 4: still flashing")
 			_hold(false, int(round((long_s - short_s) / DT)) + 1)
-			assert_false(flame.is_burning(e), "tier 5: over after its longer time")
+			assert_false(flame.is_burning(e), "tier 4: over after its longer time")
 
 
 func test_tier_7_steering_makes_the_car_turn_faster() -> void:
@@ -587,11 +587,11 @@ func test_tier_7_steering_makes_the_car_turn_faster() -> void:
 	assert_almost_eq(run.car.model.tuning.turn_speed, base * m, 1e-9, "applied once")
 
 
-func test_tier_8_always_on_without_drifting_at_full_size() -> void:
-	_fresh(7)
+func test_tier_5_always_on_without_drifting_at_full_size() -> void:
+	_fresh(4)
 	_hold(false, 1)
 	assert_false(flame.active)
-	_fresh(8)
+	_fresh(5)
 	_hold(false, 1)
 	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.3))
 	_hold(false, 1)

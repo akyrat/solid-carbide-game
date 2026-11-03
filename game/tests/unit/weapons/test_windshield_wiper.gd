@@ -399,17 +399,7 @@ func test_tier_4_changes_what_weapons_json_says() -> void:
 	_check_tier(4)
 
 
-func test_tier_5_changes_what_weapons_json_says() -> void:
-	_check_tier(5)
-
-
-func test_tier_6_changes_what_weapons_json_says() -> void:
-	_check_tier(6)
-
-
-func test_tier_7_changes_what_weapons_json_says() -> void:
-	_check_tier(7)
-
+# Tier 5 is the back wiper (test_one_wiper_below_tier_5_and_two_at_tier_5).
 
 
 const TIER_KEYS := {
@@ -423,28 +413,25 @@ const TIER_KEYS := {
 ## Applies tier `want` from code and checks the change weapons.json's tier list
 ## gives it (read from the file, not hard-coded), then plays it.
 func _check_tier(want: int) -> void:
-	var found := false
+	# T-520: a merged tier can have several entries; each key's change is the product of its entries.
+	var mult := {}
 	for entry in data.tiers("wiper"):
-		var t := int(entry["tier"])
-		if t != want:
+		if int(entry["tier"]) != want:
 			continue
-		found = true
 		var effect := String(entry["effect"])
-		var value := float(entry["value"])
 		var key: String = TIER_KEYS.get(effect, "")
-		assert_ne(key, "", "tier %d effect %s is known" % [t, effect])
-		wiper.set_tier(t - 1)
-		var before: Dictionary = wiper.stats.duplicate()
-		wiper.set_tier(t)
-		assert_eq(wiper.tier, t)
-		assert_almost_eq(float(wiper.stats[key]), float(before[key]) * value, 1e-9,
-			"tier %d: %s x %s" % [t, key, value])
-		for other in TIER_KEYS.values():
-			if other != key:
-				assert_almost_eq(float(wiper.stats[other]), float(before[other]), 1e-9,
-					"tier %d leaves %s alone" % [t, other])
-		_check_tier_in_play(t, key, before)
-	assert_true(found, "weapons.json has a wiper tier %d" % want)
+		assert_ne(key, "", "tier %d effect %s is known" % [want, effect])
+		mult[key] = float(mult.get(key, 1.0)) * float(entry["value"])
+	assert_false(mult.is_empty(), "weapons.json has a wiper tier %d" % want)
+	wiper.set_tier(want - 1)
+	var before: Dictionary = wiper.stats.duplicate()
+	wiper.set_tier(want)
+	assert_eq(wiper.tier, want)
+	for key in TIER_KEYS.values():
+		assert_almost_eq(float(wiper.stats[key]), float(before[key]) * float(mult.get(key, 1.0)), 1e-9,
+			"tier %d: %s x %s" % [want, key, mult.get(key, 1.0)])
+	for key in mult:
+		_check_tier_in_play(want, key, before)
 
 
 ## Plays the tier's change: a longer arm reaches an enemy the last tier did not,
@@ -560,16 +547,16 @@ func _to_tier(t: int) -> void:
 		rack.upgrade("wiper")
 
 
-func test_one_wiper_below_tier_8_and_two_at_tier_8() -> void:
-	assert_eq(data.max_tier("wiper"), 8)
-	assert_true(data.wiper_at(8)["back_wiper"])
-	assert_false(data.wiper_at(7)["back_wiper"])
-	_to_tier(7)
-	assert_null(wiper.back_wiper, "one wiper at tier 7")
+func test_one_wiper_below_tier_5_and_two_at_tier_5() -> void:
+	assert_eq(data.max_tier("wiper"), 5)
+	assert_true(data.wiper_at(5)["back_wiper"])
+	assert_false(data.wiper_at(4)["back_wiper"])
+	_to_tier(4)
+	assert_null(wiper.back_wiper, "one wiper at tier 4")
 	rack.upgrade("wiper")
-	assert_eq(wiper.tier, 8)
+	assert_eq(wiper.tier, 5)
 	var b = wiper.back_wiper
-	assert_not_null(b, "two wipers at tier 8")
+	assert_not_null(b, "two wipers at tier 5")
 	assert_true(b.is_back and b.is_owned())
 	for k in ["length", "sweep_degrees_per_second", "damage", "knockback_distance", "sweep_arc_degrees", "hit_cooldown"]:
 		assert_eq(float(b.stats[k]), float(wiper.stats[k]), k)
@@ -578,24 +565,24 @@ func test_one_wiper_below_tier_8_and_two_at_tier_8() -> void:
 	assert_lt(b.forward().dot(wiper.forward()), -0.999, "faces the other way")
 	assert_lt((b.pivot_units() - _car()).dot(wiper.forward()), 0.0, "pivot at the tail")
 	assert_lt((b.tip_units() - _car()).dot(wiper.forward()), 0.0, "tip behind the car")
-	wiper.set_tier(7)
-	assert_false(b.is_owned(), "lost below tier 8")
+	wiper.set_tier(4)
+	assert_false(b.is_owned(), "lost below tier 5")
 
 
-func test_back_wiper_hits_an_enemy_behind_only_at_tier_8() -> void:
-	_to_tier(7)
+func test_back_wiper_hits_an_enemy_behind_only_at_tier_5() -> void:
+	_to_tier(4)
 	var behind := _place(FakeBigEnemy.new(), _car() - wiper.forward() * 3.5)
 	behind.radius_units = 0.3
 	_step(_steps_for(_pass_seconds() * 3.0))
-	assert_eq(behind.damage_taken.size(), 0, "tier 7: nothing behind is hit")
+	assert_eq(behind.damage_taken.size(), 0, "tier 4: nothing behind is hit")
 	rack.upgrade("wiper")
 	_step(_steps_for(_pass_seconds() * 3.0))
-	assert_gt(behind.damage_taken.size(), 0, "tier 8: the back wiper hits it")
+	assert_gt(behind.damage_taken.size(), 0, "tier 5: the back wiper hits it")
 	assert_eq(float(behind.damage_taken[0]), float(wiper.stats["damage"]))
 
 
 func test_back_wiper_has_its_own_hit_cooldown_and_mirrors_the_front() -> void:
-	_to_tier(8)
+	_to_tier(5)
 	var b = wiper.back_wiper
 	assert_almost_eq(b.sweep_angle, wiper.sweep_angle, 1e-9, "same sweep angle")
 	# A true mirror across the car's cross axis: the arm's along-car part is opposite, the sideways part the same-sign flip.
@@ -614,7 +601,7 @@ func test_back_wiper_has_its_own_hit_cooldown_and_mirrors_the_front() -> void:
 
 
 func test_back_wiper_draws_with_the_same_art() -> void:
-	_to_tier(8)
+	_to_tier(5)
 	_step(2)
 	var b = wiper.back_wiper
 	assert_not_null(b.drawing)

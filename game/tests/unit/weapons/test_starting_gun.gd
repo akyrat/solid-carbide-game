@@ -282,17 +282,17 @@ func test_several_targets_spread_when_the_stats_say_so() -> void:
 	assert_false(shots.any(func(x): return x[1] == d), "the 4th closest is never aimed at")
 
 
-## T-496: no tier of the gun uses set_targets, its max_tier is 8, and at tier 8 the volley
+## T-496: no tier of the gun uses set_targets, its max_tier is 5 (T-520), and at tier 5 the volley
 ## (4 bullets, x4 fire rate) stays on one target at a time.
-func test_no_gun_tier_sets_targets_and_tier_8_aims_at_one_at_a_time() -> void:
+func test_no_gun_tier_sets_targets_and_tier_5_aims_at_one_at_a_time() -> void:
 	for t in data.tiers("gun"):
 		assert_ne(String(t["effect"]), "set_targets", "tier %d" % int(t["tier"]))
-	assert_eq(data.max_tier("gun"), 8)
-	for t in range(1, 9):
+	assert_eq(data.max_tier("gun"), 5)
+	for t in range(1, 6):
 		assert_eq(int(data.gun_at(t)["targets"]), 1, "tier %d: one target" % t)
 	var near: Node = _minion(Vector2(3.0, 0.0), 1000.0)
 	var second: Node = _minion(Vector2(0.0, -7.0), 1000.0)
-	gun.set_tier(8)
+	gun.set_tier(5)
 	_run_for(gun.fire_interval() + 0.2)
 	assert_eq(shots.size(), 4)
 	for x in shots:
@@ -300,9 +300,9 @@ func test_no_gun_tier_sets_targets_and_tier_8_aims_at_one_at_a_time() -> void:
 	assert_eq(second.health, 1000.0, "the second closest untouched")
 
 
-## T-496: at tier 8, a bullet whose target died before it left aims at the closest living enemy.
-func test_tier_8_a_dead_target_hands_the_next_bullet_to_the_closest_living() -> void:
-	gun.set_tier(8)
+## T-496: at tier 5, a bullet whose target died before it left aims at the closest living enemy.
+func test_tier_5_a_dead_target_hands_the_next_bullet_to_the_closest_living() -> void:
+	gun.set_tier(5)
 	var near: Node = _minion(Vector2(3.0, 0.0), 1000.0)
 	var second: Node = _minion(Vector2(0.0, -7.0), 1000.0)
 	var third: Node = _minion(Vector2(9.0, 0.0), 1000.0)
@@ -328,7 +328,7 @@ func test_no_bullets_fires_nothing() -> void:
 
 
 func test_every_tier_applies_the_data_values() -> void:
-	assert_eq(gun.max_tier(), 8, "the gun's own last tier")
+	assert_eq(gun.max_tier(), 5, "the gun's own last tier (T-520)")
 	assert_eq(gun.max_tier(), data.max_tier("gun"))
 	for t in range(1, gun.max_tier() + 1):
 		gun.set_tier(t)
@@ -336,38 +336,39 @@ func test_every_tier_applies_the_data_values() -> void:
 		for key in want:
 			assert_eq(gun.stats[key], want[key], "tier %d %s" % [t, key])
 	assert_false(gun.upgrade(), "no upgrade past the last tier")
-	assert_eq(gun.tier, 8)
+	assert_eq(gun.tier, 5)
 
 
 func test_upgrade_steps_through_the_tiers() -> void:
-	for t in range(2, 9):
+	for t in range(2, 6):
 		assert_true(rack.upgrade("gun"), "upgrade to tier %d" % t)
 		assert_eq(gun.tier, t)
 	assert_false(rack.upgrade("gun"))
 	assert_false(rack.upgrade("no_such_weapon"))
 
 
-func test_level_ups_offer_the_gun_up_to_tier_8() -> void:
-	gun.set_tier(7)
-	assert_true(rack.offers.available_offers().has("upgrade_gun"), "tier 7: offered")
-	gun.set_tier(8)
-	assert_false(rack.offers.available_offers().has("upgrade_gun"), "tier 8: the last")
+func test_level_ups_offer_the_gun_up_to_tier_5() -> void:
+	gun.set_tier(4)
+	assert_true(rack.offers.available_offers().has("upgrade_gun"), "tier 4: offered")
+	gun.set_tier(5)
+	assert_false(rack.offers.available_offers().has("upgrade_gun"), "tier 5: the last")
 
 
-func test_bullet_tiers_add_one_bullet() -> void:
+func test_bullet_tiers_add_bullets() -> void:
+	# T-520: tier 2 adds 2 bullets, tier 4 adds 1 (and a faster rate, which the bullets-per-volley count ignores).
 	_minion(Vector2(4.0, 0.0), 100000.0)
-	for t in [2, 3, 6]:
+	for t in [2, 4]:
 		gun.set_tier(t)
 		shots.clear()
 		gun.fire_clock = 0.0
 		_run_for(gun.fire_interval() + 0.4)
 		assert_eq(shots.size(), int(data.gun_at(t)["bullets"]), "tier %d bullets per volley" % t)
-		assert_eq(shots.size(), int(data.gun_at(t - 1)["bullets"]) + 1, "tier %d: +1 bullet" % t)
+		assert_gt(shots.size(), int(data.gun_at(t - 1)["bullets"]), "tier %d: more bullets" % t)
 
 
 func test_fire_rate_tiers_shorten_the_interval() -> void:
 	_minion(Vector2(4.0, 0.0), 100000.0)
-	for t in [4, 5, 7, 8]:
+	for t in [3, 4, 5]:
 		gun.set_tier(t)
 		shots.clear()
 		gun.fire_clock = 0.0
@@ -385,7 +386,7 @@ func test_range_stays_12_at_every_tier() -> void:
 	var at_13: Node = _minion(Vector2(13.0, 0.0), 100.0)
 	gun.set_tier(8)
 	_run_for(3.0)
-	assert_eq(shots.size(), 0, "tier 8: 13 units is still out of range (12)")
+	assert_eq(shots.size(), 0, "tier 5: 13 units is still out of range (12)")
 	assert_eq(at_13.health, 100.0)
 
 

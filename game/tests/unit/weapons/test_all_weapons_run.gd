@@ -68,7 +68,7 @@ func test_run_from_the_main_menu_with_all_five_weapons_for_60_seconds() -> void:
 	assert_gte(waited, RUN_SECONDS - 1.0, "about 60 seconds of run time passed")
 
 
-func test_repeated_level_ups_take_three_weapons_to_tier_8_with_valid_offers() -> void:
+func test_repeated_level_ups_take_three_weapons_to_tier_5_with_valid_offers() -> void:
 	var run: Node = await _start_run()
 	var rack: Node = run.weapons
 	var state: Node = run.state
@@ -80,16 +80,16 @@ func test_repeated_level_ups_take_three_weapons_to_tier_8_with_valid_offers() ->
 	pick.seed = 176
 	offers.rng.seed = 176
 	var level_ups := 0
-	var at_tier_8 := func() -> int:
+	var at_last_tier := func() -> int:
 		var n := 0
 		for id in WEAPONS:
-			if rack.get_weapon(id).tier >= 8:
+			if rack.get_weapon(id).tier >= 5:
 				n += 1
 		return n
-	while at_tier_8.call() < 3 and level_ups < 200:
+	while at_last_tier.call() < 3 and level_ups < 200:
 		var before := shown.size()
-		# run.json's max_level (12) allows only 11 real level-ups, fewer than the 21
-		# upgrades three weapons need to reach tier 8. Past the cap the choices
+		# run.json's max_level (13) allows 12 real level-ups; three weapons need 15 picks
+		# (getting it, then 4 upgrades each) to reach tier 5. Past the cap the choices
 		# open the way the gift pack opens them (RunState.open_choice).
 		if state.is_max_level():
 			state.open_choice(state.level)
@@ -109,7 +109,7 @@ func test_repeated_level_ups_take_three_weapons_to_tier_8_with_valid_offers() ->
 			assert_lt(w.tier, w.max_tier(), "%s is not offered at its last tier" % id)
 		assert_true(offers.choose(ids[pick.randi_range(0, ids.size() - 1)]))
 		assert_false(get_tree().paused, "the run resumes after the choice")
-	assert_gte(at_tier_8.call(), 3, "at least three weapons reached tier 8")
+	assert_gte(at_last_tier.call(), 3, "at least three weapons reached tier 5")
 	assert_lt(level_ups, 200, "within a sane number of level-ups")
 
 

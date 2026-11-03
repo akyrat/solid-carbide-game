@@ -1,7 +1,7 @@
 ---
 id: T-520
 title: Data: 5-tier weapons, 2-tier power-ups, sub goals for 12 gift packs in 3 minutes
-status: open
+status: in-qa
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-519]
+depends_on: []
 documents_affected: [docs/weapons.md, docs/drifting.md]
 files_to_read_first: [docs/weapons.md, docs/drifting.md, docs/game-loop-architecture.md, game/data/weapons.json, game/data/power_ups.json, game/data/run.json, tasks/README.md]
 files_expected_to_change: [game/data/weapons.json, game/data/power_ups.json, game/data/run.json, game/scripts/, game/tests/unit/, docs/weapons.md, docs/drifting.md]
@@ -54,10 +54,26 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-03, Open → In progress
+
+Texts (T-519) are in; data agent started on top of them.
+
+### 2026-11-03, In progress → In QA
+
+Data done: 5-tier weapons, 2-tier power-ups, 12 sub goals (2,360 subs, ~2:49 at 14 subs/s). Full test set passes; screenshots in art-archive/T-520.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. 
+DATA: weapons.json max_tier 5 (top level and each weapon), tiers 2 to 5 exactly as docs/weapons.md 'Shorter trees: 5 tiers', stacked numbers not rounded (gun +2 bullets / x1.44 / +1 bullet and x1.2 / x4; flame x1.56 / dmg x1.2 and size x1.3 / +2 s burn / always on; underglow x1.5 / dmg x2.25 / tick x0.5 / radius x1.3 PLACEHOLDER, marked in its _comment; molotov x1.56 / +2 / interval x0.56 / +1; wiper x1.56 / sweep x1.625 / knockback x1.5 and length x1.3 / back wiper; bricks x2.1 / x2.25 / x2.25 / widest wave, rings at the tier 4 radius 8.4). A merged tier with two kinds of upgrade has TWO ENTRIES WITH THE SAME tier NUMBER (gun 4, flame 3, wiper 4); WeaponData already adds every entry up to the tier, so no code change. One deviation: the underglow tick interval is the docs' x0.5, not the stacked 0.75 x 0.67 = 0.5025. power_ups.json: max_tier 2, tier 2 = old tier 4 for all 5 (old tiers 2 and 3 removed). Card texts: T-519's keys are read by the existing code; test_level_up_screen passes (49/49) with this data.
+SUB GOALS (run.json): max_level 13 (12 level-ups = 12 gift packs), xp_needed 30, 45, 60, 80, 100, 130, 165, 210, 265, 335, 420, 520 = 2,360 subs (was 11 level-ups, 3,501). New block build_pace (read by the unit test only): earning rate 14 subs/s = drifting ~60 percent of the time at an average x2 multiplier (10 x2 x0.6 = 12/s) + a trick every 8 s paying ~7.5 subs x2 (combo.json trick_subs, T-513: 5 or 10) = ~1.9/s. 14 x 180 s = 2,520 subs, so the 12th pack comes around 2:49 (2360/14 = 168.6 s). challenge_xp (old MVP map only) unchanged, level 13 row has xp_needed 0. T-521 needs to know: past level 13 the bar stops (is_max_level); the heal for a full sub goal once everything is maxed is NOT in data (no heal key in run.json; T-521 owns it and the 'weapon arrives at tier 2' rule and the 3-slot caps).
+CODE: no code needed changing: every tier count is read from data (WeaponData.max_tier, PowerUpData.max_tier = tiers size, GodMode.last_tier, Weapons.weapon_tier_at_start cap, level_up_offers, power_up_offers). Only comments in code still say 8 tiers (weapon.gd, level_up_offers.gd, bricks.gd, molotovs.gd, neon_underglow.gd, weapon_icons.gd 'up to x8'); left alone, harmless. The polarized power-up reasons in power_ups.json still say 'tier 4' in prose.
+COMMENTS: playtest.json comment about the kaiju at 7 minutes now says 3 (since T-521). enemies.json (minion ramp comment 'kaiju 7:00', growth_until_seconds 420) is T-522's, NOT touched. run.json time_up comment still says 8-minute timer (T-521's).
+DOCS: docs/weapons.md Content: new first section 'The 5-tier trees as built (task T-520)' (older 8-tier lists below stay as the record, said in the section); docs/drifting.md Content, 'Driving power-ups: the tiers' opens with the 2-tier values.
+TESTS: new game/tests/unit/test_four_minute_run_data.gd (6 tests: exact docs numbers per weapon/tier, tier 5 = old tier 8 power, underglow placeholder, power-ups 2 tiers with tier 2 = old tier 4, 12 sub goals fit 14 x 180, weapon_tier_at_start 99 and God mode cap at 5 weapons / 2 power-ups). Existing tests I updated because the 8-tier run, 4-tier power-ups or 12 levels no longer hold (purpose kept, numbers moved): test_weapon_data, test_enemy_data (kaiju time-to-kill cases moved to the new tiers), test_polarized_steering_wheel (tier 4 shock is now tier 2), test_rusty_overcoat, test_jump_power_up, run/test_power_up_offers, run/test_run_likes (total 2,360, cap 13, 12 level-ups), weapons/test_level_up_offers (29 offers per run = 4 gun + 5 x 5; T-521's tier-2 arrival and 3-slot caps will change that count), test_starting_gun, test_bricks, test_neon_underglow, test_exhaust_flamethrower, test_windshield_wiper (_check_tier handles two entries per tier), test_molotovs, test_size_grow, test_all_weapons_run, hud/test_hud_weapon_icons (x5). Full Godot suite run once in the worktree: 0 failing, TESTS PASSED (test_four_minute_run_data alone: 6/6).
+SCREENSHOTS: art-archive/T-520/screenshots/level_up_merged_tiers_a.png (gun tier 3 to 4 card 'Bundle and Trigger' +1 bullet and fire rate x1.2; wiper 'Shove and Stretch' knockback x1.5 and blades x1.3) and level_up_merged_tiers_b.png (flame 'Hotter, Wider Burn' damage +20 percent and area +30 percent; bricks 'Widest Wave'). Fixtures tests/fixtures/level_up_t520_a.tscn and _b.tscn.
+NOTE: running tests from a worktree needs GODOT_BIN in the environment (the worktree has no .env).

@@ -252,7 +252,9 @@ The board's "little side slip out of a drift" (Decisions). The values are **prop
 
 ### Driving power-ups: the tiers (task T-455, proposals)
 
-The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers each, every number a **proposal for the board's playtest** with its reason in the file (Game Data wrote them on the Driving & Drift Agent's behalf). Icons are fixed at `res://art/power_ups/<id>.png`; the files come with the art ticket.
+**Since T-520 each power-up has two tiers (tier 1 as below, tier 2 = the old tier 4, the last number of every list below; the tier 2 and 3 numbers in the lists are the record of the 4-tier build):** Rev Charge tier 2: 0.7 s charge, boost x1.9 for 1.5 s. Jump tier 2: takeoff 8, cooldown 1.1 s. Bouncy Bumpers tier 2: x2.6. Rusty Overcoat tier 2: 5 damage, 0.3 s repeat, hits the kaiju. Polarized Steering Wheel tier 2: +45% burst for 0.5 s and the Bricks shock (written "tier 4" in its section below, which is its last tier). `max_tier` is 2 in `game/data/power_ups.json` and God mode caps at 2. Unit test: `game/tests/unit/test_four_minute_run_data.gd`.
+
+The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers each until T-520, every number a **proposal for the board's playtest** with its reason in the file (Game Data wrote them on the Driving & Drift Agent's behalf). Icons are fixed at `res://art/power_ups/<id>.png`; the files come with the art ticket.
 
 - **Rev Charge:** charge time to full 1.6 / 1.3 / 1.0 / 0.7 s; boost speed ×1.5 / 1.6 / 1.75 / 1.9 for 0.8 / 1.0 / 1.2 / 1.5 s. Slow and short at first, so the idea shows; the top tier is cheap to use mid-drift.
 - **Jump:** takeoff speed 5 / 6 / 7 / 8 (hop height, hence airtime) with a cooldown of 2.0 / 1.7 / 1.4 / 1.1 s. The first hop is enough for the airtime missions, the third for an air 180, the fourth for an air 360.

@@ -384,6 +384,8 @@ func test_bricks_is_offered_and_its_upgrades_raise_the_boards_numbers() -> void:
 		for k in ["damage", "radius", "knockback_distance", "min_air_seconds", "cooldown", "rings"]:
 			assert_almost_eq(float(b.stats[k]), float(want[k]), 1e-9, "tier %d %s" % [t, k])
 	assert_true(b.is_max_tier())
+	assert_almost_eq(float(b.stats["radius"]), 4.0 * 2.1 * 3.0, 1e-9, "tier 5's radius (Widest Wave)")
+	assert_eq(int(b.stats["rings"]), 3)
 	_level_up()
 	assert_eq(shown.size(), b.max_tier() - 1, "nothing left to offer at the last tier")
 

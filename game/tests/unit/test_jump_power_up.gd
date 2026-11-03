@@ -124,7 +124,7 @@ func test_the_hop_uses_the_height_paths_signals() -> void:
 func test_the_hop_works_with_no_ground_source() -> void:
 	var car := _car(2, false)
 	var r: Array = _hop(car)
-	var want: float = JumpScript.airtime_for(6.0, CarHeightScript.GRAVITY) / car.model.dt
+	var want: float = JumpScript.airtime_for(8.0, CarHeightScript.GRAVITY) / car.model.dt
 	assert_almost_eq(float(r[0]), want, 1.5)
 	assert_gt(r[1], 1.0)
 	assert_false(car.airborne)

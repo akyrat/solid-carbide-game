@@ -3,8 +3,8 @@ extends GutTest
 ## the nose at least the threshold angle away from the travel: a speed burst, growing
 ## with the tier as in power_ups.json. Pressing W again facing roughly where the car
 ## moves, holding W throughout, a coast that lasts too long or has S in it: none.
-## Tier 4 also sends Bricks' tier 1 wave at the car (radius 4, damage 6, minions
-## pushed 4, the kaiju damaged and never pushed), owned Bricks or not; below tier 4
+## Tier 2 (the last, T-520; was tier 4) also sends Bricks' tier 1 wave at the car (radius 4, damage 6, minions
+## pushed 4, the kaiju damaged and never pushed), owned Bricks or not; below tier 2
 ## no wave. The burst plays the stronger motion lines.
 
 const CarScript := preload("res://scripts/driving/car.gd")
@@ -73,14 +73,14 @@ func _press_w(car) -> void:
 
 # --- The data ---------------------------------------------------------------------
 
-func test_power_ups_json_has_four_tiers_with_bursts_and_the_tier_4_shock() -> void:
+func test_power_ups_json_has_two_tiers_with_bursts_and_the_tier_2_shock() -> void:
 	assert_true(_data.ids().has(ID))
 	assert_true(PowerUpData.IDS.has(ID))
-	assert_eq(_data.max_tier(ID), 4)
+	assert_eq(_data.max_tier(ID), 2)
 	assert_eq(_data.icon(ID), "res://art/power_ups/polarized_steering_wheel.png")
 	assert_true(ResourceLoader.exists(_data.icon(ID)), "the placeholder icon exists")
-	var want := [1.2, 1.3, 1.4, 1.45]
-	for tier in range(1, 5):
+	var want := [1.2, 1.45]
+	for tier in range(1, 3):
 		var raw: Dictionary = _data.tiers(ID)[tier - 1]
 		assert_true(bool(raw.get("proposal", false)), "tier %d is a proposal" % tier)
 		assert_ne(String(raw.get("reason", "")), "", "tier %d has a reason" % tier)
@@ -88,7 +88,7 @@ func test_power_ups_json_has_four_tiers_with_bursts_and_the_tier_4_shock() -> vo
 		assert_almost_eq(float(t.burst_speed_multiplier), want[tier - 1], 1e-9, "tier %d burst" % tier)
 		assert_almost_eq(float(t.burst_seconds), 0.5, 1e-9)
 		assert_almost_eq(float(t.min_angle_degrees), 60.0, 1e-9)
-		assert_eq(int(t.shock_bricks_tier), 1 if tier == 4 else 0, "only tier 4 has the shock")
+		assert_eq(int(t.shock_bricks_tier), 1 if tier == 2 else 0, "only tier 2 has the shock")
 		var w = WheelScript.new()
 		w.set_tier(tier)
 		assert_almost_eq(w.burst_speed_multiplier, float(t.burst_speed_multiplier), 1e-9)
@@ -141,7 +141,7 @@ func test_the_threshold_is_the_datas_angle() -> void:
 
 
 func test_pressing_w_again_facing_roughly_where_it_moves_gives_none() -> void:
-	var car := _car(4)
+	var car := _car(2)
 	_steps(car, 100, true, false)
 	_steps(car, 15, false, false)  # a straight coast
 	_press_w(car)
@@ -155,7 +155,7 @@ func test_pressing_w_again_facing_roughly_where_it_moves_gives_none() -> void:
 
 
 func test_holding_w_throughout_gives_none() -> void:
-	var car := _car(4)
+	var car := _car(2)
 	_steps(car, 100, true, false)
 	# A held W + steer drift turns the nose far from the travel, but W is never pressed again.
 	_steps(car, 120, true, false, 1.0)
@@ -187,9 +187,9 @@ func test_too_long_a_coast_or_s_in_it_or_not_owned_gives_none() -> void:
 	assert_eq(plain.polarized.bursts_fired, 0, "not owned")
 
 
-func test_the_burst_grows_from_tier_1_to_4_as_in_the_data() -> void:
+func test_the_burst_grows_from_tier_1_to_2_as_in_the_data() -> void:
 	var speeds := []
-	for tier in range(1, 5):
+	for tier in range(1, 3):
 		var car := _car(tier)
 		_lift_and_steer(car, 75.0, 22)
 		var carried: float = maxf(car.model.total_speed(), car.tuning.forward_speed)
@@ -199,7 +199,7 @@ func test_the_burst_grows_from_tier_1_to_4_as_in_the_data() -> void:
 		assert_almost_eq(car.polarized.burst_speed, carried * mult, 1e-4, "tier %d burst speed" % tier)
 		assert_almost_eq(car.model.forward_speed(), carried * mult, 1e-4)
 		speeds.append(car.polarized.burst_speed)
-	for i in range(1, 4):
+	for i in range(1, 2):
 		assert_gt(speeds[i], speeds[i - 1], "tier %d is bigger than tier %d" % [i + 1, i])
 
 
@@ -236,7 +236,7 @@ func test_the_burst_shows_the_stronger_motion_lines() -> void:
 	assert_eq(fx.strong_count(), 0, "gone once the burst is over")
 
 
-# --- The tier 4 shock (in a run) ------------------------------------------------------
+# --- The tier 2 (last tier) shock (in a run) ------------------------------------------------------
 
 func _run() -> Node2D:
 	Bricks.playtest_override = 0
@@ -275,9 +275,9 @@ func _burst_with_enemies(run) -> Dictionary:
 	return {"near": near, "kaiju": kaiju, "far": far}
 
 
-func test_tier_4_burst_sends_one_bricks_tier_1_wave_without_bricks() -> void:
+func test_tier_2_burst_sends_one_bricks_tier_1_wave_without_bricks() -> void:
 	var run := _run()
-	_give(run, 4)
+	_give(run, 2)
 	assert_false(run.weapons.bricks.is_owned(), "the car does not own Bricks")
 	var waves := []
 	run.polarized_shock.shock_sent.connect(func(c, n): waves.append([c, n]))
@@ -296,12 +296,12 @@ func test_tier_4_burst_sends_one_bricks_tier_1_wave_without_bricks() -> void:
 	assert_eq(run.polarized_shock.last_wave().get_parent(), run.weapons.draw_root, "as a rack projectile")
 
 
-func test_tier_4_shock_is_the_tier_1_wave_even_with_bricks_owned_at_its_top_tier() -> void:
+func test_tier_2_shock_is_the_tier_1_wave_even_with_bricks_owned_at_its_top_tier() -> void:
 	var run := _run()
 	while run.weapons.upgrade("bricks"):
 		pass
 	assert_eq(run.weapons.bricks.tier, run.weapons.bricks.max_tier())
-	_give(run, 4)
+	_give(run, 2)
 	var e := _burst_with_enemies(run)
 	assert_eq(run.polarized_shock.shocks, 1)
 	assert_almost_eq(run.polarized_shock.bricks.radius(), 4.0, 1e-9, "still radius 4")
@@ -311,9 +311,9 @@ func test_tier_4_shock_is_the_tier_1_wave_even_with_bricks_owned_at_its_top_tier
 	assert_eq(e.far.damage_taken.size(), 0)
 
 
-func test_below_tier_4_a_burst_sends_no_wave() -> void:
+func test_below_tier_2_a_burst_sends_no_wave() -> void:
 	var run := _run()
-	_give(run, 3)
+	_give(run, 1)
 	var e := _burst_with_enemies(run)
 	assert_eq(run.car.polarized.bursts_fired, 1, "a burst")
 	assert_eq(run.polarized_shock.shocks, 0, "no wave")
