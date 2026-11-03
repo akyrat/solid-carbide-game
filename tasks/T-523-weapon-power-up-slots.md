@@ -1,7 +1,7 @@
 ---
 id: T-523
 title: Weapon and power-up slots: 3-slot grids with tier pips
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, docs/visual-style.md, game/scripts/hud/hud.gd, tasks/README.md]
 files_expected_to_change: [game/scripts/hud/, game/data/hud.json, game/tests/unit/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: weapon and power-up slots.
 ### 2026-11-03, In progress → In QA
 
 Weapon and power-up 3-slot grids with tier pips are in, tests pass, screenshots in art-archive/T-523/screenshots.
+
+### 2026-11-03, In QA → Needs playtest
+
+QA passed; play it in T-521's combined 4-minute-run build.
 
 ## Style review
 
