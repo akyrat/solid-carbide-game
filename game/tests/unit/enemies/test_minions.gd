@@ -128,28 +128,28 @@ func test_a_new_minion_appears_beyond_the_screen_edge_on_the_street() -> void:
 		assert_true(spawner.is_free_spot(q), "not on a building or boulder")
 
 
-func test_spawn_interval_at_the_start_at_7_minutes_and_between() -> void:
+func test_spawn_interval_at_the_start_at_the_boss_time_and_between() -> void:
 	var s := data.spawning()
 	var start: float = s["spawn_interval_at_start_seconds"]
 	var boss: float = s["spawn_interval_at_boss_time_seconds"]
 	var until: float = s["growth_until_seconds"]
-	assert_eq(until, 420.0, "the kaiju's arrival, 7:00")
+	assert_true(until <= RunState.RUN_SECONDS - RunState.BOSS_TIME_LEFT, "peaks by the kaiju's arrival (T-522: 3:00)")
 	assert_almost_eq(spawner.spawn_interval(), start, 0.0001, "the data's interval at the start")
 	# Halfway (3:30): the rate is the average of the two rates.
 	run.state.advance(until / 2.0 - run.state.time_elapsed())
 	assert_almost_eq(spawner.spawn_interval(), 1.0 / ((1.0 / start + 1.0 / boss) / 2.0), 0.0001, "halfway")
 	assert_true(spawner.spawn_interval() < start and spawner.spawn_interval() > boss, "between the two")
-	# 7:00 and after: the data's interval at the kaiju's arrival, held.
+	# The kaiju's arrival and after: the data's interval at the kaiju's arrival, held.
 	run.state.advance(until - run.state.time_elapsed())
-	assert_almost_eq(spawner.spawn_interval(), boss, 0.0001, "the data's interval at 7:00")
+	assert_almost_eq(spawner.spawn_interval(), boss, 0.0001, "the data's interval at the growth end")
 	# The timer really runs at that interval late on: one at once, one per interval after.
 	var steps := int(round(boss / DT))
-	assert_eq(_spawned_over(1 + 10 * steps), 11, "11 in the first 10 intervals at 7:00")
+	assert_eq(_spawned_over(1 + 10 * steps), 11, "11 in the first 10 intervals at the peak")
 	run.state.advance(60.0)
 	assert_almost_eq(spawner.spawn_interval(), boss, 0.0001, "held during the kaiju's minute")
 	# The data's curve never slows down along the way.
 	var last := INF
-	for t in range(0, 481, 10):
+	for t in range(0, int(RunState.RUN_SECONDS) + 1, 10):
 		var v := data.spawn_interval(float(t))
 		assert_true(v <= last, "interval at %d s is not longer than the one before" % t)
 		last = v

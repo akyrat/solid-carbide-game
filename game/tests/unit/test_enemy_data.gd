@@ -7,6 +7,8 @@ extends GutTest
 # (no minion is closer than it), the flame is on the kaiju this share of the fight, and the
 # garage's damage bonus adds a percentage to every weapon's damage.
 const FLAME_ON_KAIJU_SHARE := 0.3
+# T-522: the share of a build's nominal damage that reaches the kaiju while the crowd is around.
+const KAIJU_SHARE := 0.5
 
 
 func test_loads_through_loader() -> void:
@@ -14,7 +16,7 @@ func test_loads_through_loader() -> void:
 	assert_true(r.ok, r.error)
 	var e := EnemyData.new()
 	assert_true(e.is_ok(), e.error)
-	assert_eq(float(GameData.unwrap(GameData.get_value(r.data, "kaiju.health"))), 500.0)
+	assert_eq(float(GameData.unwrap(GameData.get_value(r.data, "kaiju.health"))), 1500.0)  # T-522: paced for the 4-minute run
 	assert_false(GameData.get_value(r.data, "minion.armor").ok)
 
 
@@ -43,24 +45,30 @@ func test_every_section_has_its_numbers() -> void:
 	assert_true(e.coins().drop_chance <= 1.0)
 
 
-func test_spawning_speeds_up_over_the_7_minutes() -> void:
-	# T-443: the interval shortens from the start to the kaiju's arrival, then is held.
+func test_spawning_speeds_up_and_peaks_by_the_boss_time() -> void:
+	# T-443 / T-522: the interval shortens from the start to the kaiju's arrival, then is held.
 	var e := EnemyData.new()
+	var until: float = e.spawning()["growth_until_seconds"]
+	# The boss time comes from the run (RunState), not from a constant here: the growth peaks by then.
+	var boss_time := RunState.RUN_SECONDS - RunState.BOSS_TIME_LEFT
+	assert_gt(until, 0.0)
+	assert_true(until <= boss_time, "the growth peaks by the boss time (%s <= %s)" % [until, boss_time])
 	var start := e.spawn_interval(0.0)
-	var boss := e.spawn_interval(420.0)
+	var boss := e.spawn_interval(until)
 	assert_almost_eq(start, 1.2, 0.0001)
 	assert_almost_eq(boss, 0.3, 0.0001)
-	assert_almost_eq(e.spawn_interval(210.0), 0.48, 0.0001, "halfway: the average of the two rates")
+	assert_almost_eq(e.spawn_interval(until / 2.0), 0.48, 0.0001, "halfway: the average of the two rates")
 	var last := start
-	for s in range(0, 421, 10):
+	for s in range(0, int(RunState.RUN_SECONDS) + 1, 10):
 		var v := e.spawn_interval(float(s))
 		assert_true(v <= last, "interval at %d s is not longer than the one before" % s)
 		last = v
-	assert_almost_eq(e.spawn_interval(480.0), boss, 0.0001, "held in the kaiju's minute")
+	assert_almost_eq(e.spawn_interval(boss_time), boss, 0.0001, "at its peak when the kaiju arrives")
+	assert_almost_eq(e.spawn_interval(RunState.RUN_SECONDS), boss, 0.0001, "held in the kaiju's minute")
 	assert_eq(e.max_minions_alive(), 100)
-	# About how many come over the 7 minutes with no combo (the rate's average times 420 s).
-	var total := (1.0 / start + 1.0 / boss) / 2.0 * 420.0
-	assert_almost_eq(total, 875.0, 1.0)
+	# About how many come before the kaiju with no combo (the rate's average times the growth time).
+	var total := (1.0 / start + 1.0 / boss) / 2.0 * until
+	assert_gt(total, 100.0)
 
 
 func test_minion_stats_do_not_change_over_time() -> void:
@@ -87,7 +95,7 @@ func test_combo_shortens_the_interval() -> void:
 	assert_almost_eq(e.spawn_interval(0.0, combo.spawn_multiplier(combo.start_multiplier())), 1.2, 0.0001)
 	var top := combo.spawn_multiplier(combo.max_multiplier())
 	assert_almost_eq(top, 1.75, 0.0001)
-	assert_almost_eq(e.spawn_interval(420.0, top), 0.3 / 1.75, 0.0001)
+	assert_almost_eq(e.spawn_interval(float(e.spawning()["growth_until_seconds"]), top), 0.3 / 1.75, 0.0001)
 
 
 func test_expected_coins_per_kill() -> void:
@@ -120,40 +128,38 @@ func test_meteor_attacks_in_the_kaiju_minute() -> void:
 	assert_eq(times.size() * int(m.meteors_per_attack), 21)
 
 
-func test_kaiju_time_to_kill_matches_result_notes() -> void:
-	# [gun tier, flame tier (0 = no flame), garage damage bonus level, seconds]
-	# T-408 (2026-10-30): the gun's damage 4 (a minion's health). T-496 (2026-11-02): the board's
-	# own 8-tier gun (+1 bullet at 2, 3 and 6; fire rate x1.2 at 4, 5 and 7; x4 at 8; one target).
-	# The numbers are worked out from the data by _kaiju_seconds (500 health, flame 30% on target).
-	var cases := [
-		[1, 0, 0, 157.5],   # start of a run: the gun alone, never upgraded
-		[4, 4, 0, 33.5],    # average run (level 8): flame, gun tier 4, flame tier 4
-		[4, 4, 5, 26.8],    # the same with garage damage bonus level 5 (+25%)
-		[6, 6, 0, 23.2],    # top level (12): gun tier 6, flame tier 6
-		[8, 0, 0, 7.3],     # gun tier 8 (x4 fire rate), no flame
-		[8, 4, 10, 4.6],    # gun tier 8, flame tier 4, garage bonus maxed (+50%)
-		[7, 0, 0, 23.6],    # gun tier 7 alone
-	]
-	for c in cases:
-		assert_almost_eq(_kaiju_seconds(c[0], c[1], c[2]), c[3], 0.05,
-			"gun %d, flame %d, garage %d" % [c[0], c[1], c[2]])
-	# The average run brings it down inside the 60 seconds; the gun alone does not.
-	assert_lt(_kaiju_seconds(4, 4, 0), 60.0)
-	assert_gt(_kaiju_seconds(1, 0, 0), 60.0)
-
-
-func _kaiju_seconds(gun_tier: int, flame_tier: int, garage_level: int) -> float:
+func test_kaiju_time_to_kill_for_a_three_weapon_build() -> void:
+	# T-522 (the 4-minute run, 5-tier trees): a player at 3:00 has about 3 weapons near their last
+	# tier. The weapon data's last tier is the 5-tier trees' tier 5 (same power as the old tier 8),
+	# one tier short is tier 4 (old 7). Seconds = health / damage per second.
 	var w := WeaponData.new()
-	var g := w.gun_at(gun_tier)
-	var dps: float = g.bullets * g.damage / g.fire_interval
-	if flame_tier > 0:
-		var f := w.flame_at(flame_tier)
-		dps += f.damage / f.tick_interval * FLAME_ON_KAIJU_SHARE
-	var bonus := 0.0
-	if garage_level > 0:
-		bonus = float(GarageData.new().value("damage_bonus", garage_level)) / 100.0
-	dps *= 1.0 + bonus
-	return EnemyData.new().kaiju().health / dps
+	var last := w.max_tier("gun")
+	var hp: float = EnemyData.new().kaiju().health
+	var full := _build_dps(w, last, last)
+	var short := _build_dps(w, last - 1, last - 1)
+	# If everything lands, a full build kills it well inside the minute, a short one just does.
+	assert_lt(hp / full, 25.0, "full build, everything lands: about 19 s")
+	assert_lt(hp / short, 60.0, "gun one tier short, everything lands: inside the minute")
+	# The gun shares its aim with the crowd (closest first): at half effectiveness the full build
+	# still wins, but not trivially, and the short one does not finish.
+	assert_lt(hp / (full * KAIJU_SHARE), 60.0, "full build at half effectiveness: wins")
+	assert_gt(hp / (full * KAIJU_SHARE), 30.0, "...but not trivially")
+	assert_gt(hp / (short * KAIJU_SHARE), 60.0, "short build at half effectiveness: loses")
+	# The gun alone, never upgraded, is nowhere near.
+	assert_gt(hp / _gun_dps(w, 1), 60.0)
+
+
+# A 3-weapon build: the gun at `gun_tier`, the flame at `flame_tier` (its share on the kaiju) and
+# the underglow at its last tier (a third weapon, ticking on a kaiju it sits inside).
+func _build_dps(w: WeaponData, gun_tier: int, flame_tier: int) -> float:
+	var f := w.flame_at(flame_tier)
+	var u := w.underglow_at(w.max_tier("underglow") if w.max_tier("underglow") > 0 else 8)
+	return _gun_dps(w, gun_tier) + f.damage / f.tick_interval * FLAME_ON_KAIJU_SHARE + u.damage / u.tick_interval
+
+
+func _gun_dps(w: WeaponData, tier: int) -> float:
+	var g := w.gun_at(tier)
+	return g.bullets * g.damage / g.fire_interval
 
 
 func _sorted(a: Array) -> Array:

@@ -50,7 +50,7 @@ func _car_units() -> Vector2:
 	return run.car.position / 16.0
 
 
-## Moves the run's clock to boss time (7 minutes in), firing the signal.
+## Moves the run's clock to boss time, firing the signal.
 func _to_boss_time() -> void:
 	run.state.advance(RunState.RUN_SECONDS - RunState.BOSS_TIME_LEFT - run.state.time_elapsed() + 0.01)
 
