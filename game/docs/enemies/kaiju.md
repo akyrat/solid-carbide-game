@@ -8,7 +8,7 @@ Task T-045 (Enemy Behavior Agent): Crash City's final boss as Enemies, Decisions
 
 **See it:** start the game (F5) and press Start, or open `scenes/run/run.tscn` and press F6. With the playtest switch on (below) the kaiju walks in from a screen edge 30 seconds into the run; the starting gun (and the flamethrower, with T-042's `flamethrower_at_start` on) can kill it, which wins the run. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/kaiju_demo.tscn screenshots/kaiju.png 20` (the kaiju beside the car in the gravel square, with a few minions, in a run started from the main menu; fixture script `tests/fixtures/kaiju_demo.gd`). A copy is in `art-archive/T-045/screenshots/`.
 
-**Playtest switch: early arrival.** The boss time is 7 minutes in, so for playtests `data/playtest.json` (its other keys are other tasks' switches) can bring the kaiju's arrival forward:
+**Playtest switch: early arrival.** The boss time is the run's 1:00 left (3:00 in the 4-minute run), so for playtests `data/playtest.json` (its other keys are other tasks' switches) can bring the kaiju's arrival forward:
 
 ```
 "kaiju_early_arrival": { "enabled": true, "after_seconds": 30 }

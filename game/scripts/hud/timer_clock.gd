@@ -44,7 +44,7 @@ func _init() -> void:
 	grow_vertical = Control.GROW_DIRECTION_BEGIN
 	label = Label.new()
 	label.name = "Timer"
-	label.text = "8:00"
+	label.text = "%d:%02d" % [int(RunState.RUN_SECONDS) / 60, int(RunState.RUN_SECONDS) % 60]
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	HudStyle.apply(label, "clock_digits")
@@ -55,7 +55,7 @@ func _init() -> void:
 	digits.name = "Digits"
 	digits.source = label
 	add_child(digits)
-	set_time_left(480.0)
+	set_time_left(RunState.RUN_SECONDS)
 
 
 ## The step for a time left: the first whose `above_seconds` the time is above;

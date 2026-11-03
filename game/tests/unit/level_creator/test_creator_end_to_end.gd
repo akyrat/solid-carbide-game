@@ -2,7 +2,7 @@ extends GutTest
 ## Task T-240: the level creator end to end. From a creator with no levels: New level, one asset of
 ## every kind (ground tile, road, building, boulder, rooftops at 3 and 6, ramps 0 to 3 and 3 to 6),
 ## rotate, mirror and delete, a name, Save, Back to the list, the level is listed, Play: the run
-## starts on that file with 8:00 on the clock and minions spawning. Files go only into a temporary
+## starts on that file with 4:00 on the clock and minions spawning. Files go only into a temporary
 ## levels folder (RunPaths).
 
 const GameScene := preload("res://scenes/game/game.tscn")
@@ -87,14 +87,14 @@ func test_empty_creator_to_playing_the_level() -> void:
 		ProjectSettings.globalize_path(path)], output, true)
 	assert_eq(code, 0, "check_level.py: " + "\n".join(output))
 
-	# Play: the run is on that file, 8:00, minions spawn.
+	# Play: the run is on that file, 4:00, minions spawn.
 	c.list_screen.rows[0].play.pressed.emit()
 	var run: Node2D = c.run
 	assert_not_null(run)
 	assert_eq(run.layout_path, path)
 	assert_eq(str(run.map.layout.name), LEVEL_NAME)
 	assert_true(run.state.is_running())
-	assert_eq(run.state.time_left_text(), "8:00")
+	assert_eq(run.state.time_left_text(), "4:00")
 	for i in 40:
 		run.minions.step(0.25)
 		if run.minions.minions.size() > 0:

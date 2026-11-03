@@ -106,6 +106,8 @@ func _process(delta: float) -> void:
 func _on_level_up(new_level: int) -> void:
 	if state.pause_on_level_up:
 		return  # the old direct flow: the level-up opens its screen at once
+	if state.sub_goal_heals():
+		return  # T-521: every weapon maxed, the sub goal heals the car and no pack comes
 	send_helicopter(new_level)
 
 

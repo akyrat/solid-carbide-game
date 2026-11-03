@@ -1,6 +1,6 @@
 {
   "_comment": "Mission packs (Game loop architecture, Decisions, 'Mission packs', board 2026-10-31). The 5 fixed missions are the board's; every number in 'generator' is a proposal (Driving & Drift's call by the docs, written on its behalf by Game Data) for the board's playtest. A goal's kind is 'count' (shows 'n/amount') or 'seconds' (a duration, no progress shown). Trick ids are the ones TrickDetector emits (trick_detector.gd) plus thread_the_needle (thread_the_needle.gd).",
-  "total": 30,
+  "total": 12,
   "known_tricks": ["extended_drift", "three_sixty", "alternate_drift", "airtime", "air_one_eighty", "air_three_sixty", "thread_the_needle"],
   "fixed": [
     {"number": 1, "goals": [{"trick": "extended_drift", "kind": "seconds", "amount": 2, "note": "one unbroken drift of 2 seconds"}]},
@@ -11,27 +11,27 @@
   ],
   "generator": {
     "first_mission": 6,
-    "last_mission": 30,
+    "last_mission": 12,
     "proposal": true,
-    "reason": "Missions 6 to 30 are random each run (board). Amounts start near the fixed missions' level and grow in a straight line to about 2.5 times by mission 30, so the late missions are a real push but stay doable inside a 5 minute run.",
+    "reason": "Missions 6 to 12 are random each run (board). T-521 (4-minute run, 3 minutes to build): a run is now 12 missions (was 30), since 3 power-ups at 2 tiers are only 6 gifts and a good run finishes about one mission every 15 seconds. The growth per mission is about 2.5 times the old one, so the amounts still reach the old late-run size by mission 12.",
     "goals_per_mission": {
       "proposal": true,
       "reason": "One goal early so a new mission stays quick to read; more goals later make late missions take longer. Each range is mission numbers (first, last) with how many goals.",
       "ranges": [
-        {"from": 6, "to": 14, "goals": 1},
-        {"from": 15, "to": 24, "goals": 2},
-        {"from": 25, "to": 30, "goals": 3}
+        {"from": 6, "to": 8, "goals": 1},
+        {"from": 9, "to": 11, "goals": 2},
+        {"from": 12, "to": 12, "goals": 3}
       ],
       "distinct_tricks_in_a_mission": true
     },
     "tricks": [
-      {"trick": "extended_drift", "kind": "seconds", "base": 5, "growth_per_mission": 0.2, "max": 10, "proposal": true, "reason": "Starts just above the fixed 4 s drift; a drift past 10 s is hard to hold on the map."},
-      {"trick": "alternate_drift", "kind": "count", "base": 12, "growth_per_mission": 0.8, "max": 32, "proposal": true, "reason": "Starts above the fixed 10; alt drifts chain quickly, so the amount can double."},
-      {"trick": "three_sixty", "kind": "count", "base": 2, "growth_per_mission": 0.2, "max": 7, "proposal": true, "reason": "A ground 360 is a deliberate move; few are asked for."},
-      {"trick": "airtime", "kind": "seconds", "base": 4, "growth_per_mission": 0.25, "max": 10, "proposal": true, "reason": "Starts above the fixed 3 s; the Jump power-up counts, so it is reachable for cars that took it."},
-      {"trick": "air_one_eighty", "kind": "count", "base": 4, "growth_per_mission": 0.3, "max": 11, "proposal": true, "reason": "Starts above the fixed 3; needs ramps or the Jump power-up."},
-      {"trick": "air_three_sixty", "kind": "count", "base": 2, "growth_per_mission": 0.12, "max": 5, "proposal": true, "reason": "The hardest air trick; the fixed mission asks for 1, so the cap stays low."},
-      {"trick": "thread_the_needle", "kind": "count", "base": 3, "growth_per_mission": 0.25, "max": 9, "proposal": true, "reason": "The board's own example goal is 3 needles; it depends on the map's gaps, so the cap is modest."}
+      {"trick": "extended_drift", "kind": "seconds", "base": 5, "growth_per_mission": 0.5, "max": 10, "proposal": true, "reason": "Starts just above the fixed 4 s drift; a drift past 10 s is hard to hold on the map."},
+      {"trick": "alternate_drift", "kind": "count", "base": 12, "growth_per_mission": 2, "max": 32, "proposal": true, "reason": "Starts above the fixed 10; alt drifts chain quickly, so the amount can double."},
+      {"trick": "three_sixty", "kind": "count", "base": 2, "growth_per_mission": 0.5, "max": 7, "proposal": true, "reason": "A ground 360 is a deliberate move; few are asked for."},
+      {"trick": "airtime", "kind": "seconds", "base": 4, "growth_per_mission": 0.62, "max": 10, "proposal": true, "reason": "Starts above the fixed 3 s; the Jump power-up counts, so it is reachable for cars that took it."},
+      {"trick": "air_one_eighty", "kind": "count", "base": 4, "growth_per_mission": 0.75, "max": 11, "proposal": true, "reason": "Starts above the fixed 3; needs ramps or the Jump power-up."},
+      {"trick": "air_three_sixty", "kind": "count", "base": 2, "growth_per_mission": 0.3, "max": 5, "proposal": true, "reason": "The hardest air trick; the fixed mission asks for 1, so the cap stays low."},
+      {"trick": "thread_the_needle", "kind": "count", "base": 3, "growth_per_mission": 0.62, "max": 9, "proposal": true, "reason": "The board's own example goal is 3 needles; it depends on the map's gaps, so the cap is modest."}
     ]
   }
 }

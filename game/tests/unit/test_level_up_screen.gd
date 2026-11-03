@@ -24,6 +24,8 @@ func before_each() -> void:
 	pause = PauseScript.new()
 	run.add_child(pause)
 	pause.setup(run)
+	# T-521: these tests are about the cards, so the 3-weapon cap is lifted (it is tested in test_four_minute_run.gd).
+	run.weapons.slot_rules._data["max_weapons"] = 99
 	_only_gun_and_flamethrower_left()
 
 
@@ -130,7 +132,7 @@ func test_pressing_a_cards_click_area_takes_it_and_closes() -> void:
 	offers.offer_taken.connect(func(id): taken.append(id))
 	_card("get_flamethrower").click.pressed.emit()
 	assert_eq(taken, ["get_flamethrower"])
-	assert_eq(run.weapons.flamethrower.tier, 1, "applied")
+	assert_eq(run.weapons.flamethrower.tier, 2, "applied: a new weapon arrives at tier 2 (T-521)")
 	assert_false(screen.visible)
 	assert_false(get_tree().paused, "the run resumes")
 	assert_false(state.is_waiting_for_choice())
@@ -188,7 +190,7 @@ func test_enter_takes_the_highlighted_card() -> void:
 	var id: String = screen.cards[1].id
 	_key(KEY_ENTER)
 	assert_eq(id, "get_flamethrower")
-	assert_eq(run.weapons.flamethrower.tier, 1, "the second card, the flamethrower")
+	assert_eq(run.weapons.flamethrower.tier, 2, "the second card, the flamethrower")
 	assert_false(get_tree().paused)
 
 
@@ -504,7 +506,7 @@ func test_a_key_pressed_during_the_animation_does_not_take_a_card_when_it_ends()
 	assert_eq(screen.highlight, 1, "fresh presses count once it ends")
 	_key(KEY_SPACE)
 	assert_false(screen.visible)
-	assert_eq(run.weapons.flamethrower.tier, 1)
+	assert_eq(run.weapons.flamethrower.tier, 2)
 
 
 func test_keyboard_and_mouse_work_after_the_animation() -> void:
@@ -515,7 +517,7 @@ func test_keyboard_and_mouse_work_after_the_animation() -> void:
 	assert_eq(screen.highlight, 1)
 	_key(KEY_ENTER)
 	assert_false(screen.visible)
-	assert_eq(run.weapons.flamethrower.tier, 1)
+	assert_eq(run.weapons.flamethrower.tier, 2)
 	_level_up()
 	# T-172: the second level-up's cards are drawn at random; press the first.
 	var id: String = screen.cards[0].id

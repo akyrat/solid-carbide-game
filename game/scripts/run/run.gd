@@ -389,7 +389,7 @@ func _ready() -> void:
 
 ## Starts a fresh run: a new map (every challenge open again, when challenges
 ## are on; meteor boulders from the last run gone), the car back
-## at the start, and the state reset (full health, 8:00, 0 coins).
+## at the start, and the state reset (full health, 4:00, 0 coins).
 ## `path`, when given, becomes the run's layout_path first (task T-230).
 func start_run(path: String = "") -> void:
 	Perf.begin(&"run.start_run")

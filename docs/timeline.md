@@ -3495,3 +3495,8 @@ Entry format:
 - Decision or change: Two 3-slot grids on the HUD, weapons and power-ups, with tier pips and empty frames.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-523
+
+## 2026-11-03: The 4-minute run
+- Decision or change: The kaiju arrives at 3:00 and the run ends at 4:00; at most 3 weapons and 3 power-ups, a new weapon arrives at tier 2, and once all 3 weapons are maxed a full sub goal heals 2 hearts. The board played the combined build and approved it.
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`
+- Tasks: T-521

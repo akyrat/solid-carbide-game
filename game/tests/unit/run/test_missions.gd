@@ -49,13 +49,13 @@ func _missions(seed_value: int) -> Array:
 	return m.missions
 
 
-# --- 30 missions: 5 fixed, 25 generated per seed ------------------------------------
+# --- The data's missions (12 since T-521): 5 fixed, the rest generated per seed ------------------------------------
 
-func test_a_new_run_has_30_missions_the_first_5_fixed_the_rest_by_seed() -> void:
+func test_a_new_run_has_the_datas_missions_the_first_5_fixed_the_rest_by_seed() -> void:
 	var fixed: Array = MissionData.new().fixed()
 	var sets: Array = [_missions(1), _missions(2), _missions(3)]
 	for s in sets:
-		assert_eq(s.size(), 30, "30 missions a run")
+		assert_eq(s.size(), MissionData.new().total(), "the data's missions a run")
 		for i in 5:
 			assert_eq(s[i].size(), fixed[i]["goals"].size(), "mission %d's goals" % (i + 1))
 			for g in s[i].size():
@@ -65,16 +65,16 @@ func test_a_new_run_has_30_missions_the_first_5_fixed_the_rest_by_seed() -> void
 	for i in 5:
 		assert_eq(sets[0][i], sets[1][i], "mission %d is the same for seeds 1 and 2" % (i + 1))
 		assert_eq(sets[0][i], sets[2][i], "mission %d is the same for seeds 1 and 3" % (i + 1))
-	assert_ne(sets[0].slice(5), sets[1].slice(5), "missions 6 to 30 differ between seeds 1 and 2")
+	assert_ne(sets[0].slice(5), sets[1].slice(5), "the generated missions differ between seeds 1 and 2")
 	assert_eq(_missions(7).slice(5), _missions(7).slice(5), "one seed gives the same set")
-	assert_eq(state.missions.count(), 30)
+	assert_eq(state.missions.count(), MissionData.new().total())
 	assert_eq(state.missions.current_number(), 1)
 
 
 func test_generated_missions_follow_the_rules() -> void:
 	var data := MissionData.new()
 	var s := _missions(99)
-	for n in range(6, 31):
+	for n in range(6, data.total() + 1):
 		var goals: Array = s[n - 1]
 		assert_eq(goals.size(), data.goals_for(n), "mission %d's goal count" % n)
 		var tricks := {}
@@ -204,9 +204,9 @@ func test_nothing_counts_when_the_run_is_not_going() -> void:
 	assert_eq(state.missions.current_number(), 1)
 
 
-func test_after_mission_30_nothing_more_is_offered() -> void:
+func test_after_the_last_mission_nothing_more_is_offered() -> void:
 	var m: RunMissions = state.missions
-	m.current = 29
+	m.current = m.count() - 1
 	m._load_current()
 	for g in m.current_goals():
 		if g["kind"] == "seconds" and g["trick"] == "extended_drift":
@@ -219,14 +219,14 @@ func test_after_mission_30_nothing_more_is_offered() -> void:
 		else:
 			for i in int(g["amount"]):
 				state.add_trick(g["trick"])
-	assert_eq(_of("mission"), [["mission", 29]])
+	assert_eq(_of("mission"), [["mission", m.count() - 1]])
 	assert_true(m.is_all_done())
 	assert_eq(m.current_index(), -1)
 	assert_eq(m.current_goals(), [])
 	events.clear()
 	state.add_trick("air_three_sixty")
 	_drift(10.0)
-	assert_eq(events, [], "nothing after mission 30")
+	assert_eq(events, [], "nothing after the last mission")
 
 
 # --- A new run, and the power-ups ---------------------------------------------------
@@ -286,7 +286,7 @@ func test_restart_from_the_pause_screen_starts_mission_1_with_no_power_ups() -> 
 	game.pause_screen.restart_pressed.emit()
 	var fresh: RunState = game.run.state
 	assert_eq(fresh.missions.current_number(), 1)
-	assert_eq(fresh.missions.count(), 30)
+	assert_eq(fresh.missions.count(), MissionData.new().total())
 	assert_eq(fresh.power_up_tier("bouncy_bumpers"), 0)
 	get_tree().paused = false
 	await wait_process_frames(1)

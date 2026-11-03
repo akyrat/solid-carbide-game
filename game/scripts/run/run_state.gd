@@ -1,6 +1,6 @@
 class_name RunState
 extends Node
-## The run's state (task T-036): the 8-minute clock, the car's health, the
+## The run's state (task T-036): the 4-minute clock, the car's health, the
 ## coins collected this run, and win and loss (Game loop architecture,
 ## Decisions). Task T-037 adds likes (XP) and levels: from completed
 ## challenges and from drifting, with level-ups and the level-up pause switch.
@@ -18,13 +18,12 @@ extends Node
 ## it by hand, for tests.
 ##
 ## The run's length and the boss's arrival are Game loop architecture,
-## Decisions ("A run lasts 8 minutes", "At the 7-minute mark the kaiju
-## spawns"), not balancing numbers, so they are constants here. The car's
+## Decisions ("A 4-minute run: 3 minutes to build, 1 minute of kaiju"), not balancing numbers, so they are constants here. The car's
 ## starting health and the XP numbers come from res://data/run.json (RunData).
 
-## The run lasts 8 minutes.
-const RUN_SECONDS := 480.0
-## The kaiju arrives when 7 minutes have passed (1:00 left).
+## The run lasts 4 minutes (3 minutes to build, then the kaiju; T-521).
+const RUN_SECONDS := 240.0
+## The kaiju arrives when 3 minutes have passed (1:00 left).
 const BOSS_TIME_LEFT := 60.0
 
 ## Clock comparisons allow this much rounding error from summing frame times.
@@ -41,7 +40,7 @@ const RunMissionsScript := preload("res://scripts/run/missions.gd")
 
 ## A fresh run has started (start_run). Every value is back at its start.
 signal run_started
-## 7 minutes have passed: the Enemy Behavior Agent spawns the kaiju on this.
+## 3 minutes have passed: the Enemy Behavior Agent spawns the kaiju on this.
 ## Fires once per run.
 signal boss_time
 ## The run is over. `result` is "win" or "loss"; `coins` is this run's total,
@@ -67,6 +66,9 @@ signal score(amount: float, challenge_id: String)
 ## The player reached `new_level`. Fires once per level, even when one gain
 ## gives several level-ups.
 signal level_up(new_level: int)
+## A full sub goal healed the car instead of dropping a gift pack, because every owned
+## weapon is at its last tier (T-521): `hearts` is what it restored (may be 0 at full hearts).
+signal sub_goal_healed(hearts: float)
 ## The switch is on and the run is now paused for the weapon choice of
 ## `new_level` (T-052 opens its screen on this). With several level-ups at
 ## once, it fires again for the next level after each choice_made().
@@ -225,6 +227,11 @@ var _likes_total := 0.0
 ## Set by the weapon rack (weapons.gd bind): returns {weapon id: tier} for the
 ## weapons the car owns now. Empty Callable when no rack is bound.
 var weapons_source := Callable()
+## Asks the weapons whether the car owns the most weapons it may and every one is at its
+## last tier (T-521; Weapons sets it). Not set (no weapons): false.
+var weapons_maxed_source := Callable()
+## The 4-minute run's caps and the heal (data/slots.json, T-521).
+var slot_rules := SlotRules.new()
 ## The recap as it stood when the run ended (empty while a run is going).
 var _final_recap := {}
 
@@ -238,7 +245,7 @@ func _init(run_data: RunData = null, combo_data: ComboData = null) -> void:
 	missions = RunMissionsScript.new()
 
 
-## Starts a fresh run from the start: full health, 8:00, 0 coins.
+## Starts a fresh run from the start: full health, 4:00, 0 coins.
 func start_run() -> void:
 	if _run_data == null:
 		_run_data = RunData.new()
@@ -342,12 +349,12 @@ func time_elapsed() -> float:
 
 
 ## The time left in whole seconds, rounded up, as a clock shows it
-## (8:00 at the start, 0:01 in the last second).
+## (4:00 at the start, 0:01 in the last second).
 func shown_seconds() -> int:
 	return int(ceil(time_left - EPSILON)) if time_left > 0.0 else 0
 
 
-## The time left as M:SS, for example "8:00" or "0:59".
+## The time left as M:SS, for example "4:00" or "0:59".
 func time_left_text() -> String:
 	var s := shown_seconds()
 	return "%d:%02d" % [s / 60, s % 60]
@@ -728,8 +735,28 @@ func _gain_xp(amount: float) -> void:
 	xp_changed.emit(xp, xp_needed(), level)
 	for l in reached:
 		level_up.emit(l)
-		if pause_on_level_up:
+		if sub_goal_heals():
+			heal_for_sub_goal()
+		elif pause_on_level_up:
 			open_choice(l)
+
+
+## True when a full sub goal heals the car instead of giving a gift pack: every weapon the
+## car may own is owned and at its last tier (T-521; Game loop architecture, Decisions,
+## "A 4-minute run"). The gift pack drop checks it too, so no helicopter comes.
+func sub_goal_heals() -> bool:
+	return weapons_maxed_source.is_valid() and bool(weapons_maxed_source.call())
+
+
+## Heals the car by slots.json's heal_hearts (a full sub goal with every weapon maxed) and
+## sends sub_goal_healed. Not while wrecked (the wreck is only undone by a health pickup).
+## Returns the hearts restored.
+func heal_for_sub_goal() -> float:
+	if not running or wrecked:
+		return 0.0
+	var restored := heal_car(slot_rules.heal_hearts())
+	sub_goal_healed.emit(restored)
+	return restored
 
 
 ## Starts the weapon choice for `level_reached` (T-144: the gift pack calls it

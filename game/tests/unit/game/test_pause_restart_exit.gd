@@ -46,7 +46,7 @@ func test_restart_starts_a_fresh_run_and_cancels_the_old_one() -> void:
 	game.pause_screen.restart_button.pressed.emit()
 	assert_ne(game.run, old)
 	assert_true(game.run.state.is_running())
-	assert_eq(game.run.state.time_left_text(), "8:00")
+	assert_eq(game.run.state.time_left_text(), "4:00")
 	assert_eq(game.run.state.coins, 0)
 	assert_eq(game.progress.coins, 0, "the cancelled run's coins are lost (board, 2026-10-30)")
 	assert_eq(game.history.count(), 0, "no runs-list entry")

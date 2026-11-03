@@ -146,13 +146,22 @@ func test_the_polarized_steering_wheel_is_a_mission_gift() -> void:
 			drawn = true
 			break
 	assert_true(drawn, "some gift draws it")
-	for id in ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat"]:
+	# T-521: with 3 owned the gifts only upgrade those, so the wheel is drawn while 2 are owned.
+	for id in ["rev_charge", "jump"]:
 		_max_out(id)
+	assert_true(offers.available_offers().has("polarized_steering_wheel"))
+	var drawn_now := false
+	for s in 60:
+		offers.rng.seed = s
+		if offers.compute_offers().has("polarized_steering_wheel"):
+			drawn_now = true
+			break
+	assert_true(drawn_now, "a gift still draws it with 2 power-ups owned")
 	state.missions.mission_completed.emit(4)
 	assert_eq(ready_calls.size(), 1)
-	assert_eq(ready_calls[0][1], ["polarized_steering_wheel"])
+	assert_true(ready_calls[0][1].has("polarized_steering_wheel"))
 	assert_true(offers.choose("polarized_steering_wheel"))
 	assert_eq(state.power_up_tier("polarized_steering_wheel"), 1, "taking it gives tier 1")
 	_max_out("polarized_steering_wheel")
-	assert_eq(state.power_up_tier("polarized_steering_wheel"), 2)
-	assert_false(offers.available_offers().has("polarized_steering_wheel"), "never past tier 2")
+	assert_eq(state.power_up_tier("polarized_steering_wheel"), data.max_tier("polarized_steering_wheel"))
+	assert_false(offers.available_offers().has("polarized_steering_wheel"), "never past its last tier")

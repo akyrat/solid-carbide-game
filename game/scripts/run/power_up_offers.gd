@@ -84,7 +84,11 @@ func available_offers() -> Array:
 	var out := []
 	if data == null or not data.is_ok() or state == null:
 		return out
+	# T-521: with the slots full (slots.json max_power_ups), only the owned ones' next tiers.
+	var full := state.owned_power_ups().size() >= state.slot_rules.max_power_ups()
 	for id in data.ids():
+		if full and state.power_up_tier(id) == 0:
+			continue
 		if state.power_up_tier(id) < data.max_tier(id):
 			out.append(String(id))
 	return out

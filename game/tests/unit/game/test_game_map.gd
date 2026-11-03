@@ -76,7 +76,7 @@ func test_start_plays_the_game_map_file() -> void:
 	assert_eq(run.map.layout_path, GAME_MAP)
 	assert_eq(str(run.map.layout.name), "Kaiju City")
 	assert_true(run.state.is_running())
-	assert_eq(run.state.time_left_text(), "8:00")
+	assert_eq(run.state.time_left_text(), "4:00")
 
 
 func test_the_elevation_sample_map_stays_the_runs_default() -> void:
