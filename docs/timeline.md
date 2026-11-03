@@ -3515,3 +3515,8 @@ Entry format:
 - Decision or change: The board accepted the landing and bricks performance work as it stands after QA round 2 (first landing 1.9 to 2.6 ms headless against a 2 ms target).
 - Documents touched: `docs/weapons.md`
 - Tasks: T-481
+
+## 2026-11-03: Text layout capture for the board's text editor
+- Decision or change: A screen gallery mode captures every player-facing text with its screen, a blanked copy, its box and font, which feeds the board's text editor page.
+- Documents touched: none
+- Tasks: T-524

@@ -1,7 +1,7 @@
 ---
 id: T-524
 title: Text layout capture: every player-facing text with its screen, blanked background, rect and font
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [game/docs/hud-and-menus/hud.md]
 files_to_read_first: [game/tools/screen_gallery.py, game/tools/screen_gallery.gd, game/tools/text_inventory.py, docs/hud-and-menus.md, tasks/README.md]
 files_expected_to_change: [game/tools/screen_gallery.py, game/tools/screen_gallery.gd, game/tools/, game/docs/hud-and-menus/hud.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -50,18 +50,22 @@ The board, 2026-11-03: the board wants a page (built by the Project Lead as a cl
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] One command writes, for each screen it reaches, `<screen>.png` and `<screen>_blank.png` at 1280x720, and `text_layout.json` (checked by running it and by a Python test of the manifest checker). (QA: pass / fail)
-- [ ] Each manifest row has: screen, node path, class, text, rect, font file, font size, font colour, outline, alignment, autowrap, and the inventory source/key when matched (a Python test validates the schema on the real output). (QA: pass / fail)
-- [ ] The level-up weapon card, the power-up card, the missions note line and the trick popup are templates with `template_keys` listing every inventory key that renders into them (checked in the output). (QA: pass / fail)
-- [ ] The font files the rows name are copied into `fonts/` in the output folder. (QA: pass / fail)
-- [ ] The coverage summary lists matched and unmatched inventory rows; at least 80% of the text_files rows are matched or covered by a template (printed by the tool; the reasons for the rest are listed). (QA: pass / fail)
-- [ ] `not_capturable` lists any player-facing text that is not drawn by a Control, with screen and source (empty list allowed if none). (QA: pass / fail)
-- [ ] The screen gallery's existing tests and the new tests pass; the game's Godot test set is unchanged and passes. (QA: pass / fail)
-- [ ] Screenshots: a normal and blank pair in art-archive/T-524/screenshots/. (QA: pass / fail)
+- [ ] One command writes, for each screen it reaches, `<screen>.png` and `<screen>_blank.png` at 1280x720, and `text_layout.json` (checked by running it and by a Python test of the manifest checker). (QA: pass)
+- [ ] Each manifest row has: screen, node path, class, text, rect, font file, font size, font colour, outline, alignment, autowrap, and the inventory source/key when matched (a Python test validates the schema on the real output). (QA: pass)
+- [ ] The level-up weapon card, the power-up card, the missions note line and the trick popup are templates with `template_keys` listing every inventory key that renders into them (checked in the output). (QA: pass)
+- [ ] The font files the rows name are copied into `fonts/` in the output folder. (QA: pass)
+- [ ] The coverage summary lists matched and unmatched inventory rows; at least 80% of the text_files rows are matched or covered by a template (printed by the tool; the reasons for the rest are listed). (QA: pass)
+- [ ] `not_capturable` lists any player-facing text that is not drawn by a Control, with screen and source (empty list allowed if none). (QA: pass)
+- [ ] The screen gallery's existing tests and the new tests pass; the game's Godot test set is unchanged and passes. (QA: pass)
+- [ ] Screenshots: a normal and blank pair in art-archive/T-524/screenshots/. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-03, Open → In progress
+
+UI agent started on the text layout capture for the text editor page.
 
 ## Style review
 
@@ -69,4 +73,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built the text layout capture. One command: GODOT_BIN set, python game/tools/screen_gallery.py --text-layout --out screenshots/text-editor (about 15 s, real window). New: game/tools/text_layout.gd (Godot half: finds text nodes, resolves font/size/colours/outline/shadow/alignment/wrap through theme overrides, LabelSettings and theme defaults, rect = axis-aligned box of the node's transform in screenshot pixels, blanks without moving anything), game/tools/text_layout.py (inventory match, templates, fonts, not_capturable, coverage, manifest checker), game/tools/test_text_layout.py (23 tests incl. the schema on the real output). Changed: screen_gallery.gd/.py (--text-layout; the normal gallery is unchanged), game/docs/hud-and-menus/hud.md (section 'The text layout capture (T-524)'). Output (screenshots/text-editor, git-ignored): 25 screens, each <screen>.png + <screen>_blank.png at 1280x720, text_layout.json, fonts/ (Bangers, Press Start 2P, and Godot's built-in default Open Sans SemiBold written out of the engine, since the garage/menus/cards use it and it is no game file), 392 rows, 27 not_capturable entries. Coverage: text_files 196/220 (89.1%), code 43/49 (87.8%); every unmatched row has a reason (runs list not in game, UNUSED since T-484, tooltips, kicker pieces, God mode aside; remaining: recap button.close, power_ups.take_button, levelup.take, SCORE_TEXT, SFX/zoom-min-max pause labels, slide1.drift_rule drawn in pieces). Extra states added in text mode only: tutorial slide 4, combo multiplier, multiplier loss, heal popup, God mode entry and page. Blank design: the pair is taken in one frame with Engine.time_scale 0; Label/RichTextLabel get self_modulate alpha 0 (not visible_characters, which made containers collapse), Buttons/LineEdits get transparent text+outline colours (icons stay), baked popups / time's up card / clock digits are hidden whole. Checks per screen are in the manifest: text_nodes_still_showing_in_blank is 0 on all 25; pixels_changed_outside_text is 0 on 19 screens and small (28 to 2856 px) on the 6 that have real-time animation (tutorial clips, helicopter). Things the page must know: (1) kind 'baked_popup' (trick popups, heal popup, combo broken), 'baked_card' (time's up headline) and 'art_digits' (clock) are pictures, not Controls: the blank hides them whole, rect is the plain bubble the text sits in and art_rect the full picture with rings/flames; the page must redraw them itself, they are also listed in not_capturable. (2) Control rows: Button colour is for its current state (color_state); RichTextLabel h_align is 'left' because centring is in its bbcode. (3) rect is the node's box, not the ink: a text sits inside by h_align/v_align and padding. (4) Matching: node text equals an inventory text with {placeholders}/%d as wildcards, case-folded as second try; inventory_also lists other keys with the same text. Not done / limits: tooltips (arrow.left/right) cannot be captured; text baked into plain art PNGs is undetectable and not listed; the Godot test set was not rerun (no game script or test changed; only tools/). Tests: python -m unittest game/tools/test_text_layout.py game/tools/test_screen_gallery.py game/tools/test_text_inventory.py: 35 OK. Screenshots: art-archive/T-524/screenshots/ (level_up_gift_pack and garage, normal + blank).
+- 2026-11-03, in-progress → in-qa: text layout capture ready for QA
+- 2026-11-03, in-qa → done: QA passed; tooling, no playtest needed
