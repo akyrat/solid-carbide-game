@@ -127,20 +127,26 @@ class CheckLevelUpTextsTest(unittest.TestCase):
         self.assertEqual(rows["get_wiper"], ("Wiper Blade", "Sweeps. Very clean."))
         self.assertNotIn("TITLE", rows)
 
-    def test_the_real_files_match_t171s_table_for_the_unchanged_rows(self):
-        # T-495: the board's new trees replace T-171's gun, flamethrower, molotov, bricks and
-        # wiper upgrade rows (pinned below); the get cards and the underglow stay T-171's.
+    def test_the_real_files_keep_t171s_underglow_finale_as_tier_5(self):
+        # T-519 (5-tier trees): T-171's rows for the get cards and the underglow's tiers 2 to 7 were
+        # rewritten (pinned in game/tools/test_four_minute_run_texts.py); the underglow's old tier 8
+        # row (Blinding Glow) is now its tier 5 and stays word for word.
         rows = check.expected_rows()
         self.assertEqual(len(rows), 24)
-        kept = {k: v for k, v in rows.items() if k.startswith(("get_", "upgrade_underglow"))}
         texts = check.gd_texts(check.TEXTS_GD.read_text(encoding="utf-8"))
-        self.assertEqual(check.compare(kept, texts), [])
+        title, desc = rows["upgrade_underglow.tier8"]
+        self.assertEqual(texts["upgrade_underglow.tier5.title"], title)
+        self.assertEqual(texts["upgrade_underglow.tier5.desc"], desc)
 
-    def test_the_real_file_pins_the_boards_new_trees(self):
+    def test_the_real_file_has_the_boards_finales_as_tier_5(self):
+        # T-519: the old tier 8 cards are the new tier 5 cards (Exposure for Everyone, Lit 24/7,
+        # MOREEEE, Back Wiper, Widest Wave); no tier 6 to 11 card is left.
         texts = check.gd_texts(check.TEXTS_GD.read_text(encoding="utf-8"))
         for key, want in NEW_TREES.items():
-            self.assertEqual(texts.get(key), want, key)
-        for n in (9, 10, 11):
+            if key.endswith(".title") and key.rsplit(".", 2)[1] == "tier8":
+                new_key = key.replace("tier8", "tier5")
+                self.assertEqual(texts.get(new_key), want, new_key)
+        for n in range(6, 12):
             self.assertNotIn("upgrade_gun.tier%d.title" % n, texts)
 
 

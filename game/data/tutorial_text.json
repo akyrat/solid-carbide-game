@@ -98,7 +98,7 @@
     "title": "Survive the stream",
     "title_comment": "Slide 4's headline (shown in capitals).",
     "kaiju": "The kaiju!",
-    "kaiju_comment": "Slide 4: the label on the timeline's last-minute zone, beside the kaiju drawing. The times (8:00, 4:00, 1:00) are built by code from numbers."
+    "kaiju_comment": "Slide 4: the label on the timeline's last-minute zone, beside the kaiju drawing. The times (4:00, 1:00 and the kaiju at 3:00 of the 4-minute run) are built by code from numbers."
   },
   "trick_rule": {
     "extended_drift": "Hold gas and a turn key to drift, then let go to cash it in.",
