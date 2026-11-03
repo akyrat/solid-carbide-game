@@ -1,7 +1,7 @@
 ---
 id: T-526
 title: The board's gift pack card edits: weapon and power-up cards
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -97,10 +97,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-03, Open → In progress
+
+Narrative agent applying the board's 41 card edits, on top of T-525.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Applied the board's 41 texts exactly (11 in game/data/screen_texts.json, 30 in game/scripts/ui/level_up_texts.gd; no style-loop rewrites). Updated tests: game/tools/test_check_level_up_texts.py and test_four_minute_run_texts.py (new words; structure kept), game/tests/unit/test_power_up_screen.gd, test_level_up_screen.gd, test_mission_texts.gd (slot test now checks every slot left is a known one; bouncy_bumpers keeps {bounce_multiplier}). Docs: docs/hud-and-menus.md Content (card table, header, power-up descriptions); weapons.md and drifting.md only quote older/historical card texts, left as is. Python text tests pass (41 passed, 3 skipped). NOT RUN: Godot unit tests (test_power_up_screen, test_level_up_screen, test_mission_texts) and the screenshots, because GODOT_BIN is not set in this worktree; QA to run them and take a weapon gift pack and a power-up gift pack shot. Real problems noted, board's words kept: (1) Wiper tier 3 says 'Sweep speed x1.6' while data is x1.625 (rounding). (2) Gun tier 2 no longer says '3 in all'; Molotov tier 4 '+50% attack speed' vs data interval x0.56 (about +79% rate). (3) Rusty Paintjob tier 1 card shows no damage number; tier 2 'Deals {contact_damage} damage kaijus now too' reads oddly (missing 'to'). (4) Jump/Rev Charge cards no longer show cooldown or charge numbers. (5) game/tools/check_level_up_texts.py already reported mismatches against the old T-171 table before this ticket (not part of the tests).

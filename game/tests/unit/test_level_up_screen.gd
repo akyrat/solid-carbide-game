@@ -100,8 +100,8 @@ func test_level_up_opens_two_cards_with_the_approved_text() -> void:
 
 func test_exact_text_for_known_cards() -> void:
 	assert_eq(Texts.TEXTS["get_flamethrower.title"], "Hot Take Exhaust")
-	assert_eq(Texts.TEXTS["upgrade_gun.tier3.desc"], "Fire rate x1.44, two 20% boosts stacked. Marketing calls it innovation.")
-	assert_eq(Texts.TEXTS["upgrade_gun.tier5.title"], "Exposure for Everyone")
+	assert_eq(Texts.TEXTS["upgrade_gun.tier3.desc"], "Fire rate x1.44.")
+	assert_eq(Texts.TEXTS["upgrade_gun.tier5.title"], "Rated E for Everyone")
 	assert_eq(Texts.TEXTS["levelup.take"], "Take it")
 	assert_eq(Texts.TEXTS.size(), 60, "T-519: 5-tier trees, tiers 2 to 5 for 6 weapons (24 upgrade cards), 5 get cards, title and button, each with a title and a description line where it has both")
 
@@ -613,10 +613,10 @@ func test_t171s_texts_word_for_word() -> void:
 
 ## T-322's Bricks card texts, word for word (Weapons, Content, "Bricks").
 const BRICKS_TEXTS := {
-	"get_bricks": ["Bricks", "Bricks: heavier car. Each jump landing sends an impact wave, radius x2.1. Pure content."],
+	"get_bricks": ["Bricks", "Make the car heavier, sending impact waves after each jump landing."],
 	"upgrade_bricks.tier2": ["Wider Wave II", "Landing wave radius x2.1. The brand loves a big splash."],
-	"upgrade_bricks.tier3": ["Harder Landing II", "Landing wave damage x2.25, 6 becomes 13.5. Two 50% boosts, one press release."],
-	"upgrade_bricks.tier4": ["Shove Factor II", "Landing wave knockback x2.25, from 4 to 9. Minions only, not the kaiju. Ragdolls get subs."],
+	"upgrade_bricks.tier3": ["Harder Landing", "Damage x2.25."],
+	"upgrade_bricks.tier4": ["Shove Factor", "Knockback x2.25."],
 	"upgrade_bricks.tier5": ["Widest Wave", "Your landing wave reaches its widest yet. Brace for impact!"],
 }
 

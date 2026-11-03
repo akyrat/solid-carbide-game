@@ -75,7 +75,7 @@ func test_a_completed_mission_pauses_the_run_and_shows_two_cards() -> void:
 func test_the_texts_are_t456s_word_for_word() -> void:
 	_open()
 	var t := _texts()
-	assert_eq(screen.title_label.text, "Mission done: soup up the car")
+	assert_eq(screen.title_label.text, "Mission done: pimp your ride")
 	assert_eq(screen.title_label.text, t["overlay_header"])
 	for c in screen.cards:
 		assert_false(c.has("button"), "T-475: no take button")
@@ -86,19 +86,19 @@ func test_the_texts_are_t456s_word_for_word() -> void:
 
 func test_each_description_names_the_offered_tiers_numbers() -> void:
 	assert_eq(PowerUpScreen.describe(data, "rev_charge", 1),
-			"Hold W+S 1.6s, let go of S: 0.8s boost. Brakes, now monetized.")
+			"Hold Gas+Brake then release the Brake: speed boost.")
 	assert_eq(PowerUpScreen.describe(data, "jump", 1),
-			"Press Space to hop. Next hop in 2 s. Airtime clips better than braking.")
+			"Press Space to Jump.")
 	# T-519: the last tier (tier 2 of 2 in the 4-minute run) has its own line, with its numbers.
 	var last_jump := data.max_tier("jump")
 	assert_eq(PowerUpScreen.describe(data, "jump", last_jump),
-			"Press Space to hop higher. Air 360s fit. Next hop in 1.1 s. Altitude sells.")
+			"Press Space to Jump higher.")
 	assert_eq(PowerUpScreen.describe(data, "bouncy_bumpers", data.max_tier("bouncy_bumpers")),
-			"Bounce 2.6x farther off walls and obstacles. Subs want the replay.")
+			"Bounce 2.6x farther off walls and obstacles.")
 	assert_eq(PowerUpScreen.describe(data, "rev_charge", data.max_tier("rev_charge")),
-			"Hold W+S 0.7s, let go of S: 1.9x boost for 1.5s. Pure content.")
+			"Faster charge, bigger boost.")
 	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", 1),
-			"The car deals 2 damage to minions it touches. Rust: now a feature.")
+			"The car deals damage to minions it touches. Rust: now a feature.")
 	assert_eq(PowerUpScreen.name_of("bouncy_bumpers"), "Bouncy Bumpers")
 
 
@@ -331,13 +331,13 @@ func test_the_polarized_steering_wheel_card_texts() -> void:
 	var pct := roundi((float(data.at("polarized_steering_wheel", 1)["burst_speed_multiplier"]) - 1.0) * 100.0)
 	assert_eq(pct, 20, "tier 1 is the proposal")
 	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", 1),
-			"Lift, steer, gas a new way: +20% speed burst. Whiplash is a feature.")
+			"(while coasting) Steer, then Accelerate: +20% speed burst.")
 	var last := data.max_tier("polarized_steering_wheel")
 	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", last),
-			"Lift, steer, gas: +45% speed, shock hits and shoves minions. Chat loves it.")
+			"+45% speed, shock hits and shoves minions.")
 	for tier in range(1, last + 1):
 		var text := PowerUpScreen.describe(data, "polarized_steering_wheel", tier)
 		assert_false(text.contains("{"), "no slot left unfilled at tier %d" % tier)
 	# The other power-ups have a last-tier line too, with its slots filled.
 	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", data.max_tier("rusty_overcoat")),
-			"Deals 5 damage every 0.3 s to minions, now kaiju too. Tetanus is content.")
+			"Deals 5 damage kaijus now too. Tetanus is content.")
