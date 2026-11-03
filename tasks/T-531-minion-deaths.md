@@ -1,7 +1,7 @@
 ---
 id: T-531
 title: Minion deaths: death animation (code placeholder), physics green spill, knockable corpses that fade 2 s after their last hit
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
