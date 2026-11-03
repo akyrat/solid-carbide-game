@@ -1,7 +1,7 @@
 ---
 id: T-527
 title: Polarized Steering Wheel: a cooldown between bursts, and a speed-stacking playtest bot
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
