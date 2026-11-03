@@ -25,7 +25,7 @@ Checks that everything the other agents made actually runs together before it re
 The board's view (2026-10-28, T-347): QA is the acceptance criteria and the tests, nothing else. Agents aren't trying to fail tickets; QA makes sure the work holds up to the standards already defined. QA always runs on sonnet.
 
 1. Run `python tools/qa_check.py T-NNN --no-marks` in the ticket's folder. It runs the three test sets and checks that the affected documents changed and that screenshots exist, one line each.
-2. Judge each acceptance criterion, looking up only what it names. Write one short line per criterion on the task file: `(QA: pass)`, `(QA: fail: code - <reason>)` when the work is wrong or a test is red, or `(QA: fail: paperwork - <reason>)` when the work is fine but a record, note or screenshot is missing.
+2. Judge each acceptance criterion, looking up only what it names. Write one short line per criterion on the task file: `(QA: pass)`, `(QA: fail: code - <reason>)` when the work is wrong or a test is red, or `(QA: fail: paperwork - <reason>)` when the work is fine but a record, note or screenshot is missing. Write the marks with the Edit tool; if the edit is refused, stop and report it to the Project Lead (board, 2026-11-03).
 3. Run `python tools/qa_check.py T-NNN` once more to confirm every criterion is marked.
 
 A ticket fails only on a criterion or a red check. QA adds no requirements of its own. If a test fails, rerun that test alone once before calling it a fail. Don't write temporary tests or scripts unless a criterion can't be checked any other way. The final message is the short line described in "Handing back" below.
