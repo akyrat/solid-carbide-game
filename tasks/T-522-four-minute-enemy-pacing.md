@@ -1,7 +1,7 @@
 ---
 id: T-522
 title: Minions' ramp and kaiju health paced for the 4-minute run
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -75,3 +75,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Done. Minions: growth_until_seconds 420 -> 180 (enemies.json; same 1.2 s -> 0.3 s rates, so peak 4/s at 3:00, ~375 minions by then, was 875). The boss time lives in RunState (RUN_SECONDS - BOSS_TIME_LEFT, T-521 changes it); the test reads it from there and asserts growth_until <= boss time, so it holds for 3:00 or 7:00. Kaiju health 500 -> 1500 (proposal; kaiju._comment has the working). DPS estimate (weapon data, gun/flame/underglow at last tier = new tier 5 power = old tier 8): gun 4 bullets x 4 dmg / 0.234 s = 68.5/s; flame 12/s x 0.3 on kaiju = 3.6; underglow 4.5/0.5 s = 9 -> ~81/s if all lands: 1500 in ~19 s. Gun shares aim with the crowd, so at half effectiveness (~40/s) ~37 s of the 60 s. Gun one tier short (old tier 7, 21/s; build ~34/s): 44 s if all lands, ~89 s at half -> not finished. Won in the last minute but not trivially. Greps: no 7:00/8:00/420/480 left in enemy code or data (only the 500 loop count and a seed). Tests updated: test_enemy_data.gd (health 1500; spawning test now reads boss time from RunState; time-to-kill test rewritten as a 3-weapon build using max_tier so it also holds for the 5-tier trees), test_minions.gd (7:00 assertion -> peaks by boss time), test_meteors_minions_pickups.gd (420 -> 180 in its fake data). Ran: test_enemy_data 10/10, test_minions 44/44, test_meteors_minions_pickups 11/11, test_kaiju 26/26. Docs: docs/enemies.md Content (spawning, arrival, health), game/docs/enemies/minions.md and kaiju.md. Screenshot: art-archive/T-522/screenshots/swarm_at_3min.png (fixture game/tests/fixtures/swarm_at_3min_demo.tscn; 60 minions + kaiju at the growth end; the clock shows 5:00 left only because RUN_SECONDS is still 480 here until T-521 combines). Not run: full sets (QA).
 
 QA round: all 6 criteria pass; both test sets green. Boss time read from RunState in the test; only remaining 420 in enemy data is a historical mention in a _comment. DPS estimate (~81/s if all lands, ~40/s at half; 1500 HP = 19-37 s of the last minute) looks reasonable. Screenshot shows swarm and kaiju.
+- 2026-11-03, needs-playtest → done: Combined 4-minute run build lgtm (board, 2026-11-03); merged into master through T-521's combined branch
