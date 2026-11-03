@@ -316,7 +316,7 @@ func test_slide_four_timeline_times_and_the_kaiju() -> void:
 	var times: Array = []
 	for l in slides.time_labels:
 		times.append(l.text)
-	assert_eq(times, ["8:00", "4:00", "1:00"])
+	assert_eq(times, ["4:00", "2:00", "1:00"])
 	assert_eq(slides.kaiju_label.text, _at("slide4.kaiju"))
 	var gradient: Gradient = (slides.timeline_bar.texture as GradientTexture1D).gradient
 	assert_eq(gradient.colors[0], TutorialSlides.CYAN)

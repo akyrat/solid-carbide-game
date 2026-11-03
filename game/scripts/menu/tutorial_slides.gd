@@ -64,8 +64,10 @@ const ART_POWER_UP := "res://art/power_ups/%s.png"
 const POWER_UPS: Array[String] = ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel"]
 const SCREEN_TEXTS := "res://data/screen_texts.json"
 ## The run's length in minutes and where the gift packs sit on the timeline (fractions).
-const RUN_MINUTES := 8
-const GIFT_AT: Array[float] = [0.14, 0.33, 0.52, 0.70]
+const RUN_MINUTES := 4
+## The kaiju's minute: the last one, from 3:00 (a fraction of the bar; T-521).
+const KAIJU_FROM := 0.75
+const GIFT_AT: Array[float] = [0.08, 0.25, 0.42, 0.60]
 ## The numbers in the notebook sample and the multiplier panel; sample figures, not words.
 const SAMPLE_MULTIPLIER := 2.5
 const SAMPLE_GOALS: Array = [
@@ -546,9 +548,9 @@ func _build_slide4() -> Control:
 	tl.size = Vector2(CONTENT_W, 170)
 	s.add_child(tl)
 	var bar_y := 92.0
-	# The bar: cyan to pink, red in the last minute (the last eighth).
+	# The bar: cyan to pink, red in the last minute (the last quarter).
 	var grad := Gradient.new()
-	grad.offsets = PackedFloat32Array([0.0, 0.85, 0.875, 1.0])
+	grad.offsets = PackedFloat32Array([0.0, KAIJU_FROM - 0.03, KAIJU_FROM, 1.0])
 	grad.colors = PackedColorArray([CYAN, PINK, DANGER, DANGER])
 	var gt := GradientTexture1D.new()
 	gt.gradient = grad
@@ -564,8 +566,8 @@ func _build_slide4() -> Control:
 	# The last minute's dashed red box, and the gift packs above the bar.
 	var zone := Control.new()
 	zone.name = "LastMinute"
-	zone.position = Vector2(CONTENT_W * 0.875, bar_y - 8)
-	zone.size = Vector2(CONTENT_W * 0.125, 34)
+	zone.position = Vector2(CONTENT_W * KAIJU_FROM, bar_y - 8)
+	zone.size = Vector2(CONTENT_W * (1.0 - KAIJU_FROM), 34)
 	zone.draw.connect(func(): _draw_dashed_rect(zone, Rect2(Vector2.ZERO, zone.size), DANGER))
 	tl.add_child(zone)
 	for f in GIFT_AT:
@@ -583,13 +585,13 @@ func _build_slide4() -> Control:
 	kaiju_picture.position = Vector2(CONTENT_W - 168 + 18, bar_y - 160)
 	tl.add_child(kaiju_picture)
 	# The times: the run's minutes, built from numbers.
-	for t in [[0.015, RUN_MINUTES], [0.5, RUN_MINUTES / 2], [0.875, 1]]:
+	for t in [[0.015, RUN_MINUTES], [0.5, RUN_MINUTES / 2], [KAIJU_FROM, 1]]:
 		var l := _label("%d:00" % t[1], true, 16, MUTED, false)
 		l.position = Vector2(CONTENT_W * t[0], bar_y + 28)
 		tl.add_child(l)
 		time_labels.append(l)
 	kaiju_label = _text_label("slide4.kaiju", false, 29, DANGER, true)
-	kaiju_label.position = Vector2(CONTENT_W * 0.875, bar_y + 56)
+	kaiju_label.position = Vector2(CONTENT_W * KAIJU_FROM, bar_y + 56)
 	tl.add_child(kaiju_label)
 
 	# Go live (with the HUD's LIVE badge) and Don't show again, under it.

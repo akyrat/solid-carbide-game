@@ -132,6 +132,7 @@ func bind(the_run: Node) -> void:
 	run = the_run
 	state = run.state
 	state.weapons_source = owned_tiers  # the recap lists the weapons (T-319)
+	state.weapons_maxed_source = all_owned_maxed  # T-521: a full sub goal heals then
 	draw_root = Node2D.new()
 	draw_root.name = "WeaponShots"
 	run.add_child(draw_root)
@@ -251,6 +252,41 @@ func owned_tiers() -> Dictionary:
 		if weapons[id].is_owned():
 			out[id] = weapons[id].tier
 	return out
+
+
+## The 4-minute run's caps (data/slots.json, T-521).
+var slot_rules := SlotRules.new()
+
+
+## True when the car owns as many weapons as it may (the gun counts).
+func slots_full() -> bool:
+	return owned_ids().size() >= slot_rules.max_weapons()
+
+
+## True when the slots are full and every owned weapon is at its last tier (max tiers from
+## weapons.json): a full sub goal then heals the car instead of dropping a gift pack.
+func all_owned_maxed() -> bool:
+	if not slots_full():
+		return false
+	for id in owned_ids():
+		if not weapons[id].is_max_tier():
+			return false
+	return true
+
+
+## The level-up's pick (T-521): gets the weapon, or applies its next tier. A weapon picked for
+## the first time arrives at slots.json's first_pick_tier (tiers 1 and 2 applied in order,
+## capped at its last tier). False, changing nothing, at its last tier or for no such weapon.
+func pick(weapon_id: String) -> bool:
+	var w := get_weapon(weapon_id)
+	if w == null or w.is_max_tier():
+		return false
+	var was_new: bool = not w.is_owned()
+	w.upgrade()
+	if was_new:
+		while w.tier < slot_rules.first_pick_tier() and w.upgrade():
+			pass
+	return true
 
 
 ## Gets the weapon or applies its next tier (for the level-up, T-043).

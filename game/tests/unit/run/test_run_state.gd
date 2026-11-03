@@ -31,8 +31,8 @@ func _simulate(seconds: float, step: float = 1.0 / 60.0) -> void:
 
 
 func test_fresh_run_values() -> void:
-	assert_eq(state.time_left, 480.0)
-	assert_eq(state.time_left_text(), "8:00")
+	assert_eq(state.time_left, 240.0)
+	assert_eq(state.time_left_text(), "4:00")
 	assert_eq(state.health, RunData.new().starting_health())
 	assert_eq(state.max_health, state.health)
 	assert_eq(state.coins, 0)
@@ -40,12 +40,12 @@ func test_fresh_run_values() -> void:
 	assert_eq(state.result, "")
 
 
-func test_boss_time_fires_once_at_seven_minutes() -> void:
-	_simulate(419.0)
-	assert_eq(boss_count, 0, "not before 7:00 have passed")
+func test_boss_time_fires_once_at_three_minutes() -> void:
+	_simulate(179.0)
+	assert_eq(boss_count, 0, "not before 3:00 have passed")
 	assert_eq(state.time_left_text(), "1:01")
 	_simulate(1.0)
-	assert_eq(boss_count, 1, "at 7:00 passed (1:00 left)")
+	assert_eq(boss_count, 1, "at 3:00 passed (1:00 left)")
 	assert_eq(state.time_left_text(), "1:00")
 	_simulate(30.0)
 	assert_eq(boss_count, 1, "only once")
@@ -54,7 +54,7 @@ func test_boss_time_fires_once_at_seven_minutes() -> void:
 
 func test_clock_runs_out_is_a_loss() -> void:
 	state.add_coins(7)
-	_simulate(479.5)
+	_simulate(239.5)
 	assert_eq(ended.size(), 0)
 	assert_eq(state.time_left_text(), "0:01")
 	_simulate(0.5)
@@ -98,7 +98,7 @@ func test_damage_to_zero_is_a_loss_once() -> void:
 
 
 func test_kaiju_killed_is_a_win_at_once() -> void:
-	_simulate(430.0)
+	_simulate(190.0)
 	state.add_coins(12)
 	state.kaiju_killed()
 	assert_eq(ended, [["win", 12]])
@@ -125,13 +125,13 @@ func test_time_signal_once_per_shown_second() -> void:
 	var seen := []
 	state.time_left_changed.connect(func(s: float) -> void: seen.append(state.time_left_text()))
 	_simulate(3.0)
-	assert_eq(seen, ["7:59", "7:58", "7:57"])
+	assert_eq(seen, ["3:59", "3:58", "3:57"])
 
 
 func test_clock_does_not_advance_while_paused() -> void:
 	await wait_physics_frames(5)
 	var before := state.time_left
-	assert_lt(before, 480.0, "the clock runs on its own while not paused")
+	assert_lt(before, RunState.RUN_SECONDS, "the clock runs on its own while not paused")
 	get_tree().paused = true
 	var frozen := state.time_left
 	await wait_physics_frames(20)
@@ -142,18 +142,18 @@ func test_clock_does_not_advance_while_paused() -> void:
 
 
 func test_second_run_resets_everything() -> void:
-	_simulate(425.0)
+	_simulate(185.0)
 	state.add_coins(9)
 	state.damage_car(state.max_health)
 	state.advance(state.wreck_seconds)  # the wreck (T-360)
 	assert_eq(ended.size(), 1)
 	state.start_run()
-	assert_eq(state.time_left, 480.0)
+	assert_eq(state.time_left, RunState.RUN_SECONDS)
 	assert_eq(state.health, state.max_health)
 	assert_eq(state.coins, 0)
 	assert_true(state.is_running())
 	assert_eq(state.result, "")
-	_simulate(420.0)
+	_simulate(180.0)
 	assert_eq(boss_count, 2, "boss time fires again in the new run")
 	state.kaiju_killed()
 	assert_eq(ended[1], ["win", 0])

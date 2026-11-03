@@ -1,7 +1,7 @@
 ---
 id: T-521
 title: The 4-minute run: kaiju at 3:00, 3 weapon and 3 power-up slots, new weapons at tier 2, the heal
-status: open
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-519]
+depends_on: []
 documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [docs/game-loop-architecture.md, docs/weapons.md, docs/drifting.md, tasks/README.md]
 files_expected_to_change: [game/scripts/, game/data/, game/tests/unit/, game/docs/, docs/game-loop-architecture.md]
@@ -56,10 +56,18 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-03, Open → In progress
+
+Texts (T-519) are in; game-loop agent started on top of them.
+
+### 2026-11-03, In progress → In QA
+
+Built: kaiju 3:00, end 4:00, 3-weapon and 3-power-up caps, tier-2 first pick, heal with message once all maxed, clock/timeline/missions paced. Tests pass; screenshots in art-archive/T-521.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. RULES: kaiju at 3:00 and end at 4:00 (RunState.RUN_SECONDS 240, BOSS_TIME_LEFT 60). Caps and heal in NEW game/data/slots.json (SlotRules): max_weapons 3, max_power_ups 3, first_pick_tier 2, heal_hearts 2 (proposal). Weapons.slots_full/all_owned_maxed/pick; LevelUpOffers offers no get_* when 3 owned and applies picks with pick() (new weapon at tier 2, tiers applied in order); PowerUpOffers offers only owned ones once 3 owned. HEAL: RunState._gain_xp calls heal_for_sub_goal() when sub_goal_heals() (3 owned, all at last tier): no helicopter (GiftDrops), no choice screen, signal sub_goal_healed; TrickPopups shows screen_texts heal.popup; not while wrecked. All-maxed power-ups: gift skipped (power_ups.json offer_when_exhausted skip_gift, proposal). MAX TIERS from data only (Weapon.max_tier -> weapons.json, PowerUpData.max_tier); grep: no tier number in the new code; test with a 1-tier power_ups file. TIMED TO 8:00/7:00 AND NOW FOLLOWING: clock label (reads RUN_SECONDS), clock colour steps (hud.json timer_clock.steps: green >2:00 left, yellow >1:00, orange >0:20, red; proposals), tutorial slide 4 timeline (RUN_MINUTES 4, labels 4:00/2:00/1:00, kaiju zone the last quarter, gift packs moved), missions (missions.json: 12 missions not 30, goal ranges 6-8:1, 9-11:2, 12:3, growth x2.5; proposals). Comments fixed in run_state/run/kaiju_boss. NOT MINE/LEFT: run.json time_up _comment still says 8-minute (T-520 owns run.json, comment only); enemies.json/test_minions (7:00, 420) are T-522 and fail now (test_spawn_interval_at_the_start_at_7_minutes_and_between). NOTE FOR THE MERGE: T-520 says 12 sub goals (12 packs) = exactly the 12 picks that max 3 weapons (4 gun + 4+4). weapons/test_level_up_offers.gd and run/test_power_up_offers.gd were edited by both T-520 and me: expect a conflict; mine lifts the cap in before_each (rack.slot_rules._data max_weapons 99), counts picks as sum(max_tier-1) over 6 weapons, new weapons at tier 2, and reads last tiers from data. DOCS: docs/game-loop-architecture.md (new Content section 'The 4-minute run's caps and the heal (T-521)', 8:00/7:00/30 missions fixed), game/docs/game-loop/the-run.md (new section). TESTS: new tests/unit/run/test_four_minute_run.gd 18/18. Updated (clock, 7:00 to 3:00, 30 missions to data total, tier 1 to 2): test_run_state, test_hud_timer, test_hud_timer_clock, test_hud_style, test_tutorial_slides, test_missions, test_power_up_offers (polarized as gift while 2 owned, last tier from data), test_run_likes_drain (400 s to 200 s), test_kaiju, test_level_up_offers, test_game_map, test_pause_restart_exit, test_screen_flow, test_tutorial_flow, test_run_scene, level_creator end_to_end/families/play_level/road_brush (8:00 to 4:00). Ran dirs run, hud, game, weapons, enemies, level_creator on today's (8-tier) data: all pass except test_minions (T-522); then re-ran the touched files: all pass. NOT run with T-520's data merged. SCREENSHOTS art-archive/T-521/screenshots/: kaiju.png (clock 1:00 left in orange; the kaiju walks in from off screen so is not in frame), levelup.png (3 weapons owned: only 2 upgrade cards), heal.png (heal message above the car, hearts 4 of 5 after a 3-heart hit). Fixtures tests/fixtures/four_minute_demo.gd and four_minute_*.tscn. Proposals for the playtest: heal 2 hearts, the colour steps, 12 missions.

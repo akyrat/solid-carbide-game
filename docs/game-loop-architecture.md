@@ -10,11 +10,11 @@ agents_read: [qa-integration]
 
 ## Summary
 
-Solid Carbide is played in 8-minute runs. The player only drives: drifting earns XP, each level-up brings a weapon choice, weapons fire on their own at the enemies swarming in, and enemies drop coins. At 7 minutes the kaiju arrives, and the player has the last 60 seconds to defeat it; it can be damaged at any time. Between runs, the player is back at the main menu, where the Garage spends coins on permanent car upgrades, and Start begins the next run.
+Solid Carbide is played in 4-minute runs. The player only drives: drifting earns XP, each level-up brings a weapon choice, weapons fire on their own at the enemies swarming in, and enemies drop coins. At 3 minutes the kaiju arrives, and the player has the last 60 seconds to defeat it; it can be damaged at any time. Between runs, the player is back at the main menu, where the Garage spends coins on permanent car upgrades, and Start begins the next run.
 
 ## Decisions
 
-- A run lasts 8 minutes. (2026-10-07)
+- ~~A run lasts 8 minutes. (2026-10-07)~~ Replaced by the 4-minute run below (2026-11-03).
 - The player only drives. The car's weapons fire automatically. (2026-10-07)
 - Enemies come in from the edges of the screen, in numbers that grow over the run (how they scale: Enemies, Decisions). (2026-10-07)
 - XP comes only from driving, never from kills. In the MVP it comes from drifting only, since challenges are left out of the MVP (Level design, Decisions); if they come back, completed challenges give XP too. (2026-10-07; drifting only in the MVP, 2026-10-11)
@@ -41,7 +41,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **Pickup magnet** (board, 2026-10-21): coins, level-up gift packs and health drops are pulled towards the car once they are within a radius of 1 car length, so they are easier to pick up. The radius is a garage upgrade (Garage design, Decisions). Built in T-222: the radius is 3 units (the car is drawn 3 units long, Drifting, Decisions), read from `run.json`'s `pickup_magnet`, and pickups fly to the car at 30 units per second (proposals for the playtest: the pull speed, and the reach measured on the flat map); since T-402 it pulls only pickups on the level the car is on (the ground under the car), so nothing is pulled up or down a rooftop's wall, and a pulled pickup is drawn at the height of the ground it crosses (proposal for the playtest); `game/docs/game-loop/gift-pack-and-pickups.md`, "The pickup magnet (T-222)". (T-222)
 - **An arrow for every gift pack on the map** (board, 2026-10-28): every gift pack on the map gets its own arrow, the same arrow that today points at a landed package off screen, so several arrows show when several packages are out. (T-314)
 - **A crash pays the trick in progress** (board, 2026-10-28): when a crash breaks the combo, the player still gets the trick they were doing up to that moment (a drift pays for the time it lasted), instead of losing it. (T-315)
-- **Time's up screen** (board, 2026-10-28): when the 8-minute timer runs out (the kaiju survived it, a loss), a 3-second animated failure screen plays before the run ends. Its text: HUD and menus, Content (T-316). (T-317)
+- **Time's up screen** (board, 2026-10-28): when the run's timer runs out (the kaiju survived it, a loss), a 3-second animated failure screen plays before the run ends. Its text: HUD and menus, Content (T-316). (T-317)
 - **Recap screen in the MVP** (board, 2026-10-28; replaces "In the MVP there is no recap" above): after a run ends, the player sees a recap of the run: the enemies slain, the tricks completed, the highest combo multiplier reached and the weapons used, each shown with pictures where it can be (the enemies' and weapons' own art). Its text: HUD and menus, Content (T-318). (T-319, T-320)
 - **Wrecked: the stream keeps rolling** (board, 2026-10-29; replaces the time's up screen's proposal that losing all health ends the run as before): when the car loses its last heart, the run doesn't end at once. The controls go dead, the car keeps whatever movement it had and slides or rolls to a stop, and it sits there crashed, smoking and burning (pixel art smoke and flames), for **3 seconds**, with the stream (the HUD, the live viewers) still on screen. It is like the end of a stream that doesn't cut away. Then the recap screen shows. No text. (T-360, T-361)
 - **A health pickup revives a wrecked car** (board, 2026-10-30): while the car is wrecked and still sliding, if it comes within a health pickup's pickup range (its magnet), it picks it up and comes back with **1 heart**: the controls return, the smoke and flames stop and the run goes on; the recap does not show. Whether the usual 1-second invulnerability follows, and what happens to the combo and the live viewers, are proposals for the playtest. (T-406)
@@ -73,7 +73,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 ```mermaid
 flowchart TD
     launch([Game launches]) --> menu
-    start([Run starts: 8:00 on the clock]) --> drive[Drive and drift]
+    start([Run starts: 4:00 on the clock]) --> drive[Drive and drift]
     drive --> drift{Drift longer than 1 s?}
     drift -- yes --> dxp[XP per second, times the combo] --> lvl{XP bar full?}
     lvl -- yes --> heli[Level up: a helicopter drops the gift pack ahead of the car] --> drive
@@ -81,9 +81,9 @@ flowchart TD
     pack -- yes --> choice[Level-up screen: weapon choice, run paused] --> drive
     lvl -- no --> drive
     drive --> enemies[Enemies swarm in; weapons fire automatically; enemies drop coins] --> drive
-    drive --> boss{7:00 reached?}
+    drive --> boss{3:00 reached?}
     boss -- yes --> kaiju[Kaiju spawns: weapons can damage it at any time]
-    kaiju --> win{Kaiju defeated before 8:00?}
+    kaiju --> win{Kaiju defeated before 4:00?}
     win -- yes --> won([Win])
     win -- no --> lost([Loss])
     drive -- Last heart gone --> wreck[Wrecked: controls dead, the car slides on, smoking and burning, 3 s] --> lost
@@ -103,13 +103,24 @@ The run is one Godot scene (task T-036; how to use it: [game/docs/game-loop/the-
 
 The run's map (task T-206; Level design, Decisions, "The elevation sample map becomes the run's map") is the elevation sample map's layout with its rooftops and ramps (Level design, Content, "Elevation sample map", "The run on this map"): the car has its height there, and everything else in the run (enemies, weapons, pickups, coins, the HUD, the pause screen) works on it as on the MVP map. The MVP map (Level design, Content, "MVP map") stays in the project; one constant in the run switches back to it ([game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "The run").
 
-The run owns its state: the clock (8:00 counting down, stopping while the game is paused), the car's health in hearts (starting at the value in [game/data/run.json](../game/data/run.json), plus the garage upgrade's hearts; Decisions, "Hearts instead of health points"), and the coins collected in the run. Other parts of the game plug into it:
+The run owns its state: the clock (4:00 counting down, stopping while the game is paused), the car's health in hearts (starting at the value in [game/data/run.json](../game/data/run.json), plus the garage upgrade's hearts; Decisions, "Hearts instead of health points"), and the coins collected in the run. Other parts of the game plug into it:
 
 - At 1:00 left the run sends "boss time"; the kaiju spawns on it (Enemies).
 - Enemies damage the car and add coins through the run; the kaiju's death ends the run as a win.
 - The car reaching 0 hearts, or the clock reaching 0:00, ends the run as a loss. At 0 hearts the car is wrecked first, for 3 seconds (Wrecked, below).
 - Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
 - The HUD reads the time left, the health and the coins from the run (HUD and menus).
+
+### The 4-minute run's caps and the heal (T-521)
+
+Built from Decisions, "A 4-minute run: 3 minutes to build, 1 minute of kaiju" (how to use it: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "The 4-minute run (T-521)"):
+
+- **The clock:** `RunState.RUN_SECONDS` is 240 and `BOSS_TIME_LEFT` 60, so "boss time" is sent at 3:00 into the run (1:00 left) and the run ends at 4:00 (the loss and the win as before). They stay constants in code (Decisions, not balancing). Timed to the old 8:00 and now following the new run: the clock label (starts at the run's length), its colour switch points (`game/data/hud.json` `timer_clock.steps`: green above 2:00 left, yellow above 1:00, orange above 0:20, red below; proposals), the tutorial slide 4 timeline (4:00 / 2:00 / 1:00, the kaiju's minute the last quarter) and the missions (below).
+- **The caps** (`game/data/slots.json`, read through `SlotRules`; the board's numbers): at most **3 weapons** (the gun counts) and at most **3 driving power-ups**. With 3 weapons owned the level-up offers only the upgrades of those 3 (never a new weapon); with 3 power-ups owned a mission gift offers only the next tiers of those 3. A weapon picked for the first time arrives at **tier 2** (`first_pick_tier`; tiers 1 and 2 applied in order); the gun starts at tier 1. **Max tiers are never in the code or in slots.json**: they come from `weapons.json` (5) and `power_ups.json` (2), read per weapon and per power-up.
+- **The heal:** when 3 weapons are owned and all are at their last tier, a full sub goal (the likes bar) **heals the car** by `heal_hearts` (proposal: 2 hearts, capped at the maximum; `slots.json`) instead of sending the gift pack: no helicopter, no level-up screen, no pause. The message `heal.popup` (`screen_texts.json`, T-519) pops above the car like the reward popup. The run sends `sub_goal_healed(hearts)` for it. Not while the car is wrecked. A package already on the map from an earlier sub goal still opens its choice (nothing left to offer: the choice is skipped).
+- **A mission gift with all 3 power-ups at their last tier** (proposal): nothing is offered, so the gift is skipped (`power_ups.json` `offer_when_exhausted` "skip_gift": no overlay, no pause).
+- **Missions paced for the 3-minute build** (proposal): a run has **12 missions** (was 30; `missions.json` `total` and `generator.last_mission`): the 5 fixed ones, then 7 generated; 1 goal for missions 6 to 8, 2 for 9 to 11, 3 for the 12th. Three power-ups at two tiers are only 6 gifts, so 12 missions are enough; each trick's growth per mission is about 2.5 times the old one so the amounts still reach the old late-run size.
+- **Not changed here:** the sub goals' likes per level (T-520, `run.json` `levels`: 12 gift packs max all three weapons and the curve has 11 level-ups), the minions' ramp and the kaiju's health (T-522), the slot icons (T-523). The playtest switches `all_weapons_at_start` and `weapon_tier_at_start` still give every weapon (they bypass the cap; never visible to players).
 
 ### Likes and levels
 
@@ -204,7 +215,7 @@ Every run's recap stats are kept on this computer (task T-363; Decisions, "The r
 
 ### Missions: the generator's rules (task T-455, proposals)
 
-The data is `game/data/missions.json` (read through `MissionData`; [game/docs/data/game-data.md](../game/docs/data/game-data.md)). `total` is 30. The 5 fixed missions are the board's (Decisions, "Mission packs"): drift 4 s unbroken (`extended_drift`, seconds), 10 alt drifts (`alternate_drift`), 3 s airtime (`airtime`, seconds), 3 air 180s (`air_one_eighty`), 1 air 360 (`air_three_sixty`). The ids are the ones the trick detector emits (`trick_detector.gd`); `thread_the_needle` comes from `thread_the_needle.gd`; `three_sixty` (a ground 360) is the seventh. The rules for missions 6 to 30 are **proposals for the board's playtest** (the driving numbers are the Driving & Drift Agent's call by the docs; Game Data wrote them on its behalf), each with a reason in the file:
+The data is `game/data/missions.json` (read through `MissionData`; [game/docs/data/game-data.md](../game/docs/data/game-data.md)). `total` is 12 (T-521, was 30). The 5 fixed missions are the board's (Decisions, "Mission packs"): drift 4 s unbroken (`extended_drift`, seconds), 10 alt drifts (`alternate_drift`), 3 s airtime (`airtime`, seconds), 3 air 180s (`air_one_eighty`), 1 air 360 (`air_three_sixty`). The ids are the ones the trick detector emits (`trick_detector.gd`); `thread_the_needle` comes from `thread_the_needle.gd`; `three_sixty` (a ground 360) is the seventh. The rules for missions 6 to 12 are **proposals for the board's playtest** (the driving numbers are the Driving & Drift Agent's call by the docs; Game Data wrote them on its behalf), each with a reason in the file:
 
 - **Goals per mission:** 1 for missions 6 to 14, 2 for 15 to 24, 3 for 25 to 30, never the same trick twice in a mission. Reason: a new mission stays quick to read early; later ones take longer.
 - **Amounts** grow in a straight line from mission 6 to a cap (`base + growth × (mission − 6)`, capped; seconds rounded to 0.5): drift 5 s (+0.2, cap 10); alt drifts 12 (+0.8, cap 32); ground 360s 2 (+0.2, cap 7); airtime 4 s (+0.25, cap 10); air 180s 4 (+0.3, cap 11); air 360s 2 (+0.12, cap 5); thread the needle 3 (+0.25, cap 9). Reason: each starts just above the fixed mission of its kind and ends at about 2.5 times, still doable inside a run; the hardest tricks have the lowest caps.
@@ -213,7 +224,7 @@ The data is `game/data/missions.json` (read through `MissionData`; [game/docs/da
 
 The run keeps its missions and the car's driving power-ups (Decisions, "Mission packs"; how to use it: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "Missions and the car's power-ups (T-457)"). Nothing in this shows on screen by itself: the notebook page and the power-up gift overlay (T-459) are separate tickets that read it.
 
-- **A fresh set every run:** a new run (Start, or Restart from the pause screen) starts at mission 1 with 30 missions: the 5 fixed ones, then missions 6 to 30 generated from the rules above with a new random seed each run (a test can give the seed).
+- **A fresh set every run:** a new run (Start, or Restart from the pause screen) starts at mission 1 with 12 missions: the 5 fixed ones, then missions 6 to 12 generated from the rules above with a new random seed each run (a test can give the seed).
 - **One mission at a time:** every goal of the current mission counts at once; when all are done the mission is completed and the next one is current.
 - **What counts:** the car's tricks as the combo gets them (alt drifts, 360s, air 180s and 360s, thread the needle), every landing's airtime added up (also a hop too short to raise the combo), and, for the drift goal, **one unbroken drift**: it is ticked off the moment the drift reaches its seconds, and a drift that ends, by letting go or hitting something, starts over from 0. How tricks pay in the combo and likes does not change.
 - **Signals** for the HUD page and the gift overlay: a goal's progress (done out of total), a goal completed, a mission completed, and a mission started.

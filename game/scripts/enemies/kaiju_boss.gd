@@ -1,6 +1,6 @@
 extends Node
 ## The run's kaiju (task T-045; Enemies, Decisions): it appears just off-screen
-## when the run sends "boss time" (7 minutes in, RunState.boss_time), walks
+## when the run sends "boss time" (3 minutes in, RunState.boss_time), walks
 ## slowly towards the car, deals contact damage with knockback, can be damaged
 ## at any time, and its death adds its coins to the run (EnemyData.
 ## kaiju_coins_on_defeat(), T-119) and then calls RunState.kaiju_killed(),

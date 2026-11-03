@@ -42,6 +42,8 @@ const TEXTS := {
 const BROKEN_TEXT := "COMBO BROKEN!"
 ## Challenge popup text approved in task T-048 (hud.score_flash); {likes} is the likes gained.
 const SCORE_TEXT := "TRENDING! +{subs} SUBS!"
+## Used only when screen_texts.json cannot be read (T-521's heal message lives in the file).
+const HEAL_TEXT_FALLBACK := "MAXED OUT! CAR PATCHED UP, BRAND INTACT!"
 ## Sizes: SIZE_SMALL or less bakes the small popup, anything more the normal one
 ## (the numbers are the old drawn font sizes). Extended drift comes every
 ## second, so it is smaller.
@@ -292,6 +294,9 @@ func bind_score(run_state: Node, car_position: Callable) -> void:
 	_score_state = run_state
 	if not run_state.score.is_connected(_on_score):
 		run_state.score.connect(_on_score)
+	# T-521: a full sub goal that heals the car (every weapon maxed) shows the heal message.
+	if run_state.has_signal("sub_goal_healed") and not run_state.sub_goal_healed.is_connected(_on_sub_goal_healed):
+		run_state.sub_goal_healed.connect(_on_sub_goal_healed)
 
 
 ## Shows the trick popups from a run state's `combo_trick` signal (task T-083):
@@ -335,6 +340,19 @@ func _on_amount_detached(p: PopupText) -> void:
 ## A crash cut the combo (task T-245): the red, cracked popup, from the car.
 func _on_combo_broken() -> void:
 	show_popup(BROKEN_TEXT, _combo_car_position.call(), SIZE_NORMAL, _combo_car_position, 0, true)
+
+
+## The heal message (screen_texts.json heal.popup, T-519), shown like the reward popup.
+static func heal_text() -> String:
+	var r := GameData.load_file("screen_texts")
+	if not r.ok:
+		return HEAL_TEXT_FALLBACK
+	var v := GameData.get_value(r.data, "heal.popup")
+	return String(v.data) if v.ok else HEAL_TEXT_FALLBACK
+
+
+func _on_sub_goal_healed(_hearts: float) -> void:
+	show_popup(heal_text(), _score_car_position.call(), SIZE_NORMAL, _score_car_position)
 
 
 func _on_score(amount: float, _challenge_id: String) -> void:

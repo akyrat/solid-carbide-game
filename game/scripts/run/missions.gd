@@ -1,7 +1,7 @@
 class_name RunMissions
 extends RefCounted
 ## The run's missions (task T-457; Game loop architecture, Decisions, "Mission packs"): the
-## tracker behind the notebook page, invisible by itself. A run has MissionData.total() (30)
+## tracker behind the notebook page, invisible by itself. A run has MissionData.total() (12, T-521)
 ## missions: the 5 fixed ones from res://data/missions.json, then the rest generated from the
 ## file's rules with an RNG seeded per run (start(seed); a negative seed picks a new one).
 ## One mission is current at a time; every goal of it counts in parallel, and when all of
@@ -76,7 +76,7 @@ func start(run_seed: int = -1) -> void:
 	_load_current()
 
 
-## How many missions the run has (30).
+## How many missions the run has (12).
 func count() -> int:
 	return missions.size()
 
@@ -86,7 +86,7 @@ func current_index() -> int:
 	return -1 if is_all_done() else current
 
 
-## The current mission's number (1 to 30), or 0 once all are done.
+## The current mission's number (1 to 12), or 0 once all are done.
 func current_number() -> int:
 	return current_index() + 1
 

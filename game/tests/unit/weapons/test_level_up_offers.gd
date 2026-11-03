@@ -32,6 +32,9 @@ func before_each() -> void:
 	offers = rack.offers
 	state.pause_on_level_up = true
 	shown = []
+	# T-521: these tests are about the draw and the tiers, so the 3-weapon cap is lifted here;
+	# the cap and the tier-2 arrival are tested in tests/unit/run/test_four_minute_run.gd.
+	rack.slot_rules._data["max_weapons"] = 99
 	offers.offers_ready.connect(func(level: int, ids: Array) -> void: shown.append([level, ids]))
 
 
@@ -72,7 +75,7 @@ func _expected_available() -> Array:
 		var w: Node = rack.get_weapon(id)
 		if not w.is_owned():
 			out.append("get_" + id)
-		elif w.tier < w.max_tier():  # 8 for every weapon
+		elif w.tier < w.max_tier():  # from weapons.json
 			out.append("upgrade_" + id)
 	return out
 
@@ -168,8 +171,12 @@ func test_seeded_level_ups_draw_two_different_available_ids_and_cover_them_all()
 				seen[id] = true
 			assert_true(offers.choose(ids[pick.randi_range(0, ids.size() - 1)]))
 			assert_false(state.is_waiting_for_choice())
-	# 7 gun upgrades + 5 weapons x 8 (Bricks' tier 8 since T-498, the wiper's since T-499).
-	assert_eq(level_ups, SEEDS * 47, "every run takes every tier before the choices run out")
+	# T-521: the gun's picks up to its last tier, and every other weapon's: the first pick arrives
+	# at tier 2, so each weapon takes (last tier - 1) picks. Last tiers from weapons.json.
+	var picks := 0
+	for id in WEAPONS:
+		picks += rack.get_weapon(id).max_tier() - 1
+	assert_eq(level_ups, SEEDS * picks, "every run takes every tier before the choices run out")
 	for id in OffersScript.ALL_IDS:
 		assert_true(seen.has(id), "%s offered at least once" % id)
 
@@ -212,8 +219,8 @@ func test_choices_are_shown_in_the_weapons_order() -> void:
 func test_a_weapon_at_its_last_tier_is_never_offered() -> void:
 	for s in SEEDS:
 		_new_run(s)
-		rack.gun.set_tier(8)  # the gun's own last tier
-		rack.molotov.set_tier(8)
+		rack.gun.set_tier(rack.gun.max_tier())  # the gun's own last tier
+		rack.molotov.set_tier(rack.molotov.max_tier())
 		_open_choice()
 		var ids: Array = shown[0][1]
 		assert_eq(ids.size(), 2)
@@ -232,10 +239,8 @@ func test_each_weapon_reaches_its_own_top_tier_and_stops_there() -> void:
 		assert_true(w.is_max_tier())
 		assert_false(w.upgrade(), "%s has no tier past its top" % id)
 		assert_eq(w.tier, top)
-	assert_eq(rack.gun.tier, 8, "the gun's top tier")
-	assert_eq(rack.molotov.tier, 8)
-	assert_eq(rack.bricks.tier, 8, "Bricks ends at 8 (T-498: Widest Wave)")
-	assert_eq(rack.wiper.tier, 8, "the wiper reaches 8 (T-499)")
+	for id in WEAPONS:
+		assert_eq(rack.get_weapon(id).tier, WeaponData.new().max_tier(id), "%s ends at the data's last tier" % id)
 
 
 func test_a_gift_pack_never_offers_a_weapon_at_its_own_top_tier() -> void:
@@ -251,17 +256,17 @@ func test_a_gift_pack_never_offers_a_weapon_at_its_own_top_tier() -> void:
 	# The gun one tier short of its own top is still offered.
 	_new_run(0)
 	_max_all_but(["gun"])
-	rack.gun.set_tier(7)
+	rack.gun.set_tier(rack.gun.max_tier() - 1)
 	_open_choice()
 	assert_eq(shown[0][1], ["upgrade_gun"])
 
 
-## T-498, T-499: every weapon has 8 tiers: the offers walk each to its last tier and then stop.
+## T-498, T-499: the offers walk each weapon to its last tier (weapons.json) and then stop.
 func test_bricks_and_wiper_are_never_offered_past_their_last_tier() -> void:
 	for id in ["bricks", "wiper"]:
 		_new_run(1)
 		var w: Node = rack.get_weapon(id)
-		var last := 8
+		var last: int = WeaponData.new().max_tier(id)
 		assert_eq(w.max_tier(), last, id)
 		w.set_tier(last - 1)
 		assert_true(offers.available_offers().has("upgrade_" + id), "%s one tier short: offered" % id)
@@ -276,7 +281,7 @@ func test_bricks_and_wiper_are_never_offered_past_their_last_tier() -> void:
 
 func test_one_choice_when_only_one_is_left() -> void:
 	_max_all_but(["wiper"])
-	rack.wiper.set_tier(7)
+	rack.wiper.set_tier(rack.wiper.max_tier() - 1)
 	_level_up()
 	assert_eq(shown[0][1], ["upgrade_wiper"])
 	assert_true(offers.choose("upgrade_wiper"))
@@ -315,10 +320,10 @@ func test_taking_the_gun_and_flamethrower_choices_applies_them_and_resumes() -> 
 	_level_up()
 	assert_eq(shown[-1][1], ["get_flamethrower"])
 	assert_true(offers.choose("get_flamethrower"))
-	assert_eq(rack.flamethrower.tier, 1)
+	assert_eq(rack.flamethrower.tier, 2, "a new weapon arrives at tier 2 (T-521)")
 	_level_up()
 	assert_true(offers.choose("upgrade_flamethrower"))
-	assert_eq(rack.flamethrower.tier, 2)
+	assert_eq(rack.flamethrower.tier, 3)
 	assert_false(get_tree().paused)
 
 
@@ -332,13 +337,13 @@ func _check_get_and_upgrade(weapon_id: String) -> void:
 	var taken := []
 	offers.offer_taken.connect(func(id: String) -> void: taken.append(id))
 	assert_true(offers.choose("get_" + weapon_id))
-	assert_eq(w.tier, 1, weapon_id + " given at tier 1")
+	assert_eq(w.tier, 2, weapon_id + " given at tier 2 (T-521)")
 	assert_false(get_tree().paused, "the run resumes")
 	assert_false(state.is_waiting_for_choice())
 	_level_up()
 	assert_eq(shown[-1][1], ["upgrade_" + weapon_id])
 	assert_true(offers.choose("upgrade_" + weapon_id))
-	assert_eq(w.tier, 2, weapon_id + " at its next tier")
+	assert_eq(w.tier, 3, weapon_id + " at its next tier")
 	assert_false(get_tree().paused)
 	assert_eq(taken, ["get_" + weapon_id, "upgrade_" + weapon_id])
 
@@ -369,8 +374,8 @@ func test_bricks_is_offered_and_its_upgrades_raise_the_boards_numbers() -> void:
 	assert_eq(shown[-1][1], ["get_bricks"])
 	assert_true(offers.choose("get_bricks"))
 	var data := WeaponData.new()
-	for t in range(1, 9):
-		if t > 1:
+	for t in range(2, b.max_tier() + 1):  # a new weapon arrives at tier 2 (T-521)
+		if t > 2:
 			_level_up()
 			assert_eq(shown[-1][1], ["upgrade_bricks"], "tier %d offered" % t)
 			assert_true(offers.choose("upgrade_bricks"))
@@ -379,10 +384,8 @@ func test_bricks_is_offered_and_its_upgrades_raise_the_boards_numbers() -> void:
 		for k in ["damage", "radius", "knockback_distance", "min_air_seconds", "cooldown", "rings"]:
 			assert_almost_eq(float(b.stats[k]), float(want[k]), 1e-9, "tier %d %s" % [t, k])
 	assert_true(b.is_max_tier())
-	assert_almost_eq(float(b.stats["radius"]), 4.0 * 1.4 * 1.5 * 3.0, 1e-9, "tier 8's radius (T-498: Widest Wave)")
-	assert_eq(int(b.stats["rings"]), 3)
 	_level_up()
-	assert_eq(shown.size(), 8, "nothing left to offer at tier 8")
+	assert_eq(shown.size(), b.max_tier() - 1, "nothing left to offer at the last tier")
 
 
 func test_a_choice_not_on_offer_is_refused() -> void:

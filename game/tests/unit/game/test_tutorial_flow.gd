@@ -74,7 +74,7 @@ func test_the_clock_does_not_start_while_the_slides_are_up() -> void:
 	await wait_process_frames(1)
 	assert_not_null(game.run, "the slides' Start begins the run")
 	var s: RunState = game.run.state
-	assert_eq(s.time_left_text(), "8:00", "the clock starts full: it did not tick during the slides")
+	assert_eq(s.time_left_text(), "4:00", "the clock starts full: it did not tick during the slides")
 	assert_almost_eq(s.time_left, RunState.RUN_SECONDS, 0.1)
 	assert_true(s.is_running())
 
@@ -113,7 +113,7 @@ func test_ticked_saves_hidden_and_the_next_start_skips_the_slides() -> void:
 	assert_null(game.tutorial, "no slides")
 	assert_not_null(game.run, "straight into the run")
 	assert_true(game.run.state.is_running())
-	assert_eq(game.run.state.time_left_text(), "8:00")
+	assert_eq(game.run.state.time_left_text(), "4:00")
 
 
 func test_hidden_also_skips_after_returning_to_the_menu() -> void:
@@ -152,7 +152,7 @@ func test_pause_restart_starts_a_fresh_run_without_the_slides() -> void:
 	assert_null(game.tutorial, "no slides on Restart")
 	assert_ne(game.run, old, "a fresh run")
 	assert_true(game.run.state.is_running())
-	assert_eq(game.run.state.time_left_text(), "8:00")
+	assert_eq(game.run.state.time_left_text(), "4:00")
 	assert_eq(game.run.state.coins, 0)
 	assert_false(get_tree().paused)
 	assert_false(GameSettings.load_tutorial_hidden(), "Restart does not hide the slides")

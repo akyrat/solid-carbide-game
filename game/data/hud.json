@@ -20,11 +20,12 @@
     "drop_px": 70.0
   },
   "timer_clock": {
+    "_comment": "T-521 (Game loop architecture, Decisions, 'A 4-minute run'): the switch points follow the 4-minute run (were 3:00, 1:30, 0:30 left of 8:00). Proposals for the playtest: green while more than 2:00 is left (the build's first two minutes), yellow from 2:00 (the build's third minute; the kaiju arrives at 1:00 left, 3:00 into the run), orange from 1:00 (the kaiju's minute) and red for the last 20 seconds.",
     "layout": { "x": 16, "y": 560, "w": 200, "h": 72, "reference_w": 1152, "reference_h": 648 },
     "steps": [
-      { "name": "green", "above_seconds": 180.0, "color": "#38f26b" },
-      { "name": "yellow", "above_seconds": 90.0, "color": "#ffe23a" },
-      { "name": "orange", "above_seconds": 30.0, "color": "#ff8a1f" },
+      { "name": "green", "above_seconds": 120.0, "color": "#38f26b" },
+      { "name": "yellow", "above_seconds": 60.0, "color": "#ffe23a" },
+      { "name": "orange", "above_seconds": 20.0, "color": "#ff8a1f" },
       { "name": "red", "above_seconds": -1.0, "color": "#ff2a2a" }
     ]
   },

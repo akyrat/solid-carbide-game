@@ -1,0 +1,7 @@
+{
+  "_comment": "The 4-minute run's caps (Game loop architecture, Decisions, 'A 4-minute run: 3 minutes to build, 1 minute of kaiju'; T-521). max_weapons and max_power_ups are the board's (3 each; the gun counts as a weapon). first_pick_tier is the board's too: a weapon picked for the first time arrives at tier 2 (its tier 1 and 2 applied in order). The max tiers are NOT here: they come from weapons.json and power_ups.json. heal_hearts is a proposal for the playtest: hearts a full sub goal restores once all owned weapons are at their last tier (no level-up screen then); capped at the car's maximum.",
+  "max_weapons": 3,
+  "max_power_ups": 3,
+  "first_pick_tier": 2,
+  "heal_hearts": 2.0
+}

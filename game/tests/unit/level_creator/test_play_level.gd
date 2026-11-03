@@ -1,6 +1,6 @@
 extends GutTest
 ## Task T-239: Play on a listed level in the level creator starts a full run on that level's file
-## (the game's own run: 8:00, minions, the kaiju at boss time, pause screen, garage upgrades), and
+## (the game's own run: 4:00, minions, the kaiju at boss time, pause screen, garage upgrades), and
 ## when the run ends, win or loss, the creator shows its level list again. The level is the
 ## elevation sample map with its first building and the rooftop roof-se-6 (and its ramp) removed,
 ## saved only into a per-run temporary levels folder (RunPaths). It keeps roof-nw-3 and its ramp.
@@ -76,7 +76,7 @@ func test_play_starts_a_run_on_the_level_file() -> void:
 	assert_eq(str(run.map.layout.name), LEVEL_NAME)
 	var s: RunState = run.state
 	assert_true(s.is_running())
-	assert_eq(s.time_left_text(), "8:00")
+	assert_eq(s.time_left_text(), "4:00")
 	assert_eq(s.health, s.max_health)
 	assert_eq(s.coins, 0)
 
@@ -211,7 +211,7 @@ func test_play_again_after_a_run_starts_a_fresh_run() -> void:
 	await wait_process_frames(2)
 	var run := _play(c)
 	assert_true(run.state.is_running())
-	assert_eq(run.state.time_left_text(), "8:00")
+	assert_eq(run.state.time_left_text(), "4:00")
 	assert_eq(get_tree().get_nodes_in_group("run_state").size(), 1, "only one run state")
 
 
