@@ -45,14 +45,14 @@ The board's review: play the one combined build (T-527, T-528) from C:\solid-car
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] power_ups.json has cooldown_seconds for both wheel tiers, read by the wheel (unit test). (QA: pass / fail)
-- [ ] During the cooldown the trigger gives no burst; after it, the next trigger does (unit test). (QA: pass / fail)
-- [ ] cooldown_fraction_left() goes from 1 to 0 over the cooldown, is_ready() and the ready signal fire when it ends (unit test). (QA: pass / fail)
-- [ ] The speed bot runs in one command and its result notes give peak and average speed for tier 1 and 2, before and after the change. (QA: pass / fail)
-- [ ] After the change, the bot's peak speed over 60 s stays within a bounded figure stated in the result notes (it does not keep growing burst after burst); or the ticket's result notes say it still grows, with the numbers. (QA: pass / fail)
-- [ ] game/docs/driving/drift.md and docs/drifting.md Content describe the cooldown and the bot. (QA: pass / fail)
-- [ ] The Godot test set and the touched Python tests pass. (QA: pass / fail)
-- [ ] Screenshots: the before and after speed output in art-archive/T-527/screenshots/. (QA: pass / fail)
+- [ ] power_ups.json has cooldown_seconds for both wheel tiers, read by the wheel (unit test). (QA: pass)
+- [ ] During the cooldown the trigger gives no burst; after it, the next trigger does (unit test). (QA: pass)
+- [ ] cooldown_fraction_left() goes from 1 to 0 over the cooldown, is_ready() and the ready signal fire when it ends (unit test). (QA: pass)
+- [ ] The speed bot runs in one command and its result notes give peak and average speed for tier 1 and 2, before and after the change. (QA: pass)
+- [ ] After the change, the bot's peak speed over 60 s stays within a bounded figure stated in the result notes (it does not keep growing burst after burst); or the ticket's result notes say it still grows, with the numbers. (QA: pass)
+- [ ] game/docs/driving/drift.md and docs/drifting.md Content describe the cooldown and the bot. (QA: pass)
+- [ ] The Godot test set and the touched Python tests pass. (QA: pass)
+- [ ] Screenshots: the before and after speed output in art-archive/T-527/screenshots/. (QA: pass)
 
 ## Updates
 
