@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the car physics spike with the bricks weapon.
 
+### 2026-11-01, Flagged for review
+
+Flagged after QA round 2: the first landing of a run measures 1.9 to 2.6 ms headless (target under 2 ms); later landings 0.7 to 1.9 ms; bricks passes; the prebuild test is fixed. Full test set not completed in round 2. The board decides: accept, record a run on its machine, or keep working.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
