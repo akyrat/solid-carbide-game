@@ -3540,3 +3540,13 @@ Entry format:
 - Decision or change: The board rewrote the weapon and driving power-up card texts and the power-up screen's header on the gift pack cards page: shorter, plainer descriptions.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-526
+
+## 2026-11-03: A cooldown for the Polarized Steering Wheel
+- Decision or change: The wheel's bursts get a cooldown so chained bursts can't stack speed without end; a bot playtests it by trying to reach extreme speeds.
+- Documents touched: docs/drifting.md
+- Tasks: T-527
+
+## 2026-11-03: The steering wheel's cooldown on its slot icon
+- Decision or change: The Polarized Steering Wheel's HUD slot icon fills back up as its cooldown reloads.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-528
