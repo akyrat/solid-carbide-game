@@ -119,13 +119,13 @@ static func format_number(v: Variant) -> String:
 ## A power-up's description at `tier`: the template with its slots filled from that
 ## tier's numbers (`bounce_multiplier` is bounce_distance_multiplier, T-456;
 ## `burst_percent` is the burst's extra speed as a whole percent, T-502). At the last
-## tier a power-up with a descriptions_tier4 line shows that one (T-501/T-502: the
-## Polarized Steering Wheel's tier 4 card names its shock).
+## tier a power-up shows its descriptions_last_tier line (T-519: the 4-minute run has 2
+## tiers, and the last tier is the old tier 4; the Polarized Steering Wheel's names its shock).
 static func describe(the_data: PowerUpData, id: String, tier: int) -> String:
 	var template := String(texts().get("descriptions", {}).get(id, ""))
-	var tier4: Dictionary = texts().get("descriptions_tier4", {})
-	if tier >= 4 and tier4.has(id):
-		template = String(tier4[id])
+	var last: Dictionary = texts().get("descriptions_last_tier", {})
+	if tier >= the_data.max_tier(id) and last.has(id):
+		template = String(last[id])
 	var values := {}
 	var numbers := the_data.at(id, tier)
 	for k in numbers:

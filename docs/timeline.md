@@ -3480,3 +3480,8 @@ Entry format:
 - Decision or change: The HUD shows 3 weapon slots and 3 power-up slots with tier pips.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-523
+
+## 2026-11-03: Texts for the 4-minute run
+- Decision or change: Level-up cards for the 5-tier weapon trees, last-tier power-up cards and the heal popup; no text names 8 or 7 minutes any more.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-519

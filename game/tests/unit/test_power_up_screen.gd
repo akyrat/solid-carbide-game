@@ -89,10 +89,14 @@ func test_each_description_names_the_offered_tiers_numbers() -> void:
 			"Hold W+S 1.6s, let go of S: 0.8s boost. Brakes, now monetized.")
 	assert_eq(PowerUpScreen.describe(data, "jump", 1),
 			"Press Space to hop. Next hop in 2 s. Airtime clips better than braking.")
-	assert_eq(PowerUpScreen.describe(data, "jump", 2),
-			"Press Space to hop. Next hop in 1.7 s. Airtime clips better than braking.")
-	assert_eq(PowerUpScreen.describe(data, "bouncy_bumpers", 3),
-			"Bounce 2.2x farther off walls and obstacles. Crashes are content too.")
+	# T-519: the last tier (tier 2 of 2 in the 4-minute run) has its own line, with its numbers.
+	var last_jump := data.max_tier("jump")
+	assert_eq(PowerUpScreen.describe(data, "jump", last_jump),
+			"Press Space to hop higher. Air 360s fit. Next hop in 1.1 s. Altitude sells.")
+	assert_eq(PowerUpScreen.describe(data, "bouncy_bumpers", data.max_tier("bouncy_bumpers")),
+			"Bounce 2.6x farther off walls and obstacles. Subs want the replay.")
+	assert_eq(PowerUpScreen.describe(data, "rev_charge", data.max_tier("rev_charge")),
+			"Hold W+S 0.7s, let go of S: 1.9x boost for 1.5s. Pure content.")
 	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", 1),
 			"The car deals 2 damage to minions it touches. Rust: now a feature.")
 	assert_eq(PowerUpScreen.name_of("bouncy_bumpers"), "Bouncy Bumpers")
@@ -113,7 +117,8 @@ func test_an_owned_power_up_s_card_shows_its_next_tier() -> void:
 		assert_eq(pips.size(), data.max_tier(c.id))
 		assert_eq(pips[0].color, PowerUpScreen.AMBER, "the tier owned")
 		assert_eq(pips[1].color, PowerUpScreen.WHITE, "the tier offered")
-		assert_eq(pips[2].color, PowerUpScreen.PIP_EMPTY)
+		if pips.size() > 2:  # T-519: a power-up has 2 tiers in the 4-minute run
+			assert_eq(pips[2].color, PowerUpScreen.PIP_EMPTY)
 
 
 func test_each_card_shows_the_icon_or_a_placeholder_with_the_initial() -> void:
@@ -320,20 +325,19 @@ func test_hover_brightens_the_frame_and_press_drops_the_card() -> void:
 
 
 ## T-502: the Polarized Steering Wheel's card uses T-501's texts, its burst as a whole
-## percent from the tier's numbers, and the tier 4 line (the shock) at tier 4.
+## percent from the tier's numbers, and (T-519) the last tier's line (the shock).
 func test_the_polarized_steering_wheel_card_texts() -> void:
 	assert_eq(PowerUpScreen.name_of("polarized_steering_wheel"), "Polarized Steering Wheel")
-	var want := {1: 20, 2: 30, 3: 40}
-	for tier in want:
-		var pct := roundi((float(data.at("polarized_steering_wheel", tier)["burst_speed_multiplier"]) - 1.0) * 100.0)
-		assert_eq(pct, want[tier], "tier %d is the proposal" % tier)
-		assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", tier),
-				"Lift, steer, gas a new way: +%d%% speed burst. Whiplash is a feature." % pct)
-	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", 4),
-			"Lift, steer, gas: +45% speed, a shock that hits and shoves minions. Synergy.")
-	for tier in range(1, 5):
+	var pct := roundi((float(data.at("polarized_steering_wheel", 1)["burst_speed_multiplier"]) - 1.0) * 100.0)
+	assert_eq(pct, 20, "tier 1 is the proposal")
+	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", 1),
+			"Lift, steer, gas a new way: +20% speed burst. Whiplash is a feature.")
+	var last := data.max_tier("polarized_steering_wheel")
+	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", last),
+			"Lift, steer, gas: +45% speed, shock hits and shoves minions. Chat loves it.")
+	for tier in range(1, last + 1):
 		var text := PowerUpScreen.describe(data, "polarized_steering_wheel", tier)
 		assert_false(text.contains("{"), "no slot left unfilled at tier %d" % tier)
-	# The other power-ups keep their one line at tier 4.
-	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", 4),
-			"The car deals 5 damage to minions it touches. Rust: now a feature.")
+	# The other power-ups have a last-tier line too, with its slots filled.
+	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", data.max_tier("rusty_overcoat")),
+			"Deals 5 damage every 0.3 s to minions, now kaiju too. Tetanus is content.")

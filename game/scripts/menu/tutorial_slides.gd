@@ -4,7 +4,7 @@ extends Control
 ## slides are redrawn, with clips of the real car"): four slides shown before the first run:
 ## 1 Drive (the keys and the drift rule beside the drift clip), 2 Tricks bring gift packs (the
 ## loop as four steps, then three clips), 3 Missions (the notebook page and the four driving
-## power-ups), 4 Survive the stream (the 8-minute timeline, Go live, Don't show again). A left
+## power-ups), 4 Survive the stream (the 4-minute timeline, Go live, Don't show again). A left
 ## and a right arrow move between them (slide 1 has no left arrow, slide 4 no right arrow), a
 ## Skip control at the top right jumps to slide 4, and slide 4 has the Go live button and the
 ## "Don't show again" checkbox. It only shows the screen and sends start_pressed(dont_show_again);
