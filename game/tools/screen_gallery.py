@@ -3,11 +3,17 @@
 
   python game/tools/screen_gallery.py [--out screenshots/mvp-gallery] [--no-text]
   python game/tools/screen_gallery.py --sizes --out art-archive/T-493   (the scaling scan, T-493)
+  python game/tools/screen_gallery.py --text-layout --out screenshots/text-editor   (the text layout capture, T-524)
 
 Runs game/tools/screen_gallery.gd in a real Godot window (not headless; about a minute), then
 checks the manifest.json it wrote against the PNGs on disk and prints the screens saved and any
 not reached. Unless --no-text, it also writes the text inventory (text_inventory.py) next to them.
 GODOT_BIN comes from the environment or .env at the repo root, like the other tools.
+--text-layout (task T-524, text_layout.py and text_layout.gd) saves, for every screen and extra state, `<screen>.png` and
+`<screen>_blank.png` (the same frame with every text node's text invisible, nothing moved), and text_layout.json: one row per
+text node with its rect, font, size, colours, outline, alignment, wrap and its text inventory match, the templates
+(components that show many texts), the fonts copied into fonts/, what is not capturable and the coverage of the text
+inventory. Docs: game/docs/hud-and-menus/hud.md, "The text layout capture".
 The output folder is git-ignored (/screenshots/) and outside game/, so Godot never imports it.
 """
 import argparse
@@ -22,6 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import scaling_report  # noqa: E402
+import text_layout  # noqa: E402
 import text_inventory  # noqa: E402
 
 SIZE = (1280, 720)
@@ -124,16 +131,38 @@ def scan_sizes(binary, game, out):
     return 0 if not bad else 1
 
 
+def build_text_layout(out, game):
+    """Godot's raw capture to text_layout.json (text_layout.py); prints the counts and coverage; returns problems."""
+    raw_path = out / "text_layout_nodes.json"
+    if not raw_path.exists():
+        return ["Godot wrote no text_layout_nodes.json"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    inventory = text_inventory.build(game)
+    result = text_layout.build(raw, inventory, game, out)
+    (out / "text_layout.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + chr(10), encoding="utf-8")
+    raw_path.unlink()
+    print(text_layout.summary(result))
+    problems = text_layout.check_layout(out)
+    pct = result["coverage"]["text_files"]["percent"]
+    if pct < text_layout.COVERAGE_MIN:
+        problems.append(f"text_files coverage {pct}% is under {text_layout.COVERAGE_MIN}%")
+    return problems
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--out", default=str(ROOT / "screenshots" / "mvp-gallery"))
     ap.add_argument("--sizes", action="store_true", help="the scaling scan: capture at 5 sizes, write scaling_report.md/.json and contact sheets into --out")
+    ap.add_argument("--text-layout", action="store_true", help="the text layout capture: a _blank.png per screen and text_layout.json (T-524)")
     ap.add_argument("--no-text", action="store_true", help="skip the text inventory")
     args = ap.parse_args(argv)
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
     for old in list(out.glob("*.png")) + [out / "manifest.json"]:
         old.unlink(missing_ok=True)
+    if args.text_layout:
+        for old in [out / "text_layout.json", out / "text_layout_nodes.json"]:
+            old.unlink(missing_ok=True)
     binary = godot_bin()
     if not binary or not Path(binary).is_file():
         print("GODOT_BIN is not set or does not exist (set it in the environment or .env).", file=sys.stderr)
@@ -142,8 +171,9 @@ def main(argv=None):
     subprocess.run([binary, "--headless", "--path", str(game), "--import"], capture_output=True, timeout=TIMEOUT_SECONDS)
     if args.sizes:
         return scan_sizes(binary, game, out)
+    extra = ["--text-layout"] if args.text_layout else []
     result = subprocess.run([binary, "--path", str(game), "--resolution", f"{SIZE[0]}x{SIZE[1]}", "-s", "res://tools/screen_gallery.gd",
-                             "--", f"--out={out.as_posix()}"], timeout=TIMEOUT_SECONDS)
+                             "--", f"--out={out.as_posix()}"] + extra, timeout=TIMEOUT_SECONDS)
     problems = check_manifest(out)
     manifest = out / "manifest.json"
     if manifest.exists():
@@ -153,6 +183,8 @@ def main(argv=None):
             print(f"  not reached: {n['name']}: {n['reason']}")
     for p in problems:
         print("  problem:", p)
+    if args.text_layout:
+        problems += build_text_layout(out, game)
     if not args.no_text:
         text_inventory.write(text_inventory.build(game), out / "text_inventory.json")
         print(f"text inventory written to {out / 'text_inventory.json'} (+ .csv)")

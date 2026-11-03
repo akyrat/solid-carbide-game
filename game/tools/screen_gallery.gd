@@ -20,6 +20,10 @@ var _out := ""
 var _shots: Array = []
 var _not_reached: Array = []
 var _game: Node = null
+var _text_mode := false  ## --text-layout (T-524): each shot also saves a _blank.png and the text nodes' rows
+var _text_rows: Array = []
+var _text_screens: Array = []
+var _not_capturable: Array = []
 
 
 func _initialize() -> void:
@@ -29,11 +33,14 @@ func _initialize() -> void:
 		elif arg.begins_with("--size="):
 			var parts := arg.substr(7).split("x")
 			SIZE = Vector2i(int(parts[0]), int(parts[1]))
+		elif arg == "--text-layout":
+			_text_mode = true
 	if _out == "":
 		printerr("screen_gallery.gd: need --out=<folder>")
 		quit(1)
 		return
 	DirAccess.make_dir_recursive_absolute(_out)
+	TextLayout.out_dir = _out
 	_run()
 
 
@@ -53,12 +60,18 @@ func _run() -> void:
 	await _pause()
 	await _time_up_and_wreck()
 	await _recaps()
+	if _text_mode:
+		await _text_states()
 	_not_reached.append({"name": "runs_list", "reason": "the runs list (Past streams) is not in the game yet: its texts exist (runs_list_text.json) but no screen reads them"})
 
 	var manifest := {"size": [SIZE.x, SIZE.y], "actual_window": [root.size.x, root.size.y], "screens": _shots, "not_reached": _not_reached}
 	var f := FileAccess.open(_out.path_join("manifest.json"), FileAccess.WRITE)
 	f.store_string(JSON.stringify(manifest, "  ") + "\n")
 	f.close()
+	if _text_mode:
+		var nf := FileAccess.open(_out.path_join("text_layout_nodes.json"), FileAccess.WRITE)
+		nf.store_string(JSON.stringify({"size": [SIZE.x, SIZE.y], "screens": _text_screens, "rows": _text_rows, "not_capturable": _not_capturable}, "  ") + String.chr(10))
+		nf.close()
 	print("screen_gallery.gd: %d screens saved, %d not reached, in %s" % [_shots.size(), _not_reached.size(), _out])
 	for p in [GameSettings.path, PlayerProgress.path, RunHistory.path]:
 		DirAccess.remove_absolute(p)
@@ -256,6 +269,9 @@ func _frames(n: int) -> void:
 
 
 func _shot(shot_name: String, how: String) -> void:
+	if _text_mode:
+		Engine.time_scale = 0.0  # the pair (normal, blank) is taken in the same animation state
+		await _frames(2)
 	await RenderingServer.frame_post_draw
 	var image := root.get_texture().get_image()
 	if image == null or image.is_empty():
@@ -271,6 +287,48 @@ func _shot(shot_name: String, how: String) -> void:
 	var win := Vector2(image.get_size())
 	_shots.append({"name": shot_name, "file": file, "how": how, "image_size": [image.get_width(), image.get_height()], "pieces": _pieces(win)})
 	print("screen_gallery.gd: saved ", file)
+	if _text_mode:
+		await _text_pair(shot_name, how, image)
+		Engine.time_scale = 1.0
+
+
+## T-524: the rows of every text node on screen, then the same frame with the text blanked.
+func _text_pair(shot_name: String, how: String, normal: Image) -> void:
+	var nodes := TextLayout.find_nodes(root, Vector2(normal.get_size()))
+	var count := _text_rows.size()
+	for n in nodes:
+		_text_rows.append(TextLayout.row(n, shot_name))
+	for nc in TextLayout.not_capturable(root, shot_name):
+		_not_capturable.append(nc)
+	var undo := TextLayout.blank(nodes)
+	await _frames(1)
+	await RenderingServer.frame_post_draw
+	var blank := root.get_texture().get_image()
+	if SIZE == Vector2i(1280, 720) and blank.get_size() != SIZE:
+		blank.resize(SIZE.x, SIZE.y, Image.INTERPOLATE_NEAREST)
+	var leaked := TextLayout.leaked(nodes)
+	blank.save_png(_out.path_join(shot_name + "_blank.png"))
+	TextLayout.restore(undo)
+	# How much of the picture changed away from the text: pixels that differ outside every text rect
+	# (grown by 6 px for outlines and shadows). Animation is frozen, so it should be near zero.
+	var outside := 0
+	var rects: Array = []
+	for i in range(count, _text_rows.size()):
+		var r: Array = _text_rows[i]["rect"]
+		rects.append(Rect2(r[0], r[1], r[2], r[3]).grow(6.0))
+	var step := 2
+	for y in range(0, normal.get_height(), step):
+		for x in range(0, normal.get_width(), step):
+			if normal.get_pixel(x, y) != blank.get_pixel(x, y):
+				var inside := false
+				for r in rects:
+					if (r as Rect2).has_point(Vector2(x, y)):
+						inside = true
+						break
+				if not inside:
+					outside += 1
+	_text_screens.append({"name": shot_name, "file": shot_name + ".png", "blank_file": shot_name + "_blank.png", "how": how,
+		"rows": _text_rows.size() - count, "text_nodes_still_showing_in_blank": leaked, "pixels_changed_outside_text": outside * step * step})
 
 
 ## The visible Controls that show something (T-493, the scaling scan): path, class and pixel rect.
@@ -291,3 +349,43 @@ func _collect(n: Node, win: Vector2, out: Array) -> void:
 					"rect": [snappedf(r.position.x, 0.1), snappedf(r.position.y, 0.1), snappedf(r.size.x, 0.1), snappedf(r.size.y, 0.1)]})
 	for ch in n.get_children():
 		_collect(ch, win, out)
+
+
+## T-524: the extra states that show each kind of text the shots above do not.
+func _text_states() -> void:
+	await _fresh_game()
+	_game.show_tutorial()
+	_game.tutorial.show_slide(3)
+	await _frames(8)
+	await _shot("tutorial_slide_4", "Main menu, Start: tutorial slide 4 of 4 (the goal).")
+	# The combo multiplier beside the car, a few tricks in.
+	await _start_run()
+	await _frames(20)
+	var run: Node = _game.run
+	var state: RunState = run.state
+	run.power_up_screen.visible = false
+	for i in 4:
+		state.add_trick("three_sixty")
+	for i in 3:
+		state.add_trick("alternate_drift")
+	await _frames(100)
+	await _shot("hud_combo_multiplier", "Run: a few tricks in, the combo multiplier beside the car.")
+	state._cut_combo()
+	await _frames(12)
+	await _shot("hud_multiplier_loss", "Run: a crash cut the combo: the multiplier flashes red and drops what was lost.")
+	state.sub_goal_healed.emit(1.0)
+	await _frames(10)
+	await _shot("hud_heal_popup", "Run: a full sub goal healed the car (all weapons maxed): the heal popup.")
+	# The God mode page on the pause screen.
+	await _start_run()
+	await _frames(20)
+	GodMode.unlocked = true
+	var ps: CanvasLayer = _game.pause_screen
+	ps.pause()
+	ps.refresh_god_mode_entry()
+	await _frames(8)
+	await _shot("pause_god_mode_entry", "Run, Escape, after God mode is unlocked (N): the pause screen with its God mode button.")
+	ps.open_god_mode()
+	await _frames(8)
+	await _shot("pause_god_mode_page", "Pause screen, God mode: the weapons and power-ups page.")
+	GodMode.unlocked = false
