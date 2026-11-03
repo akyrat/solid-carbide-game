@@ -50,7 +50,7 @@ func _car_units() -> Vector2:
 	return run.car.position / 16.0
 
 
-## Moves the run's clock to boss time (3 minutes in), firing the signal.
+## Moves the run's clock to boss time, firing the signal.
 func _to_boss_time() -> void:
 	run.state.advance(RunState.RUN_SECONDS - RunState.BOSS_TIME_LEFT - run.state.time_elapsed() + 0.01)
 
@@ -71,7 +71,7 @@ func test_run_has_the_boss_and_no_kaiju_before_boss_time() -> void:
 	assert_eq(boss.car, run.car)
 	assert_eq(boss.bodies_root.get_parent(), run.physics_world, "body in the flat physics world")
 	assert_eq(boss.draw_root, run.minions.draw_root, "drawn in the enemies' node, before the car's View")
-	run.state.advance(150.0)
+	run.state.advance(300.0)
 	for i in 20:
 		boss.step(DT)
 	assert_null(boss.kaiju, "no kaiju before boss time")
