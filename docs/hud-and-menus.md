@@ -143,7 +143,7 @@ Task T-331 (Extended narrative, Decisions, "Subs"; each line scored 8 or more in
 - **Sub goal label**, under the square: `{subs} / {goal} SUBS`, with the subs icon beside it (T-339: the proposal instead of the star), not part of the text (`TEXT_SUB_GOAL`). Example: "42 / 156 SUBS".
 - **Live badge** and **Viewers unit** (`TEXT_LIVE_BADGE` LIVE, `TEXT_VIEWERS_UNIT` WATCHING, T-331, T-336): no longer used (T-514 removed the counter); the constants are gone from `hud.gd`.
 - **A trick's multiplier add** on its popup and **what a crash lost** (T-514): both come from `game/data/multiplier_text.json` (T-512, below): `gain` `+x{amount}` and `loss` `-x{amount}`; the old `ADDED_TEXT` and `LOST_TEXT` constants are gone.
-- **The combo multiplier's texts** (T-512, board 2026-11-02, "The multiplier beside the car"; in `game/data/multiplier_text.json`, each line scored 8 or more): `multiplier` = `x{multiplier}` beside the car (two decimals, for example x2.50, no label word); `gain` = `+x{amount}` on a trick popup, the multiplier the trick added (for example +x0.5), replacing the viewers amount; `loss` = `-x{amount}`, what a crash cut from the multiplier (optional). The live viewers badge `LIVE` (`TEXT_LIVE_BADGE`) and `WATCHING` (`TEXT_VIEWERS_UNIT`) are unused once T-514 removes the counter, as are the two viewers amount lines above. The recap's peak line is now "Peak combo" (`recap_text.json` `heading.combo`, also `runs_list_text.json` `column.combo`) with its value `peak_value` = `x{multiplier}`. The tutorial lines that said live viewers are rewritten (see "Tutorial slides and trick list": `slide2.step2_title` "Tricks pump the multiplier", `step2_caption` "Each trick bumps the multiplier.", `step3_caption` "Tricks and drifts earn subs that fill the sub goal.", and the unused `slide1.controls` and `slide2.chain`).
+- **The combo multiplier's texts** (T-512, board 2026-11-02, "The multiplier beside the car"; in `game/data/multiplier_text.json`, each line scored 8 or more): `multiplier` = `x{multiplier}` beside the car (two decimals, for example x2.50, no label word); `gain` = `+x{amount}` on a trick popup, the multiplier the trick added (for example +x0.5), replacing the viewers amount; `loss` = `-x{amount}`, what a crash cut from the multiplier (optional). The live viewers badge `LIVE` (`TEXT_LIVE_BADGE`) and `WATCHING` (`TEXT_VIEWERS_UNIT`) are unused once T-514 removes the counter, as are the two viewers amount lines above. The recap's peak line is now "Peak combo" (`recap_text.json` `heading.combo`, also `runs_list_text.json` `column.combo`) with its value `peak_value` = `x{multiplier}`. The tutorial lines that said live viewers are rewritten (see "Tutorial slides and trick list": `slide2.step2_title` "Chain trick combos", `step2_caption` and `step3_caption` empty (the board wants no caption there), and the unused `slide1.controls` and `slide2.chain`).
 - **Subs word** (`TEXT_LIKES`, value renamed): `Subs`, replaced "Likes" in the likes row; the row went in T-337, so the HUD no longer shows the word on its own (the sub goal label ends in SUBS).
 - **Reward popup:** `TRENDING! +{subs} SUBS!`, replaces "Trending! +{likes} Likes".
 - **Molotov tier 6 card aside:** "Linger for subs." replaces "Linger for likes."
@@ -297,13 +297,13 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 | Slide 1, drift rule | `slide1.drift_rule` | W + turn = drift |
 | Slide 2, headline | `slide2.title` | Tricks bring gift packs |
 | Slide 2, step 1 title | `slide2.step1_title` | Pull tricks |
-| Slide 2, step 1 caption | `slide2.step1_caption` | Drifts, spins, air. |
-| Slide 2, step 2 title | `slide2.step2_title` | Tricks pump the multiplier |
-| Slide 2, step 2 caption | `slide2.step2_caption` | Each trick bumps the multiplier. |
+| Slide 2, step 1 caption | `slide2.step1_caption` | Full list in settings menu |
+| Slide 2, step 2 title | `slide2.step2_title` | Chain trick combos |
+| Slide 2, step 2 caption | `slide2.step2_caption` | (empty, the board wants no caption) |
 | Slide 2, step 3 title | `slide2.step3_title` | Hit a sub goal |
-| Slide 2, step 3 caption | `slide2.step3_caption` | Tricks and drifts earn subs that fill the sub goal. |
+| Slide 2, step 3 caption | `slide2.step3_caption` | (empty, the board wants no caption) |
 | Slide 2, step 4 title | `slide2.step4_title` | Gift pack |
-| Slide 2, step 4 caption | `slide2.step4_caption` | A new weapon that fires itself. |
+| Slide 2, step 4 caption | `slide2.step4_caption` | All weapons auto-fire |
 | Slide 2, ramp clip caption (the other two clips use `trick.extended_drift` and `trick.alternate_drift`) | `slide2.clip_ramp` | HANG TIME! + AIR 180! |
 | Slide 3, headline | `slide3.title` | Missions power your car |
 | Slide 3, line beside the notebook | `slide3.missions` | The notebook on the left gives you one mission at a time: clear it, then pick a driving power-up. |
