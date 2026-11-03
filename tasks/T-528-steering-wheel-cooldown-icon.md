@@ -1,7 +1,7 @@
 ---
 id: T-528
 title: The steering wheel's cooldown on its HUD slot icon, like loading
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, docs/drifting.md, tasks/T-523-weapon-power-up-slots.md, tasks/README.md]
 files_expected_to_change: [game/scripts/hud/, game/tests/, game/docs/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ UI agent: the loading fill on the wheel's slot icon, built against T-527's coold
 ### 2026-11-03, In progress → In QA
 
 UI agent: the wheel's slot icon fills like loading (veil shrinking top-down, white flash when ready), built against T-527's API; ready for QA and the combined playtest.
+
+### 2026-11-03, In QA → Needs playtest
+
+QA passed 5/5 with T-527's real wheel merged in. Ready to play.
 
 ## Style review
 
