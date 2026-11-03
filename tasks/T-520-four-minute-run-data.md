@@ -1,7 +1,7 @@
 ---
 id: T-520
 title: Data: 5-tier weapons, 2-tier power-ups, sub goals for 12 gift packs in 3 minutes
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md, docs/drifting.md]
 files_to_read_first: [docs/weapons.md, docs/drifting.md, docs/game-loop-architecture.md, game/data/weapons.json, game/data/power_ups.json, game/data/run.json, tasks/README.md]
 files_expected_to_change: [game/data/weapons.json, game/data/power_ups.json, game/data/run.json, game/scripts/, game/tests/unit/, docs/weapons.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -70,6 +70,10 @@ QA round 1 failed criterion 5: test_build_bricks_wave expects the old 4 bricks r
 
 QA fix: bricks wave tool test updated for 5 tiers; all three test sets green.
 
+### 2026-11-03, In QA → Needs playtest
+
+QA round 2 passed. Play it in the combined build in T-521's folder.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -87,3 +91,4 @@ SCREENSHOTS: art-archive/T-520/screenshots/level_up_merged_tiers_a.png (gun tier
 NOTE: running tests from a worktree needs GODOT_BIN in the environment (the worktree has no .env).
 
 QA round 1 fix: game/tools/test_build_bricks_wave.py TierRadii now expects [4.0, 8.4, 25.2] (5-tier bricks; one-ring radii {4.0, 8.4}); build_bricks_wave.py reads tiers from data, no change. Re-ran: game/tools python 977 OK (1 skipped), tools/ python 639 OK, Godot full suite green (0 failing, run before this python-only change).
+- 2026-11-03, needs-playtest → done: Combined 4-minute run build lgtm (board, 2026-11-03)
