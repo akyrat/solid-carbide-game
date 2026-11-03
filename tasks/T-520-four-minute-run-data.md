@@ -1,7 +1,7 @@
 ---
 id: T-520
 title: Data: 5-tier weapons, 2-tier power-ups, sub goals for 12 gift packs in 3 minutes
-status: in-qa
+status: in-progress
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/weapons.md, docs/drifting.md]
 files_to_read_first: [docs/weapons.md, docs/drifting.md, docs/game-loop-architecture.md, game/data/weapons.json, game/data/power_ups.json, game/data/run.json, tasks/README.md]
 files_expected_to_change: [game/data/weapons.json, game/data/power_ups.json, game/data/run.json, game/scripts/, game/tests/unit/, docs/weapons.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ The board's review: play the one combined build (T-519 to T-523) from C:\solid-c
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: every weapon has max_tier 5 and tiers 2 to 5 with exactly the docs' numbers; every power-up has 2 tiers, tier 2 equal to the old tier 4's values. (QA: pass / fail)
-- [ ] A unit test: the level table's total subs to reach 12 level-ups fits the proposed 3-minute earning rate (the rate and the sum in a _comment and the result notes). (QA: pass / fail)
-- [ ] A unit test: God mode's tier range and weapon_tier_at_start cap at 5 for weapons and 2 for power-ups. (QA: pass / fail)
-- [ ] docs/weapons.md and docs/drifting.md Content show the new tiers. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] A screenshot of a level-up screen with merged-tier cards, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: every weapon has max_tier 5 and tiers 2 to 5 with exactly the docs' numbers; every power-up has 2 tiers, tier 2 equal to the old tier 4's values. (QA: pass: test_four_minute_run_data.gd checks every weapon at max_tier 5 and the power-ups at 2 tiers; weapons.json values match docs/weapons.md exactly, underglow tick x0.5 as the docs say)
+- [ ] A unit test: the level table's total subs to reach 12 level-ups fits the proposed 3-minute earning rate (the rate and the sum in a _comment and the result notes). (QA: pass: 12 level-ups = 2,360 subs, fits 14 subs/s x 180 s = 2,520; rate and sum in run.json build_pace and the notes)
+- [ ] A unit test: God mode's tier range and weapon_tier_at_start cap at 5 for weapons and 2 for power-ups. (QA: pass: test_playtest_tier_switch_and_god_mode_cap_at_5_and_2)
+- [ ] docs/weapons.md and docs/drifting.md Content show the new tiers. (QA: pass: both docs' Content show the new tiers and match the Decisions)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: fail: code - python test set game/tools is red: test_build_bricks_wave.TierRadii.test_radii_follow_the_tiers_multipliers expects [4.0, 5.6, 8.4, 25.2] but tier_radii() now gives [4.0, 8.4, 25.2] after the bricks data change; reran alone, same result. Godot set itself passes: 2708/2709, 0 failing, 1 pending)
+- [ ] A screenshot of a level-up screen with merged-tier cards, under art-archive/T-NNN/screenshots/. (QA: pass: art-archive/T-520/screenshots/level_up_merged_tiers_a.png and _b.png exist)
 
 ## Updates
 
@@ -61,6 +61,10 @@ Texts (T-519) are in; data agent started on top of them.
 ### 2026-11-03, In progress → In QA
 
 Data done: 5-tier weapons, 2-tier power-ups, 12 sub goals (2,360 subs, ~2:49 at 14 subs/s). Full test set passes; screenshots in art-archive/T-520.
+
+### 2026-11-03, In QA → In progress
+
+QA round 1 failed criterion 5: test_build_bricks_wave expects the old 4 bricks radii. Sent back to the data agent.
 
 ## Style review
 
@@ -77,3 +81,5 @@ DOCS: docs/weapons.md Content: new first section 'The 5-tier trees as built (tas
 TESTS: new game/tests/unit/test_four_minute_run_data.gd (6 tests: exact docs numbers per weapon/tier, tier 5 = old tier 8 power, underglow placeholder, power-ups 2 tiers with tier 2 = old tier 4, 12 sub goals fit 14 x 180, weapon_tier_at_start 99 and God mode cap at 5 weapons / 2 power-ups). Existing tests I updated because the 8-tier run, 4-tier power-ups or 12 levels no longer hold (purpose kept, numbers moved): test_weapon_data, test_enemy_data (kaiju time-to-kill cases moved to the new tiers), test_polarized_steering_wheel (tier 4 shock is now tier 2), test_rusty_overcoat, test_jump_power_up, run/test_power_up_offers, run/test_run_likes (total 2,360, cap 13, 12 level-ups), weapons/test_level_up_offers (29 offers per run = 4 gun + 5 x 5; T-521's tier-2 arrival and 3-slot caps will change that count), test_starting_gun, test_bricks, test_neon_underglow, test_exhaust_flamethrower, test_windshield_wiper (_check_tier handles two entries per tier), test_molotovs, test_size_grow, test_all_weapons_run, hud/test_hud_weapon_icons (x5). Full Godot suite run once in the worktree: 0 failing, TESTS PASSED (test_four_minute_run_data alone: 6/6).
 SCREENSHOTS: art-archive/T-520/screenshots/level_up_merged_tiers_a.png (gun tier 3 to 4 card 'Bundle and Trigger' +1 bullet and fire rate x1.2; wiper 'Shove and Stretch' knockback x1.5 and blades x1.3) and level_up_merged_tiers_b.png (flame 'Hotter, Wider Burn' damage +20 percent and area +30 percent; bricks 'Widest Wave'). Fixtures tests/fixtures/level_up_t520_a.tscn and _b.tscn.
 NOTE: running tests from a worktree needs GODOT_BIN in the environment (the worktree has no .env).
+
+QA round 1 fix: game/tools/test_build_bricks_wave.py TierRadii now expects [4.0, 8.4, 25.2] (5-tier bricks; one-ring radii {4.0, 8.4}); build_bricks_wave.py reads tiers from data, no change. Re-ran: game/tools python 977 OK (1 skipped), tools/ python 639 OK, Godot full suite green (0 failing, run before this python-only change).
