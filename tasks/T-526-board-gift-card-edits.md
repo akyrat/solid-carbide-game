@@ -1,7 +1,7 @@
 ---
 id: T-526
 title: The board's gift pack card edits: weapon and power-up cards
-status: in-qa
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, game/scripts/ui/level_up_texts.gd, game/data/screen_texts.json, game/scripts/ui/power_up_screen.gd, tasks/README.md]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/data/screen_texts.json, game/tests/, game/tools/, docs/hud-and-menus.md, docs/weapons.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -101,6 +101,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Narrative agent applying the board's 41 card edits, on top of T-525.
 
+### 2026-11-03, In QA → In progress
+
+QA round 1: one Godot test still pins old card texts, and the two screenshots are missing. Back to the Narrative agent.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -110,3 +114,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Applied the board's 41 texts exactly (11 in game/data/screen_texts.json, 30 in game/scripts/ui/level_up_texts.gd; no style-loop rewrites). Updated tests: game/tools/test_check_level_up_texts.py and test_four_minute_run_texts.py (new words; structure kept), game/tests/unit/test_power_up_screen.gd, test_level_up_screen.gd, test_mission_texts.gd (slot test now checks every slot left is a known one; bouncy_bumpers keeps {bounce_multiplier}). Docs: docs/hud-and-menus.md Content (card table, header, power-up descriptions); weapons.md and drifting.md only quote older/historical card texts, left as is. Python text tests pass (41 passed, 3 skipped). NOT RUN: Godot unit tests (test_power_up_screen, test_level_up_screen, test_mission_texts) and the screenshots, because GODOT_BIN is not set in this worktree; QA to run them and take a weapon gift pack and a power-up gift pack shot. Real problems noted, board's words kept: (1) Wiper tier 3 says 'Sweep speed x1.6' while data is x1.625 (rounding). (2) Gun tier 2 no longer says '3 in all'; Molotov tier 4 '+50% attack speed' vs data interval x0.56 (about +79% rate). (3) Rusty Paintjob tier 1 card shows no damage number; tier 2 'Deals {contact_damage} damage kaijus now too' reads oddly (missing 'to'). (4) Jump/Rev Charge cards no longer show cooldown or charge numbers. (5) game/tools/check_level_up_texts.py already reported mismatches against the old T-171 table before this ticket (not part of the tests).
 
 Follow-up (Project Lead, board): rusty_overcoat last-tier text now 'Deals {contact_damage} damage to kaijus now too. Tetanus is content.' (screen_texts.json, test_power_up_screen.gd, hud-and-menus.md). Python text tests pass.
+
+QA round 1 fixes: test_t171s_texts_word_for_word in game/tests/unit/test_level_up_screen.gd now pins the board's words. Screenshots taken with screen_gallery.py: art-archive/T-526/screenshots/level_up_gift_pack.png and power_up_overlay.png (tutorial_slide_2.png copied into T-525's art-archive, not committed there). Godot test run NOT finished: my gut run (test_level_up_screen, test_power_up_screen, test_mission_texts) hung (Godot pid 45400, started 17:23, in the main checkout's game folder path form) and a hook refused me stopping it; QA must run these tests.

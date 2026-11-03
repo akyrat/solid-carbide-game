@@ -599,11 +599,11 @@ func test_every_choice_and_tier_the_offers_can_produce_has_text() -> void:
 
 func test_t171s_texts_word_for_word() -> void:
 	assert_eq(Texts.TEXTS["get_underglow.title"], "Neon Underglow")
-	assert_eq(Texts.TEXTS["upgrade_underglow.tier3.desc"], "Glow damage x2.25, to 4.5 per hit. Peak production value.")
-	assert_eq(Texts.TEXTS["get_molotov.desc"], "Throws a molotov every 3 seconds. Fire lasts 3 seconds. Radius 56% bigger. Pre-sponsored.")
+	assert_eq(Texts.TEXTS["upgrade_underglow.tier3.desc"], "Glow damage x2.25.")
+	assert_eq(Texts.TEXTS["get_molotov.desc"], "Throws a molotov every 3 seconds.")
 	assert_eq(Texts.TEXTS["upgrade_molotov.tier5.title"], "MOREEEE")
-	assert_eq(Texts.TEXTS["upgrade_wiper.tier4.desc"], "Minion knockback x1.5, 6 to 9. Blades x1.3 longer. Subs love a good shove.")
-	assert_eq(Texts.TEXTS["upgrade_wiper.tier3.title"], "Faster Sweep II")
+	assert_eq(Texts.TEXTS["upgrade_wiper.tier4.desc"], "Minion knockback x1.5. Blades x1.3 longer.")
+	assert_eq(Texts.TEXTS["upgrade_wiper.tier3.title"], "Faster Sweep")
 	for w in ["underglow", "molotov", "wiper"]:
 		for suffix in [".title", ".desc"]:
 			assert_true(Texts.TEXTS.has("get_" + w + suffix))
