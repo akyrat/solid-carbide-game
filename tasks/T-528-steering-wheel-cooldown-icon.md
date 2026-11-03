@@ -1,7 +1,7 @@
 ---
 id: T-528
 title: The steering wheel's cooldown on its HUD slot icon, like loading
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -43,11 +43,11 @@ The board's review: play the one combined build (T-527, T-528) from C:\solid-car
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The wheel's slot icon is drawn as spent right after a burst and full again when the cooldown ends, following cooldown_fraction_left() (unit test on the slot's draw state at 0, 0.5 and 1). (QA: pass / fail)
-- [ ] Other power-up slots are unchanged (test). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content and the HUD doc describe it. (QA: pass / fail)
-- [ ] The Godot test set passes. (QA: pass / fail)
-- [ ] Screenshots: the slot at about full cooldown, half and ready, in art-archive/T-528/screenshots/. (QA: pass / fail)
+- [ ] The wheel's slot icon is drawn as spent right after a burst and full again when the cooldown ends, following cooldown_fraction_left() (unit test on the slot's draw state at 0, 0.5 and 1). (QA: pass)
+- [ ] Other power-up slots are unchanged (test). (QA: pass)
+- [ ] docs/hud-and-menus.md Content and the HUD doc describe it. (QA: pass)
+- [ ] The Godot test set passes. (QA: pass; run on the branch with the real wheel from T-527, Hud.bind_car binds car.polarized, HUD tests that bind a real car pass)
+- [ ] Screenshots: the slot at about full cooldown, half and ready, in art-archive/T-528/screenshots/. (QA: pass)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-03, Open → In progress
 
 UI agent: the loading fill on the wheel's slot icon, built against T-527's cooldown API in parallel.
+
+### 2026-11-03, In progress → In QA
+
+UI agent: the wheel's slot icon fills like loading (veil shrinking top-down, white flash when ready), built against T-527's API; ready for QA and the combined playtest.
 
 ## Style review
 
