@@ -44,8 +44,8 @@ func test_icon_per_weapon_in_the_order_taken() -> void:
 	var icons: WeaponIcons = r.hud.weapon_icons
 	r.weapons.upgrade("wiper")
 	r.weapons.upgrade("flamethrower")
-	r.weapons.upgrade("molotov")
-	assert_eq(icons.order, ["gun", "wiper", "flamethrower", "molotov"])
+	# T-523: three slots, so three rows (a fourth weapon is owned but has no slot).
+	assert_eq(icons.order, ["gun", "wiper", "flamethrower"])
 	assert_eq(_icon_order(icons), icons.order, "the rows run top to bottom in that order")
 	for id: String in icons.order:
 		# T-429: the HUD's own 24 x 24 icon (a frame of the icon sheet), shown at 2x.
@@ -94,17 +94,15 @@ func test_a_new_run_empties_the_column_back_to_the_gun() -> void:
 
 
 func test_all_six_weapons_at_tier_eight_fit_under_the_hearts() -> void:
+	# T-523: the grid shows 3 slots at most (the first three taken), the piece is the same size.
 	var r := _run()
 	var hud: Hud = r.hud
 	for id: String in r.weapons.weapons:
 		r.weapons.get_weapon(id).set_tier(8)
 	var icons := hud.weapon_icons
-	assert_eq(icons.order.size(), 6, "the five weapons and Bricks (T-324)")
-	var box := Rect2()
-	for id: String in icons.order:
-		var row: Dictionary = icons.rows[id]
-		var rect: Rect2 = row.icon.get_global_rect().merge(Rect2(row.count.get_global_position(), row.count.size))
-		box = rect if box.size == Vector2.ZERO else box.merge(rect)
+	assert_eq(icons.order.size(), 6, "the five weapons and Bricks (T-324) are owned")
+	assert_eq(icons.rows.size(), SlotGrid.SLOTS, "three of them fit the slots")
+	var box := icons.get_global_rect()
 	assert_almost_eq(box.position, Vector2(12, 88), Vector2(0.5, 0.5), "at the layout page's place (T-338)")
 	assert_gte(box.position.y, hud.heart_row.get_global_rect().end.y, "under the hearts")
 	assert_lt(box.end.x, 1152.0 * 0.25, "in the left quarter, clear of the middle")

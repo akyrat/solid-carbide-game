@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/t523_slots_shot.gd" id="1_s"]
+
+[node name="T523Slots" type="Node"]
+script = ExtResource("1_s")
+weapon_n = 2
+power_n = 1

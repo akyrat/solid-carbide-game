@@ -443,6 +443,7 @@ func bind(state: RunState) -> void:
 		_state.combo_broken.disconnect(_on_combo_broken)
 		_state.level_up.disconnect(_on_level_up)
 	_state = state
+	weapon_icons.setup_power_ups(state)
 	_state.time_left_changed.connect(_on_time_left_changed)
 	_state.health_changed.connect(_on_health_changed)
 	_state.xp_changed.connect(_on_xp_changed)

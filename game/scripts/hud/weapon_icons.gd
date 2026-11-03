@@ -24,8 +24,23 @@ const COUNT_OUTLINE_SIZE := HudStyle.WEAPON_COUNT_OUTLINE
 ## The count's text, the combo counter's "x{n}" form.
 const TEXT_COUNT := "x{tier}"
 
+## T-523: the piece holds two grids of 3 slots, the weapons' and, beside it, the driving
+## power-ups' (HUD and menus, Decisions, "Weapon and power-up slots"). Pips: one per tier the
+## item can reach (from the data), the tiers reached filled. The layout editor moves both
+## together as this one piece.
+const COL_GAP := 8
+const COUNT_ROOM := 56
+
 ## The weapon ids shown, in the order taken.
 var order: Array = []
+## The weapon grid and the power-up grid (frames and pips).
+var weapon_grid: SlotGrid
+var power_grid: SlotGrid
+## The power-up ids shown, in the order collected, and each one's icon.
+var power_order: Array = []
+var power_rows: Dictionary = {}
+var _state: RunState = null
+var _power_data: PowerUpData = null
 ## The weapon id to its row (an icon and a count label).
 var rows: Dictionary = {}
 var _rack: Node = null
@@ -34,6 +49,25 @@ var _rack: Node = null
 func _init() -> void:
 	name = "WeaponIcons"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	weapon_grid = SlotGrid.new()
+	weapon_grid.name = "WeaponGrid"
+	add_child(weapon_grid)
+	power_grid = SlotGrid.new()
+	power_grid.name = "PowerUpGrid"
+	power_grid.position = Vector2(power_column_x(), 0.0)
+	add_child(power_grid)
+	custom_minimum_size = piece_size()
+	size = custom_minimum_size
+
+
+## The power-up column's left edge: after the weapon frames and their counts.
+static func power_column_x() -> float:
+	return SlotGrid.SLOT_SIZE.x + COUNT_GAP + COUNT_ROOM + COL_GAP
+
+
+## The whole piece: always both grids, whatever they hold.
+static func piece_size() -> Vector2:
+	return Vector2(power_column_x() + SlotGrid.SLOT_SIZE.x, SlotGrid.grid_size().y)
 
 
 ## Follows the weapon rack (`run.weapons`): shows what it owns now, then every change.
@@ -44,6 +78,57 @@ func setup(rack: Node) -> void:
 		if not w.tier_changed.is_connected(_on_tier_changed):
 			w.tier_changed.connect(_on_tier_changed)
 		_set_tier(id, w.tier)
+
+
+## Follows the run's driving power-ups (`power_ups_changed`), showing what it owns now.
+func setup_power_ups(state: RunState) -> void:
+	if _state != null and _state.power_ups_changed.is_connected(_refresh_power_ups):
+		_state.power_ups_changed.disconnect(_refresh_power_ups)
+	_state = state
+	if _power_data == null:
+		_power_data = PowerUpData.new()
+	_state.power_ups_changed.connect(_refresh_power_ups)
+	_refresh_power_ups()
+
+
+## Rebuilds the power-up slots: owned ones in the order collected, 3 at most.
+func _refresh_power_ups() -> void:
+	var owned: Dictionary = _state.owned_power_ups()
+	for id in power_order.duplicate():
+		if not owned.has(id):
+			power_order.erase(id)
+	for id in owned:
+		if not power_order.has(id):
+			power_order.append(id)
+	for id in power_rows.keys():
+		if not power_order.has(id):
+			power_rows[id].queue_free()
+			power_rows.erase(id)
+	for i in SlotGrid.SLOTS:
+		if i >= power_order.size():
+			power_grid.set_slot(i, 0, 0)
+			continue
+		var id: String = power_order[i]
+		if not power_rows.has(id):
+			power_rows[id] = _make_power_icon(id)
+		var icon: TextureRect = power_rows[id]
+		# The art is 32 x 32 shown at 1x, centred in the weapon icons' 48 px slot.
+		icon.position = power_grid.position + SlotGrid.icon_pos(i) + (Vector2(ICON_SIZE, ICON_SIZE) - icon.size) / 2.0
+		power_grid.set_slot(i, int(owned[id]), _power_data.max_tier(id))
+
+
+func _make_power_icon(id: String) -> TextureRect:
+	var icon := TextureRect.new()
+	icon.name = "PowerIcon_%s" % id
+	var path: String = _power_data.icon(id)
+	icon.texture = load(path) as Texture2D if ResourceLoader.exists(path) else null
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_SCALE
+	icon.size = Vector2(icon.texture.get_size()) if icon.texture != null else Vector2(32, 32)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(icon)
+	return icon
 
 
 func _on_tier_changed(weapon_id: String, tier: int) -> void:
@@ -65,28 +150,28 @@ func _refresh() -> void:
 			rows[id].icon.queue_free()
 			rows[id].count.queue_free()
 			rows.erase(id)
-	for i in order.size():
+	for i in SlotGrid.SLOTS:
+		if i < order.size():
+			var w: Node = _rack.get_weapon(order[i])
+			weapon_grid.set_slot(i, w.tier, w.max_tier())
+		else:
+			weapon_grid.set_slot(i, 0, 0)
+	for i in mini(order.size(), SlotGrid.SLOTS):
 		var id: String = order[i]
 		if not rows.has(id):
 			rows[id] = _make_row(id)
 		var row: Dictionary = rows[id]
 		var tier: int = _rack.get_weapon(id).tier
-		row.icon.position = Vector2(0.0, i * (ICON_SIZE + ROW_GAP))
+		row.icon.position = SlotGrid.icon_pos(i)
 		var count: Label = row.count
 		count.visible = tier > 1
 		count.text = count_text(tier)
 		count.size = count.get_combined_minimum_size()
 		count.position = Vector2(
-			ICON_SIZE + COUNT_GAP,
+			SlotGrid.SLOT_SIZE.x + COUNT_GAP,
 			row.icon.position.y + (ICON_SIZE - count.size.y) / 2.0)
-	custom_minimum_size = Vector2(ICON_SIZE + COUNT_GAP + 56.0, _column_height())
+	custom_minimum_size = piece_size()
 	size = custom_minimum_size
-
-
-func _column_height() -> float:
-	if order.is_empty():
-		return 0.0
-	return order.size() * ICON_SIZE + (order.size() - 1) * ROW_GAP
 
 
 func _make_row(weapon_id: String) -> Dictionary:
