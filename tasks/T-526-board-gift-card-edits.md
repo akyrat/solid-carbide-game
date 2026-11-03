@@ -1,7 +1,7 @@
 ---
 id: T-526
 title: The board's gift pack card edits: weapon and power-up cards
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, game/scripts/ui/level_up_texts.gd, game/data/screen_texts.json, game/scripts/ui/power_up_screen.gd, tasks/README.md]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/data/screen_texts.json, game/tests/, game/tools/, docs/hud-and-menus.md, docs/weapons.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -105,6 +105,10 @@ Narrative agent applying the board's 41 card edits, on top of T-525.
 
 QA round 1: one Godot test still pins old card texts, and the two screenshots are missing. Back to the Narrative agent.
 
+### 2026-11-03, In QA → Needs playtest
+
+QA round 2 passed. The board asked to push these text changes once in.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -116,3 +120,4 @@ Applied the board's 41 texts exactly (11 in game/data/screen_texts.json, 30 in g
 Follow-up (Project Lead, board): rusty_overcoat last-tier text now 'Deals {contact_damage} damage to kaijus now too. Tetanus is content.' (screen_texts.json, test_power_up_screen.gd, hud-and-menus.md). Python text tests pass.
 
 QA round 1 fixes: test_t171s_texts_word_for_word in game/tests/unit/test_level_up_screen.gd now pins the board's words. Screenshots taken with screen_gallery.py: art-archive/T-526/screenshots/level_up_gift_pack.png and power_up_overlay.png (tutorial_slide_2.png copied into T-525's art-archive, not committed there). Godot test run NOT finished: my gut run (test_level_up_screen, test_power_up_screen, test_mission_texts) hung (Godot pid 45400, started 17:23, in the main checkout's game folder path form) and a hook refused me stopping it; QA must run these tests.
+- 2026-11-03, needs-playtest → done: The board asked to push these text changes once QA passed (2026-11-03)
