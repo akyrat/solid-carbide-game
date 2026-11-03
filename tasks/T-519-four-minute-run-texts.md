@@ -1,7 +1,7 @@
 ---
 id: T-519
 title: Texts for the 4-minute run: merged weapon cards, 2-tier power-ups, the heal
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/weapons.md, docs/drifting.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, tasks/README.md]
 files_expected_to_change: [game/data/, game/tools/text_inventory.py, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: texts for the 4-minute run.
 ### 2026-11-03, In progress → In QA
 
 T-519 texts done: 5-tier weapon cards, last-tier power-up cards, heal popup (screen_texts.json heal.popup), all 8+ in the style loop; keys in the result notes. Level-up screen test needs T-520's 5-tier weapons.json.
+
+### 2026-11-03, In QA → Needs playtest
+
+Texts passed QA; play them in the combined build in T-521's folder.
 
 ## Style review
 
@@ -635,3 +639,4 @@ KEYS (for T-520/T-521/T-523):
 3. game/data/screen_texts.json heal.popup = MAXED OUT! CAR PATCHED UP, BRAND INTACT! (T-521 shows it like the reward popup).
 8/7 MINUTES: grep of game/data/*_text(s).json and level_up_texts.gd finds no player-facing text naming 8 min, 7 min, 7:00 or 8:00 (test_four_minute_run_texts.NoOldRunLength). Only comments changed: screen_texts.json _comment, tutorial_text.json kaiju_comment, tutorial_slides.gd and time_up_screen.gd header comments. NOT mine and still old: timer_clock.gd label.text = 8:00 (T-521), the tutorial slide 4 timeline numbers built by code (T-521), enemies.json/playtest.json comments (T-520), docs/game-loop-architecture.md line 58 and 106 (clock starts at 8:00; Lead).
 TESTS: updated test_level_up_screen.gd (texts, count 96 to 60, tier loops 2..5, choices count computed from max_tier), test_power_up_screen.gd (last-tier texts via data.max_tier; pips[2] only if 3+ tiers), game/tools/test_check_level_up_texts.py (finales are tier 5), new game/tools/test_four_minute_run_texts.py. Ran: the three Python files (21 OK). GUT test_power_up_screen 22/22 on today's data. test_level_up_screen passes 49/49 only with 5-tier weapons.json (I tried it with a temporary copy, restored): on the branch's current 8-tier data it fails by design until T-520 sets max_tier 5, as the tier-6..8 texts are gone. game/docs/driving/drift.md and docs/hud-and-menus.md (Content, Texts for the 4-minute run) updated.
+- 2026-11-03, needs-playtest → done: Combined 4-minute run build lgtm (board, 2026-11-03)
