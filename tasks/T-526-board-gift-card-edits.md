@@ -1,7 +1,7 @@
 ---
 id: T-526
 title: The board's gift pack card edits: weapon and power-up cards
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
