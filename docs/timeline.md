@@ -3525,3 +3525,8 @@ Entry format:
 - Decision or change: The board rewrote slide 2's trick and weapon captions and the garage's title and damage bonus text on the text pass page.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-525
+
+## 2026-11-03: The board's gift pack card edits
+- Decision or change: The board rewrote the weapon and driving power-up card texts and the power-up screen's header on the gift pack cards page: shorter, plainer descriptions.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-526
