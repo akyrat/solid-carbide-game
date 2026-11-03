@@ -1,7 +1,7 @@
 ---
 id: T-522
 title: Minions' ramp and kaiju health paced for the 4-minute run
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [docs/enemies.md, docs/game-loop-architecture.md, docs/weapons.md, tasks/README.md]
 files_expected_to_change: [game/scripts/enemies/, game/data/enemies.json, game/tests/unit/, docs/enemies.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: enemy pacing for the 4-minute run.
 ### 2026-11-03, In progress → In QA
 
 Minion ramp now peaks at 3:00 (read against the boss time); kaiju health 1500 for a 3-weapon last-tier build (~19 s nominal, ~37 s at half effectiveness). Ready for QA.
+
+### 2026-11-03, In QA → Needs playtest
+
+QA passed; play it in T-521's combined 4-minute-run build.
 
 ## Style review
 
