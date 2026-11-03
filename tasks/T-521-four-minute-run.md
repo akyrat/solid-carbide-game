@@ -43,14 +43,14 @@ The board's review: play the one combined build (T-519 to T-523) from C:\solid-c
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: the kaiju arrives at 3:00 and the run ends at 4:00 (win and loss as before). (QA: pass / fail)
-- [ ] A unit test: with 3 weapons owned, level-up offers contain only upgrades of those 3; a weapon picked for the first time is at tier 2. (QA: pass / fail)
-- [ ] A unit test: with all 3 owned weapons at their last tier, a full sub goal heals the car, shows the heal message key and opens no level-up screen. (QA: pass / fail)
-- [ ] A unit test: with 3 power-ups owned, mission gifts offer only those 3; the behaviour once all are maxed is tested as proposed. (QA: pass / fail)
-- [ ] Max tiers are read from data, not hard-coded (test with a data file of other max tiers, or a grep in the result notes). (QA: pass / fail)
-- [ ] docs/game-loop-architecture.md Content describes the 4-minute run and the caps. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] Screenshots: the kaiju arriving at 3:00, a level-up with 3 weapons owned, and the heal message, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: the kaiju arrives at 3:00 and the run ends at 4:00 (win and loss as before). (QA: pass: test_four_minute_run.gd test_the_run_is_four_minutes_and_the_kaiju_comes_at_three and test_killing_the_kaiju_in_its_minute_still_wins; green)
+- [ ] A unit test: with 3 weapons owned, level-up offers contain only upgrades of those 3; a weapon picked for the first time is at tier 2. (QA: pass: test_with_three_weapons_the_offers_are_only_their_upgrades and test_a_weapon_picked_for_the_first_time_is_at_tier_2; green)
+- [ ] A unit test: with all 3 owned weapons at their last tier, a full sub goal heals the car, shows the heal message key and opens no level-up screen. (QA: pass: test_all_three_maxed_means_a_full_sub_goal_heals_and_opens_no_screen checks the heal, the heal.popup text and no level-up screen; green)
+- [ ] A unit test: with 3 power-ups owned, mission gifts offer only those 3; the behaviour once all are maxed is tested as proposed. (QA: pass: test_with_three_power_ups_the_gifts_offer_only_those and test_once_all_three_are_maxed_the_gift_is_skipped; green)
+- [ ] Max tiers are read from data, not hard-coded (test with a data file of other max tiers, or a grep in the result notes). (QA: pass: test_power_up_max_tiers_are_read_from_the_data_file and test_the_weapons_last_tier_is_the_datas; max_tier read from data)
+- [ ] docs/game-loop-architecture.md Content describes the 4-minute run and the caps. (QA: pass: Content section 'The 4-minute run's caps and the heal (T-521)' and Decisions describe 4:00, kaiju at 3:00, caps 3/3)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass: qa_check on the combined result: game/tools set and full Godot set pass; tools set skipped (nothing under tools/ changed))
+- [ ] Screenshots: the kaiju arriving at 3:00, a level-up with 3 weapons owned, and the heal message, under art-archive/T-NNN/screenshots/. (QA: pass: art-archive/T-521/screenshots has kaiju, levelup (3 weapons), heal and combined_* images)
 
 ## Updates
 
