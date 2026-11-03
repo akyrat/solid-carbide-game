@@ -1979,6 +1979,10 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 
 ### Content
 
+#### The weapon and power-up slots (T-523; proposals for the playtest)
+
+The top-left weapon column is one movable piece (the layout editor's "weapon_icons", scaled by the HUD size slider) holding two grids of **3 slots** (`game/scripts/hud/slot_grid.gd`, `weapon_icons.gd`), drawn in code in the HUD style sheet's look: a steel frame with a stepped corner of radius 2 (the (8, 8, 15) outline, a lit top left, a shaded bottom right) around a black screen, no text, no PixelLab. The weapon grid is on the left, the driving power-up grid in a second column beside it (after the weapon counts); the piece is always the same size, so filling slots never moves anything. Weapons fill their slots in the order collected (a fourth weapon, if one is ever owned, has no slot); power-ups fill theirs the same way as they are collected; the rest show as empty frames. Under each icon, one **pip** per tier the item can reach (its max tier read from the data: the weapon's own, the power-up's own, never hard-coded) and the tiers reached filled in white (the others dark); more pips than fit under the icon get narrower. The weapons keep their "x{tier}" count beside the frame (from tier 2). The weapon icons are the 24 x 24 HUD icons at 2x; the power-up icons are their 32 x 32 art at 1x, centred in the same 48 px slot.
+
 #### The HUD's style in code (T-429, goal G-008; proposals for the playtest)
 
 The HUD pieces follow the HUD style sheet (Visual style, Decisions, "The HUD style sheet"); the values sit in `hud_style.gd` (`game/docs/hud-and-menus/hud.md`). Words are Bangers with the near-black outline (8, 8, 15): outline 6 on the coins, the sub goal, "WATCHING" and the flight and drop numbers; 8 on the big numbers (weapon counts, airtime and drift counters, the multiplier number, the combo heat steps). The trick and combo broken popups use that near-black for letters and borders, the kaiju bar for its outline and dividers (2 px). The pause strip's title and text are Bangers, shown in capitals (the text itself is unchanged; its three slider numbers stay in the default font, since Bangers would make the strip 10 pixels shorter); the level-up title has outline 6. The **clock** is T-339's art: the steel panel at 2x (exactly its 200 x 72) and the drawn seven-segment digits at 2x, tinted with the time step's colour over a dim unlit 8 (the step colour at 22%, a proposal); no system font is left in the HUD. The **weapon icons** are their own 24 x 24 art (T-429, script-drawn from the card pictures, 0 PixelLab; it scored 7 of 10 in the style loop, kept for the playtest) shown at 2x in the same 48 pixel slot, so every HUD sprite now has the same pixel size.
@@ -2257,4 +2261,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
 | `visual-style.md` | `f7cb0dc3b397467995a7f0ee0cbe532266fcc10a400acc5dc1f079cdecc9c1ea` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `79bcaa55099083d4657a28d2710c82795820cbc31a54c4f73a00cefb342d622a` |
+| `hud-and-menus.md` | `2d1d97e9d716648d602f9cdc1224cdaa497fdb63edb88f5ac0096ad04f87487f` |

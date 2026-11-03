@@ -3490,3 +3490,8 @@ Entry format:
 - Decision or change: Weapons have 5 tiers and the driving power-ups 2; 12 sub goals pace 12 gift packs into the 3-minute build.
 - Documents touched: `docs/drifting.md`, `docs/weapons.md`
 - Tasks: T-520
+
+## 2026-11-03: Weapon and power-up slots on the HUD
+- Decision or change: Two 3-slot grids on the HUD, weapons and power-ups, with tier pips and empty frames.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-523
