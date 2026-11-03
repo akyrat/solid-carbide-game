@@ -1,7 +1,7 @@
 ---
 id: T-481
 title: Frame drops: car physics spikes to ~28 ms together with the bricks weapon
-status: flagged-for-review
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -121,3 +121,4 @@ docs/weapons.md (Bricks, Bodies and cost) corrected to match the merged code: T-
 - 2026-11-01, in-qa → flagged-for-review: QA round 2: criterion 2 fails. test_bricks_perf x3 headless: first-landing car.physics_step 2.61, 1.92, 2.32 ms (2 of 3 over 2 ms), later landings 0.71-1.92, flat 0.52-0.70, bricks.step max 1.47 (ok). Prebuild test passes 10/10. Full Godot set did not finish in QA time.
 
 Merged master into the branch (2026-11-03). Conflicts in docs/weapons.md, trick_popups.gd, bricks.gd resolved: master's 5-tier bricks and combo-multiplier popups kept, plus this branch's perf changes (popup first picture deferred to end of frame, wave sheet loaded on gain/tier change, master's record_for kept). weapons.md: master's text plus the T-481 'Bodies and cost' note. Tests after the merge: game/tools python 977 OK (1 skipped); tools/ python 639 OK; Godot GUT 2738 tests, 0 failing, 1 risky/pending.
+- 2026-11-03, flagged-for-review → done: Accepted by the board (2026-11-03): first landing 1.9-2.6 ms headless, close enough; bricks passes
