@@ -3505,3 +3505,8 @@ Entry format:
 - Decision or change: The minions' ramp peaks at 3:00 and the kaiju's health is 1500 for its 1-minute fight. It reached master inside T-521's combined branch, which the board played and approved.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-522
+
+## 2026-11-03: Text layout capture for the board's text editor
+- Decision or change: A screen gallery mode captures every player-facing text with its screen, a blanked copy, its rect and font, so the board can edit texts on a page that shows them in place.
+- Documents touched: game/docs/hud-and-menus/hud.md
+- Tasks: T-524
