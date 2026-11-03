@@ -1,7 +1,7 @@
 ---
 id: T-531
 title: Minion deaths: death animation (code placeholder), physics green spill, knockable corpses that fade 2 s after their last hit
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [docs/enemies.md, docs/visual-style.md, game/docs/enemies/minions.md, game/data/enemies.json, tasks/README.md]
 files_expected_to_change: [game/scripts/enemies/, game/scripts/weapons/, game/data/enemies.json, game/tests/, game/docs/enemies/minions.md, docs/enemies.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,6 +36,8 @@ A task is not done until every document listed in documents_affected has been up
 Build docs/enemies.md, Decisions, "Minion deaths". When a minion dies: (1) it plays a death animation; until T-532's PixelLab frames exist, a placeholder drawn in code from its current sprite and facing (for example it tips over and flattens), built so T-532 can swap frames in by dropping sheets in game/art/minion/ (document the file names and frame layout T-532 must deliver). (2) It spills a pixelated green liquid, drawn in code, physics simulated: droplets burst out with some velocity, fall under gravity in the isometric view, land and spread into small pools that follow the ground's height (rooftops and ramps included); hard-edged pixels, no engine blur, a slimy alien green of its own clear of Greenbull's brand greens (Visual style). (3) Its corpse stays as a body that the car knocks back when it drives into it, and that the knockback weapons' hits push too (the bricks wave, the wiper, the Polarized Steering Wheel's shock; say in the result notes whether others do and why). Every hit restarts a 2 s timer; when it runs out the corpse and its liquid fade out and are freed. A corpse never damages the car, is never targeted by weapons' aiming, doesn't count as a kill again, and doesn't block minions' paths in a way that traps them. Coins and health drops stay as today (dropped at death). Numbers in game/data/enemies.json (`minion` > a new `death` block), each a proposal with a reason: knockback strength per source, corpse friction, droplet count and speeds, pool size and lifetime, the fade time (2 s, the board's), and safety caps on live corpses and droplets (oldest fade first) so a big crowd doesn't slow the game. Measure with the perf recorder (game/docs/game-loop/perf-recorder.md, the headless run if there is one) with many minions dying at once and report frame times before and after in the result notes. Document in game/docs/enemies/minions.md and docs/enemies.md Content. Screenshots: a death mid-animation with its spill, corpses being knocked, and a field of corpses fading.
 
 The board, 2026-11-03: docs/enemies.md, Decisions, "Minion deaths: an animation, a green spill, corpses that can be knocked about", and docs/visual-style.md, Decisions, "The minion's death animation and green spill". The board plays the functional build (T-531, code placeholder animation) and reviews the art sample (T-532) before anything merges or reaches itch.io. No new player-facing text. Never write, move or commit anything in game/data/levels/. SFX stay off. Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` (your ticket's id). Godot: the worktree has no .env; give GODOT_BIN from C:\solid-carbide-game\.env (CR and quotes stripped) to one command at a time, with no `export VAR=$(...)` and no `timeout` wrapper, never copy .env; don't leave Godot processes running (if one hangs, tell the Project Lead, don't kill it). If a hook or the permission system refuses an action, stop and tell the Project Lead; never get around it with another tool or command.
+
+The board's review: play it from the ticket's folder (C:\solid-carbide-worktrees\T-531\game\project.godot) before merging (added by the Project Lead, 2026-11-03: the line was missing; nothing user-facing merges before the board plays it).
 
 ## Acceptance criteria
 
@@ -58,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-03, Open → In progress
 
 Enemy agent: death animation placeholder, physics green spill, knockable corpses.
+
+### 2026-11-03, In QA → Needs playtest
+
+QA passed 9/9. Ready to play from this folder.
 
 ## Style review
 
