@@ -3560,3 +3560,13 @@ Entry format:
 - Decision or change: Space is a handbrake: held, the car drifts as today; released, it steers less sharply and reaches a higher top speed. Jump moves to Left Shift.
 - Documents touched: docs/drifting.md
 - Tasks: T-530
+
+## 2026-11-03: Minion deaths
+- Decision or change: Minions play a death animation, spill a physics-simulated pixel green liquid and leave corpses the car and knockback weapons can push; a corpse fades 2 s after its last hit.
+- Documents touched: docs/enemies.md
+- Tasks: T-531
+
+## 2026-11-03: Minion death animation sample
+- Decision or change: A sample direction of the minion's death animation is made through PixelLab for the board's review.
+- Documents touched: docs/visual-style.md
+- Tasks: T-532
