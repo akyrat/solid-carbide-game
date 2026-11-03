@@ -1,7 +1,7 @@
 ---
 id: T-527
 title: Polarized Steering Wheel: a cooldown between bursts, and a speed-stacking playtest bot
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [docs/drifting.md, game/docs/driving/drift.md, game/scripts/driving/polarized_steering_wheel.gd, game/data/power_ups.json, tasks/README.md]
 files_expected_to_change: [game/scripts/driving/polarized_steering_wheel.gd, game/data/power_ups.json, game/tests/, game/tools/, game/docs/driving/drift.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-03, Open → In progress
 
 Driving & Drift agent: cooldown plus a speed bot that tries to reach extreme speeds.
+
+### 2026-11-03, In QA → Needs playtest
+
+QA passed 8/8. Combined into T-528's folder for the board.
 
 ## Style review
 
