@@ -74,14 +74,17 @@ func test_every_power_up_has_a_name_and_a_description() -> void:
 	assert_eq(texts.power_ups.names.rusty_overcoat, "Rusty Paintjob")
 
 
-func test_descriptions_have_a_number_slot_and_no_greenbull_says() -> void:
-	var slots := {
-		"rev_charge": "{charge_seconds}",
-		"jump": "{cooldown_seconds}",
-		"bouncy_bumpers": "{bounce_multiplier}",
-		"rusty_overcoat": "{contact_damage}",
-	}
-	for id in slots:
-		assert_true(String(texts.power_ups.descriptions[id]).contains(slots[id]), "%s names its tier's number" % id)
+func test_descriptions_have_known_slots_and_no_greenbull_says() -> void:
+	# T-526: the board's own words dropped most numbers, so a card may have no slot; every slot
+	# a description does hold must be one the power-up screen fills.
+	var known := ["charge_seconds", "boost_seconds", "boost_speed_multiplier", "cooldown_seconds",
+		"bounce_multiplier", "contact_damage", "repeat_cooldown_seconds", "burst_percent"]
+	var rx := RegEx.new()
+	rx.compile("\\{([a-z_]+)\\}")
+	for group in ["descriptions", "descriptions_last_tier"]:
+		for id in texts.power_ups[group]:
+			for m in rx.search_all(String(texts.power_ups[group][id])):
+				assert_true(known.has(m.get_string(1)), "%s.%s: slot %s is known" % [group, id, m.get_string(1)])
+	assert_true(String(texts.power_ups.descriptions["bouncy_bumpers"]).contains("{bounce_multiplier}"))
 	var all := JSON.stringify(texts.missions) + JSON.stringify(texts.power_ups)
 	assert_false(all.to_lower().contains("greenbull says"), "no 'Greenbull says' line")

@@ -47,7 +47,7 @@ class CardTexts(unittest.TestCase):
         # docs/weapons.md, Decisions, "Shorter trees: 5 tiers": tier 2 / 3 / 4 / 5.
         t = cards()
         want = {
-            "upgrade_gun.tier2.desc": ["+2 bullets", "3 in all"],
+            "upgrade_gun.tier2.desc": ["+2 bullets"],
             "upgrade_gun.tier3.desc": ["x1.44"],
             "upgrade_gun.tier4.desc": ["+1 bullet", "x1.2"],
             "upgrade_gun.tier5.desc": ["x4"],
@@ -58,11 +58,11 @@ class CardTexts(unittest.TestCase):
             "upgrade_underglow.tier3.desc": ["x2.25"],
             "upgrade_underglow.tier4.desc": ["twice as fast"],
             "upgrade_molotov.tier2.desc": ["x1.56"],
-            "upgrade_molotov.tier3.desc": ["2 more molotovs"],
-            "upgrade_molotov.tier4.desc": ["x0.56"],
-            "upgrade_molotov.tier5.desc": ["+1", "4 per throw"],
+            "upgrade_molotov.tier3.desc": ["+2 molotovs"],
+            "upgrade_molotov.tier4.desc": ["+50%"],
+            "upgrade_molotov.tier5.desc": ["+1"],
             "upgrade_wiper.tier2.desc": ["x1.56"],
-            "upgrade_wiper.tier3.desc": ["x1.625"],
+            "upgrade_wiper.tier3.desc": ["x1.6"],
             "upgrade_wiper.tier4.desc": ["x1.5", "x1.3"],
             "upgrade_bricks.tier2.desc": ["x2.1"],
             "upgrade_bricks.tier3.desc": ["x2.25"],

@@ -28,7 +28,7 @@
     "popup_comment": "T-519 (Game loop architecture, Decisions, 'A 4-minute run'): the popup shown like the reward popup when a full sub goal heals the car because all 3 weapons are at their last tier (no gift-pack screen). One line in capitals, no numbers. Scored 8 in the style loop. Read by T-521."
   },
   "power_ups": {
-    "overlay_header": "Mission done: soup up the car",
+    "overlay_header": "Mission done: pimp your ride",
     "overlay_header_comment": "The power-up overlay's header, opened when a mission completes; offers driving power-ups, not weapons.",
     "take_button": "Take power-up",
     "take_button_comment": "The overlay's button that takes the chosen power-up.",
@@ -41,18 +41,18 @@
     },
     "names_comment": "Each power-up's name on its overlay card (the board's names, kept as the style loop scored them 9).",
     "descriptions": {
-      "rev_charge": "Hold W+S {charge_seconds}s, let go of S: {boost_seconds}s boost. Brakes, now monetized.",
-      "jump": "Press Space to hop. Next hop in {cooldown_seconds} s. Airtime clips better than braking.",
-      "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles. Crashes are content too.",
-      "rusty_overcoat": "The car deals {contact_damage} damage to minions it touches. Rust: now a feature.",
-      "polarized_steering_wheel": "Lift, steer, gas a new way: +{burst_percent}% speed burst. Whiplash is a feature."
+      "rev_charge": "Hold Gas+Brake then release the Brake: speed boost.",
+      "jump": "Press Space to Jump.",
+      "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles.",
+      "rusty_overcoat": "The car deals damage to minions it touches. Rust: now a feature.",
+      "polarized_steering_wheel": "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst."
     },
     "descriptions_last_tier": {
-      "rev_charge": "Hold W+S {charge_seconds}s, let go of S: {boost_speed_multiplier}x boost for {boost_seconds}s. Pure content.",
-      "jump": "Press Space to hop higher. Air 360s fit. Next hop in {cooldown_seconds} s. Altitude sells.",
-      "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles. Subs want the replay.",
-      "rusty_overcoat": "Deals {contact_damage} damage every {repeat_cooldown_seconds} s to minions, now kaiju too. Tetanus is content.",
-      "polarized_steering_wheel": "Lift, steer, gas: +{burst_percent}% speed, shock hits and shoves minions. Chat loves it."
+      "rev_charge": "Faster charge, bigger boost.",
+      "jump": "Press Space to Jump higher.",
+      "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles.",
+      "rusty_overcoat": "Deals {contact_damage} damage to kaijus now too. Tetanus is content.",
+      "polarized_steering_wheel": "+{burst_percent}% speed, shock hits and shoves minions."
     },
     "descriptions_last_tier_comment": "T-519 (the 4-minute run; Drifting, Decisions, 'Two tiers and three slots'): each power-up has 2 tiers, and this is the card text for tier 2, the last tier (the old tier 4's numbers), replacing its descriptions entry; the descriptions entry is the tier 1 text. power_up_screen.gd describe() uses it when the tier is the power-up's max_tier. Slots are that tier's numbers from power_ups.json. All five scored 8 or more in the style loop (T-519).",
     "descriptions_comment": "One template per power-up, shown on its card for tier 1 (and for any tier before the last); the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."

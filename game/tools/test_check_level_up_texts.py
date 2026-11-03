@@ -136,7 +136,9 @@ class CheckLevelUpTextsTest(unittest.TestCase):
         texts = check.gd_texts(check.TEXTS_GD.read_text(encoding="utf-8"))
         title, desc = rows["upgrade_underglow.tier8"]
         self.assertEqual(texts["upgrade_underglow.tier5.title"], title)
-        self.assertEqual(texts["upgrade_underglow.tier5.desc"], desc)
+        # T-526: the board reworded the description ("+30% Glow radius. Sunglasses recommended.").
+        self.assertTrue(desc.endswith("Sunglasses recommended."))
+        self.assertEqual(texts["upgrade_underglow.tier5.desc"], "+30% Glow radius. Sunglasses recommended.")
 
     def test_the_real_file_has_the_boards_finales_as_tier_5(self):
         # T-519: the old tier 8 cards are the new tier 5 cards (Exposure for Everyone, Lit 24/7,
@@ -145,6 +147,9 @@ class CheckLevelUpTextsTest(unittest.TestCase):
         for key, want in NEW_TREES.items():
             if key.endswith(".title") and key.rsplit(".", 2)[1] == "tier8":
                 new_key = key.replace("tier8", "tier5")
+                # T-526: the board renamed the gun's finale to "Rated E for Everyone".
+                if new_key == "upgrade_gun.tier5.title":
+                    want = "Rated E for Everyone"
                 self.assertEqual(texts.get(new_key), want, new_key)
         for n in range(6, 12):
             self.assertNotIn("upgrade_gun.tier%d.title" % n, texts)
