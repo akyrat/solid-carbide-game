@@ -43,12 +43,12 @@ The board's review: play the one combined build (T-519 to T-523) from C:\solid-c
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A unit test: every weapon has max_tier 5 and tiers 2 to 5 with exactly the docs' numbers; every power-up has 2 tiers, tier 2 equal to the old tier 4's values. (QA: pass / fail)
-- [ ] A unit test: the level table's total subs to reach 12 level-ups fits the proposed 3-minute earning rate (the rate and the sum in a _comment and the result notes). (QA: pass / fail)
-- [ ] A unit test: God mode's tier range and weapon_tier_at_start cap at 5 for weapons and 2 for power-ups. (QA: pass / fail)
-- [ ] docs/weapons.md and docs/drifting.md Content show the new tiers. (QA: pass / fail)
-- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: pass / fail)
-- [ ] A screenshot of a level-up screen with merged-tier cards, under art-archive/T-NNN/screenshots/. (QA: pass / fail)
+- [ ] A unit test: every weapon has max_tier 5 and tiers 2 to 5 with exactly the docs' numbers; every power-up has 2 tiers, tier 2 equal to the old tier 4's values. (QA: pass: test_four_minute_run_data.gd checks every weapon at max_tier 5 and the power-ups at 2 tiers; weapons.json values match docs/weapons.md exactly, underglow tick x0.5 as the docs say)
+- [ ] A unit test: the level table's total subs to reach 12 level-ups fits the proposed 3-minute earning rate (the rate and the sum in a _comment and the result notes). (QA: pass: 12 level-ups = 2,360 subs, fits 14 subs/s x 180 s = 2,520; rate and sum in run.json build_pace and the notes)
+- [ ] A unit test: God mode's tier range and weapon_tier_at_start cap at 5 for weapons and 2 for power-ups. (QA: pass: test_playtest_tier_switch_and_god_mode_cap_at_5_and_2)
+- [ ] docs/weapons.md and docs/drifting.md Content show the new tiers. (QA: pass: both docs' Content show the new tiers and match the Decisions)
+- [ ] The full Godot test set passes in QA; the agent runs only the test files it touched. (QA: fail: code - python test set game/tools is red: test_build_bricks_wave.TierRadii.test_radii_follow_the_tiers_multipliers expects [4.0, 5.6, 8.4, 25.2] but tier_radii() now gives [4.0, 8.4, 25.2] after the bricks data change; reran alone, same result. Godot set itself passes: 2708/2709, 0 failing, 1 pending)
+- [ ] A screenshot of a level-up screen with merged-tier cards, under art-archive/T-NNN/screenshots/. (QA: pass: art-archive/T-520/screenshots/level_up_merged_tiers_a.png and _b.png exist)
 
 ## Updates
 
