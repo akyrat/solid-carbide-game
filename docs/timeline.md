@@ -3550,3 +3550,13 @@ Entry format:
 - Decision or change: The Polarized Steering Wheel's HUD slot icon fills back up as its cooldown reloads.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-528
+
+## 2026-11-03: Jump key texts: Shift
+- Decision or change: The Jump card texts name Shift instead of Space, for the handbrake playtest.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-529
+
+## 2026-11-03: A handbrake on Space, for a playtest
+- Decision or change: Space is a handbrake: held, the car drifts as today; released, it steers less sharply and reaches a higher top speed. Jump moves to Left Shift.
+- Documents touched: docs/drifting.md
+- Tasks: T-530
