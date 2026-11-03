@@ -121,3 +121,5 @@ Follow-up (Project Lead, board): rusty_overcoat last-tier text now 'Deals {conta
 
 QA round 1 fixes: test_t171s_texts_word_for_word in game/tests/unit/test_level_up_screen.gd now pins the board's words. Screenshots taken with screen_gallery.py: art-archive/T-526/screenshots/level_up_gift_pack.png and power_up_overlay.png (tutorial_slide_2.png copied into T-525's art-archive, not committed there). Godot test run NOT finished: my gut run (test_level_up_screen, test_power_up_screen, test_mission_texts) hung (Godot pid 45400, started 17:23, in the main checkout's game folder path form) and a hook refused me stopping it; QA must run these tests.
 - 2026-11-03, needs-playtest → done: The board asked to push these text changes once QA passed (2026-11-03)
+
+Correction: the Godot run was not hung, it ran the whole suite (the .gutconfig dirs, 239 scripts) in 1352 s: 2738 tests, 2737 passing, 1 pending/risky, 0 failures, so the level-up, power-up and mission-text tests pass.
