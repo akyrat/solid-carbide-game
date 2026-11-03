@@ -13,9 +13,9 @@ import style_rules as rules  # noqa: E402
 
 class TierRadii(unittest.TestCase):
     def test_radii_follow_the_tiers_multipliers(self):
-        self.assertEqual(bw.tier_radii(), [4.0, 5.6, 8.4, 25.2])
-        self.assertEqual(bw.tier_waves()[25.2], 3, "tier 8: three rings (T-498)")
-        self.assertEqual({r for r, n in bw.tier_waves().items() if n == 1}, {4.0, 5.6, 8.4})
+        self.assertEqual(bw.tier_radii(), [4.0, 8.4, 25.2])  # T-520: the 5-tier tree (radius x2.1, then the widest wave)
+        self.assertEqual(bw.tier_waves()[25.2], 3, "tier 5: three rings (T-498)")
+        self.assertEqual({r for r, n in bw.tier_waves().items() if n == 1}, {4.0, 8.4})
 
     def test_names_match_the_games_lookup(self):
         # bricks.gd BricksWave.art_path: the radius to one decimal, "." as "_".

@@ -124,21 +124,22 @@ func test_kaiju_time_to_kill_matches_result_notes() -> void:
 	# [gun tier, flame tier (0 = no flame), garage damage bonus level, seconds]
 	# T-408 (2026-10-30): the gun's damage 4 (a minion's health). T-496 (2026-11-02): the board's
 	# own 8-tier gun (+1 bullet at 2, 3 and 6; fire rate x1.2 at 4, 5 and 7; x4 at 8; one target).
+	# T-520 (2026-11-03): the 5-tier gun (+2 bullets at 2; rate x1.44 at 3; +1 bullet and x1.2 at 4; x4 at 5).
 	# The numbers are worked out from the data by _kaiju_seconds (500 health, flame 30% on target).
 	var cases := [
 		[1, 0, 0, 157.5],   # start of a run: the gun alone, never upgraded
-		[4, 4, 0, 33.5],    # average run (level 8): flame, gun tier 4, flame tier 4
-		[4, 4, 5, 26.8],    # the same with garage damage bonus level 5 (+25%)
-		[6, 6, 0, 23.2],    # top level (12): gun tier 6, flame tier 6
-		[8, 0, 0, 7.3],     # gun tier 8 (x4 fire rate), no flame
-		[8, 4, 10, 4.6],    # gun tier 8, flame tier 4, garage bonus maxed (+50%)
-		[7, 0, 0, 23.6],    # gun tier 7 alone
+		[3, 3, 0, 29.4],    # a mid run: flame, gun tier 3, flame tier 3
+		[3, 3, 5, 23.5],    # the same with garage damage bonus level 5 (+25%)
+		[4, 4, 0, 20.2],    # a good run: gun tier 4, flame tier 4
+		[5, 0, 0, 7.3],     # gun tier 5 (x4 fire rate), no flame
+		[5, 5, 10, 4.6],    # gun tier 5, flame tier 5, garage bonus maxed (+50%)
+		[4, 0, 0, 23.6],    # gun tier 4 alone
 	]
 	for c in cases:
 		assert_almost_eq(_kaiju_seconds(c[0], c[1], c[2]), c[3], 0.05,
 			"gun %d, flame %d, garage %d" % [c[0], c[1], c[2]])
 	# The average run brings it down inside the 60 seconds; the gun alone does not.
-	assert_lt(_kaiju_seconds(4, 4, 0), 60.0)
+	assert_lt(_kaiju_seconds(3, 3, 0), 60.0)
 	assert_gt(_kaiju_seconds(1, 0, 0), 60.0)
 
 

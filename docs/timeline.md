@@ -3485,3 +3485,8 @@ Entry format:
 - Decision or change: Level-up cards for the 5-tier weapon trees, last-tier power-up cards and the heal popup; no text names 8 or 7 minutes any more.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-519
+
+## 2026-11-03: Data for the 4-minute run: 5-tier weapons, 2-tier power-ups, 12 sub goals
+- Decision or change: Weapons have 5 tiers and the driving power-ups 2; 12 sub goals pace 12 gift packs into the 3-minute build.
+- Documents touched: `docs/drifting.md`, `docs/weapons.md`
+- Tasks: T-520

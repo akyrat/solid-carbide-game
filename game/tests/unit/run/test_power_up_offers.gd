@@ -44,9 +44,8 @@ func test_a_fresh_car_can_be_offered_every_power_up() -> void:
 
 func test_an_owned_power_up_is_offered_at_its_next_tier() -> void:
 	state.grant_power_up("jump")
-	state.grant_power_up("jump")
 	assert_true(offers.available_offers().has("jump"))
-	assert_eq(offers.offered_tier("jump"), 3)
+	assert_eq(offers.offered_tier("jump"), 2, "T-520: two tiers, so the next tier is the last")
 
 
 func test_a_power_up_at_its_last_tier_is_never_offered() -> void:
@@ -136,7 +135,7 @@ func test_a_new_run_drops_the_gift() -> void:
 
 
 ## T-502: the Polarized Steering Wheel is in the mission gift's pool like the others,
-## offered at tier 1, then its next tiers, never past tier 4.
+## offered at tier 1, then its next tier, never past tier 2 (T-520).
 func test_the_polarized_steering_wheel_is_a_mission_gift() -> void:
 	assert_true(offers.available_offers().has("polarized_steering_wheel"))
 	assert_eq(offers.offered_tier("polarized_steering_wheel"), 1)
@@ -155,5 +154,5 @@ func test_the_polarized_steering_wheel_is_a_mission_gift() -> void:
 	assert_true(offers.choose("polarized_steering_wheel"))
 	assert_eq(state.power_up_tier("polarized_steering_wheel"), 1, "taking it gives tier 1")
 	_max_out("polarized_steering_wheel")
-	assert_eq(state.power_up_tier("polarized_steering_wheel"), 4)
-	assert_false(offers.available_offers().has("polarized_steering_wheel"), "never past tier 4")
+	assert_eq(state.power_up_tier("polarized_steering_wheel"), 2)
+	assert_false(offers.available_offers().has("polarized_steering_wheel"), "never past tier 2")

@@ -499,7 +499,9 @@ The board's "little side slip out of a drift" (Decisions). The values are **prop
 
 #### Driving power-ups: the tiers (task T-455, proposals)
 
-The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers each, every number a **proposal for the board's playtest** with its reason in the file (Game Data wrote them on the Driving & Drift Agent's behalf). Icons are fixed at `res://art/power_ups/<id>.png`; the files come with the art ticket.
+**Since T-520 each power-up has two tiers (tier 1 as below, tier 2 = the old tier 4, the last number of every list below; the tier 2 and 3 numbers in the lists are the record of the 4-tier build):** Rev Charge tier 2: 0.7 s charge, boost x1.9 for 1.5 s. Jump tier 2: takeoff 8, cooldown 1.1 s. Bouncy Bumpers tier 2: x2.6. Rusty Overcoat tier 2: 5 damage, 0.3 s repeat, hits the kaiju. Polarized Steering Wheel tier 2: +45% burst for 0.5 s and the Bricks shock (written "tier 4" in its section below, which is its last tier). `max_tier` is 2 in `game/data/power_ups.json` and God mode caps at 2. Unit test: `game/tests/unit/test_four_minute_run_data.gd`.
+
+The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers each until T-520, every number a **proposal for the board's playtest** with its reason in the file (Game Data wrote them on the Driving & Drift Agent's behalf). Icons are fixed at `res://art/power_ups/<id>.png`; the files come with the art ticket.
 
 - **Rev Charge:** charge time to full 1.6 / 1.3 / 1.0 / 0.7 s; boost speed ×1.5 / 1.6 / 1.75 / 1.9 for 0.8 / 1.0 / 1.2 / 1.5 s. Slow and short at first, so the idea shows; the top tier is cheap to use mid-drift.
 - **Jump:** takeoff speed 5 / 6 / 7 / 8 (hop height, hence airtime) with a cooldown of 2.0 / 1.7 / 1.4 / 1.1 s. The first hop is enough for the airtime missions, the third for an air 180, the fourth for an air 360.
@@ -1408,6 +1410,19 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 
 ### Content
 
+#### The 5-tier trees as built (task T-520)
+
+Since T-520 every weapon has **5 tiers** (`max_tier` 5 in [../game/data/weapons.json](../game/data/weapons.json)): the numbers are Decisions, "Shorter trees: 5 tiers", written into the data exactly and not rounded. A tier with two kinds of upgrade has two entries with the same tier number; all of a tier's effects apply when it is reached. **The tier lists further down in this Content (the 8-tier trees, the T-166 and T-496 numbers, tier 8 finales, "tiers 2 to 8") are the record of the 8-tier build; where they differ, this section is the game.** Tier 2 / 3 / 4 / 5:
+
+- **Gun:** +2 bullets (3 a volley) / fire rate x1.44 / +1 bullet (4) and fire rate x1.2 / fire rate x4 (final: 4 bullets, about 0.23 s between volleys, the old tier 8).
+- **Hot Take Exhaust (flamethrower):** size x1.56 / damage x1.2 (2.4) and size x1.3 / +2 s burn / always on.
+- **Neon Underglow:** radius x1.5 / damage x2.25 (4.5) / tick interval x0.5 (the docs' number; 0.75 x 0.67 stacked is 0.5025) / radius x1.3 (**placeholder**, the board has not accepted it as the finale; marked in the data's `_comment`).
+- **Hot Drop (molotovs):** fire radius x1.56 / +2 molotovs (3 a throw) / throw interval x0.56 (1.68 s) / +1 molotov (4 a throw).
+- **Windshield Wiper:** length x1.56 / sweep speed x1.625 / knockback x1.5 and length x1.3 / the back wiper.
+- **Bricks:** radius x2.1 (8.4) / damage x2.25 (13.5) / knockback x2.25 / Widest Wave: the radius times 3 (25.2), 3 rings at the tier 4 radius (8.4), twice and three times it.
+
+A weapon picked for the first time arrives at tier 2 (T-521). The playtest switch `weapon_tier_at_start` and God mode cap at 5. Unit test: `game/tests/unit/test_four_minute_run_data.gd`.
+
 #### Garage damage bonus
 
 The garage's damage bonus upgrade (Garage design) is applied at the start of every run: its percentage multiplies the damage of the gun and the flamethrower, on top of each weapon's own tier (the two multiply). Level 0 changes nothing. Built in T-062.
@@ -2235,10 +2250,10 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `4bfb7d0ef5069a6c86599ec98dfdaabb00991c2da8d82399d9f06328cdeece6c` |
-| `drifting.md` | `d8150eb699d7ef8035e215164a1658b5262c413b7eb19ed22387896309d7b3f4` |
+| `drifting.md` | `7ce71c0250b198bb94c8cda9137942159898c2209d40ba237437770258590dcd` |
 | `level-design.md` | `cbbe31da1d8f5cdc297297c989c2a9ef7b43fa30094f13d33c919968320a020f` |
 | `enemies.md` | `c6c2a976f6d09894c36488f7c9c426e9ef608dea143cfcc297b9a664a0d2f37a` |
-| `weapons.md` | `52670ef629ed7e2c98db92df76698426473a3e0291c42c07cc8a64b56b1132c8` |
+| `weapons.md` | `a5a707f2983674eab8408bf486bbfd0b422e633527290f98be17bebc5c43693d` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
 | `visual-style.md` | `f7cb0dc3b397467995a7f0ee0cbe532266fcc10a400acc5dc1f079cdecc9c1ea` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/level_up_t496_demo.gd" id="1_demo"]
+
+[node name="LevelUpT520" type="Node"]
+script = ExtResource("1_demo")
+tiers = {"gun": 3, "wiper": 3}
+offer_ids = Array[String](["upgrade_gun", "upgrade_wiper"])

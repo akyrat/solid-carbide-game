@@ -66,6 +66,19 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 
 ## Content
 
+### The 5-tier trees as built (task T-520)
+
+Since T-520 every weapon has **5 tiers** (`max_tier` 5 in [../game/data/weapons.json](../game/data/weapons.json)): the numbers are Decisions, "Shorter trees: 5 tiers", written into the data exactly and not rounded. A tier with two kinds of upgrade has two entries with the same tier number; all of a tier's effects apply when it is reached. **The tier lists further down in this Content (the 8-tier trees, the T-166 and T-496 numbers, tier 8 finales, "tiers 2 to 8") are the record of the 8-tier build; where they differ, this section is the game.** Tier 2 / 3 / 4 / 5:
+
+- **Gun:** +2 bullets (3 a volley) / fire rate x1.44 / +1 bullet (4) and fire rate x1.2 / fire rate x4 (final: 4 bullets, about 0.23 s between volleys, the old tier 8).
+- **Hot Take Exhaust (flamethrower):** size x1.56 / damage x1.2 (2.4) and size x1.3 / +2 s burn / always on.
+- **Neon Underglow:** radius x1.5 / damage x2.25 (4.5) / tick interval x0.5 (the docs' number; 0.75 x 0.67 stacked is 0.5025) / radius x1.3 (**placeholder**, the board has not accepted it as the finale; marked in the data's `_comment`).
+- **Hot Drop (molotovs):** fire radius x1.56 / +2 molotovs (3 a throw) / throw interval x0.56 (1.68 s) / +1 molotov (4 a throw).
+- **Windshield Wiper:** length x1.56 / sweep speed x1.625 / knockback x1.5 and length x1.3 / the back wiper.
+- **Bricks:** radius x2.1 (8.4) / damage x2.25 (13.5) / knockback x2.25 / Widest Wave: the radius times 3 (25.2), 3 rings at the tier 4 radius (8.4), twice and three times it.
+
+A weapon picked for the first time arrives at tier 2 (T-521). The playtest switch `weapon_tier_at_start` and God mode cap at 5. Unit test: `game/tests/unit/test_four_minute_run_data.gd`.
+
 ### Garage damage bonus
 
 The garage's damage bonus upgrade (Garage design) is applied at the start of every run: its percentage multiplies the damage of the gun and the flamethrower, on top of each weapon's own tier (the two multiply). Level 0 changes nothing. Built in T-062.
