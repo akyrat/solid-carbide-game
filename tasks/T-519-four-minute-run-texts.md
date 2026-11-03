@@ -1,7 +1,7 @@
 ---
 id: T-519
 title: Texts for the 4-minute run: merged weapon cards, 2-tier power-ups, the heal
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-03, Open → In progress
 
 Started: texts for the 4-minute run.
+
+### 2026-11-03, In progress → In QA
+
+T-519 texts done: 5-tier weapon cards, last-tier power-up cards, heal popup (screen_texts.json heal.popup), all 8+ in the style loop; keys in the result notes. Level-up screen test needs T-520's 5-tier weapons.json.
 
 ## Style review
 
@@ -624,4 +628,10 @@ Run by `tools/style_loop/run.py` on 2026-11-03: text, kind card_desc, brief `C:/
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. 31 texts through the style loop (Runs 1-31), all kept at 8 or more (9: gun t2/t4, underglow t3, molotov t3). Titles were fixed by me (board's titles combined) and only scored in context of each desc; the heal popup was a popup run.
+KEYS (for T-520/T-521/T-523):
+1. game/scripts/ui/level_up_texts.gd (LevelUpTexts.TEXTS, now 60 keys): upgrade_<w>.tier2..tier5 .title/.desc for w in gun, flamethrower, underglow, molotov, wiper, bricks; get_flamethrower/underglow/molotov/wiper/bricks .title/.desc (these now say what the player gets at tier 2: the base weapon plus its tier-2 upgrade); levelup.title, levelup.take unchanged. The gun has no get card. upgrade_<w>.tier2 for non-gun weapons is the tier-2 upgrade as a card text (never offered if a new weapon arrives at tier 2, but present). Tier 6 to 8 keys are DELETED. Old tier 8 cards moved to tier5 word for word (flame Lit 24/7, underglow Blinding Glow, wiper Back Wiper, bricks Widest Wave); the gun's tier5 (Exposure for Everyone) and molotov's tier5 (MOREEEE) have new descs.
+2. game/data/screen_texts.json power_ups.descriptions_last_tier.<id> for all 5 power-ups (replaces descriptions_tier4; power_up_screen.gd describe() now uses it when tier >= data.max_tier(id), so it works with 4-tier data and with T-520's 2-tier data); power_ups.descriptions.<id> is the unchanged tier 1 text.
+3. game/data/screen_texts.json heal.popup = MAXED OUT! CAR PATCHED UP, BRAND INTACT! (T-521 shows it like the reward popup).
+8/7 MINUTES: grep of game/data/*_text(s).json and level_up_texts.gd finds no player-facing text naming 8 min, 7 min, 7:00 or 8:00 (test_four_minute_run_texts.NoOldRunLength). Only comments changed: screen_texts.json _comment, tutorial_text.json kaiju_comment, tutorial_slides.gd and time_up_screen.gd header comments. NOT mine and still old: timer_clock.gd label.text = 8:00 (T-521), the tutorial slide 4 timeline numbers built by code (T-521), enemies.json/playtest.json comments (T-520), docs/game-loop-architecture.md line 58 and 106 (clock starts at 8:00; Lead).
+TESTS: updated test_level_up_screen.gd (texts, count 96 to 60, tier loops 2..5, choices count computed from max_tier), test_power_up_screen.gd (last-tier texts via data.max_tier; pips[2] only if 3+ tiers), game/tools/test_check_level_up_texts.py (finales are tier 5), new game/tools/test_four_minute_run_texts.py. Ran: the three Python files (21 OK). GUT test_power_up_screen 22/22 on today's data. test_level_up_screen passes 49/49 only with 5-tier weapons.json (I tried it with a temporary copy, restored): on the branch's current 8-tier data it fails by design until T-520 sets max_tier 5, as the tier-6..8 texts are gone. game/docs/driving/drift.md and docs/hud-and-menus.md (Content, Texts for the 4-minute run) updated.
