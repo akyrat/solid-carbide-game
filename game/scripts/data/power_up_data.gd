@@ -1,9 +1,9 @@
 class_name PowerUpData
 extends RefCounted
-## The four driving power-ups from res://data/power_ups.json, with per-tier numbers
+## The five driving power-ups (the fifth, polarized_steering_wheel, T-502) from res://data/power_ups.json, with per-tier numbers
 ## (all proposals for the playtest). Same style as WeaponData.
 
-const IDS := ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat"]
+const IDS := ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel"]
 
 var _data: Dictionary = {}
 var error: String = ""

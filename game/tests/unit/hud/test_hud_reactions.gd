@@ -299,11 +299,11 @@ func test_reaching_the_sub_goal_bursts_once_per_goal() -> void:
 	assert_eq(hud.reactions.bursts_started, 1, "still one: the next goal is not reached")
 
 
-func test_the_hud_feeds_the_viewers_step_and_a_new_run_clears_them() -> void:
+func test_the_hud_feeds_the_multiplier_step_and_a_new_run_clears_them() -> void:
 	var r := _run()
 	await get_tree().process_frame
 	var hud: Hud = r.hud
-	hud.viewers_counter.step = 3
+	hud.multiplier_tag.step = 3
 	assert_eq(hud.reactions.step_source.call(), 3)
 	hud.reactions.burst(Vector2(1052, 430))
 	assert_gt(hud.reactions.count(), 0)
@@ -425,8 +425,8 @@ func test_only_a_crash_that_cuts_the_combo_starts_a_bad_burst() -> void:
 	r.state.collision()
 	assert_eq(hud.reactions.bad_bursts_started, 1, "once per crash")
 	assert_eq(hud.reactions.pending_bad.size(), 10)
-	var y: float = hud.viewers_counter.get_global_rect().get_center().y
-	assert_almost_eq(float(hud.reactions.pending_bad[0]["y"]), y, 0.01, "from the viewers counter")
+	var y: float = hud.multiplier_tag.get_global_rect().get_center().y
+	assert_almost_eq(float(hud.reactions.pending_bad[0]["y"]), y, 0.01, "from the multiplier")
 
 
 func test_the_combo_draining_away_starts_none() -> void:

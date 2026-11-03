@@ -67,6 +67,7 @@ extends Node2D
 const ChallengeTracker := preload("res://scripts/level/challenge_tracker.gd")
 const ChallengeArrow := preload("res://scripts/level/challenge_arrow.gd")
 const MapBuilding := preload("res://scripts/level/map_building.gd")
+const CarHeightScript := preload("res://scripts/driving/car_height.gd")
 
 const LAYOUT_PATH := "res://data/level/mvp_map.json"
 ## The ground tiles' layout (T-103): the atlas tile on every 2 x 2 unit cell.
@@ -85,6 +86,19 @@ const PLACEMENT_STEP := 0.1
 const CHALLENGES_ENABLED := false
 ## Fallback boulder size (units across) if the layout data has no boulder.
 const DEFAULT_BOULDER_DIAMETER := 3.0
+## Task T-478 (Drifting, Content, "The Jump clears obstacles"): how high a boulder stands, units
+## (proposal): lower than the car (1), so a tier 1 hop (peak about 1.04) clears it. Its width is
+## still its diameter.
+const BOULDER_HEIGHT_UNITS := 0.8
+## Task T-478 (the board's playtest, 2026-11-01; proposals): a prop's collision height is its
+## declared height_units times this, so the street props (barrier 0.9, cones 0.68, broken cars
+## 0.71, parked cars 1.01) are about as low as a boulder and a tier 1 hop (peak 1.04) clears the
+## lowest of them.
+const PROP_HEIGHT_SCALE := 0.75
+## A rising hop passes an obstacle its apex clears once it is this share of the obstacle's top
+## above the ground: the car may clip the foot of what it is jumping, so a Space pressed when
+## the car looks level with the obstacle still works (the car's body is 1 unit, its sprite 3).
+const RISE_PASS_FRACTION := 0.1
 ## The boulder sprites (T-065): variants, their opaque boxes and outlines.
 const BOULDER_ART_PATH := "res://art/boulders/boulders.json"
 ## The building atlas and its list (task T-064); without it the placeholder boxes stay.
@@ -393,7 +407,7 @@ func _build_boulders() -> void:
 			var b0: Dictionary = copy.boulders[0]
 			var g := ground_height_at(Vector2(float(b0.x), float(b0.y)))
 			body.set_meta("base_units", g)
-			body.set_meta("top_units", g + float(b0.diameter))
+			body.set_meta("top_units", g + BOULDER_HEIGHT_UNITS)
 		physics_root.add_child(body)
 		var j := 0
 		for b in copy.boulders:
@@ -895,9 +909,13 @@ var _passing: Dictionary = {}
 ## base_units) up to its top (top_units); a meteor boulder from the street up by its diameter.
 func obstacle_heights(body: Node) -> Array:
 	if body.has_meta("base_units"):
-		return [float(body.get_meta("base_units")), float(body.get_meta("top_units"))]
+		var base := float(body.get_meta("base_units"))
+		var top := float(body.get_meta("top_units"))
+		if body.has_meta("prop_id"):
+			top = base + (top - base) * PROP_HEIGHT_SCALE
+		return [base, top]
 	if body in meteor_boulder_bodies:
-		return [0.0, boulder_diameter()]
+		return [0.0, BOULDER_HEIGHT_UNITS]
 	return [-INF, INF]
 
 
@@ -916,13 +934,13 @@ func height_bodies() -> Array:
 ## and makes it solid again once the car is at its height and clear of it. An obstacle the car is
 ## still overlapping stays passable (a car that lands on a boulder slides off it instead of being
 ## pushed out through it). The run calls it after every physics step of the car.
-func update_car_obstacles(the_car: PhysicsBody2D, height: float) -> void:
+func update_car_obstacles(the_car: PhysicsBody2D, height: float, vz: float = 0.0) -> void:
 	if the_car == null or not is_instance_valid(the_car):
 		return
 	var overlapping := _overlapping(the_car)
 	for body in height_bodies():
 		var hr := obstacle_heights(body)
-		var over: bool = height >= float(hr[1]) - OBSTACLE_HEIGHT_MARGIN
+		var over: bool = _is_over(height, vz, hr)
 		var under: bool = height + CAR_HEIGHT_UNITS <= float(hr[0]) + OBSTACLE_HEIGHT_MARGIN
 		var away := over or under
 		var pass_it: bool = away or (_passing.has(body) and overlapping.has(body))
@@ -935,6 +953,37 @@ func update_car_obstacles(the_car: PhysicsBody2D, height: float) -> void:
 	for body in _passing.keys():
 		if not is_instance_valid(body):
 			_passing.erase(body)
+
+
+## True when a car at `height` rising at `vz` passes over an obstacle with heights hr = [from, to]:
+## at its top (less the margin), or rising with an apex above the top and already RISE_PASS_FRACTION
+## of the way up from its foot (a hop pressed a little late still clears it).
+func _is_over(height: float, vz: float, hr: Array) -> bool:
+	var top := float(hr[1])
+	if height >= top - OBSTACLE_HEIGHT_MARGIN:
+		return true
+	if vz > 0.0 and top < INF:
+		var apex := height + vz * vz / (2.0 * CarHeightScript.GRAVITY)
+		var foot := float(hr[0])
+		return apex >= top + OBSTACLE_HEIGHT_MARGIN and height >= foot + (top - foot) * RISE_PASS_FRACTION
+	return false
+
+
+## Task T-478: the top (units) of the highest obstacle the car overlaps and is over (its height
+## is at the obstacle's top, less the margin; or it is falling through one it passes), 0 when
+## none. The car lands on it and drives along it instead of landing inside it (car.gd floor_query).
+func obstacle_floor(the_car: PhysicsBody2D, height: float, vz: float = 0.0) -> float:
+	if the_car == null or not is_instance_valid(the_car):
+		return 0.0
+	var overlapping := _overlapping(the_car)
+	var top := 0.0
+	for body in overlapping:
+		if not (body in prop_bodies or body in boulder_bodies or body in meteor_boulder_bodies):
+			continue
+		var t := float(obstacle_heights(body)[1])
+		if height >= t - OBSTACLE_HEIGHT_MARGIN or (vz <= 0.0 and _passing.has(body) and height >= float(obstacle_heights(body)[0])):
+			top = maxf(top, t)
+	return top
 
 
 ## True while the car passes over or under `body` (update_car_obstacles).
@@ -1052,6 +1101,7 @@ func _sync_boulder_sprites() -> void:
 		sp.variant = str(boulder_art.variants[k].id)
 		sp.centre_units = Vector2(float(b.x), float(b.y))
 		sp.ground_units = ground_height_at(sp.centre_units)
+		sp.top_units = sp.ground_units + BOULDER_HEIGHT_UNITS
 		var outline := PackedVector2Array()
 		for p in boulder_art.variants[k].hull:
 			outline.append(r.position + Vector2(float(p[0]), float(p[1])) * r.scale)
@@ -1287,6 +1337,8 @@ class _BoulderSprite extends Sprite2D:
 	var centre_units := Vector2.ZERO
 	## The height it stands on, units (a rooftop's, a ramp's; T-393).
 	var ground_units := 0.0
+	## T-478: the top of the boulder's collision height, units: a car above it is drawn over it.
+	var top_units := INF
 	## The outline of its opaque pixels on screen (convex), and its box.
 	var outline := PackedVector2Array()
 	var box := Rect2()

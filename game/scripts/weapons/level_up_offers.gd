@@ -8,8 +8,9 @@ extends Node
 ## run resumes.
 ##
 ## Choice ids (the screen maps each to its text), one pair per weapon:
-##   "get_<weapon>"      gives the weapon (tier 1) while the car does not have it
-##   "upgrade_<weapon>"  the owned weapon's next tier, until its last tier (from the data: 8, the gun 11)
+##   "get_<weapon>"      gives the weapon (at tier 2, T-521) while the car does not have it, and
+##                       only while it owns fewer weapons than the cap (3, the gun counts)
+##   "upgrade_<weapon>"  the owned weapon's next tier, until its last tier (from weapons.json)
 ## The weapons are gun, flamethrower, underglow, molotov, wiper and (T-324)
 ## bricks. The gun is
 ## always owned, so it has only "upgrade_gun".
@@ -81,9 +82,13 @@ static func weapon_of(id: String) -> String:
 ## one it has below its last tier.
 func available_offers() -> Array:
 	var out := []
+	var full: bool = rack.slots_full()
 	for weapon_id in WEAPON_ORDER:
 		var w: Node = rack.get_weapon(weapon_id)
 		if w == null or w.is_max_tier():
+			continue
+		# T-521: with the slots full, only upgrades of the owned weapons.
+		if full and not w.is_owned():
 			continue
 		# Bricks only while the data offers it (weapons.json "offered_in_level_ups", T-323).
 		if weapon_id == "bricks" and not w.data.bricks_offered():
@@ -127,7 +132,7 @@ func choose(id: String) -> bool:
 	if not current_offers.has(id):
 		return false
 	var weapon_id := weapon_of(id)
-	if weapon_id == "" or not rack.upgrade(weapon_id):
+	if weapon_id == "" or not rack.pick(weapon_id):
 		return false
 	current_offers = []
 	offer_taken.emit(id)

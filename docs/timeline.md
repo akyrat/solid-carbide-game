@@ -3135,3 +3135,378 @@ Entry format:
 - Decision or change: The Music and SFX buses are defined up front in default_bus_layout.tres, so the web build routes them to the speakers; music starts after the first click; a headless Chrome check proves it. SFX stay off (the board).
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-476
+
+## 2026-11-01: A faster Godot test set
+- Decision or change: run_tests.sh runs the Godot test scripts in GUT_JOBS parallel headless processes (default 12), sharded by measured times: about 3 minutes instead of 25, same 2526 tests; GUT_JOBS=1 or -gselect keeps the single process.
+- Documents touched: none
+- Tasks: T-487
+
+## 2026-11-01: The Jump clears obstacles
+- Decision or change: A jump high enough passes over barriers and boulders, the car can land on top of one, and the car is drawn over the obstacle while above it; the board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-478
+
+## 2026-11-01: The redrawn tutorial slides are built
+- Decision or change: Four slides (Drive, Tricks bring gifts, Missions, Survive the stream) match the approved draft, with the recorded clips as frame sheets (at most 3840 px, freed when hidden) and Skip; the board played it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-485
+
+## 2026-11-01: QA's checks follow the new test rule
+- Decision or change: qa_check.py runs the tools set only when tools/ or .claude/ change (--all-tests forces it), --marks-only for the second run; the goal runner's prompts follow the rule.
+- Documents touched: none
+- Tasks: T-486
+
+## 2026-11-01: The first mission is a 2-second drift
+- Decision or change: Mission 1 asks for one unbroken drift of 2 seconds instead of 4; a run test that drifted 4 s now starts at mission 5; the board played it.
+- Documents touched: none
+- Tasks: T-488
+
+## 2026-11-01: The trick list's rules and key recipe notes
+- Decision or change: The Narrative Theme Agent writes each trick's one-line rule and the short notes under its keycap recipe, from the Project Lead's draft.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-489
+
+## 2026-11-01: Clips for every trick, with key timelines
+- Decision or change: The Driving & Drift Agent records clips for FULL 360!, AIR 360!, HANG TIME! and THREAD THE NEEDLE!, and writes which keys are held on every frame of every clip.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-490
+
+## 2026-11-01: The trick list shows each trick's keys and clip
+- Decision or change: The UI Agent adds a live key pad to every clip (slide 2 and the trick list) and rebuilds the trick list with each trick's clip and keycap recipe.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-491
+
+## 2026-11-01: The trick list's rules and key recipe notes
+- Decision or change: Each trick's one-line rule and the short notes and badges under its keycap recipe (none for thread the needle), through the style loop (all 8+), notes 20 characters at most.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-489
+
+## 2026-11-01: Clips for every trick, with key timelines
+- Decision or change: Clips of the real car for FULL 360!, AIR 360! (a taller ramp, base air-turn speed), HANG TIME! (no spin) and THREAD THE NEEDLE!, and keys_per_frame in every clip's sheet JSON for the live key pad; the approved clips' images are unchanged.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-490
+
+## 2026-11-02: The trick list shows each trick's keys and clip
+- Decision or change: A live W A S D key pad on every clip (slide 2 and the trick list), lit from each clip's keys_per_frame; the trick list becomes seven selectable rows with the selected trick's clip, pad, rule and keycap recipe (none for thread the needle), the recipe structure in game/data/trick_recipes.json.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-491
+
+## 2026-11-02: Arrow keys in the main menu and the garage
+- Decision or change: The board asks for arrow-key control of the main menu and the garage; the UI Agent builds it.
+- Documents touched: docs/hud-and-menus.md, docs/garage-design.md
+- Tasks: T-492
+
+## 2026-11-02: A scan for screens that don't scale
+- Decision or change: The screen gallery captures every screen at five resolutions and reports what shrinks as the window grows.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-493
+
+## 2026-11-02: Every screen scales with the window
+- Decision or change: The level-up and pause screens, and every other screen the scan flags, scale with the window by the HUD's rule.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-494
+
+## 2026-11-02: A scan for screens that don't scale
+- Decision or change: screen_gallery.py --sizes captures every screen at five resolutions and reports what shrinks as the window grows; it flagged 16 of 19 screens.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-493
+
+## 2026-11-02: Every screen scales with the window
+- Decision or change: A shared UiScale helper (the HUD's rule) scales the main menu, recaps, pause screen with its trick list and layout editor, level-up and power-up screens; every 16:9 screen keeps 0.99-1.00 of its share; the board kept ultrawide's height-decides rule and the hard-edged 4K text.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-494
+
+## 2026-11-02: Arrow keys and WASD in the main menu and the garage
+- Decision or change: The arrows and W, A, S, D move the selection in the main menu and the garage (wrapping), Enter or Space presses, the first button is selected on opening; reviewed in the board's swipe deck.
+- Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
+- Tasks: T-492
+
+## 2026-11-02: Card text for the board's weapon trees
+- Decision or change: The board's titles stay as written; the Narrative Theme Agent fills the missing card texts and fixes wrong numbers.
+- Documents touched: docs/weapons.md
+- Tasks: T-495
+
+## 2026-11-02: Weapon data for the board's trees
+- Decision or change: The board's weapon upgrade trees go into weapons.json; the gun loses multi-target and has 8 tiers.
+- Documents touched: docs/weapons.md
+- Tasks: T-496
+
+## 2026-11-02: Flamethrower afterburn
+- Decision or change: Burning enemies keep taking flame damage for the burn time after leaving the flame.
+- Documents touched: docs/weapons.md
+- Tasks: T-497
+
+## 2026-11-02: Bricks widest wave
+- Decision or change: Bricks tier 8 is a x3 wave with two extra crash rings, hitting ring by ring.
+- Documents touched: docs/weapons.md
+- Tasks: T-498
+
+## 2026-11-02: Back wiper
+- Decision or change: Wiper Blade tier 8 adds a mirrored copy of the wiper behind the car.
+- Documents touched: docs/weapons.md
+- Tasks: T-499
+
+## 2026-11-02: Playtest switch for weapon tiers
+- Decision or change: A playtest-only switch starts every weapon at a chosen tier, for the board's playtest of the new weapon trees.
+- Documents touched: game/data/playtest.json
+- Tasks: T-500
+
+## 2026-11-02: Playtest switch for weapon tiers
+- Decision or change: A playtest-only switch, weapon_tier_at_start, starts every weapon at a chosen tier (capped at its last tier) when all_weapons_at_start is on, so the board can play the new weapon trees at their top tiers.
+- Documents touched: none
+- Tasks: T-500
+
+## 2026-11-02: Text for the new power-up, the rename and God mode
+- Decision or change: The Narrative Theme Agent writes the Polarized Steering Wheel's texts, renames Rusty Overcoat to Rusty Paintjob and writes God mode's texts.
+- Documents touched: docs/drifting.md, docs/hud-and-menus.md
+- Tasks: T-501
+
+## 2026-11-02: The Polarized Steering Wheel
+- Decision or change: A fifth driving power-up: a speed burst when the car accelerates again in a new direction; tier 4 adds Bricks' wave.
+- Documents touched: docs/drifting.md
+- Tasks: T-502
+
+## 2026-11-02: Two power-up icons
+- Decision or change: A rusty spray can for Rusty Paintjob and a steering wheel for the Polarized Steering Wheel, made with PixelLab through the style loop.
+- Documents touched: docs/drifting.md
+- Tasks: T-503
+
+## 2026-11-02: God mode's logic
+- Decision or change: Pressing N in a run unlocks God mode for the session; an API sets each weapon's and power-up's tier in the current run.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-504
+
+## 2026-11-02: God mode's page
+- Decision or change: A secret settings entry, shown after N, opens a page to set every weapon's and power-up's tier.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-505
+
+## 2026-11-02: Text for the rain toggle
+- Decision or change: The Narrative Theme Agent writes the rain toggle's label.
+- Documents touched: docs/level-design.md
+- Tasks: T-506
+
+## 2026-11-02: Rain over the map
+- Decision or change: Steady rain over the map during a run, with a saved on/off setting.
+- Documents touched: docs/level-design.md
+- Tasks: T-507
+
+## 2026-11-02: Rain toggle
+- Decision or change: A settings toggle turns the rain on or off.
+- Documents touched: docs/level-design.md
+- Tasks: T-508
+
+## 2026-11-02: Rain art
+- Decision or change: The rain's drops and splashes are made with PixelLab, generously, through the style loop.
+- Documents touched: docs/level-design.md, docs/visual-style.md
+- Tasks: T-509
+
+## 2026-11-02: Card text for the board's weapon trees
+- Decision or change: The board's titles kept; missing card texts written and wrong numbers fixed.
+- Documents touched: docs/weapons.md
+- Tasks: T-495
+
+## 2026-11-02: The board's weapon trees in the data
+- Decision or change: The board's tier lists from the Upgrade Tree Workshop are in weapons.json; the gun has 8 tiers and aims one target at a time.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-496
+
+## 2026-11-02: Bricks tier 8, the widest wave
+- Decision or change: Bricks tier 8: a x3 wave with two extra crash rings, hitting ring by ring.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-498
+
+## 2026-11-02: Wiper tier 8, the back wiper
+- Decision or change: Wiper tier 8 adds a mirrored back wiper.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-499
+
+## 2026-11-02: Flamethrower afterburn
+- Decision or change: Burning enemies keep taking flame damage after leaving the flame.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-497
+
+## 2026-11-02: Text for the new power-up, the rename and God mode
+- Decision or change: Texts for the Polarized Steering Wheel, the Rusty Paintjob rename and God mode.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-501
+
+## 2026-11-02: The Polarized Steering Wheel
+- Decision or change: A fifth driving power-up: a burst when the car accelerates again in a new direction; tier 4 adds Bricks' wave.
+- Documents touched: docs/drifting.md
+- Tasks: T-502
+
+## 2026-11-02: God mode's page
+- Decision or change: A secret God mode entry in the pause settings opens a page to set every tier.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-505
+
+## 2026-11-02: Two power-up icons
+- Decision or change: Rusty Paintjob's spray can (v1) and the steering wheel (v4), the board's picks.
+- Documents touched: none
+- Tasks: T-503
+
+## 2026-11-02: Rain art
+- Decision or change: PixelLab rain drops and splashes; the board halved the drops after playing.
+- Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`, `docs/visual-style.md`
+- Tasks: T-509
+
+## 2026-11-02: The rain toggle's label
+- Decision or change: The rain toggle's label, Rain.
+- Documents touched: none
+- Tasks: T-506
+
+## 2026-11-02: Rain over the map
+- Decision or change: Rain over the map with a saved on/off setting.
+- Documents touched: docs/level-design.md
+- Tasks: T-507
+
+## 2026-11-02: The rain toggle
+- Decision or change: A Rain checkbox in the pause settings.
+- Documents touched: none
+- Tasks: T-508
+
+## 2026-11-02: Rain off by default
+- Decision or change: The rain is off by default; the player turns it on in the pause settings.
+- Documents touched: docs/level-design.md
+- Tasks: T-510
+
+## 2026-11-02: Garage icons in the web build
+- Decision or change: Images the game loads at runtime load from the exported pack, so the garage icons show on itch.io.
+- Documents touched: docs/garage-design.md
+- Tasks: T-511
+
+## 2026-11-02: Texts for the combo multiplier
+- Decision or change: The multiplier, trick amounts, recap peak and tutorial lines are written for the combo multiplier instead of viewers.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-512
+
+## 2026-11-02: Tricks pay subs
+- Decision or change: Each trick pays subs straight away as well as raising the combo multiplier; the amounts are proposals for the playtest.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-513
+
+## 2026-11-02: The multiplier beside the car
+- Decision or change: The live viewers counter is gone; the combo multiplier shows beside the car and trick popups show the multiplier they add.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-514
+
+## 2026-11-02: Rain off by default
+- Decision or change: The rain is off by default; the player turns it on in the pause settings.
+- Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`
+- Tasks: T-510
+
+## 2026-11-02: Garage icons in the web build
+- Decision or change: The garage icons load through Godot's imported textures, so they show in the web build on itch.io.
+- Documents touched: none
+- Tasks: T-511
+
+## 2026-11-02: Texts for the combo multiplier
+- Decision or change: Texts for the multiplier beside the car, trick amounts (+x), the recap's Peak combo and the tutorial, replacing the live viewers.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-512
+
+## 2026-11-02: Tricks pay subs
+- Decision or change: Each trick pays subs straight away (5 or 10, times the combo) as well as raising the multiplier.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-513
+
+## 2026-11-02: The multiplier beside the car
+- Decision or change: The live viewers counter is gone; the combo multiplier shows beside the car, hidden at x1 (the board's tweak).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-514
+
+## 2026-11-02: Even the lowest Jump clears a minion
+- Decision or change: A minion's contact damage needs the car within about 0.5 units of its ground, so even the first Jump tier hops over one.
+- Documents touched: docs/enemies.md
+- Tasks: T-515
+
+## 2026-11-02: Drift Guide label
+- Decision or change: The pause screen's Drift Guide checkbox reads "Drift Guide", the board's words.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-516
+
+## 2026-11-02: The Drift Guide
+- Decision or change: An optional Drift Guide, off by default, shows a gray fading arrow of the drift's predicted path during a drift.
+- Documents touched: docs/drifting.md
+- Tasks: T-517
+
+## 2026-11-02: Drift Guide checkbox
+- Decision or change: The pause settings get a Drift Guide checkbox, off by default.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-518
+
+## 2026-11-02: Even the lowest Jump clears a minion
+- Decision or change: A minion's contact damage needs the car within 0.5 units of its ground, so even Jump tier 1 hops over one.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-515
+
+## 2026-11-02: Drift Guide label
+- Decision or change: The pause screen's checkbox reads "Drift Guide".
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-516
+
+## 2026-11-02: The Drift Guide
+- Decision or change: An optional Drift Guide shows a gray fading arrow of the drift's predicted path (1 s ahead) during a drift.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-517
+
+## 2026-11-02: Drift Guide checkbox
+- Decision or change: The pause settings have a Drift Guide checkbox, off by default.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-518
+
+## 2026-11-03: Texts for the 4-minute run
+- Decision or change: Card texts for the 5-tier weapons and 2-tier power-ups, the heal message, and the run's time in every text.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-519
+
+## 2026-11-03: 5-tier weapons and 2-tier power-ups in data
+- Decision or change: The weapon trees are 5 tiers and the power-ups 2, and the sub goals give about 12 gift packs in a 3-minute build.
+- Documents touched: docs/weapons.md, docs/drifting.md
+- Tasks: T-520
+
+## 2026-11-03: The 4-minute run
+- Decision or change: The kaiju arrives at 3:00 and the run ends at 4:00; at most 3 weapons and 3 power-ups; new weapons at tier 2; a heal once everything is maxed.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-521
+
+## 2026-11-03: Enemies paced for the 4-minute run
+- Decision or change: The minions' ramp peaks before the kaiju at 3:00, and the kaiju's health fits a 3-weapon build.
+- Documents touched: docs/enemies.md
+- Tasks: T-522
+
+## 2026-11-03: Weapon and power-up slots
+- Decision or change: The HUD shows 3 weapon slots and 3 power-up slots with tier pips.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-523
+
+## 2026-11-03: Texts for the 4-minute run
+- Decision or change: Level-up cards for the 5-tier weapon trees, last-tier power-up cards and the heal popup; no text names 8 or 7 minutes any more.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-519
+
+## 2026-11-03: Data for the 4-minute run: 5-tier weapons, 2-tier power-ups, 12 sub goals
+- Decision or change: Weapons have 5 tiers and the driving power-ups 2; 12 sub goals pace 12 gift packs into the 3-minute build.
+- Documents touched: `docs/drifting.md`, `docs/weapons.md`
+- Tasks: T-520
+
+## 2026-11-03: Weapon and power-up slots on the HUD
+- Decision or change: Two 3-slot grids on the HUD, weapons and power-ups, with tier pips and empty frames.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-523
+
+## 2026-11-03: The 4-minute run
+- Decision or change: The kaiju arrives at 3:00 and the run ends at 4:00; at most 3 weapons and 3 power-ups, a new weapon arrives at tier 2, and once all 3 weapons are maxed a full sub goal heals 2 hearts. The board played the combined build and approved it.
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`
+- Tasks: T-521
+
+## 2026-11-03: Enemies paced for the 4-minute run
+- Decision or change: The minions' ramp peaks at 3:00 and the kaiju's health is 1500 for its 1-minute fight. It reached master inside T-521's combined branch, which the board played and approved.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-522
+
+## 2026-11-03: Text layout capture for the board's text editor
+- Decision or change: A screen gallery mode captures every player-facing text with its screen, a blanked copy, its rect and font, so the board can edit texts on a page that shows them in place.
+- Documents touched: game/docs/hud-and-menus/hud.md
+- Tasks: T-524

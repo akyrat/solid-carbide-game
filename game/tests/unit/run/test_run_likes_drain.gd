@@ -74,11 +74,12 @@ func test_the_drain_numbers_load() -> void:
 func test_no_drain_while_the_combo_is_above_no_combo() -> void:
 	state.xp = 50.0
 	state.add_trick("alternate_drift")
+	var after_trick_xp := state.xp  # T-513: the trick paid its subs
 	assert_false(state.has_no_combo())
 	# Through the combo's own wait and most of its drain: likes stay put.
 	_simulate(_combo_gone_after("alternate_drift") - 0.1)
 	assert_gt(state.combo, combo_data.start_multiplier(), "the combo is still draining")
-	assert_eq(state.xp, 50.0, "no likes drain while there is a combo")
+	assert_eq(state.xp, after_trick_xp, "no likes drain while there is a combo")
 	assert_false(state.is_likes_draining())
 
 
@@ -142,7 +143,7 @@ func test_a_long_drain_never_goes_below_the_level() -> void:
 	state.level = 6
 	state.xp = 200.0
 	xp_events.clear()
-	_simulate(400.0, 0.1)
+	_simulate(200.0, 0.1)
 	assert_true(state.is_running(), "still before 0:00")
 	assert_eq(state.xp, 0.0)
 	assert_eq(state.level, 6, "level unchanged after a long drain")

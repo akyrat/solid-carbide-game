@@ -71,6 +71,29 @@ var _exit_slip_start := 0.0
 var _last_steer := 0.0
 
 
+## A copy of the whole driving state (task T-517, the Drift Guide): the same tuning (shared,
+## only read), position, velocity, heading, drift amount, slip and bounce, so stepping the
+## copy forward never touches this car. The copy has no signal listeners.
+func duplicate_state():
+	var c = get_script().new()
+	c.tuning = tuning
+	c.dt = dt
+	c.x = x
+	c.y = y
+	c.vx = vx
+	c.vy = vy
+	c.rotation = rotation
+	c.drift_amount = drift_amount
+	c.is_drifting = is_drifting
+	c.airborne = airborne
+	c.exit_slip = exit_slip
+	c.bounce_normal = bounce_normal
+	c._w_was_held = _w_was_held
+	c._exit_slip_start = _exit_slip_start
+	c._last_steer = _last_steer
+	return c
+
+
 func get_position() -> Vector2:
 	return Vector2(x, y)
 

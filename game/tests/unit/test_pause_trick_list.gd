@@ -107,3 +107,24 @@ func test_panel_fits_and_clears_the_hud_timer() -> void:
 	var clock: Rect2 = hud.timer_clock.get_global_rect()
 	assert_false(r.intersects(clock), "panel %s clear of clock %s" % [r, clock])
 	get_tree().root.size = old_size
+
+
+func test_trick_list_clip_is_loaded_only_while_the_panel_shows() -> void:
+	ps.trick_list_button.pressed.emit()
+	await wait_process_frames(2)
+	assert_not_null(ps.trick_list.clip_player.sheet, "loaded while the panel is open")
+	ps.close_trick_list()
+	await wait_process_frames(2)
+	assert_null(ps.trick_list.clip_player.sheet, "freed when the panel is hidden")
+
+
+func test_panel_fits_with_the_recipe_and_clip() -> void:
+	var old_size := get_tree().root.size
+	get_tree().root.size = Vector2i(1152, 648)
+	ps.trick_list_button.pressed.emit()
+	for id in TrickList.TRICK_IDS:
+		ps.trick_list.select(id)
+		await wait_process_frames(2)
+		var r: Rect2 = ps.trick_panel.get_global_rect()
+		assert_true(Rect2(Vector2.ZERO, Vector2(1152, 648)).encloses(r), "%s: %s" % [id, r])
+	get_tree().root.size = old_size

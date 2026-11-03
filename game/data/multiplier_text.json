@@ -1,0 +1,11 @@
+{
+  "_comment": "T-512, the combo multiplier's text (HUD and menus, Content, 'The multiplier beside the car'); T-514 reads it, no text in code. Each line scored 8 or more in the style loop (T-512's Style review). {multiplier} and {amount} are numbers built by code. Bangers has capitals only, so the HUD shows these in capitals (x2.50 shows as X2.50).",
+  "multiplier": "x{multiplier}",
+  "multiplier_comment": "The combo multiplier beside the car, {multiplier} with two decimals (for example x2.50). No label word.",
+  "gain": "+x{amount}",
+  "gain_comment": "A trick popup's amount after the trick name: the multiplier the trick added (for example +x0.5). Replaces '+{amount}' viewers (hud.gd ADDED_TEXT). The style loop scored the form '+X{amount}!' 9/10; the '!' is dropped here because the amount follows the popup's own '!' name.",
+  "loss": "-x{amount}",
+  "loss_comment": "What a crash cut from the multiplier, falling away from the number beside the car (for example -x1.5). Replaces '-{amount}' viewers (hud.gd LOST_TEXT). Optional: the UI may show nothing instead.",
+  "unused": ["hud.gd TEXT_LIVE_BADGE (LIVE)", "hud.gd TEXT_VIEWERS_UNIT (WATCHING)"],
+  "unused_comment": "Texts of the live viewers counter that no longer appear once T-514 removes the counter."
+}

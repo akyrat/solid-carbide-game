@@ -1,5 +1,5 @@
 {
-  "_comment": "T-316, text on the run's end screens, read by the screens' scripts. time_up.headline: the time's up failure screen (HUD and menus, Content, 'Time's up screen'), shown for 3 seconds when the 8-minute timer runs out with the kaiju still alive. Text approved in the style loop (score 9). T-456 adds 'missions' (the notebook page) and 'power_ups' (the driving power-up overlay): HUD and menus, Content, 'Mission notebook and power-up texts'. Every entry scored 8 or more in the style loop (T-456's Style review).",
+  "_comment": "T-316, text on the run's end screens, read by the screens' scripts. time_up.headline: the time's up failure screen (HUD and menus, Content, 'Time's up screen'), shown for 3 seconds when the 4-minute timer runs out with the kaiju still alive. Text approved in the style loop (score 9). T-456 adds 'missions' (the notebook page) and 'power_ups' (the driving power-up overlay): HUD and menus, Content, 'Mission notebook and power-up texts'. Every entry scored 8 or more in the style loop (T-456's Style review).",
   "time_up": {
     "headline": "STREAM OVER, KAIJU STILL TRENDING!"
   },
@@ -23,6 +23,10 @@
       "thread_the_needle_comment": "Notebook page goal line, a quantity goal: thread the needle."
     }
   },
+  "heal": {
+    "popup": "MAXED OUT! CAR PATCHED UP, BRAND INTACT!",
+    "popup_comment": "T-519 (Game loop architecture, Decisions, 'A 4-minute run'): the popup shown like the reward popup when a full sub goal heals the car because all 3 weapons are at their last tier (no gift-pack screen). One line in capitals, no numbers. Scored 8 in the style loop. Read by T-521."
+  },
   "power_ups": {
     "overlay_header": "Mission done: soup up the car",
     "overlay_header_comment": "The power-up overlay's header, opened when a mission completes; offers driving power-ups, not weapons.",
@@ -32,15 +36,25 @@
       "rev_charge": "Rev Charge",
       "jump": "Jump",
       "bouncy_bumpers": "Bouncy Bumpers",
-      "rusty_overcoat": "Rusty Overcoat"
+      "rusty_overcoat": "Rusty Paintjob",
+      "polarized_steering_wheel": "Polarized Steering Wheel"
     },
     "names_comment": "Each power-up's name on its overlay card (the board's names, kept as the style loop scored them 9).",
     "descriptions": {
       "rev_charge": "Hold W+S {charge_seconds}s, let go of S: {boost_seconds}s boost. Brakes, now monetized.",
       "jump": "Press Space to hop. Next hop in {cooldown_seconds} s. Airtime clips better than braking.",
       "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles. Crashes are content too.",
-      "rusty_overcoat": "The car deals {contact_damage} damage to minions it touches. Rust: now a feature."
+      "rusty_overcoat": "The car deals {contact_damage} damage to minions it touches. Rust: now a feature.",
+      "polarized_steering_wheel": "Lift, steer, gas a new way: +{burst_percent}% speed burst. Whiplash is a feature."
     },
-    "descriptions_comment": "One template per power-up, shown on its card for the tier offered; the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."
+    "descriptions_last_tier": {
+      "rev_charge": "Hold W+S {charge_seconds}s, let go of S: {boost_speed_multiplier}x boost for {boost_seconds}s. Pure content.",
+      "jump": "Press Space to hop higher. Air 360s fit. Next hop in {cooldown_seconds} s. Altitude sells.",
+      "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles. Subs want the replay.",
+      "rusty_overcoat": "Deals {contact_damage} damage every {repeat_cooldown_seconds} s to minions, now kaiju too. Tetanus is content.",
+      "polarized_steering_wheel": "Lift, steer, gas: +{burst_percent}% speed, shock hits and shoves minions. Chat loves it."
+    },
+    "descriptions_last_tier_comment": "T-519 (the 4-minute run; Drifting, Decisions, 'Two tiers and three slots'): each power-up has 2 tiers, and this is the card text for tier 2, the last tier (the old tier 4's numbers), replacing its descriptions entry; the descriptions entry is the tier 1 text. power_up_screen.gd describe() uses it when the tier is the power-up's max_tier. Slots are that tier's numbers from power_ups.json. All five scored 8 or more in the style loop (T-519).",
+    "descriptions_comment": "One template per power-up, shown on its card for tier 1 (and for any tier before the last); the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."
   }
 }

@@ -19,8 +19,8 @@ func is_ok() -> bool:
 	return error == ""
 
 
-## A weapon's last tier: its own "max_tier" when its entry has one (the gun: 11,
-## T-408), otherwise the shared top-level one (8). No weapon id: the shared one.
+## A weapon's last tier: its own "max_tier" when its entry has one (
+## 8 for every weapon since T-498 and T-499), otherwise the shared top-level one (8). No weapon id: the shared one.
 func max_tier(weapon: String = "") -> int:
 	if weapon != "" and _data.has(weapon) and _data[weapon] is Dictionary and _data[weapon].has("max_tier"):
 		return int(_data[weapon]["max_tier"])
@@ -156,12 +156,16 @@ func molotov_at(tier: int) -> Dictionary:
 
 
 ## What Bricks' landing wave does at `tier`: damage, radius, knockback_distance, knockback_kaiju,
-## min_air_seconds (the shortest time in the air that counts as a landing), cooldown.
+## min_air_seconds (the shortest time in the air that counts as a landing), cooldown,
+## rings (1, or tier 8's widest_wave value: the wave is that many rings, the outer
+## radius split evenly; T-498) and ring_interval (seconds between the rings reaching
+## their radii).
 func bricks_at(tier: int) -> Dictionary:
 	var b: Dictionary = _data["bricks"]
 	var damage := float(b["damage"])
 	var radius := float(b["radius"])
 	var knock := float(b["knockback_distance"])
+	var rings := 1
 	for t in tiers("bricks"):
 		if int(t["tier"]) > tier:
 			continue
@@ -169,6 +173,9 @@ func bricks_at(tier: int) -> Dictionary:
 			"radius_multiplier": radius *= float(t["value"])
 			"damage_multiplier": damage *= float(t["value"])
 			"knockback_multiplier": knock *= float(t["value"])
+			"widest_wave":
+				radius *= float(t["value"])
+				rings *= roundi(float(t["value"]))
 	return {
 		"damage": damage,
 		"radius": radius,
@@ -176,6 +183,8 @@ func bricks_at(tier: int) -> Dictionary:
 		"knockback_kaiju": bool(b["knockback_kaiju"]),
 		"min_air_seconds": float(b["min_air_seconds"]),
 		"cooldown": float(b["cooldown"]),
+		"rings": rings,
+		"ring_interval": float(b.get("ring_interval", 0.15)),
 	}
 
 
@@ -185,13 +194,15 @@ func bricks_offered() -> bool:
 
 
 ## What the windshield wiper does at `tier`: damage, length, sweep_arc_degrees,
-## sweep_degrees_per_second, hit_cooldown, knockback_distance, knockback_kaiju.
+## sweep_degrees_per_second, hit_cooldown, knockback_distance, knockback_kaiju, and
+## back_wiper (true from tier 8, T-499: a second wiper behind the car).
 func wiper_at(tier: int) -> Dictionary:
 	var w: Dictionary = _data["wiper"]
 	var damage := float(w["damage"])
 	var length := float(w["length"])
 	var speed := float(w["sweep_degrees_per_second"])
 	var knock := float(w["knockback_distance"])
+	var back := false
 	for t in tiers("wiper"):
 		if int(t["tier"]) > tier:
 			continue
@@ -200,7 +211,9 @@ func wiper_at(tier: int) -> Dictionary:
 			"damage_multiplier": damage *= float(t["value"])
 			"sweep_speed_multiplier": speed *= float(t["value"])
 			"knockback_multiplier": knock *= float(t["value"])
+			"add_back_wiper": back = true
 	return {
+		"back_wiper": back,
 		"damage": damage,
 		"length": length,
 		"sweep_arc_degrees": float(w["sweep_arc_degrees"]),

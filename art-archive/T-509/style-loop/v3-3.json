@@ -1,0 +1,29 @@
+{
+  "file": "v3-3.png",
+  "asset": "rain splash animation (brief: art-archive/T-509/brief_splash.md)",
+  "task": "T-509",
+  "version": 3,
+  "refines": "v2-3.png (Style Evaluator 7/10: no rule broken, but shapes unverifiable at native size, the zoom tool was refused; frame 1's tiny ring, frame 2's 2-4 droplets, frame 3's ~10x4 ring, frame 4's broken ring to be checked; impact at bottom row x 5-6)",
+  "size": "48x8 (4 frames of 12x8, one row, played once in order), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_this_version": 0,
+  "generations_total": 2,
+  "script": "game/tools/build_rain_splash.py (default --version 3). Tests: game/tools/test_build_rain_splash.py, 14 pass (shape checks for every point the evaluator listed)",
+  "change": "Free script fix. Frame 1 redrawn so it reads as a dot inside a ring: a 6x3 ring (dark far edge, mid sides, pale near side) with a transparent gap each side of the white-and-cyan dot. Frames 2-4 as in v2. Exact pixel map below, so the shapes can be checked without zooming.",
+  "pixel_map_legend": {".": "transparent", "W": "(252,254,252) near white", "C": "(202,251,251) cyan hint", "1": "(228,246,255) palest blue-white", "2": "(202,232,255) pale blue-white", "3": "(143,197,232) light blue-grey", "4": "(114,167,204) mid blue-grey", "7": "(103,154,192) darker blue-grey", "8": "(92,141,176) dark desaturated blue", "9": "(70,104,134) darkest desaturated blue"},
+  "pixel_map": {
+    "frame 1 (impact: dot inside a 6x3 ring)": ["............", "............", "............", "............", "............", "....8888....", "...4.WC.4...", "....2112...."],
+    "frame 2 (crown: 3 droplets thrown up and out, rim rising, 8x3 ring)": ["............", "......W.....", "..W......1..", "...2....2...", "...3....3...", "...878878...", "..4......4..", "...312213..."],
+    "frame 3 (widest ring, x1-10 by y4-7 = 10x4, 2 falling droplets)": ["............", "............", "..1.........", ".........2..", "...888888...", ".77......77.", ".44......44.", "...321123..."],
+    "frame 4 (fading broken ring, darkest far edge)": ["............", "............", "............", "............", "....9..9....", ".8........8.", "..........8.", "...7..77...."]
+  },
+  "checks_per_evaluator_point": {
+    "frame 1 tiny ring": "6 wide, 3 high, dot at x5-6 y6 with gaps at x4 and x7 (test_v3_frame1_is_dot_inside_tiny_ring)",
+    "frame 2 droplets": "3 droplets at y1-2, detached from the ring (test_crown_has_2_to_4_droplets_detached_from_ring)",
+    "frame 3 ring": "10 wide x 4 high, 2 droplets above it (test_frame3_ring_is_widest_10_by_4, test_frame3_has_1_or_2_falling_droplets_above_ring)",
+    "frame 4": "8 pixels, 3 dark tones, broken (test_fading_frame_has_fewest_and_darkest_pixels, test_v2_fade_has_three_tones_darkest_on_far_edge)",
+    "impact point": "frames 1-3 have pixels on the bottom row at x5 and x6; frame 4 at x6 (test_every_frame_touches_bottom_row_centre_area)"
+  },
+  "preview": "art-archive/T-509/screenshots/v3-3_preview_x12.png (nearest-neighbour x12 on a dark and a light background)",
+  "script_checks": "game/tools/style_rules.py art --size 12x8 --frames 4 --max-colors 12: all 21 pass"
+}

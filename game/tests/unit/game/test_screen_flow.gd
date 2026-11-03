@@ -67,7 +67,7 @@ func test_start_begins_a_fresh_run() -> void:
 	assert_false(is_instance_valid(menu) and menu.is_inside_tree(), "the menu left the tree")
 	var s: RunState = game.run.state
 	assert_true(s.is_running())
-	assert_eq(s.time_left_text(), "8:00")
+	assert_eq(s.time_left_text(), "4:00")
 	assert_eq(s.health, s.max_health)
 	assert_eq(s.coins, 0)
 	assert_eq(s.result, "")
@@ -180,7 +180,7 @@ func test_a_second_run_from_the_menu_is_fresh() -> void:
 	assert_true(s.is_running())
 	assert_eq(s.coins, 0)
 	assert_eq(s.health, s.max_health)
-	assert_eq(s.time_left_text(), "8:00")
+	assert_eq(s.time_left_text(), "4:00")
 	assert_eq(get_tree().get_nodes_in_group("run_state").size(), 1, "only one run state in the tree")
 
 

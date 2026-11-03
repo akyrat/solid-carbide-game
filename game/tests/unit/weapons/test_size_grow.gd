@@ -110,10 +110,10 @@ func test_each_weapon_grows_from_the_old_size_to_the_data_size() -> void:
 
 
 func test_every_size_tier_in_the_data_grows_to_its_size() -> void:
-	var size_tiers := {"wiper": [2, 6], "underglow": [2, 5, 8], "flamethrower": [2, 4, 6]}
+	var size_tiers := {"wiper": [2, 4], "underglow": [2, 5], "flamethrower": [2, 3]}  # T-520: the 5-tier trees
 	for id in size_tiers:
 		var w = _own(id)
-		for t in range(2, 9):
+		for t in range(2, w.max_tier() + 1):  # every weapon ends at 5 (T-520)
 			w.upgrade()
 			var prev := _data_size(id, t - 1)
 			var new := _data_size(id, t)
@@ -142,7 +142,7 @@ func test_getting_the_weapon_or_a_new_run_does_not_grow() -> void:
 	var w = _own("underglow")
 	assert_false(w.grow.active, "getting it shows its size at once")
 	assert_eq(w.radius(), _data_size("underglow", 1))
-	w.set_tier(8)
+	w.set_tier(5)
 	w.reset_for_run()
 	assert_false(w.grow.active)
 	assert_eq(w.radius(), _data_size("underglow", 0 + 1))
@@ -193,18 +193,18 @@ func test_the_underglow_circle_follows_the_drawn_radius() -> void:
 
 func test_the_flame_area_follows_the_drawn_scale() -> void:
 	var f = _own("flamethrower")
-	f.set_tier(5)
-	f.grow.snap(f.grow.target)  # tier 5's size, settled
-	f.upgrade()  # tier 6: size x1.3
+	f.set_tier(2)
+	f.grow.snap(f.grow.target)  # tier 2's size, settled
+	f.upgrade()  # tier 3: size x1.3 (and damage x1.2)
 	assert_true(f.grow.active)
-	var old: float = _data_size("flamethrower", 5)
+	var old: float = _data_size("flamethrower", 2)
 	assert_almost_eq(f.drawn_scale(), old * f.size_fraction(), 1e-6)
 	var length_start := _depth(f)
 	_step(_steps(SizeGrow.DURATION) + 1)
 	var length_end := _depth(f)
 	assert_gt(length_end, length_start, "the hit outline grew with the flame")
 	assert_almost_eq(f.flame_drawing.scale.x, f.drawn_scale(), 1e-6, "the drawing uses the same scale")
-	assert_almost_eq(length_end / length_start, _data_size("flamethrower", 6) / old, 0.02)
+	assert_almost_eq(length_end / length_start, _data_size("flamethrower", 3) / old, 0.02)
 
 
 func _depth(f) -> float:

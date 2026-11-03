@@ -1,0 +1,2575 @@
+{
+ "base": [
+  1280,
+  720
+ ],
+ "sizes": [
+  "1280x720",
+  "1920x1080",
+  "2560x1440",
+  "3840x2160",
+  "3440x1440"
+ ],
+ "screen_flag": 0.85,
+ "piece_flag": 0.7,
+ "order": [
+  "main_menu",
+  "recap_win",
+  "recap_time_up",
+  "recap_wreck",
+  "power_up_overlay",
+  "level_up_gift_pack",
+  "pause_trick_list",
+  "pause_screen",
+  "pause_hud_layout_editor",
+  "garage",
+  "hud_mission_page",
+  "hud_trick_popup",
+  "hud_combo_broken",
+  "hud_run_start",
+  "time_up_screen",
+  "wreck",
+  "tutorial_slide_3",
+  "tutorial_slide_2",
+  "tutorial_slide_1"
+ ],
+ "screens": {
+  "main_menu": {
+   "coverage": {
+    "1280x720": 0.2685763888888889,
+    "1920x1080": 0.11936728395061728,
+    "2560x1440": 0.06714409722222223,
+    "3840x2160": 0.03026212832550861,
+    "3440x1440": 0.04996770025839793
+   },
+   "content": {
+    "1280x720": 0.18958333333333333,
+    "1920x1080": 0.08425925925925926,
+    "2560x1440": 0.04739583333333333,
+    "3840x2160": 0.021361502347417842,
+    "3440x1440": 0.03527131782945737
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.4444444444444444,
+    "2560x1440": 0.25,
+    "3840x2160": 0.11267605633802817,
+    "3440x1440": 0.18604651162790697
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.4444444444444444,
+    "2560x1440": 0.25,
+    "3840x2160": 0.11267605633802819,
+    "3440x1440": 0.186046511627907
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.4444444444444444,
+    "2560x1440": 0.25,
+    "3840x2160": 0.11267605633802817,
+    "3440x1440": 0.18604651162790697
+   },
+   "worst_ratio": 0.11267605633802817,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/MainMenu/@CenterContainer@2/@VBoxContainer@3/Subtitle",
+     "class": "Label",
+     "base_share": 0.012638888888888889,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/MainMenu/@CenterContainer@2/@VBoxContainer@3/Title",
+     "class": "Label",
+     "base_share": 0.04423611111111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/MainMenu/@CenterContainer@2/@VBoxContainer@3/StartButton",
+     "class": "Button",
+     "base_share": 0.04423611111111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/MainMenu/@CenterContainer@2/@VBoxContainer@3/GarageButton",
+     "class": "Button",
+     "base_share": 0.04423611111111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/MainMenu/@CenterContainer@2/@VBoxContainer@3/ExitButton",
+     "class": "Button",
+     "base_share": 0.04423611111111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "tutorial_slide_1": {
+   "coverage": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 1.0,
+    "3440x1440": 1.0
+   },
+   "content": {
+    "1280x720": 0.7243511284722223,
+    "1920x1080": 0.7243511284722223,
+    "2560x1440": 0.7243511284722223,
+    "3840x2160": 0.7143135795676838,
+    "3440x1440": 1.0
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 1.0,
+    "3440x1440": 1.0
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 0.98614270274458,
+    "3440x1440": 1.3805459268202802
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 0.98614270274458,
+    "3440x1440": 1.0
+   },
+   "worst_ratio": 0.98614270274458,
+   "flagged": false,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "tutorial_slide_2": {
+   "coverage": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 1.0,
+    "3440x1440": 1.0
+   },
+   "content": {
+    "1280x720": 0.8825911458333333,
+    "1920x1080": 0.8825911458333333,
+    "2560x1440": 0.8825911458333333,
+    "3840x2160": 0.8703491759585289,
+    "3440x1440": 1.0
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 1.0,
+    "3440x1440": 1.0
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 0.9861295120253607,
+    "3440x1440": 1.1330274552616437
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 0.9861295120253607,
+    "3440x1440": 1.0
+   },
+   "worst_ratio": 0.9861295120253607,
+   "flagged": false,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "tutorial_slide_3": {
+   "coverage": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 1.0,
+    "3440x1440": 1.0
+   },
+   "content": {
+    "1280x720": 0.8966449652777778,
+    "1920x1080": 0.8966571180555555,
+    "2560x1440": 0.8966449652777778,
+    "3840x2160": 0.8842010514475742,
+    "3440x1440": 1.0
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 1.0,
+    "3440x1440": 1.0
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0000135536117953,
+    "2560x1440": 1.0,
+    "3840x2160": 0.9861216932988092,
+    "3440x1440": 1.1152686277452115
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 0.9861216932988092,
+    "3440x1440": 1.0
+   },
+   "worst_ratio": 0.9861216932988092,
+   "flagged": false,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "garage": {
+   "coverage": {
+    "1280x720": 0.73671875,
+    "1920x1080": 0.73671875,
+    "2560x1440": 0.73671875,
+    "3840x2160": 0.726484375,
+    "3440x1440": 0.5482558139534883
+   },
+   "content": {
+    "1280x720": 0.38693719618055555,
+    "1920x1080": 0.3868411458333333,
+    "2560x1440": 0.3868102484809028,
+    "3840x2160": 0.3814375684663536,
+    "3440x1440": 0.28785878956718347
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 1.0,
+    "3840x2160": 0.9861081654294803,
+    "3440x1440": 0.7441860465116279
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997517676042252,
+    "2560x1440": 0.9996719165257156,
+    "3840x2160": 0.9857867690971853,
+    "3440x1440": 0.7439418913679744
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997517676042252,
+    "2560x1440": 0.9996719165257156,
+    "3840x2160": 0.9857867690971853,
+    "3440x1440": 0.7439418913679744
+   },
+   "worst_ratio": 0.7439418913679744,
+   "flagged": true,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "hud_run_start": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.09335458984375,
+    "1920x1080": 0.09334276138117284,
+    "2560x1440": 0.09335349392361111,
+    "3840x2160": 0.0920418219385759,
+    "3440x1440": 0.06947236757105943
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998732953291642,
+    "2560x1440": 0.9999882606721242,
+    "3840x2160": 0.98593783222259,
+    "3440x1440": 0.7441773102676272
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 0.98593783222259,
+    "3440x1440": 0.7441773102676272
+   },
+   "worst_ratio": 0.7441773102676272,
+   "flagged": true,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "hud_mission_page": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.09035797526041667,
+    "1920x1080": 0.09033553722993827,
+    "2560x1440": 0.09034892306857638,
+    "3840x2160": 0.0890850327660407,
+    "3440x1440": 0.06723640786498707
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997516762586398,
+    "2560x1440": 0.9998998185626206,
+    "3840x2160": 0.9859122286582088,
+    "3440x1440": 0.7441114928838105
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997516762586398,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 0.9859122286582088,
+    "3440x1440": 0.7441114928838105
+   },
+   "worst_ratio": 0.7441114928838105,
+   "flagged": true,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "hud_trick_popup": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.09035797526041667,
+    "1920x1080": 0.09033553722993827,
+    "2560x1440": 0.09034892306857638,
+    "3840x2160": 0.0890850327660407,
+    "3440x1440": 0.06723640786498707
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997516762586398,
+    "2560x1440": 0.9998998185626206,
+    "3840x2160": 0.9859122286582088,
+    "3440x1440": 0.7441114928838105
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997516762586398,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 0.9859122286582088,
+    "3440x1440": 0.7441114928838105
+   },
+   "worst_ratio": 0.7441114928838105,
+   "flagged": true,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "hud_combo_broken": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.09035797526041667,
+    "1920x1080": 0.09033553722993827,
+    "2560x1440": 0.09034892306857638,
+    "3840x2160": 0.0890850327660407,
+    "3440x1440": 0.06723640786498707
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997516762586398,
+    "2560x1440": 0.9998998185626206,
+    "3840x2160": 0.9859122286582088,
+    "3440x1440": 0.7441114928838105
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9997516762586398,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 0.9859122286582088,
+    "3440x1440": 0.7441114928838105
+   },
+   "worst_ratio": 0.7441114928838105,
+   "flagged": true,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "level_up_gift_pack": {
+   "coverage": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 1.0,
+    "1920x1080": 0.8614992139274692,
+    "2560x1440": 0.5255707194010416,
+    "3840x2160": 0.28700204665492957,
+    "3440x1440": 0.3911223958333333
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.0,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.8614992139274692,
+    "2560x1440": 0.5255707194010416,
+    "3840x2160": 0.28700204665492957,
+    "3440x1440": 0.3911223958333333
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.8614992139274692,
+    "2560x1440": 0.5255707194010416,
+    "3840x2160": 0.28700204665492957,
+    "3440x1440": 0.3911223958333333
+   },
+   "worst_ratio": 0.28700204665492957,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Banner/Ribbon",
+     "class": "TextureRect",
+     "base_share": 0.07256944444444445,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/Sunburst",
+     "class": "TextureRect",
+     "base_share": 1.1377777777777778,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Banner/Ribbon/TitleLabel",
+     "class": "Label",
+     "base_share": 0.043541666666666666,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Banner/Emblem",
+     "class": "TextureRect",
+     "base_share": 0.017777777777777778,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_upgrade_gun/Body/@MarginContainer@342/@VBoxContainer@343/WeaponImage",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_upgrade_gun/Body/@MarginContainer@342/@VBoxContainer@343/Title",
+     "class": "Label",
+     "base_share": 0.0126953125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_upgrade_gun/ClickArea",
+     "class": "Button",
+     "base_share": 0.14609375,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_get_wiper/Body/@MarginContainer@344/@VBoxContainer@345/WeaponImage",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_get_wiper/Body/@MarginContainer@344/@VBoxContainer@345/Title",
+     "class": "Label",
+     "base_share": 0.0126953125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_get_wiper/ClickArea",
+     "class": "Button",
+     "base_share": 0.14609375,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_upgrade_gun/Body/@MarginContainer@342/@VBoxContainer@343/Description",
+     "class": "Label",
+     "base_share": 0.06477864583333333,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/LevelUpScreen/LevelUpScreen/@CenterContainer@231/@VBoxContainer@232/Cards/Card_get_wiper/Body/@MarginContainer@344/@VBoxContainer@345/Description",
+     "class": "Label",
+     "base_share": 0.06477864583333333,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "power_up_overlay": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.5407677842881945,
+    "1920x1080": 0.29219307002314815,
+    "2560x1440": 0.2052067925347222,
+    "3840x2160": 0.14245457624217528,
+    "3440x1440": 0.15271203165374675
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.5403300242963957,
+    "2560x1440": 0.3794730353710571,
+    "3840x2160": 0.263430219737824,
+    "3440x1440": 0.2823985379505541
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.5403300242963957,
+    "2560x1440": 0.3794730353710571,
+    "3840x2160": 0.263430219737824,
+    "3440x1440": 0.2823985379505541
+   },
+   "worst_ratio": 0.263430219737824,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/HeaderHolder/Header/TitleLabel",
+     "class": "Label",
+     "base_share": 0.06598958333333334,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_rev_charge/Body/Frame",
+     "class": "Panel",
+     "base_share": 0.1254340277777778,
+     "ratios": {
+      "1920x1080": 0.44444444444444436,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_rev_charge/Body/@MarginContainer@467/@VBoxContainer@468/Name",
+     "class": "Label",
+     "base_share": 0.012356770833333334,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_rev_charge/ClickArea",
+     "class": "Button",
+     "base_share": 0.1254340277777778,
+     "ratios": {
+      "1920x1080": 0.44444444444444436,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_jump/Body/Frame",
+     "class": "Panel",
+     "base_share": 0.1254340277777778,
+     "ratios": {
+      "1920x1080": 0.44444444444444436,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_jump/Body/@MarginContainer@469/@VBoxContainer@470/Name",
+     "class": "Label",
+     "base_share": 0.012356770833333334,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_jump/ClickArea",
+     "class": "Button",
+     "base_share": 0.1254340277777778,
+     "ratios": {
+      "1920x1080": 0.44444444444444436,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_rev_charge/Body/HighlightFrame",
+     "class": "Panel",
+     "base_share": 0.140625,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_rev_charge/Body/@MarginContainer@467/@VBoxContainer@468/Icon",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_rev_charge/Body/@MarginContainer@467/@VBoxContainer@468/Description",
+     "class": "Label",
+     "base_share": 0.0484765625,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_jump/Body/@MarginContainer@469/@VBoxContainer@470/Icon",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PowerUpScreen/PowerUpScreen/@CenterContainer@380/@VBoxContainer@381/Cards/Card_jump/Body/@MarginContainer@469/@VBoxContainer@470/Description",
+     "class": "Label",
+     "base_share": 0.0484765625,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "pause_screen": {
+   "coverage": {
+    "1280x720": 0.9320833333333334,
+    "1920x1080": 0.9320370370370369,
+    "2560x1440": 0.9320833333333334,
+    "3840x2160": 0.9321126760563381,
+    "3440x1440": 0.9320833333333334
+   },
+   "content": {
+    "1280x720": 0.16629295789930554,
+    "1920x1080": 0.12575981385030863,
+    "2560x1440": 0.1115880859375,
+    "3840x2160": 0.10026022960680751,
+    "3440x1440": 0.08304229651162791
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9999503303034817,
+    "2560x1440": 1.0,
+    "3840x2160": 1.0000314807935677,
+    "3440x1440": 1.0
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.7562545969412564,
+    "2560x1440": 0.6710331414338623,
+    "3840x2160": 0.6029132614714662,
+    "3440x1440": 0.499373500601944
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.7562545969412564,
+    "2560x1440": 0.6710331414338623,
+    "3840x2160": 0.6029132614714662,
+    "3440x1440": 0.499373500601944
+   },
+   "worst_ratio": 0.499373500601944,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/@Label@562",
+     "class": "Label",
+     "base_share": 0.01015625,
+     "ratios": {
+      "1920x1080": 0.44444444444444436,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/@HBoxContainer@572/SmoothingCheck",
+     "class": "CheckBox",
+     "base_share": 0.0025390625,
+     "ratios": {
+      "1920x1080": 0.44444444444444436,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/@Label@561",
+     "class": "Label",
+     "base_share": 0.017491319444444445,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/@HBoxContainer@563/@Label@564",
+     "class": "Label",
+     "base_share": 0.0033203125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/@HBoxContainer@563/ZoomSlider",
+     "class": "HSlider",
+     "base_share": 0.005069444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/MusicRow/@Label@568",
+     "class": "Label",
+     "base_share": 0.0033203125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/MusicRow/MusicSlider",
+     "class": "HSlider",
+     "base_share": 0.005069444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/HudSizeRow/@Label@570",
+     "class": "Label",
+     "base_share": 0.0033203125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/HudSizeRow/HudSizeSlider",
+     "class": "HSlider",
+     "base_share": 0.005069444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/RunButtonsRow/TrickListButton",
+     "class": "Button",
+     "base_share": 0.0029861111111111113,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/RunButtonsRow/HudLayoutButton",
+     "class": "Button",
+     "base_share": 0.004131944444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/RunButtonsRow/RestartButton",
+     "class": "Button",
+     "base_share": 0.002673611111111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558/@CenterContainer@559/@VBoxContainer@560/@HBoxContainer@572/DynamicCheck",
+     "class": "CheckBox",
+     "base_share": 0.00220703125,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/@PanelContainer@558",
+     "class": "PanelContainer",
+     "base_share": 0.2916666666666667,
+     "ratios": {
+      "1920x1080": 0.6666666666666666,
+      "2560x1440": 0.5,
+      "3840x2160": 0.33802816901408445,
+      "3440x1440": 0.5
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "pause_trick_list": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.19268401692708334,
+    "1920x1080": 0.13748917341820988,
+    "2560x1440": 0.11818585069444444,
+    "3840x2160": 0.10323387006064162,
+    "3440x1440": 0.08795226098191214
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.7135473694750685,
+    "2560x1440": 0.6133661347695956,
+    "3840x2160": 0.5357676869468007,
+    "3440x1440": 0.4564585188983037
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.7135473694750685,
+    "2560x1440": 0.6133661347695956,
+    "3840x2160": 0.5357676869468007,
+    "3440x1440": 0.4564585188983037
+   },
+   "worst_ratio": 0.4564585188983037,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_extended_drift/@HBoxContainer@574/Picture",
+     "class": "TextureRect",
+     "base_share": 0.0033333333333333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_three_sixty/@HBoxContainer@575/Picture",
+     "class": "TextureRect",
+     "base_share": 0.0033333333333333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_three_sixty/@HBoxContainer@575/Name",
+     "class": "Label",
+     "base_share": 0.0023697916666666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_alternate_drift/@HBoxContainer@576/Picture",
+     "class": "TextureRect",
+     "base_share": 0.0033333333333333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_air_one_eighty/@HBoxContainer@577/Picture",
+     "class": "TextureRect",
+     "base_share": 0.0033333333333333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_air_three_sixty/@HBoxContainer@578/Picture",
+     "class": "TextureRect",
+     "base_share": 0.0033333333333333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_airtime/@HBoxContainer@579/Picture",
+     "class": "TextureRect",
+     "base_share": 0.0033333333333333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_thread_the_needle/@HBoxContainer@580/Picture",
+     "class": "TextureRect",
+     "base_share": 0.0033333333333333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/Detail/Recipe/Step1/Note",
+     "class": "Label",
+     "base_share": 0.002018229166666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel",
+     "class": "PanelContainer",
+     "base_share": 0.479375,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/Detail/Middle/Rule",
+     "class": "Label",
+     "base_share": 0.019322916666666665,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/Detail/Recipe/Step1/Keys/KeyW",
+     "class": "PanelContainer",
+     "base_share": 0.0021006944444444445,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/Detail/Recipe/Step1/Keys/KeyA",
+     "class": "PanelContainer",
+     "base_share": 0.0031510416666666666,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/Detail/Recipe/Step2/Keys/Badge",
+     "class": "PanelContainer",
+     "base_share": 0.003628472222222222,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickBackButton",
+     "class": "Button",
+     "base_share": 0.0020833333333333333,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_extended_drift/@HBoxContainer@574/Name",
+     "class": "Label",
+     "base_share": 0.0031315104166666666,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_alternate_drift/@HBoxContainer@576/Name",
+     "class": "Label",
+     "base_share": 0.002595486111111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_airtime/@HBoxContainer@579/Name",
+     "class": "Label",
+     "base_share": 0.0029622395833333332,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/List/Row_thread_the_needle/@HBoxContainer@580/Name",
+     "class": "Label",
+     "base_share": 0.005247395833333333,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/Detail/TrickName",
+     "class": "Label",
+     "base_share": 0.028645833333333332,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/TrickListPanel/@VBoxContainer@573/TrickList/Layout/Detail/Middle/ClipBox",
+     "class": "Panel",
+     "base_share": 0.10010416666666666,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "pause_hud_layout_editor": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.10272090928819444,
+    "1920x1080": 0.09750557002314814,
+    "2560x1440": 0.09569507378472222,
+    "3840x2160": 0.09309718187597808,
+    "3440x1440": 0.07121493863049096
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9492280656276697,
+    "2560x1440": 0.9316026741570163,
+    "3840x2160": 0.9063118942491448,
+    "3440x1440": 0.6932857110005702
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9492280656276697,
+    "2560x1440": 0.9316026741570163,
+    "3840x2160": 0.9063118942491448,
+    "3440x1440": 0.6932857110005702
+   },
+   "worst_ratio": 0.6932857110005702,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/HudLayoutEditor/EditorBar",
+     "class": "PanelContainer",
+     "base_share": 0.018862847222222222,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/HudLayoutEditor/EditorBar/@VBoxContainer@583/HintLabel",
+     "class": "Label",
+     "base_share": 0.003671875,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/HudLayoutEditor/EditorBar/@VBoxContainer@583/@HBoxContainer@584/DoneButton",
+     "class": "Button",
+     "base_share": 0.0020833333333333333,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Run/PauseScreenLayer/PauseScreen/HudLayoutEditor/EditorBar/@VBoxContainer@583/@HBoxContainer@584/ResetLayoutButton",
+     "class": "Button",
+     "base_share": 0.003611111111111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "time_up_screen": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.09335458984375,
+    "1920x1080": 0.09334276138117284,
+    "2560x1440": 0.09335349392361111,
+    "3840x2160": 0.0920418219385759,
+    "3440x1440": 0.06947236757105943
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998732953291642,
+    "2560x1440": 0.9999882606721242,
+    "3840x2160": 0.98593783222259,
+    "3440x1440": 0.7441773102676272
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 0.98593783222259,
+    "3440x1440": 0.7441773102676272
+   },
+   "worst_ratio": 0.7441773102676272,
+   "flagged": true,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "wreck": {
+   "coverage": {
+    "1280x720": 0.9095094401041667,
+    "1920x1080": 0.9093671778549381,
+    "2560x1440": 0.9094002115885417,
+    "3840x2160": 0.909780809859155,
+    "3440x1440": 0.9152028706395348
+   },
+   "content": {
+    "1280x720": 0.09335458984375,
+    "1920x1080": 0.09334276138117284,
+    "2560x1440": 0.09335349392361111,
+    "3840x2160": 0.0920418219385759,
+    "3440x1440": 0.06947236757105943
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 1.0002983693659708,
+    "3440x1440": 1.0062598916342376
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998732953291642,
+    "2560x1440": 0.9999882606721242,
+    "3840x2160": 0.98593783222259,
+    "3440x1440": 0.7441773102676272
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.9998435835375032,
+    "2560x1440": 0.9998799039231385,
+    "3840x2160": 0.98593783222259,
+    "3440x1440": 0.7441773102676272
+   },
+   "worst_ratio": 0.7441773102676272,
+   "flagged": true,
+   "shrinking_pieces": [],
+   "missing_at": []
+  },
+  "recap_win": {
+   "coverage": {
+    "1280x720": 0.9149305555555556,
+    "1920x1080": 0.9429012345679012,
+    "2560x1440": 0.95703125,
+    "3840x2160": 0.9709996087636933,
+    "3440x1440": 0.9609173126614987
+   },
+   "content": {
+    "1280x720": 0.2805627170138889,
+    "1920x1080": 0.15062046682098765,
+    "2560x1440": 0.09930734592013889,
+    "3840x2160": 0.057903780320813766,
+    "3440x1440": 0.08882562177002583
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.030571368332279,
+    "2560x1440": 1.0460151802656545,
+    "3840x2160": 1.0612823048347009,
+    "3440x1440": 1.0502625656414104
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.536851326591378,
+    "2560x1440": 0.3539577424153003,
+    "3840x2160": 0.20638444386731297,
+    "3440x1440": 0.3165980951261911
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.536851326591378,
+    "2560x1440": 0.3539577424153003,
+    "3840x2160": 0.20638444386731297,
+    "3440x1440": 0.3165980951261911
+   },
+   "worst_ratio": 0.20638444386731297,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@983/TitlePanel",
+     "class": "PanelContainer",
+     "base_share": 0.03414930555555556,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/@HFlowContainer@992/Trick_alternate_drift/Image",
+     "class": "TextureRect",
+     "base_share": 0.005138888888888889,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/@HFlowContainer@992/Trick_air_three_sixty/Image",
+     "class": "TextureRect",
+     "base_share": 0.0045768229166666665,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/@HFlowContainer@992/Trick_airtime/Image",
+     "class": "TextureRect",
+     "base_share": 0.0057009548611111115,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/@HFlowContainer@992/Trick_thread_the_needle/Image",
+     "class": "TextureRect",
+     "base_share": 0.009033203125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_gun/Name",
+     "class": "Label",
+     "base_share": 0.0022916666666666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_gun/Tier",
+     "class": "Label",
+     "base_share": 0.0022916666666666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_flamethrower/Name",
+     "class": "Label",
+     "base_share": 0.002936197916666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_flamethrower/Tier",
+     "class": "Label",
+     "base_share": 0.002936197916666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@986/@HBoxContainer@987/Enemy_minion/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@986/@HBoxContainer@987/Enemy_minion/@VBoxContainer@984/Name",
+     "class": "Label",
+     "base_share": 0.0021006944444444445,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@986/@HBoxContainer@987/Enemy_minion/@VBoxContainer@984/Count",
+     "class": "Label",
+     "base_share": 0.0029600694444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@986/@HBoxContainer@987/Enemy_kaiju/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@986/@HBoxContainer@987/Enemy_kaiju/@VBoxContainer@985/Count",
+     "class": "Label",
+     "base_share": 0.002119140625,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo/@VBoxContainer@989/@CenterContainer@990/@HBoxContainer@988/PeakHolder/PeakViewers",
+     "class": "Label",
+     "base_share": 0.013365451388888889,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/@HFlowContainer@992/Trick_extended_drift/Image",
+     "class": "TextureRect",
+     "base_share": 0.005941840277777778,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/@HFlowContainer@992/Trick_three_sixty/Image",
+     "class": "TextureRect",
+     "base_share": 0.004938151041666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/@HFlowContainer@992/Trick_air_one_eighty/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044563802083333335,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_gun/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_flamethrower/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_underglow/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_underglow/Name",
+     "class": "Label",
+     "base_share": 0.0028407118055555555,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_underglow/Tier",
+     "class": "Label",
+     "base_share": 0.0028407118055555555,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_molotov/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_wiper/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/@HBoxContainer@994/Weapon_bricks/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@983/TitlePanel/Title",
+     "class": "Label",
+     "base_share": 0.025494791666666666,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@996/ContinueButton",
+     "class": "Button",
+     "base_share": 0.012413194444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/CloseButton",
+     "class": "Button",
+     "base_share": 0.0029340277777777776,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks",
+     "class": "PanelContainer",
+     "base_share": 0.16953125,
+     "ratios": {
+      "1920x1080": 0.43317972350230416,
+      "2560x1440": 0.3266129032258065,
+      "3840x2160": 0.22197702343090803,
+      "3440x1440": 0.32793912763905264
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons",
+     "class": "PanelContainer",
+     "base_share": 0.20451388888888888,
+     "ratios": {
+      "1920x1080": 0.6738351254480287,
+      "2560x1440": 0.5080645161290323,
+      "3840x2160": 0.34529759200363475,
+      "3440x1440": 0.5101275318829708
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies",
+     "class": "PanelContainer",
+     "base_share": 0.07595052083333333,
+     "ratios": {
+      "1920x1080": 0.6760767281939921,
+      "2560x1440": 0.510586319218241,
+      "3840x2160": 0.34757076661925956,
+      "3440x1440": 0.5132944473903492
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo",
+     "class": "PanelContainer",
+     "base_share": 0.07595052083333333,
+     "ratios": {
+      "1920x1080": 0.6760767281939921,
+      "2560x1440": 0.510586319218241,
+      "3840x2160": 0.34757076661925956,
+      "3440x1440": 0.5132944473903492
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@991/Heading",
+     "class": "Label",
+     "base_share": 0.036822916666666664,
+     "ratios": {
+      "1920x1080": 0.6791345801246792,
+      "2560x1440": 0.514026402640264,
+      "3840x2160": 0.35067168688699857,
+      "3440x1440": 0.5176145521528898
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@993/Heading",
+     "class": "Label",
+     "base_share": 0.036822916666666664,
+     "ratios": {
+      "1920x1080": 0.6791345801246792,
+      "2560x1440": 0.514026402640264,
+      "3840x2160": 0.35067168688699857,
+      "3440x1440": 0.5176145521528898
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@986/Heading",
+     "class": "Label",
+     "base_share": 0.017803819444444445,
+     "ratios": {
+      "1920x1080": 0.6871444823663253,
+      "2560x1440": 0.523037542662116,
+      "3840x2160": 0.358794404653175,
+      "3440x1440": 0.528930867529169
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo/@VBoxContainer@989/Heading",
+     "class": "Label",
+     "base_share": 0.017803819444444445,
+     "ratios": {
+      "1920x1080": 0.6871444823663253,
+      "2560x1440": 0.523037542662116,
+      "3840x2160": 0.358794404653175,
+      "3440x1440": 0.528930867529169
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "recap_time_up": {
+   "coverage": {
+    "1280x720": 0.9149305555555556,
+    "1920x1080": 0.9429012345679012,
+    "2560x1440": 0.95703125,
+    "3840x2160": 0.9709996087636933,
+    "3440x1440": 0.9609173126614987
+   },
+   "content": {
+    "1280x720": 0.22541024305555557,
+    "1920x1080": 0.12610825617283952,
+    "2560x1440": 0.08551922743055557,
+    "3840x2160": 0.051689417057902975,
+    "3440x1440": 0.07856469638242894
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.030571368332279,
+    "2560x1440": 1.0460151802656545,
+    "3840x2160": 1.0612823048347009,
+    "3440x1440": 1.0502625656414104
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.559461071792369,
+    "2560x1440": 0.3793937057664151,
+    "3840x2160": 0.2293126361838108,
+    "3440x1440": 0.34854093282293985
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.559461071792369,
+    "2560x1440": 0.3793937057664151,
+    "3840x2160": 0.2293126361838108,
+    "3440x1440": 0.34854093282293985
+   },
+   "worst_ratio": 0.2293126361838108,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@1133/TitlePanel",
+     "class": "PanelContainer",
+     "base_share": 0.02734375,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1140/@HFlowContainer@1141/Trick_alternate_drift/Image",
+     "class": "TextureRect",
+     "base_share": 0.005138888888888889,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1140/@HFlowContainer@1141/Trick_thread_the_needle/Image",
+     "class": "TextureRect",
+     "base_share": 0.009033203125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_gun/Name",
+     "class": "Label",
+     "base_share": 0.0022916666666666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_gun/Tier",
+     "class": "Label",
+     "base_share": 0.0022916666666666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1135/@HBoxContainer@1136/Enemy_minion/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1135/@HBoxContainer@1136/Enemy_minion/@VBoxContainer@1134/Name",
+     "class": "Label",
+     "base_share": 0.0021006944444444445,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1135/@HBoxContainer@1136/Enemy_minion/@VBoxContainer@1134/Count",
+     "class": "Label",
+     "base_share": 0.0029600694444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo/@VBoxContainer@1138/@CenterContainer@1139/@HBoxContainer@1137/PeakHolder/PeakViewers",
+     "class": "Label",
+     "base_share": 0.012979687500000002,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1140/@HFlowContainer@1141/Trick_three_sixty/Image",
+     "class": "TextureRect",
+     "base_share": 0.004938151041666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_gun/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_underglow/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_underglow/Name",
+     "class": "Label",
+     "base_share": 0.0028407118055555555,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_underglow/Tier",
+     "class": "Label",
+     "base_share": 0.0028407118055555555,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_molotov/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/@HBoxContainer@1143/Weapon_wiper/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@1133/TitlePanel/Title",
+     "class": "Label",
+     "base_share": 0.020147569444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@1145/ContinueButton",
+     "class": "Button",
+     "base_share": 0.012413194444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/CloseButton",
+     "class": "Button",
+     "base_share": 0.0029340277777777776,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks",
+     "class": "PanelContainer",
+     "base_share": 0.108984375,
+     "ratios": {
+      "1920x1080": 0.6738351254480287,
+      "2560x1440": 0.5080645161290324,
+      "3840x2160": 0.3452975920036347,
+      "3440x1440": 0.5101275318829708
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons",
+     "class": "PanelContainer",
+     "base_share": 0.20451388888888888,
+     "ratios": {
+      "1920x1080": 0.6738351254480287,
+      "2560x1440": 0.5080645161290323,
+      "3840x2160": 0.34529759200363475,
+      "3440x1440": 0.5101275318829708
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies",
+     "class": "PanelContainer",
+     "base_share": 0.07595052083333333,
+     "ratios": {
+      "1920x1080": 0.6760767281939921,
+      "2560x1440": 0.510586319218241,
+      "3840x2160": 0.34757076661925956,
+      "3440x1440": 0.5132944473903492
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo",
+     "class": "PanelContainer",
+     "base_share": 0.07595052083333333,
+     "ratios": {
+      "1920x1080": 0.6760767281939921,
+      "2560x1440": 0.510586319218241,
+      "3840x2160": 0.34757076661925956,
+      "3440x1440": 0.5132944473903492
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1140/Heading",
+     "class": "Label",
+     "base_share": 0.036822916666666664,
+     "ratios": {
+      "1920x1080": 0.6791345801246792,
+      "2560x1440": 0.514026402640264,
+      "3840x2160": 0.35067168688699857,
+      "3440x1440": 0.5176145521528898
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1142/Heading",
+     "class": "Label",
+     "base_share": 0.036822916666666664,
+     "ratios": {
+      "1920x1080": 0.6791345801246792,
+      "2560x1440": 0.514026402640264,
+      "3840x2160": 0.35067168688699857,
+      "3440x1440": 0.5176145521528898
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1135/Heading",
+     "class": "Label",
+     "base_share": 0.017803819444444445,
+     "ratios": {
+      "1920x1080": 0.6871444823663253,
+      "2560x1440": 0.523037542662116,
+      "3840x2160": 0.358794404653175,
+      "3440x1440": 0.528930867529169
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo/@VBoxContainer@1138/Heading",
+     "class": "Label",
+     "base_share": 0.017803819444444445,
+     "ratios": {
+      "1920x1080": 0.6871444823663253,
+      "2560x1440": 0.523037542662116,
+      "3840x2160": 0.358794404653175,
+      "3440x1440": 0.528930867529169
+     }
+    }
+   ],
+   "missing_at": []
+  },
+  "recap_wreck": {
+   "coverage": {
+    "1280x720": 0.9149305555555556,
+    "1920x1080": 0.9429012345679012,
+    "2560x1440": 0.95703125,
+    "3840x2160": 0.9709996087636933,
+    "3440x1440": 0.9609173126614987
+   },
+   "content": {
+    "1280x720": 0.22450312500000003,
+    "1920x1080": 0.1257050925925926,
+    "2560x1440": 0.08529244791666667,
+    "3840x2160": 0.05158720657276995,
+    "3440x1440": 0.07839593023255814
+   },
+   "bbox_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 1.030571368332279,
+    "2560x1440": 1.0460151802656545,
+    "3840x2160": 1.0612823048347009,
+    "3440x1440": 1.0502625656414104
+   },
+   "content_ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.5599258032269822,
+    "2560x1440": 0.37991652863035497,
+    "3840x2160": 0.22978391313158758,
+    "3440x1440": 0.3491975010706783
+   },
+   "ratios": {
+    "1280x720": 1.0,
+    "1920x1080": 0.5599258032269822,
+    "2560x1440": 0.37991652863035497,
+    "3840x2160": 0.22978391313158758,
+    "3440x1440": 0.3491975010706783
+   },
+   "worst_ratio": 0.22978391313158758,
+   "flagged": true,
+   "shrinking_pieces": [
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@1276/TitlePanel",
+     "class": "PanelContainer",
+     "base_share": 0.02618923611111111,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1283/@HFlowContainer@1284/Trick_alternate_drift/Image",
+     "class": "TextureRect",
+     "base_share": 0.005138888888888889,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1283/@HFlowContainer@1284/Trick_thread_the_needle/Image",
+     "class": "TextureRect",
+     "base_share": 0.009033203125,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_gun/Name",
+     "class": "Label",
+     "base_share": 0.0022916666666666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_gun/Tier",
+     "class": "Label",
+     "base_share": 0.0022916666666666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802816,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1278/@HBoxContainer@1279/Enemy_minion/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1278/@HBoxContainer@1279/Enemy_minion/@VBoxContainer@1277/Name",
+     "class": "Label",
+     "base_share": 0.0021006944444444445,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790695
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1278/@HBoxContainer@1279/Enemy_minion/@VBoxContainer@1277/Count",
+     "class": "Label",
+     "base_share": 0.0029600694444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo/@VBoxContainer@1281/@CenterContainer@1282/@HBoxContainer@1280/PeakHolder/PeakViewers",
+     "class": "Label",
+     "base_share": 0.012979687500000002,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1283/@HFlowContainer@1284/Trick_three_sixty/Image",
+     "class": "TextureRect",
+     "base_share": 0.004938151041666667,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_gun/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_underglow/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_underglow/Name",
+     "class": "Label",
+     "base_share": 0.0028407118055555555,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_underglow/Tier",
+     "class": "Label",
+     "base_share": 0.0028407118055555555,
+     "ratios": {
+      "1920x1080": 0.4444444444444444,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_molotov/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/@HBoxContainer@1286/Weapon_wiper/Image",
+     "class": "TextureRect",
+     "base_share": 0.0044444444444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802817,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@1276/TitlePanel/Title",
+     "class": "Label",
+     "base_share": 0.01924045138888889,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/@CenterContainer@1288/ContinueButton",
+     "class": "Button",
+     "base_share": 0.012413194444444444,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.18604651162790697
+     }
+    },
+    {
+     "path": "Game/Recap/CloseButton",
+     "class": "Button",
+     "base_share": 0.0029340277777777776,
+     "ratios": {
+      "1920x1080": 0.4444444444444445,
+      "2560x1440": 0.25,
+      "3840x2160": 0.11267605633802819,
+      "3440x1440": 0.186046511627907
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks",
+     "class": "PanelContainer",
+     "base_share": 0.108984375,
+     "ratios": {
+      "1920x1080": 0.6738351254480287,
+      "2560x1440": 0.5080645161290324,
+      "3840x2160": 0.3452975920036347,
+      "3440x1440": 0.5101275318829708
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons",
+     "class": "PanelContainer",
+     "base_share": 0.20451388888888888,
+     "ratios": {
+      "1920x1080": 0.6738351254480287,
+      "2560x1440": 0.5080645161290323,
+      "3840x2160": 0.34529759200363475,
+      "3440x1440": 0.5101275318829708
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies",
+     "class": "PanelContainer",
+     "base_share": 0.07595052083333333,
+     "ratios": {
+      "1920x1080": 0.6760767281939921,
+      "2560x1440": 0.510586319218241,
+      "3840x2160": 0.34757076661925956,
+      "3440x1440": 0.5132944473903492
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo",
+     "class": "PanelContainer",
+     "base_share": 0.07595052083333333,
+     "ratios": {
+      "1920x1080": 0.6760767281939921,
+      "2560x1440": 0.510586319218241,
+      "3840x2160": 0.34757076661925956,
+      "3440x1440": 0.5132944473903492
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_tricks/@VBoxContainer@1283/Heading",
+     "class": "Label",
+     "base_share": 0.036822916666666664,
+     "ratios": {
+      "1920x1080": 0.6791345801246792,
+      "2560x1440": 0.514026402640264,
+      "3840x2160": 0.35067168688699857,
+      "3440x1440": 0.5176145521528898
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/Section_weapons/@VBoxContainer@1285/Heading",
+     "class": "Label",
+     "base_share": 0.036822916666666664,
+     "ratios": {
+      "1920x1080": 0.6791345801246792,
+      "2560x1440": 0.514026402640264,
+      "3840x2160": 0.35067168688699857,
+      "3440x1440": 0.5176145521528898
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_enemies/@VBoxContainer@1278/Heading",
+     "class": "Label",
+     "base_share": 0.017803819444444445,
+     "ratios": {
+      "1920x1080": 0.6871444823663253,
+      "2560x1440": 0.523037542662116,
+      "3840x2160": 0.358794404653175,
+      "3440x1440": 0.528930867529169
+     }
+    },
+    {
+     "path": "Game/Recap/Margin/Column/TopRow/Section_combo/@VBoxContainer@1281/Heading",
+     "class": "Label",
+     "base_share": 0.017803819444444445,
+     "ratios": {
+      "1920x1080": 0.6871444823663253,
+      "2560x1440": 0.523037542662116,
+      "3840x2160": 0.358794404653175,
+      "3440x1440": 0.528930867529169
+     }
+    }
+   ],
+   "missing_at": []
+  }
+ }
+}

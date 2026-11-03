@@ -1,0 +1,9 @@
+{
+  "description": "pixel art game icon, a single upright rusty spray paint can, front view, nozzle cap on top with a small puff of spray mist, cylindrical body of blue-grey metal with orange-brown rust patches and flaking paint, bright metal rim at top and bottom, small cyan and magenta neon glints, dark almost-black outline, light from top-left, centred, filling the frame, no text, no label",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "outline": "single color black outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}

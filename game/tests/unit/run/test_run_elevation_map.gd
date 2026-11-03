@@ -155,6 +155,9 @@ func test_an_enemy_behind_a_rooftop_is_drawn_under_it() -> void:
 func test_the_run_goes_on_with_enemies_and_weapons() -> void:
 	run.car.scripted_input = [true, false, 0.4]
 	run.state.time_left = 200.0
+	# Mission 1 is a 2 s drift (T-488): start at mission 5 so the 4 s scripted drift does not finish a mission and pause the run on a power-up pick.
+	run.state.missions.current = 4
+	run.state.missions._load_current()
 	await wait_seconds(4.0)
 	assert_true(run.state.is_running())
 	assert_gt(run.minions.minions.size(), 0, "enemies spawned")

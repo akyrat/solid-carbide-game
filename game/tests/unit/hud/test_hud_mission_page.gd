@@ -34,7 +34,7 @@ func test_header_is_the_texts_header() -> void:
 
 func test_first_mission_is_the_duration_goal_without_count() -> void:
 	var p := _page()
-	assert_eq(_label_texts(p), ["Hold one drift for 4 seconds"])
+	assert_eq(_label_texts(p), ["Hold one drift for 2 seconds"])
 	assert_false(p.rows[0].ticked)
 	assert_false(p.rows[0].crossed)
 
@@ -54,7 +54,7 @@ func test_duration_goal_text_does_not_change_with_progress() -> void:
 	var p := _page()
 	var m := _tracker(p)
 	m.on_drift_step(true, 1.5)
-	assert_eq(_label_texts(p), ["Hold one drift for 4 seconds"])
+	assert_eq(_label_texts(p), ["Hold one drift for 2 seconds"])
 	assert_false(p.rows[0].ticked)
 
 

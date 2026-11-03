@@ -26,9 +26,14 @@ extends "res://scripts/weapons/weapon.gd"
 ##   An enemy is hit when any part of its body (the rack's radius_of()) touches
 ##   it. Before T-267 the area was a separate rectangle in the data, about half
 ##   the drawn flame's length, and minions counted only by their centre.
-## - Damage: an enemy entering takes one hit at once and flashes orange for
-##   `burn_flash_seconds`; every `tick_interval` while the flame is on, every
-##   enemy inside takes one hit. One hit = take_damage(`damage`). No push.
+## - Damage and afterburn (T-497; Weapons, Decisions, "The board's own upgrade
+##   trees"): an enemy touching the flame starts burning: one hit at once (unless
+##   it is already burning), then one hit every `tick_interval` on its own burn
+##   clock, inside the flame or out. While it touches the flame its burn time is
+##   kept full; once it leaves, it keeps burning (hits, orange tint, burn flames)
+##   for `burn_flash_seconds`, then stops. Re-entering refreshes the burn. All
+##   its hits come from that one clock, so it never takes more than one flame hit
+##   per tick. One hit = take_damage(`damage`, the flame's damage now). No push.
 ## - Targets: the rack's living_enemies() (the group "enemies": the minions
 ##   now, the kaiju when it joins the group).
 
@@ -80,13 +85,12 @@ var active := false
 var linger_left := 0.0
 ## Seconds of drifting since the flame came on (for the size ramp).
 var drift_time := 0.0
-## The shared damage tick timer.
-var tick_timer := 0.0
 ## Hits dealt so far (all enemies) this run.
 var hits := 0
 ## Enemies inside the flame on the last step: instance id -> node.
 var inside: Dictionary = {}
-## Enemies flashing: instance id -> {"node": Node, "left": float}.
+## Enemies burning (T-497: afterburn): instance id -> {"node": Node, "left":
+## float (burn seconds left), "tick": float (seconds since its last hit)}.
 var burning: Dictionary = {}
 
 ## The turn speed multiplier already applied to `_turn_car` (tier 7).
@@ -170,14 +174,13 @@ func _stop() -> void:
 
 func _reset_flame() -> void:
 	drift_time = 0.0
-	tick_timer = 0.0
 	inside.clear()
 
 
 # --- Each step -----------------------------------------------------------
 
-## While the car is wrecked (T-414) no new flame is made; the burn tints already
-## on enemies run out.
+## While the car is wrecked (T-414) no new flame is made; the burns already on
+## enemies keep going (their hits too, T-497) and run out.
 func step_wrecked(dt: float) -> void:
 	_age_burns(dt)
 	_reset_flame()
@@ -197,6 +200,8 @@ func step(dt: float) -> void:
 	else:
 		linger_left = maxf(0.0, linger_left - dt)
 	active = bool(stats["always_on"]) or gate or linger_left > EPS
+	# The burns already on enemies tick first (T-497), then the flame lights new
+	# ones and keeps the burn time full for those touching it.
 	_age_burns(dt)
 	if not active:
 		_reset_flame()
@@ -209,17 +214,12 @@ func step(dt: float) -> void:
 		if is_inside(e):
 			now_inside[e.get_instance_id()] = e
 	for id in now_inside:
-		if not inside.has(id):
-			var e: Node = now_inside[id]
+		var e: Node = now_inside[id]
+		if burning.has(id):
+			_refresh_burn(id)  # already burning: no extra hit, its clock goes on
+		elif rack.is_target(e):
 			_hit(e)
-			_start_burn(e)
-	tick_timer += dt
-	if tick_timer >= float(stats["tick_interval"]) - EPS:
-		tick_timer = 0.0
-		for id in now_inside:
-			var e: Node = now_inside[id]
-			if rack.is_target(e):
-				_hit(e)
+			_start_burn(e, dt)  # the entering step counts on its clock (the old shared tick's rhythm)
 	inside = now_inside
 	_update_drawing()
 
@@ -344,20 +344,38 @@ func _hit(e: Node) -> void:
 	e.take_damage(amount, weapon_id)
 
 
-# --- Burn flash (looks only) ---------------------------------------------
+# --- Burn (T-497: afterburn) --------------------------------------------
 
-func _start_burn(e: Node) -> void:
+## Starts a burn on `e` (its hit on entering is dealt by the caller): its burn
+## time full, its clock at `clock` seconds, the orange tint and the burn flames on.
+func _start_burn(e: Node, clock := 0.0) -> void:
 	if not rack.is_target(e):
 		return
-	burning[e.get_instance_id()] = {"node": e, "left": float(stats["burn_flash_seconds"])}
+	burning[e.get_instance_id()] = {"node": e, "left": float(stats["burn_flash_seconds"]), "tick": clock}
 	_tint(e, burn_tint)
 	BurnFlames.add_source(e, BURN_SOURCE)  # T-071: the flames on the enemy (drawing only)
 
 
+## Touching the flame again: the burn time back to full (the clock goes on).
+func _refresh_burn(id: int) -> void:
+	burning[id]["left"] = float(stats["burn_flash_seconds"])
+
+
+## One step of every burn: its clock runs, and a hit (the flame's damage now)
+## lands every `tick_interval`; its time runs down and, when it is over (a hit due
+## on the very step it ends still lands), the tint and the flames go.
 func _age_burns(dt: float) -> void:
+	var interval: float = float(stats["tick_interval"])
 	for id in burning.keys():
 		var b: Dictionary = burning[id]
 		b["left"] -= dt
+		var n = b["node"]
+		if is_instance_valid(n):
+			b["tick"] += dt
+			if b["tick"] >= interval - EPS:
+				b["tick"] = 0.0
+				if rack != null and rack.is_target(n):
+					_hit(n)
 		if b["left"] <= EPS or not is_instance_valid(b["node"]):
 			if is_instance_valid(b["node"]):
 				_tint(b["node"], Color.WHITE)
@@ -374,7 +392,7 @@ func _clear_burns() -> void:
 	burning.clear()
 
 
-## Whether an enemy is flashing now.
+## Whether an enemy is burning now (tint, flames and afterburn hits).
 func is_burning(e: Node) -> bool:
 	return e != null and burning.has(e.get_instance_id())
 

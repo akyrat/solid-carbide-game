@@ -44,6 +44,17 @@ func trick_add(trick: String) -> float:
 	return float(tricks[trick])
 
 
+## The subs one trick pays straight away (T-513; combo.json, "trick_subs"): 0 for a
+## trick not in the table.
+func trick_subs(trick: String) -> float:
+	return float(_data.get("trick_subs", {}).get(trick, 0.0))
+
+
+## Whether the trick's subs are multiplied by the combo multiplier (trick_subs.multiplied_by_combo).
+func trick_subs_multiplied() -> bool:
+	return bool(_data.get("trick_subs", {}).get("multiplied_by_combo", true))
+
+
 ## What the airtime trick adds for an airtime of `seconds` (task T-242; combo.json,
 ## "airtime"): nothing under min_seconds, else per_second times the seconds
 ## (taken to hundredths), held at max_add. Rounded to hundredths, as the popup shows it.

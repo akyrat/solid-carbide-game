@@ -3,7 +3,7 @@ extends Node
 ## started from the game scene (past the tutorial slides, as pause_from_menu_demo),
 ## with damage, subs, coins, a combo and the gun at tier 3, so the hearts, the
 ## weapon icon and its count, the coins, the clock, the sub goal and its label
-## and the live viewers counter all show a value. `mode` "level_up"
+## and the multiplier beside the car all show a value. `mode` "level_up"
 ## (t428_level_up_demo.tscn) opens the level-up screen with two cards instead,
 ## as level_up_from_menu_demo did before the tutorial slides came first.
 

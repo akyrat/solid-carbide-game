@@ -16,7 +16,7 @@ extends RefCounted
 ## and to the HUD's usual 16 pixel margin from an edge when it comes within EDGE_SNAP of it.
 
 ## The movable pieces, in the order the editor lists them.
-const PIECES: Array[String] = ["hearts", "weapon_icons", "coins", "clock", "sub_goal", "viewers"]
+const PIECES: Array[String] = ["hearts", "weapon_icons", "coins", "clock", "sub_goal"]
 const GRID := 4.0
 const EDGE_MARGIN := 16.0
 const EDGE_SNAP := 12.0

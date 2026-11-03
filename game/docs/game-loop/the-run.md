@@ -152,7 +152,7 @@ The drain runs with the clock (`advance()`), so it stops while the run is paused
 | `enemies_slain` | `{enemy type: kills}`, types `"minion"` and `"kaiju"` (`ENEMY_TYPE` on each enemy script) |
 | `tricks` | `{trick id: count}`, every id the combo counts, including `"airtime"` and `"thread_the_needle"` |
 | `highest_combo` | The highest multiplier reached |
-| `peak_viewers` | The live viewers counter's peak: `RunState.peak_viewers_for(highest_combo)`, i.e. `ViewersData.viewers_for` on T-332's curve, whole viewers, no wobble (T-320 quick tuning, 2026-10-29) |
+| `peak_viewers` | Removed in T-514: the recap shows `highest_combo`. Saved runs that carry it still load; it is not read. |
 | `weapons` | `{weapon id: {"tier": tier it ended on, "kills": kills}}` for the owned weapons |
 
 Feeding it: `enemy_slain(enemy_type, weapon_id)` (the minion spawner and the kaiju boss call it when an enemy dies; ignored once the run ended), `add_trick`, `add_airtime_trick` and `add_needle_trick` count tricks. Weapons pass their id to `take_damage(amount, source)`, so an enemy knows `last_hit_by`; the kill goes to the weapon that struck the last blow. The weapon list comes from `state.weapons_source` (set by the rack: `Weapons.owned_tiers()`). Damage per weapon is not counted.
@@ -165,7 +165,7 @@ Feeding it: `enemy_slain(enemy_type, weapon_id)` (the minion spawner and the kai
 
 Game loop architecture, Decisions, "Mission packs"; Content, "Missions in the run". The tracker is invisible by itself: the notebook page (HUD) and the power-up gift overlay are separate tickets that read it.
 
-**The tracker:** `scripts/run/missions.gd` (`RunMissions`, a RefCounted), one per `RunState` as `state.missions`, created in `_init()` and kept for every run of that state, so connect its signals once. `start_run()` calls `missions.start(state.mission_seed)`: 30 missions (`MissionData.total()`), the 5 fixed ones from `data/missions.json` first, then missions 6 to 30 from `MissionData.mission(n, rng)` with one `RandomNumberGenerator` seeded with the run's seed. `mission_seed` is -1 by default (a new random seed each run; the seed used is `missions.mission_seed`); tests set it. The pause screen's Restart builds a new run and so a new `RunState` with a fresh tracker.
+**The tracker:** `scripts/run/missions.gd` (`RunMissions`, a RefCounted), one per `RunState` as `state.missions`, created in `_init()` and kept for every run of that state, so connect its signals once. `start_run()` calls `missions.start(state.mission_seed)`: 12 missions (`MissionData.total()`; 30 before T-521), the 5 fixed ones from `data/missions.json` first, then missions 6 to 12 from `MissionData.mission(n, rng)` with one `RandomNumberGenerator` seeded with the run's seed. `mission_seed` is -1 by default (a new random seed each run; the seed used is `missions.mission_seed`); tests set it. The pause screen's Restart builds a new run and so a new `RunState` with a fresh tracker.
 
 | Read | Is |
 | --- | --- |
@@ -173,7 +173,7 @@ Game loop architecture, Decisions, "Mission packs"; Content, "Missions in the ru
 | `current_index()`, `current_number()` | The current mission, 0-based (-1 once all are done) and 1-based (0 then) |
 | `current_goals()` | A copy of the current mission's goals: `[{"trick", "kind", "amount", "done", "completed"}]` (`done` is the progress; empty once all are done) |
 | `mission(index)` | A copy of any mission's goals `[{"trick", "kind", "amount"}]` |
-| `is_all_done()` | True after mission 30: nothing more is offered (a proposal) |
+| `is_all_done()` | True after the last mission (12): nothing more is offered (a proposal) |
 
 | Signal (on `state.missions`) | Fires |
 | --- | --- |
@@ -192,7 +192,7 @@ Indices are 0-based (mission_index 0 is mission 1; goal_index 0 is its first goa
 - `drift_step(drifting, delta)` → `missions.on_drift_step()`: the **continuous drift** goal follows the unbroken drift in progress, so it is ticked off the moment the drift reaches its seconds; a step without drifting ends the drift and the goal's progress goes back to 0.
 - `collision()` (a wall, building, map edge, boulder, or damage) and the wreck → `missions.on_crash()`: the drift ends for the goal and starts over, even if the car is still sliding sideways. The crash's paid drift (T-315) reaches `on_trick()` first, so a crash at 4.2 s still counts as a 4.2 s drift.
 
-Proposals for the playtest (T-457): a trick that completes a mission does not also count for the next one; a new mission's drift goal counts only drifting done after it started; after mission 30 nothing more is offered.
+Proposals for the playtest (T-457): a trick that completes a mission does not also count for the next one; a new mission's drift goal counts only drifting done after it started; after the last mission nothing more is offered.
 
 **The car's owned driving power-ups** (on `RunState`, for the power-up tickets):
 
@@ -203,7 +203,7 @@ Proposals for the playtest (T-457): a trick that completes a mission does not al
 | `owned_power_ups() -> Dictionary` | A copy, `{id: tier}` |
 | `power_ups_changed` | A tier went up, or a new run cleared them (sent on every `start_run()`) |
 
-**Tests:** `tests/unit/run/test_missions.gd` (30 missions, the fixed 5 the same for three seeds, 6 to 30 different between seeds and following the rules, a new seed each run, missions 1 to 5 completed in order from trick events with their signals and order, several goals, a completing trick not carried over, two 2 s drifts against one 4 s drift, a wall hit ending the drift, nothing while the run is not going, nothing after mission 30, a new run and the pause screen's Restart resetting to mission 1 and clearing power-ups, tier 1 then 2, the last tier, unknown ids, the car's trick signal reaching the tracker in a real run).
+**Tests:** `tests/unit/run/test_missions.gd` (the data's missions, the fixed 5 the same for three seeds, the generated ones different between seeds and following the rules, a new seed each run, missions 1 to 5 completed in order from trick events with their signals and order, several goals, a completing trick not carried over, two 2 s drifts against one 4 s drift, a wall hit ending the drift, nothing while the run is not going, nothing after the last mission, a new run and the pause screen's Restart resetting to mission 1 and clearing power-ups, tier 1 then 2, the last tier, unknown ids, the car's trick signal reaching the tracker in a real run).
 
 ### Wrecked (T-360)
 
@@ -217,3 +217,26 @@ Game loop architecture, Decisions, "Wrecked: the stream keeps rolling"; Content,
 - **The enemies swarm the wreck** (the board's quick tuning, 2026-10-29): `MinionSpawner.step()` and `KaijuBoss.step()` check `state.is_wrecked()`. During the wreck the minion spawner still prunes, spawns and walks the minions to the car, but calls `move_step(dt, false)`, which skips `contact_step()` (no damage, no knockback); a kaiju already there walks to the car (`_walk_to_car()`) with no `contact_step()` and no arrival. Nothing dies (the weapons don't fire), so no coins, likes or kills. After `run_ended` they stand still as before. Tests: `test_minions_swarm_the_wreck_without_touching_it` (`tests/unit/enemies/test_minions.gd`) and `test_the_kaiju_swarms_the_wreck_without_touching_it` (`tests/unit/enemies/test_kaiju.gd`); their "nothing moves after the run ends" tests now step past the wreck first.
 - **A health pickup revives the wreck** (T-406; Game loop architecture, Content, "Wrecked"): `PickupMagnet.step()` also runs while `is_wrecked()` and pulls the "coins" and "health_pickups" groups as usual (T-413; the landed gift packs stand still); a coin picked up counts through `add_coins()`. The pickup's own rule is unchanged: `health_pickup.gd` calls `state.heal_car()` when the car touches it, and `heal_car()` during the wreck calls `RunState.revive()`, the one way to undo the wreck: `wrecked` false, `running` true (the clock runs on from where it stopped), `result`, `loss_reason` and `_final_recap` cleared (already empty since T-413), `health` = `REVIVE_HEARTS` (1, at most the maximum), the invulnerability of a hit (`car.invulnerability_seconds`, with the blink) and the signals `health_changed`, `revived` and `invulnerability_started`. `run_ended` is never sent for that wreck. `run.gd` on `wreck_started` also resets the car's trick detector and turns `car.detect_tricks` off (the trick in progress is dropped, T-413); on `revived`: `car.input_enabled = true`, the trick detector reset and `detect_tricks` given back, `wreck_effect.stop()`, `apply_blink()`. The combo stays as the fatal hit cut it (the viewers follow it). Not wrecked: `revive()` returns 0.
 - Tests: `tests/unit/run/test_wreck.gd` (3 s from the data, the result and `run_ended` after it, the clock stopped, nothing counting, a kaiju kill and the time's up unchanged, pause, a new run, dead controls coasting exactly like no keys held, live controls unchanged, the effect's puffs, flames and colours, the art swap, the whole wreck in the run scene; T-406: the revive's heart, the run going on with no recap, the invulnerability, the combo and viewers, too late after the recap starts, a sliding wreck in the run scene picking up a health pickup and driving again, the magnet pulling coins and health pickups); `tests/unit/run/test_wreck_decides_loss.gd` (T-413: the result set only at the wreck's end, the fatal hit dropping the trick, the drift forgotten, a kaiju kill during the wreck winning with the win recap and a runs-list win, coins counting and a real coin pulled in the run, the trick detection off and back, pause Restart and Exit during the wreck banking nothing and adding no run, the tie at 0:00 won, a kill one frame later too late). The revive GIF: `bash game/tools/record_revive.sh` with `tests/fixtures/revive_demo.tscn` (`art-archive/T-406/screenshots/`). Screenshot and GIF: `bash game/tools/record_wreck.sh [out_dir]` with the fixture `tests/fixtures/wreck_demo.tscn` (a run from the main menu, driven into a drift, then the last heart); result in `art-archive/T-360/screenshots/`.
+
+## The 4-minute run (T-521)
+
+Game loop architecture, Content, "The 4-minute run's caps and the heal" has the rules; this is where the code is.
+
+- `RunState.RUN_SECONDS` 240 and `BOSS_TIME_LEFT` 60 (kaiju at 3:00, end at 4:00). `TimerClock` and the HUD read `RUN_SECONDS`; the colour steps are `data/hud.json` `timer_clock.steps`.
+- `data/slots.json` through `SlotRules` (`scripts/data/slot_rules.gd`): `max_weapons` 3, `max_power_ups` 3, `first_pick_tier` 2, `heal_hearts` 2 (a proposal). `RunState.slot_rules` and `Weapons.slot_rules` hold one each.
+- Weapons: `Weapons.slots_full()`, `all_owned_maxed()` and `pick(id)` (a first pick applies tiers up to `first_pick_tier`); `LevelUpOffers.available_offers()` offers no `get_*` once the slots are full, and `choose()` applies the pick with `Weapons.pick()`. Last tiers come from `weapons.json` (`Weapon.max_tier()`).
+- Power-ups: `PowerUpOffers.available_offers()` offers no unowned power-up once `max_power_ups` are owned; last tiers come from `power_ups.json` (`PowerUpData.max_tier(id)`); with nothing to offer the gift is skipped.
+- The heal: `Weapons` sets `RunState.weapons_maxed_source`; `RunState._gain_xp()` calls `heal_for_sub_goal()` instead of opening the choice when `sub_goal_heals()`, `GiftDrops` sends no helicopter for it, and `TrickPopups` shows `heal.popup` on `sub_goal_healed(hearts)`.
+- Tests: `tests/unit/run/test_four_minute_run.gd`.
+
+## God mode (T-504)
+
+(HUD and menus, Decisions, "A secret God mode".) `scripts/run/god_mode.gd` (`GodMode`, the run's child `run.god_mode`) is the logic behind the secret page T-505 builds; it draws nothing. Test: `tests/unit/run/test_god_mode.gd`.
+
+- **The secret:** the input action `god_mode_unlock` (N, `project.godot`) sets the static flag `GodMode.unlocked` for the rest of the session (a new run keeps it; nothing is saved; closing the game locks it again) and sends `unlocked_changed`. `GodMode.unlocked` is what the settings screen reads. `run.god_mode.unlock()` does the same from code.
+- **The API** (`kind` is `GodMode.KIND_WEAPON` "weapon" or `GodMode.KIND_POWER_UP` "power_up"):
+  - `entries()`: every weapon (the rack's order) then every driving power-up (`PowerUpData.ids()`, so a new power-up appears by itself), each `{kind, id, tier, last_tier, min_tier}`.
+  - `current_tier(kind, id)`, `last_tier(kind, id)`, `min_tier(kind, id)` (1 for the gun, else 0); -1 for an unknown id.
+  - `set_tier(kind, id, tier)`: sets it at once, clamped to `min_tier..last_tier`, and returns the tier now (-1 for an unknown id); sends `tier_set(kind, id, tier)`. A weapon is reset (`reset_for_run`) when set lower, then `upgrade()`d once per tier, the level-up's own call, so its stats equal levelling it up from tier 1; 0 removes it (the gun stays at 1). A power-up goes through `RunState.set_power_up_tier()` (sends `power_ups_changed`, which the car follows, as for a gift); 0 removes it.
+  - `step(kind, id, delta)`: `set_tier(current + delta)`, for the - and + buttons.
+- The level-up offers and the mission gifts read the live tiers, so after God mode they offer only what is left. A new run starts as usual (gun at 1, no power-ups). The Game loop architecture document is unchanged (the loop is the same).

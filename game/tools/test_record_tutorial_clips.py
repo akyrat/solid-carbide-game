@@ -73,6 +73,50 @@ class TestRecordedClips(unittest.TestCase):
         data = json.loads((CLIPS_DIR / "alt_drift.json").read_text())
         self.assertTrue(any("alternate_drift" in l for l in data["tricks"]))
 
+    def test_new_clips_show_their_trick_and_nothing_unwanted(self):
+        for name in ["three_sixty", "air_three_sixty", "airtime", "thread_the_needle"]:
+            data = json.loads((CLIPS_DIR / f"{name}.json").read_text())
+            self.assertEqual(data["problems"], [], name)
+            self.assertEqual(rtc.check_expect(name, data["tricks"], data["air"]), [], name)
+        hang = json.loads((CLIPS_DIR / "airtime.json").read_text())
+        self.assertTrue(any("airtime" in l for l in hang["air"]))
+        self.assertFalse(any("air_" in l for l in hang["tricks"]))
+
+    def test_every_sheet_page_fits_the_web_limit(self):
+        from PIL import Image
+        for name in rtc.CLIPS:
+            meta = json.loads((CLIPS_DIR / f"{name}_sheet.json").read_text())
+            for page in meta["pages"]:
+                with Image.open(CLIPS_DIR / page) as im:
+                    self.assertLessEqual(max(im.size), 3840, page)
+
+    def test_every_sheet_has_one_key_entry_per_frame(self):
+        for name in rtc.CLIPS:
+            meta = json.loads((CLIPS_DIR / f"{name}_sheet.json").read_text())
+            keys = meta["keys_per_frame"]
+            self.assertEqual(len(keys), meta["frames"], name)
+            for k in keys:
+                self.assertTrue(set(k) <= set("WASD"), (name, k))
+
+    def test_alt_drift_keys_are_w_then_w_a_then_s_a_then_w(self):
+        import itertools
+        meta = json.loads((CLIPS_DIR / "alt_drift_sheet.json").read_text())
+        runs = [k for k, _ in itertools.groupby(meta["keys_per_frame"])]
+        # The script lets go of W for two physics steps before it presses S (one frame shows just A).
+        runs = [r for r in runs if r != "A"]
+        self.assertEqual(runs, ["W", "WA", "AS", "W"])
+
+    def test_keys_per_frame_takes_the_step_at_each_frame(self):
+        keys = ["W"] * 6 + ["WA"] * 6
+        self.assertEqual(rtc.keys_per_frame(keys, 3, 4), ["W", "W", "WA", "WA"])
+        self.assertEqual(rtc.keys_per_frame([], 3, 2), ["", ""])
+
+    def test_the_sheet_keys_follow_merged_frames(self):
+        sys.path.insert(0, str(Path(__file__).parent))
+        import gif_to_sheet as g
+        # Frames 1 and 2 were identical and merged into one 2-frame-long sheet frame.
+        self.assertEqual(g.keys_for_sheet(["W", "W", "WA", "S"], [40, 80, 40], 0.16), ["W", "W", "S"])
+
 
 if __name__ == "__main__":
     unittest.main()

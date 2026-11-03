@@ -1,0 +1,14 @@
+{
+  "task": "T-509",
+  "version": 3,
+  "file": "art-archive/T-509/style-loop/v3.png",
+  "size": "24x16 (3 frames of 8x16), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_total_this_version": 0,
+  "colours_from": ["art-archive/T-509/style-loop/raw/v1_raw.png", "art-archive/T-509/style-loop/raw/v1b_raw.png"],
+  "script": "python game/tools/build_rain_drops_v3.py art-archive/T-509/style-loop/v3.png (tests: game/tools/test_build_rain_drops_v3.py)",
+  "changed_from_v2": "Round 2 reason, free script fix: thin streak brighter (near-white head, 2 pale, 4 pale-cyan rows before the mid blue), 15 rows with exactly 5 px lean; near-black tail colour (54,57,72) removed everywhere, darkest is now (85,119,157); thick streak keeps v2's slim 2-px shape (never 3 wide), 16 rows, 5 px lean; short bright streak now 9 rows, 3 px lean, bright head down to a darker blue-grey tail (5 colours, not a flat dash). 6 colours in all, all from PixelLab's two T-509 generations; nothing scaled.",
+  "script_checks": "game/tools/style_rules.py art --size 8x16 --frames 3 --max-colors 12: all pass",
+  "preview": "art-archive/T-509/screenshots/v3_preview.png",
+  "consulted": ["docs/visual-style.md (Content, Rules)", "docs/level-design.md (Decisions, Rain over the map)", "art-archive/T-509/brief_drops.md", "style loop round 2 reason"]
+}

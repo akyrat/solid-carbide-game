@@ -40,6 +40,7 @@ var splash_rect: TextureRect
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	UiScale.keep(self)  # scales with the window like the HUD (T-494)
 
 	background =ColorRect.new()
 	background.name = "Background"
@@ -97,6 +98,7 @@ func _ready() -> void:
 	start_button.pressed.connect(func(): start_pressed.emit())
 	garage_button.pressed.connect(func(): garage_pressed.emit())
 	exit_button.pressed.connect(func(): exit_pressed.emit())
+	KeyNav.chain_column([start_button, garage_button, exit_button])  # T-492
 	start_button.grab_focus()
 
 
@@ -128,3 +130,8 @@ func _make_button(node_name: String, text: String, parent: Node) -> Button:
 	HudStyle.style_button(button)  # the shared button (T-446)
 	parent.add_child(button)
 	return button
+
+
+## W, A, S, D move the selection like the arrow keys (T-492).
+func _unhandled_key_input(event: InputEvent) -> void:
+	KeyNav.handle_wasd(event, self)

@@ -74,7 +74,7 @@ func test_garage_buttons_are_shared() -> void:
 func test_tutorial_slide_buttons_are_shared() -> void:
 	var slides: TutorialSlides = load("res://scenes/menu/tutorial_slides.tscn").instantiate()
 	add_child_autofree(slides)
-	assert_eq(_all_shared(slides, "tutorial slides"), 4, "two arrows, Start and the checkbox")
+	assert_eq(_all_shared(slides, "tutorial slides"), 5, "two arrows, Skip, Go live and the checkbox")
 	assert_eq(slides.dont_show_checkbox.get_meta("hud_button"), "checkbox")
 
 
@@ -92,8 +92,12 @@ func test_level_up_and_pause_buttons_are_shared() -> void:
 	assert_gt(screen.cards.size(), 0)
 	assert_eq(_all_shared(screen, "level-up"), 0, "T-474: no Take it buttons, the cards are clicked")
 	# Pause: Trick list, Edit HUD layout (T-453), Restart, Exit, the trick list's Back, the two
-	# camera checkboxes, and the HUD layout editor's Reset layout and Done (T-453).
-	assert_eq(_all_shared(pause, "pause"), 9)
+	# camera checkboxes, T-508's Rain checkbox, T-518's Drift Guide checkbox, and the HUD layout editor's Reset layout and Done (T-453).
+	# T-505: and the God mode page's Back and a - and + on each of its rows (the entry itself
+	# only exists once God mode is unlocked). Combined count: 11 (9 plus T-508's Rain and T-518's Drift Guide checkboxes)
+	# plus T-505's God mode page buttons.
+	var god_page_buttons: int = 1 + 2 * pause.god_mode_page.rows.size()
+	assert_eq(_all_shared(pause, "pause"), 11 + god_page_buttons)
 
 
 func test_recap_buttons_are_shared() -> void:
@@ -101,7 +105,7 @@ func test_recap_buttons_are_shared() -> void:
 	add_child_autofree(screen)
 	screen.show_summary({"result": "win", "loss_reason": "", "time_survived": 300.0, "coins": 4,
 		"likes": 9, "level": 2, "enemies_slain": {"minion": 3}, "tricks": {}, "highest_combo": 1.0,
-		"peak_viewers": 1000.0, "weapons": {}})
+		"weapons": {}})
 	assert_eq(_all_shared(screen, "recap"), 2, "Continue and the X")
 
 

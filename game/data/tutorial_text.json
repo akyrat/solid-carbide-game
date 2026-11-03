@@ -1,7 +1,7 @@
 {
   "_comment": "T-381, the tutorial slides' and the pause screen's trick list's text (HUD and menus, Content, 'Tutorial slides and trick list'); the UI tickets read it, no text in code. Every line scored 8 or more in the style loop (T-381's Style review). Keys: slide1.*, slide2.*, slide3.*, trick.<id> (reused word for word from the trick popups and recap_text.json), button.*, checkbox.*, arrow.*. Each entry has a '<key>_comment' line saying where it appears. T-484 (the redrawn four-slide tutorial, HUD and menus, Decisions, 'The tutorial slides are redrawn, with clips of the real car'): new keys kicker.*, slide1.title, slide1.key_*, slide1.drift_rule, slide2.title, slide2.step*, slide2.clip_ramp, slide3.title, slide3.missions, slide4.*, button.skip, all scored 8 or more in T-484's Style review. Headlines, labels and captions are stored in sentence case (the style loop's label kind); the slides show them in capitals in the display font, so the UI upcases them for display (trick.* are stored in capitals, as popups).",
   "slide1": {
-    "controls": "W accelerate, S brake/reverse, A left, D right. Live viewers want confidence. Fake it.",
+    "controls": "[W] accelerate, [S] brake/reverse, [A] left, [D] right; subs reward confidence, so fake it.",
     "controls_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 1 (the controls), first line: what W, A, S and D do.",
     "drift": "Accelerate while turning and the car drifts on its own. No drift button, zero friction.",
     "drift_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 1 (the controls), second line under the controls: accelerating while turning drifts the car.",
@@ -19,8 +19,8 @@
     "drift_rule_comment": "Slide 1: the drift rule under the keys, written with the W as part of the line (the UI may draw the W as a keycap and split the line on '+' and '=')."
   },
   "slide2": {
-    "chain": "Tricks bring live viewers. Live viewers bring subs.",
-    "chain_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 2 (the loop), first line under the trick list: tricks bring viewers, viewers bring subs.",
+    "chain": "Tricks raise your multiplier. Tricks and drifting bring subs.",
+    "chain_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 2 (the loop), first line under the trick list: tricks raise the multiplier, tricks and drifting bring subs.",
     "gift": "Every sub goal brings a gift pack: a weapon that keeps enemies away and the stream alive.",
     "gift_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 2 (the loop), second line under the trick list: a sub goal brings a gift pack with a weapon that helps survive and keeps enemies away.",
     "title": "Tricks bring gift packs",
@@ -29,13 +29,13 @@
     "step1_title_comment": "Slide 2, step 1 title (the trick clip step).",
     "step1_caption": "Drifts, spins, air.",
     "step1_caption_comment": "Slide 2, step 1 caption under its title.",
-    "step2_title": "Live viewers pile in",
-    "step2_title_comment": "Slide 2, step 2 title (the live viewers counter rising).",
-    "step2_caption": "Live viewers love a show.",
+    "step2_title": "Tricks pump the multiplier",
+    "step2_title_comment": "Slide 2, step 2 title (the multiplier beside the car rising).",
+    "step2_caption": "Each trick bumps the multiplier.",
     "step2_caption_comment": "Slide 2, step 2 caption under its title.",
     "step3_title": "Hit a sub goal",
     "step3_title_comment": "Slide 2, step 3 title (the sub goal ring).",
-    "step3_caption": "Live viewers become subs.",
+    "step3_caption": "Tricks and drifts earn subs that fill the sub goal.",
     "step3_caption_comment": "Slide 2, step 3 caption under its title.",
     "step4_title": "Gift pack",
     "step4_title_comment": "Slide 2, step 4 title (the gift pack).",
@@ -98,6 +98,79 @@
     "title": "Survive the stream",
     "title_comment": "Slide 4's headline (shown in capitals).",
     "kaiju": "The kaiju!",
-    "kaiju_comment": "Slide 4: the label on the timeline's last-minute zone, beside the kaiju drawing. The times (8:00, 4:00, 1:00) are built by code from numbers."
+    "kaiju_comment": "Slide 4: the label on the timeline's last-minute zone, beside the kaiju drawing. The times (4:00, 1:00 and the kaiju at 3:00 of the 4-minute run) are built by code from numbers."
+  },
+  "trick_rule": {
+    "extended_drift": "Hold gas and a turn key to drift, then let go to cash it in.",
+    "three_sixty": "Drift and hold the turn key one way until the car spins all the way round.",
+    "alternate_drift": "Drift forward, then swap gas for brake while holding the same turn key.",
+    "airtime": "Hold gas off a ramp or a rooftop edge and fly.",
+    "air_one_eighty": "In the air, hold a turn key to spin the car half a turn before it lands.",
+    "air_three_sixty": "Hit a ramp at full gas and hold a turn key: one full spin before you land.",
+    "thread_the_needle": "Drive between two paired obstacles without touching either.",
+    "comment": "Pause screen, trick list panel (HUD and menus, Content, 'Tutorial slides and trick list'; T-489): the one-line rule beside each trick's clip, under its name (trick.<id>). One per trick id. Written without key letters: the keys are drawn as keycaps in the recipe beside it. Stored in sentence case."
+  },
+  "trick_recipe": {
+    "extended_drift": {
+      "step1_note": "Hold 1 s or more",
+      "step2_badge": "Let go",
+      "step2_note": "Cash in",
+      "step1_note_comment": "Trick list, extended_drift recipe, step 1: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step2_badge_comment": "Trick list, extended_drift recipe, step 2: the badge word (shown in capitals) in place of keys, for a step with no keys.",
+      "step2_note_comment": "Trick list, extended_drift recipe, step 2: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "steps_comment": "Order: step1 (keys W+turn etc. drawn by the UI as keycaps, not text), then the following steps. Keys per step are drawn by the UI from the draft table in HUD and menus, Content, 'Tutorial slides and trick list'."
+    },
+    "three_sixty": {
+      "step1_note": "Keep holding",
+      "step2_badge": "Full circle",
+      "step2_note": "Same way round",
+      "step1_note_comment": "Trick list, three_sixty recipe, step 1: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step2_badge_comment": "Trick list, three_sixty recipe, step 2: the badge word (shown in capitals) in place of keys, for a step with no keys.",
+      "step2_note_comment": "Trick list, three_sixty recipe, step 2: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "steps_comment": "Order: step1 (keys W+turn etc. drawn by the UI as keycaps, not text), then the following steps. Keys per step are drawn by the UI from the draft table in HUD and menus, Content, 'Tutorial slides and trick list'."
+    },
+    "alternate_drift": {
+      "step1_note": "0.3 s or more",
+      "step2_note": "Swap fast, hold turn",
+      "step1_note_comment": "Trick list, alternate_drift recipe, step 1: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step2_note_comment": "Trick list, alternate_drift recipe, step 2: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "steps_comment": "Order: step1 (keys W+turn etc. drawn by the UI as keycaps, not text), then the following steps. Keys per step are drawn by the UI from the draft table in HUD and menus, Content, 'Tutorial slides and trick list'."
+    },
+    "airtime": {
+      "step1_note": "Hold off a ramp",
+      "step2_badge": "Airborne",
+      "step2_note": "0.3 s or more",
+      "step3_badge": "Land",
+      "step3_note": "Cash in",
+      "step1_note_comment": "Trick list, airtime recipe, step 1: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step2_badge_comment": "Trick list, airtime recipe, step 2: the badge word (shown in capitals) in place of keys, for a step with no keys.",
+      "step2_note_comment": "Trick list, airtime recipe, step 2: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step3_badge_comment": "Trick list, airtime recipe, step 3: the badge word (shown in capitals) in place of keys, for a step with no keys.",
+      "step3_note_comment": "Trick list, airtime recipe, step 3: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "steps_comment": "Order: step1 (keys W+turn etc. drawn by the UI as keycaps, not text), then the following steps. Keys per step are drawn by the UI from the draft table in HUD and menus, Content, 'Tutorial slides and trick list'."
+    },
+    "air_one_eighty": {
+      "step1_note": "Full send at a ramp",
+      "step2_note": "Half a turn, midair",
+      "step3_badge": "Land",
+      "step3_note": "Cash in",
+      "step1_note_comment": "Trick list, air_one_eighty recipe, step 1: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step2_note_comment": "Trick list, air_one_eighty recipe, step 2: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step3_badge_comment": "Trick list, air_one_eighty recipe, step 3: the badge word (shown in capitals) in place of keys, for a step with no keys.",
+      "step3_note_comment": "Trick list, air_one_eighty recipe, step 3: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "steps_comment": "Order: step1 (keys W+turn etc. drawn by the UI as keycaps, not text), then the following steps. Keys per step are drawn by the UI from the draft table in HUD and menus, Content, 'Tutorial slides and trick list'."
+    },
+    "air_three_sixty": {
+      "step1_note": "At a ramp",
+      "step2_note": "Full turn in the air",
+      "step3_badge": "Land",
+      "step3_note": "Cash in",
+      "step1_note_comment": "Trick list, air_three_sixty recipe, step 1: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step2_note_comment": "Trick list, air_three_sixty recipe, step 2: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "step3_badge_comment": "Trick list, air_three_sixty recipe, step 3: the badge word (shown in capitals) in place of keys, for a step with no keys.",
+      "step3_note_comment": "Trick list, air_three_sixty recipe, step 3: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
+      "steps_comment": "Order: step1 (keys W+turn etc. drawn by the UI as keycaps, not text), then the following steps. Keys per step are drawn by the UI from the draft table in HUD and menus, Content, 'Tutorial slides and trick list'."
+    },
+    "comment": "Pause screen, trick list panel (T-489): each trick's key recipe, steps joined by an arrow. Notes sit under keycaps in tiny pixel type (20 characters at most); badges are a word or two shown in capitals where no key is pressed. Stored in sentence case. THREAD THE NEEDLE! has no recipe (no keys: just drive through the gap)."
   }
 }

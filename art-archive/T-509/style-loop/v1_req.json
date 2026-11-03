@@ -1,0 +1,8 @@
+{
+  "description": "three separate thin slanted raindrop streaks side by side, pixel art rain effect, each streak 1 to 2 pixels wide, top leaning right and bottom toward lower left, bright near-white pale blue head, pale blue-grey body, dark desaturated blue tail, no outline, night, transparent background",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "outline": "lineless",
+  "shading": "flat shading",
+  "detail": "low detail"
+}

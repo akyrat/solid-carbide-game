@@ -1,7 +1,7 @@
 class_name MissionData
 extends RefCounted
 ## The run's missions from res://data/missions.json: the 5 fixed ones and the generator's rules
-## for missions 6 to 30 (all proposals for the playtest). Same style as WeaponData.
+## for missions 6 to 12 (all proposals for the playtest). Same style as WeaponData.
 
 var _data: Dictionary = {}
 var error: String = ""
@@ -19,7 +19,7 @@ func is_ok() -> bool:
 	return error == ""
 
 
-## Missions in a run (30).
+## Missions in a run (12, T-521).
 func total() -> int:
 	return int(_data["total"])
 

@@ -1,0 +1,18 @@
+{
+  "file": "v1-2.png",
+  "asset": "rain splash animation (brief: art-archive/T-509/brief_splash.md)",
+  "task": "T-509",
+  "version": 1,
+  "size": "48x8 (4 frames of 12x8, one row, played once in order), RGBA 8-bit",
+  "pixellab_calls": [
+    {"endpoint": "create-image-pixflux", "request": "raw/splash/v1-2_crown_req.json", "image": "raw/splash/v1-2_crown_raw.png", "record": "raw/splash/v1-2_crown_raw.json", "generations": 1},
+    {"endpoint": "create-image-pixflux", "request": "raw/splash/v1-2_ring_req.json", "image": "raw/splash/v1-2_ring_raw.png", "record": "raw/splash/v1-2_ring_raw.json", "generations": 1}
+  ],
+  "generations_this_version": 2,
+  "consulted": ["docs/visual-style.md", "docs/level-design.md", "docs/extended-narrative.md", "art-archive/T-509/brief_splash.md"],
+  "script": "game/tools/build_rain_splash.py (tests: game/tools/test_build_rain_splash.py, 7 pass)",
+  "method": "Both 32x32 drawings (a crown splash, an isometric ripple ring) were read for shape and colour; the frames are placed pixel by pixel in 12x8 (nothing scaled). Colours: 8, all sampled from the two drawings (near white and one cyan hint from the crown, six pale-to-dark blue-greys from the ring; the crown's saturated royal blues were left out).",
+  "frames": "1 impact: white dot with cyan hint, tiny 4x3 ring (dark far edge, pale near side). 2 crown: 8x3 ring, rim walls rising at its sides, 3 droplets thrown up and out. 3 widest: 10x4 flat ellipse ring (darkest far edge, mid sides, bright near side), 2 droplets falling. 4 fading: 8 dark pixels of the broken ring.",
+  "preview": "art-archive/T-509/screenshots/v1-2_preview_x12.png (nearest-neighbour x12 on a dark street and a pale roof colour; review only)",
+  "script_checks": "game/tools/style_rules.py art --size 12x8 --frames 4 --max-colors 12: all 21 pass"
+}

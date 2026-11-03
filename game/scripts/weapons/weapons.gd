@@ -57,9 +57,14 @@ const DEFAULT_TARGET_RADIUS_UNITS := 0.5
 ## every weapon at the start of a run (T-172).
 const PLAYTEST_FILE := "playtest"
 const ALL_WEAPONS_KEY := "all_weapons_at_start"
+## With all_weapons_at_start on, every weapon starts at this tier (capped at its own
+## max_tier); 0 = off (T-500).
+const WEAPON_TIER_KEY := "weapon_tier_at_start"
 
 ## Tests set this to 0 (off) or 1 (on) to override "all_weapons_at_start"; -1 reads the file.
 static var all_weapons_override := -1
+## Tests set this to a tier (0 off) to override "weapon_tier_at_start"; -1 reads the file.
+static var weapon_tier_override := -1
 
 const MODE_RUNNING := 0
 const MODE_WRECKED := 1
@@ -127,6 +132,7 @@ func bind(the_run: Node) -> void:
 	run = the_run
 	state = run.state
 	state.weapons_source = owned_tiers  # the recap lists the weapons (T-319)
+	state.weapons_maxed_source = all_owned_maxed  # T-521: a full sub goal heals then
 	draw_root = Node2D.new()
 	draw_root.name = "WeaponShots"
 	run.add_child(draw_root)
@@ -173,6 +179,13 @@ func reset_for_run() -> void:
 		for w in weapons.values():
 			if not w.is_owned():
 				w.upgrade()
+		# T-500 (data/playtest.json "weapon_tier_at_start"): then every weapon up to
+		# that tier, capped at its own last tier, with each tier applied in order.
+		var target := weapon_tier_at_start()
+		if target > 1:
+			for w in weapons.values():
+				while w.tier < target and w.upgrade():
+					pass
 
 
 ## The playtest switch: data/playtest.json "all_weapons_at_start" (or all_weapons_override).
@@ -184,6 +197,17 @@ static func all_weapons_switch_on() -> bool:
 		return false
 	var v := GameData.get_value(r.data, ALL_WEAPONS_KEY)
 	return v.ok and bool(v.data)
+
+
+## The playtest switch: data/playtest.json "weapon_tier_at_start" (0 = off).
+static func weapon_tier_at_start() -> int:
+	if weapon_tier_override >= 0:
+		return weapon_tier_override
+	var r := GameData.load_file(PLAYTEST_FILE)
+	if not r.ok:
+		return 0
+	var v := GameData.get_value(r.data, WEAPON_TIER_KEY)
+	return maxi(0, int(v.data)) if v.ok else 0
 
 
 ## The factor every weapon's damage is multiplied by: 1 + bonus / 100.
@@ -228,6 +252,41 @@ func owned_tiers() -> Dictionary:
 		if weapons[id].is_owned():
 			out[id] = weapons[id].tier
 	return out
+
+
+## The 4-minute run's caps (data/slots.json, T-521).
+var slot_rules := SlotRules.new()
+
+
+## True when the car owns as many weapons as it may (the gun counts).
+func slots_full() -> bool:
+	return owned_ids().size() >= slot_rules.max_weapons()
+
+
+## True when the slots are full and every owned weapon is at its last tier (max tiers from
+## weapons.json): a full sub goal then heals the car instead of dropping a gift pack.
+func all_owned_maxed() -> bool:
+	if not slots_full():
+		return false
+	for id in owned_ids():
+		if not weapons[id].is_max_tier():
+			return false
+	return true
+
+
+## The level-up's pick (T-521): gets the weapon, or applies its next tier. A weapon picked for
+## the first time arrives at slots.json's first_pick_tier (tiers 1 and 2 applied in order,
+## capped at its last tier). False, changing nothing, at its last tier or for no such weapon.
+func pick(weapon_id: String) -> bool:
+	var w := get_weapon(weapon_id)
+	if w == null or w.is_max_tier():
+		return false
+	var was_new: bool = not w.is_owned()
+	w.upgrade()
+	if was_new:
+		while w.tier < slot_rules.first_pick_tier() and w.upgrade():
+			pass
+	return true
 
 
 ## Gets the weapon or applies its next tier (for the level-up, T-043).

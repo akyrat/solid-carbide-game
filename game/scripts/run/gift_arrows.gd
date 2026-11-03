@@ -101,7 +101,7 @@ func hud_rects() -> Array:
 	if h == null or not is_instance_valid(h):
 		return out
 	for group in [["timer_label"], ["heart_row", "weapon_icons", "left_column"],
-			["coins_label"], ["viewers_counter"], ["sub_goal", "likes_fire"]]:
+			["coins_label"], ["sub_goal", "likes_fire"]]:
 		var r := Rect2()
 		var any := false
 		for key in group:

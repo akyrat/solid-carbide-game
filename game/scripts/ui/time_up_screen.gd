@@ -1,7 +1,7 @@
 class_name TimeUpScreen
 extends CanvasLayer
 ## The time's up screen (task T-317; HUD and menus, Content, "Time's up screen";
-## Game loop architecture, Decisions, "Time's up screen"). When the 8-minute
+## Game loop architecture, Decisions, "Time's up screen"). When the 4-minute
 ## timer runs out with the kaiju alive, RunState freezes the run at 0:00 (the
 ## scene tree is paused) and sends time_up_started(seconds); this plays the
 ## failure screen over the dimmed, frozen run for those seconds (3 s). RunState

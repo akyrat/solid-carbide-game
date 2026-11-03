@@ -9,10 +9,10 @@ extends GutTest
 const CarScript := preload("res://scripts/driving/car.gd")
 const GroundHeightScript := preload("res://scripts/level/ground_height.gd")
 const RAMP_DATA := "res://tests/fixtures/data/tutorial_ramp.json"
-const CLIPS := ["drift", "long_drift", "alt_drift", "ramp_jump"]
+const CLIPS := ["drift", "long_drift", "alt_drift", "ramp_jump", "three_sixty", "air_three_sixty", "airtime", "thread_the_needle"]
 
 
-func test_the_four_clip_scenes_load_with_a_drive() -> void:
+func test_every_clip_scene_loads_with_a_drive() -> void:
 	for clip in CLIPS:
 		var scene: PackedScene = load("res://tests/fixtures/tutorial_clip_%s.tscn" % clip)
 		assert_not_null(scene, clip)
@@ -67,3 +67,32 @@ func test_the_ramp_drive_flies_and_spins_at_least_a_half_turn() -> void:
 	assert_eq(took_off_from_ramp, [true], "one takeoff, off the ramp's top")
 	assert_gt(air_steps * car.model.dt, car.tricks.airtime_min_seconds, "more airtime than the airtime trick needs")
 	assert_gt(rad_to_deg(absf(turned)), 180.0, "a half turn or more in the air")
+
+
+func test_the_needle_clip_has_two_boulders_with_a_gap_and_the_air_clip_a_taller_ramp() -> void:
+	var node: Node = load("res://tests/fixtures/tutorial_clip_thread_the_needle.tscn").instantiate()
+	assert_eq(node.needle_boulders.size(), 2)
+	var gap: float = node.needle_boulders[0].distance_to(node.needle_boulders[1]) - node.needle_diameter
+	assert_gt(gap, 3.0, "a gap the car passes without touching")
+	node.free()
+	var air: Node = load("res://tests/fixtures/tutorial_clip_air_three_sixty.tscn").instantiate()
+	assert_eq(air.clip, "air_three_sixty")
+	var g = GroundHeightScript.from_file(air.ramp_data)
+	assert_not_null(g)
+	assert_gt(float(g.ramps[0].top_height), 3.0)
+	air.free()
+
+
+func test_the_clips_keys_come_from_the_scripted_input() -> void:
+	var node: Node = load("res://tests/fixtures/tutorial_clip_alt_drift.tscn").instantiate()
+	node.car = CarScript.new()
+	node.car.scripted_input = [true, false, 1.0]
+	assert_eq(node._keys_now(), "WA")
+	node.car.scripted_input = [false, true, 1.0]
+	assert_eq(node._keys_now(), "AS")
+	node.car.scripted_input = [true, false, -1.0]
+	assert_eq(node._keys_now(), "WD")
+	node.car.scripted_input = [false, false, 0.0]
+	assert_eq(node._keys_now(), "")
+	node.car.free()
+	node.free()

@@ -1,7 +1,7 @@
 extends GutTest
 ## Task T-041: the starting gun. It fires only with an enemy in range, at the
-## data's interval; its bullets go for the closest enemy (T-408: the volley's
-## targets, 1 below tier 6, then 3 and 5) and damage by the data's amount; every upgrade tier takes effect;
+## data's interval; its bullets go for the closest enemy (T-408, T-496: one target all run, the
+## code still understands several) and damage by the data's amount; every upgrade tier takes effect;
 ## a new run starts with the base gun; the weapon rack's plumbing.
 
 const RunScene := preload("res://scenes/run/run.tscn")
@@ -138,7 +138,8 @@ func test_bullets_never_move_an_enemy() -> void:
 	run.add_child(fake)
 	var real_at: Vector2 = real.position
 	var fake_at: Vector2 = fake.position
-	gun.set_tier(6)  # 3 bullets a volley over up to 3 targets: both are shot at
+	gun.set_tier(6)
+	gun.stats["targets"] = 3  # the code's several-target volley (no tier gives it now): both are shot at
 	_run_for(gun.fire_interval() * 3 + 1.0)
 	assert_lt(real.health, 100.0, "the real minion was hit")
 	assert_gt(fake.damage_taken.size(), 0, "the recording one was hit")
@@ -206,8 +207,8 @@ func test_tier_1_one_bullet_kills_a_minion() -> void:
 	assert_signal_emit_count(m, "died", 1, "killed by that one bullet")
 
 
-## Below tier 6 the whole volley goes at the closest enemy, delay_between_bullets apart.
-func test_below_tier_6_the_volley_aims_at_the_closest_only() -> void:
+## The whole volley goes at the closest enemy, delay_between_bullets apart.
+func test_one_target_the_volley_aims_at_the_closest_only() -> void:
 	gun.set_tier(3)  # 3 bullets, 1 target
 	var near: Node = _minion(Vector2(3.0, 0.0), 100.0)
 	var second: Node = _minion(Vector2(0.0, -7.0), 100.0)
@@ -221,8 +222,8 @@ func test_below_tier_6_the_volley_aims_at_the_closest_only() -> void:
 	assert_eq(second.health, 100.0, "the second closest untouched")
 
 
-## Below tier 6, a target that dies mid-volley: the rest go at the closest living enemy.
-func test_below_tier_6_a_dead_target_passes_the_rest_to_the_next_closest() -> void:
+## One target (every tier), a target that dies mid-volley: the rest go at the closest living enemy.
+func test_one_target_a_dead_target_passes_the_rest_to_the_next_closest() -> void:
 	gun.set_tier(3)
 	var near: Node = _minion(Vector2(3.0, 0.0), 100.0)
 	var second: Node = _minion(Vector2(0.0, -7.0), 100.0)
@@ -238,9 +239,9 @@ func test_below_tier_6_a_dead_target_passes_the_rest_to_the_next_closest() -> vo
 	assert_eq(third.health, 100.0, "the farther one untouched")
 
 
-## Below tier 6, a target the bullets in flight will already kill is skipped: with one-shot
+## One target (every tier), a target the bullets in flight will already kill is skipped: with one-shot
 ## minions each bullet of the volley goes to the next closest, so +1 bullet counts.
-func test_below_tier_6_bullets_skip_a_minion_already_doomed() -> void:
+func test_one_target_bullets_skip_a_minion_already_doomed() -> void:
 	gun.set_tier(3)  # 3 bullets, 1 target
 	var near: Node = _minion(Vector2(3.0, 0.0))  # the data's health: one bullet kills
 	var second: Node = _minion(Vector2(0.0, -6.0))
@@ -258,7 +259,7 @@ func test_below_tier_6_bullets_skip_a_minion_already_doomed() -> void:
 
 
 ## A tough enemy (the kaiju's case) is not doomed by one bullet: the volley stays on it.
-func test_below_tier_6_a_tough_target_keeps_the_whole_volley() -> void:
+func test_one_target_a_tough_target_keeps_the_whole_volley() -> void:
 	gun.set_tier(3)
 	var tough: Node = _minion(Vector2(3.0, 0.0), 100.0)
 	_minion(Vector2(0.0, -6.0))
@@ -266,43 +267,54 @@ func test_below_tier_6_a_tough_target_keeps_the_whole_volley() -> void:
 	assert_eq(shots.map(func(x): return x[1]), [tough, tough, tough])
 
 
-## From tier 6 a volley aims at the 3 closest at once; tier 7's 4th bullet goes round to the closest.
-func test_from_tier_6_the_volley_spreads_over_up_to_3_at_once() -> void:
+## The code's several-target volley (WeaponData still reads set_targets, but no tier of the
+## data gives it since T-496): 3 targets over 4 bullets goes round the closest again.
+func test_several_targets_spread_when_the_stats_say_so() -> void:
 	var a: Node = _minion(Vector2(2.0, 0.0), 1000.0)
 	var b: Node = _minion(Vector2(0.0, 4.0), 1000.0)
 	var c: Node = _minion(Vector2(-6.0, 0.0), 1000.0)
 	var d: Node = _minion(Vector2(0.0, -9.0), 1000.0)
-	gun.set_tier(6)
-	_run_for(gun.fire_interval())
-	assert_eq(shots.map(func(x): return x[1]), [a, b, c], "the 3 closest, closest first")
-	assert_eq(shots[2][0], shots[0][0], "fired at the same moment")
-	gun.set_tier(7)
-	shots.clear()
-	gun.fire_clock = 0.0
+	gun.set_tier(6)  # 4 bullets
+	gun.stats["targets"] = 3
 	_run_for(gun.fire_interval())
 	assert_eq(shots.map(func(x): return x[1]), [a, b, c, a], "4 bullets round the 3 targets")
+	assert_eq(shots[2][0], shots[0][0], "fired at the same moment")
 	assert_false(shots.any(func(x): return x[1] == d), "the 4th closest is never aimed at")
 
 
-func test_from_tier_6_one_enemy_takes_the_whole_volley_at_once() -> void:
-	var only: Node = _minion(Vector2(4.0, 0.0), 1000.0)
-	gun.set_tier(6)
-	_run_for(gun.fire_interval())
-	assert_eq(shots.size(), 3)
+## T-496: no tier of the gun uses set_targets, its max_tier is 5 (T-520), and at tier 5 the volley
+## (4 bullets, x4 fire rate) stays on one target at a time.
+func test_no_gun_tier_sets_targets_and_tier_5_aims_at_one_at_a_time() -> void:
+	for t in data.tiers("gun"):
+		assert_ne(String(t["effect"]), "set_targets", "tier %d" % int(t["tier"]))
+	assert_eq(data.max_tier("gun"), 5)
+	for t in range(1, 6):
+		assert_eq(int(data.gun_at(t)["targets"]), 1, "tier %d: one target" % t)
+	var near: Node = _minion(Vector2(3.0, 0.0), 1000.0)
+	var second: Node = _minion(Vector2(0.0, -7.0), 1000.0)
+	gun.set_tier(5)
+	_run_for(gun.fire_interval() + 0.2)
+	assert_eq(shots.size(), 4)
 	for x in shots:
-		assert_eq(x[1], only)
-		assert_eq(x[0], shots[0][0])
+		assert_eq(x[1], near, "the whole volley at the closest")
+	assert_eq(second.health, 1000.0, "the second closest untouched")
 
 
-## Tier 11: up to 5 targets, one bullet each, all at once.
-func test_tier_11_spreads_over_up_to_5() -> void:
-	var ms := []
-	for i in 6:
-		ms.append(_minion(Vector2(2.0 + i * 1.5, float(i % 2)), 1000.0))
-	gun.set_tier(11)
+## T-496: at tier 5, a bullet whose target died before it left aims at the closest living enemy.
+func test_tier_5_a_dead_target_hands_the_next_bullet_to_the_closest_living() -> void:
+	gun.set_tier(5)
+	var near: Node = _minion(Vector2(3.0, 0.0), 1000.0)
+	var second: Node = _minion(Vector2(0.0, -7.0), 1000.0)
+	var third: Node = _minion(Vector2(9.0, 0.0), 1000.0)
 	_run_for(gun.fire_interval())
-	assert_eq(shots.map(func(x): return x[1]), ms.slice(0, 5), "the 5 closest, one bullet each")
-	assert_eq(shots[4][0], shots[0][0], "fired at the same moment")
+	assert_eq(shots.size(), 1)
+	near.take_damage(100000.0)  # dies before bullet 2 leaves
+	_run_for(0.2)
+	assert_eq(shots.size(), 4)
+	assert_eq(shots[0][1], near)
+	for i in range(1, 4):
+		assert_eq(shots[i][1], second, "bullet %d: the closest living" % (i + 1))
+	assert_eq(third.health, 1000.0)
 
 
 ## T-422's data guard: a volley of 0 bullets is no volley, not an empty queue.
@@ -316,7 +328,7 @@ func test_no_bullets_fires_nothing() -> void:
 
 
 func test_every_tier_applies_the_data_values() -> void:
-	assert_eq(gun.max_tier(), 11, "the gun's own last tier")
+	assert_eq(gun.max_tier(), 5, "the gun's own last tier (T-520)")
 	assert_eq(gun.max_tier(), data.max_tier("gun"))
 	for t in range(1, gun.max_tier() + 1):
 		gun.set_tier(t)
@@ -324,38 +336,39 @@ func test_every_tier_applies_the_data_values() -> void:
 		for key in want:
 			assert_eq(gun.stats[key], want[key], "tier %d %s" % [t, key])
 	assert_false(gun.upgrade(), "no upgrade past the last tier")
-	assert_eq(gun.tier, 11)
+	assert_eq(gun.tier, 5)
 
 
 func test_upgrade_steps_through_the_tiers() -> void:
-	for t in range(2, 12):
+	for t in range(2, 6):
 		assert_true(rack.upgrade("gun"), "upgrade to tier %d" % t)
 		assert_eq(gun.tier, t)
 	assert_false(rack.upgrade("gun"))
 	assert_false(rack.upgrade("no_such_weapon"))
 
 
-func test_level_ups_offer_the_gun_up_to_tier_11() -> void:
-	gun.set_tier(10)
-	assert_true(rack.offers.available_offers().has("upgrade_gun"), "tier 10: offered")
-	gun.set_tier(11)
-	assert_false(rack.offers.available_offers().has("upgrade_gun"), "tier 11: the last")
+func test_level_ups_offer_the_gun_up_to_tier_5() -> void:
+	gun.set_tier(4)
+	assert_true(rack.offers.available_offers().has("upgrade_gun"), "tier 4: offered")
+	gun.set_tier(5)
+	assert_false(rack.offers.available_offers().has("upgrade_gun"), "tier 5: the last")
 
 
-func test_bullet_tiers_add_one_bullet() -> void:
+func test_bullet_tiers_add_bullets() -> void:
+	# T-520: tier 2 adds 2 bullets, tier 4 adds 1 (and a faster rate, which the bullets-per-volley count ignores).
 	_minion(Vector2(4.0, 0.0), 100000.0)
-	for t in [2, 3, 7, 8]:
+	for t in [2, 4]:
 		gun.set_tier(t)
 		shots.clear()
 		gun.fire_clock = 0.0
 		_run_for(gun.fire_interval() + 0.4)
 		assert_eq(shots.size(), int(data.gun_at(t)["bullets"]), "tier %d bullets per volley" % t)
-		assert_eq(shots.size(), int(data.gun_at(t - 1)["bullets"]) + 1, "tier %d: +1 bullet" % t)
+		assert_gt(shots.size(), int(data.gun_at(t - 1)["bullets"]), "tier %d: more bullets" % t)
 
 
 func test_fire_rate_tiers_shorten_the_interval() -> void:
 	_minion(Vector2(4.0, 0.0), 100000.0)
-	for t in [4, 5, 9, 10]:
+	for t in [3, 4, 5]:
 		gun.set_tier(t)
 		shots.clear()
 		gun.fire_clock = 0.0
@@ -371,9 +384,9 @@ func test_fire_rate_tiers_shorten_the_interval() -> void:
 
 func test_range_stays_12_at_every_tier() -> void:
 	var at_13: Node = _minion(Vector2(13.0, 0.0), 100.0)
-	gun.set_tier(11)
+	gun.set_tier(8)
 	_run_for(3.0)
-	assert_eq(shots.size(), 0, "tier 11: 13 units is still out of range (12)")
+	assert_eq(shots.size(), 0, "tier 5: 13 units is still out of range (12)")
 	assert_eq(at_13.health, 100.0)
 
 

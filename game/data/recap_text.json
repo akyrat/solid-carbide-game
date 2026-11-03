@@ -8,7 +8,7 @@
   "heading": {
     "enemies": "Takedowns",
     "tricks": "Tricks landed",
-    "combo": "Peak engagement",
+    "combo": "Peak combo",
     "weapons": "Weapons used"
   },
   "button": {
@@ -16,6 +16,8 @@
     "close": "Close"
   },
   "tier": "Tier {tier}",
+  "peak_value": "x{multiplier}",
+  "peak_value_comment": "T-512: the recap's peak combo value, beside heading.combo: the run's highest combo multiplier, two decimals (for example x4.25). Replaces the peak live viewers number.",
   "enemy": {
     "minion": "Kaiju minion",
     "kaiju": "The kaiju"

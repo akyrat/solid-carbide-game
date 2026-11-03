@@ -521,13 +521,13 @@ func test_each_air_trick_raises_the_combo_and_shows_its_popup() -> void:
 		r.car.trick.emit(id)
 		assert_almost_eq(r.state.combo, before + c.trick_add(id), 0.000001, id)
 		var pop = r.trick_popups.popups().back()
-		assert_eq(pop.text, "%s +%s" % [texts[id], ViewersData.new().format(TrickPopups.trick_viewers(c.trick_add(id), r.state.combo))], id)
+		assert_eq(pop.text, TrickPopups.trick_text(id, c.trick_add(id)), id)
 
 
 func test_popup_texts_word_for_word() -> void:
 	assert_eq(TrickPopups.TEXTS["air_one_eighty"], "AIR 180!")
 	assert_eq(TrickPopups.TEXTS["air_three_sixty"], "AIR 360!")
-	assert_eq(TrickPopups.trick_text("air_one_eighty", 236000.0), "AIR 180! +236K", "T-336: +{viewers}")
+	assert_eq(TrickPopups.trick_text("air_one_eighty", 0.25), "AIR 180! +x0.25", "T-514: +x{amount}")
 	assert_eq(TrickPopups.trick_text("air_three_sixty", 0.0), "AIR 360!")
 
 

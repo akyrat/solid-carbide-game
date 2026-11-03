@@ -5,14 +5,14 @@ const Art := preload("res://scripts/hud/trick_popup_art.gd")
 const BrokenArt := preload("res://scripts/hud/combo_broken_art.gd")
 const Popups := preload("res://scripts/hud/trick_popups.gd")
 
-## [text, style, heat, frame, viewers, hide_amount, width, height, hash of the pixels] as built before T-480.
+## [text, style, heat, frame, multiplier_amount, hide_amount, width, height, hash of the pixels] as built before T-480 (the multiplier-amount rows re-recorded in T-514: no eye).
 const TRICK_GOLDEN := [
-	["FULL 360! +226K", "normal", 3, 2, true, false, 261, 87, 2772041644],
-	["FULL 360! +5,938", "normal", 2, 0, true, true, 249, 48, 3314372398],
-	["THREAD THE NEEDLE! +12.0K", "normal", 0, 0, true, false, 339, 37, 4204024030],
+	["FULL 360! +226K", "normal", 3, 2, true, false, 226, 87, 1703682015],
+	["FULL 360! +5,938", "normal", 2, 0, true, true, 214, 48, 1656637861],
+	["THREAD THE NEEDLE! +12.0K", "normal", 0, 0, true, false, 304, 37, 4021592906],
 	["ALT DRIFT! +0.5", "normal", 1, 0, false, false, 183, 41, 1120496484],
 	["LONG DRIFT!", "small", 0, 0, false, false, 99, 27, 3115531473],
-	["LONG DRIFT! +12.0K", "small", 3, 5, true, false, 192, 77, 4239615401],
+	["LONG DRIFT! +12.0K", "small", 3, 5, true, false, 173, 77, 1764907007],
 	["TRENDING! +120 SUBS!", "normal", 3, 1, false, false, 280, 87, 1449751886],
 	["AIR 180!", "normal", 2, 0, false, false, 119, 45, 4051785811],
 ]

@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/power_up_screen_demo.gd" id="1_demo"]
+
+[node name="T502OverlayShot" type="Node"]
+script = ExtResource("1_demo")
+owned = {
+"polarized_steering_wheel": 3,
+"bouncy_bumpers": 4,
+"jump": 4,
+"rev_charge": 4
+}

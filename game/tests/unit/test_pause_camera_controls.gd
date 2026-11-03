@@ -96,6 +96,10 @@ func test_numbers_show_the_stored_values_when_pausing() -> void:
 
 
 func test_strip_stays_below_the_hud_timer() -> void:
+	# The pause screen scales with the window (T-494): measure it at the layout size, 1152 x 648.
+	var win := get_window()
+	var old_size := win.size
+	win.size = Vector2i(UiScale.BASE)
 	var p := _scene()
 	var ps = p.pause_screen
 	ps.dynamic_check.button_pressed = true
@@ -103,6 +107,7 @@ func test_strip_stays_below_the_hud_timer() -> void:
 	await wait_frames(3)
 	assert_gte(ps.strip.get_global_rect().position.y, ps.STRIP_TOP - 0.5)
 	assert_lt(ps.strip.get_global_rect().end.y, 380.0, "compact: stays in the top of the screen (with the music row, T-210, and the Restart and Exit row, T-327)")
+	win.size = old_size
 
 
 ## QA round 1: over the run's bright asphalt the unchecked box and the buttons

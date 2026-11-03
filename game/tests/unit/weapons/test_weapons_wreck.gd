@@ -139,6 +139,20 @@ func test_a_burn_tint_on_an_enemy_runs_out_during_the_wreck() -> void:
 	assert_false(rack.flamethrower.is_burning(e), "the burn ended")
 
 
+## T-497: the burn already on an enemy keeps hurting it during the wreck (afterburn).
+func test_a_burning_enemy_keeps_taking_damage_during_the_wreck() -> void:
+	rack.gun.set_tier(0)
+	rack.upgrade("flamethrower")
+	rack.flamethrower.stats["burn_flash_seconds"] = 1.0
+	var e := _enemy(_car() + Vector2(1, 0))
+	rack.flamethrower._start_burn(e)
+	_wreck()
+	for i in 200:
+		rack.step(DT)
+	assert_eq(e.damage_taken.size(), 5, "one hit every 0.2 s for its 1 s burn, then none")
+	assert_false(rack.flamethrower.is_burning(e))
+
+
 func test_bullets_in_flight_keep_moving_during_the_wreck() -> void:
 	rack.upgrade("gun")
 	var e := _enemy(_car() + Vector2(6, 0))

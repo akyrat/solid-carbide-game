@@ -17,12 +17,12 @@ func _run() -> Node2D:
 func test_hud_is_in_the_run_and_starts_at_8_00() -> void:
 	var r := _run()
 	assert_not_null(r.hud)
-	assert_eq(r.hud.timer_label.text, "8:00")
+	assert_eq(r.hud.timer_label.text, "4:00")
 
 
-func test_timer_follows_the_run_from_8_00_to_0_00() -> void:
+func test_timer_follows_the_run_from_4_00_to_0_00() -> void:
 	var r := _run()
-	var cases := {480.0: "8:00", 479.5: "8:00", 420.0: "7:00", 419.0: "6:59", 61.0: "1:01",
+	var cases := {RunState.RUN_SECONDS: "4:00", 239.5: "4:00", 180.0: "3:00", 179.0: "2:59", 61.0: "1:01",
 		60.0: "1:00", 9.0: "0:09", 1.0: "0:01", 0.4: "0:01", 0.0: "0:00"}
 	for left in cases:
 		r.state.advance(r.state.time_left - left)
@@ -33,15 +33,15 @@ func test_timer_follows_the_run_from_8_00_to_0_00() -> void:
 func test_timer_resets_with_a_fresh_run() -> void:
 	var r := _run()
 	r.state.advance(100.0)
-	assert_ne(r.hud.timer_label.text, "8:00")
+	assert_ne(r.hud.timer_label.text, "4:00")
 	r.start_run()
-	assert_eq(r.hud.timer_label.text, "8:00")
+	assert_eq(r.hud.timer_label.text, "4:00")
 
 
 func test_timer_stops_while_paused() -> void:
 	var r := _run()
 	await wait_process_frames(10)
-	assert_lt(r.state.time_left, 480.0, "the clock runs while not paused")
+	assert_lt(r.state.time_left, RunState.RUN_SECONDS, "the clock runs while not paused")
 	assert_eq(r.hud.timer_label.text, r.state.time_left_text())
 	get_tree().paused = true
 	var frozen: float = r.state.time_left
@@ -63,5 +63,5 @@ func test_timer_shows_in_a_run_started_from_the_main_menu() -> void:
 	var hud: Hud = game.run.hud
 	assert_not_null(hud)
 	assert_true(hud.is_inside_tree() and hud.timer_label.is_visible_in_tree())
-	game.run.state.advance(125.0)
-	assert_eq(hud.timer_label.text, "5:55")
+	game.run.state.advance(65.0)
+	assert_eq(hud.timer_label.text, "2:55")

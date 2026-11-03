@@ -16,11 +16,10 @@ extends Node2D
 ## (TrickPopupArt); below x2 it is the plain black and white popup. The drift
 ## prototype has no combo and shows step 0.
 ##
-## Viewers (task T-336): in a run a trick popup's amount is the viewers the trick
-## brought (ViewersData.trick_gain, T-332), "+12.0K" with the viewers' eye, in the
-## viewers colour (TrickPopupArt). Once the HUD has bound itself (fly_amounts),
-## DETACH_AT seconds after the popup shows its amount leaves it (amount_detached)
-## and the HUD flies it into the live viewers counter.
+## Multiplier amount (tasks T-336, T-514): in a run a trick popup's amount is the multiplier
+## the trick added, "+x0.5" (T-512's `gain` text), in the multiplier colour (TrickPopupArt).
+## Once the HUD has bound itself (fly_amounts), DETACH_AT seconds after the popup shows its
+## amount leaves it (amount_detached) and the HUD flies it into the multiplier beside the car.
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const Art := preload("res://scripts/hud/trick_popup_art.gd")
@@ -41,14 +40,10 @@ const TEXTS := {
 }
 ## Combo broken popup text approved in task T-244 (docs/hud-and-menus.md, "Combo broken popup").
 const BROKEN_TEXT := "COMBO BROKEN!"
-## Amount text approved in task T-082 (combo.added); since T-336 {amount} is the
-## viewers the trick brought, written short (ViewersData.format: "12.0K").
-const ADDED_TEXT := "+{amount}"
-## The viewers a crash lost, dropping from the live viewers counter (T-336, the
-## board's "-{viewers lost}"); {amount} written short like ADDED_TEXT's.
-const LOST_TEXT := "-{amount}"
 ## Challenge popup text approved in task T-048 (hud.score_flash); {likes} is the likes gained.
 const SCORE_TEXT := "TRENDING! +{subs} SUBS!"
+## Used only when screen_texts.json cannot be read (T-521's heal message lives in the file).
+const HEAL_TEXT_FALLBACK := "MAXED OUT! CAR PATCHED UP, BRAND INTACT!"
 ## Sizes: SIZE_SMALL or less bakes the small popup, anything more the normal one
 ## (the numbers are the old drawn font sizes). Extended drift comes every
 ## second, so it is smaller.
@@ -87,12 +82,12 @@ const MAX_REACH := 0.25
 ## A popup's absolute z (task T-132): the top of Godot's canvas item range, over
 ## the map's (map.top_z_index() grows with the buildings; it is a few hundred).
 const POPUP_Z := RenderingServer.CANVAS_ITEM_Z_MAX
-## Seconds after a viewers popup shows before its amount leaves it for the counter (T-336).
+## Seconds after a popup with an amount shows before it leaves for the multiplier (T-336).
 const DETACH_AT := 0.3
 
-## A viewers popup was shown (T-336): the HUD holds its viewers back until the amount lands.
-signal viewers_popup(popup: Node2D)
-## A viewers popup's amount left it (T-336): `screen_at` is the amount's centre in
+## A popup with a multiplier amount was shown (T-514): the HUD holds the add back until the amount lands.
+signal gain_popup(popup: Node2D)
+## A popup's amount left it (T-336): `screen_at` is the amount's centre in
 ## canvas (HUD) pixels.
 signal amount_detached(popup: Node2D, screen_at: Vector2)
 
@@ -120,10 +115,10 @@ class PopupText extends Node2D:
 	## The combo broken popup (task T-245): a red card cracked in two; it shakes
 	## at birth and its right half falls away. Drawn from BrokenArt.
 	var broken := false
-	## The amount is viewers (T-336): the viewers colour and the eye.
-	var viewers := false
-	## The viewers the trick brought (T-336), for the counter.
-	var viewers_gain := 0.0
+	## The amount is a multiplier add (T-514): the multiplier colour.
+	var multiplier_amount := false
+	## The multiplier the trick added, for the tag.
+	var gain := 0.0
 	## True once the amount has left for the counter: the bubble shows the name only.
 	var amount_gone := false
 	## Called once at DETACH_AT with this popup (set by TrickPopups when the HUD flies amounts).
@@ -145,13 +140,13 @@ class PopupText extends Node2D:
 
 	## The baked texture for this moment.
 	func texture() -> ImageTexture:
-		return Art.texture(text, Art.style_for(font_size), heat, frame, viewers, amount_gone)
+		return Art.texture(text, Art.style_for(font_size), heat, frame, multiplier_amount, amount_gone)
 
 	## The amount's centre (and its eye) in canvas pixels (T-336).
 	func amount_screen_center() -> Vector2:
 		var style := Art.style_for(font_size)
 		var box := Art.amount_box(text, style, heat)
-		var tex_size := Vector2(Art.texture(text, style, heat, frame, viewers).get_size())
+		var tex_size := Vector2(Art.texture(text, style, heat, frame, multiplier_amount).get_size())
 		var local := (-tex_size / 2.0 + Vector2(box.position) + Vector2(box.size) / 2.0) * PIXEL_SCALE
 		return get_global_transform_with_canvas() * local
 
@@ -170,7 +165,7 @@ class PopupText extends Node2D:
 	func size() -> Vector2:
 		if broken:
 			return Vector2(broken_textures()[0].get_size()) * PIXEL_SCALE
-		return Vector2(Art.plain_size(text, Art.style_for(font_size), viewers)) * PIXEL_SCALE
+		return Vector2(Art.plain_size(text, Art.style_for(font_size), multiplier_amount)) * PIXEL_SCALE
 
 	## Asks for the pictures this popup will draw later to be baked on worker threads
 	## now (T-480): the flame frames, and the look without the amount once it has flown
@@ -182,10 +177,10 @@ class PopupText extends Node2D:
 			return
 		var frames := Art.FLAME_FRAMES if heat >= Art.FLAME_STEP else 1
 		for f in frames:
-			for hide in ([false, true] if viewers else [false]):
+			for hide in ([false, true] if multiplier_amount else [false]):
 				if f == 0 and not hide:
 					continue
-				Art.request(text, style, heat, f, viewers, hide)
+				Art.request(text, style, heat, f, multiplier_amount, hide)
 		# The picture the popup is born with is made at the end of this frame, not here:
 		# a trick's popup is shown from inside the car's physics step (T-481), and a
 		# bake there was 10 to 30 ms on a landing. Still never while drawing.
@@ -221,7 +216,7 @@ class PopupText extends Node2D:
 		modulate.a = 1.0 if t < 0.5 else 1.0 - (t - 0.5) * 2.0
 		if broken:
 			queue_redraw()
-		if viewers and not amount_gone and on_detach.is_valid() and age >= DETACH_AT:
+		if multiplier_amount and not amount_gone and on_detach.is_valid() and age >= DETACH_AT:
 			amount_gone = true
 			queue_redraw()
 			on_detach.call(self)
@@ -278,17 +273,8 @@ var _combo_car_position: Callable
 var _from_combo := false
 ## The run state whose combo multiplier heats the challenge popup (set by bind_score()).
 var _score_state: Node = null
-## True once the HUD flies the amounts into the live viewers counter (T-336).
+## True once the HUD flies the amounts into the multiplier beside the car (T-336, T-514).
 var fly_amounts := false
-static var _viewers: ViewersData = null
-
-
-static func viewers_data() -> ViewersData:
-	if _viewers == null:
-		_viewers = ViewersData.new()
-	return _viewers
-
-
 ## The popup heat step for a combo multiplier: the HUD counter's step
 ## (ComboHeat.step_for, task T-131), so both use the same thresholds.
 static func heat_for(multiplier: float) -> int:
@@ -312,6 +298,9 @@ func bind_score(run_state: Node, car_position: Callable) -> void:
 	_score_state = run_state
 	if not run_state.score.is_connected(_on_score):
 		run_state.score.connect(_on_score)
+	# T-521: a full sub goal that heals the car (every weapon maxed) shows the heal message.
+	if run_state.has_signal("sub_goal_healed") and not run_state.sub_goal_healed.is_connected(_on_sub_goal_healed):
+		run_state.sub_goal_healed.connect(_on_sub_goal_healed)
 
 
 ## Shows the trick popups from a run state's `combo_trick` signal (task T-083):
@@ -326,31 +315,26 @@ func bind_combo(run_state: Node, car_position: Callable) -> void:
 		run_state.combo_broken.connect(_on_combo_broken)
 
 
-## The popup text for a trick: its name and, when it brought viewers, "+{amount}"
-## with the viewers written short (T-336: "FULL 360! +12.0K"). At the cap the trick
-## brings none and only the name shows.
-static func trick_text(trick_id: String, viewers_gained: float) -> String:
+## The popup text for a trick: its name and, when it added to the multiplier, T-512's `gain`
+## text ("FULL 360! +x0.25"). At the cap the trick adds none and only the name shows.
+static func trick_text(trick_id: String, added: float) -> String:
 	var text: String = TEXTS.get(trick_id, "")
-	if text != "" and roundf(viewers_gained) > 0.0:
-		text += " " + ADDED_TEXT.format({"amount": viewers_data().format(viewers_gained)})
+	if text != "" and snappedf(added, 0.01) > 0.0:
+		text += " " + MultiplierTag.gain_text(added)
 	return text
-
-
-## The viewers a combo_trick brought: the curve's value after it less before it (T-332).
-static func trick_viewers(added: float, multiplier: float) -> float:
-	return viewers_data().trick_gain(multiplier - added, multiplier)
 
 
 func _on_combo_trick(trick_id: String, added: float, multiplier: float) -> void:
 	if not TEXTS.has(trick_id):
 		return
-	var gain := trick_viewers(added, multiplier)
+	# What the trick really added (at the cap, less or nothing).
+	var gain := added
 	var p := show_popup(trick_text(trick_id, gain), _combo_car_position.call(), SIZES[trick_id], _combo_car_position, heat_for(multiplier), false, true)
-	if p.viewers:
-		p.viewers_gain = roundf(gain)
+	if p.multiplier_amount:
+		p.gain = gain
 		if fly_amounts:
 			p.on_detach = _on_amount_detached
-		viewers_popup.emit(p)
+		gain_popup.emit(p)
 
 
 func _on_amount_detached(p: PopupText) -> void:
@@ -360,6 +344,19 @@ func _on_amount_detached(p: PopupText) -> void:
 ## A crash cut the combo (task T-245): the red, cracked popup, from the car.
 func _on_combo_broken() -> void:
 	show_popup(BROKEN_TEXT, _combo_car_position.call(), SIZE_NORMAL, _combo_car_position, 0, true)
+
+
+## The heal message (screen_texts.json heal.popup, T-519), shown like the reward popup.
+static func heal_text() -> String:
+	var r := GameData.load_file("screen_texts")
+	if not r.ok:
+		return HEAL_TEXT_FALLBACK
+	var v := GameData.get_value(r.data, "heal.popup")
+	return String(v.data) if v.ok else HEAL_TEXT_FALLBACK
+
+
+func _on_sub_goal_healed(_hearts: float) -> void:
+	show_popup(heal_text(), _score_car_position.call(), SIZE_NORMAL, _score_car_position)
 
 
 func _on_score(amount: float, _challenge_id: String) -> void:
@@ -381,8 +378,8 @@ func _on_trick(trick_id: String) -> void:
 ## A popup that would overlap one already showing is moved up until it doesn't.
 ## `heat` is the combo heat step (0 to 3, heat_for()) it is drawn at (task T-133).
 ## `broken` draws the combo broken look (task T-245) instead of the comic bubble.
-## `viewers` letters its "+amount" as viewers, with the eye (task T-336).
-func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable(), heat := 0, broken := false, viewers := false) -> PopupText:
+## `multiplier_amount` letters its "+amount" in the multiplier colour (tasks T-336, T-514).
+func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable(), heat := 0, broken := false, multiplier_amount := false) -> PopupText:
 	var showing := popups()
 	while showing.size() >= MAX_POPUPS:
 		var oldest = showing[0]
@@ -396,7 +393,7 @@ func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow 
 	p.font_size = font_size
 	p.heat = clampi(heat, 0, Art.HEAT_STEPS - 1)
 	p.broken = broken
-	p.viewers = viewers and not broken and Art.split_text(text)[1] != ""
+	p.multiplier_amount = multiplier_amount and not broken and Art.split_text(text)[1] != ""
 	p.anchor = at
 	p.follow = follow
 	p.stack = _free_stack(p)

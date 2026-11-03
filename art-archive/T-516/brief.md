@@ -1,0 +1,1 @@
+T-516: the label of the pause screen's Drift Guide checkbox, next to "Rain", "Camera smoothing" and "Dynamic camera". The board's own words are "Drift Guide": keep them as the value unless there is a real rule break. Short, plain settings voice, sentence case style, no end punctuation, no on/off words.

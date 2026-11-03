@@ -49,13 +49,13 @@ func _missions(seed_value: int) -> Array:
 	return m.missions
 
 
-# --- 30 missions: 5 fixed, 25 generated per seed ------------------------------------
+# --- The data's missions (12 since T-521): 5 fixed, the rest generated per seed ------------------------------------
 
-func test_a_new_run_has_30_missions_the_first_5_fixed_the_rest_by_seed() -> void:
+func test_a_new_run_has_the_datas_missions_the_first_5_fixed_the_rest_by_seed() -> void:
 	var fixed: Array = MissionData.new().fixed()
 	var sets: Array = [_missions(1), _missions(2), _missions(3)]
 	for s in sets:
-		assert_eq(s.size(), 30, "30 missions a run")
+		assert_eq(s.size(), MissionData.new().total(), "the data's missions a run")
 		for i in 5:
 			assert_eq(s[i].size(), fixed[i]["goals"].size(), "mission %d's goals" % (i + 1))
 			for g in s[i].size():
@@ -65,16 +65,16 @@ func test_a_new_run_has_30_missions_the_first_5_fixed_the_rest_by_seed() -> void
 	for i in 5:
 		assert_eq(sets[0][i], sets[1][i], "mission %d is the same for seeds 1 and 2" % (i + 1))
 		assert_eq(sets[0][i], sets[2][i], "mission %d is the same for seeds 1 and 3" % (i + 1))
-	assert_ne(sets[0].slice(5), sets[1].slice(5), "missions 6 to 30 differ between seeds 1 and 2")
+	assert_ne(sets[0].slice(5), sets[1].slice(5), "the generated missions differ between seeds 1 and 2")
 	assert_eq(_missions(7).slice(5), _missions(7).slice(5), "one seed gives the same set")
-	assert_eq(state.missions.count(), 30)
+	assert_eq(state.missions.count(), MissionData.new().total())
 	assert_eq(state.missions.current_number(), 1)
 
 
 func test_generated_missions_follow_the_rules() -> void:
 	var data := MissionData.new()
 	var s := _missions(99)
-	for n in range(6, 31):
+	for n in range(6, data.total() + 1):
 		var goals: Array = s[n - 1]
 		assert_eq(goals.size(), data.goals_for(n), "mission %d's goal count" % n)
 		var tricks := {}
@@ -97,11 +97,11 @@ func test_each_run_without_a_seed_picks_a_new_one() -> void:
 
 func test_missions_1_to_5_complete_in_order_from_trick_events() -> void:
 	var m: RunMissions = state.missions
-	# Mission 1: one unbroken drift of 4 seconds.
-	_drift(4.1)
+	# Mission 1: one unbroken drift of 2 seconds.
+	_drift(2.1)
 	assert_eq(_of("mission"), [["mission", 0]], "mission 1 done")
 	assert_true(_of("goal").has(["goal", 0, 0]))
-	assert_true(_of("progress").any(func(e): return e[1] == 0 and e[3] == 4.0 and e[4] == 4.0))
+	assert_true(_of("progress").any(func(e): return e[1] == 0 and e[3] == 2.0 and e[4] == 2.0))
 	assert_eq(m.current_number(), 2)
 	# Mission 2: 10 alt drifts.
 	for i in 9:
@@ -169,31 +169,31 @@ func test_a_mission_with_several_goals_needs_all_of_them() -> void:
 
 # --- The continuous drift goal ------------------------------------------------------
 
-func test_two_2_second_drifts_do_not_complete_mission_1_one_4_second_drift_does() -> void:
+func test_two_1_second_drifts_do_not_complete_mission_1_one_2_second_drift_does() -> void:
 	var m: RunMissions = state.missions
-	_drift(2.0)
-	_drift(2.0)
-	assert_eq(m.current_number(), 1, "two 2 s drifts are not one 4 s drift")
+	_drift(1.0)
+	_drift(1.0)
+	assert_eq(m.current_number(), 1, "two 1 s drifts are not one 2 s drift")
 	assert_eq(_of("mission"), [])
 	assert_eq(m.current_goals()[0]["done"], 0.0, "the ended drift starts over")
-	_drift(4.0)
-	assert_eq(_of("mission"), [["mission", 0]], "one 4 s drift completes it")
+	_drift(2.0)
+	assert_eq(_of("mission"), [["mission", 0]], "one 2 s drift completes it")
 	assert_eq(m.current_number(), 2)
 
 
 func test_a_wall_hit_ends_the_drift_for_the_goal() -> void:
 	var m: RunMissions = state.missions
-	for i in 150:  # 2.5 s
+	for i in 90:  # 1.5 s
 		state.drift_step(true, DT)
-	assert_almost_eq(float(m.current_goals()[0]["done"]), 2.5, 0.001)
+	assert_almost_eq(float(m.current_goals()[0]["done"]), 1.5, 0.001)
 	state.collision()
 	assert_eq(m.current_goals()[0]["done"], 0.0, "the hit ends the drift")
-	for i in 150:  # still drifting after the hit: a new drift of 2.5 s
+	for i in 90:  # still drifting after the hit: a new drift of 1.5 s
 		state.drift_step(true, DT)
-	assert_eq(m.current_number(), 1, "2.5 s + 2.5 s across a wall hit is not 4 s")
-	for i in 90:
+	assert_eq(m.current_number(), 1, "1.5 s + 1.5 s across a wall hit is not 2 s")
+	for i in 40:
 		state.drift_step(true, DT)
-	assert_eq(m.current_number(), 2, "an unbroken 4 s completes it while still drifting")
+	assert_eq(m.current_number(), 2, "an unbroken 2 s completes it while still drifting")
 
 
 func test_nothing_counts_when_the_run_is_not_going() -> void:
@@ -204,9 +204,9 @@ func test_nothing_counts_when_the_run_is_not_going() -> void:
 	assert_eq(state.missions.current_number(), 1)
 
 
-func test_after_mission_30_nothing_more_is_offered() -> void:
+func test_after_the_last_mission_nothing_more_is_offered() -> void:
 	var m: RunMissions = state.missions
-	m.current = 29
+	m.current = m.count() - 1
 	m._load_current()
 	for g in m.current_goals():
 		if g["kind"] == "seconds" and g["trick"] == "extended_drift":
@@ -219,20 +219,20 @@ func test_after_mission_30_nothing_more_is_offered() -> void:
 		else:
 			for i in int(g["amount"]):
 				state.add_trick(g["trick"])
-	assert_eq(_of("mission"), [["mission", 29]])
+	assert_eq(_of("mission"), [["mission", m.count() - 1]])
 	assert_true(m.is_all_done())
 	assert_eq(m.current_index(), -1)
 	assert_eq(m.current_goals(), [])
 	events.clear()
 	state.add_trick("air_three_sixty")
 	_drift(10.0)
-	assert_eq(events, [], "nothing after mission 30")
+	assert_eq(events, [], "nothing after the last mission")
 
 
 # --- A new run, and the power-ups ---------------------------------------------------
 
 func test_a_new_run_resets_to_mission_1_and_clears_power_ups() -> void:
-	_drift(4.0)
+	_drift(2.0)
 	state.add_trick("alternate_drift")
 	state.grant_power_up("jump")
 	assert_eq(state.missions.current_number(), 2)
@@ -280,13 +280,13 @@ func test_restart_from_the_pause_screen_starts_mission_1_with_no_power_ups() -> 
 	if game.run == null:  # the tutorial slides first
 		game.tutorial.start_pressed.emit(false)
 	var old: RunState = game.run.state
-	old.drift_step(true, 4.1)
+	old.drift_step(true, 2.1)
 	old.grant_power_up("bouncy_bumpers")
 	assert_eq(old.missions.current_number(), 2)
 	game.pause_screen.restart_pressed.emit()
 	var fresh: RunState = game.run.state
 	assert_eq(fresh.missions.current_number(), 1)
-	assert_eq(fresh.missions.count(), 30)
+	assert_eq(fresh.missions.count(), MissionData.new().total())
 	assert_eq(fresh.power_up_tier("bouncy_bumpers"), 0)
 	get_tree().paused = false
 	await wait_process_frames(1)

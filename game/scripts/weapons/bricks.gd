@@ -30,6 +30,16 @@ extends "res://scripts/weapons/weapon.gd"
 ## game/tools/build_bricks_wave.py), 12 stepped frames at 32 art px per unit,
 ## drawn at 0.5. A radius with no sheet falls back to T-324's code-drawn
 ## placeholder. City colours, opaque hard-edged pixels, none of Greenbull's.
+##
+## Tier 8, Widest Wave (T-498; Weapons, Decisions, "The board's own upgrade trees"):
+## the radius times 3, and the wave is `rings` crash rings (3), at the tier 7 radius
+## times 1, 2 and 3, travelling from the inner ring out. The inner ring hits on the
+## landing like every tier's wave; ring k hits when the drawn wave reaches it,
+## BricksWave.RING_SECONDS + (k - 1) x `ring_interval` seconds after the landing,
+## every enemy then within its radius that no ring of this landing has hit yet (so
+## each enemy once per landing, the kaiju damaged, never pushed). Its art is one
+## sparse sheet (bricks_wave_r25_2.png, the strips that hold pixels, listed in its
+## .json), drawn strip by strip.
 
 ## Flat world pixels per unit (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
@@ -46,8 +56,11 @@ const KAIJU_GROUP := "kaiju"
 ## Tests set this to 0 (off) or 1 (on) to override data/playtest.json; -1 reads the file.
 static var playtest_override := -1
 
-## A wave went out at `centre` (flat world, units) and hit `hit_count` enemies.
+## A wave went out at `centre` (flat world, units) and hit `hit_count` enemies
+## (its inner ring's; a widest wave's outer rings report through ring_hit).
 signal wave_sent(centre: Vector2, hit_count: int)
+## A widest wave's ring `ring` (1 = the inner one) reached its radius and hit `hit_count` enemies.
+signal ring_hit(centre: Vector2, ring: int, hit_count: int)
 ## Every hit, with the damage dealt and whether the enemy was pushed.
 signal enemy_hit(enemy: Node, amount: float, pushed: bool)
 
@@ -64,6 +77,8 @@ var waves := 0
 var hits := 0
 ## The last wave drawn (a BricksWave), for tests and screenshots.
 var last_wave: Node2D = null
+## A widest wave's rings still to come: {centre, ring (2..), due (seconds from now), hit: {instance id: true}}.
+var pending_rings: Array = []
 
 
 func _init() -> void:
@@ -96,6 +111,7 @@ func apply_tier() -> void:
 	stats["damage"] = boosted_damage(float(stats["damage"]))
 	if is_owned():
 		BricksWave.sheet_for(radius())  # loaded now, not at the first landing (T-481)
+		BricksWave.record_for(radius())  # and a widest wave's strip record (T-498)
 	else:
 		_reset_air()
 
@@ -104,6 +120,7 @@ func reset_for_run() -> void:
 	waves = 0
 	hits = 0
 	last_wave = null
+	pending_rings.clear()
 	_reset_air()
 	super.reset_for_run()
 
@@ -125,6 +142,7 @@ func step_wrecked(dt: float) -> void:
 ## is going): counts the car's time in the air and sends a wave on a landing.
 func step(dt: float) -> void:
 	since_wave += dt
+	_step_rings(dt)
 	var car := _car()
 	if car == null:
 		return
@@ -160,30 +178,84 @@ func on_landing(seconds: float) -> bool:
 
 ## One impact wave at `centre` (flat world, units): every living enemy whose body
 ## is within the radius takes the damage once; minions that survive are pushed
-## away from the centre. Returns the enemies hit.
+## away from the centre. Returns the enemies hit. A widest wave (rings > 1) hits
+## only within its inner ring now and leaves its outer rings for _step_rings.
 func send_wave(centre: Vector2) -> Array:
 	since_wave = 0.0
 	waves += 1
-	var hit := []
-	for e in targets(centre):
-		if reaches(centre, e):
-			hit.append(e)
-	for e in hit:
-		_hit(e, centre)
+	var hit := _ring_strike(centre, 1, {})
+	var n := rings()
+	if n > 1:
+		var done := {}
+		for e in hit:
+			done[e.get_instance_id()] = true
+		for k in range(2, n + 1):
+			pending_rings.append({"centre": centre, "ring": k, "due": ring_reach_seconds(k), "hit": done})
 	_draw_wave(centre)
 	wave_sent.emit(centre, hit.size())
+	if n > 1:
+		ring_hit.emit(centre, 1, hit.size())
 	return hit
 
 
-## True when an enemy's body (the rack's radius_of()) is within the wave's radius of `centre`.
-func reaches(centre: Vector2, e: Node) -> bool:
+## Ring `k` of the wave at `centre` strikes: every enemy within its radius that is not
+## in `done` (instance ids already hit this landing) is hit and added to it.
+func _ring_strike(centre: Vector2, k: int, done: Dictionary) -> Array:
+	var reach := ring_radius(k)
+	var hit := []
+	for e in targets(centre):
+		if not done.has(e.get_instance_id()) and reaches(centre, e, reach):
+			hit.append(e)
+	for e in hit:
+		done[e.get_instance_id()] = true
+		_hit(e, centre)
+	return hit
+
+
+## A widest wave's outer rings: each strikes when its time comes.
+func _step_rings(dt: float) -> void:
+	if pending_rings.is_empty():
+		return
+	var due := []
+	for p in pending_rings:
+		p["due"] = float(p["due"]) - dt
+		if float(p["due"]) <= EPS:
+			due.append(p)
+	for p in due:
+		pending_rings.erase(p)
+		var hit := _ring_strike(p["centre"], int(p["ring"]), p["hit"])
+		ring_hit.emit(p["centre"], int(p["ring"]), hit.size())
+
+
+## True when an enemy's body (the rack's radius_of()) is within `reach` (the
+## wave's radius when not given) of `centre`.
+func reaches(centre: Vector2, e: Node, reach: float = -1.0) -> bool:
 	var r: float = maxf(rack.radius_of(e), 0.0) if rack != null else 0.0
-	return centre.distance_to(enemy_units(e)) - r <= radius() + EPS
+	return centre.distance_to(enemy_units(e)) - r <= (radius() if reach < 0.0 else reach) + EPS
 
 
 ## The wave's radius now, in units.
 func radius() -> float:
 	return float(stats["radius"])
+
+
+## How many crash rings the wave is (1; tier 8's widest wave 3).
+func rings() -> int:
+	return maxi(int(stats.get("rings", 1)), 1)
+
+
+## Ring `k`'s radius (1 = the inner one), units: the radius split evenly.
+func ring_radius(k: int) -> float:
+	return radius() * float(k) / float(rings())
+
+
+## Seconds after the landing at which ring `k` strikes: the inner ring on the landing,
+## ring k > 1 when the drawn wave reaches it (BricksWave.RING_SECONDS, then one
+## ring_interval a ring; the sheet's timing, build_bricks_wave.py widest_timing).
+func ring_reach_seconds(k: int) -> float:
+	if k <= 1:
+		return 0.0
+	return BricksWave.RING_SECONDS + float(k - 1) * float(stats.get("ring_interval", 0.15))
 
 
 ## Every living, damageable enemy in the run on the level of the ground at
@@ -307,6 +379,41 @@ class BricksWave:
 	var sheet: Texture2D = null
 	var frame_size := Vector2.ZERO
 	var art_centre := Vector2.ZERO
+	## This wave's frame count and seconds (FRAMES and WAVE_SECONDS, or a widest
+	## wave's own, from its record).
+	var frames := FRAMES
+	var seconds := WAVE_SECONDS
+	## A widest wave's sheet (T-498): per frame, its strips (PackedInt32Array of
+	## atlas x, atlas y, frame x, frame y, width; `cell` high). Empty: a one-row sheet.
+	var runs: Array = []
+	var cell := 16
+
+	## Sparse sheets' records by path, read once (T-498).
+	static var _records := {}
+
+	## The record (.json) of a widest wave's sheet for radius `r`, {} for a one-row
+	## sheet or none: {frames, frame_width, frame_height, centre, cell, runs}.
+	static func record_for(r: float) -> Dictionary:
+		var path := art_path(r).get_basename() + ".json"
+		if _records.has(path):
+			return _records[path]
+		var rec := {}
+		if FileAccess.file_exists(path):
+			var parsed = JSON.parse_string(FileAccess.get_file_as_string(path))
+			if parsed is Dictionary and String(parsed.get("layout", "")) == "runs":
+				var packed := []
+				for fr in parsed["runs"]:
+					var a := PackedInt32Array()
+					for run_ in fr:
+						for v in run_:
+							a.append(int(v))
+					packed.append(a)
+				rec = {"frames": int(parsed["frames"]), "cell": int(parsed["cell"]),
+					"frame_width": float(parsed["frame_width"]), "frame_height": float(parsed["frame_height"]),
+					"centre": Vector2(float(parsed["centre"][0]), float(parsed["centre"][1])),
+					"runs": packed}
+		_records[path] = rec
+		return rec
 
 	## The sheet's path for a damage radius of `r` units.
 	static func art_path(r: float) -> String:
@@ -328,7 +435,7 @@ class BricksWave:
 
 	## The frame of the sheet shown now (0 to FRAMES - 1).
 	func frame_index() -> int:
-		return clampi(int(floor(age / FRAME_SECONDS + EPS)), 0, FRAMES - 1)
+		return clampi(int(floor(age / FRAME_SECONDS + EPS)), 0, frames - 1)
 
 	func setup(at: Vector2, r: float, height: float, seed_value: int) -> void:
 		centre = at
@@ -336,7 +443,15 @@ class BricksWave:
 		ground_h = height
 		position = ISO_TRANSFORM * (centre * PX_PER_UNIT) + Vector2(0.0, -ground_h * PX_PER_UNIT)
 		sheet = sheet_for(r)
-		if sheet != null:
+		var rec := record_for(r) if sheet != null else {}
+		if not rec.is_empty():
+			runs = rec["runs"]
+			cell = rec["cell"]
+			frames = rec["frames"]
+			seconds = frames * FRAME_SECONDS
+			frame_size = Vector2(rec["frame_width"], rec["frame_height"])
+			art_centre = rec["centre"]
+		elif sheet != null:
 			frame_size = Vector2(float(sheet.get_width()) / FRAMES, float(sheet.get_height()))
 			art_centre = Vector2(frame_size.x / 2.0, (frame_size.y + ART_TOP) / 2.0)
 		var rng := RandomNumberGenerator.new()
@@ -362,7 +477,7 @@ class BricksWave:
 			queue_redraw()
 
 	func is_done() -> bool:
-		return age >= WAVE_SECONDS - EPS
+		return age >= seconds - EPS
 
 	## Seconds of the stepped animation now (age rounded down to a frame).
 	func stepped_age() -> float:
@@ -388,6 +503,17 @@ class BricksWave:
 
 	func _draw() -> void:
 		if Perf.on: Perf.each_begin(&"draw.bricks")
+		if sheet != null and not runs.is_empty():
+			# A widest wave: the frame's strips, one rect each (one texture, so one batch).
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2(ART_SCALE, ART_SCALE))
+			var a: PackedInt32Array = runs[frame_index()]
+			var h := float(cell)
+			for i in range(0, a.size(), 5):
+				var w := float(a[i + 4])
+				draw_texture_rect_region(sheet, Rect2(Vector2(a[i + 2], a[i + 3]) - art_centre, Vector2(w, h)),
+					Rect2(float(a[i]), float(a[i + 1]), w, h))
+			if Perf.on: Perf.each_end(&"draw.bricks")
+			return
 		if sheet != null:
 			draw_set_transform(Vector2.ZERO, 0.0, Vector2(ART_SCALE, ART_SCALE))
 			draw_texture_rect_region(sheet, Rect2(-art_centre, frame_size),

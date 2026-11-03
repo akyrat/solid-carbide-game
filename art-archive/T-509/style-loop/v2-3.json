@@ -1,0 +1,15 @@
+{
+  "file": "v2-3.png",
+  "asset": "rain splash animation (brief: art-archive/T-509/brief_splash.md)",
+  "task": "T-509",
+  "version": 2,
+  "refines": "v1-2.png (Style Evaluator 7/10: frame 4 had only 2 colours, so its fade might read flat; suggested a darker far-edge blue)",
+  "size": "48x8 (4 frames of 12x8, one row, played once in order), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_this_version": 0,
+  "reuses": "the colours of raw/splash/v1-2_crown_raw.png and v1-2_ring_raw.png (2 generations, paid in version 1)",
+  "script": "game/tools/build_rain_splash.py (default --version 2; --version 1 rebuilds v1-2). Tests: game/tools/test_build_rain_splash.py, 9 pass",
+  "change": "Free script fix, frame 4 only: its far-edge pixels use a new darker, more desaturated blue (70,104,134), darkened from the ring's darkest sampled colour. Frame 4 now fades in three tones: far edge darkest, sides dark, near side mid. Frames 1 to 3 unchanged. 9 colours in all.",
+  "preview": "art-archive/T-509/screenshots/v2-3_preview_x12.png (nearest-neighbour x12 on a dark and a light background)",
+  "script_checks": "game/tools/style_rules.py art --size 12x8 --frames 4 --max-colors 12: all 21 pass"
+}

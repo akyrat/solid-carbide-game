@@ -4,7 +4,7 @@ extends CanvasLayer
 ## the car's health bar upright at the top left (T-276: 72 x 320, the heart
 ## under it, the weapon icons beside it), the coins
 ## at the top right, the sub goal square on the right edge (T-337, SubGoal: it
-## replaced the likes bar and its row) and the live viewers counter at the bottom
+## replaced the likes bar and its row) and the combo multiplier beside the car, not the live viewers counter, at the bottom
 ## right (T-336, in place of the combo counter). The HUD only shows values: the run
 ## state owns them (`time_left_changed`, `health_changed`, `xp_changed`,
 ## `coins_changed`). The texts are from T-048 and T-331. Since T-131 the combo
@@ -36,8 +36,6 @@ const HEART_SCALE := 2
 # Text from T-048 (hud.health, hud.coins).
 # Livestream HUD texts (T-331): {subs} and {goal} are the sub goal's numbers.
 const TEXT_SUB_GOAL := "{subs} / {goal} SUBS"
-const TEXT_LIVE_BADGE := "LIVE"
-const TEXT_VIEWERS_UNIT := "WATCHING"
 const TEXT_COINS := "Coins"
 ## The comic font of the trick popups (T-084), used since T-131 by the combo
 ## counter and the sub goal label. It has capitals only.
@@ -55,7 +53,7 @@ const DRIFT_OFFSET := Vector2(70, 30)
 ## page's, times the HUD size slider's share (hud_size / 100). Textures under the root are
 ## drawn with nearest filtering, so the pixel art stays hard-edged at any scale. The world
 ## camera is never touched (HUD and menus, Content, "The HUD scales with the window").
-const LAYOUT_SIZE := Vector2(1152, 648)
+const LAYOUT_SIZE := UiScale.BASE  # 1152 x 648, shared with every screen (T-494)
 
 ## The scaled area every HUD piece is in (T-431).
 var root: Control
@@ -73,8 +71,8 @@ var _likes_level := 0
 var _follow_numbers := [0, 0]
 var coins_label: Label
 var coins_value_label: Label
-## The live viewers counter at the bottom right (T-336): the combo shown as viewers.
-var viewers_counter: ViewersCounter
+## The combo multiplier beside the car (T-514), in place of the live viewers counter (T-336).
+var multiplier_tag: MultiplierTag
 ## The reaction icons (T-351): the Hud's first child, so every HUD piece is drawn over them.
 var reactions: Reactions
 ## The top-left area: the hearts row and the weapon icons (T-113, T-276, T-338).
@@ -89,7 +87,7 @@ var weapon_icons: WeaponIcons
 var mission_page: MissionPage
 ## A full-screen area (empty since T-337 and T-336 took the likes bar and the combo counter away).
 var bottom_area: Control
-## The combo's heat steps (T-131): lights likes_fire (the viewers counter has its own, T-336).
+## The combo's heat steps (T-131): lights likes_fire (the multiplier beside the car has its own look, T-514).
 var combo_heat: ComboHeat
 ## The flames along the sub goal square's top edge at the top heat step (T-131, T-337).
 var likes_fire: LikesFire
@@ -101,7 +99,7 @@ var _car: Node
 var _state: RunState
 ## The combo's numbers (combo.json): its start value is "no combo" (T-116).
 var _combo_data: ComboData
-## The trick popups whose amounts fly into the viewers counter (bind_popups, T-336).
+## The trick popups whose amounts fly into the multiplier (bind_popups, T-336, T-514).
 var _popups: Node
 ## The player's HUD layout (T-453): HudLayout entries for the pieces the player moved; a piece
 ## not in it keeps its default place. set_layout() sets it, the pause screen's editor moves it.
@@ -120,7 +118,7 @@ func _ready() -> void:
 	_build_mission_page()
 	_build_bottom()
 	_build_coins()
-	_build_viewers()
+	_build_multiplier()
 	_build_airtime()
 	_build_drift()
 	_remember_defaults()
@@ -139,8 +137,8 @@ func _build_root() -> void:
 
 ## The HUD's scale for a window of `view` pixels at a HUD size of `size_percent` (T-431).
 static func scale_for(view: Vector2, size_percent: float) -> float:
-	var fit := minf(view.x / LAYOUT_SIZE.x, view.y / LAYOUT_SIZE.y)
-	return maxf(fit, 0.01) * clampf(size_percent, GameSettings.MIN_HUD_SIZE, GameSettings.MAX_HUD_SIZE) / 100.0
+	var fit := UiScale.fit(view, LAYOUT_SIZE)  # the rule every screen shares (T-494)
+	return fit * clampf(size_percent, GameSettings.MIN_HUD_SIZE, GameSettings.MAX_HUD_SIZE) / 100.0
 
 
 ## The HUD's scale now: screen pixels per layout page pixel.
@@ -165,6 +163,7 @@ func _layout_root() -> void:
 	_apply_layout()
 	_layout_airtime()
 	_layout_drift()
+	_place_multiplier()
 
 
 ## The movable piece with HudLayout id `id` (T-453), or null.
@@ -175,7 +174,6 @@ func piece(id: String) -> Control:
 		"coins": return coins_label.get_parent() as Control if coins_label != null else null
 		"clock": return timer_clock
 		"sub_goal": return sub_goal
-		"viewers": return viewers_counter
 	return null
 
 
@@ -240,18 +238,12 @@ func reset_layout() -> void:
 
 
 ## Places every movable piece: the moved ones by the layout, the others at their default places.
-## The sub goal moves up clear of the viewers counter (T-431) only while both are at their defaults.
+## Every piece at its place (the sub goal no longer needs to clear a counter, T-514).
 func _apply_layout() -> void:
 	if _default_offsets.is_empty():
 		return
 	for id in HudLayout.PIECES:
 		_apply_piece(id)
-	if layout.has("sub_goal"):
-		return
-	if layout.has("viewers"):
-		sub_goal.keep_above(INF, root.size.y)
-	else:
-		sub_goal.keep_above(root.size.y + viewers_counter.offset_top - MARGIN, root.size.y)
 
 
 func _apply_piece(id: String) -> void:
@@ -279,11 +271,11 @@ func to_layout(screen_point: Vector2) -> Vector2:
 	return root.get_global_transform().affine_inverse() * screen_point
 
 
-## The reaction icons (T-351): under every other HUD piece, fed the viewers counter's step.
+## The reaction icons (T-351): under every other HUD piece, fed the multiplier's step.
 func _build_reactions() -> void:
 	reactions = Reactions.new()
 	reactions.step_source = func() -> int:
-		return viewers_counter.step if viewers_counter != null else 0
+		return multiplier_tag.step if multiplier_tag != null else 0
 	root.add_child(reactions)
 
 
@@ -394,10 +386,17 @@ func _build_bottom() -> void:
 	combo_heat.setup(null, likes_fire)
 
 
-## The live viewers counter (T-336), anchored to the bottom-right corner (hud.json).
-func _build_viewers() -> void:
-	viewers_counter = ViewersCounter.new()
-	root.add_child(viewers_counter)
+## The multiplier beside the car (T-514): placed each frame next to the car's screen place
+## (the camera keeps the car at the centre, as for the airtime and drift counters).
+func _build_multiplier() -> void:
+	multiplier_tag = MultiplierTag.new()
+	root.add_child(multiplier_tag)
+	_place_multiplier()
+
+
+func _place_multiplier() -> void:
+	if multiplier_tag != null:
+		multiplier_tag.follow(root.size / 2.0)
 
 
 func _build_coins() -> void:
@@ -444,6 +443,7 @@ func bind(state: RunState) -> void:
 		_state.combo_broken.disconnect(_on_combo_broken)
 		_state.level_up.disconnect(_on_level_up)
 	_state = state
+	weapon_icons.setup_power_ups(state)
 	_state.time_left_changed.connect(_on_time_left_changed)
 	_state.health_changed.connect(_on_health_changed)
 	_state.xp_changed.connect(_on_xp_changed)
@@ -462,7 +462,7 @@ func bind(state: RunState) -> void:
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
 	_on_coins_changed(_state.coins)
-	viewers_counter.reset(_state.combo)
+	multiplier_tag.reset(_state.combo)
 	_on_combo_changed(_state.combo)
 
 
@@ -547,42 +547,42 @@ func _on_coins_changed(coins: int) -> void:
 
 
 func _on_combo_changed(multiplier: float) -> void:
-	viewers_counter.set_multiplier(multiplier)
+	multiplier_tag.set_multiplier(multiplier)
 	combo_heat.set_multiplier(multiplier)
 
 
-## A crash cut the combo (T-336): the counter flashes red and drops the viewers lost.
+## A crash cut the combo: the multiplier flashes red and drops what was lost (T-514).
 func _on_combo_broken() -> void:
-	viewers_counter.crash(viewers_counter.last_loss())
-	# T-356: the stream reacts badly, from the counter's lane.
-	reactions.bad_burst(to_layout(viewers_counter.get_global_rect().get_center()).y)
+	multiplier_tag.crash(multiplier_tag.last_loss())
+	# T-356: the stream reacts badly, rising from the multiplier's height.
+	reactions.bad_burst(to_layout(multiplier_tag.get_global_rect().get_center()).y)
 
 
-## Flies the trick popups' "+viewers" into the viewers counter from now on (T-336):
-## the counter holds a trick's viewers back until its amount lands. The run scene
-## calls it once the popups exist.
+## Flies the trick popups' "+x0.5" into the multiplier from now on (T-336, T-514): the
+## multiplier holds a trick's add back until its amount lands. The run scene calls it once
+## the popups exist.
 func bind_popups(popups: Node) -> void:
 	if _popups != null and is_instance_valid(_popups):
-		_popups.viewers_popup.disconnect(_on_viewers_popup)
+		_popups.gain_popup.disconnect(_on_gain_popup)
 		_popups.amount_detached.disconnect(_on_amount_detached)
 	_popups = popups
 	popups.fly_amounts = true
-	popups.viewers_popup.connect(_on_viewers_popup)
+	popups.gain_popup.connect(_on_gain_popup)
 	popups.amount_detached.connect(_on_amount_detached)
 
 
-func _on_viewers_popup(p: Node2D) -> void:
-	viewers_counter.hold(p.viewers_gain)
-	# A popup pushed out before its amount left (the three-popup limit): no flight,
-	# the viewers count in at once.
+func _on_gain_popup(p: Node2D) -> void:
+	multiplier_tag.hold(p.gain)
+	# A popup pushed out before its amount left (the three-popup limit): no flight, the add
+	# counts in at once.
 	p.tree_exiting.connect(func() -> void:
 		if not p.amount_gone:
-			viewers_counter.release(p.viewers_gain))
+			multiplier_tag.release(p.gain))
 
 
 func _on_amount_detached(p: Node2D, screen_at: Vector2) -> void:
 	var amount: String = TrickPopupArt.split_text(p.text)[1]
-	viewers_counter.fly_in(amount, p.viewers_gain, screen_at)
+	multiplier_tag.fly_in(amount, p.gain, screen_at)
 
 
 ## The combo's heat step now (0 base, 1 from x2, 2 from x3, 3 from x4; T-131).

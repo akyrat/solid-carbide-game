@@ -41,17 +41,17 @@ func test_clock_is_not_at_the_top_centre() -> void:
 
 func test_colour_at_each_switch_point() -> void:
 	var c := _hud().timer_clock
-	var cases := [[480.0, "green"], [180.1, "green"], [180.0, "yellow"], [90.1, "yellow"],
-		[90.0, "orange"], [30.1, "orange"], [30.0, "red"], [0.0, "red"]]
+	var cases := [[RunState.RUN_SECONDS, "green"], [120.1, "green"], [120.0, "yellow"], [60.1, "yellow"],
+		[60.0, "orange"], [20.1, "orange"], [20.0, "red"], [0.0, "red"]]
 	for case in cases:
 		assert_eq(String(c.step_for(case[0])["name"]), case[1], "%s s left" % case[0])
 
 
 func test_colours_are_green_yellow_orange_red() -> void:
 	var c := _hud().timer_clock
-	var g := c.color_for(300.0)
-	var y := c.color_for(120.0)
-	var o := c.color_for(60.0)
+	var g := c.color_for(200.0)
+	var y := c.color_for(100.0)
+	var o := c.color_for(40.0)
 	var r := c.color_for(10.0)
 	assert_gt(g.g, g.r)
 	assert_true(y.r > 0.9 and y.g > 0.8)

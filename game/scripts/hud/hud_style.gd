@@ -50,7 +50,7 @@ const LABEL_FONT_SIZE := 20
 const LABEL_OUTLINE := 6
 const LABEL_COLOR := Color(0.92, 0.95, 1.0)
 const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
-## The near-black of the heat steps' and the viewers counter's outlines (= OUTLINE_COLOR).
+## The near-black of the heat steps' and the multiplier's outlines (= OUTLINE_COLOR).
 const DARK := OUTLINE_COLOR
 const WHITE := Color(1.0, 1.0, 1.0)
 const BLACK := Color(0.0, 0.0, 0.0)
@@ -70,10 +70,10 @@ const MISSION_INK := Color(0.12, 0.13, 0.2)
 const MISSION_EDGE := Color(0.25, 0.22, 0.2)
 ## The likes heart's red (Visual style, Decisions, "Red after the rebrand"): the heart only.
 const HEART_COLOR := Color(0.86, 0.1, 0.16)
-## The live viewers counter's colours (T-336). data/hud.json (viewers_counter.color,
+## The combo multiplier's colours (T-336, T-514). data/hud.json (multiplier_tag.color,
 ## crash_color) can set them; these are the values when it doesn't.
-const VIEWERS_COLOR := Color("#33e1ff")
-const VIEWERS_CRASH_COLOR := Color("#ff5010")
+const MULTIPLIER_COLOR := Color("#33e1ff")
+const MULTIPLIER_CRASH_COLOR := Color("#ff5010")
 
 # ---------------------------------------------------------------- label roles
 
@@ -82,11 +82,10 @@ const CLOCK_FONT_SIZE := 52
 const WEAPON_COUNT_SIZE := 32
 const WEAPON_COUNT_OUTLINE := 8
 const AIR_COUNTER_SIZE := 30
-const VIEWERS_UNIT_SIZE := 14
-## The viewers number's size per heat step when data/hud.json (viewers_counter.number_sizes) has none.
-const VIEWERS_NUMBER_SIZES := [28, 30, 32, 34]
-const VIEWERS_FLIGHT_SIZE := 30
-const VIEWERS_DROP_SIZE := 24
+## The multiplier number's size per heat step when data/hud.json (multiplier_tag.number_sizes) has none.
+const MULTIPLIER_NUMBER_SIZES := [28, 30, 32, 34]
+const MULTIPLIER_FLIGHT_SIZE := 30
+const MULTIPLIER_DROP_SIZE := 24
 const LEVEL_UP_TITLE_SIZE := 40
 const LEVEL_UP_CARD_TITLE_SIZE := 36
 const LEVEL_UP_CARD_DESC_SIZE := 24
@@ -116,14 +115,12 @@ const LABELS := {
 	"weapon_count": {"font": "comic", "size": WEAPON_COUNT_SIZE, "color": WHITE, "outline_color": BLACK, "outline": WEAPON_COUNT_OUTLINE},
 	# The airtime and drift counters' numbers (T-243, T-247).
 	"air_counter": {"font": "comic", "size": AIR_COUNTER_SIZE, "color": WHITE, "outline_color": BLACK, "outline": 8},
-	# The live viewers counter's number (T-336): its size and colour follow the heat step.
-	"viewers_number": {"font": "comic", "outline_color": DARK, "outline": 8},
-	# "WATCHING" under it, in the viewers colour.
-	"viewers_unit": {"font": "comic", "size": VIEWERS_UNIT_SIZE, "color": VIEWERS_COLOR, "outline_color": DARK, "outline": 6},
-	# A trick's "+12K" flying into the counter, in the viewers colour.
-	"viewers_flight": {"font": "comic", "size": VIEWERS_FLIGHT_SIZE, "color": VIEWERS_COLOR, "outline_color": DARK, "outline": 6},
-	# A crash's "-12K" dropping off the counter, in the crash colour.
-	"viewers_drop": {"font": "comic", "size": VIEWERS_DROP_SIZE, "color": VIEWERS_CRASH_COLOR, "outline_color": DARK, "outline": 6},
+	# The combo multiplier beside the car (T-514): its size and colour follow the heat step.
+	"multiplier_number": {"font": "comic", "outline_color": DARK, "outline": 8},
+	# A trick's "+x0.5" flying into the multiplier, in its colour.
+	"multiplier_flight": {"font": "comic", "size": MULTIPLIER_FLIGHT_SIZE, "color": MULTIPLIER_COLOR, "outline_color": DARK, "outline": 6},
+	# A crash's "-x1.5" dropping off the multiplier, in the crash colour.
+	"multiplier_drop": {"font": "comic", "size": MULTIPLIER_DROP_SIZE, "color": MULTIPLIER_CRASH_COLOR, "outline_color": DARK, "outline": 6},
 	# The pause strip (T-015, T-124): Bangers in capitals (T-429), the theme's colours.
 	"pause_title": {"font": "comic", "size": 28, "caps": true},
 	"pause_text": {"font": "comic", "size": 16, "caps": true},
@@ -184,7 +181,7 @@ const POPUP_PALETTE := [
 	Color8(255, 184, 41),   # flame: orange-yellow
 	Color8(255, 153, 20),   # flame: orange
 	Color8(8, 8, 15),       # "+amount" at heat 0 and 1
-	Color8(51, 225, 255),   # the viewers amount: the viewers colour (hud.json viewers_counter.color)
+	Color8(51, 225, 255),   # the multiplier amount: the multiplier colour (hud.json multiplier_tag.color)
 ]
 ## The popups' lettering per size style: font pixel size, text outline and shadow
 ## (none: black letters on white need none).

@@ -56,6 +56,8 @@ const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The placeholder boost effect (task T-008, boost_effect.gd).
 const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
+## The Drift Guide (task T-517, drift_guide.gd): the predicted-path arrow during a drift.
+const DriftGuideScript := preload("res://scripts/driving/drift_guide.gd")
 ## The Rev Charge placeholder effect (task T-460).
 const RevChargeEffectScript := preload("res://scripts/driving/rev_charge_effect.gd")
 ## The wreck's smoke and flames (task T-360, wreck_effect.gd; placeholders in code).
@@ -74,7 +76,10 @@ const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 ## The driving power-up gift (task T-459): its choices, and the overlay that shows them.
 const PowerUpOffersScript := preload("res://scripts/run/power_up_offers.gd")
+const GodModeScript := preload("res://scripts/run/god_mode.gd")
 const PowerUpScreenScript := preload("res://scripts/ui/power_up_screen.gd")
+## The Polarized Steering Wheel's tier 4 shock (T-502): Bricks' wave at the car.
+const PolarizedShockScript := preload("res://scripts/driving/polarized_shock.gd")
 ## The gift pack drop (task T-144): a helicopter drops a package per level-up; driving over it opens the level-up screen.
 const GiftDropsScript := preload("res://scripts/run/gift_drops.gd")
 ## The pickup magnet (task T-222): pulls coins, gift packs and health drops near the car to it.
@@ -83,6 +88,8 @@ const PickupMagnetScript := preload("res://scripts/run/pickup_magnet.gd")
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 ## The car's round shadow on the ground (task T-187), drawn with the elevation map only.
 const CarShadowScript := preload("res://scripts/driving/car_shadow.gd")
+## The rain over the map (task T-507, rain.gd): over the world, under the HUD.
+const RainScript := preload("res://scripts/level/rain.gd")
 
 ## Which map a run plays on (task T-206): true, the elevation sample map's
 ## layout with its rooftops and ramps; false, the MVP map (as before T-206).
@@ -130,6 +137,8 @@ var drift_smoke: Node2D
 ## The placeholder boost effect (task T-008): streaks behind the car when W
 ## snaps it to cruise speed. Child "BoostEffect" of the View, under the car.
 var boost_effect: Node2D
+## The Drift Guide (T-517); follows GameSettings' drift_guide_enabled at once.
+var drift_guide: Node2D
 ## The Rev Charge placeholder effect (task T-460, rev_charge_effect.gd): a glow at
 ## the rear while charging, speed lines while boosting. Child "RevChargeEffect" of
 ## the View, drawn over the car.
@@ -177,8 +186,12 @@ var weapons: Node
 var level_up_screen: CanvasLayer
 ## The driving power-up gift's choices (task T-459, power_up_offers.gd): child "PowerUpOffers".
 var power_up_offers: PowerUpOffers
+## God mode (task T-504, god_mode.gd): child "GodMode".
+var god_mode: Node
 ## The driving power-up overlay (task T-459, power_up_screen.gd): child "PowerUpScreen".
 var power_up_screen: CanvasLayer
+## The Polarized Steering Wheel's tier 4 shock (T-502, polarized_shock.gd): child "PolarizedShock".
+var polarized_shock: Node
 ## The sound effects (task T-077, run_sounds.gd): child "Sounds".
 var sounds: Node
 ## The gift pack drop (task T-144, gift_drops.gd): child "GiftDrops", drawn
@@ -204,6 +217,9 @@ var elevation = null
 ## The car's round shadow (car_shadow.gd), child "CarShadow" of the run, just
 ## before View; shown on the elevation map only.
 var shadow: Node2D
+## The rain (task T-507, rain.gd), a CanvasLayer child "Rain" of the run between the world
+## (layer 0) and the HUD (layer 10); it follows GameSettings' rain_enabled at once.
+var rain: CanvasLayer
 
 
 func _ready() -> void:
@@ -241,6 +257,11 @@ func _ready() -> void:
 	boost_effect.view_transform = ISO_TRANSFORM
 	view_root.add_child(boost_effect)
 	view_root.move_child(boost_effect, car_sprite.get_index())  # under the car
+
+	drift_guide = DriftGuideScript.new()
+	drift_guide.view_transform = ISO_TRANSFORM
+	view_root.add_child(drift_guide)
+	view_root.move_child(drift_guide, car_sprite.get_index())  # under the car
 
 	rev_charge_effect = RevChargeEffectScript.new()
 	rev_charge_effect.name = "RevChargeEffect"
@@ -284,6 +305,8 @@ func _ready() -> void:
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
 
+	rain = RainScript.new()
+	add_child(rain)
 	hud = HudScene.instantiate()
 	add_child(hud)
 	hud.bind(state)
@@ -311,6 +334,12 @@ func _ready() -> void:
 	add_child(weapons)
 	weapons.bind(self)
 	hud.bind_weapons(weapons)
+	# The Polarized Steering Wheel's tier 4 shock (T-502): Bricks' code, the rack's enemies.
+	polarized_shock = PolarizedShockScript.new()
+	polarized_shock.name = "PolarizedShock"
+	add_child(polarized_shock)
+	if car != null and is_instance_valid(car):
+		polarized_shock.bind(weapons, car)
 	# The level-up screen (T-052) opens when the car drives over the gift pack's
 	# package (T-144, gift_drops below), which pauses the run for the weapon
 	# choice; a level-up itself no longer pauses (the switch stays off).
@@ -329,6 +358,11 @@ func _ready() -> void:
 	power_up_screen.name = "PowerUpScreen"
 	add_child(power_up_screen)
 	power_up_screen.setup(power_up_offers)
+	# God mode (T-504): the secret N key and the tier API.
+	god_mode = GodModeScript.new()
+	god_mode.name = "GodMode"
+	add_child(god_mode)
+	god_mode.bind(self)
 	level_up_screen.hold = power_up_offers.is_showing
 	power_up_offers.closed.connect(level_up_screen.show_held)
 	# Rev Charge (T-460): the car's charge follows the owned tier.
@@ -355,7 +389,7 @@ func _ready() -> void:
 
 ## Starts a fresh run: a new map (every challenge open again, when challenges
 ## are on; meteor boulders from the last run gone), the car back
-## at the start, and the state reset (full health, 8:00, 0 coins).
+## at the start, and the state reset (full health, 4:00, 0 coins).
 ## `path`, when given, becomes the run's layout_path first (task T-230).
 func start_run(path: String = "") -> void:
 	Perf.begin(&"run.start_run")
@@ -400,6 +434,7 @@ func _build_world() -> void:
 	# Back to the street's drawing until sync_view() places them (T-206).
 	drift_smoke.position = Vector2.ZERO
 	boost_effect.position = Vector2.ZERO
+	drift_guide.position = Vector2.ZERO
 	rev_charge_effect.position = Vector2.ZERO
 	car_sprite.set_in_air(false)
 	# Drift marks go on the ground: right after the ground tiles in the map's
@@ -453,6 +488,11 @@ func _build_world() -> void:
 	# Boost effect (T-008): when W snaps the car to cruise speed.
 	boost_effect.clear()
 	boost_effect.bind(car)
+	# Drift Guide (T-517): the path ends where the car would hit a wall (test_move, no side effects).
+	drift_guide.bind(car)
+	drift_guide.blocked = func(from_units: Vector2, to_units: Vector2) -> bool:
+		return car.test_move(Transform2D(car.rotation, from_units * CarScript.PX_PER_UNIT),
+				(to_units - from_units) * CarScript.PX_PER_UNIT)
 	# Rev Charge (T-460): the tier owned now, and its placeholder effect.
 	_apply_rev_charge_tier()
 	rev_charge_effect.bind(car)
@@ -490,8 +530,9 @@ func _build_world() -> void:
 	var the_car = car
 	car.stepped.connect(func() -> void:
 		Perf.begin(&"map.car_obstacles")
-		the_map.update_car_obstacles(the_car, the_car.height)
+		the_map.update_car_obstacles(the_car, the_car.height, the_car.vertical_speed)
 		Perf.end(&"map.car_obstacles"))
+	car.floor_query = func() -> float: return the_map.obstacle_floor(the_car, the_car.height, the_car.vertical_speed)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
@@ -635,6 +676,7 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
 	drift_smoke.position = lift
 	boost_effect.position = lift
+	drift_guide.position = lift
 	rev_charge_effect.position = lift
 	Perf.begin(&"level.car_depth_sort")
 	view_root.z_index = elevation.z_for(units, car.rotation, car.height)
@@ -661,13 +703,18 @@ func set_zoom(orthographic_size: float) -> void:
 	camera_follow.set_base_size(orthographic_size)  # applies the zoom
 
 
-## Rev Charge (task T-460) and Jump (task T-461): gives the car the owned tiers (0 = not
+## Rev Charge (task T-460), Jump (task T-461), Bouncy Bumpers (T-462) and the
+## Polarized Steering Wheel (T-502): gives the car the owned tiers (0 = not
 ## owned; a new run's power-ups start at 0, RunState.start_run).
 func _apply_rev_charge_tier() -> void:
 	if car != null and is_instance_valid(car):
 		car.rev_charge.set_tier(state.power_up_tier("rev_charge"))
 		car.jump.set_tier(state.power_up_tier("jump"))
 		car.set_bouncy_bumpers_tier(state.power_up_tier("bouncy_bumpers"))
+		# T-502: the Polarized Steering Wheel, and its tier 4 shock bound to this car.
+		car.polarized.set_tier(state.power_up_tier("polarized_steering_wheel"))
+		if polarized_shock != null and weapons != null:
+			polarized_shock.bind(weapons, car)
 
 
 ## Reads the saved camera options (task T-123) and applies them at once.

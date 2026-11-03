@@ -117,15 +117,23 @@ static func format_number(v: Variant) -> String:
 
 
 ## A power-up's description at `tier`: the template with its slots filled from that
-## tier's numbers (`bounce_multiplier` is bounce_distance_multiplier, T-456).
+## tier's numbers (`bounce_multiplier` is bounce_distance_multiplier, T-456;
+## `burst_percent` is the burst's extra speed as a whole percent, T-502). At the last
+## tier a power-up shows its descriptions_last_tier line (T-519: the 4-minute run has 2
+## tiers, and the last tier is the old tier 4; the Polarized Steering Wheel's names its shock).
 static func describe(the_data: PowerUpData, id: String, tier: int) -> String:
 	var template := String(texts().get("descriptions", {}).get(id, ""))
+	var last: Dictionary = texts().get("descriptions_last_tier", {})
+	if tier >= the_data.max_tier(id) and last.has(id):
+		template = String(last[id])
 	var values := {}
 	var numbers := the_data.at(id, tier)
 	for k in numbers:
 		values[k] = format_number(numbers[k])
 	if numbers.has("bounce_distance_multiplier"):
 		values["bounce_multiplier"] = format_number(numbers["bounce_distance_multiplier"])
+	if numbers.has("burst_speed_multiplier"):
+		values["burst_percent"] = str(roundi((float(numbers["burst_speed_multiplier"]) - 1.0) * 100.0))
 	return template.format(values)
 
 
@@ -151,6 +159,7 @@ func setup(the_offers: PowerUpOffers) -> void:
 	_root = Control.new()
 	_root.name = "PowerUpScreen"
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	UiScale.keep(_root)  # scales with the window like the HUD (T-494)
 	_root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_root)
 	_dim = ColorRect.new()

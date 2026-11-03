@@ -13,7 +13,7 @@ extends SceneTree
 ## user://gallery_*.* files, which are deleted first. A screen it can't reach is written in the
 ## manifest under "not_reached" with the reason; the script still exits 0.
 
-const SIZE := Vector2i(1280, 720)
+var SIZE := Vector2i(1280, 720)  ## 1280 x 720, or --size=WxH (the scaling scan, T-493)
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
 var _out := ""
@@ -26,6 +26,9 @@ func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--out="):
 			_out = arg.substr(6)
+		elif arg.begins_with("--size="):
+			var parts := arg.substr(7).split("x")
+			SIZE = Vector2i(int(parts[0]), int(parts[1]))
 	if _out == "":
 		printerr("screen_gallery.gd: need --out=<folder>")
 		quit(1)
@@ -52,7 +55,7 @@ func _run() -> void:
 	await _recaps()
 	_not_reached.append({"name": "runs_list", "reason": "the runs list (Past streams) is not in the game yet: its texts exist (runs_list_text.json) but no screen reads them"})
 
-	var manifest := {"size": [SIZE.x, SIZE.y], "screens": _shots, "not_reached": _not_reached}
+	var manifest := {"size": [SIZE.x, SIZE.y], "actual_window": [root.size.x, root.size.y], "screens": _shots, "not_reached": _not_reached}
 	var f := FileAccess.open(_out.path_join("manifest.json"), FileAccess.WRITE)
 	f.store_string(JSON.stringify(manifest, "  ") + "\n")
 	f.close()
@@ -101,13 +104,13 @@ func _hud() -> void:
 	run.power_up_screen.visible = false  # the overlay opens on each completed mission
 	await _frames(10)
 	await _shot("hud_mission_page", "Run: mission 1 done, mission 2 half way, so the notebook page shows a count.")
-	# Popups over the car: a trick with its viewers, a score and the cracked combo broken.
+	# Popups over the car: a trick with its multiplier add, a score and the cracked combo broken.
 	run.power_up_screen.visible = false
 	var state: RunState = run.state
 	for i in 3:
 		state.add_trick("three_sixty")
 	await _frames(14)
-	await _shot("hud_trick_popup", "Run: a trick popup with its viewers over the car.")
+	await _shot("hud_trick_popup", "Run: a trick popup with its multiplier add over the car.")
 	state.combo_broken.emit()
 	await _frames(10)
 	await _shot("hud_combo_broken", "Run: the combo broken popup.")
@@ -258,12 +261,33 @@ func _shot(shot_name: String, how: String) -> void:
 	if image == null or image.is_empty():
 		_not_reached.append({"name": shot_name, "reason": "the viewport gave no image (run with a window, not --headless)"})
 		return
-	if image.get_size() != SIZE:
+	if SIZE == Vector2i(1280, 720) and image.get_size() != SIZE:
 		image.resize(SIZE.x, SIZE.y, Image.INTERPOLATE_NEAREST)
 	var file := shot_name + ".png"
 	var err := image.save_png(_out.path_join(file))
 	if err != OK:
 		_not_reached.append({"name": shot_name, "reason": "saving the PNG failed (error %d)" % err})
 		return
-	_shots.append({"name": shot_name, "file": file, "how": how})
+	var win := Vector2(image.get_size())
+	_shots.append({"name": shot_name, "file": file, "how": how, "image_size": [image.get_width(), image.get_height()], "pieces": _pieces(win)})
 	print("screen_gallery.gd: saved ", file)
+
+
+## The visible Controls that show something (T-493, the scaling scan): path, class and pixel rect.
+## Ones that fill the window are left out, they are backgrounds, not content.
+func _pieces(win: Vector2) -> Array:
+	var out: Array = []
+	_collect(root, win, out)
+	return out
+
+
+func _collect(n: Node, win: Vector2, out: Array) -> void:
+	if n is Control:
+		var c := n as Control
+		if c.is_visible_in_tree() and c.modulate.a > 0.05 and c.self_modulate.a > 0.05 				and (c is Label or c is RichTextLabel or c is BaseButton or c is TextureRect or c is Range 				or c is Panel or c is PanelContainer or c is LineEdit or c is TextureProgressBar):
+			var r := c.get_global_rect()
+			if r.size.x > 1 and r.size.y > 1 and not (r.size.x >= win.x * 0.95 and r.size.y >= win.y * 0.95):
+				out.append({"path": String(c.get_path()).replace("/root/", ""), "class": c.get_class(),
+					"rect": [snappedf(r.position.x, 0.1), snappedf(r.position.y, 0.1), snappedf(r.size.x, 0.1), snappedf(r.size.y, 0.1)]})
+	for ch in n.get_children():
+		_collect(ch, win, out)

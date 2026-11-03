@@ -96,7 +96,7 @@ func test_snap_grid_edges_and_on_screen() -> void:
 
 func test_clean_drops_bad_entries() -> void:
 	var l := HudLayout.clean({"clock": {"ax": 0, "ay": 1, "dx": 5, "dy": -3},
-		"viewers": {"ax": 2.0, "ay": 0, "dx": 0, "dy": 0}, "nope": {"ax": 0, "ay": 0, "dx": 0, "dy": 0},
+		"coins": {"ax": 2.0, "ay": 0, "dx": 0, "dy": 0}, "nope": {"ax": 0, "ay": 0, "dx": 0, "dy": 0},
 		"hearts": "x"})
 	assert_eq(l.keys(), ["clock"])
 	assert_eq(l.clock, {"ax": 0.0, "ay": 1.0, "dx": 5.0, "dy": -3.0})
@@ -185,12 +185,12 @@ func test_dragging_empty_space_moves_nothing() -> void:
 
 
 func test_layout_holds_at_two_window_sizes_and_two_hud_sizes() -> void:
-	# Move three pieces at 1152 x 648: the clock to the top right, the viewers counter to the
+	# Move three pieces at 1152 x 648: the clock to the top right, the coins to the
 	# left middle, the sub goal to the top left area under the weapons.
 	var base := _hud_at(Vector2i(1152, 648))
 	await get_tree().process_frame
 	base.move_piece("clock", Vector2(936, 16))
-	base.move_piece("viewers", Vector2(16, 300))
+	base.move_piece("coins", Vector2(16, 300))
 	base.move_piece("sub_goal", Vector2(500, 450))
 	var layout := base.layout.duplicate(true)
 	assert_eq(layout.keys().size(), 3)
@@ -213,10 +213,10 @@ func test_layout_holds_at_two_window_sizes_and_two_hud_sizes() -> void:
 			var clock := hud.piece_rect("clock")
 			assert_almost_eq(area.x - clock.end.x, 1152.0 - ref.clock.end.x, EPS, "%s: clock's right margin" % where)
 			assert_almost_eq(clock.position.y, ref.clock.position.y, EPS, "%s: clock's top margin" % where)
-			var v := hud.piece_rect("viewers")
-			assert_almost_eq(v.position.x, ref.viewers.position.x, EPS, "%s: viewers' left margin" % where)
-			assert_almost_eq(v.get_center().y - area.y / 2.0, ref.viewers.get_center().y - 324.0, EPS,
-				"%s: viewers centred on the height" % where)
+			var v := hud.piece_rect("coins")
+			assert_almost_eq(v.position.x, ref.coins.position.x, EPS, "%s: coins' left margin" % where)
+			assert_almost_eq(v.get_center().y - area.y / 2.0, ref.coins.get_center().y - 324.0, EPS,
+				"%s: coins centred on the height" % where)
 			var sg := hud.piece_rect("sub_goal")
 			assert_almost_eq(sg.get_center().x - area.x / 2.0, ref.sub_goal.get_center().x - 576.0, EPS,
 				"%s: sub goal centred on the width" % where)
@@ -259,22 +259,20 @@ func test_reset_returns_every_piece_to_the_default() -> void:
 	assert_false(cfg.has_section("hud_layout"), "no layout left in the file")
 
 
-func test_reset_at_a_big_hud_keeps_the_sub_goal_clear_of_the_viewers() -> void:
+func test_reset_at_a_big_hud_keeps_the_sub_goal_in_place() -> void:
 	var hud := _hud_at(Vector2i(1152, 648), GameSettings.MAX_HUD_SIZE)
 	await get_tree().process_frame
 	var before := hud.piece_rect("sub_goal")
 	hud.move_piece("sub_goal", Vector2(400, 100))
 	hud.reset_layout()
 	assert_almost_eq(hud.piece_rect("sub_goal").position, before.position, Vector2(EPS, EPS))
-	assert_lt(hud.sub_goal.get_global_rect().end.y, hud.viewers_counter.get_global_rect().position.y,
-		"still above the viewers counter")
 
 
 func test_saved_layout_is_used_by_a_run_started_by_the_game_flow() -> void:
-	GameSettings.save_hud_layout({"viewers": {"ax": 0.0, "ay": 0.0, "dx": 16.0, "dy": 200.0}})
+	GameSettings.save_hud_layout({"coins": {"ax": 0.0, "ay": 0.0, "dx": 16.0, "dy": 200.0}})
 	var holder := Node.new()
 	add_child_autofree(holder)
 	var run: Node2D = GameFlow.add_run(holder, PlayerProgress.new())
 	await get_tree().process_frame
-	assert_eq(run.hud.layout.keys(), ["viewers"], "the run's HUD has the saved layout")
-	assert_almost_eq(run.hud.piece_rect("viewers").position, Vector2(16, 200), Vector2(EPS, EPS))
+	assert_eq(run.hud.layout.keys(), ["coins"], "the run's HUD has the saved layout")
+	assert_almost_eq(run.hud.piece_rect("coins").position, Vector2(16, 200), Vector2(EPS, EPS))

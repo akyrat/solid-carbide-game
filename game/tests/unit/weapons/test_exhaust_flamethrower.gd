@@ -349,10 +349,149 @@ func test_entering_hit_flashes_the_enemy_for_the_burn_time() -> void:
 	assert_true(flame.is_burning(e))
 	assert_eq(e.sprite.modulate, flame.burn_tint, "orange tint")
 	assert_true(BurnFlames.is_burning(e), "T-071: the flames are drawn on it")
-	_hold(false, int(round(s["burn_flash_seconds"] / DT)) + 1)
+	# T-497: the burn counts from the last step the enemy touches the flame, so
+	# through the flame's linger (it stays inside) and then the burn time.
+	_hold(false, int(round((s["linger"] + s["burn_flash_seconds"]) / DT)) + 1)
 	assert_false(flame.is_burning(e))
 	assert_eq(e.sprite.modulate, Color.WHITE, "tint back to normal")
 	assert_false(BurnFlames.is_burning(e), "T-071: and the flames go with the flash")
+
+
+# --- Afterburn (T-497) ------------------------------------------------------
+## Weapons, Decisions, "The board's own upgrade trees" (Hot Take Exhaust): an
+## enemy that leaves the flame keeps taking the flame's damage every
+## tick_interval for its burn time. Burn times are set in the stats directly
+## (T-496 changes the tier data separately).
+
+## Where an enemy stands clear of the flame: in front of the car.
+func _clear_spot() -> Vector2:
+	return _behind(-6.0)
+
+
+func _inside_spot() -> Vector2:
+	return _behind(Flame.EXHAUST_OFFSET_UNITS + 0.4)
+
+
+## Steps the flamethrower (drifting, so the flame is on) `steps` times and
+## returns the step numbers (from `first`) on which `e` was hit.
+func _hits_over(e: Node, steps: int, first: int, drifting := true) -> Array:
+	var at := []
+	for i in steps:
+		var before: int = e.damage_taken.size()
+		_hold(drifting, 1)
+		for k in e.damage_taken.size() - before:
+			at.append(first + i)
+	return at
+
+
+## Every hit an enemy takes from entering the flame for one step and then
+## leaving, as step numbers (0 = the entering step), with `burn` seconds of burn.
+func _afterburn_hit_steps(burn: float, drifting_after := true) -> Array:
+	flame.stats["burn_flash_seconds"] = burn
+	var e := _enemy_at(_inside_spot())
+	var at := _hits_over(e, 1, 0)
+	e.position = _clear_spot() * 16.0
+	at.append_array(_hits_over(e, int(round(burn / DT)) + 40, 1, drifting_after))
+	return at
+
+
+## The hits expected: the entering one, then one every tick_interval while the
+## burn lasts (one due on the step it ends still lands). The entering step counts
+## on the enemy's clock, so the next hit is tick_interval / DT - 1 steps later.
+func _expected_steps(burn: float) -> Array:
+	var tick_steps := int(round(float(flame.stats["tick_interval"]) / DT))
+	var out := [0]
+	var k := tick_steps - 1
+	while k <= int(round(burn / DT)):
+		out.append(k)
+		k += tick_steps
+	return out
+
+
+func test_afterburn_at_tier_1_hits_every_tick_for_the_burn_time_then_stops() -> void:
+	var s: Dictionary = data.flame_at(1)
+	var burn: float = s["burn_flash_seconds"]
+	var at := _afterburn_hit_steps(burn)
+	assert_eq(at, _expected_steps(burn), "entering hit, then one every tick_interval for the burn time")
+	assert_gt(at.size(), 1, "it keeps burning after leaving the flame")
+	# Same with the flame off (no drift) once it has left.
+	_fresh(1)
+	var off := _afterburn_hit_steps(burn, false)
+	assert_eq(off, _expected_steps(burn), "the burn goes on with the flame off")
+	# A longer burn shows the rhythm better: 1 s = 5 more hits, then nothing.
+	_fresh(1)
+	var long := _afterburn_hit_steps(1.0)
+	assert_eq(long, [0, 9, 19, 29, 39, 49], "1 s of burn at 0.2 s ticks: 5 more hits")
+
+
+func test_afterburn_hits_are_the_flames_current_damage() -> void:
+	_fresh(3)
+	flame.stats["burn_flash_seconds"] = 1.0
+	var e := _enemy_at(_inside_spot())
+	_hold(true, 1)
+	e.position = _clear_spot() * 16.0
+	_hold(false, 60)
+	assert_eq(e.damage_taken.size(), 6)
+	for a in e.damage_taken:
+		assert_almost_eq(float(a), float(data.flame_at(3)["damage"]), 1e-9, "tier 3's 2.4 every hit")
+
+
+func test_two_more_seconds_of_burn_keep_it_burning_two_seconds_longer() -> void:
+	var base: float = data.flame_at(1)["burn_flash_seconds"]
+	var at := _afterburn_hit_steps(base + 2.0)
+	assert_eq(at, _expected_steps(base + 2.0), "hits every tick for burn + 2 s")
+	assert_eq(at.size() - _expected_steps(base).size(), 10, "2 s more = 10 more hits at 0.2 s")
+	assert_eq(at[-1], int(round((base + 2.0) / DT)), "the last hit on the step the burn ends")
+
+
+func test_an_enemy_inside_and_burning_takes_one_hit_per_tick() -> void:
+	flame.stats["burn_flash_seconds"] = 1.0
+	var e := _enemy_at(_inside_spot())
+	var at := _hits_over(e, 50, 0)
+	assert_eq(at, [0, 9, 19, 29, 39, 49], "1 s inside: entering hit + 5 ticks, not doubled")
+	# In and out of the flame every few steps while burning: still one hit per tick.
+	var more := []
+	for i in 60:
+		e.position = (_inside_spot() if int(i / 3.0) % 2 == 0 else _clear_spot()) * 16.0
+		more.append_array(_hits_over(e, 1, 50 + i))
+	assert_eq(more, [59, 69, 79, 89, 99, 109], "one hit every tick, none extra for re-entering")
+
+
+func test_re_entering_the_flame_refreshes_the_burn() -> void:
+	var burn := 0.6
+	flame.stats["burn_flash_seconds"] = burn
+	var e := _enemy_at(_inside_spot())
+	_hold(true, 1)
+	e.position = _clear_spot() * 16.0
+	_hold(true, 20)  # 0.4 s out: 0.2 s of burn left
+	assert_true(flame.is_burning(e))
+	e.position = _inside_spot() * 16.0
+	_hold(true, 1)  # back in: the burn is full again
+	e.position = _clear_spot() * 16.0
+	var n := int(round(burn / DT))
+	_hold(true, n - 1)
+	assert_true(flame.is_burning(e), "still burning: the full burn counts from the re-entry")
+	_hold(true, 1)
+	assert_false(flame.is_burning(e), "over exactly a burn time after the last touch")
+
+
+func test_tint_and_burn_flames_stay_on_for_exactly_the_burn_time() -> void:
+	for burn in [float(data.flame_at(1)["burn_flash_seconds"]), 1.0, 2.38]:
+		_fresh(1)
+		flame.stats["burn_flash_seconds"] = burn
+		var e := _enemy_at(_inside_spot())
+		_hold(true, 1)
+		e.position = _clear_spot() * 16.0
+		var n := int(round(burn / DT))
+		for i in n - 1:
+			_hold(false, 1)
+			assert_eq(e.sprite.modulate, flame.burn_tint, "%.2f s burn, step %d: tinted" % [burn, i])
+			assert_true(BurnFlames.is_burning(e), "%.2f s burn, step %d: flames on" % [burn, i])
+		_hold(false, 1)
+		assert_false(flame.is_burning(e), "%.2f s: over" % burn)
+		assert_eq(e.sprite.modulate, Color.WHITE, "%.2f s: tint off" % burn)
+		assert_false(BurnFlames.is_burning(e), "%.2f s: flames off" % burn)
+		e.queue_free()
 
 
 func test_paused_game_stops_the_flame() -> void:
@@ -383,7 +522,7 @@ func test_each_tier_sets_the_datas_values() -> void:
 ## reach is burnt only after the upgrade.
 func test_size_tiers_reach_further() -> void:
 	var car_y: float = _behind(0.0).y
-	for t in [2, 4, 6]:
+	for t in [2, 3]:  # T-520: the size tiers of the 5-tier tree
 		var before: Dictionary = data.flame_at(t - 1)
 		var after: Dictionary = data.flame_at(t)
 		assert_gt(after["size_multiplier"], before["size_multiplier"], "tier %d bigger" % t)
@@ -419,22 +558,22 @@ func test_tier_3_hotter_flame_deals_more_damage() -> void:
 	assert_almost_eq(float(e.damage_taken[0]), want, 1e-9, "2 x 1.2 = 2.4, not rounded")
 
 
-func test_tier_5_burn_flash_lasts_longer() -> void:
-	var short_s: float = data.flame_at(4)["burn_flash_seconds"]
-	var long_s: float = data.flame_at(5)["burn_flash_seconds"]
+func test_tier_4_burn_flash_lasts_longer() -> void:
+	var short_s: float = data.flame_at(3)["burn_flash_seconds"]
+	var long_s: float = data.flame_at(4)["burn_flash_seconds"]
 	assert_gt(long_s, short_s)
-	for t in [4, 5]:
+	for t in [3, 4]:
 		_fresh(t)
 		var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 		_hold(true, 1)
 		e.remove_from_group("enemies")
 		_hold(false, int(round(short_s / DT)) + 1)
-		if t == 4:
-			assert_false(flame.is_burning(e), "tier 4: flash over")
+		if t == 3:
+			assert_false(flame.is_burning(e), "tier 3: flash over")
 		else:
-			assert_true(flame.is_burning(e), "tier 5: still flashing")
+			assert_true(flame.is_burning(e), "tier 4: still flashing")
 			_hold(false, int(round((long_s - short_s) / DT)) + 1)
-			assert_false(flame.is_burning(e), "tier 5: over after its longer time")
+			assert_false(flame.is_burning(e), "tier 4: over after its longer time")
 
 
 func test_tier_7_steering_makes_the_car_turn_faster() -> void:
@@ -448,11 +587,11 @@ func test_tier_7_steering_makes_the_car_turn_faster() -> void:
 	assert_almost_eq(run.car.model.tuning.turn_speed, base * m, 1e-9, "applied once")
 
 
-func test_tier_8_always_on_without_drifting_at_full_size() -> void:
-	_fresh(7)
+func test_tier_5_always_on_without_drifting_at_full_size() -> void:
+	_fresh(4)
 	_hold(false, 1)
 	assert_false(flame.active)
-	_fresh(8)
+	_fresh(5)
 	_hold(false, 1)
 	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.3))
 	_hold(false, 1)

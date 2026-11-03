@@ -27,7 +27,7 @@ func test_placeholder_when_there_is_no_splash() -> void:
 		await wait_process_frames(2)
 		assert_null(bare.splash_rect)
 		assert_eq(bare.background.color, MainMenu.PLACEHOLDER_COLOR)
-		assert_eq(bare.background.size, size)
+		assert_almost_eq(bare.background.get_global_rect().size, size, Vector2(0.5, 0.5), "fills the screen at its scale (T-494)")
 
 
 ## A menu inside a parent of the given screen size, using another image path.
@@ -54,7 +54,7 @@ func test_splash_fills_the_screen_cropped_with_nearest_filtering() -> void:
 		assert_eq(with_splash.splash_rect.stretch_mode, TextureRect.STRETCH_KEEP_ASPECT_COVERED)
 		assert_eq(with_splash.splash_rect.expand_mode, TextureRect.EXPAND_IGNORE_SIZE)
 		assert_eq(with_splash.splash_rect.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
-		assert_eq(with_splash.splash_rect.size, size)
+		assert_almost_eq(with_splash.splash_rect.get_global_rect().size, size, Vector2(0.5, 0.5), "fills the screen at its scale (T-494)")
 	DirAccess.remove_absolute(path)
 
 

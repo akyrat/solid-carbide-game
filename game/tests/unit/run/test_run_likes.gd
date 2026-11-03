@@ -223,7 +223,7 @@ func test_run_scene_drift_pays_its_combo_once_when_it_ends() -> void:
 	assert_almost_eq(run.state.combo, 1.0 + c.drift_amount(seconds), 0.000001, "one payment, scaled by its length")
 	assert_gt(run.state.combo, 1.0)
 	var texts: Array = run.trick_popups.popups().map(func(p) -> String: return p.text)
-	assert_eq(texts.filter(func(t: String) -> bool: return t == TrickPopups.trick_text("extended_drift", TrickPopups.trick_viewers(run.state.combo - 1.0, run.state.combo))).size(), 1, "the popup shows the amount (T-336: as viewers)")
+	assert_eq(texts.filter(func(t: String) -> bool: return t == TrickPopups.trick_text("extended_drift", run.state.combo - 1.0)).size(), 1, "the popup shows the amount (T-336: as viewers)")
 
 
 func test_new_run_resets_xp_and_level() -> void:
@@ -268,7 +268,7 @@ func test_top_level_bar_stops() -> void:
 
 
 ## Task T-328: the new curve. The first four level-ups need clearly fewer likes
-## than the old 100, 125, 156, 195; the total is 3,501 (was 4,255).
+## than the old 100, 125, 156, 195; the total was 3,501 (was 4,255). T-520: 12 level-ups, total 2,360 (the 4-minute run).
 func test_t328_early_levels_need_fewer_likes() -> void:
 	var old := [100.0, 125.0, 156.0, 195.0]
 	for i in 4:
@@ -279,15 +279,15 @@ func test_t328_early_levels_need_fewer_likes() -> void:
 		total += data.xp_needed(l)
 		if l > 1:
 			assert_gt(data.xp_needed(l), data.xp_needed(l - 1), "the curve only rises")
-	assert_eq(total, 3501.0, "total for all 11 level-ups")
-	assert_eq(data.max_level(), 12, "the cap is unchanged")
+	assert_eq(total, 2360.0, "total for all 12 level-ups (T-520)")
+	assert_eq(data.max_level(), 13, "the cap is 13: 12 level-ups (T-520)")
 
 
 func test_t328_one_level_up_per_threshold_and_stops_at_the_cap() -> void:
 	for l in range(1, data.max_level()):
 		state.add_xp(state.xp_needed())
 		assert_eq(state.level, l + 1, "one gift pack's level-up per threshold")
-	assert_eq(levels, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "one level_up each, in order")
+	assert_eq(levels, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], "one level_up each, in order")
 	state.add_xp(5000.0)
 	assert_eq(state.level, data.max_level(), "stops at the cap")
-	assert_eq(levels.size(), 11, "no level-up past the cap")
+	assert_eq(levels.size(), 12, "no level-up past the cap")

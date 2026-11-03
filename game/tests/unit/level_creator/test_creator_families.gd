@@ -284,7 +284,7 @@ func test_a_level_saved_before_plays() -> void:
 	await wait_process_frames(2)
 	assert_eq(run.map.layout_path, OLD_LEVEL)
 	assert_true(run.state.is_running())
-	assert_eq(run.state.time_left_text(), "8:00")
+	assert_eq(run.state.time_left_text(), "4:00")
 	run.queue_free()
 	await wait_process_frames(1)
 	get_tree().paused = false

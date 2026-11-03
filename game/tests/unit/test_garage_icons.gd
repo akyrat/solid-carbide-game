@@ -71,3 +71,14 @@ func test_buying_and_text_unchanged() -> void:
 	assert_eq(row.level.text, "Level 0")
 	row.buy.pressed.emit()
 	assert_eq(row.level.text, "Level 1")
+
+
+## T-511: an export has only the imported texture, so the real icons must come through ResourceLoader.
+func test_res_icons_load_as_imported_textures() -> void:
+	GarageScreen.icon_dir = "res://art/garage"
+	for id in GarageData.UPGRADES:
+		var path := "res://art/garage/%s.png" % id
+		if not ResourceLoader.exists(path):
+			continue
+		var tex := GarageScreen.icon_texture(id)
+		assert_eq(tex.resource_path, path, "%s comes from the imported resource" % id)

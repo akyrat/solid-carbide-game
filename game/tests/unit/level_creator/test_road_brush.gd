@@ -383,7 +383,7 @@ func test_a_painted_level_saves_passes_check_level_and_plays() -> void:
 	var run := GameFlow.add_run(self, PlayerProgress.new(), e.level_path)
 	await wait_process_frames(2)
 	assert_true(run.state.is_running())
-	assert_eq(run.state.time_left_text(), "8:00")
+	assert_eq(run.state.time_left_text(), "4:00")
 	run.queue_free()
 	await wait_process_frames(1)
 	get_tree().paused = false

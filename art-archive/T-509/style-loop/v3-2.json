@@ -1,0 +1,15 @@
+{
+  "file": "v3-2.png",
+  "task": "T-509",
+  "version": 3,
+  "refine_of": "v2-2.png (score 7/10)",
+  "size": "24x16 (3 frames of 8x16), RGBA 8-bit",
+  "pixellab_calls": [],
+  "generations_this_version": 0,
+  "generations_total_so_far": 2,
+  "script": "python game/tools/build_rain_drops_v2.py --version 3 (tests: game/tools/test_build_rain_drops_v2.py, 18 pass for versions 2 and 3)",
+  "changes": "body and tail lifted: mid blue (112,132,204) -> (140,164,214), blue-grey (88,125,165) -> (120,145,188), tail (85,119,157) -> (108,134,172); darkest luminance about 130 (was 114); heads stay near white (249,250,254); variant 3 shorter (6 rows, was 7), 2 px wide on 4 of its rows below a 1-px white tip, only whites and cyan, mean luminance more than 30 above variant 1",
+  "colours": "6: three head colours sampled from PixelLab's T-509 generation raw/v1_raw.png, three blue-greys brightened by script from its sampled body colours",
+  "preview": "art-archive/T-509/screenshots/v3-2_preview_x12.png (nearest-neighbour x12, dark and light background; review only)",
+  "script_checks": "game/tools/style_rules.py art --size 8x16 --frames 3 --max-colors 12: all pass"
+}
