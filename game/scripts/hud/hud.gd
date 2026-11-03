@@ -321,6 +321,9 @@ func bind_car(car: Node) -> void:
 	airtime_counter.stop()
 	drift_counter.stop()
 	car.stepped.connect(_on_car_stepped)
+	# T-528: the Polarized Steering Wheel's cooldown shows on its slot icon.
+	if "polarized" in car:
+		weapon_icons.bind_cooldown("polarized_steering_wheel", car.polarized)
 
 
 func _on_car_stepped() -> void:

@@ -1,7 +1,7 @@
 ---
 id: T-528
 title: The steering wheel's cooldown on its HUD slot icon, like loading
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-527]
+depends_on: []
 documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [docs/hud-and-menus.md, docs/drifting.md, tasks/T-523-weapon-power-up-slots.md, tasks/README.md]
 files_expected_to_change: [game/scripts/hud/, game/tests/, game/docs/, docs/hud-and-menus.md]
@@ -53,10 +53,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-03, Open → In progress
+
+UI agent: the loading fill on the wheel's slot icon, built against T-527's cooldown API in parallel.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. New SlotCooldown (game/scripts/hud/slot_cooldown.gd): a loading veil over the power-up icon, 1 = spent (whole slot veiled), shrinking top-down in 2 px steps with a light edge line, 0 = normal; a 0.3 s white flash on ready_again as the ready cue. Generic: WeaponIcons.bind_cooldown(id, source) takes any object with cooldown_fraction_left() (missing method = always ready, so it runs on today's wheel); Hud.bind_car binds car.polarized to the wheel. Other slots get a veil that draws nothing (tested). Tests: game/tests/unit/hud/test_hud_slot_cooldown.gd (0, 0.5, 1, clamp, no-method, flash, wheel slot vs stub, other slots); the test_hud set passes (205 tests). Not yet run against T-527's real wheel (stub only). Screenshots (stub, full/half/ready, Jump beside it unchanged): art-archive/T-528/screenshots/cooldown_full.png, cooldown_half.png, cooldown_ready.png, cooldown_strip_full_half_ready.png. Docs: docs/hud-and-menus.md (Content, slots), game/docs/hud-and-menus/hud.md. Fill style is a proposal for the playtest.

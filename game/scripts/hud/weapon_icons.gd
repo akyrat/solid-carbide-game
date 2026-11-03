@@ -39,6 +39,9 @@ var power_grid: SlotGrid
 ## The power-up ids shown, in the order collected, and each one's icon.
 var power_order: Array = []
 var power_rows: Dictionary = {}
+## T-528: each power-up icon's cooldown veil, and the sources that have a cooldown (id to object).
+var power_cooldowns: Dictionary = {}
+var cooldown_sources: Dictionary = {}
 var _state: RunState = null
 var _power_data: PowerUpData = null
 ## The weapon id to its row (an icon and a count label).
@@ -104,6 +107,8 @@ func _refresh_power_ups() -> void:
 		if not power_order.has(id):
 			power_rows[id].queue_free()
 			power_rows.erase(id)
+			power_cooldowns[id].queue_free()
+			power_cooldowns.erase(id)
 	for i in SlotGrid.SLOTS:
 		if i >= power_order.size():
 			power_grid.set_slot(i, 0, 0)
@@ -112,9 +117,18 @@ func _refresh_power_ups() -> void:
 		if not power_rows.has(id):
 			power_rows[id] = _make_power_icon(id)
 		var icon: TextureRect = power_rows[id]
+		power_cooldowns[id].position = power_grid.position + SlotGrid.icon_pos(i)
 		# The art is 32 x 32 shown at 1x, centred in the weapon icons' 48 px slot.
 		icon.position = power_grid.position + SlotGrid.icon_pos(i) + (Vector2(ICON_SIZE, ICON_SIZE) - icon.size) / 2.0
 		power_grid.set_slot(i, int(owned[id]), _power_data.max_tier(id))
+
+
+## T-528: a power-up with a cooldown (an object with `cooldown_fraction_left()`, and
+## optionally `signal ready_again`) shows it on its slot icon like a loading bar.
+func bind_cooldown(id: String, source: Object) -> void:
+	cooldown_sources[id] = source
+	if power_cooldowns.has(id):
+		power_cooldowns[id].bind_source(source)
 
 
 func _make_power_icon(id: String) -> TextureRect:
@@ -128,6 +142,11 @@ func _make_power_icon(id: String) -> TextureRect:
 	icon.size = Vector2(icon.texture.get_size()) if icon.texture != null else Vector2(32, 32)
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(icon)
+	var veil := SlotCooldown.new()
+	veil.name = "Cooldown_%s" % id
+	add_child(veil)  # after the icon, so it draws over it
+	power_cooldowns[id] = veil
+	veil.bind_source(cooldown_sources.get(id))
 	return icon
 
 
