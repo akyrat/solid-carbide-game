@@ -3520,3 +3520,8 @@ Entry format:
 - Decision or change: A screen gallery mode captures every player-facing text with its screen, a blanked copy, its box and font, which feeds the board's text editor page.
 - Documents touched: none
 - Tasks: T-524
+
+## 2026-11-03: The board's text edits: tutorial slide 2 and the garage
+- Decision or change: The board rewrote slide 2's trick and weapon captions and the garage's title and damage bonus text on the text pass page.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-525
