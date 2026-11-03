@@ -3455,3 +3455,28 @@ Entry format:
 - Decision or change: The pause settings have a Drift Guide checkbox, off by default.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-518
+
+## 2026-11-03: Texts for the 4-minute run
+- Decision or change: Card texts for the 5-tier weapons and 2-tier power-ups, the heal message, and the run's time in every text.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-519
+
+## 2026-11-03: 5-tier weapons and 2-tier power-ups in data
+- Decision or change: The weapon trees are 5 tiers and the power-ups 2, and the sub goals give about 12 gift packs in a 3-minute build.
+- Documents touched: docs/weapons.md, docs/drifting.md
+- Tasks: T-520
+
+## 2026-11-03: The 4-minute run
+- Decision or change: The kaiju arrives at 3:00 and the run ends at 4:00; at most 3 weapons and 3 power-ups; new weapons at tier 2; a heal once everything is maxed.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-521
+
+## 2026-11-03: Enemies paced for the 4-minute run
+- Decision or change: The minions' ramp peaks before the kaiju at 3:00, and the kaiju's health fits a 3-weapon build.
+- Documents touched: docs/enemies.md
+- Tasks: T-522
+
+## 2026-11-03: Weapon and power-up slots
+- Decision or change: The HUD shows 3 weapon slots and 3 power-up slots with tier pips.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-523

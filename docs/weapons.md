@@ -54,6 +54,14 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
   - **Wiper Blade** (no damage upgrades): 2 length ×1.2 (Longer Blade), 3 sweep speed ×1.25 (Faster Sweep), 4 knockback ×1.5 (Hard Shove), 5 length ×1.3 (Even Longer Blade), 6 sweep speed ×1.3 (Faster Sweep II), 7 length ×1.3 (Longest Blade!), 8 a second wiper at the back of the car (Back Wiper): an exact copy of the front one with all its upgrades, sweeping behind the car, with the same blade art.
   - **Neon Underglow:** unchanged.
   - Card text: the board's titles stay exactly as written; the Narrative Theme Agent writes the missing card texts and corrects numbers that would be wrong, and leaves the board's other wording alone.
+- **Shorter trees: 5 tiers** (board, 2026-11-03, for the 4-minute run, Game loop architecture, Decisions, "A 4-minute run"; replaces the 8-tier trees above, which stay as the record of the board's tiers): each weapon has **5 tiers**. Tier 1 is getting it (the gun at the start; any other weapon arrives straight at **tier 2** when first picked), and the old tiers 2 to 7 are merged in pairs, the same kind of upgrade together, their numbers multiplied, so tier 5 is exactly the old tier 8's power. Mixed pairs are fine (board). The exact stacked numbers stay, not rounded (board). Tier 2 / 3 / 4 / 5:
+  - **Gun:** +2 bullets (old 2+3) / fire rate ×1.44 (old 4+5) / +1 bullet and fire rate ×1.2 (old 6+7) / fire rate ×4 (old 8).
+  - **Hot Take Exhaust:** size ×1.56 (old 2+4) / damage ×1.2 and size ×1.3 (old 3+6) / +2 s burn (old 5+7) / always on (old 8).
+  - **Neon Underglow:** radius ×1.5 (old 2+5) / damage ×2.25 (old 3+6) / tick interval ×0.5 (old 4+7) / radius ×1.3 (old 8). **Open question:** the board did not accept "radius ×1.3" as its last tier; it stays as a placeholder until the board decides the underglow's finale.
+  - **Hot Drop:** fire radius ×1.56 (old 2+7) / +2 molotovs (old 4+5) / throw interval ×0.56 (old 3+6) / +1 molotov, 4 per throw (old 8).
+  - **Wiper Blade:** length ×1.56 (old 2+5) / sweep speed ×1.625 (old 3+6) / knockback ×1.5 and length ×1.3 (old 4+7) / back wiper (old 8).
+  - **Bricks:** radius ×2.1 (old 2+5) / damage ×2.25 (old 3+6) / knockback ×2.25 (old 4+7) / Widest Wave (old 8, its rings at the tier 4 radius).
+  - Card titles: the board's titles where a tier keeps one upgrade; for merged tiers the Narrative Theme Agent combines the board's titles or writes one in the same voice, and the card text gives the merged numbers. (T-519, T-520)
 - **The underglow barely pushes the kaiju** (board, 2026-10-30, audit; answers T-409's open point): the kaiju is pushed very little, just a slight stop at each damage tick. Minions are pushed as T-409 says.
 
 ## Content
