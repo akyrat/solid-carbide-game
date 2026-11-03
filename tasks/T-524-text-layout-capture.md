@@ -50,14 +50,14 @@ The board, 2026-11-03: the board wants a page (built by the Project Lead as a cl
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] One command writes, for each screen it reaches, `<screen>.png` and `<screen>_blank.png` at 1280x720, and `text_layout.json` (checked by running it and by a Python test of the manifest checker). (QA: pass / fail)
-- [ ] Each manifest row has: screen, node path, class, text, rect, font file, font size, font colour, outline, alignment, autowrap, and the inventory source/key when matched (a Python test validates the schema on the real output). (QA: pass / fail)
-- [ ] The level-up weapon card, the power-up card, the missions note line and the trick popup are templates with `template_keys` listing every inventory key that renders into them (checked in the output). (QA: pass / fail)
-- [ ] The font files the rows name are copied into `fonts/` in the output folder. (QA: pass / fail)
-- [ ] The coverage summary lists matched and unmatched inventory rows; at least 80% of the text_files rows are matched or covered by a template (printed by the tool; the reasons for the rest are listed). (QA: pass / fail)
-- [ ] `not_capturable` lists any player-facing text that is not drawn by a Control, with screen and source (empty list allowed if none). (QA: pass / fail)
-- [ ] The screen gallery's existing tests and the new tests pass; the game's Godot test set is unchanged and passes. (QA: pass / fail)
-- [ ] Screenshots: a normal and blank pair in art-archive/T-524/screenshots/. (QA: pass / fail)
+- [ ] One command writes, for each screen it reaches, `<screen>.png` and `<screen>_blank.png` at 1280x720, and `text_layout.json` (checked by running it and by a Python test of the manifest checker). (QA: pass)
+- [ ] Each manifest row has: screen, node path, class, text, rect, font file, font size, font colour, outline, alignment, autowrap, and the inventory source/key when matched (a Python test validates the schema on the real output). (QA: pass)
+- [ ] The level-up weapon card, the power-up card, the missions note line and the trick popup are templates with `template_keys` listing every inventory key that renders into them (checked in the output). (QA: pass)
+- [ ] The font files the rows name are copied into `fonts/` in the output folder. (QA: pass)
+- [ ] The coverage summary lists matched and unmatched inventory rows; at least 80% of the text_files rows are matched or covered by a template (printed by the tool; the reasons for the rest are listed). (QA: pass)
+- [ ] `not_capturable` lists any player-facing text that is not drawn by a Control, with screen and source (empty list allowed if none). (QA: pass)
+- [ ] The screen gallery's existing tests and the new tests pass; the game's Godot test set is unchanged and passes. (QA: pass)
+- [ ] Screenshots: a normal and blank pair in art-archive/T-524/screenshots/. (QA: pass)
 
 ## Updates
 
