@@ -13,9 +13,25 @@ func _ready() -> void:
 	await get_tree().process_frame
 	var rack: Node = run.weapons
 	var state: RunState = run.state
-	rack.pick("flamethrower")
-	rack.pick("underglow")
+	if kind != "newweapon":
+		rack.pick("flamethrower")
+		rack.pick("underglow")
 	match kind:
+		"newweapon":
+			# A gift pack offering a weapon the car does not own: it arrives at tier 2.
+			rack.pick("flamethrower")
+			state.add_xp(state.xp_needed())
+			run.gift_drops.pick_up_all()
+			run.level_up_screen.show_offers(["get_underglow", "upgrade_flamethrower"])
+			run.level_up_screen.skip_animation()
+		"slots":
+			rack.pick("flamethrower")
+			rack.pick("flamethrower")
+			state.grant_power_up("jump")
+			state.grant_power_up("jump")
+			state.grant_power_up("rev_charge")
+			for i in 30:
+				await get_tree().process_frame
 		"kaiju":
 			state.advance(RunState.RUN_SECONDS - RunState.BOSS_TIME_LEFT - state.time_elapsed() + 0.01)
 			for i in 90:

@@ -225,7 +225,9 @@ func test_driving_over_the_landed_package_removes_it_and_opens_the_screen() -> v
 	var taken: Node = run.weapons.get_weapon(run.weapons.offers.weapon_of(ids[0]))
 	var tier_before: int = taken.tier
 	run.level_up_screen.take(ids[0])
-	assert_eq(taken.tier, tier_before + 1, "the choice works as before")
+	# T-521: a weapon taken for the first time arrives at tier 2; an owned one goes up one tier.
+	var tier_after: int = run.weapons.slot_rules.first_pick_tier() if tier_before == 0 else tier_before + 1
+	assert_eq(taken.tier, tier_after, "the choice works as before")
 	assert_false(run.level_up_screen.visible)
 	assert_false(get_tree().paused, "the run resumes")
 
