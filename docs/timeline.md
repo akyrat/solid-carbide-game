@@ -3500,3 +3500,8 @@ Entry format:
 - Decision or change: The kaiju arrives at 3:00 and the run ends at 4:00; at most 3 weapons and 3 power-ups, a new weapon arrives at tier 2, and once all 3 weapons are maxed a full sub goal heals 2 hearts. The board played the combined build and approved it.
 - Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`
 - Tasks: T-521
+
+## 2026-11-03: Enemies paced for the 4-minute run
+- Decision or change: The minions' ramp peaks at 3:00 and the kaiju's health is 1500 for its 1-minute fight. It reached master inside T-521's combined branch, which the board played and approved.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-522
