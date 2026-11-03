@@ -1,7 +1,7 @@
 ---
 id: T-523
 title: Weapon and power-up slots: 3-slot grids with tier pips
-status: open
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -55,10 +55,18 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-03, Open → In progress
+
+Started: weapon and power-up slots.
+
+### 2026-11-03, In progress → In QA
+
+Weapon and power-up 3-slot grids with tier pips are in, tests pass, screenshots in art-archive/T-523/screenshots.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: SlotGrid (slot_grid.gd, drawn in code, HUD style sheet look) x2 inside the existing weapon_icons piece (weapon grid, power-up grid beside it, always same size, so layout editor and size slider move/scale both). 3 slots each, filled in order collected, empty frames; pips = max tier from data (weapon.max_tier(), PowerUpData.max_tier), filled to current tier; narrower if more pips than fit. Weapon 'xN' count kept. Power-up icons 32px art at 1x. Hud.bind calls setup_power_ups(state). Weapons beyond 3 are owned but have no slot/row. Tests: new test_hud_slot_grids.gd (6); updated test_hud_weapon_icons.gd (3 rows not 4; 6-weapon fit test now checks piece rect). Ran layout, layout_editor, scaling, size_slider, heart_row, style, weapon_icons, slot_grids: all pass. Doc: hud-and-menus.md Content, 'The weapon and power-up slots'. Screenshots: art-archive/T-523/screenshots/hud_slots_1/2/3.png (fixtures t523_slots_shot*.tscn). Proposals: frame size, white pips, grid ends y~291 clear of the mission page.
