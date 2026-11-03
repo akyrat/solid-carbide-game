@@ -181,7 +181,11 @@ class PopupText extends Node2D:
 				if f == 0 and not hide:
 					continue
 				Art.request(text, style, heat, f, multiplier_amount, hide)
-		texture()  # the picture the popup is born with, made now, never while drawing
+		# The picture the popup is born with is made at the end of this frame, not here:
+		# a trick's popup is shown from inside the car's physics step (T-481), and a
+		# bake there was 10 to 30 ms on a landing. Still never while drawing.
+		if is_inside_tree():
+			texture.call_deferred()
 
 	## The car's drawn position now (the last known one if it cannot be asked).
 	func anchor_now() -> Vector2:

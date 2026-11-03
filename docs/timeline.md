@@ -3510,3 +3510,8 @@ Entry format:
 - Decision or change: A screen gallery mode captures every player-facing text with its screen, a blanked copy, its rect and font, so the board can edit texts on a page that shows them in place.
 - Documents touched: game/docs/hud-and-menus/hud.md
 - Tasks: T-524
+
+## 2026-11-03: Car physics and bricks performance accepted
+- Decision or change: The board accepted the landing and bricks performance work as it stands after QA round 2 (first landing 1.9 to 2.6 ms headless against a 2 ms target).
+- Documents touched: `docs/weapons.md`
+- Tasks: T-481
