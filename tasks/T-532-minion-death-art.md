@@ -1,7 +1,7 @@
 ---
 id: T-532
 title: Minion death animation through PixelLab: a sample direction first
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-531]
+depends_on: []
 documents_affected: [docs/visual-style.md]
 files_to_read_first: [docs/visual-style.md, docs/working-with-the-board.md, tasks/README.md, game/art/minion/]
 files_expected_to_change: [art-archive/T-532/, docs/visual-style.md]
@@ -50,10 +50,16 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-03, Open → In progress
+
+Asset agent: PixelLab sample of the death animation, one direction, up to 4 generations (board's go).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Plan (before any PixelLab call): sample direction SE. Style loop run: python tools/style_loop/run.py art --task T-532 --brief art-archive/T-532/brief.md --out art-archive/T-532/minion_death_se.png --size 48x48 --frames 8 --max-colors 32 --allow-red 147,93,93. Planned PixelLab calls: /animate-with-text-v3 (first_frame = minion_se frame 0, 8 frames, 48x48, no_background, 600 s HTTP timeout), 1 generation each (as in T-068: usage 1.0 generation). At most 4 calls in all (version 1 plus up to 3 refines), free script fixes first. Everything kept in art-archive/T-532/.
+
+Run 1 of the style loop (2026-11-03) stopped before any PixelLab call: the loop's headless generator agent wrote its request builder art-archive/T-532/build_req.py but the permission system refused 'python art-archive/T-532/build_req.py' (only python game/tools/*, tools/style_loop/run.py and a few more are pre-approved in .claude/settings.json). 0 of 4 generations spent, no cost. Not worked around. Needs the board/Project Lead: either approve the script run, or allow moving the builder into game/tools/ (an approved path), then rerun the same loop command.
