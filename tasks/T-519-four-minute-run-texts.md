@@ -43,12 +43,12 @@ The board's review: play the one combined build (T-519 to T-523) from C:\solid-c
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every weapon has card text for tiers 2 to 5 matching docs/weapons.md's merged numbers exactly, and every power-up has card text for tiers 1 and 2 (a test reads the text files against weapons.json/power_ups.json shapes or against a list in the test). (QA: pass / fail)
-- [ ] The heal message exists with its key. (QA: pass / fail)
-- [ ] No player-facing text in game/data/*.json still says 8 minutes, 7 minutes or 7:00 for the run (grep in the result notes). (QA: pass / fail)
-- [ ] Each new or rewritten line scored 8 or more in the style loop (Style review section). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists the texts; the result notes list every key. (QA: pass / fail)
-- [ ] The text inventory and the tests that read these files pass (the agent runs the ones it touched). (QA: pass / fail)
+- [ ] Every weapon has card text for tiers 2 to 5 matching docs/weapons.md's merged numbers exactly, and every power-up has card text for tiers 1 and 2 (a test reads the text files against weapons.json/power_ups.json shapes or against a list in the test). (QA: pass: tiers 2-5 of all six weapons match docs/weapons.md 'Shorter trees: 5 tiers' numbers; last-tier power-up texts for all 5; test_four_minute_run_texts covers it. Note: test_level_up_screen is red on this branch only because weapons.json is still 8-tier until T-520)
+- [ ] The heal message exists with its key. (QA: pass: heal.popup in screen_texts.json)
+- [ ] No player-facing text in game/data/*.json still says 8 minutes, 7 minutes or 7:00 for the run (grep in the result notes). (QA: pass: NoOldRunLength test and result-notes grep; remaining old 8:00 items belong to T-520/T-521)
+- [ ] Each new or rewritten line scored 8 or more in the style loop (Style review section). (QA: pass: 31 style-loop runs, all kept at 8 or more)
+- [ ] docs/hud-and-menus.md Content lists the texts; the result notes list every key. (QA: pass: docs/hud-and-menus.md 'Texts for the 4-minute run (T-519)' and the KEYS list in the result notes)
+- [ ] The text inventory and the tests that read these files pass (the agent runs the ones it touched). (QA: pass: the three Python test files pass; the one red GUT test is test_level_up_screen, waiting on T-520's 5-tier weapons.json, not a T-519 defect. Paperwork note: qa_check also flags no screenshots in art-archive/T-519/screenshots/)
 
 ## Updates
 
