@@ -41,15 +41,15 @@ The board, 2026-11-03: docs/enemies.md, Decisions, "Minion deaths: an animation,
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A dying minion plays the placeholder death animation in its facing, then lies as a corpse (test of the state sequence). (QA: pass / fail)
-- [ ] The spill's droplets move under physics and settle into pools at the ground's height, including on a rooftop (test with a rooftop death). (QA: pass / fail)
-- [ ] The car and the bricks wave, wiper and wheel shock knock corpses back; each hit restarts the 2 s timer; after 2 s with no hit the corpse fades and is freed (tests). (QA: pass / fail)
-- [ ] A corpse never damages the car, is never a weapon target and never counts as a second kill (tests). (QA: pass / fail)
-- [ ] The caps on live corpses and droplets hold under a mass death (test), and the result notes give perf recorder frame times before and after. (QA: pass / fail)
-- [ ] The frame layout T-532's art must deliver is written in game/docs/enemies/minions.md. (QA: pass / fail)
-- [ ] docs/enemies.md Content and game/docs/enemies/minions.md describe it; the numbers are in enemies.json with reasons. (QA: pass / fail)
-- [ ] The Godot test set passes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-531/screenshots/. (QA: pass / fail)
+- [ ] A dying minion plays the placeholder death animation in its facing, then lies as a corpse (test of the state sequence). (QA: pass)
+- [ ] The spill's droplets move under physics and settle into pools at the ground's height, including on a rooftop (test with a rooftop death). (QA: pass)
+- [ ] The car and the bricks wave, wiper and wheel shock knock corpses back; each hit restarts the 2 s timer; after 2 s with no hit the corpse fades and is freed (tests). (QA: pass)
+- [ ] A corpse never damages the car, is never a weapon target and never counts as a second kill (tests). (QA: pass)
+- [ ] The caps on live corpses and droplets hold under a mass death (test), and the result notes give perf recorder frame times before and after. (QA: pass)
+- [ ] The frame layout T-532's art must deliver is written in game/docs/enemies/minions.md. (QA: pass)
+- [ ] docs/enemies.md Content and game/docs/enemies/minions.md describe it; the numbers are in enemies.json with reasons. (QA: pass)
+- [ ] The Godot test set passes. (QA: pass)
+- [ ] Screenshots in art-archive/T-531/screenshots/. (QA: pass)
 
 ## Updates
 
