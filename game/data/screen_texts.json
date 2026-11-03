@@ -51,7 +51,7 @@
       "rev_charge": "Faster charge, bigger boost.",
       "jump": "Press Space to Jump higher.",
       "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles.",
-      "rusty_overcoat": "Deals {contact_damage} damage kaijus now too. Tetanus is content.",
+      "rusty_overcoat": "Deals {contact_damage} damage to kaijus now too. Tetanus is content.",
       "polarized_steering_wheel": "+{burst_percent}% speed, shock hits and shoves minions."
     },
     "descriptions_last_tier_comment": "T-519 (the 4-minute run; Drifting, Decisions, 'Two tiers and three slots'): each power-up has 2 tiers, and this is the card text for tier 2, the last tier (the old tier 4's numbers), replacing its descriptions entry; the descriptions entry is the tier 1 text. power_up_screen.gd describe() uses it when the tier is the power-up's max_tier. Slots are that tier's numbers from power_ups.json. All five scored 8 or more in the style loop (T-519).",

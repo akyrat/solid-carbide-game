@@ -340,4 +340,4 @@ func test_the_polarized_steering_wheel_card_texts() -> void:
 		assert_false(text.contains("{"), "no slot left unfilled at tier %d" % tier)
 	# The other power-ups have a last-tier line too, with its slots filled.
 	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", data.max_tier("rusty_overcoat")),
-			"Deals 5 damage kaijus now too. Tetanus is content.")
+			"Deals 5 damage to kaijus now too. Tetanus is content.")
