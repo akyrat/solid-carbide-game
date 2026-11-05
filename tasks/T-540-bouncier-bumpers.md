@@ -1,7 +1,7 @@
 ---
 id: T-540
 title: Bouncier Bouncy Bumpers
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/collisions.md]
 files_expected_to_change: [game/data/power_ups.json, game/tests/, docs/drifting.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -68,6 +68,10 @@ QA round 1: one paperwork fail (Drifting Content still shows the old bumper numb
 ### 2026-11-05, In progress → In QA
 
 Doc fixed. QA round 2.
+
+### 2026-11-05, In QA → Needs playtest
+
+QA round 2 passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
 ## Style review
 
