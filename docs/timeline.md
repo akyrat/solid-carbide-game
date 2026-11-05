@@ -3570,3 +3570,53 @@ Entry format:
 - Decision or change: A sample direction of the minion's death animation is made through PixelLab for the board's review.
 - Documents touched: docs/visual-style.md
 - Tasks: T-532
+
+## 2026-11-05: Texts for the reverse drift, aura and grind tricks, and Resume
+- Decision or change: Popup texts for the reverse drift, aura and rail grind tricks, and the pause screen's Resume label.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-533
+
+## 2026-11-05: Tricks fly to the gift icon
+- Decision or change: When a trick pays subs, an effect flies from the car to the sub goal bar's gift icon.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-534
+
+## 2026-11-05: The Garage button pulses
+- Decision or change: The main menu's Garage button pulses, slightly highlighted, while an upgrade can be bought.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-535
+
+## 2026-11-05: Reverse drift and aura tricks
+- Decision or change: Two new tricks: a reverse drift, and the aura, paid every second after 5 s standing still.
+- Documents touched: docs/drifting.md
+- Tasks: T-536
+
+## 2026-11-05: Resume and stacked buttons on the pause screen
+- Decision or change: The pause screen gets Resume, and its buttons stack vertically in a sensible order.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-537
+
+## 2026-11-05: No frame drops with many minions
+- Decision or change: Many minions alive must not drop the frame rate; the cost per minion is cut, with a cap only if still needed.
+- Documents touched: docs/enemies.md
+- Tasks: T-538
+
+## 2026-11-05: Paired meteors hurt the kaiju
+- Decision or change: Drifting between a pair of the kaiju's meteors hurts the kaiju, with a linking animation, and destroys the pair.
+- Documents touched: docs/enemies.md
+- Tasks: T-539
+
+## 2026-11-05: Bouncier Bouncy Bumpers
+- Decision or change: Bouncy Bumpers bounces the car further at every tier.
+- Documents touched: docs/drifting.md
+- Tasks: T-540
+
+## 2026-11-05: Rail grinding prototype
+- Decision or change: Rails on the map that the car grinds along, a trick, with Jump to hop from rail to rail; its own playtest.
+- Documents touched: docs/drifting.md, docs/level-design.md
+- Tasks: T-541
+
+## 2026-11-05: Rails in the level creator
+- Decision or change: The level creator gets a rail piece, saved in the level file.
+- Documents touched: docs/level-design.md
+- Tasks: T-542
