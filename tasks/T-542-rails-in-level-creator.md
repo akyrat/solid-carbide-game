@@ -1,7 +1,7 @@
 ---
 id: T-542
 title: Rails in the level creator
-status: open
+status: blocked
 from: project-lead
 to: level-challenge
 lead: Rails
