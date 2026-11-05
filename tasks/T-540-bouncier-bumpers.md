@@ -1,7 +1,7 @@
 ---
 id: T-540
 title: Bouncier Bouncy Bumpers
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Rails
@@ -45,7 +45,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 - [ ] The factors in data are higher at every tier, and the bounce distance test measures the new distances (test). (QA: pass)
 - [ ] The result notes give the old and new distances per tier, and say whether any player-facing text names a number. (QA: pass)
-- [ ] docs/drifting.md Content gives the new numbers. (QA: fail: paperwork - Content only gives tier 2 (x3.9, line 261); tier 1 x2.1 and the new distances 1.85 / 3.48 appear only in Decisions, and Content lines 267 and 319 still say x1.4/1.8/2.2/2.6 and 1.23/.../2.30)
+- [ ] docs/drifting.md Content gives the new numbers. (QA: pass)
 - [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 - [ ] A plot in art-archive/T-540/screenshots/ shows old and new bounce distance per tier. (QA: pass)
 
@@ -64,6 +64,10 @@ Built: Bouncy Bumpers x2.1 / x3.9 (head-on 1.85 / 3.48 units, was 1.23 / 2.30). 
 ### 2026-11-05, In QA → In progress
 
 QA round 1: one paperwork fail (Drifting Content still shows the old bumper numbers). Back to the agent to fix the doc.
+
+### 2026-11-05, In progress → In QA
+
+Doc fixed. QA round 2.
 
 ## Style review
 
@@ -84,3 +88,5 @@ QA round: criteria 1, 2, 4, 5 pass; criterion 3 fails (paperwork): docs/drifting
 QA round 1 fix: docs/drifting.md Content now gives x2.1/x3.9 and distances 1.85/3.48 (was 1.23/2.30), and the cap line x3.9.
 
 QA round 1 fix: docs/drifting.md Content now gives x2.1/x3.9 and distances 1.85/3.48 (was 1.23/2.30), and the cap line 1.75 x 3.9 = 6.8 units.
+
+QA round 2: criterion 3 now passes (Content lines 267, 317, 319, 323 give x2.1/x3.9 and 1.85/3.48 units; no bad bytes). Other marks unchanged, code unchanged.
