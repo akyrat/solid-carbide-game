@@ -1,7 +1,7 @@
 ---
 id: T-536
 title: Two new tricks: the reverse drift and the aura
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Rails

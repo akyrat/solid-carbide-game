@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Rails

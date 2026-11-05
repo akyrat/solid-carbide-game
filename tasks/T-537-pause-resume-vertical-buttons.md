@@ -1,7 +1,7 @@
 ---
 id: T-537
 title: Pause screen: a Resume button, buttons stacked vertically and reordered
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Rails

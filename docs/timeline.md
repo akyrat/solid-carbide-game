@@ -3620,3 +3620,8 @@ Entry format:
 - Decision or change: The level creator gets a rail piece, saved in the level file.
 - Documents touched: docs/level-design.md
 - Tasks: T-542
+
+## 2026-11-05: Texts for the reverse drift, aura and grind tricks, and Resume
+- Decision or change: Popups REVERSE DRIFT!, AURA FARMING!, GRIND! (reused) and the pause screen's Resume label, with trick list entries and recipes for later.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-533
