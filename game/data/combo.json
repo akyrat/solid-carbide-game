@@ -5,6 +5,8 @@
   "trick_add": {
     "three_sixty": 0.25,
     "alternate_drift": 0.5,
+    "reverse_drift": 0.25,
+    "aura": 0.1,
     "air_one_eighty": 0.25,
     "air_three_sixty": 0.5,
     "thread_the_needle": 0.5
@@ -14,6 +16,8 @@
     "multiplied_by_combo": true,
     "three_sixty": 5.0,
     "alternate_drift": 10.0,
+    "reverse_drift": 5.0,
+    "aura": 2.0,
     "air_one_eighty": 5.0,
     "air_three_sixty": 10.0,
     "thread_the_needle": 10.0,
@@ -26,6 +30,16 @@
     "counts_in_air": true,
     "touch_window_seconds": 0.5,
     "clear_seconds": 0.25
+  },
+  "reverse_drift": {
+    "_comment": "T-536, proposals for the playtest (Drifting, Decisions, \"A reverse drift trick\"; Content, \"Reverse drift and aura (task T-536)\"). A drift on S without W while the car moves backwards (velocity behind the nose) pays REVERSE DRIFT! once per unbroken reverse drift, when it has lasted min_seconds. 1.0 s, as the shortest drift that pays (drift_pay.min_seconds), so a tap of S + A/D does not pay. Worth (trick_add.reverse_drift 0.25, trick_subs.reverse_drift 5): as FULL 360! and AIR 180!, half of ALT DRIFT!, since it needs only one held key pair.",
+    "min_seconds": 1.0
+  },
+  "aura": {
+    "_comment": "T-536, proposals for the playtest (Drifting, Decisions, \"An aura trick\"). still_speed: the car counts as still at or under this speed in units/s (cruise speed is 11; with no keys it coasts to 0 in about a second), so a stopped car counts and a rolling one does not. wait_seconds (5, the board's) still before it starts; then one AURA FARMING! every every_seconds (1, the board's), the first at 6 s. Moving above still_speed or leaving the ground starts the count again. Worth per aura (trick_add.aura 0.1, trick_subs.aura 2): small, since it repeats every second with no skill: 2 subs is a fifth of a drift second, and 0.1 keeps the combo from draining and climbs it slowly (about 50 s still from x1 to x6) while the enemies close in.",
+    "still_speed": 0.5,
+    "wait_seconds": 5.0,
+    "every_seconds": 1.0
   },
   "drift_pay": {
     "_comment": "A whole drift pays once, when it ends (Drifting, Decisions, T-246): seconds of drift times per_second, nothing under min_seconds, at most max. Proposals for the playtest.",
