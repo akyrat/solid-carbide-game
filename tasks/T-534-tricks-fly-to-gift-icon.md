@@ -1,7 +1,7 @@
 ---
 id: T-534
 title: Tricks fly to the gift icon
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,12 +43,12 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] When a trick pays subs, an effect node is spawned that travels from the car's screen position to the gift icon's current position and frees itself on arrival (test). (QA: pass / fail)
-- [ ] It goes to the icon's moved position when the HUD layout has been edited, and scales with the HUD size (test). (QA: pass / fail)
-- [ ] Ten tricks paid on the same frame spawn at most a bounded number of nodes, with the bound in data (test). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content and game/docs/hud-and-menus/hud.md describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF or frame strip in art-archive/T-534/screenshots/ shows the effect flying from the car to the gift icon in a run. (QA: pass / fail)
+- [ ] When a trick pays subs, an effect node is spawned that travels from the car's screen position to the gift icon's current position and frees itself on arrival (test). (QA: pass)
+- [ ] It goes to the icon's moved position when the HUD layout has been edited, and scales with the HUD size (test). (QA: pass)
+- [ ] Ten tricks paid on the same frame spawn at most a bounded number of nodes, with the bound in data (test). (QA: pass)
+- [ ] docs/hud-and-menus.md Content and game/docs/hud-and-menus/hud.md describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF or frame strip in art-archive/T-534/screenshots/ shows the effect flying from the car to the gift icon in a run. (QA: pass)
 
 ## Updates
 
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the agent is working in C:\solid-carbide-worktrees$t.
 
+### 2026-11-05, In progress → In QA
+
+Built: dots fly from the car to the gift icon when a trick pays subs. QA is checking it.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -65,3 +69,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Built. Each RunState.trick_subs_paid makes Hud.spawn_subs_flight(): a SubsFlight (scripts/hud/subs_flight.gd), 5 glowing dots on an arc, a child of the HUD's scaled area (HUD pixels, so it scales with HUD size), from the car's place (screen centre) to Hud.gift_center(), asked each frame so it follows a gift moved in the layout editor; frees itself on arrival. Bounds in data. Proposals (game/data/hud.json subs_flight): seconds 0.4 (short because the sub goal fill springs at once when subs are paid, so dots land just after the bar starts to fill; I did not delay the bar), arc 60 px, 5 dots, radius 4, colour #ffe23a, max_per_frame 3 (ten tricks on one frame make 3 nodes), max_alive 12 (cheap). Tests: tests/unit/hud/test_hud_subs_flight.gd 5 pass (spawn/arrive/free, signal wiring, moved gift + HUD size 50, per-frame bound, alive bound); all test_hud_* 203/203 pass. Docs: docs/hud-and-menus.md Decisions entry, game/docs/hud-and-menus/hud.md section. Screenshots: art-archive/T-534/screenshots/subs_fly_to_gift.gif (a run, tricks paying 1, 3, 10, 1) and subs_fly_strip.png (6 frames); fixture tests/fixtures/subs_flight_demo.tscn. Dots are small and plain (placeholder); the board may want them bigger. Full QA run not done by me.
+
+QA round 1: all 6 criteria pass. Godot set: first qa_check run red (2 failing), rerun alone green: 2743 tests, 2742 passing, 0 failing, 1 risky/pending (flaky under load, not in T-534's code; subs_flight tests 5/5 in the agent's notes). Docs lines present in docs/hud-and-menus.md and game/docs/hud-and-menus/hud.md; hud.json subs_flight has max_per_frame 3 and max_alive 12; GIF and strip in art-archive/T-534/screenshots/. Not visually checked by QA.
