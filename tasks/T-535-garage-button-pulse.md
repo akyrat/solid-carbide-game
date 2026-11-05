@@ -1,7 +1,7 @@
 ---
 id: T-535
 title: The Garage button pulses when an upgrade can be bought
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,11 +43,11 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With coins enough for a non-maxed upgrade the Garage button pulses; with too few coins, or every upgrade maxed, it doesn't (tests covering the three cases). (QA: pass / fail)
-- [ ] Coming back from the garage after buying updates the state (test). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots or a GIF in art-archive/T-535/screenshots/ show the main menu with the button pulsing and not pulsing. (QA: pass / fail)
+- [ ] With coins enough for a non-maxed upgrade the Garage button pulses; with too few coins, or every upgrade maxed, it doesn't (tests covering the three cases). (QA: pass)
+- [ ] Coming back from the garage after buying updates the state (test). (QA: pass)
+- [ ] docs/hud-and-menus.md Content describes it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots or a GIF in art-archive/T-535/screenshots/ show the main menu with the button pulsing and not pulsing. (QA: pass)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-05, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees$t.
+
+### 2026-11-05, In progress → In QA
+
+Built: the Garage button pulses while an upgrade can be bought. QA is checking it.
 
 ## Style review
 
@@ -70,3 +74,5 @@ Built: the Garage button pulses while the saved coins cover the next level of at
 - Docs: docs/hud-and-menus.md Content (main menu paragraph); game/docs/hud-and-menus/main-menu.md.
 - Screenshots in art-archive/T-535/screenshots/: pulsing_f20/f40/f60/f80.png (frames of the pulse; f60 near the peak) and not_pulsing.png. Made with fixtures game/tests/fixtures/t535_pulse_rich.tscn / t535_pulse_poor.tscn (+ t535_pulse_demo.gd). Still frames only, no GIF.
 - Untracked .uid files for other scripts in the folder were left out of the commit.
+
+QA round 1: all 5 criteria pass. qa_check: tests PASS (2 sets; tools set skipped), documents PASS (1 changed), screenshots PASS (5 files). Agent's tests: test_garage_button_pulse 8/8, test_main_menu 9/9, test_menu_arrow_keys 14/14, test_screen_flow 28/28; QA full run green. Docs line present in docs/hud-and-menus.md.
