@@ -1,7 +1,7 @@
 ---
 id: T-539
 title: Paired meteors: drifting between a pair hurts the kaiju
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/enemies/kaiju_meteors.gd]
 files_expected_to_change: [game/scripts/enemies/, game/data/enemies.json, game/data/meteor_fx.json, game/tests/, game/docs/enemies/, docs/enemies.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the agent is working in C:\solid-carbide-worktrees$t.
 ### 2026-11-05, In progress → In QA
 
 Built: meteors land in 2 pairs 7 units apart (4 per attack, was 3); a drift through a pair does 100 to the kaiju with a beam and breaks both. QA is checking it.
+
+### 2026-11-05, In QA → Needs playtest
+
+QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
 ## Style review
 
