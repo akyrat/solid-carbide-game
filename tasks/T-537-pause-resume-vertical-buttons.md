@@ -1,7 +1,7 @@
 ---
 id: T-537
 title: Pause screen: a Resume button, buttons stacked vertically and reordered
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -54,10 +54,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-05, Open → In progress
+
+Started: the agent is working in C:\solid-carbide-worktrees\T-537.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built. Pause screen buttons now one vertical column (VBox RunButtonsColumn): Resume, Trick list, Edit HUD layout (run only), Restart, Exit, God mode (when unlocked). Resume text 'Resume' = T-533, new key resume_button in game/data/pause_text.json; pressing it calls resume() (same as Escape). Order reason: safe/most-used first; screens that return next; Restart and Exit (end the run) together at bottom, away from accidental hits; secret entry last. Keyboard: focus starts on Resume (was Restart); Up/Down/Tab/Shift+Tab walk the column in order and wrap (explicit focus neighbours, relinked when God mode joins). Proposals for playtest: button gap 4 px (BUTTON_GAP const), buttons full strip-content width (520). Tests: new game/tests/unit/game/test_pause_resume_stack.gd (6 pass: text, resume unpauses, column order and one x, keyboard order, God mode last, fits 720); updated test_pause_restart_exit (focus on Resume). Also green: pause_restart_exit, pause_trick_list, god_mode_page, pause_slider_saves, hud_layout_editor, hud_style, hud_size_slider, drift_guide/rain toggle. Full sets not run (QA). Screenshots in art-archive/T-537/screenshots/: pause_1280.png (1280x720), pause_large.png (2560x1440), pause_small.png (960x540), pause_god.png (God mode entry); fixtures game/tests/fixtures/pause_stack_*.tscn. Docs: docs/hud-and-menus.md Content updated (new bullet, Restart/Trick list wording).
