@@ -1,7 +1,7 @@
 ---
 id: T-533
 title: Texts: reverse drift and aura trick popups, the pause screen's Resume button, the rail grind popup
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/drifting.md, game/data/pause_text.json]
 files_expected_to_change: [docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -171,3 +171,4 @@ Run by `tools/style_loop/run.py` on 2026-11-05: text, kind label, brief `C:/User
 Final texts, all style-loop scores 8+ (Style review in the ticket). Popups: REVERSE DRIFT! (9), AURA FARMING! (9), GRIND! (9, old card reused for the rail grind). Pause button: Resume (9). Trick list rules: REVERSE DRIFT!: 'Hold reverse and steer to drift while moving backwards.' (8, second round) / AURA FARMING!: 'Stop and sit still for 5 seconds, then every second you stay put pays subs.' (9) / GRIND!: 'Jump or drop onto a rail and grind along it.' (9). Recipes (my wording, notes <=20 chars, not separately scored): REVERSE DRIFT! keys S + A/D, note 'Slide backwards'; AURA FARMING! no keys, badge 'STAND STILL', note '5 s, then every s'; GRIND! no keys, badge 'ON A RAIL', note 'Jump or drop on'. Recorded in docs/hud-and-menus.md Content, new section before 'Combo broken popup'. No numbers chosen; no code or data changed (the trick list keys in tutorial_text.json are for the UI ticket). Popup label for the rail grind is GRIND! not RAIL GRIND!, so the trick id name and popup match the old card.
 
 QA: both criteria pass (texts and scores in the ticket match docs/hud-and-menus.md Content). Godot test set was red once (2 failing) and green on a lone rerun (0 failing), so flaky, unrelated to this docs-only change. qa_check's screenshots line is red (paperwork): user_facing_text is yes but the ticket is text only with nothing to picture, so art-archive/T-533/screenshots/ is empty; the Project Lead decides whether to waive it.
+- 2026-11-05, in-qa → done: Text ticket; QA passed both criteria. The screenshot check is waived: text-only work has nothing to picture (tasks/README.md, Screenshots).
