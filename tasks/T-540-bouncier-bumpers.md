@@ -1,7 +1,7 @@
 ---
 id: T-540
 title: Bouncier Bouncy Bumpers
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Rails
@@ -43,11 +43,11 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The factors in data are higher at every tier, and the bounce distance test measures the new distances (test). (QA: pass / fail)
-- [ ] The result notes give the old and new distances per tier, and say whether any player-facing text names a number. (QA: pass / fail)
-- [ ] docs/drifting.md Content gives the new numbers. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A plot in art-archive/T-540/screenshots/ shows old and new bounce distance per tier. (QA: pass / fail)
+- [ ] The factors in data are higher at every tier, and the bounce distance test measures the new distances (test). (QA: pass)
+- [ ] The result notes give the old and new distances per tier, and say whether any player-facing text names a number. (QA: pass)
+- [ ] docs/drifting.md Content gives the new numbers. (QA: fail: paperwork - Content only gives tier 2 (x3.9, line 261); tier 1 x2.1 and the new distances 1.85 / 3.48 appear only in Decisions, and Content lines 267 and 319 still say x1.4/1.8/2.2/2.6 and 1.23/.../2.30)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A plot in art-archive/T-540/screenshots/ shows old and new bounce distance per tier. (QA: pass)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-05, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees$t.
+
+### 2026-11-05, In progress → In QA
+
+Built: Bouncy Bumpers x2.1 / x3.9 (head-on 1.85 / 3.48 units, was 1.23 / 2.30). QA is checking it.
 
 ## Style review
 
@@ -70,3 +74,5 @@ Player-facing text: yes. The card text "Bounce {bounce_multiplier}x farther off 
 Docs: docs/drifting.md (Decisions, Content tiers, new numbers).
 Tests changed: test_bouncy_bumpers.gd (top tier from data, new test of factors above the old), test_four_minute_run_data.gd, test_power_up_screen.gd. Ran: test_bouncy_bumpers 4/4, test_four_minute_run_data 6/6, test_power_up_screen all passing.
 Plot: art-archive/T-540/screenshots/bounce_distance_old_vs_new.png
+
+QA round: criteria 1, 2, 4, 5 pass; criterion 3 fails (paperwork): docs/drifting.md Content gives only tier 2 (x3.9); tier 1 x2.1 and new distances 1.85/3.48 are only in Decisions, and Content (tier list line 267, Bouncy Bumpers section lines 317-319) still shows the old x1.4/1.8/2.2/2.6 and 1.23/.../2.30. qa_check: tests 2 sets passed, documents 1 changed, screenshots 1 file. Plot checked: shows none/tier 1/tier 2 old vs new.
