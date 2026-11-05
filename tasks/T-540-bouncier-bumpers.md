@@ -82,3 +82,5 @@ Plot: art-archive/T-540/screenshots/bounce_distance_old_vs_new.png
 QA round: criteria 1, 2, 4, 5 pass; criterion 3 fails (paperwork): docs/drifting.md Content gives only tier 2 (x3.9); tier 1 x2.1 and new distances 1.85/3.48 are only in Decisions, and Content (tier list line 267, Bouncy Bumpers section lines 317-319) still shows the old x1.4/1.8/2.2/2.6 and 1.23/.../2.30. qa_check: tests 2 sets passed, documents 1 changed, screenshots 1 file. Plot checked: shows none/tier 1/tier 2 old vs new.
 
 QA round 1 fix: docs/drifting.md Content now gives x2.1/x3.9 and distances 1.85/3.48 (was 1.23/2.30), and the cap line x3.9.
+
+QA round 1 fix: docs/drifting.md Content now gives x2.1/x3.9 and distances 1.85/3.48 (was 1.23/2.30), and the cap line 1.75 x 3.9 = 6.8 units.
