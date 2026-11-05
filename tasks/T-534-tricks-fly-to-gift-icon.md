@@ -1,7 +1,7 @@
 ---
 id: T-534
 title: Tricks fly to the gift icon
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, game/docs/hud-and-menus/hud.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/data/hud.json, game/tests/, game/docs/hud-and-menus/hud.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the agent is working in C:\solid-carbide-worktrees$t.
 ### 2026-11-05, In progress → In QA
 
 Built: dots fly from the car to the gift icon when a trick pays subs. QA is checking it.
+
+### 2026-11-05, In QA → Needs playtest
+
+QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
 ## Style review
 
