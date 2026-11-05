@@ -1,7 +1,7 @@
 ---
 id: T-539
 title: Paired meteors: drifting between a pair hurts the kaiju
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -43,12 +43,12 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Meteors land in pairs at the proposed distance (test). (QA: pass / fail)
-- [ ] A drifting car crossing between a landed pair damages the kaiju by the data's amount and destroys both boulders; driving through without drifting does neither; a pair pays only once (tests). (QA: pass / fail)
-- [ ] The link effect from the pair to the kaiju and the hit flash play (test that they are spawned). (QA: pass / fail)
-- [ ] docs/enemies.md Content describes it with each proposed number. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF or frame strip in art-archive/T-539/screenshots/ shows a drift through a pair, the link and the kaiju getting hit. (QA: pass / fail)
+- [ ] Meteors land in pairs at the proposed distance (test). (QA: pass: test_meteor_pairs 10/10 (pairs at data distance 7))
+- [ ] A drifting car crossing between a landed pair damages the kaiju by the data's amount and destroys both boulders; driving through without drifting does neither; a pair pays only once (tests). (QA: pass: tests cover drift damage 100, both boulders removed, no drift nothing, pays once)
+- [ ] The link effect from the pair to the kaiju and the hit flash play (test that they are spawned). (QA: pass: tests check beam, break-ups and kaiju flash are spawned)
+- [ ] docs/enemies.md Content describes it with each proposed number. (QA: pass: docs/enemies.md has 4 meteors in 2 pairs, 7 units, 100 damage, timings)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass: qa_check ran 2 test sets green (tools set skipped, no tools changes))
+- [ ] A GIF or frame strip in art-archive/T-539/screenshots/ shows a drift through a pair, the link and the kaiju getting hit. (QA: pass: GIF, strip and 2 stills present in art-archive/T-539/screenshots/)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-05, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees$t.
+
+### 2026-11-05, In progress → In QA
+
+Built: meteors land in 2 pairs 7 units apart (4 per attack, was 3); a drift through a pair does 100 to the kaiju with a beam and breaks both. QA is checking it.
 
 ## Style review
 
@@ -104,3 +108,6 @@ Built Enemies, Decisions, "Paired meteors hurt the kaiju". Placeholder effects d
 - To re-record from the repo root: `bash game/tools/record_meteor_pair_gif.sh <out.gif> 4 2` (GIF_ARGS="--scale 0.6 --shared --crop 0.8 --first 30" was used).
 
 Documents affected: docs/enemies.md (and game/docs/enemies/meteors.md).
+
+### QA, 2026-11-05
+All 6 criteria pass. qa_check: 2 test sets passed (tools set skipped), documents changed, 4 screenshots, 6 marks pass.
