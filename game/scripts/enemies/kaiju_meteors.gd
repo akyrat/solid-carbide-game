@@ -34,8 +34,20 @@ extends Node
 ## the map's drawing, just over the ground tiles (under buildings, boulders and
 ## the car); the falling meteors, the dust and the windup flash are drawn over
 ## everything.
+##
+## Paired meteors (T-539; Enemies, Decisions, "Paired meteors hurt the kaiju"):
+## the meteors of an attack land in pairs, pair_distance_units apart with a
+## drivable gap between the two (pick_pair). Once both of a pair have landed, a
+## drifting car whose step crosses the line between their centres hurts the
+## kaiju by pair_damage_to_kaiju, and both boulders break at once (strike_pair).
+## Each pair pays once; a pair whose boulder is gone (faded, or never placed)
+## pays nothing. Placeholders drawn in code: a faint cyan dashed line between
+## the two of a pair (on the ground), and on a strike the boulders' break-up,
+## a cyan and pink energy beam from the pair to the kaiju, and a burst on the
+## kaiju with its red hit flash (meteor_pair_fx.gd).
 
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
+const PairFx := preload("res://scripts/enemies/meteor_pair_fx.gd")
 
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 
@@ -66,6 +78,13 @@ const WINDUP_COLOR := Color(1.0, 0.92, 0.55)
 const FALL_SECONDS := 0.5
 const FALL_HEIGHT_PX := 220.0
 const DUST_SECONDS := 0.5
+## Pairing rules of the code (T-539), not balancing numbers: tries for a pair's
+## partner around each first spot, and the half width of the free path checked
+## between the two boulders (the car's 1-unit body), sampled every
+## GAP_SAMPLE_UNITS.
+const PARTNER_TRIES := 16
+const GAP_CLEAR_RADIUS := 0.5
+const GAP_SAMPLE_UNITS := 0.5
 
 ## An attack's windup began (the kaiju's short animation).
 signal attack_started()
@@ -75,6 +94,9 @@ signal warnings_shown(spots: Array)
 signal meteor_landed(units: Vector2, hit_car: bool)
 ## A landed meteor's boulder was placed at `units` (map.add_meteor_boulder).
 signal boulder_placed(units: Vector2, body: Node)
+## A drifting car crossed between the landed pair `a`-`b` (units): the kaiju
+## took `damage` and both boulders broke (T-539).
+signal pair_struck(a: Vector2, b: Vector2, damage: float)
 
 ## False stops attacks (tests and fixtures); meteors already warned still land.
 var enabled := true
@@ -101,6 +123,14 @@ var pending_boulders: Array = []
 var standing_boulders: Array = []
 ## Dust bursts being drawn: {units: Vector2, age: float}.
 var dust: Array = []
+## Meteor pairs (T-539): {a: Vector2, b: Vector2, landed: int, bodies: Array,
+## paid: bool, dead: bool}. Kept from the warning until the pair pays or a
+## boulder of it is gone.
+var pairs: Array = []
+## Strike effects being drawn (T-539): the beams {from: Vector2 units,
+## to: Vector2 units, kaiju: Node, age}, and the boulders breaking {units, age}.
+var links: Array = []
+var breakups: Array = []
 
 ## The ground drawing (warning circles), in the map's View; and the sky drawing.
 var ground_draw: Node2D = null
@@ -109,6 +139,9 @@ var sky_draw: Node2D = null
 var _stats: Dictionary
 var _run: Node = null
 var _was_live := false
+## The car's position (units) at the end of the last step, for the pair crossing.
+var _last_car_units := Vector2.ZERO
+var _have_last_car := false
 
 
 func _init() -> void:
@@ -164,6 +197,10 @@ func clear() -> void:
 	pending_boulders.clear()
 	standing_boulders.clear()
 	dust.clear()
+	pairs.clear()
+	links.clear()
+	breakups.clear()
+	_have_last_car = false
 	_was_live = false
 	_redraw()
 
@@ -225,12 +262,19 @@ func step(dt: float) -> void:
 			landed.append(w)
 	for w in landed:
 		warnings.erase(w)
-		land(w.units)
+		land(w.units, w.get("pair", {}))
 	_place_waiting_boulders()
 	_age_boulders(dt)
+	_check_pair_crossings()
 	for d in dust:
 		d.age += dt
 	dust = dust.filter(func(d) -> bool: return d.age < MeteorFx.impact_seconds())
+	for l in links:
+		l.age += dt
+	links = links.filter(func(l) -> bool: return l.age < PairFx.LINK_SECONDS)
+	for b in breakups:
+		b.age += dt
+	breakups = breakups.filter(func(b) -> bool: return b.age < PairFx.BREAKUP_SECONDS)
 	_redraw()
 
 
@@ -255,24 +299,82 @@ func is_winding_up() -> bool:
 
 ## Shows meteors_per_attack warning circles at once near the car (fewer if not
 ## enough spots are found). Returns the landing spots (units).
+## T-539: they come in pairs (pick_pair), meteors_per_attack / 2 of them; an
+## odd one left over lands alone. A pair with no spot found is left out.
 func drop_meteors() -> Array:
 	var spots: Array = []
-	for i in int(stat("meteors_per_attack")):
-		var p = pick_spot()
-		if p == null:
+	var n := int(stat("meteors_per_attack"))
+	for i in n / 2:
+		var pr = pick_pair()
+		if pr == null:
 			continue
-		add_warning(p)
-		spots.append(p)
+		add_pair_warnings(pr[0], pr[1])
+		spots.append(pr[0])
+		spots.append(pr[1])
+	if n % 2 == 1:
+		var p = pick_spot()
+		if p != null:
+			add_warning(p)
+			spots.append(p)
 	warnings_shown.emit(spots)
 	return spots
 
 
 ## Adds one warning circle at `units`; its meteor lands warning_seconds later.
-func add_warning(units: Vector2) -> Dictionary:
-	var w := {"units": units, "time_left": stat("warning_seconds")}
+## `pair` is the meteor's pair (T-539), empty for a meteor on its own.
+func add_warning(units: Vector2, pair: Dictionary = {}) -> Dictionary:
+	var w := {"units": units, "time_left": stat("warning_seconds"), "pair": pair}
 	warnings.append(w)
 	_redraw()
 	return w
+
+
+## Adds the two warnings of a pair at `a` and `b` (T-539) and returns the pair.
+func add_pair_warnings(a: Vector2, b: Vector2) -> Dictionary:
+	var pair := {"a": a, "b": b, "landed": 0, "bodies": [], "paid": false, "dead": false}
+	pairs.append(pair)
+	add_warning(a, pair)
+	add_warning(b, pair)
+	return pair
+
+
+## Two landing spots pair_distance_units apart (T-539), [first, partner], or
+## null: the first is picked as pick_spot() picks, the partner at that distance
+## in a random direction, also within land_within_units_of_car of the car;
+## both pass is_good_spot() and the ground between the
+## two boulders is free for the car (gap_is_clear).
+func pick_pair():
+	var c: Vector2 = car.position / PX_PER_UNIT
+	var reach := stat("land_within_units_of_car")
+	var dist := stat("pair_distance_units")
+	var apart: float = map.boulder_diameter() + stat("boulder_clearance_units")
+	for _t in SPOT_TRIES:
+		var p := c + Vector2.RIGHT.rotated(rng.randf() * TAU) * reach * sqrt(rng.randf())
+		if not is_good_spot(p):
+			continue
+		for _j in PARTNER_TRIES:
+			var q := p + Vector2.RIGHT.rotated(rng.randf() * TAU) * dist
+			if q.distance_to(p) < apart - 0.0001 or q.distance_to(c) > reach or not is_good_spot(q):
+				continue
+			if gap_is_clear(p, q):
+				return [p, q]
+	return null
+
+
+## True when the ground between the edges of two boulders at `a` and `b` is
+## open for the car's body (the map's is_open_spot, GAP_CLEAR_RADIUS wide).
+func gap_is_clear(a: Vector2, b: Vector2) -> bool:
+	var r: float = map.boulder_diameter() / 2.0
+	var length := a.distance_to(b) - 2.0 * r
+	if length <= 0.0:
+		return false
+	var dir := (b - a).normalized()
+	var n := maxi(1, int(ceil(length / GAP_SAMPLE_UNITS)))
+	for i in n + 1:
+		var s := a + dir * (r + length * i / float(n))
+		if not map.is_open_spot(s, GAP_CLEAR_RADIUS):
+			return false
+	return true
 
 
 ## A landing spot within land_within_units_of_car of the car that the map's
@@ -312,8 +414,11 @@ func is_good_spot(units: Vector2) -> bool:
 
 ## A meteor lands at `units`: the dust, the hit on the car if its centre is
 ## within impact_radius_units, and the boulder (now, or once the spot is clear).
-## Returns true when it hit the car.
-func land(units: Vector2) -> bool:
+## Returns true when it hit the car. `pair` is the meteor's pair (T-539): it
+## counts the landing.
+func land(units: Vector2, pair: Dictionary = {}) -> bool:
+	if not pair.is_empty():
+		pair.landed += 1
 	var hit := false
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	# T-418: a car more than the contact rule's tolerance above the landing (jumping over it) is missed.
@@ -348,13 +453,18 @@ func _place_waiting_boulders() -> void:
 		if _blocked_by_body(p):
 			continue
 		placed.append(p)
+		var pair := _pair_at(p)
 		if map.can_place_meteor_boulder(p):
 			var body: Node = map.add_meteor_boulder(p)
 			var spawner = _spawner()
 			if spawner != null:  # T-418: coins and health pickups on the spot are pushed out
 				spawner.push_pickups_out(p, map.boulder_diameter() / 2.0)
-			standing_boulders.append({"body": body, "age": 0.0})
+			standing_boulders.append({"body": body, "age": 0.0, "pair": pair})
+			if not pair.is_empty():
+				pair.bodies.append(body)
 			boulder_placed.emit(p, body)
+		elif not pair.is_empty():
+			pair.dead = true  # T-539: a pair missing a boulder pays nothing
 	for p in placed:
 		pending_boulders.erase(p)
 
@@ -373,8 +483,73 @@ func _age_boulders(dt: float) -> void:
 		elif b.age >= life + fade:
 			map.remove_meteor_boulder(body)
 			standing_boulders.erase(b)
+			if not b.get("pair", {}).is_empty():
+				b.pair.dead = true  # T-539: gone, so its pair no longer pays
 		elif b.age > life:
 			map.set_meteor_boulder_alpha(body, 1.0 - (b.age - life) / fade)
+
+
+## The pair a meteor at `units` belongs to (T-539), or an empty dictionary.
+func _pair_at(units: Vector2) -> Dictionary:
+	for pr in pairs:
+		if pr.a.is_equal_approx(units) or pr.b.is_equal_approx(units):
+			return pr
+	return {}
+
+
+## True when `pair` pays on a crossing (T-539): both meteors landed, every
+## boulder of it still there (standing, fading or waiting), not paid yet.
+func is_pair_armed(pair: Dictionary) -> bool:
+	return pair.landed >= 2 and not pair.paid and not pair.dead
+
+
+## The car's own drift state, as the drift marks read it: drifting, on the ground.
+func car_is_drifting() -> bool:
+	var m = car.get("model")
+	return m != null and m.is_drifting and car.get("airborne") != true
+
+
+## T-539: a drifting car whose last step crossed the line between an armed
+## pair's centres strikes it. Forgets pairs that paid or lost a boulder.
+func _check_pair_crossings() -> void:
+	var cu: Vector2 = car.position / PX_PER_UNIT
+	if _have_last_car and car_is_drifting() and cu != _last_car_units:
+		for pr in pairs.duplicate():
+			if is_pair_armed(pr) and Geometry2D.segment_intersects_segment(_last_car_units, cu, pr.a, pr.b) != null:
+				strike_pair(pr)
+	_last_car_units = cu
+	_have_last_car = true
+	pairs = pairs.filter(func(pr) -> bool: return not pr.paid and not pr.dead)
+
+
+## The car drifted through `pair` (T-539): the kaiju takes pair_damage_to_kaiju
+## (its red hit flash comes with take_damage), both boulders break at once
+## (removed from the map, or no longer waiting), and the strike effects start:
+## the break-up at each boulder and the beam from the pair to the kaiju.
+## Returns false, doing nothing, when no live kaiju is on the map.
+func strike_pair(pair: Dictionary) -> bool:
+	var k := _kaiju()
+	if k == null or pair.paid:
+		return false
+	pair.paid = true
+	var dmg := stat("pair_damage_to_kaiju")
+	var k_at: Vector2 = k.position_units()
+	links.append({"from": (pair.a + pair.b) / 2.0, "to": k_at, "kaiju": k, "age": 0.0})
+	for body in pair.bodies:
+		for b in standing_boulders.duplicate():
+			if b.body == body:
+				standing_boulders.erase(b)
+		map.remove_meteor_boulder(body)
+	pair.bodies.clear()
+	for u in [pair.a, pair.b]:
+		for p in pending_boulders.duplicate():
+			if p.is_equal_approx(u):
+				pending_boulders.erase(p)
+		breakups.append({"units": u, "age": 0.0})
+	k.take_damage(dmg)
+	pair_struck.emit(pair.a, pair.b, dmg)
+	_redraw()
+	return true
 
 
 ## True when a boulder at `units` would be on the car's 1 x 1 body or the kaiju's.
@@ -416,7 +591,7 @@ class _GroundDraw extends Node2D:
 	func _process(delta: float) -> void:
 		if Perf.on: Perf.each_begin(&"meteors.fx_process")
 		_pulse = fmod(_pulse + delta * 3.0, 1.0)
-		if not owner_attack.warnings.is_empty():
+		if not owner_attack.warnings.is_empty() or not owner_attack.pairs.is_empty():
 			queue_redraw()
 		if Perf.on: Perf.each_end(&"meteors.fx_process")
 
@@ -428,6 +603,16 @@ class _GroundDraw extends Node2D:
 			return
 		var r: float = a.map.boulder_diameter() / 2.0
 		var total: float = maxf(a.stat("warning_seconds"), 0.001)
+		# T-539: the faint line between the two of each pair, under the circles.
+		for pr in a.pairs:
+			if pr.paid or pr.dead:
+				continue
+			var dir: Vector2 = (pr.b - pr.a).normalized()
+			if pr.a.distance_to(pr.b) <= 2.0 * r:
+				continue
+			var from: Vector2 = ISO_TRANSFORM * ((pr.a + dir * r) * PX_PER_UNIT)
+			var to: Vector2 = ISO_TRANSFORM * ((pr.b - dir * r) * PX_PER_UNIT)
+			PairFx.draw_pair_line(self, from, to, a.is_pair_armed(pr), _pulse)
 		for w in a.warnings:
 			var disc: PackedVector2Array = a.ground_ellipse(w.units, r)
 			draw_colored_polygon(disc, WARNING_FILL)
@@ -453,7 +638,7 @@ class _SkyDraw extends Node2D:
 		if Perf.on: Perf.each_begin(&"meteors.fx_process")
 		_t += delta
 		var a = owner_attack
-		if a.is_winding_up() or not a.warnings.is_empty() or not a.dust.is_empty():
+		if a.is_winding_up() or not a.warnings.is_empty() or not a.dust.is_empty() or not a.links.is_empty() or not a.breakups.is_empty():
 			queue_redraw()
 		if Perf.on: Perf.each_end(&"meteors.fx_process")
 
@@ -489,4 +674,13 @@ class _SkyDraw extends Node2D:
 				var dir := Vector2.RIGHT.rotated(TAU * i / 8.0)
 				var off := Vector2(dir.x, dir.y * 0.5) * (10.0 + f * 34.0)
 				draw_circle(c + off, 9.0 * (1.0 - f) + 2.0, DUST_COLOR)
+		# T-539: the struck pairs' boulders breaking, and the beams to the kaiju.
+		for b in a.breakups:
+			PairFx.draw_breakup(self, ISO_TRANSFORM * (b.units * PX_PER_UNIT), b.age, int(b.units.x * 31.0 + b.units.y * 17.0))
+		for l in a.links:
+			var to_units: Vector2 = l.to
+			if is_instance_valid(l.kaiju):
+				to_units = l.kaiju.position_units()
+			var chest: Vector2 = ISO_TRANSFORM * (to_units * PX_PER_UNIT) - Vector2(0, KaijuScript.HEIGHT_UNITS * PX_PER_UNIT * 0.45)
+			PairFx.draw_link(self, ISO_TRANSFORM * (l.from * PX_PER_UNIT), chest, l.age, int(l.from.x * 31.0 + l.from.y * 17.0))
 		if Perf.on: Perf.each_end(&"draw.meteors")
