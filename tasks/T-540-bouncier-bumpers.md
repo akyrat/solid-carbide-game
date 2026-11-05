@@ -1,7 +1,7 @@
 ---
 id: T-540
 title: Bouncier Bouncy Bumpers
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 lead: Rails
@@ -53,10 +53,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-05, Open → In progress
+
+Started: the agent is working in C:\solid-carbide-worktrees$t.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+T-540 report. Factors (proposal, 1.5x each): tier 1 x1.4 -> x2.1, tier 2 x2.6 -> x3.9 (game/data/power_ups.json; the run's 2 tiers). The 4-tier record x1.8/x2.2 had no data left.
+Measured head-on bounce at cruise speed (tests/unit/test_bouncy_bumpers.gd): none 0.87; tier 1 1.23 -> 1.85 units; tier 2 2.30 -> 3.48 units.
+Safety: the bounce goes away from the wall, never into it. Hardest-hit cap (16.5 units/s) is unchanged and scales by the same factor: estimated farthest bounce about 7.6 units at tier 2 (0.87 x 2.25 x 3.9, estimate not measured), peak speed about 13 units/s = 0.22 units per step, so no tunnelling through thin walls. Cap needs no raise. Not checked in play against the map edge: for the board's playtest.
+Player-facing text: yes. The card text "Bounce {bounce_multiplier}x farther off walls and obstacles." (screen_texts.json) fills in the number from data, so it now reads 2.1x / 3.9x with no text change; tests hardcoded 2.6x, updated to 3.9x. No new text needed from Narrative.
+Docs: docs/drifting.md (Decisions, Content tiers, new numbers).
+Tests changed: test_bouncy_bumpers.gd (top tier from data, new test of factors above the old), test_four_minute_run_data.gd, test_power_up_screen.gd. Ran: test_bouncy_bumpers 4/4, test_four_minute_run_data 6/6, test_power_up_screen all passing.
+Plot: art-archive/T-540/screenshots/bounce_distance_old_vs_new.png
