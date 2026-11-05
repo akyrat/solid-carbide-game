@@ -1,7 +1,7 @@
 ---
 id: T-535
 title: The Garage button pulses when an upgrade can be bought
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -53,10 +53,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-05, Open → In progress
+
+Started: the agent is working in C:\solid-carbide-worktrees$t.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: the Garage button pulses while the saved coins cover the next level of at least one non-maxed garage upgrade.
+- game/scripts/menu/main_menu.gd: `progress` var, `can_buy_something()` (PlayerProgress.can_buy over GarageData.UPGRADES, so prices and tiers come from the garage data), `is_garage_pulsing()`, `refresh_garage_pulse()` (looping sine tween on the button's modulate and scale). game/scripts/game/game_flow.gd: `show_menu` passes `progress`; the menu is rebuilt on every return from the garage, so buying updates it. Focus and KeyNav untouched. No new text.
+- Proposals (consts in main_menu.gd, no data file for the menu exists): PULSE_SECONDS 1.6 (slow gentle breath), PULSE_SCALE 1.05 (noticeable but not jumpy), PULSE_TINT (1.0, 0.85, 0.35) (warm yellow; multiplies the steel plate so it reads as a gold-grey highlight).
+- Tests: game/tests/unit/test_garage_button_pulse.gd (8: enough coins, too few, all maxed, no progress, pulse really changes the button, return from garage after buying via GameFlow, in-place refresh, focus/chain unchanged). Ran with -gselect: test_garage_button_pulse 8/8, test_main_menu 9/9, test_menu_arrow_keys 14/14, test_screen_flow 28/28.
+- Docs: docs/hud-and-menus.md Content (main menu paragraph); game/docs/hud-and-menus/main-menu.md.
+- Screenshots in art-archive/T-535/screenshots/: pulsing_f20/f40/f60/f80.png (frames of the pulse; f60 near the peak) and not_pulsing.png. Made with fixtures game/tests/fixtures/t535_pulse_rich.tscn / t535_pulse_poor.tscn (+ t535_pulse_demo.gd). Still frames only, no GIF.
+- Untracked .uid files for other scripts in the folder were left out of the commit.
