@@ -1,7 +1,7 @@
 ---
 id: T-533
 title: Texts: reverse drift and aura trick popups, the pause screen's Resume button, the rail grind popup
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -41,8 +41,8 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The result notes give the final text of the four pieces and the three trick list entries with recipes, each with its style loop score of 8 or more. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content records the texts. (QA: pass / fail)
+- [ ] The result notes give the final text of the four pieces and the three trick list entries with recipes, each with its style loop score of 8 or more. (QA: pass)
+- [ ] docs/hud-and-menus.md Content records the texts. (QA: pass)
 
 ## Updates
 
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-05, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees$t.
+
+### 2026-11-05, In progress → In QA
+
+Texts written: REVERSE DRIFT!, AURA FARMING!, GRIND!, Resume. QA is checking them; they're merged once QA passes so the three waiting tickets can start.
 
 ## Style review
 
@@ -165,3 +169,5 @@ Run by `tools/style_loop/run.py` on 2026-11-05: text, kind label, brief `C:/User
 ## Result notes
 
 Final texts, all style-loop scores 8+ (Style review in the ticket). Popups: REVERSE DRIFT! (9), AURA FARMING! (9), GRIND! (9, old card reused for the rail grind). Pause button: Resume (9). Trick list rules: REVERSE DRIFT!: 'Hold reverse and steer to drift while moving backwards.' (8, second round) / AURA FARMING!: 'Stop and sit still for 5 seconds, then every second you stay put pays subs.' (9) / GRIND!: 'Jump or drop onto a rail and grind along it.' (9). Recipes (my wording, notes <=20 chars, not separately scored): REVERSE DRIFT! keys S + A/D, note 'Slide backwards'; AURA FARMING! no keys, badge 'STAND STILL', note '5 s, then every s'; GRIND! no keys, badge 'ON A RAIL', note 'Jump or drop on'. Recorded in docs/hud-and-menus.md Content, new section before 'Combo broken popup'. No numbers chosen; no code or data changed (the trick list keys in tutorial_text.json are for the UI ticket). Popup label for the rail grind is GRIND! not RAIL GRIND!, so the trick id name and popup match the old card.
+
+QA: both criteria pass (texts and scores in the ticket match docs/hud-and-menus.md Content). Godot test set was red once (2 failing) and green on a lone rerun (0 failing), so flaky, unrelated to this docs-only change. qa_check's screenshots line is red (paperwork): user_facing_text is yes but the ticket is text only with nothing to picture, so art-archive/T-533/screenshots/ is empty; the Project Lead decides whether to waive it.
