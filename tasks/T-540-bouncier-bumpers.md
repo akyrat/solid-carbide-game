@@ -1,7 +1,7 @@
 ---
 id: T-540
 title: Bouncier Bouncy Bumpers
-status: in-qa
+status: in-progress
 from: project-lead
 to: game-data
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/collisions.md]
 files_expected_to_change: [game/data/power_ups.json, game/tests/, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the agent is working in C:\solid-carbide-worktrees$t.
 
 Built: Bouncy Bumpers x2.1 / x3.9 (head-on 1.85 / 3.48 units, was 1.23 / 2.30). QA is checking it.
 
+### 2026-11-05, In QA → In progress
+
+QA round 1: one paperwork fail (Drifting Content still shows the old bumper numbers). Back to the agent to fix the doc.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -76,3 +80,5 @@ Tests changed: test_bouncy_bumpers.gd (top tier from data, new test of factors a
 Plot: art-archive/T-540/screenshots/bounce_distance_old_vs_new.png
 
 QA round: criteria 1, 2, 4, 5 pass; criterion 3 fails (paperwork): docs/drifting.md Content gives only tier 2 (x3.9); tier 1 x2.1 and new distances 1.85/3.48 are only in Decisions, and Content (tier list line 267, Bouncy Bumpers section lines 317-319) still shows the old x1.4/1.8/2.2/2.6 and 1.23/.../2.30. qa_check: tests 2 sets passed, documents 1 changed, screenshots 1 file. Plot checked: shows none/tier 1/tier 2 old vs new.
+
+QA round 1 fix: docs/drifting.md Content now gives x2.1/x3.9 and distances 1.85/3.48 (was 1.23/2.30), and the cap line x3.9.
