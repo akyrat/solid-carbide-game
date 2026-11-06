@@ -1,7 +1,7 @@
 ---
 id: T-539
 title: Paired meteors: drifting between a pair hurts the kaiju
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -69,6 +69,10 @@ QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-b
 ### 2026-11-06, Needs playtest → In progress
 
 The board's tweak: the pair's meteors a bit further apart. Back with the agent; merges after QA.
+
+### 2026-11-06, In progress → In QA
+
+Tweak in: pair meteors 9 units apart (was 7). QA is checking it; it merges once QA passes.
 
 ## Style review
 
