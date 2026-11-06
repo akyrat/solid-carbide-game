@@ -1,10 +1,10 @@
 ---
 id: T-017
 title: Recap screen after a run ends, win or loss
-status: blocked
+status: cancelled
 from: project-lead
 to: ui
-lead:
+lead: Rails
 epic: hud-menus
 milestone: final-release
 user_facing_text: yes
@@ -42,4 +42,4 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-11-06, blocked → cancelled: The board, 2026-11-06: cancelled while clearing the backlog. Replaced by the MVP recap screen (T-106 cancelled).

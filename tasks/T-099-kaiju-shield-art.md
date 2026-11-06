@@ -1,10 +1,10 @@
 ---
 id: T-099
 title: Art: the kaiju's green shield
-status: blocked
+status: cancelled
 from: project-lead
 to: asset-generation
-lead:
+lead: Rails
 epic: art
 milestone: final-release
 user_facing_text: no
@@ -51,4 +51,4 @@ The board's review: judge the look. One round only, so problems are reported rat
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-11-06, blocked → cancelled: The board, 2026-11-06: cancelled while clearing the backlog. The kaiju's shield was dropped (the kaiju can be damaged at any time).

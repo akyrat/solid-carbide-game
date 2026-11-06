@@ -1,10 +1,10 @@
 ---
 id: T-088
 title: Meteor challenges never land on another challenge's arrow
-status: open
+status: cancelled
 from: project-lead
 to: level-challenge
-lead: Greenbull
+lead: Rails
 epic: level-challenges
 milestone: final-release
 user_facing_text: no
@@ -56,4 +56,4 @@ Not started after all: challenges are out of the MVP and the ticket says to wait
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-11-06, open → cancelled: The board, 2026-11-06: cancelled while clearing the backlog. Driving challenges were cut from the MVP.

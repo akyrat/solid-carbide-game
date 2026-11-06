@@ -1,10 +1,10 @@
 ---
 id: T-066
 title: Art: the challenge arrows, blue and green
-status: open
+status: cancelled
 from: project-lead
 to: asset-generation
-lead:
+lead: Rails
 epic: art
 milestone: final-release
 user_facing_text: no
@@ -54,4 +54,4 @@ The board's review: judge the look. One round only, so problems are reported rat
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-11-06, open → cancelled: The board, 2026-11-06: cancelled while clearing the backlog. Driving challenges were cut from the MVP.
