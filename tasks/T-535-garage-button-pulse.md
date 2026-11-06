@@ -43,11 +43,11 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With coins enough for a non-maxed upgrade the Garage button pulses; with too few coins, or every upgrade maxed, it doesn't (tests covering the three cases). (QA: pass)
-- [ ] Coming back from the garage after buying updates the state (test). (QA: pass)
-- [ ] docs/hud-and-menus.md Content describes it. (QA: pass)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
-- [ ] Screenshots or a GIF in art-archive/T-535/screenshots/ show the main menu with the button pulsing and not pulsing. (QA: pass)
+- [ ] With coins enough for a non-maxed upgrade the Garage button pulses; with too few coins, or every upgrade maxed, it doesn't (tests covering the three cases). (QA: pass, round 2 after the board tweak: light blue letters)
+- [ ] Coming back from the garage after buying updates the state (test). (QA: pass, round 2 after the board tweak: light blue letters)
+- [ ] docs/hud-and-menus.md Content describes it. (QA: pass, round 2 after the board tweak: light blue letters)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass, round 2 after the board tweak: light blue letters)
+- [ ] Screenshots or a GIF in art-archive/T-535/screenshots/ show the main menu with the button pulsing and not pulsing. (QA: pass, round 2 after the board tweak: light blue letters)
 
 ## Updates
 
@@ -95,3 +95,5 @@ Board's tweak (2026-11-06): "just make the letters light blue, no button yellow 
 - Tests updated: test_garage_button_pulse.gd 9/9 (blue letters, no tint, no scale, letters restored); test_main_menu 9/9, test_menu_arrow_keys 14/14, test_screen_flow 28/28.
 - Screenshots replaced: art-archive/T-535/screenshots/letters_blue_f5.png, letters_blue_f50.png, not_pulsing.png (the earlier pulsing_f*.png and the yellow-tint notes above are superseded).
 - Docs: docs/hud-and-menus.md (Decisions line and Content) and game/docs/hud-and-menus/main-menu.md updated.
+
+QA (after the board's light-blue-letters tweak): all 5 criteria pass. qa_check: tests PASS (2 sets, tools skipped), documents PASS (1), screenshots PASS (3: letters_blue_f5, letters_blue_f50, not_pulsing). Docs (Decisions and Content in docs/hud-and-menus.md) describe the light blue letters, no tint, no scale pulse. Agent's tests: garage_button_pulse 9/9, main_menu 9/9, arrow_keys 14/14, screen_flow 28/28; QA full run green.
