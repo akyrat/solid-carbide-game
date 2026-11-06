@@ -322,14 +322,15 @@ func physics_step() -> void:
 	Perf.end(&"car.stepped_listeners")
 
 
-## T-541: one physics step on a rail. A or D swing the nose across (the car stays on the rail);
-## Jump (owned, cooldown over) hops off; otherwise the grind slides on. Returns true while it
+## T-541: one physics step on a rail. A or D spin the body at the air turn rate, as in the air
+## (the board's tweak, 2026-11-06; the car stays on the rail); Jump (owned, cooldown over) hops
+## off, slightly toward the side of the rail the nose points to; otherwise the grind slides on. Returns true while it
 ## goes on (the step is done here: no driving, no collisions, the height held on the bar), false
 ## when it ended: the car is then off the rail with its leaving velocity, and physics_step()
 ## carries on with its normal step (the hop, the fall).
 func _grind_step(steer: float) -> bool:
 	var rotation_before: float = model.rotation
-	grind.set_steer(steer)
+	grind.turn(steer, tuning.turn_rate_for(true), model.dt)
 	var reason := ""
 	if _jump_pressed and jump.is_owned() and jump.cooldown_left <= 0.0:
 		reason = "jump"  # the press stays for the normal step's hop
@@ -349,7 +350,7 @@ func _grind_step(steer: float) -> bool:
 
 
 ## T-541: puts the car on the grind's place on the rail: position, velocity along the rail, the
-## heading across it, the height on the bar; no drift.
+## body's heading (turned by A and D), the height on the bar; no drift.
 func _place_on_grind() -> void:
 	model.set_position(grind.position_units())
 	model.set_velocity(grind.velocity())
@@ -362,12 +363,12 @@ func _place_on_grind() -> void:
 
 
 ## T-541: ends the grind for `reason` ("end", "slow", "jump"): the car leaves from its place on
-## the rail with the grind's leaving velocity, its nose along the rail. Off the end or too slow
+## the rail with the grind's leaving velocity, facing the way it faced on the rail. Off the end or too slow
 ## it falls from the bar; for a jump, the normal step's Jump hops it from there.
 func _leave_grind(reason: String) -> void:
 	var p: Vector2 = grind.position_units()
 	var v: Vector2 = grind.leave_velocity(reason)
-	var heading: float = grind.exit_heading()
+	var heading: float = grind.heading()
 	grind.stop(reason)
 	model.set_position(p)
 	model.set_velocity(v)

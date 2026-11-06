@@ -3,7 +3,8 @@ extends Node
 ## Jump at tier 1 (as the playtest switch gives it), trick detection on, W held. The scene is
 ## the environment variable RAIL_SCENE:
 ##   "jump" (default)  from just south of the spawn point, driving north: a hop onto rail-3, a
-##                     grind, then (D held, once the Jump's cooldown is over) a Jump onto rail-4,
+##                     grind, D turning the nose a little to the right of the rail, then (once
+##                     the Jump's cooldown is over) a Jump slightly to the right, onto rail-4,
 ##                     and a grind to its end;
 ##   "climb"           off roof-12's north edge onto rail-1, up to roof-13;
 ##   "still"           the car parked by rail-3 and rail-4 (RAIL_STILL="x,y": elsewhere), the
@@ -92,7 +93,13 @@ func _on_stepped() -> void:
 		if _steps == hop_step:
 			car.press_jump()  # the hop onto rail-3
 		if car.grind.active and car.grind.rail_index >= 0 and car.grind.rails[car.grind.rail_index].id == "rail-3":
-			car.scripted_input = [true, false, -1.0]  # D: the nose to the east, rail-4's side
+			# From 1 s on the rail, D turns the nose about 25 degrees to the right of the rail line
+			# (east, rail-4's side; the board's tweak: A and D spin the car on the rail), then let go.
+			var off: float = rad_to_deg(angle_difference(atan2(car.grind.travel().y, car.grind.travel().x), car.grind.body_heading))
+			if car.grind.seconds > 1.0 and off < 25.0:
+				car.scripted_input = [true, false, -1.0]
+			else:
+				car.scripted_input = [true, false, 0.0]
 			if not _jumped_off and car.jump.cooldown_left <= 0.0 and car.grind.seconds > 1.6:
 				_jumped_off = true
 				car.press_jump()

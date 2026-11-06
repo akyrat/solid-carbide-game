@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -68,6 +68,10 @@ Built: rails on the map, GRIND! trick, Jump hops rail to rail. QA is checking it
 
 QA passed. In the grind playtest build: C:\solid-carbide-worktrees\playtest-grind-rails\game\project.godot
 
+### 2026-11-06, Needs playtest → In progress
+
+The board's tweak: easier to snap onto rails, steer on the rail like in midair, Jump hops off diagonally toward the side the car points to. Back with the agent.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -121,3 +125,20 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ### QA, 2026-11-06: PASS. qa_check: 2 test sets passed (tools set skipped), documents and screenshots pass; all 8 criteria marked pass (rail tests, jump_at_start 0 in committed data, combo.json rail_grind, docs sections present, GIFs present). Orphaned Godot PID 36536 from the agent still needs closing by the board.
 
 Playtest build (2026-11-06): playtest/grind-rails commit 0b7fa1fb sets game/data/playtest.json jump_at_start to 1 there only (this branch and master keep 0). Headless check in that folder: RunState.start_run() gives Jump tier 1. On that build only, test_rail_grind's test_the_playtest_switch_is_off_in_the_committed_data fails, as intended, since the switch is on there.
+- 2026-11-06, needs-playtest → in-progress: The board, after playing: make it easier to snap onto the rail; steer on the rail like in midair; with the rail line as the threshold, Jump hops off slightly diagonally toward the side the car points to.
+
+### Quick tuning 1 (board, 2026-11-06), Driving & Drift Agent
+
+**The board's words, verbatim:** "Okay, for the grinding prototype, I want you to make it easier to snap on the rail because it's kind of hard now to get on it. And I want to be able to turn the car, so steer just like I would steer when I'm in midair while I'm on the rail, and basically have kind of a threshold which is, you know, on parallel with the rail, on the rail line. And whenever you, depending on whether you're more to the left or to the right, and you press jump, you have like a slight diagonal direction towards that side."
+
+**What changed.** The grind's numbers moved from constants into the new file game/data/rail_grind.json; rail_grind.gd reads it, and its DEFAULTS are used for any missing key.
+1. **Easier to snap on:** reach goes from 1 to **2 units** (the old wall grind's loosened reach). Past an end: 0.5 to **1 unit**. Height window: from 0.5 under / 0.25 over to **0.75 under / 0.5 over**. Angle: 45 to **60 degrees**; 60 still lets a landing straight across (or 65 degrees off the rail) fall past. Least speed along the rail stays **2 units/s**.
+2. **Steering on the rail as in midair:** the car no longer snaps across the rail at 70 degrees. It keeps the heading it landed with, and A/D spin the body at the **air turn rate** (`tuning.turn_rate_for(true)`, so the garage's air turn upgrade applies). It keeps sliding along the rail whichever way it faces, sideways or backwards included. It leaves a rail still facing the way it faced. A spin on a rail pays no air-spin trick; the trick detector is unchanged.
+3. **The threshold is the rail line:** on Jump, if the nose points left of the rail line the hop's flat velocity is turned **15 degrees** to the left of the rail at the same speed; right of it, 15 degrees right; exactly along it, straight on. This works facing forwards or backwards. Reason for 15 degrees ("slight"): at cruise (11 units/s) it is about 2.8 units/s sideways, about 2.4 units over a tier-1 Jump's 0.83 s, and with the 2-unit reach that reaches a second rail up to about 4.4 units away (the jump pair is 3.5 apart). Key: `jump_angle_deg`. A slow drop pushes 2 units/s toward the same nose side, and not at all when the nose is exactly along the line. This replaces the first prototype's flat 4 units/s sideways push toward the side A/D last chose.
+- The rest is unchanged: decel 1, end speed 2, the combo/subs pay, and the rails on the map.
+
+**Files:** game/data/rail_grind.json (new), game/scripts/driving/rail_grind.gd, game/scripts/driving/car.gd (the grind step's turning, the leaving heading), game/tests/unit/test_rail_grind.gd (updated, plus 3 new tests), game/tests/fixtures/rail_grind_gif_demo.gd (D now turns the nose about 25 degrees right of the rail before the jump), docs/drifting.md Content, docs/level-design.md Content (the jump pair's line), game/docs/driving/rail-grind.md.
+
+**Tests (foreground):** test_rail_grind 24/24, test_run_rails 5/5, test_jump_power_up 12/12.
+
+**GIFs retaken:** art-archive/T-541/screenshots/rail_jump_between_rails.gif (hop onto rail-3, D turns the nose right, a slightly diagonal Jump onto rail-4) and rail_climb_to_roof_13.gif (the car now faces the way it landed). The other stills are unchanged.
