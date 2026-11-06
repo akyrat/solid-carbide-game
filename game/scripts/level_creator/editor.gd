@@ -48,6 +48,14 @@ extends Control
 ## with the next, or a plain click adds the last one and pairs the row. Unpair with a pick removes
 ## only the pairs between consecutive picked ones (one picked: all its pairs).
 ##
+## Rails (T-542; Level design, Content, "Rails in the level creator"): the Rail piece (Levels group) is
+## laid with a drag from one end to the other, or a click (a rail RailPiece.DEFAULT_LENGTH long in the picked
+## direction; R turns that direction by 45 degrees, H steps the height: auto = just above the street or
+## rooftop under each end, or 1, 3.1, 6.1). With nothing picked, a click on a rail selects it: drag an end
+## to resize or turn it, drag the bar to move it, R turns it, [ and ] shorten and lengthen it, H steps
+## its height, Del deletes it. Rails are drawn with T-541's placeholder (rail_drawing.gd) and saved in the
+## level file's "rails" list.
+##
 ## Saving (T-238): the Save button writes the level, named from the level name field, through
 ## LevelStore.save_level into the levels folder (levels_dir), in the map-file format
 ## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
@@ -64,6 +72,9 @@ const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 const BuildingTowers := preload("res://scripts/level/building_towers.gd")
 ## T-441: the kaiju alert signs and banners (their geometry and drawing, shared with the run).
 const KaijuSigns := preload("res://scripts/level/kaiju_signs.gd")
+## T-542: rails, their format and the placeholder drawing the run uses.
+const RailsScript := preload("res://scripts/level/rails.gd")
+const RailDrawingScript := preload("res://scripts/level/rail_drawing.gd")
 
 const ISO_TRANSFORM := MvpMapScript.ISO_TRANSFORM
 const PX_PER_UNIT := MvpMapScript.PX_PER_UNIT
@@ -122,6 +133,13 @@ var pick_arrows: String = "up"
 var pick_style: String = ElevationLayerScript.DEFAULT_PIECE_STYLE
 ## The level's data model (level_document.gd), over level_data.
 var document: LevelDocument
+## T-542: the rails' drawing in the map (null when the level has none), the direction step a rail is laid
+## in (0..7, RailPiece.TURN_STEP_DEG each), the drag in progress ({} for none) and the rail being laid
+## by a drag ({a, b} while dragging).
+var rail_drawing: Node2D
+var rail_turn: int = 0
+var rail_drag: Dictionary = {}
+var rail_new: Dictionary = {}
 var panel: LevelCreatorAssetPanel
 var map_view: SubViewportContainer
 var viewport: SubViewport
@@ -451,6 +469,8 @@ func _rebuild_map() -> void:
 	elevation.name = "Elevation"
 	map.add_child(elevation)
 	elevation.setup_data(map, map.layout)
+	rail_drawing = null  # the old map's drawing went with the old map
+	_rebuild_rails()
 	if _overlay.get_parent() == null:
 		world.add_child(_overlay)
 	else:
@@ -467,6 +487,8 @@ func _refresh_ground() -> void:
 func _refresh_after(kind: String) -> void:
 	if kind in ["ground", "road"]:
 		_refresh_ground()
+	elif kind == "rail":
+		_rebuild_rails()
 	else:
 		_rebuild_map()
 	_overlay.queue_redraw()
@@ -964,6 +986,12 @@ func _update_size_label() -> void:
 	if brush_mode() == "paint":
 		size_label.text = CreatorTexts.get_text("road_brush_hint")
 		return
+	if rail_picked():
+		size_label.text = CreatorTexts.get_text("rail_hint")  # T-542
+		return
+	if _picked() == "" and not selected_rail().is_empty():
+		size_label.text = rail_readout()
+		return
 	if not LevelDocument.is_resizable(_picked()):
 		size_label.text = ""
 		return
@@ -1122,6 +1150,9 @@ func apply_member(m: Dictionary) -> void:
 ## Steps the picked family's member along `axis` (look, turn, flip, height; KEY_ACTIONS). Returns
 ## the member now ({} with nothing picked).
 func step_pick(axis: String) -> Dictionary:
+	if axis == "height" and _picked() == "" and not selected_rail().is_empty():
+		rail_height_pick()  # T-542: H steps the selected rail's height
+		return {}
 	if panel == null or panel.picked_family == "":
 		return {}
 	apply_member(CreatorFamilies.step(panel.picked_family, panel.member, axis))
@@ -1141,6 +1172,14 @@ func height_pick() -> Dictionary:
 ## Rotate (R): the picked piece's next turn (its next view, or for a road tile the tile along the
 ## other axis). Returns the view now.
 func rotate_pick() -> String:
+	if rail_picked():
+		rail_turn = (rail_turn + 1) % int(360.0 / RailPiece.TURN_STEP_DEG)  # T-542: the direction a clicked rail is laid in
+		_update_pose_controls()
+		_overlay.queue_redraw()
+		return pick_view
+	if _picked() == "" and not selected_rail().is_empty():
+		turn_rail()  # T-542: R turns the selected rail
+		return pick_view
 	if _picked() == "" and str(selected.get("kind", "")) == "spawn":
 		turn_spawn()  # T-280: R turns the selected start's heading
 		return pick_view
@@ -1210,11 +1249,18 @@ func _update_pose_controls() -> void:
 		mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
 	var key: String = LevelCreatorAssetPanel.label_key(id)
 	height_label.text = CreatorTexts.get_text(key) if key != "" else ""
+	if rail_picked():
+		height_label.text = rail_height_text()  # T-542
 	var dir_key: String = LevelCreatorAssetPanel.RAMP_DIR_KEYS.get(pick_view, "") \
 		if str(LevelDocument.entry(id).get("kind", "")) == "ramp" else ""
 	if dir_key == "" and panel != null and bool(CreatorFamilies.family(panel.picked_family).get("facing_labels", false)):
 		dir_key = LevelCreatorAssetPanel.FACING_KEYS.get(pick_view, "")  # T-398: a car's facing
 	direction_label.text = CreatorTexts.get_text(dir_key) if dir_key != "" else ""
+	if rail_picked():
+		direction_label.text = CreatorTexts.get_text("rail_direction").format({"deg": int(RailPiece.TURN_STEP_DEG * rail_turn)})
+		rotate_button.disabled = false  # R turns the direction a clicked rail is laid in
+	elif not selected_rail().is_empty() and id == "":
+		rotate_button.disabled = false  # R turns the selected rail
 	# T-264: the S, M, L and Any size buttons show with a rooftop picked, Arrows up and down with a ramp.
 	var kind := str(LevelDocument.entry(id).get("kind", ""))
 	for b_id in size_buttons:
@@ -1234,6 +1280,291 @@ func _update_pose_controls() -> void:
 		pair_button.set_pressed_no_signal(pair_mode)
 		unpair_button.visible = can_unpair()  # T-394: also for a pick in the pair tool
 	_update_size_label()
+
+
+# ---- Rails (T-542) ------------------------------------------------------------------------------
+
+## (Re)builds the rails' drawing in the map: T-541's placeholder (rail_drawing.gd) with the same height and
+## depth callables the run gives it, so a rail looks in the creator as it will in a run.
+func _rebuild_rails() -> void:
+	if rail_drawing != null and is_instance_valid(rail_drawing):
+		if rail_drawing.shadows != null and is_instance_valid(rail_drawing.shadows):
+			rail_drawing.shadows.free()
+		rail_drawing.free()
+	rail_drawing = null
+	if map == null or document == null or elevation == null:
+		return
+	var rails: Array = RailsScript.from_layout({"rails": document.rails()})
+	if rails.is_empty():
+		return
+	var lay: Node2D = elevation
+	var hf := func(units: Vector2) -> float: return lay.ground_height.height_at(units)
+	var df := func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
+	rail_drawing = RailDrawingScript.new()
+	rail_drawing.build(map, rails, hf, df)
+
+
+## True while the Rail piece is picked.
+func rail_picked() -> bool:
+	return _picked() == "rail"
+
+
+## The selected rail's entry, {} when no rail is selected.
+func selected_rail() -> Dictionary:
+	return selected.item if str(selected.get("kind", "")) == "rail" else {}
+
+
+## The picked rail height (the family member's "height"): "auto", or units as text.
+func rail_height_mode() -> String:
+	if panel == null or panel.member.is_empty():
+		return RailPiece.AUTO
+	return str(panel.member.get("height", RailPiece.AUTO))
+
+
+## The fixed height of the picked rail, -1 for auto.
+func rail_fixed_height() -> float:
+	var m := rail_height_mode()
+	return -1.0 if m == RailPiece.AUTO else float(m)
+
+
+## A rail end's height at map point `u`: the picked fixed height, or just above what is under it.
+func rail_height_at(u: Vector2) -> float:
+	var fz := rail_fixed_height()
+	return fz if fz >= 0.0 else RailPiece.auto_height(document.height_at(u))
+
+
+## The local mouse position (the map view's pixels) as map pixels.
+func local_px(local: Vector2) -> Vector2:
+	return viewport.get_canvas_transform().affine_inverse() * local
+
+
+## The map point (units, snapped) a rail end at map pixel `px` is on, for the picked height: with auto the
+## surface under the end sets the height the end is drawn at, so it settles in a few steps.
+func rail_point_at(px: Vector2) -> Vector2:
+	var fz := rail_fixed_height()
+	var z := fz if fz >= 0.0 else RailPiece.STREET_HEIGHT
+	var u := RailPiece.ground_for(px, z)
+	if fz < 0.0:
+		for i in 3:
+			z = RailPiece.auto_height(document.height_at(u))
+			u = RailPiece.ground_for(px, z)
+	return RailPiece.snap(u)
+
+
+## Lays a rail from `a` to `b` (map points, units) at the picked height. A rail shorter than the game takes
+## is laid RailPiece.DEFAULT_LENGTH long from `a` in the picked direction (a click). Returns the piece, or {}
+## (with the rail_refused message) when it can't be laid.
+func lay_rail(a: Vector2, b: Vector2) -> Dictionary:
+	a = RailPiece.snap(a)
+	b = RailPiece.snap(b)
+	if a.distance_to(b) < RailsScript.MIN_LENGTH:
+		b = RailPiece.snap(a + RailPiece.direction_of(rail_turn) * RailPiece.DEFAULT_LENGTH)
+	var piece := document.place_rail(a, b, rail_height_at(a), rail_height_at(b))
+	if piece.is_empty():
+		last_problem = "rail"
+		_show_message(CreatorTexts.get_text("rail_refused"))
+		return {}
+	last_problem = ""
+	_show_message("")
+	_refresh_after("rail")
+	_overlay.queue_redraw()
+	return piece
+
+
+## The press of a rail drag with the Rail piece picked, at the local mouse position.
+func begin_rail_drag(local: Vector2) -> void:
+	var a := rail_point_at(local_px(local))
+	rail_drag = {"mode": "new", "a": a}
+	rail_new = {"a": a, "b": a}
+	_overlay.queue_redraw()
+
+
+## The mouse moved during a drag: a new rail's far end follows it; a selected rail's end follows it, or the
+## whole rail moves with it. A change the rail check refuses is left out (the rail keeps its last good place).
+func update_rail_drag(local: Vector2) -> void:
+	if rail_drag.is_empty():
+		return
+	var px := local_px(local)
+	var mode := str(rail_drag.mode)
+	if mode == "new":
+		rail_new.b = rail_point_at(px)
+		_overlay.queue_redraw()
+		return
+	var it: Dictionary = rail_drag.item
+	var o: Dictionary = rail_drag.orig
+	var changed := false
+	if mode == "a":
+		changed = document.set_rail(it, RailPiece.snap(RailPiece.ground_for(px, RailPiece.height_a(o))), RailPiece.end_b(o),
+			RailPiece.height_a(o), RailPiece.height_b(o))
+	elif mode == "b":
+		changed = document.set_rail(it, RailPiece.end_a(o), RailPiece.snap(RailPiece.ground_for(px, RailPiece.height_b(o))),
+			RailPiece.height_a(o), RailPiece.height_b(o))
+	elif mode == "body":
+		var h := (RailPiece.height_a(o) + RailPiece.height_b(o)) / 2.0
+		var d := RailPiece.snap(RailPiece.ground_for(px, h) - RailPiece.ground_for(rail_drag.grab_px, h))
+		changed = document.set_rail(it, RailPiece.end_a(o) + d, RailPiece.end_b(o) + d, RailPiece.height_a(o), RailPiece.height_b(o))
+	if changed:
+		_rail_changed()
+
+
+## The release of a rail drag: a new rail is laid, an edit stays. Returns the laid rail ({} for an edit).
+func end_rail_drag(local: Vector2) -> Dictionary:
+	if rail_drag.is_empty():
+		return {}
+	update_rail_drag(local)
+	var out := {}
+	if str(rail_drag.mode) == "new":
+		out = lay_rail(rail_new.a, rail_new.b)
+	rail_drag = {}
+	rail_new = {}
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return out
+
+
+## Esc during a drag: a new rail is dropped, an edit goes back to the rail as it was.
+func cancel_rail_drag() -> void:
+	if rail_drag.is_empty():
+		return
+	if str(rail_drag.mode) != "new":
+		var o: Dictionary = rail_drag.orig
+		document.set_rail(rail_drag.item, RailPiece.end_a(o), RailPiece.end_b(o), RailPiece.height_a(o), RailPiece.height_b(o))
+		_rail_changed()
+	rail_drag = {}
+	rail_new = {}
+	_overlay.queue_redraw()
+
+
+## The press with nothing picked: the selected rail's end or bar, else any rail's, is selected and starts a
+## drag (a click without a move changes nothing). Returns true when a rail was under the mouse.
+func press_rail(local: Vector2) -> bool:
+	var px := local_px(local)
+	var handle := RailPiece.HANDLE_PX / zoom
+	var body := RailPiece.BODY_PX / zoom
+	var item := selected_rail()
+	var part := RailPiece.part_at(item, px, handle, body) if not item.is_empty() else ""
+	if part == "":
+		item = {}
+		var best := INF
+		for it in document.rails():
+			var p := RailPiece.part_at(it, px, handle, body)
+			var dist := RailPiece.distance_px(it, px)
+			if p != "" and dist < best:
+				best = dist
+				item = it
+				part = p
+	if item.is_empty():
+		return false
+	selected = {"kind": "rail", "item": item}
+	_clear_spawn_hint()
+	rail_drag = {"mode": part, "item": item, "orig": item.duplicate(), "grab_px": px}
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return true
+
+
+## Selects the piece under the local mouse position: a rail first (it is drawn over the ground), else
+## select_at on the ground point.
+func select_at_mouse(local: Vector2) -> Dictionary:
+	var px := local_px(local)
+	for it in document.rails():
+		if RailPiece.part_at(it, px, 0.0, RailPiece.BODY_PX / zoom) != "":
+			selected = {"kind": "rail", "item": it}
+			_clear_spawn_hint()
+			_update_pose_controls()
+			_overlay.queue_redraw()
+			return selected
+	return select_at(screen_to_units(local))
+
+
+func _rail_changed() -> void:
+	_rebuild_rails()
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## R with a rail selected: turns it one step (RailPiece.TURN_STEP_DEG) round its middle. True when it turned.
+func turn_rail(steps: int = 1) -> bool:
+	var it := selected_rail()
+	if it.is_empty():
+		return false
+	var ends := RailPiece.turned_ends(it, steps)
+	return _set_selected_rail(ends[0], ends[1], RailPiece.height_a(it), RailPiece.height_b(it))
+
+
+## [ and ] with a rail selected: shortens or lengthens it by `delta` units from its end b.
+func resize_rail(delta: float) -> bool:
+	var it := selected_rail()
+	if it.is_empty():
+		return false
+	return _set_selected_rail(RailPiece.end_a(it), RailPiece.resized_b(it, delta), RailPiece.height_a(it), RailPiece.height_b(it))
+
+
+## The selected rail moved by `delta` units (snapped).
+func move_rail(delta: Vector2) -> bool:
+	var it := selected_rail()
+	if it.is_empty():
+		return false
+	var d := RailPiece.snap(delta)
+	return _set_selected_rail(RailPiece.end_a(it) + d, RailPiece.end_b(it) + d, RailPiece.height_a(it), RailPiece.height_b(it))
+
+
+## H with a rail selected: the next height of the rail family's (auto, then the fixed ones), both ends. A rail
+## whose ends are at different heights, or at no preset, takes the first (auto).
+func rail_height_pick() -> bool:
+	var it := selected_rail()
+	if it.is_empty():
+		return false
+	var heights: Array = [RailPiece.AUTO]
+	for h in CreatorFamilies.family("rail").get("heights", []):
+		if str(h) != RailPiece.AUTO:
+			heights.append(str(h))
+	var za := RailPiece.height_a(it)
+	var zb := RailPiece.height_b(it)
+	var next := 0
+	if is_equal_approx(za, zb):
+		for i in heights.size():
+			if heights[i] != RailPiece.AUTO and is_equal_approx(float(heights[i]), za):
+				next = (i + 1) % heights.size()
+	var a := RailPiece.end_a(it)
+	var b := RailPiece.end_b(it)
+	if heights[next] == RailPiece.AUTO:
+		return _set_selected_rail(a, b, RailPiece.auto_height(document.height_at(a)), RailPiece.auto_height(document.height_at(b)))
+	return _set_selected_rail(a, b, float(heights[next]), float(heights[next]))
+
+
+func _set_selected_rail(a: Vector2, b: Vector2, za: float, zb: float) -> bool:
+	var it := selected_rail()
+	if not document.set_rail(it, a, b, za, zb):
+		_show_message(CreatorTexts.get_text("rail_refused"))
+		return false
+	_show_message("")
+	_rail_changed()
+	return true
+
+
+## The rail the picked piece would lay at the mouse (a click), for the overlay: {a, b, za, zb} or {}.
+func rail_ghost() -> Dictionary:
+	if not rail_picked() or hover_cell.x < 0 or not rail_drag.is_empty():
+		return {}
+	var a := rail_point_at(ISO_TRANSFORM * (hover_units * PX_PER_UNIT))
+	var b := RailPiece.snap(a + RailPiece.direction_of(rail_turn) * RailPiece.DEFAULT_LENGTH)
+	return {"a": a, "b": b, "za": rail_height_at(a), "zb": rail_height_at(b)}
+
+
+## The top bar text for the picked rail's height.
+func rail_height_text() -> String:
+	if rail_fixed_height() < 0.0:
+		return CreatorTexts.get_text("rail_height_auto")
+	return CreatorTexts.get_text("rail_height_fixed").format({"h": rail_height_mode()})
+
+
+## The selected rail's readout for the top bar.
+func rail_readout() -> String:
+	var it := selected_rail()
+	return CreatorTexts.get_text("rail_selected").format({"id": str(it.id), "length": snappedf(RailPiece.length_of(it), 0.1),
+		"z1": snappedf(RailPiece.height_a(it), 0.1), "z2": snappedf(RailPiece.height_b(it), 0.1),
+		"deg": int(round(RailPiece.angle_deg(it)))})
 
 
 # ---- The spawn point (T-280) --------------------------------------------------------------------
@@ -1378,8 +1709,12 @@ func _on_map_input(event: InputEvent) -> void:
 				begin_road_stroke(units, mb.button_index == MOUSE_BUTTON_RIGHT)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			var units := screen_to_units(mb.position)
-			if panel.picked == "" and not pair_mode and spawn_cell_has(units):
+			if panel.picked == "" and not pair_mode and press_rail(mb.position):
+				pass  # T-542: a rail's end or bar: select it and drag
+			elif panel.picked == "" and not pair_mode and spawn_cell_has(units):
 				begin_spawn_drag()  # T-280: drag the start
+			elif panel.picked == "rail":
+				begin_rail_drag(mb.position)  # T-542: drag from one end to the other
 			elif panel.picked != "" and LevelDocument.is_resizable(panel.picked):
 				begin_size_drag(units)
 			elif panel.picked != "":
@@ -1390,6 +1725,8 @@ func _on_map_input(event: InputEvent) -> void:
 				pass  # T-394: Shift+click on an obstacle starts a row with the pair tool
 			else:
 				select_at(units)
+		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and not rail_drag.is_empty():
+			end_rail_drag(mb.position)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and spawn_dragging:
 			end_spawn_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and size_drag_start.x >= 0:
@@ -1398,7 +1735,7 @@ func _on_map_input(event: InputEvent) -> void:
 			panel.pick("")
 			if pair_mode:
 				set_pair_tool(false)
-			select_at(screen_to_units(mb.position))
+			select_at_mouse(mb.position)
 		map_view.accept_event()
 	elif event is InputEventMouseMotion:
 		var mm := event as InputEventMouseMotion
@@ -1409,6 +1746,10 @@ func _on_map_input(event: InputEvent) -> void:
 			continue_road_stroke(hover_units)
 		if spawn_dragging:
 			update_spawn_drag(hover_units)
+		if not rail_drag.is_empty():
+			update_rail_drag(mm.position)
+		elif rail_picked():
+			_overlay.queue_redraw()  # T-542: the rail ghost follows the mouse
 		var c :=document.cell_at(hover_units)
 		if c != hover_cell:
 			hover_cell = c
@@ -1447,7 +1788,12 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				delete_selected()
 		KEY_T:
 			style_pick()
+		KEY_BRACKETLEFT:
+			resize_rail(-RailPiece.LENGTH_STEP)  # T-542: a selected rail shorter
+		KEY_BRACKETRIGHT:
+			resize_rail(RailPiece.LENGTH_STEP)  # T-542: a selected rail longer
 		KEY_ESCAPE:
+			cancel_rail_drag()
 			size_drag_start = Vector2i(-1, -1)
 			end_road_stroke()
 			panel.pick("")
@@ -1567,6 +1913,8 @@ class _Overlay extends Node2D:
 			if not ap.is_empty():
 				_texture(ap.texture, ap.rect, bool(ap.flip), Color(1, 1, 1, editor.PREVIEW_ALPHA))
 				_quad(ap.quad, Color(0.55, 0.85, 1.0, 0.9), w)
+		elif editor.rail_picked():
+			pass  # T-542: a rail has no footprint: its ghost and drag line are drawn by _draw_rails
 		elif editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
 			# Where the piece would go, snapped (LevelSnapping): its art and footprint there (a
 			# piece of any size: the engine-drawn preview, editor.preview_drawing, and footprint).
@@ -1586,7 +1934,37 @@ class _Overlay extends Node2D:
 		elif not editor.selected.is_empty() and str(editor.selected.get("kind", "")) != "spawn":
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
 		_draw_pairs(doc, w)
+		_draw_rails(w)
 		_draw_spawn(doc, w)
+
+	## T-542: the rail being laid by a drag, the ghost of the one a click would lay, and the selected rail
+	## with a handle on each end.
+	func _draw_rails(w: float) -> void:
+		var lay_col := Color(0.55, 0.85, 1.0, 0.95)
+		if not editor.rail_new.is_empty():
+			var a: Vector2 = editor.rail_new.a
+			var b: Vector2 = editor.rail_new.b
+			_rail_line(a, editor.rail_height_at(a), b, editor.rail_height_at(b), lay_col, w * 2.0)
+		else:
+			var g: Dictionary = editor.rail_ghost()
+			if not g.is_empty():
+				_rail_line(g.a, g.za, g.b, g.zb, Color(lay_col, 0.6), w * 2.0)
+		var it: Dictionary = editor.selected_rail()
+		if it.is_empty():
+			return
+		var sel := Color(1.0, 0.85, 0.3, 1.0)
+		var a2 := RailPiece.end_a(it)
+		var b2 := RailPiece.end_b(it)
+		_rail_line(a2, RailPiece.height_a(it), b2, RailPiece.height_b(it), sel, w * 1.5)
+		for e in [[a2, RailPiece.height_a(it)], [b2, RailPiece.height_b(it)]]:
+			var at: Vector2 = RailPiece.px_of(e[0], e[1])
+			draw_circle(at, w * 4.0, Color(0.05, 0.1, 0.05, 0.9))
+			draw_circle(at, w * 3.0, sel)
+
+	## A line from map point `a` at height `za` to `b` at `zb` (map pixels), with a ground line under it.
+	func _rail_line(a: Vector2, za: float, b: Vector2, zb: float, color: Color, width: float) -> void:
+		draw_line(RailPiece.px_of(a, 0.0), RailPiece.px_of(b, 0.0), Color(color, 0.25), width * 0.5)
+		draw_line(RailPiece.px_of(a, za), RailPiece.px_of(b, zb), color, width)
 
 	## T-280: the spawn point, always: a car-shaped arrow on its cell (turned to the heading), the
 	## label above, at the height of the surface it stands on. Dragged: a ghost at the drop cell.

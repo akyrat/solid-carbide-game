@@ -1,7 +1,7 @@
 ---
 id: T-542
 title: Rails in the level creator
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -53,10 +53,23 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-06, Blocked → In progress
+
+Started now that the rail grind (T-541) is in master: the agent is working in C:\solid-carbide-worktrees\T-542.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+T-542 done by the level-challenge agent (on master, which has T-541).
+
+What was built: the Rail piece of the level creator (Levels group, button "Rail"). Lay with a drag (or a click: 12 units in the picked direction, R turns 45 degrees); H steps heights auto / 1 / 3.1 / 6.1 (auto = just above the street or rooftop under each end). Select by clicking the bar; drag an end (resize/turn), drag the bar (move), R turns 45 degrees round the middle, [ ] shorten/lengthen, H height, Del deletes, Esc cancels a drag. Drawn with T-541's RailDrawing (same callables as the run), saved/loaded in the "rails" list (T-541 format), grindable in a run on the saved file.
+Files: game/scripts/level_creator/rail_piece.gd (new), editor.gd, level_document.gd (place_rail, set_rail, rail_problem, rails), game/tools/build_creator_assets.py + regenerated data/level/creator_assets.json, creator_texts.json (piece_rail, rail_*), art/creator_pieces/icon_rail.png (button picture, made with a script, no PixelLab), tests, game/tools/shots/ (screenshot scene).
+Proposals for the playtest (all in rail_piece.gd / build_creator_assets.py): snap 0.5 unit; default click length 12; turn step 45 degrees; length step 1; heights auto/1/3.1/6.1; auto = 1.0 over the street, surface+0.1 over rooftops/ramps; grab radius 12 px (ends), 8 px (bar); ends must be inside the map.
+Docs: docs/level-design.md Content "Rails in the level creator (task T-542)"; game/docs/level/level-creator-pieces.md "Rails (T-542)".
+Tests: new game/tests/unit/level_creator/test_creator_rails.gd (24 tests: panel, heights, laying by drag/click/mouse events, auto height on a rooftop, refusals, select/move/resize/turn/height/delete/Esc, drawing, save+reload+check_level.py, run with rails and a car locking onto the creator-laid rail). Updated test_creator_families.gd, test_creator_assets.gd, tools/test_build_creator_assets.py for the new family. Ran: godot level_creator + run dirs 66 scripts, 801 tests, all pass; test_creator_assets 8/8; test_rail_grind 27/27; python test_build_creator_assets 27 OK. Full three sets not run (QA does).
+Test levels only under the test folder/user://; nothing written to game/data/levels/.
+Screenshots (art-archive/T-542/screenshots/): creator_rails_placed.png (rails, one selected with handles), creator_laying_a_rail.png (Rail picked, a rail being dragged), run_on_the_creator_level.png (the same level in a run, car grinding). Regenerate: T542_MODE=creator|laying|run bash game/tools/screenshot.sh res://tools/shots/rails_creator_shots.tscn <out.png> 40.
+Notes: Godot's untracked .uid files left uncommitted. The 5 rails of the game's map can now be edited by opening a copy in the creator.
