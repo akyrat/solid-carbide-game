@@ -323,8 +323,9 @@ func physics_step() -> void:
 
 
 ## T-541: one physics step on a rail. A or D spin the body at the air turn rate, as in the air
-## (the board's tweak, 2026-11-06; the car stays on the rail); Jump (owned, cooldown over) hops
-## off, slightly toward the side of the rail the nose points to; otherwise the grind slides on. Returns true while it
+## (the board's tweak, 2026-11-06; the car stays on the rail); Jump (owned; the regular Jump's
+## cooldown doesn't apply on a rail, quick tuning 2) hops off, slightly toward the side of the
+## rail the nose points to; otherwise the grind slides on. Returns true while it
 ## goes on (the step is done here: no driving, no collisions, the height held on the bar), false
 ## when it ended: the car is then off the rail with its leaving velocity, and physics_step()
 ## carries on with its normal step (the hop, the fall).
@@ -332,8 +333,8 @@ func _grind_step(steer: float) -> bool:
 	var rotation_before: float = model.rotation
 	grind.turn(steer, tuning.turn_rate_for(true), model.dt)
 	var reason := ""
-	if _jump_pressed and jump.is_owned() and jump.cooldown_left <= 0.0:
-		reason = "jump"  # the press stays for the normal step's hop
+	if _jump_pressed and jump.is_owned():
+		reason = "jump"
 	else:
 		_jump_pressed = false  # used up (or of no use), before stepped is sent
 		jump.step(height_model, false, model.dt)  # the cooldown runs on
@@ -364,7 +365,8 @@ func _place_on_grind() -> void:
 
 ## T-541: ends the grind for `reason` ("end", "slow", "jump"): the car leaves from its place on
 ## the rail with the grind's leaving velocity, facing the way it faced on the rail. Off the end or too slow
-## it falls from the bar; for a jump, the normal step's Jump hops it from there.
+## it falls from the bar; for a jump, the Jump hops it from there with no cooldown
+## (JumpPowerUp.hop_off_rail: the regular Jump's cooldown is neither checked nor started).
 func _leave_grind(reason: String) -> void:
 	var p: Vector2 = grind.position_units()
 	var v: Vector2 = grind.leave_velocity(reason)
@@ -374,7 +376,10 @@ func _leave_grind(reason: String) -> void:
 	model.set_velocity(v)
 	model.rotation = heading
 	_sync_from_model()
-	if reason != "jump":
+	if reason == "jump":
+		jump.hop_off_rail(height_model)
+		_jump_pressed = false  # used: the normal step's Jump doesn't see it again
+	else:
 		height_model.leave_rail(0.0)
 
 

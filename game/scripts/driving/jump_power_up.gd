@@ -88,3 +88,18 @@ func step(height_model, pressed: bool, dt: float) -> bool:
 	hops += 1
 	jumped.emit(takeoff_speed)
 	return true
+
+
+## Task T-541 (rail grinding; the board's quick tuning 2, 2026-11-06): a Jump off a rail. It hops
+## like step() at the tier's takeoff speed, but ignores the cooldown and leaves it as it was (it
+## neither starts nor extends it), so a Jump off a rail always fires and the next rail can be
+## jumped off at once; off the rails the regular Jump keeps its cooldown. Nothing when not owned.
+## Returns true when the car hopped.
+func hop_off_rail(height_model) -> bool:
+	if tier <= 0:
+		return false
+	if not height_model.hop(takeoff_speed):
+		return false
+	hops += 1
+	jumped.emit(takeoff_speed)
+	return true

@@ -414,3 +414,52 @@ func test_the_jump_goes_to_the_side_of_the_rail_line_the_nose_points_to() -> voi
 	assert_eq(g.nose_side(), -1.0)
 	assert_almost_eq(g.leave_velocity("jump").y, 10.0 * sin(a), 1e-6, "slightly right")
 	assert_almost_eq(g.leave_velocity("jump").length(), 10.0, 1e-6, "the speed is kept")
+
+
+# --- Quick tuning 2 (board, 2026-11-06): no cooldown for a Jump off a rail -------------------
+
+func test_a_jump_off_a_rail_ignores_the_regular_cooldown_and_leaves_it_alone() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	car.jump.cooldown_left = car.jump.cooldown_seconds  # as if it had just hopped
+	var before: float = car.jump.cooldown_left
+	car.press_jump()
+	car.physics_step()
+	assert_false(car.grind.active, "hopped off, cooldown or not")
+	assert_true(car.airborne)
+	assert_gt(car.vertical_speed, 0.0)
+	assert_eq(car.jump.hops, 1)
+	assert_lte(car.jump.cooldown_left, before, "not started again or extended")
+	assert_gt(car.jump.cooldown_left, before - 2.0 * car.model.dt, "only ticked down as usual")
+
+
+func test_two_rail_jumps_in_quick_succession() -> void:
+	# rail-a, a Jump to the right onto rail-b, and at once a Jump off rail-b: well inside the
+	# regular cooldown (2 s at tier 1).
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	car.scripted_input = [false, false, -1.0]  # D: the nose right of the line, toward rail-b
+	car.physics_step()
+	car.scripted_input = [false, false, 0.0]
+	car.press_jump()
+	car.physics_step()
+	var steps := _step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
+	assert_true(car.grind.active, "on rail-b")
+	assert_eq(car.grind.rail_index, 1)
+	assert_lt(float(steps + 2) * car.model.dt, car.jump.cooldown_seconds, "inside the regular cooldown")
+	car.press_jump()
+	car.physics_step()
+	assert_false(car.grind.active, "jumped off rail-b at once")
+	assert_eq(car.jump.hops, 2)
+
+
+func test_off_the_rails_the_regular_jump_keeps_its_cooldown() -> void:
+	var car := _car(Vector2(2, 10), Vector2(10, 0), 0.0, 0.0, 1)  # on the street, no rail near
+	car.press_jump()
+	car.physics_step()
+	assert_eq(car.jump.hops, 1)
+	_step_until(car, func() -> bool: return not car.airborne, 200)
+	assert_gt(car.jump.cooldown_left, 0.0, "the cooldown still runs")
+	car.press_jump()
+	car.physics_step()
+	assert_eq(car.jump.hops, 1, "a press during the cooldown does nothing on the ground")

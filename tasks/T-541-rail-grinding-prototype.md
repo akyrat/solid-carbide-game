@@ -156,3 +156,18 @@ Playtest build (2026-11-06): playtest/grind-rails commit 0b7fa1fb sets game/data
 **GIFs retaken:** art-archive/T-541/screenshots/rail_jump_between_rails.gif (hop onto rail-3, D turns the nose right, a slightly diagonal Jump onto rail-4) and rail_climb_to_roof_13.gif (the car now faces the way it landed). The other stills are unchanged.
 - 2026-11-06, in-progress → in-qa: Ready for the board to play (quick tuning 1), no QA agent yet.
 - 2026-11-06, needs-playtest → in-progress: The board: jumping off a rail is not subject to the regular jump's cooldown; after landing on a rail the player can jump again quickly.
+
+### Quick tuning 2 (board, 2026-11-06), Driving & Drift Agent
+
+**The board's words, verbatim:** "for the grinding: jumping out from a rail should not be subjected to the cooldown for the regular jump. jumping on a rail, i should be able to jump again quickly if i want to."
+
+**What changed:**
+- A Jump pressed while grinding now always fires if the Jump power-up is owned, whatever the regular cooldown says. It goes through the new `JumpPowerUp.hop_off_rail()`, which hops at the tier's takeoff speed and leaves the cooldown as it was: it neither starts nor extends it. So after landing on a rail the player can jump off again right away.
+- Off the rails the regular Jump keeps its cooldown as before. A cooldown that was already running keeps ticking during a grind.
+- No minimum gap was added (so nothing new in rail_grind.json): one key press is one Jump, because the press is used once and then forgotten.
+
+**Files:** game/scripts/driving/jump_power_up.gd (hop_off_rail), game/scripts/driving/car.gd (the grind step and _leave_grind), game/tests/unit/test_rail_grind.gd (3 new tests: the cooldown is ignored and left alone, two rail jumps in quick succession, the regular cooldown still applies on the ground), docs/drifting.md Content ("Leaving"), game/docs/driving/rail-grind.md.
+
+**Tests (foreground):** test_rail_grind 27/27, test_run_rails 5/5, test_jump_power_up 12/12.
+
+**GIFs:** not retaken. The recorded drive jumps after 1.6 s on the rail either way, so it looks the same.
