@@ -1,7 +1,7 @@
 ---
 id: T-540
 title: Bouncier Bouncy Bumpers
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Rails
@@ -94,3 +94,4 @@ QA round 1 fix: docs/drifting.md Content now gives x2.1/x3.9 and distances 1.85/
 QA round 1 fix: docs/drifting.md Content now gives x2.1/x3.9 and distances 1.85/3.48 (was 1.23/2.30), and the cap line 1.75 x 3.9 = 6.8 units.
 
 QA round 2: criterion 3 now passes (Content lines 267, 317, 319, 323 give x2.1/x3.9 and 1.85/3.48 units; no bad bytes). Other marks unchanged, code unchanged.
+- 2026-11-06, needs-playtest → done: The board played the combined build: lgtm.
