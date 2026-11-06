@@ -1,7 +1,7 @@
 ---
 id: T-543
 title: The trick list shows REVERSE DRIFT!, AURA FARMING! and GRIND!
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Rails

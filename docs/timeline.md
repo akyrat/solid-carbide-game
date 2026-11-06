@@ -3670,3 +3670,8 @@ Entry format:
 - Decision or change: The board approved the south-east sample; the other directions are made from it and swapped into the game.
 - Documents touched: docs/visual-style.md
 - Tasks: T-544
+
+## 2026-11-06: Rail grinding
+- Decision or change: Rails as a map piece (straight segments at a height, in the level file); the car locks on within 2 units and 60 degrees, grinds with sparks, A/D turn it as in midair, GRIND! pays when the grind ends; Jump hops off 15 degrees toward the nose's side, with no Jump cooldown on a rail. The board approved it after two tweaks.
+- Documents touched: `docs/drifting.md`, `docs/level-design.md`
+- Tasks: T-541

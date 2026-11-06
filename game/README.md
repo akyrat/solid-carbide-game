@@ -56,6 +56,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/driving/drift.md](docs/driving/drift.md): Drift. The drift prototype and the side slip.
 - [docs/driving/collisions.md](docs/driving/collisions.md): Collisions. Layers, bounce, signal, knockback.
 - [docs/driving/tricks.md](docs/driving/tricks.md): Tricks. The trick signal and how each trick is found.
+- [docs/driving/rail-grind.md](docs/driving/rail-grind.md): Rail grinding (T-541, a prototype). Rails, the grind, its drawing and sparks.
 - [docs/driving/effects.md](docs/driving/effects.md): Driving effects. Drift marks, drift smoke, boost effect, airtime trick, hype speed boost.
 
 ## data/

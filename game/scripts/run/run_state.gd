@@ -297,6 +297,10 @@ func start_run() -> void:
 	running = true
 	missions.start(mission_seed)  # T-457: back to mission 1, a fresh set
 	_power_ups = {}
+	# T-541: the playtest switch (data/playtest.json "jump_at_start"; 0, off, on master).
+	var jump_tier := jump_at_start()
+	if jump_tier > 0:
+		set_power_up_tier("jump", jump_tier)
 	run_started.emit()
 	power_ups_changed.emit()
 	time_left_changed.emit(time_left)
@@ -590,6 +594,38 @@ func add_needle_trick() -> void:
 	likes_drain_idle = 0.0
 	combo_trick.emit(TRICK_THREAD_THE_NEEDLE, combo - before, combo)
 	_pay_trick_subs(TRICK_THREAD_THE_NEEDLE, before)
+	if combo != before:
+		combo_changed.emit(combo)
+
+
+## The rail grind trick's id (task T-541): the popup's key (GRIND!, T-533).
+const TRICK_RAIL_GRIND := "rail_grind"
+
+
+## A grind of `seconds` on a rail ended (task T-541; the run scene connects the car's
+## grind.grind_ended). The combo goes up by ComboData.grind_add(seconds) (combo.json,
+## "rail_grind"), like add_trick, the popup gets combo_trick with the id "rail_grind", and the
+## grind pays ComboData.grind_subs(seconds) subs, times the multiplier from before it when
+## trick_subs.multiplied_by_combo is on. Nothing when the grind is too short to pay.
+func add_grind_trick(seconds: float) -> void:
+	if not running:
+		return
+	var amount := _combo_data.grind_add(seconds)
+	if amount <= 0.0:
+		return
+	missions.on_trick(TRICK_RAIL_GRIND, seconds)  # no mission names it yet
+	var before := combo
+	combo = minf(combo + amount, _combo_data.max_multiplier())
+	_record_trick(TRICK_RAIL_GRIND)
+	combo_idle = 0.0
+	likes_drain_idle = 0.0
+	combo_trick.emit(TRICK_RAIL_GRIND, combo - before, combo)
+	var subs := _combo_data.grind_subs(seconds)
+	if subs > 0.0 and not is_max_level():
+		if _combo_data.trick_subs_multiplied():
+			subs *= before
+		_gain_xp(subs)
+		trick_subs_paid.emit(TRICK_RAIL_GRIND, subs)
 	if combo != before:
 		combo_changed.emit(combo)
 
@@ -942,6 +978,21 @@ func enemy_slain(enemy_type: String, weapon_id := "") -> void:
 	_slain[enemy_type] = int(_slain.get(enemy_type, 0)) + 1
 	if weapon_id != "":
 		_weapon_kills[weapon_id] = int(_weapon_kills.get(weapon_id, 0)) + 1
+
+
+## Tests set this to override data/playtest.json's jump_at_start: -1 reads the file.
+static var jump_at_start_override := -1
+
+
+## Task T-541's playtest switch: data/playtest.json "jump_at_start", the Jump power-up's tier
+## every run starts with (0, the game's rule: none; the rail grind playtest build sets 1).
+static func jump_at_start() -> int:
+	if jump_at_start_override >= 0:
+		return jump_at_start_override
+	var r := GameData.load_file("playtest")
+	if not r.ok:
+		return 0
+	return maxi(int(r.data.get("jump_at_start", 0)), 0)
 
 
 ## The car's tier of driving power-up `id` (T-457; PowerUpData.IDS): 0 when not owned.
