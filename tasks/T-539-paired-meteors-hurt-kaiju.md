@@ -120,3 +120,11 @@ Documents affected: docs/enemies.md (and game/docs/enemies/meteors.md).
 ### QA, 2026-11-05
 All 6 criteria pass. qa_check: 2 test sets passed (tools set skipped), documents changed, 4 screenshots, 6 marks pass.
 - 2026-11-06, needs-playtest → in-progress: The board: space the meteors of a pair a bit further apart, so it is easier to drift through. No board QA needed: pass QA and merge.
+
+### Enemy Behavior Agent, 2026-11-06: the board's tweak (quick tuning)
+
+The board, after playing: "space the meteor a bit further apart to make it easier to drift through." `pair_distance_units` 7 -> **9** (game/data/enemies.json, meteor_attack; reason in its _comment). The free ground between the two 3-unit boulders goes from 4 units to 6 (six car widths). It still fits: 9 is under the 20-unit diameter of the 10-unit landing radius and above the 4.5 the clearance rule needs. Both meteors of a pair still land within 10 units of the car, and the gap check still runs. In the test, both pairs were found in 12 of 12 seeded attacks. No other number changed.
+- docs/enemies.md Content, 'Paired meteors hurt the kaiju': 9 units apart, 6 units of free ground, citing the board's tweak.
+- test_meteor_pairs.gd: the pairs-found check is now at least 11 of 12 attacks (was 10), so a distance too wide for the landing radius would fail it. The other tests read the distance from the data.
+- Tests (foreground): test_meteor_pairs.gd 10/10, test_kaiju_meteors.gd 28/28, test_enemy_data.gd 10/10, no SCRIPT ERROR.
+- Screenshots retaken at 9 units in art-archive/T-539/screenshots/: meteor_pair_landed_line.png, and also meteor_pair_strike.gif, meteor_pair_strike_strip.png and meteor_pair_strike_beam.png. The fixture's drift still strikes the pair at 2.3 s, kaiju 1500 -> 1400.
