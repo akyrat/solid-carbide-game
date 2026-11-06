@@ -43,12 +43,12 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Meteors land in pairs at the proposed distance (test). (QA: pass: test_meteor_pairs 10/10 (pairs at data distance 7))
+- [ ] Meteors land in pairs at the proposed distance (test). (QA: pass: test_meteor_pairs 10/10, pairs at data distance 9, 2026-11-06)
 - [ ] A drifting car crossing between a landed pair damages the kaiju by the data's amount and destroys both boulders; driving through without drifting does neither; a pair pays only once (tests). (QA: pass: tests cover drift damage 100, both boulders removed, no drift nothing, pays once)
 - [ ] The link effect from the pair to the kaiju and the hit flash play (test that they are spawned). (QA: pass: tests check beam, break-ups and kaiju flash are spawned)
-- [ ] docs/enemies.md Content describes it with each proposed number. (QA: pass: docs/enemies.md has 4 meteors in 2 pairs, 7 units, 100 damage, timings)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass: qa_check ran 2 test sets green (tools set skipped, no tools changes))
-- [ ] A GIF or frame strip in art-archive/T-539/screenshots/ shows a drift through a pair, the link and the kaiju getting hit. (QA: pass: GIF, strip and 2 stills present in art-archive/T-539/screenshots/)
+- [ ] docs/enemies.md Content describes it with each proposed number. (QA: pass: docs/enemies.md has 4 meteors in 2 pairs, 9 units, 100 damage, timings)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass: qa_check 2 test sets green again at distance 9, tools set skipped)
+- [ ] A GIF or frame strip in art-archive/T-539/screenshots/ shows a drift through a pair, the link and the kaiju getting hit. (QA: pass: GIF, strip and 2 stills retaken at 9 units, present in art-archive/T-539/screenshots/)
 
 ## Updates
 
@@ -132,3 +132,6 @@ The board, after playing: "space the meteor a bit further apart to make it easie
 - test_meteor_pairs.gd: the pairs-found check is now at least 11 of 12 attacks (was 10), so a distance too wide for the landing radius would fail it. The other tests read the distance from the data.
 - Tests (foreground): test_meteor_pairs.gd 10/10, test_kaiju_meteors.gd 28/28, test_enemy_data.gd 10/10, no SCRIPT ERROR.
 - Screenshots retaken at 9 units in art-archive/T-539/screenshots/: meteor_pair_landed_line.png, and also meteor_pair_strike.gif, meteor_pair_strike_strip.png and meteor_pair_strike_beam.png. The fixture's drift still strikes the pair at 2.3 s, kaiju 1500 -> 1400.
+
+### QA, 2026-11-06 (after the 7 to 9 tweak)
+All 6 criteria pass. qa_check: 2 test sets passed (tools set skipped), documents changed, 4 screenshots. pair_distance_units is 9 in data and docs/enemies.md.
