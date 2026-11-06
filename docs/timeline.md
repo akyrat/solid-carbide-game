@@ -3635,3 +3635,8 @@ Entry format:
 - Decision or change: REVERSE DRIFT! (1 s of drifting backwards, +0.25) and AURA FARMING! (5 s still, then +0.1 each second from 6 s); the board approved them in the batch-1105 playtest.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-536
+
+## 2026-11-06: Resume and one button column on the pause screen
+- Decision or change: The pause screen gets Resume, and its buttons sit in one column right of the settings: Resume, Trick list, Edit HUD layout, Restart, Exit, God mode; approved in the batch-1105 playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-537
