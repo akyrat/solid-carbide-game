@@ -7,6 +7,9 @@ of the platform it climbs, rising from bottom_height at its foot to
 top_height at that side). Units are the flat world's (x east, y south).
 A ramp with "jump": true (T-400, the level creator's small jump ramp) climbs to no platform: its
 "platform" is empty and its top is open, so only its foot and its rise are checked.
+T-549: a ramp's top may also meet several areas of its top_height side by side (two rooftops whose
+sides lie on the ramp's top end and together cover it); "platform" is then empty or names one of
+them (game/docs/level/game-map.md, "A ramp onto several rooftops").
 
 Usage, from the repo root:
 
@@ -52,6 +55,52 @@ def _top_touches(side, ramp, area):
         return line_ok and ramp[1] >= area[1] - EPS and ramp[3] <= area[3] + EPS
     line_ok = _same(ramp[3], area[1]) if side == "north" else _same(ramp[1], area[3])
     return line_ok and ramp[0] >= area[0] - EPS and ramp[2] <= area[2] + EPS
+
+
+def _top_span(side, ramp):
+    """The ramp's top end: (the line's coordinate, along-axis start, along-axis end)."""
+    if side == "east":
+        return ramp[0], ramp[1], ramp[3]
+    if side == "west":
+        return ramp[2], ramp[1], ramp[3]
+    if side == "north":
+        return ramp[3], ramp[0], ramp[2]
+    return ramp[1], ramp[0], ramp[2]
+
+
+def _area_span(side, area):
+    """The area's side the ramp climbs: (the line's coordinate, along-axis start, along-axis end)."""
+    if side == "east":
+        return area[2], area[1], area[3]
+    if side == "west":
+        return area[0], area[1], area[3]
+    if side == "north":
+        return area[1], area[0], area[2]
+    return area[3], area[0], area[2]
+
+
+def top_areas(side, ramp, platforms, top):
+    """T-549: the areas at height `top` whose climbed side lies on the ramp's top end and shares a
+    stretch of it, in order, and whether together they cover the whole top end. `platforms` is a
+    list of (id, rect, height). A ramp onto one area (_top_touches) gives that area and True."""
+    if side not in SIDES:
+        return [], False
+    line, lo, hi = _top_span(side, ramp)
+    found, runs = [], []
+    for pid, rect, height in platforms:
+        if not _same(height, top):
+            continue
+        a_line, a_lo, a_hi = _area_span(side, rect)
+        if not _same(a_line, line) or min(a_hi, hi) - max(a_lo, lo) <= EPS:
+            continue
+        found.append(pid)
+        runs.append((a_lo, a_hi))
+    reach = lo
+    for a_lo, a_hi in sorted(runs):
+        if a_lo > reach + EPS:
+            break
+        reach = max(reach, a_hi)
+    return found, bool(found) and reach >= hi - EPS
 
 
 def _ancestors(pid, on_of):
@@ -157,14 +206,25 @@ def check_data(data):
             if top <= bottom + EPS:
                 problems.append("%s: a jump ramp's top_height %g must be above its bottom_height %g"
                                 % (name, top, bottom))
-        elif target not in platforms:
+        elif target and target not in platforms:
             problems.append("%s: climbs to unknown area %r" % (name, target))
             continue
-        else:
-            area = platforms[target]
-            if side in SIDES and not _top_touches(side, rect, area["rect"]):
+        elif not target or (side in SIDES and not _top_touches(side, rect, platforms[target]["rect"])):
+            # T-549: a top meeting several areas of its height side by side, which cover it together.
+            shared, covered = top_areas(side, rect, [(pid, platforms[pid]["rect"], platforms[pid]["height"])
+                                                     for pid in order], top)
+            if not (covered and (not target or target in shared)):
+                if not target:
+                    problems.append("%s: climbs to unknown area '' (its top meets no area at height %g)"
+                                    % (name, top))
+                    continue
                 problems.append("%s: its top (the %s side of %r) doesn't touch area %r along that side"
                                 % (name, side, target, target))
+            if target and not _same(top, platforms[target]["height"]):
+                problems.append("%s: top_height %g doesn't match area %r's height %g"
+                                % (name, top, target, platforms[target]["height"]))
+        else:
+            area = platforms[target]  # its top lies wholly on that one area's side
             if not _same(top, area["height"]):
                 problems.append("%s: top_height %g doesn't match area %r's height %g"
                                 % (name, top, target, area["height"]))

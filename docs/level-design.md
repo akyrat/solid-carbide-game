@@ -474,6 +474,14 @@ Task T-251 (Decisions, "Level creator piece set"). Every number here is the Leve
 
 ![The level creator with the multi-layer test level: rooftops of three sizes, a 6 on a 3, ramps in all four directions](../art-archive/T-251/screenshots/creator.png)
 
+### A ramp onto several rooftops (task T-549)
+
+Task T-549 (Decisions, "A ramp may climb onto several rooftops"). How it works: `game/docs/level/game-map.md`, "A ramp onto several rooftops (T-549)".
+
+- **The rule:** a ramp's top end may meet two or more rooftops of its top height side by side; it is valid when together they cover its whole top end, with no gap. It climbs onto all of them: the car drives up it and onto whichever rooftop it reaches. A ramp whose top meets no rooftop at its height, or covers only part of it, is still an error.
+- **In the level file:** such a ramp's `platform` link is empty or names one of the rooftops. The level checks accept both, so the board's Kaiju City (ramp-2 onto roof-6 and roof-7, ramp-13 onto roof-3 and roof-6) passes unchanged.
+- **In the level creator:** it links such a ramp to the first of its rooftops in the file, keeps a link to any of them, and snaps a ramp onto rooftops of its height whose sides continue each other on one line, as onto one rooftop.
+
 ### Level creator: props
 
 Task T-253 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. How it works and how to rebuild the placeholder art: `game/docs/level/level-creator-pieces.md`, "Level creator", "Props (T-253)".
