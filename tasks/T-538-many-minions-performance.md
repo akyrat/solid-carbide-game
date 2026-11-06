@@ -1,7 +1,7 @@
 ---
 id: T-538
 title: No frame drops with many minions alive
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -117,3 +117,4 @@ The headless 13.8 at 200 was one round hit by a burst of the machine's other wor
 
 ### QA, 2026-11-06: pass
 All 6 criteria pass. qa_check: tests (2 sets: Godot and Python) pass, documents changed, 1 screenshot (art-archive/T-538/screenshots/frame_time_vs_minions.png, shows before/after frame time at 100/200/400, window and headless). Criteria: 1 measurement + docs in game/docs/enemies/minions.md + before/after table in notes; 2 window 200 alive 8.6-10.4 ms (plot shows ~9.3 ms) under 16.6; 3 existing minion tests pass unchanged (only test_enemy_data ceiling 100->200, a data change); 4 docs/enemies.md describes change and 200 cap; 5 test counts in notes, qa_check full run green; 6 plot present. Not re-run: the window benchmark (judged from the plot and CSVs).
+- 2026-11-06, needs-playtest → done: The board played the combined build: lgtm (cap on minions alive 200 kept).
