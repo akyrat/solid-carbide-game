@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -183,3 +183,4 @@ Playtest build (2026-11-06): playtest/grind-rails commit 0b7fa1fb sets game/data
 - 2026-11-06, in-qa → needs-playtest: The board played both tweaks: LGTM; no further QA round needed (the board tested it). Merge.
 
 Merge of master (2026-11-06, merge commit 64a1531c): merged master into the branch with T-536 (REVERSE DRIFT!, AURA FARMING!). It merged cleanly, with no conflicts, and all three new tricks are kept: trick_popups.gd TEXTS and SIZES, and combo.json trick_add, trick_subs and its blocks, hold reverse_drift, aura and rail_grind. The rail grind's own pay stays in combo.json rail_grind. After the merge I added rail_grind GRIND! to recap_text.json's trick names, next to T-536's two, so the run recap names the grind. playtest.json jump_at_start stays 0. No .import or untracked .uid files committed. Tests (foreground): test_tricks 27/27, test_reverse_and_aura_tricks 18/18, test_rail_grind 27/27, test_run_rails 5/5, test_trick_popups* 35/35, test_recap* 18/18, test_run_recap 12/12.
+- 2026-11-06, needs-playtest → done: The board played both quick-tuning rounds: LGTM; no further QA round (the board tested it).
