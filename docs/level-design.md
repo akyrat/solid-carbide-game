@@ -74,6 +74,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Rails** (board, 2026-11-05); a prototype with its own playtest (Drifting, Decisions, "Rail grinding, a prototype"): rails are a map piece that can be placed anywhere on the map, in the level creator like the other pieces, and saved in the level file. For the prototype they use placeholder art; the playtest build has a few rails on the map to try.
 - **No rails on the default map** (board, 2026-11-06): the game's default map has no rails; the playtest rails T-541 put on it are removed. The board places rails itself in the level creator, once the creator's rail piece (T-542) is merged.
 - **The board's new Kaiju City is the default map** (board, 2026-11-06): the board edited its level Kaiju City in the level creator (ramps and rails added, saved as `game/data/levels/kaiju_city.json`) and made it the game's default map. The game plays a byte-for-byte copy of it, as before.
+- **A ramp may climb onto several rooftops** (board, 2026-11-06): a ramp whose top end meets two or more rooftops of the same height (side by side) is a proper ramp onto them, not an error. The level checks, the game and the level creator accept it, so a level made in the creator goes in unchanged (it came up with ramp-2 and ramp-13 of the board's Kaiju City).
 
 ## Content
 

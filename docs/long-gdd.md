@@ -748,6 +748,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Rails** (board, 2026-11-05); a prototype with its own playtest (Drifting, Decisions, "Rail grinding, a prototype"): rails are a map piece that can be placed anywhere on the map, in the level creator like the other pieces, and saved in the level file. For the prototype they use placeholder art; the playtest build has a few rails on the map to try.
 - **No rails on the default map** (board, 2026-11-06): the game's default map has no rails; the playtest rails T-541 put on it are removed. The board places rails itself in the level creator, once the creator's rail piece (T-542) is merged.
 - **The board's new Kaiju City is the default map** (board, 2026-11-06): the board edited its level Kaiju City in the level creator (ramps and rails added, saved as `game/data/levels/kaiju_city.json`) and made it the game's default map. The game plays a byte-for-byte copy of it, as before.
+- **A ramp may climb onto several rooftops** (board, 2026-11-06): a ramp whose top end meets two or more rooftops of the same height (side by side) is a proper ramp onto them, not an error. The level checks, the game and the level creator accept it, so a level made in the creator goes in unchanged (it came up with ramp-2 and ramp-13 of the board's Kaiju City).
 
 ### Content
 
@@ -2405,7 +2406,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
 | `drifting.md` | `ebeda14f941b9082f36bc0b34939aeac54c082f113cc24d9e29f3471823a9605` |
-| `level-design.md` | `0a7fd496866d071614fe377b39af2f8494fbb65836f43b8f1150bf2f367ce2b0` |
+| `level-design.md` | `6f00c67e0e84f5b0e77c10e913e85d08b32561dde74dcdadf778ad4801d89ccf` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
