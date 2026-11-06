@@ -1,7 +1,7 @@
 ---
 id: T-547
 title: The board's new Kaiju City becomes the default map
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -54,10 +54,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-06, Open → In progress
+
+Started: copying the board's Kaiju City over the default map, with the level checks.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+STOPPED, level checks fail on the board's level (not fixed, per the ticket). Copied game/data/levels/kaiju_city.json to game/data/level/kaiju_city_map.json (byte-identical, sha256 5a5d671151c6b2443935a87b9fe7c3a1217f9d9d8fcea096bf4873c96ab769b2; 72 rails, 28 ramps, 12 platforms, 41 buildings, 73 props); copy left uncommitted in the worktree. Both check_level.py and check_height_data.py exit 1 with the same output: "ramp 'ramp-2': climbs to unknown area ''" and "ramp 'ramp-13': climbs to unknown area ''" (two ramps with an empty climbs-to area id). No tests, docs or screenshots done. Needs the board's decision: fix the two ramps in the level creator, or allow them.
