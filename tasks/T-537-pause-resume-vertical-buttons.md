@@ -1,7 +1,7 @@
 ---
 id: T-537
 title: Pause screen: a Resume button, buttons stacked vertically and reordered
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,12 +43,12 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Pressing Resume closes the pause screen and the run carries on, as Escape does (test). (QA: pass / fail)
-- [ ] The buttons are in one vertical column, in the order given in the result notes, with Resume first, and keyboard navigation follows that order (test). (QA: pass / fail)
-- [ ] The whole pause screen stays inside the window at 1280x720 (test or screenshot). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes the new layout. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-537/screenshots/ show the new pause screen at 1280x720 and at a large window. (QA: pass / fail)
+- [ ] Pressing Resume closes the pause screen and the run carries on, as Escape does (test). (QA: pass)
+- [ ] The buttons are in one vertical column, in the order given in the result notes, with Resume first, and keyboard navigation follows that order (test). (QA: pass)
+- [ ] The whole pause screen stays inside the window at 1280x720 (test or screenshot). (QA: pass)
+- [ ] docs/hud-and-menus.md Content describes the new layout. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - full run red: test_shared_button expects 34 shared pause buttons, now 35; test_screen_flow strip-height asserts (354 vs 259.2 thin band, 436 vs 380 compact) broke by the taller stacked strip; update those tests/limits; counts missing in notes)
+- [ ] Screenshots in art-archive/T-537/screenshots/ show the new pause screen at 1280x720 and at a large window. (QA: pass)
 
 ## Updates
 
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the agent is working in C:\solid-carbide-worktrees\T-537.
 
+### 2026-11-05, In progress → In QA
+
+Built: pause buttons in one column, Resume, Trick list, Edit HUD layout, Restart, Exit (then God mode). QA is checking it.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -65,3 +69,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Built. Pause screen buttons now one vertical column (VBox RunButtonsColumn): Resume, Trick list, Edit HUD layout (run only), Restart, Exit, God mode (when unlocked). Resume text 'Resume' = T-533, new key resume_button in game/data/pause_text.json; pressing it calls resume() (same as Escape). Order reason: safe/most-used first; screens that return next; Restart and Exit (end the run) together at bottom, away from accidental hits; secret entry last. Keyboard: focus starts on Resume (was Restart); Up/Down/Tab/Shift+Tab walk the column in order and wrap (explicit focus neighbours, relinked when God mode joins). Proposals for playtest: button gap 4 px (BUTTON_GAP const), buttons full strip-content width (520). Tests: new game/tests/unit/game/test_pause_resume_stack.gd (6 pass: text, resume unpauses, column order and one x, keyboard order, God mode last, fits 720); updated test_pause_restart_exit (focus on Resume). Also green: pause_restart_exit, pause_trick_list, god_mode_page, pause_slider_saves, hud_layout_editor, hud_style, hud_size_slider, drift_guide/rain toggle. Full sets not run (QA). Screenshots in art-archive/T-537/screenshots/: pause_1280.png (1280x720), pause_large.png (2560x1440), pause_small.png (960x540), pause_god.png (God mode entry); fixtures game/tests/fixtures/pause_stack_*.tscn. Docs: docs/hud-and-menus.md Content updated (new bullet, Restart/Trick list wording).
+
+QA round: criteria 1,2,3,4,6 pass (screenshot 1280 checked: inside window, Resume first). Criterion 5 fail (code): full Godot run 2744 tests, 3 failing, all caused by this change: hud/test_shared_button (pause shared buttons now 35, test expects 34, line 100) and game/test_screen_flow strip tests (strip height 354 vs limit 259.2 'thin band'; 436 vs 380 'compact') since the stacked column makes the strip taller. Both reproduced on rerun of the single files. Fix: update the expected count and height limits (proposal for playtest) and record counts in result notes.
