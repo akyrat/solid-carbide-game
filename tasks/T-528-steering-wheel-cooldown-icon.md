@@ -1,7 +1,7 @@
 ---
 id: T-528
 title: The steering wheel's cooldown on its HUD slot icon, like loading
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -78,3 +78,4 @@ Sample video (the board asked): scripted demo game/tests/fixtures/wheel_cooldown
 Sample GIF for phones (scratchpad videos/wheel_cooldown.gif): the same demo recorded as PNG frames with record_wheel_cooldown_video.sh (output path ending in f.png), then every 4th frame, 640x360 (box downscale), 8 fps, 150 frames, 64-colour octree palette per frame, 14.5 MB. frames_to_gif.py at skip 2 was 38 MB and its median-cut palette lost the HUD colours, so the GIF was made by a short one-off script (not committed).
 
 Merge of master into the branch (2026-11-06): one conflict, game/docs/hud-and-menus/hud.md, kept both sections (T-528 slot cooldown, T-534 subs flight). Tests run in the foreground: tests/unit/hud 27 scripts, 245/245 passing (includes test_hud_slot_cooldown and test_hud_slot_grids); test_polarized_steering_wheel 16/16 passing. No .import/.uid files added.
+- 2026-11-06, needs-playtest → done: The board played the wheel-handbrake-deaths build: good.
