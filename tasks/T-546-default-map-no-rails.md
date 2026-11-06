@@ -1,7 +1,7 @@
 ---
 id: T-546
 title: No rails on the default map: remove T-541's playtest rails
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -43,11 +43,11 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/level/kaiju_city_map.json has no rails and is otherwise unchanged (a diff of the file shows only the rails removed). (QA: pass / fail)
-- [ ] A test checks that the default map loads with no rails, and the rail grind tests still pass on their own test rails. (QA: pass / fail)
-- [ ] docs/level-design.md Content says the default map has no rails. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-546/screenshots/ shows the spot where the playtest rails were, now empty, in a run. (QA: pass / fail)
+- [ ] game/data/level/kaiju_city_map.json has no rails and is otherwise unchanged (a diff of the file shows only the rails removed). (QA: pass)
+- [ ] A test checks that the default map loads with no rails, and the rail grind tests still pass on their own test rails. (QA: pass)
+- [ ] docs/level-design.md Content says the default map has no rails. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A screenshot in art-archive/T-546/screenshots/ shows the spot where the playtest rails were, now empty, in a run. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: removing T-541's 5 playtest rails from the default map. The agent is working in C:\solid-carbide-worktrees\T-546.
 
+### 2026-11-06, In progress → In QA
+
+Built: the default map's 5 rails are removed. QA is checking it.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -64,3 +68,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Removed the 5 rails from game/data/level/kaiju_city_map.json (now an empty "rails": []; nothing else changed). test_rail_grind.gd: the two game-map rail tests became test_the_game_map_has_no_rails and a jump-pair-gap test on the test layout. test_run_rails.gd now runs on a user:// copy of the map with the five old rails added (GameFlow.add_run), so run, draw, grind and hop tests keep working. docs/level-design.md Content: the default map has no rails (lines for the map copy, its contents, and the rails list). Tests run (GUT, -gselect): test_run_rails 225 asserts pass, test_rail_grind 27 tests pass, test_game_map pass, test_tutorial_clips 7 pass. Screenshots in art-archive/T-546/screenshots/: default_map_no_rails_spawn.png (street where rail-3/4 were, empty), default_map_no_rails_roofs.png. Note: the T-543 tutorial clip fixture (tutorial_clip_rail_grind) and rail_grind_gif_demo drive onto rail-3 on the game map, so they now show no rail; they are fixtures, not tests, left unchanged. Untracked Godot .uid files and .import noise left uncommitted.
+
+QA round: all 5 criteria pass. qa_check: tests (2 sets, tools set skipped: nothing under tools/ changed), documents, screenshots all PASS. Map diff: only the rails list removed (now "rails": []). Screenshot default_map_no_rails_spawn.png shows the empty street. T-543 grind clip fixtures (tutorial_clip_rail_grind, rail_grind_gif_demo) are fixtures under game/tests/fixtures, not referenced by any test in tests/unit or tests/integration; test_run_rails uses its own map copy with the old rails. No test depends on the default map's rails.
