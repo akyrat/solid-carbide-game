@@ -1,7 +1,7 @@
 ---
 id: T-535
 title: The Garage button pulses when an upgrade can be bought
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/garage-design.md, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [game/scripts/menu/, game/scenes/menu/, game/tests/, game/docs/hud-and-menus/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -72,6 +72,10 @@ The board's tweak: light blue letters only, no yellow tint. Back with the agent;
 ### 2026-11-06, In progress → In QA
 
 Tweak in: light blue letters, no yellow tint or scale pulse. QA is checking it; it merges once QA passes.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA passed after the board's tweak; the board approved merging.
 
 ## Style review
 
