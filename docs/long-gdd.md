@@ -1431,6 +1431,18 @@ Following Drifting, Decisions, "Driving power-ups". Numbers: `game/data/power_up
 - **Repeat (proposal, open question for the board):** each enemy can be hit again only after the tier's `repeat_cooldown_seconds` (0.5 / 0.5 / 0.4 / 0.3 s), counted per enemy, so driving through a crowd hits each minion once per cooldown and a minion stuck to the car does not melt in one frame. The car's invulnerability after a hit does not stop it (that only protects the car).
 - **The kaiju (proposal, open question for the board):** hit only when the tier's `hits_kaiju` is true, which is tier 4 only; it then takes the tier's damage on the same repeat cooldown.
 
+#### Minion deaths: an animation, a green spill, corpses (built in task T-531)
+
+Following Decisions, "Minion deaths". Numbers: `game/data/enemies.json`, `minion` > `death`, each a proposal for the board's playtest except the 2 seconds (reasons in that block's `_comment`). How it is built: `game/docs/enemies/minions.md`, "Death".
+
+- **The death animation (placeholder in code, PixelLab art by T-532):** the minion tips over sideways about its feet in 0.5 s, flattens and darkens a little, then lies. The frames T-532 delivers replace it per direction (`game/docs/enemies/minions.md`, "Death", lists the file names and frame layout).
+- **The spill:** 9 droplets burst out of the body in all directions (2.5 to 6 units a second along the ground, 4 to 8 up), fall under gravity and land after 0.3 to 0.7 s, 1 to 4 units away; each landing makes or feeds a small flat pool, which spreads out for a third of a second to at most 7 screen pixels across. Droplets land on the ground's real height: on a rooftop or a ramp the pool is drawn on it, and one thrown off an edge lands on the street below. It is hard-edged square pixels (2 screen pixels each), in a slimy acid green of its own (light 204,250,89; body 140,224,26; dark 77,140,20), clear of Greenbull's three brand greens.
+- **The corpse:** it stays where the minion died. The car drives into it and knocks it away from the car, as far as 0.25 units per unit of the car's speed, at least 1.5 and at most 8 units, and only when the car goes faster than 2 units a second. The bricks wave, the wiper and the Polarized Steering Wheel's shock knock it as far as they would a living minion (4 units at Bricks tier 1). Other weapons do not: the underglow ticks many times a second and would hold a corpse in place for good; the gun, the flamethrower and the molotovs are not knockback weapons. A knock is a slide that slows evenly to rest in 0.4 s (stopped by walls and rooftop edges).
+- **The fade:** 2 seconds after the corpse was last hit it fades out over 0.4 s and is freed, with its liquid. Every hit, even one while it fades, restarts the 2 seconds.
+- **What a corpse is not:** an enemy. It never damages the car, is never a weapon's target or aim, does not count as a kill again, is on no collision layer and blocks no minion's path. Coins and health drops fall at the moment of death, as before.
+- **Caps for big crowds (proposal):** at most 24 corpses that are not yet fading (the oldest starts to fade at once when a 25th dies), at most 48 counting the fading ones (past that the oldest is freed at once), at most 80 droplets and 160 pools alive; a death with no droplet room spills nothing.
+- **Open question for the board:** whether the underglow should knock corpses too (it would keep them from fading while a car sits in its glow).
+
 ### References
 
 - Enemy numbers (the minion, how many minions are kept around over the run, coin drops, the kaiju and its meteor attack): [../game/data/enemies.json](../game/data/enemies.json), read through `game/scripts/data/enemy_data.gd`; the reasons for each number are in task T-039's result notes.
@@ -2361,7 +2373,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
 | `drifting.md` | `1427a2b1a4635c5ff79d7436a6a8d8e6aedbbb42ce2b898b69a29c21af5d1c55` |
 | `level-design.md` | `cf69dbec8759a60511a16d611e53660d2ae74d8b389b465d1a9f4b21615eef79` |
-| `enemies.md` | `b35e4e316043c348a521146e401595af5722fabd533f61c6d67bbb589cd5a645` |
+| `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
 | `visual-style.md` | `130615f45f5cd698f3f59c71df224783d66a7a4eecf2754616296e820012a6fd` |

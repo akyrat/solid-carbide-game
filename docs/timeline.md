@@ -3695,3 +3695,8 @@ Entry format:
 - Decision or change: The board wants to try a drive modelled on Hotshot Racing's drift: grip on plain steering, a Space tap while steering snaps into a held drift that keeps its speed, Space alone brakes, S stays reverse with today's reverse drift, Jump moves to Left Shift, no boost meter. A hidden test key switches the run between this and today's drive.
 - Documents touched: docs/drifting.md
 - Tasks: T-545
+
+## 2026-11-06: Minion deaths
+- Decision or change: Minions play a death animation (code placeholder until T-544's art), spill pixelated green liquid and leave corpses the car and knockback weapons push about; a corpse fades 2 s after its last hit; approved in the board's playtest.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-531

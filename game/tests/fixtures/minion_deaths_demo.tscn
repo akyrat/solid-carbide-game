@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/minion_deaths_demo.gd" id="1_demo"]
+
+[node name="MinionDeathsDemo" type="Node"]
+script = ExtResource("1_demo")

@@ -97,6 +97,22 @@ var may_drop := false
 var fall = EnemyFallScript.new()
 
 var _dead := false
+## T-531: true once the spawner's corpse keeper (minion_corpses.gd) has taken the dead body
+## over: it then stays, in the group "minion_corpses", instead of being freed at its death.
+var _corpse := false
+## The corpse's numbers (the keeper hands them over; seconds, units) and its clocks.
+var corpse_stats := {}
+## Seconds until the corpse starts to fade (every hit restarts it), the fade's seconds left
+## (-1 while it has not started), and the seconds since it was last hit by the car.
+var corpse_timer := 0.0
+var corpse_fade_left := -1.0
+var _corpse_car_gap := 0.0
+## A corpse's slide after a knock: the start velocity (units/s), the seconds it lasts and has left.
+var _slide_v0 := Vector2.ZERO
+var _slide_total := 0.0
+var _slide_left := 0.0
+## True when the corpse moved since the keeper last placed its drawing.
+var corpse_moved := false
 ## The normal of the obstacle it touched last step (ZERO for none).
 var _wall_normal := Vector2.ZERO
 ## A knockback still to travel (units, flat world) and the seconds left for it.
@@ -277,14 +293,141 @@ func is_dead() -> bool:
 	return _dead
 
 
+# --- Corpse (task T-531; Enemies, Decisions, "Minion deaths") -----------------------
+
+## True while this body is a corpse: dead, kept, knockable, fading in time.
+func is_corpse() -> bool:
+	return _corpse
+
+
+## Called by the corpse keeper from its `died` listener: the body stays as a corpse for
+## `stats.corpse_seconds` after its last hit, then fades out over `stats.fade_seconds`.
+## It leaves every collision layer (nothing hits it, nothing is blocked by it); its
+## mask stays on the obstacles, so a knocked corpse stops at walls.
+func keep_as_corpse(stats: Dictionary) -> void:
+	_corpse = true
+	corpse_stats = stats
+	corpse_timer = float(stats.get("corpse_seconds", 2.0))
+	corpse_fade_left = -1.0
+	add_to_group("minion_corpses")
+	collision_layer = 0
+	_knockback_left = Vector2.ZERO
+	_knockback_time = 0.0
+
+
+## A hit on the corpse (the car or a knockback weapon): it slides `distance` units along
+## `direction` (any length), slowing evenly to rest over corpse_stats.slide_seconds, and the
+## fade timer starts again (a fading corpse comes back whole). Ignored for a zero distance
+## or direction, or when this is not a corpse.
+func knock_corpse(direction: Vector2, distance: float) -> void:
+	if not _corpse or direction.length() < 0.000001:
+		return
+	corpse_timer = float(corpse_stats.get("corpse_seconds", 2.0))
+	corpse_fade_left = -1.0
+	if distance <= 0.0:
+		return
+	var t := maxf(float(corpse_stats.get("slide_seconds", 0.4)), 0.05)
+	# An even slowing down covers v0 * t / 2, so v0 = 2 * distance / t.
+	_slide_v0 = direction.normalized() * (2.0 * distance / t) + _slide_v0 * (_slide_left / maxf(_slide_total, 0.001))
+	_slide_total = t
+	_slide_left = t
+
+
+## A knockback weapon's hit on the corpse (T-531): `weapon_id` is the weapon ("bricks", "wiper",
+## "polarized_steering_wheel"; any other pushes nothing), `distance` the weapon's knockback
+## distance for a living minion (units); the data's knock_scale_* is the corpse's share of it.
+## Returns true when it was hit (the timer restarts).
+func knock_by_weapon(direction: Vector2, distance: float, weapon_id: String) -> bool:
+	var key := ""
+	match weapon_id:
+		"bricks": key = "knock_scale_bricks"
+		"wiper": key = "knock_scale_wiper"
+		"polarized_steering_wheel": key = "knock_scale_shock"
+	if not _corpse or key == "" or not corpse_stats.has(key):
+		return false
+	knock_corpse(direction, distance * float(corpse_stats[key]))
+	return true
+
+
+## True while a knocked corpse still slides.
+func is_sliding() -> bool:
+	return _slide_left > 0.0
+
+
+## One physics step of a corpse: slides, counts the timer, fades. Returns true when it has
+## faded away completely (the keeper then frees it).
+func corpse_step(dt: float) -> bool:
+	_corpse_car_gap = maxf(_corpse_car_gap - dt, 0.0)
+	if _slide_left > 0.0:
+		var h0 := body_height()
+		var k := _slide_left / _slide_total
+		var v := _slide_v0 * k
+		_slide_left = maxf(_slide_left - dt, 0.0)
+		var hit := _move(v * dt * PX_PER_UNIT)
+		if hit != null:
+			var n := hit.get_normal()
+			_slide_v0 -= n * minf(_slide_v0.dot(n), 0.0)
+			var rest := hit.get_remainder()
+			rest -= n * rest.dot(n)
+			if rest.length() > 0.0:
+				_move(rest)
+		elif _edge_normal != Vector2.ZERO:
+			_slide_v0 -= _edge_normal * minf(_slide_v0.dot(_edge_normal), 0.0)
+		_fall_step(dt, h0)
+		corpse_moved = true
+	if corpse_fade_left < 0.0:
+		corpse_timer -= dt
+		if corpse_timer <= 0.0:
+			corpse_fade_left = maxf(float(corpse_stats.get("fade_seconds", 0.4)), 0.01)
+	else:
+		corpse_fade_left -= dt
+		if corpse_fade_left <= 0.0:
+			return true
+	return false
+
+
+## Starts the fade now (the keeper's cap on corpses, oldest first).
+func start_fade_now() -> void:
+	if corpse_fade_left < 0.0:
+		corpse_timer = 0.0
+		corpse_fade_left = maxf(float(corpse_stats.get("fade_seconds", 0.4)), 0.01)
+
+
+## 1 while the corpse is whole, falling to 0 as it fades.
+func corpse_alpha() -> float:
+	if corpse_fade_left < 0.0:
+		return 1.0
+	return clampf(corpse_fade_left / maxf(float(corpse_stats.get("fade_seconds", 0.4)), 0.01), 0.0, 1.0)
+
+
+## The car drove into the corpse (the keeper checks): knocks it away from the car by a
+## distance that grows with the car's speed. Returns true when it was hit.
+func car_knock(car_units: Vector2, car_speed: float) -> bool:
+	if not _corpse or _corpse_car_gap > 0.0:
+		return false
+	if car_speed < float(corpse_stats.get("knock_car_min_speed", 2.0)):
+		return false
+	_corpse_car_gap = float(corpse_stats.get("knock_car_gap_seconds", 0.2))
+	var away := position_units() - car_units
+	if away.length() < 0.001:
+		away = heading
+	var d := clampf(car_speed * float(corpse_stats.get("knock_car_per_speed", 0.25)),
+		float(corpse_stats.get("knock_car_min", 1.5)), float(corpse_stats.get("knock_car_max", 8.0)))
+	knock_corpse(away, d)
+	return true
+
+
 func _die() -> void:
 	_dead = true
 	remove_from_group("enemies")
 	remove_from_group("minions")
+	died.emit(self, position_units())
+	# T-531: the corpse keeper (a `died` listener) may keep the body, with its drawing, as a corpse.
+	if _corpse:
+		return
 	if sprite != null and is_instance_valid(sprite):
 		sprite.queue_free()
 	sprite = null
-	died.emit(self, position_units())
 	# Freed at the end of the frame, so a weapon's physics callback can kill it.
 	queue_free()
 

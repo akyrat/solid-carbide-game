@@ -28,7 +28,7 @@ func _section(name: String) -> Dictionary:
 		return out
 	var sec: Dictionary = _data[name]
 	for k in sec:
-		if not String(k).begins_with("_"):
+		if not String(k).begins_with("_") and not (sec[k] is Dictionary):
 			out[k] = float(sec[k])
 	return out
 
@@ -36,6 +36,18 @@ func _section(name: String) -> Dictionary:
 ## health, move_speed, contact_damage (hearts, 1), knockback.
 func minion() -> Dictionary:
 	return _section("minion")
+
+
+## T-531 (Enemies, Decisions, "Minion deaths"): the minion's death, corpse and green spill
+## numbers (enemies.json, minion > death), all floats; empty when the block is missing.
+func minion_death() -> Dictionary:
+	var sec = _data.get("minion", {}).get("death", {})
+	var out := {}
+	if sec is Dictionary:
+		for k in sec:
+			if not String(k).begins_with("_"):
+				out[k] = float(sec[k])
+	return out
 
 
 ## spawn_interval_at_start_seconds, spawn_interval_at_boss_time_seconds, growth_until_seconds,

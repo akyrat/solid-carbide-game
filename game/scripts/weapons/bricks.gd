@@ -209,7 +209,26 @@ func _ring_strike(centre: Vector2, k: int, done: Dictionary) -> Array:
 	for e in hit:
 		done[e.get_instance_id()] = true
 		_hit(e, centre)
+	_knock_corpses(centre, reach, done)
 	return hit
+
+
+## T-531: the ring also knocks the minion corpses within its reach, once each per landing
+## (`done` holds their ids too), restarting their fade timer.
+func _knock_corpses(centre: Vector2, reach: float, done: Dictionary) -> void:
+	if rack == null:
+		return
+	for c in rack.corpses():
+		if done.has(c.get_instance_id()):
+			continue
+		var cu: Vector2 = c.position_units()
+		if centre.distance_to(cu) - c.radius_units() > reach + EPS:
+			continue
+		done[c.get_instance_id()] = true
+		var away := cu - centre
+		if away.length() < 0.001:
+			away = Vector2.RIGHT
+		c.knock_by_weapon(away, float(stats["knockback_distance"]), weapon_id)
 
 
 ## A widest wave's outer rings: each strikes when its time comes.

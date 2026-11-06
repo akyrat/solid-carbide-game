@@ -374,6 +374,17 @@ func living_enemies() -> Array:
 	return out
 
 
+## Every minion corpse in this run (T-531), for the weapons that knock them about.
+func corpses() -> Array:
+	var out := []
+	if run == null or not run.is_inside_tree():
+		return out
+	for c in run.get_tree().get_nodes_in_group("minion_corpses"):
+		if is_instance_valid(c) and not c.is_queued_for_deletion() and run.is_ancestor_of(c):
+			out.append(c)
+	return out
+
+
 ## True for a living enemy a weapon can damage. Untyped (T-206): a target
 ## queued earlier and freed since must give false, not a script error.
 static func is_target(e) -> bool:

@@ -7,7 +7,7 @@ extends SceneTree
 ##
 ## Usage (normally through tools/perf_sample_run.sh, from the repo root; needs a window):
 ##   godot --path game -s res://tools/perf_sample_run.gd -- [--record-perf] [--seconds=150]
-##       [--start-at=300] [--all-weapons] [--no-hold-health] [--no-vsync] [--park] [--no-weapons]
+##       [--start-at=300] [--all-weapons] [--no-hold-health] [--no-vsync] [--park] [--no-weapons] [--no-corpses]
 ## --start-at moves the run's clock on that many seconds at the start (300 = 5:00 in, when
 ## the spawn timer is fast; the kaiju then comes at 7:00, 120 s later). --all-weapons gives
 ## the car every weapon at the start, so every weapon's zone shows. It prints its own frame
@@ -27,6 +27,8 @@ var no_vsync := false
 ## same way every time, so a run with and one without the recorder carry the same load.
 var park := false
 var no_weapons := false
+## --no-corpses (T-531): minions are freed at death as before the corpses, for the comparison.
+var no_corpses := false
 
 var game: Node = null
 var run: Node2D = null
@@ -54,6 +56,8 @@ func _initialize() -> void:
 			park = true
 		elif a == "--no-weapons":
 			no_weapons = true
+		elif a == "--no-corpses":
+			no_corpses = true
 	PlayerProgress.path = "user://perf_sample_progress.json"
 	RunHistory.path = "user://perf_sample_history.json"
 	GameSettings.path = "user://perf_sample_settings.cfg"
@@ -73,6 +77,8 @@ func _setup() -> void:
 	run = game.run
 	run.car.use_keyboard = false
 	run.minions.rng.seed = 468
+	if no_corpses:
+		run.minions.corpses.enabled = false
 	if no_weapons:
 		run.weapons.enabled = false
 	if start_at > 0.0:

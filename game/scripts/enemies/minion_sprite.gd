@@ -18,6 +18,17 @@ extends Node2D
 ## frames: the legs flail (the walk cycle at FLAIL_SPEED times its speed) and
 ## the body tips from side to side (FALL_TILT radians), stretched a little.
 ##
+## Dying (task T-531; Enemies, Decisions, "Minion deaths"): start_death() plays the death
+## animation once and then holds its last frame as the corpse, until the corpse is freed.
+## The art hook (T-532): death frames in DEATH_SHEET_DIR, one sheet per direction named like
+## the walk sheets (minion_death_e.png, _se, _s, _ne, _n; the other three mirrored),
+## FRAME_SIZE square frames in a row, as many as the sheet is wide (8 asked for), played
+## evenly over the animation's seconds (enemies.json minion.death.animation_seconds) and
+## then the last frame held, as the body lies on the ground. Until those sheets exist the
+## placeholder is made by script from the walk frames: the body tips over sideways about
+## its feet (DEATH_TIP radians), flattens a little (DEATH_FLATTEN) and is drawn darker
+## (DEATH_TINT). Details: game/docs/enemies/minions.md, "Death".
+##
 ## Its shadow while it falls (T-454; Visual style, Decisions, "Shadows shrink
 ## with height"): the car's air shadow colour, a ground circle of its body's
 ## size (shadow_radius_units) on the ground under it (air_height units below
@@ -62,6 +73,14 @@ const FALL_STRETCH := Vector2(0.9, 1.12)
 const LAND_SECONDS := 0.18
 const LAND_SQUASH := Vector2(1.3, 0.7)
 
+## T-531: the death frames' sheets (see the top).
+const DEATH_SHEET_DIR := "res://art/minion/minion_death_%s.png"
+## The placeholder death: how far it tips over (radians), how flat it ends (the y scale
+## on screen) and the colour a corpse is drawn in.
+const DEATH_TIP := 1.45
+const DEATH_FLATTEN := 0.62
+const DEATH_TINT := Color(0.78, 0.84, 0.72)
+
 static var _textures := {}
 
 ## T-379: how many times the art's size it is drawn (enemies.json minion.size_scale,
@@ -81,6 +100,12 @@ var land_left := 0.0
 ## sets it from the fall), and its body's radius, units (the shadow's full size).
 var air_height := 0.0
 var shadow_radius_units := 0.5
+## T-531: true from start_death() on; seconds into the death animation and how long it takes.
+var dying := false
+var death_seconds := 0.0
+var death_total := 0.5
+## Which way the body tips over: 1 or -1.
+var death_side := 1.0
 ## T-538: what the last drawing showed (draw_key()); _process asks for a new drawing only when
 ## it changes. Moving the sprite needs none (its position is its transform), and a walking
 ## minion's frame changes 10 times a second, not every frame.
@@ -101,14 +126,16 @@ func _process(delta: float) -> void:
 		_drawn_key = key
 		redraws += 1
 		queue_redraw()
+	if dying and death_seconds >= death_total:
+		set_process(false)  # T-531: a settled corpse is drawn once, not every frame
 
 
 ## T-538: everything _draw() shows while walking, standing on the ground: the sheet's
 ## direction, the walk frame and the size. null while it falls, lands or shows its shadow,
 ## or without its art (those change every frame, so it is drawn every frame, as before).
 func draw_key():
-	if falling or land_left > 0.0 or shows_shadow():
-		return null
+	if dying or falling or land_left > 0.0 or shows_shadow():
+		return null  # T-531: a dying minion animates, so it is drawn every frame until it settles
 	var ci := compass_index(facing)
 	if _sheet(SHEETS[ci][0]) == null:
 		return null  # the placeholder follows the exact facing: drawn every frame
@@ -117,6 +144,9 @@ func draw_key():
 
 ## Moves the animation on `delta` seconds (the walk, the fall, the squash).
 func advance(delta: float) -> void:
+	if dying:
+		death_seconds = minf(death_seconds + delta, death_total)
+		return
 	var speed := FLAIL_SPEED if falling else 1.0
 	_walk = fmod(_walk + delta * speed * (WALK_FPS / FRAME_COUNT), 1.0)
 	if falling:
@@ -135,8 +165,38 @@ func set_falling(on: bool) -> void:
 	falling = on
 
 
-## What it plays now: "fall", "land" (the squash) or "walk".
+## T-531: the minion dies: plays the death animation over `seconds` and then holds it.
+func start_death(seconds: float) -> void:
+	dying = true
+	falling = false
+	land_left = 0.0
+	air_height = 0.0
+	death_seconds = 0.0
+	death_total = maxf(seconds, 0.01)
+	death_side = 1.0 if facing.x >= 0.0 else -1.0
+	set_process(true)
+	queue_redraw()
+
+
+## T-531: how far the death animation is, 0 to 1 (1 for a body that lies).
+func death_progress() -> float:
+	return clampf(death_seconds / death_total, 0.0, 1.0)
+
+
+## T-531: the death sheet frame now (0 to n - 1) for a sheet of `n` frames.
+func death_frame(n: int) -> int:
+	return clampi(int(death_progress() * n), 0, maxi(n - 1, 0))
+
+
+## T-531: the death frames' sheet for a direction, or null until it exists.
+static func death_sheet(name: String) -> Texture2D:
+	return _sheet_at(DEATH_SHEET_DIR % name)
+
+
+## What it plays now: "death", "fall", "land" (the squash) or "walk".
 func animation() -> String:
+	if dying:
+		return "death"
 	if falling:
 		return "fall"
 	return "land" if land_left > 0.0 else "walk"
@@ -208,8 +268,35 @@ func shadow_outline() -> PackedVector2Array:
 	return pts
 
 
+## T-531: the placeholder death's transform about the feet: tipped over and flattened.
+func death_transform() -> Transform2D:
+	var e := 1.0 - pow(1.0 - death_progress(), 2.0)  # fast at first, then settling
+	return Transform2D(Vector2(1.0, 0.0), Vector2(0.0, lerpf(1.0, DEATH_FLATTEN, e)), Vector2.ZERO) * Transform2D(death_side * DEATH_TIP * e, Vector2.ZERO)
+
+
+func _draw_dying(entry: Array) -> void:
+	var tex := death_sheet(entry[0])
+	if tex != null:
+		var n := maxi(1, tex.get_width() / FRAME_SIZE)
+		_draw_art(tex, entry[1], death_frame(n), DEATH_TINT if death_progress() >= 1.0 else Color.WHITE)
+		return
+	draw_set_transform_matrix(death_transform())
+	var walk_tex := _sheet(entry[0])
+	var tint := Color.WHITE.lerp(DEATH_TINT, death_progress())
+	if walk_tex != null:
+		_draw_art(walk_tex, entry[1], 0, tint)
+	else:
+		draw_set_transform_matrix(death_transform() * Transform2D.IDENTITY.scaled(Vector2(size_scale, size_scale)))
+		_draw_placeholder()
+	draw_set_transform_matrix(Transform2D.IDENTITY)
+
+
 func _draw() -> void:
 	if Perf.on: Perf.each_begin(&"draw.minion")
+	if dying:
+		_draw_dying(SHEETS[compass_index(facing)])
+		if Perf.on: Perf.each_end(&"draw.minion")
+		return
 	if shows_shadow():
 		draw_colored_polygon(shadow_outline(), SHADOW_COLOR)
 	var entry: Array = SHEETS[compass_index(facing)]
@@ -234,7 +321,7 @@ func _draw() -> void:
 	if Perf.on: Perf.each_end(&"draw.minion")
 
 
-func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
+func _draw_art(tex: Texture2D, mirrored: bool, frame: int, tint := Color.WHITE) -> void:
 	var src := Rect2(frame * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
 	var size := FRAME_SIZE * ART_SCALE * size_scale
 	var lift := LIFT * size_scale
@@ -242,7 +329,7 @@ func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
 	# A negative width flips the frame in place: Godot draws it from the
 	# rect's x to x + size, so x is -size / 2 both ways (T-226 fix: it was
 	# -w / 2, which put every mirrored frame one frame width to the right).
-	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -size / 2.0 - lift), Vector2(w, size)), src)
+	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -size / 2.0 - lift), Vector2(w, size)), src, tint)
 
 
 func _draw_placeholder() -> void:
