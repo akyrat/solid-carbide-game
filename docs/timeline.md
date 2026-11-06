@@ -3720,3 +3720,8 @@ Entry format:
 - Decision or change: The level creator gets a Rail piece (lay, move, resize, turn, height, delete), saved in the level file; rails sit on ramps and rooftops with posts and shadows, snapping from a platform matches the street, and joints between connected rail pieces keep all speed up to 100 degrees; approved by the board after a second round.
 - Documents touched: `docs/drifting.md`, `docs/level-design.md`
 - Tasks: T-542
+
+## 2026-11-06: No rails on the default map
+- Decision or change: T-541's 5 playtest rails are removed from the default map; the board places rails itself in the level creator, working on its own Kaiju City level, which becomes the default map when it is done.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-546
