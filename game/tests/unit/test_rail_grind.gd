@@ -95,11 +95,11 @@ func test_bad_rail_entries_are_skipped() -> void:
 	assert_eq(Rails.from_layout({}).size(), 0, "a level with no rails")
 
 
-func test_the_game_map_has_no_rails() -> void:
-	# The board, 2026-11-06 (T-546): the default map has none; rails come from the creator's levels.
+func test_the_game_map_has_the_boards_72_rails() -> void:
+	# The board, 2026-11-06 (T-547): the default map is the board's Kaiju City with its own rails.
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_MAP))
-	assert_eq((data.get("rails", []) as Array).size(), 0, "no rails in the game's map file")
-	assert_eq(Rails.from_layout(data).size(), 0, "the map loads with no rails")
+	assert_eq((data.get("rails", []) as Array).size(), 72, "72 rails in the game's map file")
+	assert_eq(Rails.from_layout(data).size(), 72, "all 72 load as usable rails")
 
 
 func test_two_parallel_rails_can_be_a_first_tier_jump_apart() -> void:

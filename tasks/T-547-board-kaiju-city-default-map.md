@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: copying the board's Kaiju City over the default map, with the level checks.
 
+### 2026-11-06, In progress
+
+Paused: waits for T-549 (ramp-2 and ramp-13 meet two rooftops each); then the checks run again on the same copy.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -65,3 +69,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 STOPPED, level checks fail on the board's level (not fixed, per the ticket). Copied game/data/levels/kaiju_city.json to game/data/level/kaiju_city_map.json (byte-identical, sha256 5a5d671151c6b2443935a87b9fe7c3a1217f9d9d8fcea096bf4873c96ab769b2; 72 rails, 28 ramps, 12 platforms, 41 buildings, 73 props); copy left uncommitted in the worktree. Both check_level.py and check_height_data.py exit 1 with the same output: "ramp 'ramp-2': climbs to unknown area ''" and "ramp 'ramp-13': climbs to unknown area ''" (two ramps with an empty climbs-to area id). No tests, docs or screenshots done. Needs the board's decision: fix the two ramps in the level creator, or allow them.
+
+UNBLOCKED after T-549. Copy committed, byte-identical to the board's file (sha256 5a5d671151c6b2443935a87b9fe7c3a1217f9d9d8fcea096bf4873c96ab769b2; 41 buildings, 12 platforms, 28 ramps, 73 props, 72 rails). check_level.py: OK. check_height_data.py: OK. Note: git's autocrlf had turned the working copy to CRLF after the merge; re-copied, the committed blob is LF and identical. Tests: added a test in test_game_map.gd (72 rails, 28 ramps, 12 platforms, the run gives the rails to the car, the grind finds the longest rail); test_rail_grind.gd's 'game map has no rails' test now expects 72 (T-546's old expectation). Full run before that fix: 2918 tests, 2916 pass, 1 failing (that old test); after the fix test_game_map.gd (13/13) and test_rail_grind.gd (27/27) pass. Docs: docs/level-design.md Content and game/docs/level/game-map.md updated. Screenshots in art-archive/T-547/screenshots/ (start, wide, rails, rails_far, ramps; new fixture shots in game_map_run_demo.gd).

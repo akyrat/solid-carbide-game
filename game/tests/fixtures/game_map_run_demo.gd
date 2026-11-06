@@ -11,6 +11,8 @@ extends Node
 @export var shot := "start"
 
 const ROOF_1_AT := Vector2(-32.0, 36.0)
+## T-547: parked beside the board's rails (rail-1 and rail-2 near the spawn) and its ramps up to roof-1.
+const AT := {"rails": Vector2(20.0, -30.0), "rails_far": Vector2(-46.0, -96.0), "ramps": Vector2(-10.0, 25.0)}
 
 
 func _ready() -> void:
@@ -28,6 +30,10 @@ func _ready() -> void:
 	if shot == "wide":
 		run.camera_follow.dynamic = false
 		run.set_zoom(20.0)
+	if AT.has(shot):
+		run.car.model.set_position(AT[shot])
+		run.car.model.set_velocity(Vector2.ZERO)
+		run.car._sync_from_model()
 	if shot == "rooftop":
 		run.car.model.set_position(ROOF_1_AT)
 		run.car.model.set_velocity(Vector2.ZERO)
@@ -37,7 +43,7 @@ func _ready() -> void:
 	run.camera.reset_physics_interpolation()
 	for i in 3:  # the camera catches up with the car before minions spawn round the screen
 		await get_tree().process_frame
-	if shot in ["start", "wide", "rooftop"]:
+	if shot in ["start", "wide", "rooftop"]:  # (the T-547 shots show the rails and ramps without minions)
 		for i in 300:  # 15 s of the run's minions, as in a run
 			run.state.health = run.state.max_health
 			run.state.advance(0.05)

@@ -107,6 +107,25 @@ func test_the_map_holds_the_levels_buildings_rooftops_ramps_props_and_boulders()
 	assert_eq(run.map.alert_signs.size(), 0, "no kaiju alert signs on the game map yet")
 
 
+func test_the_map_holds_the_boards_72_rails_28_ramps_and_12_platforms_and_the_car_grinds_them() -> void:
+	# T-547: the board's Kaiju City with its rails and ramps is the default map.
+	assert_eq(data.rails.size(), 72, "the level's rails")
+	assert_eq(data.ramps.size(), 28, "the level's ramps")
+	assert_eq(data.platforms.size(), 12, "the level's platforms")
+	var rails: Array = run.car.grind.rails
+	assert_eq(rails.size(), 72, "the run gives all the level's rails to the car")
+	assert_not_null(run.rail_drawing)
+	# A car just above the longest rail's middle, moving along it, locks on (the grind finds it).
+	var best: Dictionary = rails[0]
+	for r in rails:
+		if r.length > best.length:
+			best = r
+	var mid: Vector2 = (best.a + best.b) / 2.0
+	var h: float = (best.za + best.zb) / 2.0
+	var found: Dictionary = run.car.grind.find(mid, best.dir * 10.0, h, -1.0)
+	assert_false(found.is_empty(), "the grind finds %s from a car moving along it" % best.id)
+
+
 func test_the_map_draws_the_levels_own_ground() -> void:
 	assert_eq(run.map.ground_layout, LevelGround.layout_of(run.map.layout))
 
