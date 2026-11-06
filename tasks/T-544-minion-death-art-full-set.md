@@ -1,7 +1,7 @@
 ---
 id: T-544
 title: Art: the minion's death animation, the full set, swapped into the game
-status: flagged-for-review
+status: done
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-06, Open → In progress
 
 Started: the full death set from the approved sample, at most 4 generations per direction (16 in all). The agent is working in C:\solid-carbide-worktrees\T-544.
+
+### 2026-11-06, Flagged for review → Done
+
+Approved by the board. Merging into master.
 
 ## Style review
 
@@ -341,3 +345,4 @@ Plan (before any PixelLab call), 2026-11-06: four style loop runs, one per new d
 - 2026-11-06, in-progress → flagged-for-review: the style loop kept version 4 (score 7/10), still below 8 after 3 refines; every version is in its Style review
 
 Full report (2026-11-06). Generations: east 4, south 4, north-east 4, north 3 (the loop's round 2 was a free script rebuild of v1; v4 scored 3 and was not kept) = 15 of 16, each /animate-with-text-v3, about 1.0 generation each, logged in game/art/pixellab-generation-log.jsonl; every request, raw frames and loop version is in art-archive/T-544/ (req_<d>_vN.json, raw_<d>_vN/, style-loop/). Best scores (all 41/41 script checks): east 7/10 (v4), south 6/10 (v2), north-east 7/10 (v4), north 7/10 (v2, free rebuild), south-east 6/10 (T-532's approved sample, copied). None reached 8: each keeps its best version for the board's playtest (the loop flagged the ticket, it is the loop's own status change; I changed nothing else). Into the game: game/art/minion/minion_death_{e,se,s,ne,n}.png (384x48 RGBA). New test game/tests/unit/enemies/test_minion_death_art.gd (sheets load for all 8 directions incl. mirrored, 8 frames, alpha 0/1, body in every frame). Tests: test_minion* 104/104; full suite 2862 tests, 2861 passing, 0 failing, 1 risky/pending (the existing one). Deaths in a run, game's own scene: art-archive/T-544/screenshots/in_run/ (death_shots.gd; minions die in different facings with the art, no placeholder tip-over). Strips (x4, dark and light, per direction and all together): art-archive/T-544/screenshots/death_*_strip_*.png, death_all_directions_*.png; per-version strips in the same folder. docs/visual-style.md Content, 'The minion's death set (T-544)' records the set. Refusals: Round 1 of north logged a refused task_notes call by the generator (not worked around); one Godot import command of mine was refused by the guard because of a 2>&1, I dropped the redirect and did not need the import.
+- 2026-11-06, flagged-for-review → done: The board: lgtm (all five directions as they are, best scores 6-7).
