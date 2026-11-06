@@ -1,7 +1,7 @@
 ---
 id: T-536
 title: Two new tricks: the reverse drift and the aura
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/tricks.md]
 files_expected_to_change: [game/scripts/driving/trick_detector.gd, game/data/combo.json, game/tests/, game/docs/driving/tricks.md, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the agent is working in C:\solid-carbide-worktrees\T-536.
 ### 2026-11-06, In progress → In QA
 
 Built: REVERSE DRIFT! and AURA FARMING! (still 5 s, first pay at 6 s, then every second). QA is checking it.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
 ## Style review
 
