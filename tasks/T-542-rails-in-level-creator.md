@@ -1,7 +1,7 @@
 ---
 id: T-542
 title: Rails in the level creator
-status: in-qa
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/level_creator/]
 files_expected_to_change: [game/scripts/level_creator/, game/scenes/level_creator/, game/tests/, game/docs/level/, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -35,7 +35,9 @@ A task is not done until every document listed in documents_affected has been up
 
 Build Level design, Decisions, "Rails", the creator's side: a rail piece in the level creator, placed like the other pieces (position, direction, length and height as T-541's format allows), drawn with T-541's placeholder, saved to and loaded from the level file in T-541's format, and playable when the level is played as a full run. Work on top of T-541's branch. The creator is the board's tool, so its labels follow the creator's existing style.
 
-The board's review: play the grind prototype build from C:\solid-carbide-worktrees\playtest-grind-rails\game\project.godot before merging (open the level creator, place rails, play the level).
+The board's review: play it from C:\solid-carbide-worktrees\T-542\game\project.godot before merging (open the level creator, place rails on the ground, on ramps and on platforms, play the level).
+
+Round 2, the board's feedback after playing it (2026-11-06): (a) rails look horrible on a ramp or a platform: a rail on raised ground or a ramp must sit at that ground's height and draw in the right depth order, like other pieces on that ground; (b) snapping onto a rail from a platform is very hard, while it works well on the ground: snapping must be as easy from a platform or ramp as from the street (the lock-on must use the car's and the rail's real heights); (c) the board wants long rails that curve round corners. For now corners are angled rail pieces joined end to end: the car stays on the rail through a joint already, but loses a lot of speed there. A joint between connected rail pieces must cost no speed (the car carries its speed along the new piece's direction). This touches T-541's grind and rail drawing code (merged in master); document every change in docs/drifting.md and docs/level-design.md Content.
 
 Never write, move or commit anything in game/data/levels/ (the board's own levels). SFX stay off. Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` (your ticket's id) and hand back in one short line (tasks/README.md, "Handing back"). Every number you choose is a proposal for the board's playtest: list each with its reason in the result notes and keep it in data where the code already reads data.
 
@@ -48,6 +50,9 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] docs/level-design.md Content describes the rail piece in the creator. (QA: pass)
 - [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - full run not finished, round stopped for the board's feedback)
 - [ ] Screenshots in art-archive/T-542/screenshots/ show rails placed in the creator and the same level in a run. (QA: fail: code - the board: rails look horrible on ramps and platforms; no screenshots show them there)
+- [ ] A rail on a ramp and a rail on a platform sit at that ground's height and draw in the right depth order: screenshots in art-archive/T-542/screenshots/ show both in the creator and in a run, and QA opens and looks at them (beyond the script checks), saying in its report what it saw. (QA: pass / fail)
+- [ ] A car on a platform snaps onto a rail at the platform's height as easily as on the street (same lock-on distance and angle; test). (QA: pass / fail)
+- [ ] Driving through a joint between two connected rail pieces at an angle (for example 30 degrees) keeps the car's speed: no more loss than on a straight rail of the same length (test with the numbers in the result notes). (QA: pass / fail)
 
 ## Updates
 
@@ -60,6 +65,10 @@ Started now that the rail grind (T-541) is in master: the agent is working in C:
 ### 2026-11-06, In progress → In QA
 
 Built: a Rail piece in the level creator (lay, move, resize, turn, height, delete), saved in T-541's format and grindable in a run. QA next.
+
+### 2026-11-06, In QA → In progress
+
+Back with the agent: rails drawn properly on ramps and platforms, easy snapping from a platform, no speed loss at angled joints. QA will check screenshots of rails on ramps and platforms.
 
 ## Style review
 
@@ -79,3 +88,4 @@ Screenshots (art-archive/T-542/screenshots/): creator_rails_placed.png (rails, o
 Notes: Godot's untracked .uid files left uncommitted. The 5 rails of the game's map can now be edited by opening a copy in the creator.
 
 QA round 1 stopped early for the board's playtest. Criteria 1 and 3 pass (creator piece and docs section present). 2 fails: snapping onto a rail from a platform is very hard, angled joints cost a lot of speed. 4 fails: full run not finished. 5 fails: rails look horrible on ramps and platforms, no screenshots show them there. Paperwork note: review line names the playtest-grind-rails folder; use this ticket's folder.
+- 2026-11-06, in-qa → in-progress: The board played the rails in the creator: rails look horrible on a ramp or a platform; snapping onto a rail from a platform is very hard (fine on the ground); passing a joint between angled rail pieces costs a lot of speed and should cost none (the board wants long rails that curve round corners). QA must take and look at screenshots of rails on ramps and platforms.
