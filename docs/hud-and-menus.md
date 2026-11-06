@@ -76,6 +76,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **Tricks fly to the gift icon** (board, 2026-11-05): when a trick or combo pays subs, something visibly flies from the car to the gift icon at the right end of the sub goal bar, so the player sees the trick filling the bar. The look is the UI Agent's proposal for the playtest (placeholder effect, no generated art).
 - **The Garage button pulses when something can be bought** (board, 2026-11-05): on the main menu, while the player has enough coins for at least one garage upgrade that isn't maxed, the letters of the Garage button turn light blue (board's tweak, 2026-11-06: no yellow button highlight, no scale pulse), with a soft colour breath. Otherwise it looks as today.
 - **Resume on the pause screen, buttons stacked** (board, 2026-11-05): the pause screen gets a **Resume** button that closes it and carries on the run, as Escape does. The pause screen's buttons stack vertically, one under the other, instead of sitting in a row, in an order that makes sense (Resume first; the order is the UI Agent's proposal for the playtest).
+- **The trick list shows the new tricks** (board, 2026-11-06): the trick list (the pause screen's Trick list and the tutorial's trick slide) adds REVERSE DRIFT!, AURA FARMING! and GRIND! (Drifting, Decisions), each with its recipe and a recorded clip like the others, using the texts already written for them (Content, T-533).
 
 ## Content
 

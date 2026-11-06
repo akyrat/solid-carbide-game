@@ -3660,3 +3660,13 @@ Entry format:
 - Decision or change: The kaiju drops 4 meteors per attack in 2 pairs, 9 units apart (the board's tweak, was 7); drifting between a landed pair does 100 to the kaiju with a beam and breaks both.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-539
+
+## 2026-11-06: The new tricks in the trick list
+- Decision or change: The trick list and the tutorial's trick slide show REVERSE DRIFT!, AURA FARMING! and GRIND! with their recipes and clips.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-543
+
+## 2026-11-06: The minion's death animation, full set
+- Decision or change: The board approved the south-east sample; the other directions are made from it and swapped into the game.
+- Documents touched: docs/visual-style.md
+- Tasks: T-544
