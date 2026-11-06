@@ -1,7 +1,7 @@
 ---
 id: T-549
 title: A ramp may climb onto several rooftops of the same height
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/game-map.md, game/tools/check_height_data.py, game/scripts/level_creator/level_document.gd, game/scripts/level_creator/snapping.gd, game/scripts/level/ground_height.gd]
 files_expected_to_change: [game/tools/check_height_data.py, game/tools/check_level.py, game/tools/test_check_height_data.py, game/scripts/level_creator/, game/scripts/level/, game/tests/, game/docs/level/, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -93,3 +93,4 @@ New fixture: game/tests/fixtures/height/ramp_onto_two_rooftops.json (ramp-2, ram
 **Screenshots:** none; nothing the player sees changes (the game code is unchanged, and the creator's look is unchanged).
 
 Note on a refusal: the command guard refused one read-only shell `for ... done` loop (it read `done` as a ticket status). I ran the same read-only check as a Python one-liner instead, as the guard's message suggests ("run that part on its own"); nothing was written.
+- 2026-11-06, in-qa → done: QA passed; tooling, no board review needed
