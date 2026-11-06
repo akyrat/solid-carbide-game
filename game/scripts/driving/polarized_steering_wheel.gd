@@ -24,7 +24,9 @@ extends RefCounted
 ##   least `min_angle_degrees` from its direction of travel;
 ## - the burst: forward speed held at least at `burst_speed_multiplier` x the speed
 ##   the car carried into the press (cruise speed at the least) for `burst_seconds`;
-## - no cooldown: a new burst restarts a running one.
+## - cooldown (T-527): a burst starts a cooldown of `cooldown_seconds`; while it runs a
+##   trigger gives no burst (the coast is still spent). The HUD draws it with
+##   cooldown_fraction_left() / is_ready() / ready_again (T-528).
 
 const PowerUpDataScript := preload("res://scripts/data/power_up_data.gd")
 
@@ -36,6 +38,8 @@ const EPS := 1e-6
 signal fired(speed: float, seconds: float, angle_deg: float)
 ## The burst's time is over, or a wall hit or the wreck ended it.
 signal burst_ended
+## The cooldown ran out: the next trigger gives a burst again (T-528 fills the slot icon).
+signal ready_again
 ## Tier 4: a burst went off at `centre` (flat world, units): the shock's place.
 signal shock(centre: Vector2)
 
@@ -47,6 +51,8 @@ var burst_seconds := 0.0
 var min_angle_degrees := 60.0
 var max_coast_seconds := 0.0
 var min_speed := 0.0
+## Seconds between bursts, counted from the burst (T-527).
+var cooldown_seconds := 0.0
 ## Bricks' tier whose wave the burst sets off (0 = none; tier 4: 1).
 var shock_bricks_tier := 0
 
@@ -57,6 +63,8 @@ var burst_left := 0.0
 var burst_total := 0.0
 ## The forward speed the running burst holds.
 var burst_speed := 0.0
+## Seconds of cooldown left; > 0 while the wheel is reloading.
+var cooldown_left := 0.0
 ## Bursts and shocks so far (tests, effects).
 var bursts_fired := 0
 var shocks_sent := 0
@@ -80,6 +88,7 @@ func set_tier(new_tier: int, data = null) -> void:
 	if tier == 0:
 		burst_speed_multiplier = 1.0
 		burst_seconds = 0.0
+		cooldown_seconds = 0.0
 		shock_bricks_tier = 0
 		reset()
 		return
@@ -89,6 +98,7 @@ func set_tier(new_tier: int, data = null) -> void:
 	min_angle_degrees = clampf(float(t.get("min_angle_degrees", 60.0)), 0.0, 180.0)
 	max_coast_seconds = maxf(float(t.get("max_coast_seconds", 0.0)), 0.0)
 	min_speed = maxf(float(t.get("min_speed", 0.0)), 0.0)
+	cooldown_seconds = maxf(float(t.get("cooldown_seconds", 0.0)), 0.0)
 	shock_bricks_tier = maxi(int(t.get("shock_bricks_tier", 0)), 0)
 
 
@@ -107,9 +117,22 @@ func burst_fraction_left() -> float:
 	return clampf(burst_left / burst_total, 0.0, 1.0)
 
 
-## Drops the coast and any burst (the wreck, a new car).
+## True when a trigger would give a burst (no cooldown running).
+func is_ready() -> bool:
+	return cooldown_left <= 0.0
+
+
+## Share of the cooldown still to go, 1 just after a burst -> 0 when ready.
+func cooldown_fraction_left() -> float:
+	if cooldown_seconds <= 0.0:
+		return 0.0
+	return clampf(cooldown_left / cooldown_seconds, 0.0, 1.0)
+
+
+## Drops the coast, any burst and the cooldown (the wreck, a new car).
 func reset() -> void:
 	coast = -1.0
+	cooldown_left = 0.0
 	end_burst()
 
 
@@ -139,6 +162,10 @@ static func angle_between(heading: float, v: Vector2) -> float:
 ## rotation the model built this step's velocity on. `centre` is the car's place
 ## (flat world, units) for the tier 4 shock.
 func step(model, w: bool, s: bool, heading: float, airborne: bool, dt: float, centre := Vector2.ZERO) -> void:
+	if cooldown_left > 0.0:
+		cooldown_left = maxf(cooldown_left - dt, 0.0)
+		if cooldown_left <= 0.0:
+			ready_again.emit()
 	var w_pressed := w and not _w_was
 	var w_released := _w_was and not w
 	_w_was = w
@@ -147,7 +174,7 @@ func step(model, w: bool, s: bool, heading: float, airborne: bool, dt: float, ce
 	if w_pressed:
 		if coast >= 0.0:
 			last_press_angle = angle_between(_heading_before, _v_before)
-			if coast <= max_coast_seconds + EPS and not airborne \
+			if cooldown_left <= 0.0 and coast <= max_coast_seconds + EPS and not airborne \
 					and _v_before.length() >= min_speed - EPS \
 					and last_press_angle >= min_angle_degrees - EPS:
 				_fire(model, centre)
@@ -174,6 +201,7 @@ func _fire(model, centre: Vector2) -> void:
 	burst_total = burst_seconds
 	burst_left = burst_seconds
 	bursts_fired += 1
+	cooldown_left = cooldown_seconds
 	fired.emit(burst_speed, burst_seconds, last_press_angle)
 	if shock_bricks_tier > 0:
 		shocks_sent += 1

@@ -3665,3 +3665,8 @@ Entry format:
 - Decision or change: Rails as a map piece (straight segments at a height, in the level file); the car locks on within 2 units and 60 degrees, grinds with sparks, A/D turn it as in midair, GRIND! pays when the grind ends; Jump hops off 15 degrees toward the nose's side, with no Jump cooldown on a rail. The board approved it after two tweaks.
 - Documents touched: `docs/drifting.md`, `docs/level-design.md`
 - Tasks: T-541
+
+## 2026-11-06: A cooldown for the Polarized Steering Wheel
+- Decision or change: The wheel's bursts get a cooldown (3 s at tier 1, 4 s at tier 2) so chained bursts can't stack speed without end; approved in the board's playtest.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-527
