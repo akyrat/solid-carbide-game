@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md, docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/tricks.md]
 files_expected_to_change: [game/scripts/driving/, game/scripts/level/, game/scenes/, game/data/combo.json, game/data/level/kaiju_city_map.json, game/tests/, game/docs/driving/, docs/drifting.md, docs/level-design.md]
 model: opus
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -87,6 +87,10 @@ The board's tweak 2: a jump off a rail ignores the Jump cooldown, so you can hop
 ### 2026-11-06, In progress → In QA
 
 Tweak 2 in: a jump off a rail ignores the Jump cooldown. Ready to play in the grind build.
+
+### 2026-11-06, In QA → Needs playtest
+
+The board approved the grind prototype. Bringing master in (the one-line conflict with T-536), then merging.
 
 ## Style review
 
@@ -176,3 +180,4 @@ Playtest build (2026-11-06): playtest/grind-rails commit 0b7fa1fb sets game/data
 
 **GIFs:** not retaken. The recorded drive jumps after 1.6 s on the rail either way, so it looks the same.
 - 2026-11-06, in-progress → in-qa: Ready for the board to play (quick tuning 2), no QA agent yet.
+- 2026-11-06, in-qa → needs-playtest: The board played both tweaks: LGTM; no further QA round needed (the board tested it). Merge.
