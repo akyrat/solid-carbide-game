@@ -3625,3 +3625,8 @@ Entry format:
 - Decision or change: Popups REVERSE DRIFT!, AURA FARMING!, GRIND! (reused) and the pause screen's Resume label, with trick list entries and recipes for later.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-533
+
+## 2026-11-06: Tricks fly to the gift icon
+- Decision or change: Five glowing dots fly from the car to the sub goal bar's gift icon each time a trick pays subs; the board approved it in the batch-1105 playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-534
