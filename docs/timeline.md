@@ -3730,3 +3730,13 @@ Entry format:
 - Decision or change: The minion's PixelLab death animation in all five drawn directions (mirrored to eight) replaces the code placeholder; 15 of 16 generations, best scores 6 to 7; approved by the board as it is.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-544
+
+## 2026-11-06: The board's new Kaiju City is the default map
+- Decision or change: The board's edited Kaiju City (ramps and 72 rails) becomes the default map, as a byte-for-byte copy.
+- Documents touched: docs/level-design.md
+- Tasks: T-547
+
+## 2026-11-06: Rail landing boost and facing jump
+- Decision or change: Each rail landing gives a set speed boost that then declines; Jump off a rail goes where the car faces at a set speed.
+- Documents touched: docs/drifting.md
+- Tasks: T-548
