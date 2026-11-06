@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -83,6 +83,10 @@ Back in the board's playtest.
 ### 2026-11-06, Needs playtest → In progress
 
 The board's tweak 2: a jump off a rail ignores the Jump cooldown, so you can hop again quickly after landing on a rail. Back with the agent.
+
+### 2026-11-06, In progress → In QA
+
+Tweak 2 in: a jump off a rail ignores the Jump cooldown. Ready to play in the grind build.
 
 ## Style review
 
@@ -171,3 +175,4 @@ Playtest build (2026-11-06): playtest/grind-rails commit 0b7fa1fb sets game/data
 **Tests (foreground):** test_rail_grind 27/27, test_run_rails 5/5, test_jump_power_up 12/12.
 
 **GIFs:** not retaken. The recorded drive jumps after 1.6 s on the rail either way, so it looks the same.
+- 2026-11-06, in-progress → in-qa: Ready for the board to play (quick tuning 2), no QA agent yet.
