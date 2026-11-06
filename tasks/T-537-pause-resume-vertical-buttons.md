@@ -1,7 +1,7 @@
 ---
 id: T-537
 title: Pause screen: a Resume button, buttons stacked vertically and reordered
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -87,3 +87,4 @@ QA round: criteria 1,2,3,4,6 pass (screenshot 1280 checked: inside window, Resum
 QA round 1 fix: button column moved to the right of the settings (new HBox StripColumns: settings left, 200 px column right, 32 px gap; consts BUTTON_COLUMN_WIDTH, COLUMN_GAP, proposals), so the strip height is back within test_screen_flow's limits. test_shared_button pause count 11 -> 12 (Resume). Order and keyboard unchanged. Foreground runs, all green: test_shared_button 12/12, test_screen_flow 28/28, test_pause_resume_stack 6/6, test_pause_restart_exit 4/4, test_pause_trick_list 8/8, test_god_mode_page 8/8, test_pause_slider_saves 8/8, test_hud_layout_editor 13/13. Screenshots in art-archive/T-537/screenshots/ retaken (1280, 2560x1440, 960x540, God mode). docs/hud-and-menus.md updated.
 
 QA round 2: all 6 criteria pass. Full sets green (game/tools and godot; tools set skipped, nothing under tools/ changed); the 3 earlier failures are fixed. New screenshot checked: Resume first in a column right of the settings, inside 1280x720.
+- 2026-11-06, needs-playtest → done: The board played the combined build: lgtm.
