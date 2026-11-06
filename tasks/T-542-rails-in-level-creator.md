@@ -15,7 +15,7 @@ depends_on: [T-541]
 documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/level_creator/]
 files_expected_to_change: [game/scripts/level_creator/, game/scenes/level_creator/, game/tests/, game/docs/level/, docs/level-design.md]
-model: opus
+model: sonnet
 qa_rounds: 1
 ---
 
