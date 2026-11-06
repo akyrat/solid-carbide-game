@@ -748,6 +748,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Rails** (board, 2026-11-05); a prototype with its own playtest (Drifting, Decisions, "Rail grinding, a prototype"): rails are a map piece that can be placed anywhere on the map, in the level creator like the other pieces, and saved in the level file. For the prototype they use placeholder art; the playtest build has a few rails on the map to try.
 - **No rails on the default map** (board, 2026-11-06): the game's default map has no rails; the playtest rails T-541 put on it are removed. The board places rails itself in the level creator, once the creator's rail piece (T-542) is merged.
 - **The board's new Kaiju City is the default map** (board, 2026-11-06): the board edited its level Kaiju City in the level creator (ramps and rails added, saved as `game/data/levels/kaiju_city.json`) and made it the game's default map. The game plays a byte-for-byte copy of it, as before.
+- **A ramp may climb onto several rooftops** (board, 2026-11-06): a ramp whose top end meets two or more rooftops of the same height (side by side) is a proper ramp onto them, not an error. The level checks, the game and the level creator accept it, so a level made in the creator goes in unchanged (it came up with ramp-2 and ramp-13 of the board's Kaiju City).
 
 ### Content
 
@@ -1146,6 +1147,14 @@ Task T-251 (Decisions, "Level creator piece set"). Every number here is the Leve
 - **The multi-layer test level** (`game/tests/fixtures/level_creator_pieces_level.gd`; screenshots and a GIF of the car driving it in a run in `art-archive/T-251/screenshots/`): a 48 by 32 rooftop at 3 with a 14 by 12 at 6 on it, a 16 by 16 at 3, a 16 by 16 at 6 on the street; ramps 0 to 3 climbing north, east and west, 3 to 6 climbing south and east on the big 3, and a 0 to 6 climbing north.
 
 ![The level creator with the multi-layer test level: rooftops of three sizes, a 6 on a 3, ramps in all four directions](../art-archive/T-251/screenshots/creator.png)
+
+#### A ramp onto several rooftops (task T-549)
+
+Task T-549 (Decisions, "A ramp may climb onto several rooftops"). How it works: `game/docs/level/game-map.md`, "A ramp onto several rooftops (T-549)".
+
+- **The rule:** a ramp's top end may meet two or more rooftops of its top height side by side; it is valid when together they cover its whole top end, with no gap. It climbs onto all of them: the car drives up it and onto whichever rooftop it reaches. A ramp whose top meets no rooftop at its height, or covers only part of it, is still an error.
+- **In the level file:** such a ramp's `platform` link is empty or names one of the rooftops. The level checks accept both, so the board's Kaiju City (ramp-2 onto roof-6 and roof-7, ramp-13 onto roof-3 and roof-6) passes unchanged.
+- **In the level creator:** it links such a ramp to the first of its rooftops in the file, keeps a link to any of them, and snaps a ramp onto rooftops of its height whose sides continue each other on one line, as onto one rooftop.
 
 #### Level creator: props
 
@@ -2405,7 +2414,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
 | `drifting.md` | `ebeda14f941b9082f36bc0b34939aeac54c082f113cc24d9e29f3471823a9605` |
-| `level-design.md` | `0a7fd496866d071614fe377b39af2f8494fbb65836f43b8f1150bf2f367ce2b0` |
+| `level-design.md` | `7e9d0106715fbd6fa878b83642e0ccf7b80eea3c2941a927214e1ca755a16217` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
