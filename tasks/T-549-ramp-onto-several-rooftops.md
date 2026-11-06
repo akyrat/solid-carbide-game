@@ -1,7 +1,7 @@
 ---
 id: T-549
 title: A ramp may climb onto several rooftops of the same height
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -41,11 +41,11 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] check_level.py and check_height_data.py pass on the board's game/data/levels/kaiju_city.json unchanged (output in the result notes), and still reject a non-jump ramp whose top meets no area at its top_height (test). (QA: pass / fail)
-- [ ] In the game, the car drives up a ramp whose top meets two rooftops of the same height and ends on the rooftop it drives onto, either one (test). (QA: pass / fail)
-- [ ] The level creator loads, relinks and saves a level with such a ramp without errors, and the saved level still passes the checks (test). (QA: pass / fail)
-- [ ] Every existing level and test still passes: the agent's tests for the changed code, and QA's full run of the three test sets, with the counts in the result notes. (QA: pass / fail)
-- [ ] game/docs/level/game-map.md and docs/level-design.md Content describe the rule. (QA: pass / fail)
+- [x] check_level.py and check_height_data.py pass on the board's game/data/levels/kaiju_city.json unchanged (output in the result notes), and still reject a non-jump ramp whose top meets no area at its top_height (test). (QA: pass)
+- [x] In the game, the car drives up a ramp whose top meets two rooftops of the same height and ends on the rooftop it drives onto, either one (test). (QA: pass)
+- [x] The level creator loads, relinks and saves a level with such a ramp without errors, and the saved level still passes the checks (test). (QA: pass)
+- [x] Every existing level and test still passes: the agent's tests for the changed code, and QA's full run of the three test sets, with the counts in the result notes. (QA: pass)
+- [x] game/docs/level/game-map.md and docs/level-design.md Content describe the rule. (QA: pass)
 
 ## Updates
 
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-06, Open → In progress
 
 Started: the checks, the game and the creator accept a ramp onto two rooftops of the same height.
+
+### 2026-11-06, In progress → In QA
+
+Built: the checks and the creator accept a ramp onto several same-height rooftops; the game already handled it. QA now.
 
 ## Style review
 
