@@ -1,7 +1,7 @@
 ---
 id: T-534
 title: Tricks fly to the gift icon
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -75,3 +75,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Built. Each RunState.trick_subs_paid makes Hud.spawn_subs_flight(): a SubsFlight (scripts/hud/subs_flight.gd), 5 glowing dots on an arc, a child of the HUD's scaled area (HUD pixels, so it scales with HUD size), from the car's place (screen centre) to Hud.gift_center(), asked each frame so it follows a gift moved in the layout editor; frees itself on arrival. Bounds in data. Proposals (game/data/hud.json subs_flight): seconds 0.4 (short because the sub goal fill springs at once when subs are paid, so dots land just after the bar starts to fill; I did not delay the bar), arc 60 px, 5 dots, radius 4, colour #ffe23a, max_per_frame 3 (ten tricks on one frame make 3 nodes), max_alive 12 (cheap). Tests: tests/unit/hud/test_hud_subs_flight.gd 5 pass (spawn/arrive/free, signal wiring, moved gift + HUD size 50, per-frame bound, alive bound); all test_hud_* 203/203 pass. Docs: docs/hud-and-menus.md Decisions entry, game/docs/hud-and-menus/hud.md section. Screenshots: art-archive/T-534/screenshots/subs_fly_to_gift.gif (a run, tricks paying 1, 3, 10, 1) and subs_fly_strip.png (6 frames); fixture tests/fixtures/subs_flight_demo.tscn. Dots are small and plain (placeholder); the board may want them bigger. Full QA run not done by me.
 
 QA round 1: all 6 criteria pass. Godot set: first qa_check run red (2 failing), rerun alone green: 2743 tests, 2742 passing, 0 failing, 1 risky/pending (flaky under load, not in T-534's code; subs_flight tests 5/5 in the agent's notes). Docs lines present in docs/hud-and-menus.md and game/docs/hud-and-menus/hud.md; hud.json subs_flight has max_per_frame 3 and max_alive 12; GIF and strip in art-archive/T-534/screenshots/. Not visually checked by QA.
+- 2026-11-06, needs-playtest → done: The board played the combined build: lgtm.
