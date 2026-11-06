@@ -60,6 +60,9 @@
     "air_three_sixty": "AIR 360!",
     "airtime": "HANG TIME!",
     "thread_the_needle": "THREAD THE NEEDLE!",
+    "reverse_drift": "REVERSE DRIFT!",
+    "aura": "AURA FARMING!",
+    "rail_grind": "GRIND!",
     "comment": "Slide 2 (the loop) and the pause screen's trick list panel: the name beside each trick's illustration, one per trick id in game/docs/driving/tricks.md. Reused word for word from the trick popups (recap_text.json trick.*), so each trick has one name."
   },
   "button": {
@@ -108,6 +111,9 @@
     "air_one_eighty": "In the air, hold a turn key to spin the car half a turn before it lands.",
     "air_three_sixty": "Hit a ramp at full gas and hold a turn key: one full spin before you land.",
     "thread_the_needle": "Drive between two paired obstacles without touching either.",
+    "reverse_drift": "Hold reverse and steer to drift while moving backwards.",
+    "aura": "Stop and sit still for 5 seconds, then every second you stay put pays subs.",
+    "rail_grind": "Jump or drop onto a rail and grind along it.",
     "comment": "Pause screen, trick list panel (HUD and menus, Content, 'Tutorial slides and trick list'; T-489): the one-line rule beside each trick's clip, under its name (trick.<id>). One per trick id. Written without key letters: the keys are drawn as keycaps in the recipe beside it. Stored in sentence case."
   },
   "trick_recipe": {
@@ -170,6 +176,25 @@
       "step3_badge_comment": "Trick list, air_three_sixty recipe, step 3: the badge word (shown in capitals) in place of keys, for a step with no keys.",
       "step3_note_comment": "Trick list, air_three_sixty recipe, step 3: the tiny note under the step's keycap(s) or badge, 20 characters at most.",
       "steps_comment": "Order: step1 (keys W+turn etc. drawn by the UI as keycaps, not text), then the following steps. Keys per step are drawn by the UI from the draft table in HUD and menus, Content, 'Tutorial slides and trick list'."
+    },
+    "reverse_drift": {
+      "step1_note": "Slide backwards",
+      "step1_note_comment": "Trick list, reverse_drift recipe, step 1: the tiny note under the step's keycaps, 20 characters at most (T-533's text).",
+      "steps_comment": "One step: S + A/D drawn by the UI as keycaps, not text."
+    },
+    "aura": {
+      "step1_badge": "Stand still",
+      "step1_note": "5 s, then every s",
+      "step1_badge_comment": "Trick list, aura recipe, step 1: the badge word (shown in capitals) in place of keys (no keys: stand still), T-533's text.",
+      "step1_note_comment": "Trick list, aura recipe, step 1: the tiny note under the badge, 20 characters at most (T-533's text).",
+      "steps_comment": "One step: no keys, a badge."
+    },
+    "rail_grind": {
+      "step1_badge": "On a rail",
+      "step1_note": "Jump or drop on",
+      "step1_badge_comment": "Trick list, rail_grind recipe, step 1: the badge word (shown in capitals) in place of keys (Jump is its own key, not drawn), T-533's text.",
+      "step1_note_comment": "Trick list, rail_grind recipe, step 1: the tiny note under the badge, 20 characters at most (T-533's text).",
+      "steps_comment": "One step: no keys, a badge."
     },
     "comment": "Pause screen, trick list panel (T-489): each trick's key recipe, steps joined by an arrow. Notes sit under keycaps in tiny pixel type (20 characters at most); badges are a word or two shown in capitals where no key is pressed. Stored in sentence case. THREAD THE NEEDLE! has no recipe (no keys: just drive through the gap)."
   }

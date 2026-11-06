@@ -15,8 +15,8 @@ func _caps(step: Node) -> Array:
 	return step.get_node("Keys").get_children().filter(func(c): return c.name.begins_with("Key"))
 
 
-func test_all_seven_tricks_are_listed_and_each_has_a_clip_that_exists() -> void:
-	assert_eq(list.rows.size(), 7)
+func test_all_ten_tricks_are_listed_and_each_has_a_clip_that_exists() -> void:
+	assert_eq(list.rows.size(), 10)
 	for id in TrickList.TRICK_IDS:
 		var clip := TrickList.clip_for(id)
 		assert_ne(clip, "", id)
@@ -35,7 +35,7 @@ func test_selecting_a_trick_shows_its_clip_pad_name_and_rule() -> void:
 		assert_true(list.rows[id].button_pressed)
 
 
-func test_six_tricks_show_a_recipe_and_the_needle_none() -> void:
+func test_nine_tricks_show_a_recipe_and_the_needle_none() -> void:
 	for id in TrickList.TRICK_IDS:
 		list.select(id)
 		var steps := TrickList.steps_for(id)
@@ -122,3 +122,49 @@ func test_rows_are_focusable_list_entries_not_buttons() -> void:
 	ev.pressed = true
 	list.rows["airtime"]._gui_input(ev)
 	assert_eq(list.selected, "airtime", "Enter or Space selects")
+
+
+## T-543: REVERSE DRIFT!, AURA FARMING! and GRIND! in the list, with the texts of T-533 word for word.
+func test_the_three_new_tricks_have_t533s_texts_and_recipes() -> void:
+	var names := {"reverse_drift": "REVERSE DRIFT!", "aura": "AURA FARMING!", "rail_grind": "GRIND!"}
+	var rules := {
+		"reverse_drift": "Hold reverse and steer to drift while moving backwards.",
+		"aura": "Stop and sit still for 5 seconds, then every second you stay put pays subs.",
+		"rail_grind": "Jump or drop onto a rail and grind along it.",
+	}
+	var notes := {"reverse_drift": "Slide backwards", "aura": "5 s, then every s", "rail_grind": "Jump or drop on"}
+	var badges := {"aura": "Stand still", "rail_grind": "On a rail"}
+	for id in names:
+		assert_true(id in TrickList.TRICK_IDS, id)
+		assert_eq(_texts["trick"][id], names[id])
+		assert_eq(_texts["trick_rule"][id], rules[id])
+		assert_eq(_texts["trick_recipe"][id]["step1_note"], notes[id])
+		assert_lte(String(notes[id]).length(), 20)
+		if badges.has(id):
+			assert_eq(_texts["trick_recipe"][id]["step1_badge"], badges[id])
+		assert_eq(TrickList.clip_for(id), id)
+		assert_eq(TrickList.steps_for(id).size(), 1, id)
+		assert_true(FileAccess.file_exists("res://art/tutorial/tricks/%s.png" % id), id)
+		assert_true(list.is_loaded(id), id)
+	var rev: Dictionary = TrickList.steps_for("reverse_drift")[0]
+	assert_eq(rev["keys"], ["S", "A"], "S + A/D")
+	assert_eq(rev["either"], ["A"])
+	assert_false(TrickList.steps_for("aura")[0].has("keys"), "aura: no keys")
+	assert_false(TrickList.steps_for("rail_grind")[0].has("keys"), "grind: no keys shown")
+
+
+func test_the_list_is_ground_then_air_then_rail_then_the_needle() -> void:
+	assert_eq(TrickList.TRICK_IDS, ["extended_drift", "three_sixty", "alternate_drift", "reverse_drift", "aura",
+		"air_one_eighty", "air_three_sixty", "airtime", "rail_grind", "thread_the_needle"])
+	assert_eq(list.rows.size(), 10)
+
+
+func test_new_tricks_show_their_one_step_with_the_badge_and_note() -> void:
+	list.select("aura")
+	var shown := list.recipe_box.get_children().filter(func(c): return c.name.begins_with("Step"))
+	assert_eq(shown.size(), 1)
+	assert_eq(shown[0].get_node("Keys/Badge/Word").text, "STAND STILL")
+	list.select("reverse_drift")
+	shown = list.recipe_box.get_children().filter(func(c): return c.name.begins_with("Step"))
+	assert_eq(_caps(shown[0]).size(), 2)
+	assert_eq(list.recipe_box.find_children("EitherTag", "Label", true, false).size(), 1)

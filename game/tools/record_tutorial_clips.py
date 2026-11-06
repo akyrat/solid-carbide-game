@@ -34,9 +34,10 @@ FPS = 50
 KEEP_EVERY = 2          # 50 -> 25 frames per second
 # The clips whose camera follows the car redraw the whole frame each time, so their GIFs are bigger:
 # they keep every 3rd step (16.7 frames per second) to stay near the 1.5 MB aim.
-CLIP_EVERY = {"long_drift": 3, "alt_drift": 3, "ramp_jump": 3, "three_sixty": 3, "air_three_sixty": 3, "airtime": 3, "thread_the_needle": 3}
+CLIP_EVERY = {"long_drift": 3, "alt_drift": 3, "ramp_jump": 3, "three_sixty": 3, "air_three_sixty": 3, "airtime": 3, "thread_the_needle": 3, "reverse_drift": 3, "aura": 5, "rail_grind": 4}
 MAX_BYTES = 1_500_000   # the board's aim for a slide
-CLIPS = ["drift", "long_drift", "alt_drift", "ramp_jump", "three_sixty", "air_three_sixty", "airtime", "thread_the_needle"]
+CLIPS = ["drift", "long_drift", "alt_drift", "ramp_jump", "three_sixty", "air_three_sixty", "airtime", "thread_the_needle",
+         "reverse_drift", "aura", "rail_grind"]
 # T-490: what each new clip's recorded take must show: (tricks that must fire, tricks that must not).
 # "airtime" is the HANG TIME! line the fixture prints ("airtime N s"), not a detector id.
 EXPECT = {
@@ -44,6 +45,10 @@ EXPECT = {
     "air_three_sixty": (["air_three_sixty", "airtime"], []),
     "airtime": (["airtime"], ["air_one_eighty", "air_three_sixty"]),
     "thread_the_needle": (["thread_the_needle"], []),
+    # T-543: the three tricks of 2026-11-05.
+    "reverse_drift": (["reverse_drift"], ["three_sixty", "extended_drift"]),
+    "aura": (["aura"], []),
+    "rail_grind": (["rail_grind"], []),
 }
 
 
@@ -124,9 +129,9 @@ def record(name: str, out_dir: Path, archive: Path | None, keep_frames: bool = F
         size = gif.stat().st_size
         record_data = {
             "clip": name,
-            "task": "T-483" if name in CLIPS[:4] else "T-490",
+            "task": "T-483" if name in CLIPS[:4] else ("T-543" if name in CLIPS[8:] else "T-490"),
             "fixture": FIXTURE % name,
-            "script": "game/tests/fixtures/tutorial_clip_demo.gd",
+            "script": "game/tests/fixtures/tutorial_clip_rail_grind.gd" if name == "rail_grind" else "game/tests/fixtures/tutorial_clip_demo.gd",
             "recorder": "game/tools/record_tutorial_clips.py",
             "size_px": list(CLIP_SIZE),
             "fps": round(FPS / every, 1),

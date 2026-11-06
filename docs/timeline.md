@@ -3700,3 +3700,8 @@ Entry format:
 - Decision or change: Minions play a death animation (code placeholder until T-544's art), spill pixelated green liquid and leave corpses the car and knockback weapons push about; a corpse fades 2 s after its last hit; approved in the board's playtest.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-531
+
+## 2026-11-06: The new tricks in the trick list
+- Decision or change: The pause screen's trick list shows 10 tricks in two columns, adding REVERSE DRIFT!, AURA FARMING! and GRIND! with their recipes and clips recorded from the game; approved by the board.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-543

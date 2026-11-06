@@ -1,5 +1,5 @@
 {
-  "_comment": "The trick list's keycap recipes (T-491; HUD and menus, Decisions, 'Each trick shows the keys that make it'). Structure only: the texts come from tutorial_text.json. 'clip' is the recorded clip shown for the trick (game/art/tutorial/clips/<clip>_sheet.png). 'steps' are in order; step N's note is trick_recipe.<id>.stepN_note and its badge trick_recipe.<id>.stepN_badge. A step with 'keys' draws those keys as keycaps joined with +; a step with 'badge' true draws the badge word instead of keys. 'either' lists the keys that get a small /D tag (either turn key works). THREAD THE NEEDLE! has no recipe.",
+  "_comment": "The trick list's keycap recipes (T-491; HUD and menus, Decisions, 'Each trick shows the keys that make it'). Structure only: the texts come from tutorial_text.json. 'clip' is the recorded clip shown for the trick (game/art/tutorial/clips/<clip>_sheet.png). 'steps' are in order; step N's note is trick_recipe.<id>.stepN_note and its badge trick_recipe.<id>.stepN_badge. A step with 'keys' draws those keys as keycaps joined with +; a step with 'badge' true draws the badge word instead of keys. 'either' lists the keys that get a small /D tag (either turn key works). THREAD THE NEEDLE! has no recipe. T-543 added reverse_drift, aura and rail_grind (the detector's ids), with the texts of T-533.",
   "tricks": {
     "extended_drift":    { "clip": "long_drift", "steps": [ { "keys": ["W", "A"], "either": ["A"] }, { "badge": true } ] },
     "three_sixty":       { "clip": "three_sixty", "steps": [ { "keys": ["W", "A"], "either": ["A"] }, { "badge": true } ] },
@@ -7,6 +7,9 @@
     "airtime":           { "clip": "airtime", "steps": [ { "keys": ["W"] }, { "badge": true }, { "badge": true } ] },
     "air_one_eighty":    { "clip": "ramp_jump", "steps": [ { "keys": ["W"] }, { "keys": ["A"], "either": ["A"] }, { "badge": true } ] },
     "air_three_sixty":   { "clip": "air_three_sixty", "steps": [ { "keys": ["W"] }, { "keys": ["A"], "either": ["A"] }, { "badge": true } ] },
+    "reverse_drift":     { "clip": "reverse_drift", "steps": [ { "keys": ["S", "A"], "either": ["A"] } ] },
+    "aura":              { "clip": "aura", "steps": [ { "badge": true } ] },
+    "rail_grind":        { "clip": "rail_grind", "steps": [ { "badge": true } ] },
     "thread_the_needle": { "clip": "thread_the_needle", "steps": [] }
   }
 }

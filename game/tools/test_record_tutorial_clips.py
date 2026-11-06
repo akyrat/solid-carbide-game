@@ -53,7 +53,7 @@ class TestRecordedClips(unittest.TestCase):
             self.assertLessEqual(gif.stat().st_size, rtc.MAX_BYTES, name)
             with Image.open(gif) as im:
                 self.assertEqual(im.size, rtc.CLIP_SIZE, name)
-                self.assertGreater(im.n_frames, 40, name)
+                self.assertGreater(im.n_frames, 10 if name in rtc.CLIPS[8:] else 40, name)  # T-543: the three short clips
                 self.assertEqual(im.info["loop"], 0, name)
                 n_frames = im.n_frames
             data = json.loads(rec.read_text())

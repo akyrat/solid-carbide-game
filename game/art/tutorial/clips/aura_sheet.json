@@ -1,0 +1,51 @@
+{
+  "clip": "aura",
+  "task": "T-485",
+  "source": "aura.gif",
+  "frame_size": [
+    480,
+    320
+  ],
+  "columns": 8,
+  "rows_per_page": 12,
+  "frames_per_page": 96,
+  "pages": [
+    "aura_sheet.png"
+  ],
+  "frames": 15,
+  "durations_ms": [
+    6000,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "seconds": 7.4,
+  "keys_per_frame": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "W",
+    "W"
+  ]
+}

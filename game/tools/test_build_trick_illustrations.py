@@ -27,9 +27,9 @@ class TrickIllustrationTests(unittest.TestCase):
         text = TRICKS_MD.read_text(encoding="utf-8")
         for tid in b.TRICK_IDS:
             self.assertIn("`%s`" % tid, text)
-        self.assertEqual(len(b.TRICK_IDS), 7)
+        self.assertEqual(len(b.TRICK_IDS), 10)  # T-543: three more
 
-    def test_seven_files_same_size(self):
+    def test_ten_files_same_size(self):
         self.assertEqual(sorted(p.stem for p in self.paths), sorted(b.TRICK_IDS))
         for p in self.paths:
             self.assertEqual(Image.open(p).size, (64, 48))
@@ -48,7 +48,7 @@ class TrickIllustrationTests(unittest.TestCase):
             im = Image.open(p).convert("RGBA")
             self.assertGreater(sum(1 for px in im.getdata() if px[3]), 150, p.name)
             seen.add(im.tobytes())
-        self.assertEqual(len(seen), 7)
+        self.assertEqual(len(seen), 10)
 
     def test_deterministic(self):
         a = b.draw("three_sixty").tobytes()

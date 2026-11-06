@@ -9,7 +9,8 @@ extends GutTest
 const CarScript := preload("res://scripts/driving/car.gd")
 const GroundHeightScript := preload("res://scripts/level/ground_height.gd")
 const RAMP_DATA := "res://tests/fixtures/data/tutorial_ramp.json"
-const CLIPS := ["drift", "long_drift", "alt_drift", "ramp_jump", "three_sixty", "air_three_sixty", "airtime", "thread_the_needle"]
+const CLIPS := ["drift", "long_drift", "alt_drift", "ramp_jump", "three_sixty", "air_three_sixty", "airtime", "thread_the_needle",
+	"reverse_drift", "aura", "rail_grind"]
 
 
 func test_every_clip_scene_loads_with_a_drive() -> void:
@@ -17,6 +18,11 @@ func test_every_clip_scene_loads_with_a_drive() -> void:
 		var scene: PackedScene = load("res://tests/fixtures/tutorial_clip_%s.tscn" % clip)
 		assert_not_null(scene, clip)
 		var node: Node = scene.instantiate()
+		if clip == "rail_grind":
+			# T-543: its own script (a run on the game's map), not the demo's parts.
+			assert_gt(node.hop_step, 0, clip)
+			node.free()
+			continue
 		assert_eq(node.clip, clip)
 		assert_gt(node.parts.size(), 0, clip)
 		assert_gt(node.zoom, 0.0, clip)
@@ -96,3 +102,16 @@ func test_the_clips_keys_come_from_the_scripted_input() -> void:
 	assert_eq(node._keys_now(), "")
 	node.car.free()
 	node.free()
+
+
+## T-543: each new clip has its GIF, its sheet and a record saying the detector's trick fired and nothing unwanted did.
+func test_the_three_new_clips_were_recorded_with_their_tricks() -> void:
+	for pair in [["reverse_drift", "reverse_drift"], ["aura", "aura"], ["rail_grind", "rail_grind"]]:
+		var clip: String = pair[0]
+		assert_true(FileAccess.file_exists("res://art/tutorial/clips/%s_sheet.png" % clip), clip)
+		assert_true(FileAccess.file_exists("res://art/tutorial/clips/%s_sheet.json" % clip), clip)
+		var rec = JSON.parse_string(FileAccess.get_file_as_string("res://art/tutorial/clips/%s.json" % clip))
+		assert_eq(rec["task"], "T-543")
+		assert_eq(rec["problems"], [], clip)
+		assert_true(" | ".join(rec["tricks"]).contains(pair[1]), clip)
+		assert_lte(int(rec["bytes"]), 1500000, clip)

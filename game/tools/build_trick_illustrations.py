@@ -24,7 +24,8 @@ from PIL import Image
 
 W, H = 64, 48
 TRICK_IDS = ["extended_drift", "three_sixty", "alternate_drift", "air_one_eighty",
-             "air_three_sixty", "airtime", "thread_the_needle"]
+             "air_three_sixty", "airtime", "thread_the_needle",
+             "reverse_drift", "aura", "rail_grind"]       # the last three: T-543
 
 OUT = (12, 10, 26)          # near-black outline
 OUT_L = (70, 60, 120)       # lighter pixels breaking the outline on the lit (upper) side
@@ -573,9 +574,54 @@ def thread_the_needle(cv):
     draw_car_34(cv, 52, 23)
 
 
+def reverse_drift(cv):
+    """T-543: the extended drift's curve, but the car faces back along it (mirrored, nose left): it slides
+    backwards, tail first, with the twin pink marks running out of its nose."""
+    pts = sample(lambda a: (6 + 38.4 * math.cos(a), 8.5 + 35.5 * math.sin(a)), math.pi * 0.5 - 0.06, math.pi * 0.5 - 1.3)
+    draw_road(cv, pts, radius=5.5, kerb=True)
+    draw_tire_marks(cv, pts, offset=2.6)
+    draw_car_34(cv, pts[-1][0] + 5, pts[-1][1] - 2, flip=True)
+
+
+def aura(cv):
+    """T-543: a parked car on a short strip of road, no tire marks, with rings of neon cyan spreading out round it
+    (the aura), the outer one dimmer."""
+    pts = [(6 + i * 0.25, 30.0) for i in range(209)]
+    draw_road(cv, pts, radius=5.5, kerb=True)
+    draw_car_34(cv, 32, 27)
+    draw_ring(cv, 32, 27, 15, -math.pi * 0.95, math.pi * 0.95, c=CYAN, d=CYAN_D)
+    draw_ring(cv, 32, 27, 21, -math.pi * 0.85, -math.pi * 0.15, c=CYAN_D, d=CYAN_H)
+
+
+def rail_grind(cv):
+    """T-543: the car on a rail: a long pale metal rail from the lower left to the upper right on posts, the car on
+    top of it nose to the right, and a spray of hot sparks (white, pink and cyan pixels) trailing back along the rail."""
+    pts = [(4 + i * 0.3, 40.0 - i * 0.12) for i in range(190)]
+    rail = {}
+    for (x, y) in pts:
+        xi, yi = int(round(x)), int(round(y))
+        rail[(xi, yi)] = WHITE if xi % 5 else CYAN_W
+        rail[(xi, yi + 1)] = STRIPE_D
+        rail[(xi, yi + 2)] = ASPH_L
+    for px in (10, 26, 42, 58):                                    # posts under the rail
+        py = int(round(40.0 - (px - 4) * 0.4))
+        for d in range(3, 8):
+            rail[(px, py + d)] = ASPH_L if d < 6 else ASPH_D
+    cv.blit(rail)
+    cv.outline(set(rail))
+    cx, cy = 38, 21
+    draw_car_34(cv, cx, cy, shadow=False)
+    for i, (dx, dy, c) in enumerate([(-14, 10, PINK_W), (-17, 11, PINK), (-20, 13, CYAN_W), (-16, 8, WHITE), (-23, 12, CYAN),
+                                      (-12, 12, PINK), (-26, 14, PINK_D), (-19, 9, WHITE), (-21, 15, CYAN_D)]):
+        cv.put(cx + dx, cy + dy - 1, c)
+        if i % 2 == 0:
+            cv.put(cx + dx + 1, cy + dy - 1, c)
+
+
 DRAWERS = {"extended_drift": extended_drift, "three_sixty": three_sixty, "alternate_drift": alternate_drift,
            "air_one_eighty": air_one_eighty, "air_three_sixty": air_three_sixty, "airtime": airtime,
-           "thread_the_needle": thread_the_needle}
+           "thread_the_needle": thread_the_needle,
+           "reverse_drift": reverse_drift, "aura": aura, "rail_grind": rail_grind}
 
 
 def draw(trick_id: str) -> Image.Image:
