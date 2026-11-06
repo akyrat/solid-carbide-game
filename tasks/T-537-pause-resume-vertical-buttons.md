@@ -1,7 +1,7 @@
 ---
 id: T-537
 title: Pause screen: a Resume button, buttons stacked vertically and reordered
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -47,7 +47,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] The buttons are in one vertical column, in the order given in the result notes, with Resume first, and keyboard navigation follows that order (test). (QA: pass)
 - [ ] The whole pause screen stays inside the window at 1280x720 (test or screenshot). (QA: pass)
 - [ ] docs/hud-and-menus.md Content describes the new layout. (QA: pass)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - full run red: test_shared_button expects 34 shared pause buttons, now 35; test_screen_flow strip-height asserts (354 vs 259.2 thin band, 436 vs 380 compact) broke by the taller stacked strip; update those tests/limits; counts missing in notes)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass, round 2)
 - [ ] Screenshots in art-archive/T-537/screenshots/ show the new pause screen at 1280x720 and at a large window. (QA: pass)
 
 ## Updates
@@ -66,6 +66,10 @@ Built: pause buttons in one column, Resume, Trick list, Edit HUD layout, Restart
 
 QA round 1 failed: the stacked column makes the pause strip taller than its height limit, and a button-count test needs updating. Back to the agent: the column goes beside the settings so the strip stays short.
 
+### 2026-11-06, In progress → In QA
+
+Fixed: the button column sits right of the settings, so the strip keeps its height. QA round 2.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -77,3 +81,5 @@ Built. Pause screen buttons now one vertical column (VBox RunButtonsColumn): Res
 QA round: criteria 1,2,3,4,6 pass (screenshot 1280 checked: inside window, Resume first). Criterion 5 fail (code): full Godot run 2744 tests, 3 failing, all caused by this change: hud/test_shared_button (pause shared buttons now 35, test expects 34, line 100) and game/test_screen_flow strip tests (strip height 354 vs limit 259.2 'thin band'; 436 vs 380 'compact') since the stacked column makes the strip taller. Both reproduced on rerun of the single files. Fix: update the expected count and height limits (proposal for playtest) and record counts in result notes.
 
 QA round 1 fix: button column moved to the right of the settings (new HBox StripColumns: settings left, 200 px column right, 32 px gap; consts BUTTON_COLUMN_WIDTH, COLUMN_GAP, proposals), so the strip height is back within test_screen_flow's limits. test_shared_button pause count 11 -> 12 (Resume). Order and keyboard unchanged. Foreground runs, all green: test_shared_button 12/12, test_screen_flow 28/28, test_pause_resume_stack 6/6, test_pause_restart_exit 4/4, test_pause_trick_list 8/8, test_god_mode_page 8/8, test_pause_slider_saves 8/8, test_hud_layout_editor 13/13. Screenshots in art-archive/T-537/screenshots/ retaken (1280, 2560x1440, 960x540, God mode). docs/hud-and-menus.md updated.
+
+QA round 2: all 6 criteria pass. Full sets green (game/tools and godot; tools set skipped, nothing under tools/ changed); the 3 earlier failures are fixed. New screenshot checked: Resume first in a column right of the settings, inside 1280x720.
