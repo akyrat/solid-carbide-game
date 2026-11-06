@@ -1,7 +1,7 @@
 ---
 id: T-537
 title: Pause screen: a Resume button, buttons stacked vertically and reordered
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd, game/scenes/, game/data/pause_text.json, game/tests/, game/docs/hud-and-menus/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -69,6 +69,10 @@ QA round 1 failed: the stacked column makes the pause strip taller than its heig
 ### 2026-11-06, In progress → In QA
 
 Fixed: the button column sits right of the settings, so the strip keeps its height. QA round 2.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA round 2 passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
 ## Style review
 
