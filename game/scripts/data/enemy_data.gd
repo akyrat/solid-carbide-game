@@ -74,6 +74,7 @@ func kaiju_coins_on_defeat() -> int:
 
 ## first_attack_after_seconds, seconds_between_attacks, windup_seconds, meteors_per_attack,
 ## warning_seconds, land_within_units_of_car, impact_radius_units, impact_damage (hearts, 1), minion_damage (a minion's health points lost, T-418), knockback.
+## T-539: pair_distance_units, pair_damage_to_kaiju (the paired meteors).
 func meteor_attack() -> Dictionary:
 	return _section("meteor_attack")
 

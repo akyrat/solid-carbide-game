@@ -35,6 +35,9 @@ var _ramps_ref: Array = []
 var _sizes := Vector2i(-1, -1)
 ## How many times it was built (tests).
 var builds := 0
+## T-538: goes up by one every time any index is built, so what an enemy kept from an index
+## (minion.gd: its ground height and its index) is read again after a rebuild.
+static var generation := 0
 
 
 ## The index of `ground` (a GroundHeight), built on first use and kept in its meta; rebuilt
@@ -69,6 +72,7 @@ func build(g) -> void:
 	_ramps_ref = g.ramps
 	_sizes = Vector2i(g.platforms.size(), g.ramps.size())
 	builds += 1
+	generation += 1
 	buckets = []
 	var rects: Array = []
 	for p in g.platforms:

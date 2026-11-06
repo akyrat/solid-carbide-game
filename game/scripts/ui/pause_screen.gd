@@ -48,6 +48,12 @@ const HUD_LAYOUT_RESET_KEY := "hud_layout_reset"
 const HUD_LAYOUT_DONE_KEY := "hud_layout_done"
 ## The HUD size slider's step, in percent (T-431, a proposal for the playtest).
 const GOD_MODE_BUTTON_KEY := "god_mode_button"
+## The Resume button text (T-533, key in data/pause_text.json) and the gap between the stacked buttons (T-537).
+const RESUME_KEY := "resume_button"
+const BUTTON_GAP := 4
+## The button column stands right of the settings (T-537): its width and the gap between the two.
+const BUTTON_COLUMN_WIDTH := 200.0
+const COLUMN_GAP := 32
 const HUD_SIZE_STEP := 5.0
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
 const LABEL_WIDTH := 170.0
@@ -86,6 +92,8 @@ var set_min_button: Button
 var set_max_button: Button
 var min_label: Label
 var max_label: Label
+## The Resume button (T-537): the first button of the column; does what Escape does.
+var resume_button: Button
 var restart_button: Button
 var exit_button: Button
 ## The trick list button (T-386) and its sub-panel, with the back control and the trick list scene.
@@ -101,7 +109,7 @@ var hud_layout_editor: HudLayoutEditor
 ## before N it does not exist) and its page.
 var god_mode_button: Button
 var god_mode_page: GodModePage
-var _run_row: HBoxContainer
+var _run_row: VBoxContainer
 var _root: Control
 var _dim: ColorRect
 var strip: PanelContainer
@@ -137,10 +145,15 @@ func setup(t: Node) -> void:
 	_root.add_child(strip)
 	var center := CenterContainer.new()
 	strip.add_child(center)
+	# T-537: the settings on the left, the button column on the right, so the strip stays thin.
+	var outer := HBoxContainer.new()
+	outer.name = "StripColumns"
+	outer.add_theme_constant_override("separation", COLUMN_GAP)
+	center.add_child(outer)
 	var box := VBoxContainer.new()
 	box.custom_minimum_size.x = 520.0
 	box.add_theme_constant_override("separation", 4)
-	center.add_child(box)
+	outer.add_child(box)
 
 	title_label = Label.new()
 	title_label.text = TEXT_TITLE
@@ -179,7 +192,7 @@ func setup(t: Node) -> void:
 	_build_music_slider(box)
 	_build_hud_size_slider(box)
 	_build_camera_controls(box)
-	_build_run_buttons(box)
+	_build_run_buttons(outer)
 	_build_trick_panel()
 	_build_hud_layout_editor()
 	_build_god_mode()
@@ -235,27 +248,52 @@ func close_trick_list() -> void:
 
 ## The "Restart" and "Exit" buttons (T-327): a row at the bottom of the strip, in its look.
 ## They only emit signals; the run's owner does the rest. No confirm prompt.
-func _build_run_buttons(box: VBoxContainer) -> void:
-	var row := HBoxContainer.new()
-	row.name = "RunButtonsRow"
-	_run_row = row
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 24)
-	box.add_child(row)
+func _build_run_buttons(outer: HBoxContainer) -> void:
+	# T-537: one vertical column, Resume first (proposal for the playtest): Resume, Trick list,
+	# Edit HUD layout, Restart, Exit, then God mode when unlocked. Safe action first, the two
+	# that end the run (Restart, Exit) together at the bottom, the secret entry after them.
+	var col := VBoxContainer.new()
+	col.name = "RunButtonsColumn"
+	_run_row = col
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.custom_minimum_size.x = BUTTON_COLUMN_WIDTH
+	col.add_theme_constant_override("separation", BUTTON_GAP)
+	outer.add_child(col)
+	resume_button = _make_game_button("ResumeButton", pause_text(RESUME_KEY))
+	resume_button.pressed.connect(resume)
+	col.add_child(resume_button)
 	trick_list_button = _make_game_button("TrickListButton", TrickList.text("button.trick_list"))
 	trick_list_button.pressed.connect(open_trick_list)
-	row.add_child(trick_list_button)
-	_build_hud_layout_button(row)
+	col.add_child(trick_list_button)
+	_build_hud_layout_button(col)
 	restart_button = _make_game_button("RestartButton", TEXT_RESTART)
 	restart_button.pressed.connect(func():
 		save_pending()
 		restart_pressed.emit())
-	row.add_child(restart_button)
+	col.add_child(restart_button)
 	exit_button = _make_game_button("ExitButton", TEXT_EXIT)
 	exit_button.pressed.connect(func():
 		save_pending()
 		exit_pressed.emit())
-	row.add_child(exit_button)
+	col.add_child(exit_button)
+	_link_button_focus()
+
+
+## Keyboard order (T-537): Up and Down walk the column top to bottom and wrap round.
+func _link_button_focus() -> void:
+	var btns: Array = []
+	for c in _run_row.get_children():
+		if c is Button:
+			btns.append(c)
+	var n := btns.size()
+	for i in n:
+		var b: Button = btns[i]
+		var up: Button = btns[(i - 1 + n) % n]
+		var down: Button = btns[(i + 1) % n]
+		b.focus_neighbor_top = b.get_path_to(up)
+		b.focus_neighbor_bottom = b.get_path_to(down)
+		b.focus_next = b.get_path_to(down)
+		b.focus_previous = b.get_path_to(up)
 
 
 ## The "SFX volume" slider (T-077): 0 to 100, saved, applied to the SFX bus at once.
@@ -349,7 +387,7 @@ static func pause_text(key: String) -> String:
 ## The "Edit HUD layout" button (T-453): in the run buttons row after Trick list (a row of its
 ## own would make the strip taller than half the screen), the shared button in its small size.
 ## Only with a HUD to edit.
-func _build_hud_layout_button(row: HBoxContainer) -> void:
+func _build_hud_layout_button(row: Control) -> void:
 	if _hud() == null:
 		return
 	hud_layout_button = _make_game_button("HudLayoutButton", pause_text(HUD_LAYOUT_BUTTON_KEY))
@@ -390,6 +428,7 @@ func refresh_god_mode_entry() -> void:
 	god_mode_button = _make_game_button("GodModeButton", pause_text(GOD_MODE_BUTTON_KEY))
 	god_mode_button.pressed.connect(open_god_mode)
 	_run_row.add_child(god_mode_button)
+	_link_button_focus()
 
 
 func is_god_mode_open() -> bool:
@@ -678,7 +717,7 @@ func pause() -> void:
 	refresh_camera_controls()
 	get_tree().paused = true
 	visible = true
-	restart_button.grab_focus()  # keyboard: arrows move between the buttons, Enter presses
+	resume_button.grab_focus()  # keyboard: Up/Down move down the column, Enter presses
 	_camera_follows_while_paused(true)
 
 

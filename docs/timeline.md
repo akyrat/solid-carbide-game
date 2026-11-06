@@ -3550,3 +3550,123 @@ Entry format:
 - Decision or change: The Polarized Steering Wheel's HUD slot icon fills back up as its cooldown reloads.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-528
+
+## 2026-11-03: Jump key texts: Shift
+- Decision or change: The Jump card texts name Shift instead of Space, for the handbrake playtest.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-529
+
+## 2026-11-03: A handbrake on Space, for a playtest
+- Decision or change: Space is a handbrake: held, the car drifts as today; released, it steers less sharply and reaches a higher top speed. Jump moves to Left Shift.
+- Documents touched: docs/drifting.md
+- Tasks: T-530
+
+## 2026-11-03: Minion deaths
+- Decision or change: Minions play a death animation, spill a physics-simulated pixel green liquid and leave corpses the car and knockback weapons can push; a corpse fades 2 s after its last hit.
+- Documents touched: docs/enemies.md
+- Tasks: T-531
+
+## 2026-11-03: Minion death animation sample
+- Decision or change: A sample direction of the minion's death animation is made through PixelLab for the board's review.
+- Documents touched: docs/visual-style.md
+- Tasks: T-532
+
+## 2026-11-05: Texts for the reverse drift, aura and grind tricks, and Resume
+- Decision or change: Popup texts for the reverse drift, aura and rail grind tricks, and the pause screen's Resume label.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-533
+
+## 2026-11-05: Tricks fly to the gift icon
+- Decision or change: When a trick pays subs, an effect flies from the car to the sub goal bar's gift icon.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-534
+
+## 2026-11-05: The Garage button pulses
+- Decision or change: The main menu's Garage button pulses, slightly highlighted, while an upgrade can be bought.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-535
+
+## 2026-11-05: Reverse drift and aura tricks
+- Decision or change: Two new tricks: a reverse drift, and the aura, paid every second after 5 s standing still.
+- Documents touched: docs/drifting.md
+- Tasks: T-536
+
+## 2026-11-05: Resume and stacked buttons on the pause screen
+- Decision or change: The pause screen gets Resume, and its buttons stack vertically in a sensible order.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-537
+
+## 2026-11-05: No frame drops with many minions
+- Decision or change: Many minions alive must not drop the frame rate; the cost per minion is cut, with a cap only if still needed.
+- Documents touched: docs/enemies.md
+- Tasks: T-538
+
+## 2026-11-05: Paired meteors hurt the kaiju
+- Decision or change: Drifting between a pair of the kaiju's meteors hurts the kaiju, with a linking animation, and destroys the pair.
+- Documents touched: docs/enemies.md
+- Tasks: T-539
+
+## 2026-11-05: Bouncier Bouncy Bumpers
+- Decision or change: Bouncy Bumpers bounces the car further at every tier.
+- Documents touched: docs/drifting.md
+- Tasks: T-540
+
+## 2026-11-05: Rail grinding prototype
+- Decision or change: Rails on the map that the car grinds along, a trick, with Jump to hop from rail to rail; its own playtest.
+- Documents touched: docs/drifting.md, docs/level-design.md
+- Tasks: T-541
+
+## 2026-11-05: Rails in the level creator
+- Decision or change: The level creator gets a rail piece, saved in the level file.
+- Documents touched: docs/level-design.md
+- Tasks: T-542
+
+## 2026-11-05: Texts for the reverse drift, aura and grind tricks, and Resume
+- Decision or change: Popups REVERSE DRIFT!, AURA FARMING!, GRIND! (reused) and the pause screen's Resume label, with trick list entries and recipes for later.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-533
+
+## 2026-11-06: Tricks fly to the gift icon
+- Decision or change: Five glowing dots fly from the car to the sub goal bar's gift icon each time a trick pays subs; the board approved it in the batch-1105 playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-534
+
+## 2026-11-06: Reverse drift and aura tricks
+- Decision or change: REVERSE DRIFT! (1 s of drifting backwards, +0.25) and AURA FARMING! (5 s still, then +0.1 each second from 6 s); the board approved them in the batch-1105 playtest.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-536
+
+## 2026-11-06: Resume and one button column on the pause screen
+- Decision or change: The pause screen gets Resume, and its buttons sit in one column right of the settings: Resume, Trick list, Edit HUD layout, Restart, Exit, God mode; approved in the batch-1105 playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-537
+
+## 2026-11-06: No frame drops with many minions
+- Decision or change: Minions cost about half per step (200 alive: 8.6-10.4 ms a frame, was 14.3-15.6), and the cap on minions alive rises from 100 to 200; approved in the batch-1105 playtest.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-538
+
+## 2026-11-06: Bouncier Bouncy Bumpers
+- Decision or change: Bouncy Bumpers x2.1 / x3.9 (was x1.4 / x2.6): head-on bounces of 1.85 / 3.48 units; approved in the batch-1105 playtest.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-540
+
+## 2026-11-06: The Garage button's letters turn light blue
+- Decision or change: On the main menu, while an upgrade can be bought, the Garage button's letters turn light blue with a soft colour breath; no yellow tint or scale pulse (the board's tweak after the batch-1105 playtest).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-535
+
+## 2026-11-06: Paired meteors hurt the kaiju
+- Decision or change: The kaiju drops 4 meteors per attack in 2 pairs, 9 units apart (the board's tweak, was 7); drifting between a landed pair does 100 to the kaiju with a beam and breaks both.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-539
+
+## 2026-11-06: The new tricks in the trick list
+- Decision or change: The trick list and the tutorial's trick slide show REVERSE DRIFT!, AURA FARMING! and GRIND! with their recipes and clips.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-543
+
+## 2026-11-06: The minion's death animation, full set
+- Decision or change: The board approved the south-east sample; the other directions are made from it and swapped into the game.
+- Documents touched: docs/visual-style.md
+- Tasks: T-544

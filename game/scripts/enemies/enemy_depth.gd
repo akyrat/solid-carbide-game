@@ -41,6 +41,10 @@ var _sprites: Array = []
 var _areas: Array = []
 ## Each area's outline's bounding box on screen (an area does not move).
 var _area_boxes: Array = []
+## T-538: each building's and area's outline on screen, kept with the grid (they do not move;
+## building.overlaps_on_screen and area.covers worked them out again for every question).
+var _sils: Array = []
+var _area_sils: Array = []
 ## Screen cell (Vector2i) -> indices into _items / _sprites / _areas.
 var _item_cells: Dictionary = {}
 var _sprite_cells: Dictionary = {}
@@ -51,6 +55,22 @@ var _sig_refs: Array = []
 ## How many times the grid was built (tests).
 var builds := 0
 const _NONE := []
+## T-538: between begin_batch() and end_batch() (the minions' drawing, one step) the map's
+## lists are checked once, for the first thing placed, not for each: nothing adds or removes
+## a building, boulder or raised area while the crowd is placed.
+var _batch := false
+var _batch_checked := false
+
+
+## T-538: starts placing many things at once (see _batch).
+func begin_batch() -> void:
+	_batch = true
+	_batch_checked = false
+
+
+func end_batch() -> void:
+	_batch = false
+	_batch_checked = false
 
 
 func _init(the_map: Node2D = null) -> void:
@@ -91,7 +111,14 @@ func z_index_for(centre_units: Vector2, radius_units: float, height_units: float
 	var z: int = map.top_z_index()
 	if map.view != "iso":
 		return z
-	_cache_items()
+	if not (_batch and _batch_checked):
+		_cache_items()
+		_batch_checked = _batch
+	# T-538: nothing listed in the cells round the thing's screen box (worked out without the
+	# outline, a pixel wider on every side than the outline's box): nothing can cover it, and
+	# the outline is not needed.
+	if _cells_empty(_rough_box(centre_units, radius_units, height_units, ground_h)):
+		return z
 	var shape := screen_shape(centre_units, radius_units, height_units)
 	if ground_h != 0.0:
 		shape = Transform2D(0.0, Vector2(0.0, -ground_h * PX_PER_UNIT)) * shape
@@ -109,7 +136,11 @@ func z_index_for(centre_units: Vector2, radius_units: float, height_units: float
 					continue
 				if not (_boxes[i] as Rect2).intersects(box):
 					continue
-				if b.overlaps_on_screen(shape):
+				# T-538: building.overlaps_on_screen(shape) with the kept outline (its silhouette():
+				# the iso outline in the iso view, none in the flat view).
+				var sil: PackedVector2Array = _sils[i]
+				if b.view == "iso" and not sil.is_empty() and not shape.is_empty() \
+						and not Geometry2D.intersect_polygons(sil, shape).is_empty():
 					z = b.z_index - 1
 			for i in _sprite_cells.get(key, _NONE):
 				var s = _sprites[i]
@@ -121,9 +152,34 @@ func z_index_for(centre_units: Vector2, radius_units: float, height_units: float
 				var a = _areas[i]
 				if a.z_index - 1 >= z or not (_area_boxes[i] as Rect2).intersects(box, true):
 					continue
-				if a.covers(centre_units, radius_units, ground_h, shape):
+				# T-538: area.covers(centre_units, radius_units, ground_h, shape) with the kept outline.
+				if not a.block.is_empty() and a.is_behind(centre_units, radius_units, ground_h) \
+						and not Geometry2D.intersect_polygons(_area_sils[i], shape).is_empty():
 					z = a.z_index - 1
 	return z
+
+
+## T-538: the screen box of screen_shape(centre_units, radius_units, height_units) lifted by
+## ground_h, from its corners' sums, grown by a pixel so it holds the outline's own box.
+static func _rough_box(centre_units: Vector2, radius_units: float, height_units: float, ground_h: float) -> Rect2:
+	var c: Vector2 = ISO_TRANSFORM * (centre_units * PX_PER_UNIT)
+	var r := radius_units * PX_PER_UNIT
+	var top := c.y - r - (height_units + ground_h) * PX_PER_UNIT
+	var bottom := c.y + r - ground_h * PX_PER_UNIT
+	return Rect2(c.x - 2.0 * r, minf(top, bottom), 4.0 * r, absf(bottom - top)).grow(1.0)
+
+
+## T-538: true when no building, sprite or raised area is listed in any cell the box (grown by
+## a pixel, as z_index_for looks) touches.
+func _cells_empty(box: Rect2) -> bool:
+	var c0 := _cell_of(box.position - Vector2.ONE)
+	var c1 := _cell_of(box.end + Vector2.ONE)
+	for cy in range(c0.y, c1.y + 1):
+		for cx in range(c0.x, c1.x + 1):
+			var key := Vector2i(cx, cy)
+			if _item_cells.has(key) or _sprite_cells.has(key) or _area_cells.has(key):
+				return false
+	return true
 
 
 static func _cell_of(p: Vector2) -> Vector2i:
@@ -169,9 +225,12 @@ func _cache_items() -> void:
 	builds += 1
 	_items = map.fade_items().duplicate()
 	_boxes = []
+	_sils = []
 	_item_cells = {}
 	for i in _items.size():
-		var bx := _bounds(_items[i].iso_silhouette())
+		var sil: PackedVector2Array = _items[i].iso_silhouette()
+		_sils.append(sil)
+		var bx := _bounds(sil)
 		_boxes.append(bx)
 		_file(_item_cells, bx, i)
 	_sprites = map.depth_sprites().duplicate()
@@ -181,11 +240,14 @@ func _cache_items() -> void:
 	_areas = []
 	_area_cells = {}
 	_area_boxes = []
+	_area_sils = []
 	var elevation = map.get("elevation")
 	if elevation != null:
 		_areas = elevation.areas.duplicate()
 		for i in _areas.size():
-			_area_boxes.append(_bounds(_areas[i].silhouette()))
+			var sil: PackedVector2Array = _areas[i].silhouette()
+			_area_sils.append(sil)
+			_area_boxes.append(_bounds(sil))
 			_file(_area_cells, _area_boxes[i], i)
 
 

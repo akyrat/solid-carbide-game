@@ -95,6 +95,11 @@ var likes_fire: LikesFire
 var airtime_counter: AirtimeCounter
 ## The live drift counter (T-247), shown only while the car is drifting.
 var drift_counter: DriftCounter
+## The dots flying to the gift when a trick pays subs (T-534): data/hud.json, subs_flight.
+var subs_flight_cfg: Dictionary = {}
+var _flight_frame := -1
+var _flights_this_frame := 0
+var _flights_alive := 0
 var _car: Node
 var _state: RunState
 ## The combo's numbers (combo.json): its start value is "no combo" (T-116).
@@ -111,6 +116,8 @@ var _default_offsets: Dictionary = {}
 func _ready() -> void:
 	layer = 10
 	_combo_data = ComboData.new()
+	var hud_file := GameData.load_file("hud")
+	subs_flight_cfg = hud_file.data.get("subs_flight", {}) if hud_file.ok else {}
 	_build_root()
 	_build_reactions()
 	_build_timer()
@@ -445,6 +452,7 @@ func bind(state: RunState) -> void:
 		_state.combo_changed.disconnect(_on_combo_changed)
 		_state.combo_broken.disconnect(_on_combo_broken)
 		_state.level_up.disconnect(_on_level_up)
+		_state.trick_subs_paid.disconnect(_on_trick_subs_paid)
 	_state = state
 	weapon_icons.setup_power_ups(state)
 	_state.time_left_changed.connect(_on_time_left_changed)
@@ -454,6 +462,7 @@ func bind(state: RunState) -> void:
 	_state.combo_changed.connect(_on_combo_changed)
 	_state.combo_broken.connect(_on_combo_broken)
 	_state.level_up.connect(_on_level_up)
+	_state.trick_subs_paid.connect(_on_trick_subs_paid)
 	mission_page.bind(_state.missions)
 	sub_goal.stop()
 	reactions.clear()
@@ -596,3 +605,37 @@ func combo_step() -> int:
 ## Whether the sub goal square is on fire now (the top heat step, T-131).
 func fire_on() -> bool:
 	return likes_fire.burning and likes_fire.visible
+
+
+## A trick paid subs (T-534): dots fly from the car's place (the screen's centre, where the
+## camera keeps it) to the gift's place now. At most subs_flight.max_per_frame start in one
+## frame and subs_flight.max_alive are on screen at once; the rest pay without a flight.
+func _on_trick_subs_paid(_trick_id: String, _subs: float) -> void:
+	spawn_subs_flight()
+
+
+## Starts one flight; null when the bounds in data say no.
+func spawn_subs_flight() -> SubsFlight:
+	var frame := Engine.get_process_frames()
+	if frame != _flight_frame:
+		_flight_frame = frame
+		_flights_this_frame = 0
+	if _flights_this_frame >= int(subs_flight_cfg.get("max_per_frame", 3)):
+		return null
+	if _flights_alive >= int(subs_flight_cfg.get("max_alive", 12)):
+		return null
+	_flights_this_frame += 1
+	_flights_alive += 1
+	var f := SubsFlight.new()
+	f.setup(root.size / 2.0, gift_center, subs_flight_cfg)
+	f.arrived.connect(func() -> void: _flights_alive -= 1)
+	f.tree_exiting.connect(func() -> void:
+		if not f.done:
+			_flights_alive -= 1)
+	root.add_child(f)
+	return f
+
+
+## Where the gift is now, in the HUD's own pixels (it follows the layout editor and the size).
+func gift_center() -> Vector2:
+	return to_layout(sub_goal.gift.get_global_rect().get_center())

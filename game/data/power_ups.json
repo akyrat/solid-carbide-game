@@ -27,8 +27,8 @@
       "name_id": "bouncy_bumpers",
       "icon": "res://art/power_ups/bouncy_bumpers.png",
       "tiers": [
-        {"tier": 1, "bounce_distance_multiplier": 1.4, "proposal": true, "reason": "Multiplies the T-435 wall bounce distance; 1.4 is felt but not wild."},
-        {"tier": 2, "bounce_distance_multiplier": 2.6, "proposal": true, "reason": "Top tier: walls act like springs."}
+        {"tier": 1, "bounce_distance_multiplier": 2.1, "proposal": true, "reason": "T-540: about 1.5 times the old 1.4, so the wall bounce is clearly further than before (2.1 times the plain T-435 bounce)."},
+        {"tier": 2, "bounce_distance_multiplier": 3.9, "proposal": true, "reason": "T-540: 1.5 times the old 2.6; top tier, walls act like springs (3.9 times the plain bounce, still away from the wall, never into it)."}
       ]
     },
     "rusty_overcoat": {
