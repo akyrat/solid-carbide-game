@@ -51,6 +51,14 @@
     "per_second": 0.2,
     "max_add": 0.6
   },
+  "rail_grind": {
+    "_comment": "T-541, the rail grinding prototype (Drifting, Content, \"Rail grinding (task T-541)\"). A whole grind pays once, when it ends (off the rail's end, too slow, or a Jump off it), by its seconds on the rail: the GRIND! popup with +{amount}. Proposals for the playtest. Nothing under min_seconds (a touch of a rail is not a grind). add_per_second 0.25 x seconds, at most max_add 1.0: a 2 s grind adds 0.5 (as AIR 360! and ALT DRIFT!), a 4 s ride along a long rail the most, 1.0, since riding a rail takes a line and a landing. subs_per_second 5 x seconds, at most max_subs 20: 2 s pays 10 subs (as the big tricks), multiplied by the combo as it stood before (trick_subs.multiplied_by_combo).",
+    "min_seconds": 0.3,
+    "add_per_second": 0.25,
+    "max_add": 1.0,
+    "subs_per_second": 5.0,
+    "max_subs": 20.0
+  },
   "spawning": {
     "enabled": true,
     "extra_spawn_per_multiplier_point": 0.15,

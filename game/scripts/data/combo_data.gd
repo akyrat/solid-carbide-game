@@ -91,6 +91,35 @@ func needle_rules() -> Dictionary:
 	}
 
 
+## The rail grind (task T-541; combo.json, "rail_grind"): its numbers, with defaults.
+func _grind() -> Dictionary:
+	return _data.get("rail_grind", {})
+
+
+## Shortest grind that pays, in seconds (rail_grind.min_seconds).
+func grind_min_seconds() -> float:
+	return float(_grind().get("min_seconds", 0.3))
+
+
+## What a whole grind of `seconds` adds to the multiplier, paid once when it ends: seconds times
+## rail_grind.add_per_second, at most rail_grind.max_add, nothing under min_seconds. Rounded to
+## hundredths, as the popup shows it.
+func grind_add(seconds: float) -> float:
+	if seconds < grind_min_seconds() - 1e-6:
+		return 0.0
+	var g := _grind()
+	return snappedf(minf(seconds * float(g.get("add_per_second", 0.25)), float(g.get("max_add", 1.0))), 0.01)
+
+
+## The subs a whole grind of `seconds` pays (before the combo multiplier): seconds times
+## rail_grind.subs_per_second, at most rail_grind.max_subs, nothing under min_seconds.
+func grind_subs(seconds: float) -> float:
+	if seconds < grind_min_seconds() - 1e-6:
+		return 0.0
+	var g := _grind()
+	return minf(seconds * float(g.get("subs_per_second", 5.0)), float(g.get("max_subs", 20.0)))
+
+
 ## Shortest drift that pays, in seconds (drift_pay.min_seconds, task T-246).
 func drift_min_seconds() -> float:
 	return float(_data["drift_pay"]["min_seconds"])

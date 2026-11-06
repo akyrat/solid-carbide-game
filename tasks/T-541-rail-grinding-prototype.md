@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -56,10 +56,56 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-05, Open → In progress
+
+Started: the agent is working in C:\solid-carbide-worktrees\T-541.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+### Driving & Drift Agent, 2026-11-06: rail grinding prototype built
+
+**What it does (Drifting, Content, "Rail grinding (task T-541)"; Level design, Content, "Rails (task T-541)"; how it is built: game/docs/driving/rail-grind.md).** Rails are a map piece in the level file's new `"rails"` list. A car in the air (a jump, a ramp, the Jump hop, a drop off a rooftop edge) that catches a rail moving roughly along it locks on and slides along the bar with sparks. Only its speed along the rail is kept, and it slowly loses that speed. A and D swing the nose to that side but never take the car off the rail. It leaves at the rail's end (flying on and falling from the bar), drops off beside the rail when too slow, or hops off with Jump (the `car_jump` action, so whichever key that build binds: Space on master, Left Shift on the handbrake build). The hop adds a sideways push toward the nose's side and can land on a second rail. A grind pays GRIND! (T-533's text, word for word) when it ends, by its seconds on the rail: it adds to the combo and pays subs. The trick detector is unchanged: a landing on a rail is a landing, so a hop onto a rail also pays its HANG TIME! and air spins.
+
+**Rail format (for T-542, written in Level design, Content, "Rails (task T-541)"):** `{"id": "rail-1", "x1", "y1", "z1", "x2", "y2", "z2"}`, in map units. The ends can be in any direction. z1 and z2 are the bar's height at each end and must be above 0. If z2 is left out it equals z1. The height changes in a straight line between the ends. Bad entries (a missing or non-number end, a height at or under the street, shorter than 1 unit) are skipped with a warning. The checks are `Rails.problem()` in game/scripts/level/rails.gd. The prototype has straight rails only; a corner is two rails that meet.
+
+**Proposed numbers, each with its reason (also in the docs; constants at the top of rail_grind.gd, trick numbers in combo.json):**
+- Catch reach: 1 unit from the rail's line (the car's side within half a unit of the bar). The wall grind used 2, but a rail is thin.
+- Past an end: 0.5 units still catches (the grind starts at the end), so a landing right at the end isn't lost.
+- Height window: from 0.5 under to 0.25 over the bar, falling or level only. One step of a fall moves up to about 0.3 units, so the car never steps through the bar, and a car still rising doesn't snap on.
+- Angle: within 45 degrees of the rail, either way. This is what makes a landing across a rail fall past it.
+- Least speed along the rail: 2 units/s. Slower than that isn't a grind.
+- Speed loss: 1 unit/s every second. The wall grind lost 4, but rails are for travelling: at cruise speed a ride crosses the map's 35 to 54 unit rails.
+- Drops off below 2 units/s, with a 2 units/s sideways push.
+- Angle across the rail: 70 degrees (the wall grind's look). Sparks are the wall grind's: 5 a second per unit/s, 0.3 s each.
+- Jump's sideways push: 4 units/s. With Jump tier 1 (about 0.83 s in the air) that carries the car about 3.3 units, enough for rails up to about 3.5 units apart at the same height.
+- The rail just left can't be caught again until the car touches the ground or another rail, so a hop never drops it straight back on.
+- Pay (combo.json `rail_grind`): nothing under 0.3 s; 0.25 x seconds added to the combo, at most 1.0 (a 2 s grind adds 0.5, like AIR 360!); 5 subs a second, at most 20 (2 s pays 10, like the big tricks), times the combo from before the grind.
+- Playtest switch: `jump_at_start` in game/data/playtest.json, the Jump tier each run starts with. It is **0 (off) in the committed data**. **For the playtest build at C:\solid-carbide-worktrees\playtest-grind-rails, set it to 1.**
+
+**Rails on the game's map** (kaiju_city_map.json; the only change to the file is the new `"rails"` list):
+- rail-1: from roof-12 up to roof-13, which had no way up.
+- rail-2: from roof-13 to roof-10.
+- rail-3 and rail-4, the jump pair: on the road just north-east of the spawn, 3.5 units apart at height 1. A tier 1 hop from the street lands on them, and Jump with D held while driving north goes from rail-3 to rail-4.
+- rail-5: from roof-2 down to the street east of it.
+
+**Placeholder art (drawn in code):** a 3-pixel grey metal bar on thin posts every 6 units and at both ends, with a dark shadow line on the street. Each 2-unit piece sits in the map's depth order like the car at that place and height (the screenshots show the bar going behind a skyscraper and over rooftops). The car on the rail draws over it. The pieces just in front of a car driving under a rail draw over the car.
+
+**Not in the prototype (for the board):** curved rails, and carrying a grind on into the next rail at a corner; speed changing with a rail's slope; enemies knocking the car off; rails as obstacles on the street (a car drives under them); the trick list entry and keycap recipe for GRIND!. The level creator may drop the `rails` list if the board saves the game map from it; T-542 handles that.
+
+**Files:** new: game/scripts/level/rails.gd, game/scripts/level/rail_drawing.gd, game/scripts/driving/rail_grind.gd, game/scripts/driving/rail_sparks.gd, game/docs/driving/rail-grind.md, game/tests/unit/test_rail_grind.gd, game/tests/unit/run/test_run_rails.gd, game/tests/fixtures/rail_grind_gif.tscn and rail_grind_gif_demo.gd. Changed: car.gd (`car.grind`, the grind step; the normal step is unchanged when there are no rails), car_height.gd (set_on_rail, leave_rail), run.gd (_build_rails, sparks), run_state.gd (add_grind_trick, jump_at_start), combo_data.gd, trick_popups.gd (one TEXTS and one SIZES line), combo.json, playtest.json, kaiju_city_map.json, game/README.md. The trick detector is untouched, which should keep this clear of T-536. The likely merge overlaps with T-536 are trick_popups.gd's TEXTS and SIZES and combo.json, each a one-line add.
+
+**Documents affected:** docs/drifting.md (Content, "Rail grinding (task T-541)"), docs/level-design.md (Content, "Rails (task T-541)"; "The game's map" notes the added rails).
+
+**Tests run (foreground, the changed code's sets):** test_rail_grind 21/21, test_run_rails 5/5, test_jump_power_up 12/12, test_game_map 12/12, test_run_combo 20/20, test_run_scene 5/5, test_run_state 10/10, test_car_collisions 19/19, test_car_footprint_height 11/11, test_car_height 21/21, test_combo_data 6/6, test_tricks 27/27, test_trick_popups* 35/35. `python game/tools/check_level.py game/data/level/kaiju_city_map.json`: OK.
+
+**Screenshots and GIFs (art-archive/T-541/screenshots/):**
+- rail_jump_between_rails.gif: a run, hop from the street onto rail-3, grind, Jump with D onto rail-4, grind to the end.
+- rail_climb_to_roof_13.gif: off roof-12 onto rail-1, up to roof-13.
+- rail_grind_popup.png: the GRIND! popup.
+- Depth stills: rails_jump_pair_by_spawn.png, rail_1_depth_roof_12_to_roof_13.png, rail_2_depth_roof_13_to_roof_10.png.
+
+**For the Project Lead:** an earlier recording run of mine was left orphaned: a Godot window (PID 36536, `--write-movie ...scratchpad/mjump/f.png`) paused on its pause screen and still writing frames into my scratchpad. My `Stop-Process` on it was refused by the auto-mode classifier, so I did not try another way. Please close that Godot window (or end PID 36536). The fixture now unpauses itself and quits, so this won't happen again.

@@ -1,0 +1,356 @@
+extends GutTest
+## Task T-541: the rail grinding prototype (Drifting, Content, "Rail grinding (task T-541)"; the
+## rail format: Level design, Content, "Rails (task T-541)"). Rails load from a level file; a car
+## that lands on a rail moving along it locks on, slides along it and leaves at its end; one
+## landing across it doesn't; Jump while grinding hops off and can land on a second rail; a grind
+## that ends pays the GRIND! trick (combo.json "rail_grind"); the playtest switch starts runs with
+## the Jump power-up and is off in the committed data.
+
+const CarScript := preload("res://scripts/driving/car.gd")
+const Rails := preload("res://scripts/level/rails.gd")
+const RailGrind := preload("res://scripts/driving/rail_grind.gd")
+const RailDrawing := preload("res://scripts/level/rail_drawing.gd")
+const TrickPopupsScript := preload("res://scripts/hud/trick_popups.gd")
+const GAME_MAP := "res://data/level/kaiju_city_map.json"
+
+## Two level rails along x (east), 3.5 units apart, at height 1: the jump pair's layout.
+const LAYOUT := {"rails": [
+	{"id": "rail-a", "x1": 0.0, "y1": 0.0, "z1": 1.0, "x2": 20.0, "y2": 0.0, "z2": 1.0},
+	{"id": "rail-b", "x1": 0.0, "y1": 3.5, "z1": 1.0, "x2": 30.0, "y2": 3.5},
+]}
+
+var _world: Node2D
+
+
+func before_each() -> void:
+	_world = Node2D.new()
+	add_child_autofree(_world)
+	RunState.jump_at_start_override = -1
+
+
+func after_each() -> void:
+	RunState.jump_at_start_override = -1
+
+
+## A car with no ground source (flat street at 0), the layout's rails, Jump at `jump_tier`, at
+## `pos` heading `heading` (radians) with flat velocity `vel`, in the air at `height` going up
+## at `vz`.
+func _car(pos: Vector2, vel: Vector2, height: float, vz: float, jump_tier := 0, layout := LAYOUT) -> CharacterBody2D:
+	var car: CharacterBody2D = CarScript.new()
+	car.model.set_position(pos)
+	car.model.rotation = atan2(vel.y, vel.x)
+	_world.add_child(car)
+	car.set_physics_process(false)
+	car.use_keyboard = false
+	car.model.set_velocity(vel)
+	car.grind.rails = Rails.from_layout(layout)
+	car.jump.set_tier(jump_tier)
+	if height > 0.0 or vz > 0.0:
+		car.height_model.height = height
+		car.height_model.leave_rail(vz)
+	return car
+
+
+## Steps until `cond` holds or `max_steps` pass; returns the steps taken.
+func _step_until(car, cond: Callable, max_steps := 1000) -> int:
+	for i in max_steps:
+		if cond.call():
+			return i
+		car.physics_step()
+	return max_steps
+
+
+# --- The format -----------------------------------------------------------------------------
+
+func test_rails_load_from_the_level_format() -> void:
+	var rails := Rails.from_layout(LAYOUT)
+	assert_eq(rails.size(), 2)
+	assert_eq(rails[0].id, "rail-a")
+	assert_eq(rails[0].a, Vector2(0, 0))
+	assert_eq(rails[0].b, Vector2(20, 0))
+	assert_almost_eq(float(rails[0].length), 20.0, 1e-6)
+	assert_eq(rails[0].dir, Vector2.RIGHT)
+	assert_almost_eq(float(rails[1].zb), 1.0, 1e-6, "z2 left out: a level rail at z1")
+
+
+func test_a_sloped_rail_changes_height_in_a_straight_line() -> void:
+	var r := Rails.make("r", Vector2(0, 0), Vector2(0, -10), 3.0, 6.0)
+	assert_almost_eq(Rails.height_at(r, 0.0), 3.0, 1e-6)
+	assert_almost_eq(Rails.height_at(r, 5.0), 4.5, 1e-6)
+	assert_almost_eq(Rails.height_at(r, 10.0), 6.0, 1e-6)
+	assert_almost_eq(Rails.height_at(r, 14.0), 6.0, 1e-6, "held past the end")
+
+
+func test_bad_rail_entries_are_skipped() -> void:
+	var layout := {"rails": [
+		{"id": "no-end", "x1": 0, "y1": 0, "z1": 1},
+		{"id": "street", "x1": 0, "y1": 0, "z1": 0, "x2": 5, "y2": 0},
+		{"id": "short", "x1": 0, "y1": 0, "z1": 1, "x2": 0.5, "y2": 0},
+		{"id": "text", "x1": "a", "y1": 0, "z1": 1, "x2": 5, "y2": 0},
+		{"id": "ok", "x1": 0, "y1": 0, "z1": 1, "x2": 5, "y2": 0},
+	]}
+	var rails := Rails.from_layout(layout)
+	assert_eq(rails.size(), 1)
+	assert_eq(rails[0].id, "ok")
+	assert_eq(Rails.from_layout({}).size(), 0, "a level with no rails")
+
+
+func test_the_game_map_has_rails_that_all_load() -> void:
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_MAP))
+	var raw: Array = data.get("rails", [])
+	assert_gte(raw.size(), 4, "a handful of rails for the playtest")
+	for r in raw:
+		assert_eq(Rails.problem(r), "", str(r.get("id")))
+	assert_eq(Rails.from_layout(data).size(), raw.size())
+
+
+func test_the_game_map_has_two_rails_a_first_tier_jump_apart() -> void:
+	# Two parallel rails at the same height, no further apart than a Jump tier 1 hop carries
+	# the car sideways (JUMP_SIDE_SPEED x the hop's airtime) plus the reach.
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_MAP))
+	var rails := Rails.from_layout(data)
+	var j = preload("res://scripts/driving/jump_power_up.gd").new()
+	j.set_tier(1)
+	var carry: float = RailGrind.JUMP_SIDE_SPEED * j.airtime_for(j.takeoff_speed, 12.0) + RailGrind.REACH
+	var found := false
+	for a in rails:
+		for b in rails:
+			if a == b or absf(float(a.dir.dot(b.dir))) < 0.999 or absf(float(a.za) - float(b.za)) > 0.01:
+				continue
+			var gap := Rails.side_distance(b, a.a)
+			if gap > 0.5 and gap <= carry:
+				found = true
+	assert_true(found, "two parallel rails within %.2f units" % carry)
+
+
+# --- Locking on, sliding, leaving -----------------------------------------------------------
+
+func test_landing_along_a_rail_locks_on_slides_and_leaves_at_its_end() -> void:
+	var car := _car(Vector2(2, 0.3), Vector2(10, 0), 1.6, 0.0)
+	var ended: Array = []
+	car.grind.grind_ended.connect(func(reason: String, seconds: float, length: float) -> void:
+		ended.append([reason, seconds, length]))
+	var steps := _step_until(car, func() -> bool: return car.grind.active, 100)
+	assert_lt(steps, 100, "locked on")
+	assert_eq(car.grind.rail_index, 0)
+	assert_false(car.airborne)
+	assert_almost_eq(car.height, 1.0, 1e-6, "on the bar")
+	assert_almost_eq(car.model.get_position().y, 0.0, 1e-6, "snapped onto the rail's line")
+	# It slides along, slowing by DECEL, steering doesn't take it off.
+	var x0: float = car.model.get_position().x
+	var v0: float = car.grind.speed
+	car.scripted_input = [true, false, 1.0]
+	for i in 10:
+		car.physics_step()
+	assert_true(car.grind.active, "still on the rail with W and A held")
+	assert_gt(car.model.get_position().x, x0 + 1.5)
+	assert_almost_eq(car.model.get_position().y, 0.0, 1e-6)
+	assert_almost_eq(car.grind.speed, v0 - RailGrind.DECEL * 10 * car.model.dt, 1e-6)
+	assert_almost_eq(car.model.get_velocity().x, car.grind.speed, 1e-6, "the car's speed is the grind's")
+	car.scripted_input = [false, false, 0.0]
+	_step_until(car, func() -> bool: return not car.grind.active, 500)
+	assert_false(car.grind.active)
+	assert_eq(ended.size(), 1)
+	assert_eq(ended[0][0], "end", "left at the rail's end")
+	assert_gt(float(ended[0][1]), 1.0, "its seconds")
+	assert_true(car.airborne, "off the end of a bar at height: it falls")
+	assert_gt(car.model.get_position().x, 19.9)
+	_step_until(car, func() -> bool: return not car.airborne, 200)
+	assert_false(car.grind.active, "doesn't catch the rail it left")
+	assert_almost_eq(car.height, 0.0, 1e-6, "landed on the street")
+
+
+func test_landing_across_a_rail_does_not_lock_on() -> void:
+	var car := _car(Vector2(10, -0.6), Vector2(0, 10), 1.6, 0.0)
+	_step_until(car, func() -> bool: return not car.airborne, 200)
+	assert_eq(car.grind.grinds, 0, "straight across")
+	var diag := _car(Vector2(10, -0.6), Vector2(6, 8), 1.6, 0.0)  # 53 degrees off the rail
+	_step_until(diag, func() -> bool: return not diag.airborne, 200)
+	assert_eq(diag.grind.grinds, 0, "past MAX_ANGLE_DEG")
+	var close := _car(Vector2(2, -0.6), Vector2(9, 5), 1.6, 0.0)  # 29 degrees off: catches
+	_step_until(close, func() -> bool: return close.grind.active or not close.airborne, 200)
+	assert_true(close.grind.active, "within MAX_ANGLE_DEG")
+
+
+func test_rising_or_too_far_or_too_slow_does_not_lock_on() -> void:
+	var g = RailGrind.new()
+	g.rails = Rails.from_layout(LAYOUT)
+	assert_true(g.find(Vector2(5, 0.5), Vector2(10, 0), 1.0, -1.0).has("index"), "the reference catch")
+	assert_eq(g.find(Vector2(5, 0.5), Vector2(10, 0), 1.0, 2.0), {}, "going up")
+	assert_eq(g.find(Vector2(5, RailGrind.REACH + 0.1), Vector2(10, 0), 1.0, -1.0), {}, "beside it")
+	assert_eq(g.find(Vector2(5, 0.0), Vector2(1, 0), 1.0, -1.0), {}, "too slow")
+	assert_eq(g.find(Vector2(5, 0.0), Vector2(10, 0), 1.0 + RailGrind.CATCH_ABOVE + 0.1, -1.0), {}, "above it")
+	assert_eq(g.find(Vector2(5, 0.0), Vector2(10, 0), 1.0 - RailGrind.CATCH_BELOW - 0.1, -1.0), {}, "under it")
+	assert_eq(g.find(Vector2(-1, 0.0), Vector2(10, 0), 1.0, -1.0), {}, "past its end")
+	assert_eq(int(g.find(Vector2(-0.4, 0.0), Vector2(10, 0), 1.0, -1.0).s), 0, "just past an end: from the end")
+
+
+func test_a_car_on_the_ground_never_locks_on() -> void:
+	var car := _car(Vector2(2, 0), Vector2(10, 0), 0.0, 0.0)
+	for i in 50:
+		car.physics_step()
+	assert_eq(car.grind.grinds, 0)
+
+
+func test_grinding_backwards_along_a_rail_works_either_way() -> void:
+	var car := _car(Vector2(18, 0.2), Vector2(-10, 0), 1.6, 0.0)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	assert_true(car.grind.active)
+	assert_eq(car.grind.direction, -1.0)
+	var x0: float = car.model.get_position().x
+	car.physics_step()
+	assert_lt(car.model.get_position().x, x0)
+
+
+func test_too_slow_drops_the_car_off_beside_the_rail() -> void:
+	var car := _car(Vector2(2, 0.2), Vector2(RailGrind.END_SPEED + 0.5, 0), 1.6, 0.0)
+	var reasons: Array = []
+	car.grind.grind_ended.connect(func(reason: String, _s: float, _l: float) -> void: reasons.append(reason))
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	assert_true(car.grind.active)
+	_step_until(car, func() -> bool: return not car.grind.active, 200)
+	assert_eq(reasons, ["slow"])
+	assert_true(car.airborne)
+	assert_gt(absf(car.model.get_velocity().y), 1.0, "a sideways push off the bar")
+
+
+# --- Jumping between rails ------------------------------------------------------------------
+
+func test_jump_while_grinding_hops_off_and_lands_on_the_second_rail() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+	var started: Array = []
+	car.grind.grind_started.connect(func(i: int) -> void: started.append(i))
+	var ended: Array = []
+	car.grind.grind_ended.connect(func(reason: String, _s: float, _l: float) -> void: ended.append(reason))
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	assert_eq(started, [0])
+	# D held (steer < 0, right): rail-b lies south of rail-a, the right of a car going east.
+	car.scripted_input = [false, false, -1.0]
+	car.physics_step()
+	car.press_jump()
+	car.physics_step()
+	assert_false(car.grind.active, "hopped off")
+	assert_eq(ended, ["jump"])
+	assert_true(car.airborne)
+	assert_gt(car.vertical_speed, 0.0, "going up")
+	assert_gt(car.model.get_velocity().y, 0.0, "toward the right")
+	assert_eq(car.jump.hops, 1)
+	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
+	assert_true(car.grind.active, "landed on the second rail")
+	assert_eq(started, [0, 1])
+	assert_almost_eq(car.model.get_position().y, 3.5, 1e-6)
+
+
+func test_a_jump_pressed_between_steps_while_grinding_is_kept_for_the_next_step() -> void:
+	# A press that arrives after a grind step (from the keyboard, or a listener of `stepped`)
+	# hops on the next step: the grind step doesn't throw it away.
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	var pressed := [false]
+	car.stepped.connect(func() -> void:
+		if car.grind.active and not pressed[0]:
+			pressed[0] = true
+			car.press_jump())
+	car.physics_step()
+	assert_true(pressed[0])
+	car.physics_step()
+	assert_false(car.grind.active, "hopped off on the next step")
+	assert_eq(car.jump.hops, 1)
+
+
+func test_jump_without_the_power_up_does_nothing_on_a_rail() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 0)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	car.press_jump()
+	car.physics_step()
+	assert_true(car.grind.active)
+
+
+func test_the_rail_left_is_not_caught_again_until_the_ground() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	car.scripted_input = [false, false, 1.0]  # A: the nose to the north, away from rail-b
+	car.physics_step()
+	car.press_jump()
+	car.physics_step()
+	assert_false(car.grind.active)
+	assert_lt(car.model.get_velocity().y, 0.0, "hopping north")
+	assert_eq(car.grind.exclude, 0, "rail-a is shut")
+	assert_eq(car.grind.find(Vector2(5, 0.2), Vector2(10, 0), 1.0, -1.0), {}, "even right on it")
+	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
+	assert_false(car.grind.active, "no rail where it lands")
+	assert_eq(car.grind.exclude, -1, "free again once on the ground")
+	assert_true(car.grind.find(Vector2(5, 0.2), Vector2(10, 0), 1.0, -1.0).has("index"))
+
+
+# --- Paying the trick -----------------------------------------------------------------------
+
+func test_a_grind_pays_the_grind_trick_from_combo_json() -> void:
+	var data := ComboData.new()
+	var json: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/combo.json"))
+	var g: Dictionary = json.rail_grind
+	assert_almost_eq(data.grind_add(2.0), minf(2.0 * float(g.add_per_second), float(g.max_add)), 1e-6)
+	assert_almost_eq(data.grind_add(100.0), float(g.max_add), 1e-6, "held at max_add")
+	assert_eq(data.grind_add(float(g.min_seconds) - 0.05), 0.0, "too short")
+	assert_almost_eq(data.grind_subs(2.0), minf(2.0 * float(g.subs_per_second), float(g.max_subs)), 1e-6)
+	var state: RunState = RunState.new()
+	add_child_autofree(state)
+	state.start_run()
+	var tricks: Array = []
+	state.combo_trick.connect(func(id: String, added: float, _m: float) -> void: tricks.append([id, added]))
+	var subs: Array = []
+	state.trick_subs_paid.connect(func(id: String, s: float) -> void: subs.append([id, s]))
+	var before: float = state.combo
+	state.add_grind_trick(2.0)
+	assert_eq(tricks.size(), 1)
+	assert_eq(tricks[0][0], "rail_grind")
+	assert_almost_eq(float(tricks[0][1]), data.grind_add(2.0), 1e-6)
+	assert_almost_eq(state.combo, before + data.grind_add(2.0), 1e-6, "adds to the combo")
+	assert_eq(subs.size(), 1)
+	assert_almost_eq(float(subs[0][1]), data.grind_subs(2.0) * before, 1e-6, "subs, times the combo before")
+	state.add_grind_trick(0.1)
+	assert_eq(tricks.size(), 1, "a touch of a rail pays nothing")
+
+
+func test_the_grind_popup_uses_t533s_text() -> void:
+	assert_eq(TrickPopupsScript.TEXTS.get("rail_grind"), "GRIND!")
+	assert_eq(TrickPopupsScript.SIZES.get("rail_grind"), TrickPopupsScript.SIZE_NORMAL)
+
+
+# --- The playtest switch --------------------------------------------------------------------
+
+func test_the_playtest_switch_is_off_in_the_committed_data() -> void:
+	var json: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/playtest.json"))
+	assert_true(json.has("jump_at_start"))
+	assert_eq(int(json.jump_at_start), 0, "off: runs start with no power-up")
+	assert_eq(RunState.jump_at_start(), 0)
+	var state: RunState = RunState.new()
+	add_child_autofree(state)
+	state.start_run()
+	assert_eq(state.power_up_tier("jump"), 0)
+
+
+func test_the_playtest_switch_starts_runs_with_the_jump_power_up() -> void:
+	RunState.jump_at_start_override = 1
+	var state: RunState = RunState.new()
+	add_child_autofree(state)
+	state.start_run()
+	assert_eq(state.power_up_tier("jump"), 1)
+	state.start_run()
+	assert_eq(state.power_up_tier("jump"), 1, "every run")
+
+
+# --- The drawing ----------------------------------------------------------------------------
+
+func test_posts_stand_every_few_units_and_at_both_ends() -> void:
+	assert_eq(RailDrawing.post_places(12.0), [0.0, 6.0, 12.0])
+	assert_eq(RailDrawing.post_places(14.0), [0.0, 6.0, 12.0, 14.0])
+	assert_eq(RailDrawing.post_places(12.5), [0.0, 6.0, 12.0], "one within a unit of the end is enough")
+
+
+func test_screen_of_lifts_by_the_height() -> void:
+	var p := RailDrawing.screen_of(Vector2(2, 1), 0.0)
+	var q := RailDrawing.screen_of(Vector2(2, 1), 1.5)
+	assert_eq(p, RailDrawing.ISO_TRANSFORM * Vector2(32, 16))
+	assert_almost_eq(q.y, p.y - 24.0, 1e-6)
+	assert_eq(q.x, p.x)

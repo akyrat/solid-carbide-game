@@ -77,6 +77,10 @@ const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 ## The driving power-up gift (task T-459): its choices, and the overlay that shows them.
 const PowerUpOffersScript := preload("res://scripts/run/power_up_offers.gd")
 const GodModeScript := preload("res://scripts/run/god_mode.gd")
+## Rail grinding (task T-541): the map's rails, their placeholder drawing and the grind's sparks.
+const RailsScript := preload("res://scripts/level/rails.gd")
+const RailDrawingScript := preload("res://scripts/level/rail_drawing.gd")
+const RailSparksScript := preload("res://scripts/driving/rail_sparks.gd")
 const PowerUpScreenScript := preload("res://scripts/ui/power_up_screen.gd")
 ## The Polarized Steering Wheel's tier 4 shock (T-502): Bricks' wave at the car.
 const PolarizedShockScript := preload("res://scripts/driving/polarized_shock.gd")
@@ -156,6 +160,11 @@ var zoom := ZOOM
 var needle: ThreadTheNeedle
 ## T-451: the flash of the pair just threaded (null when the level has no pairs).
 var needle_flash: NeedleFlash
+## Rail grinding (task T-541): the map's rails' drawing (rail_drawing.gd, in the map's view;
+## null when the level has no rails) and the grind's sparks (rail_sparks.gd, child "RailSparks"
+## of View, over the car).
+var rail_drawing: Node2D
+var rail_sparks: Node2D
 ## T-420: "" when the car's start is a place it can stand, else LevelSpawn.OFF_MAP or BLOCKED.
 var spawn_problem := ""
 ## The car's trick detection before the wreck turned it off (T-413), given back on a revive.
@@ -276,6 +285,10 @@ func _ready() -> void:
 
 	wreck_effect = WreckEffectScript.new()
 	view_root.add_child(wreck_effect)  # above the car sprite
+
+	rail_sparks = RailSparksScript.new()
+	rail_sparks.name = "RailSparks"
+	view_root.add_child(rail_sparks)  # over the car, where it touches the rail (T-541)
 
 	trick_popups = TrickPopupsScript.new()
 	trick_popups.name = "TrickPopups"
@@ -525,6 +538,7 @@ func _build_world() -> void:
 		add_child(needle_flash)
 		needle_flash.bind(needle, map)
 	car.stepped.connect(_on_car_needle_step)
+	_build_rails()
 	# T-405 (altitude audit): props and boulders block the car only at their own heights.
 	var the_map: Node2D = map
 	var the_car = car
@@ -540,6 +554,35 @@ func _build_world() -> void:
 	car_sprite.reset_physics_interpolation()
 	shadow.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
+
+
+## Rail grinding (task T-541): the map's rails go to the car's grind, are drawn in the map (a
+## placeholder), and each grind that ends pays the GRIND! trick (RunState.add_grind_trick).
+func _build_rails() -> void:
+	var rails: Array = RailsScript.from_layout(map.layout)
+	car.grind.rails = rails
+	car.grind.grind_ended.connect(func(_reason: String, seconds: float, _length: float) -> void:
+		state.add_grind_trick(seconds))
+	rail_drawing = null  # the old map's drawing went with the old map
+	if not rails.is_empty():
+		var hf := Callable()
+		var df := Callable()
+		if elevation != null:
+			var lay: Node2D = elevation
+			hf = func(units: Vector2) -> float: return lay.ground_height.height_at(units)
+			df = func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
+		rail_drawing = RailDrawingScript.new()
+		rail_drawing.build(map, rails, hf, df)
+	car.stepped.connect(_on_car_rails_step)
+
+
+## T-541: after each physics step, the grind's sparks, and the rail pieces just in front of a car
+## passing under them drawn over it.
+func _on_car_rails_step() -> void:
+	if rail_sparks != null:
+		rail_sparks.step(car, car.model.dt)
+	if rail_drawing != null and is_instance_valid(rail_drawing):
+		rail_drawing.update_for_car(car.model.get_position(), car.height, view_root.z_index)
 
 
 ## The map file the next map is built from (task T-230): layout_path, or
