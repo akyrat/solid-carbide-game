@@ -169,6 +169,10 @@ Screenshots: `art-archive/T-454/screenshots/`.
 
 Task T-274 draws the underglow's zone in code, as the Decisions entry says; the generated sprite of T-175 stays in `game/art/weapons/underglow.png` with a switch back (`use_sprite`). The look is the agent's proposal for the playtest: on the damage circle's edge a bright pink ring (a light core line and a hot pink line inside it), outside it a stepped purple halo (a solid band, then a checker-dithered one), inside it a purple floor glow (half-dithered, then sparse). Every pixel is opaque or empty, so there is no blur, bloom or smoothing. The halo and floor glow pulse in steps and a lighter arc travels round the ring; both stop while paused. Purple and pink only, never Greenbull's colours. Its colours, widths and speeds are in `game/scenes/weapons/neon_underglow_look.tres` (how it is built: `game/docs/weapons/neon-underglow.md`, "The neon underglow"). Screenshots and a GIF: `art-archive/T-274/screenshots/`.
 
+### The minion's death set (T-544)
+
+The minion's death animation is drawn for five directions, in `game/art/minion/`: `minion_death_e.png`, `_se`, `_s`, `_ne` and `_n` (8 frames of 48 x 48 in a row, 384 x 48, transparent, the last frame the lying corpse); south-west, west and north-west are the south-east, east and north-east sheets mirrored by the game, as for the walk. The south-east sheet is the board's approved sample (T-532, 6/10 after 4 generations); the others were made from each direction's walk frame 0 through the style loop (T-544): east 7/10 (4 generations), south 6/10 (4), north-east 7/10 (4), north 7/10 (3, the kept version a free script rebuild of generation 1). None reached 8, so each keeps its best version for the board's playtest. No blood in any frame; the green spill is code. Every generation and strip is in `art-archive/T-544/`.
+
 ## Open questions
 
 - (After MVP) Does the car carry any Greenbull livery or stickers? In the MVP it is kept simple: Greenbull's dark green with two white stripes.

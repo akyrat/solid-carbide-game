@@ -1,0 +1,127 @@
+{
+  "file": "death_ne_3.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADj0lEQVR4nOWZPUwTYRzGn3staQvlQ4QYA3EQSMAoWohxMjiQuBiMTjiykLjooCZuLg7q5uIqbrI4MJgYO2hIiEYRNCrhMxqpkFAKQmlLQM887/mWu1IQeuXai09yaWmPu9//+3+p1nr4INwsAZdLwOUScLkEXC4Bl0vA5RJwuQRcLk+e7qtn+EwrdAMs0JVnVlPvo/1e9b1WqAbo6dDX7wXk63jkB/pQlrURjkWA8B03l9B+rAOhT32ILK9jYTWOmWmgtiUmz/lrROEWcWtNUL4S+stkXBpzqBaYfm9EIxt5nMz9wfAQwAPA+dNBDI6HEOopwkt/Pc4mJrK6uCMR8J1cwf76mPQ8D2oqMoqB1wk8ix1HU+ctxJfXC8YAPe1IielCz1NMochXTcKPPLlbuClE75+4mEBFtS5rgJ6nJt4avmvs70RjDTA1UF4QBugKurjUuHRtSxJNwQ14en5xztopJx8dKJwIEL7qyBricx6curwk04bd5tvsO5nzbPPhDx54y39lAs//IEsOlyCCFbR1b8CrgWXmCw/5cnI/sRfp09Ydt8BzcI0MGfDjoVJcuVEtz8mFPLleFRraE5vglRJRzdIutcA69JgFYderhN0I6GbPE44Fq8RBRc8r768sGZ/39s5KI/WqNfl387X59Gs6EoEUOMVWaRaLlruOcih7vqqRMQD+ygSaL8Tx8YFfGlbXNZ9VN/LkImUyiUWrPK/gFyYCKSPGSz1yiSP46s99mH5a4XwNcHuM1MckWEP7csZzWLQq75PDXsv/Rvu9qL20mDW8bQPUfi/X4C0MoGGcwkfrilkFeHzHY1mbpzfDO1fEBGH4qTe3qyzfqfShOHk5xHjwQcb8YGOS5uQg01QdmD1IT5vFtmne9ZnzfS9mAJSar2NLdiKQ8eY9VwPS+1wXxl75ZP6rlGG3YU1k8+S1V4MsFQmmxfP7gY2BNee3FC29z2ikwet2o2DXgBQ8wc49nMPMqMgEKr3PaNR1xWy1zd0akD4VtcyzYBnhamMeZIJXqgkmjXNyBE9p//iFRicgPcfhky4Fz+LlAwrnQRp8KsW2kYa9TCECMeyTi0a9+yp+y1fu/DUnjAH1OVS0XT/fygjbHWhHEVBvODH5EFJSBkS/G72fhbpFuuQELhcG7HY7dAx8N3NgJ1BZTdFcaKdtNC9w/8XvAwIul4DLJeByCbhcAi6XgMsl8g1gV38A1oqJhjX54agAAAAASUVORK5CYII=",
+      "format": "png"
+    },
+    "action": "violent death recoil, fixed camera, no rotation, the lizard keeps facing up and to the right: it is struck hard and rears up violently, head and chest thrown up and back, back arched, mouth wide open, front legs lifted off the ground, then it falls down hard and flops over onto its side toward the upper right, legs limp and curled, tail flat on the ground, jaw hanging open, eye closed, lying still. No blood, no liquid, no splatter, no shadow.",
+    "frame_count": 8,
+    "no_background": true,
+    "seed": 23
+  },
+  "prompt": "",
+  "job_id": "2b80f482-0014-4e8e-80c5-7e45b72395e6",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-06T22:14:05+00:00",
+  "image": {
+    "width": 48,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-544",
+  "job_status": "completed",
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 3,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "death_ne_0.png",
+    "death_ne_1.png",
+    "death_ne_2.png",
+    "death_ne_3.png",
+    "death_ne_4.png",
+    "death_ne_5.png",
+    "death_ne_6.png",
+    "death_ne_7.png",
+    "death_ne_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 1.0
+    },
+    "id": "2b80f482-0014-4e8e-80c5-7e45b72395e6",
+    "status": "completed",
+    "created_at": "2026-11-06T22:11:46.695752+00:00",
+    "last_response": {
+      "seed": 23,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 1,
+        "cost_if_paid": 0.032480629914336735
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1292 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1220 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1224 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1268 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1252 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1284 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1264 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1204 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1228 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.7333333333333333,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 1.0
+      },
+      "generation_id": "d976d8bb-535b-47d9-b30f-e8409c9a1f9e",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-11-06T22:12:08.86384+00:00"
+    }
+  }
+}

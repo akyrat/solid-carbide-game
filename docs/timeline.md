@@ -3725,3 +3725,8 @@ Entry format:
 - Decision or change: T-541's 5 playtest rails are removed from the default map; the board places rails itself in the level creator, working on its own Kaiju City level, which becomes the default map when it is done.
 - Documents touched: `docs/level-design.md`
 - Tasks: T-546
+
+## 2026-11-06: The minion's death animation, full set
+- Decision or change: The minion's PixelLab death animation in all five drawn directions (mirrored to eight) replaces the code placeholder; 15 of 16 generations, best scores 6 to 7; approved by the board as it is.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-544
