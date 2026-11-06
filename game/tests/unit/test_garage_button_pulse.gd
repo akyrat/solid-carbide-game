@@ -40,8 +40,8 @@ func test_no_pulse_with_too_few_coins() -> void:
 	p.coins = _cheapest(p) - 1
 	var m := _menu(p)
 	assert_false(m.is_garage_pulsing())
+	assert_ne(m.garage_button.get_theme_color("font_color"), MainMenu.LETTER_BLUE)
 	assert_eq(m.garage_button.modulate, Color.WHITE)
-	assert_eq(m.garage_button.scale, Vector2.ONE)
 
 
 func test_no_pulse_when_everything_is_maxed() -> void:
@@ -58,12 +58,23 @@ func test_no_pulse_without_progress() -> void:
 	assert_false(m.is_garage_pulsing())
 
 
-func test_pulse_actually_changes_the_button() -> void:
+func test_letters_are_light_blue_and_button_not_tinted_or_scaled() -> void:
+	var m := _menu(_progress(1000000))
+	await wait_seconds(MainMenu.PULSE_SECONDS / 4.0)
+	var c: Color = m.garage_button.get_theme_color("font_color")
+	assert_gt(c.b, c.r, "blue letters")
+	assert_gt(c.b, 0.9)
+	assert_eq(m.garage_button.modulate, Color.WHITE, "no yellow tint")
+	assert_eq(m.garage_button.scale, Vector2.ONE, "no scale pulse")
+
+
+func test_letters_go_back_when_nothing_can_be_bought() -> void:
 	var p := _progress(1000000)
 	var m := _menu(p)
-	await wait_seconds(MainMenu.PULSE_SECONDS / 4.0)
-	assert_ne(m.garage_button.modulate, Color.WHITE)
-	assert_gt(m.garage_button.scale.x, 1.0)
+	p.coins = 0
+	m.refresh_garage_pulse()
+	assert_ne(m.garage_button.get_theme_color("font_color"), MainMenu.LETTER_BLUE)
+	assert_eq(m.garage_button.get_theme_color("font_color"), m.start_button.get_theme_color("font_color"))
 
 
 func test_state_updates_after_buying_when_the_menu_comes_back() -> void:

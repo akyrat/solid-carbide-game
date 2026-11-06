@@ -85,3 +85,9 @@ Built: the Garage button pulses while the saved coins cover the next level of at
 
 QA round 1: all 5 criteria pass. qa_check: tests PASS (2 sets; tools set skipped), documents PASS (1 changed), screenshots PASS (5 files). Agent's tests: test_garage_button_pulse 8/8, test_main_menu 9/9, test_menu_arrow_keys 14/14, test_screen_flow 28/28; QA full run green. Docs line present in docs/hud-and-menus.md.
 - 2026-11-06, needs-playtest → in-progress: The board: the Garage button's letters turn light blue; no yellow highlighting on the button. No board QA needed: pass QA and merge.
+
+Board's tweak (2026-11-06): "just make the letters light blue, no button yellow highlighting."
+- Removed the yellow modulate tint and the scale pulse. While an upgrade can be bought the Garage letters are light blue (LETTER_BLUE (0.45, 0.8, 1.0), reads on the steel plate), with a soft colour breath to LETTER_BLUE_PALE (0.75, 0.92, 1.0) over PULSE_SECONDS 1.6 (kept as a proposal; the letters are the only signal). Applied to the font colour states in LETTER_STATES; original colours restored when nothing can be bought. Consts in main_menu.gd.
+- Tests updated: test_garage_button_pulse.gd 9/9 (blue letters, no tint, no scale, letters restored); test_main_menu 9/9, test_menu_arrow_keys 14/14, test_screen_flow 28/28.
+- Screenshots replaced: art-archive/T-535/screenshots/letters_blue_f5.png, letters_blue_f50.png, not_pulsing.png (the earlier pulsing_f*.png and the yellow-tint notes above are superseded).
+- Docs: docs/hud-and-menus.md (Decisions line and Content) and game/docs/hud-and-menus/main-menu.md updated.
