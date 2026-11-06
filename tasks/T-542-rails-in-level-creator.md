@@ -1,7 +1,7 @@
 ---
 id: T-542
 title: Rails in the level creator
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -46,13 +46,13 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
 - [ ] The creator can place, move, rotate, resize and delete a rail (tests where the creator has tests, otherwise a scripted check named in the result notes). (QA: pass)
-- [ ] A saved level with rails loads back the same rails, and playing it as a full run has grindable rails (test). (QA: fail: code - the board: snapping onto a rail from a platform is very hard; angled joints cost a lot of speed)
+- [ ] A saved level with rails loads back the same rails, and playing it as a full run has grindable rails (test). (QA: pass)
 - [ ] docs/level-design.md Content describes the rail piece in the creator. (QA: pass)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - full run not finished, round stopped for the board's feedback)
-- [ ] Screenshots in art-archive/T-542/screenshots/ show rails placed in the creator and the same level in a run. (QA: fail: code - the board: rails look horrible on ramps and platforms; no screenshots show them there)
-- [ ] A rail on a ramp and a rail on a platform sit at that ground's height and draw in the right depth order: screenshots in art-archive/T-542/screenshots/ show both in the creator and in a run, and QA opens and looks at them (beyond the script checks), saying in its report what it saw. (QA: pass / fail)
-- [ ] A car on a platform snaps onto a rail at the platform's height as easily as on the street (same lock-on distance and angle; test). (QA: pass / fail)
-- [ ] Driving through a joint between two connected rail pieces at an angle (for example 30 degrees) keeps the car's speed: no more loss than on a straight rail of the same length (test with the numbers in the result notes). (QA: pass / fail)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-542/screenshots/ show rails placed in the creator and the same level in a run. (QA: pass)
+- [ ] A rail on a ramp and a rail on a platform sit at that ground's height and draw in the right depth order: screenshots in art-archive/T-542/screenshots/ show both in the creator and in a run, and QA opens and looks at them (beyond the script checks), saying in its report what it saw. (QA: pass)
+- [ ] A car on a platform snaps onto a rail at the platform's height as easily as on the street (same lock-on distance and angle; test). (QA: pass)
+- [ ] Driving through a joint between two connected rail pieces at an angle (for example 30 degrees) keeps the car's speed: no more loss than on a straight rail of the same length (test with the numbers in the result notes). (QA: pass)
 
 ## Updates
 
@@ -69,6 +69,10 @@ Built: a Rail piece in the level creator (lay, move, resize, turn, height, delet
 ### 2026-11-06, In QA → In progress
 
 Back with the agent: rails drawn properly on ramps and platforms, easy snapping from a platform, no speed loss at angled joints. QA will check screenshots of rails on ramps and platforms.
+
+### 2026-11-06, In progress → In QA
+
+Round 2 built: rails sit on ramps and rooftops with shadows, snapping from a platform matches the street, angled joints keep all speed. QA round 2 next, with a visual check of the screenshots.
 
 ## Style review
 
@@ -91,3 +95,5 @@ QA round 1 stopped early for the board's playtest. Criteria 1 and 3 pass (creato
 - 2026-11-06, in-qa → in-progress: The board played the rails in the creator: rails look horrible on a ramp or a platform; snapping onto a rail from a platform is very hard (fine on the ground); passing a joint between angled rail pieces costs a lot of speed and should cost none (the board wants long rails that curve round corners). QA must take and look at screenshots of rails on ramps and platforms.
 
 ROUND 2 (Driving & Drift Agent). (a) Rails on ramps and platforms: the creator's auto height is now 1 unit over the ground under each end (street, rooftop, ramp, ramp foot), was 0.1 over rooftops/ramps and 1 over the street (so a rail on a ramp floated at the foot and lay flat at the top). Rail pieces over a rooftop or ramp draw their own shadow on that surface (the street shadow was hidden under rooftops), the street shadow is laid in runs over street only (rail_drawing.gd). Depth order is the existing z_for rule; test asserts pieces on a ramp sit over the ramp's own z. rail_point_at in the creator now settles an end on the highest ground it can be on (7/4/1 start heights) so rails can be laid on a rooftop where the street was also under the mouse. (b) Snapping from a platform: the lock-on already used real heights; the cause was the bar 0.1 over a rooftop being in reach for only ~0.14 s of a Jump's arc (street: whole arc, bar 1 over). Fixes: auto rails 1 over the ground, and catch_above 0.5 -> 1.0 (data/rail_grind.json) so a 3.1 bar on a 3 rooftop is caught along the arc too. Test: a first-tier hop catchable 21 steps from street, 3 and 6 rooftops (bar 1 over); 24 steps with the bar 0.1 over a 3 rooftop; same distance/angle acceptance on a platform. (c) Joints: RailGrind.joint_at_end/_cross_joint: past a rail's end, a connected rail (an end within join_distance 1.0 units flat, join_height 0.6 units in height, way on turning travel by at most join_max_angle_deg 100) takes the car with its whole speed along the new direction, rest of the step carried over, one grind (seconds and length add up, one GRIND!). Smallest turn wins at a fork. Test numbers: after 15 units from 11 u/s, straight 9.5333, 30 degree joint 9.5333, 90 degree equal. Proposals for the playtest (all in data/rail_grind.json): catch_above 1.0, join_distance 1.0, join_height 0.6, join_max_angle_deg 100. Tests: new game/tests/unit/test_rail_joints_and_heights.gd 14/14; test_rail_grind 27/27; test_run_rails 5/5; level_creator dir 26 scripts 331 tests all pass (test_creator_rails 26, 3 updated for the new auto height, 2 new for ramp/rooftop); run dir 40 scripts 472 tests, 471 pass: the 1 failure is test_perf_recorder 'no folder written' (a game/perf folder already on disk, not from this change). Full three sets not run (QA does). Screenshots art-archive/T-542/screenshots/: creator_rail_on_ramp, creator_rail_on_platform, run_rail_on_ramp (car grinding it), run_rail_on_platform (car grinding it), and before_* of the old look; I looked at all of them: bars sit on posts over the surface with a shadow, in the right depth order, the car on top. Regenerate: T542_MODE=raised|raised_run [T542_VIEW=platform] bash game/tools/screenshot.sh res://tools/shots/rails_creator_shots.tscn out.png 30. Docs: docs/drifting.md (Rails on raised ground and joints), docs/level-design.md Content, game/docs/driving/rail-grind.md, game/docs/level/level-creator-pieces.md. Nothing written to game/data/levels/.
+
+QA round 2: all 8 criteria pass. qa_check: tests 2 sets passed (tools set skipped), documents ok, 10 screenshots; test_perf_recorder did not fail in QA's run. Screenshots seen: the rail on the platform (run and creator) is a thin white bar on posts a little above the rooftop surface with a shadow on it, drawn over the surface and under the car; the car sits on it. On the ramp (run and creator) the bar runs along the ramp slope on thin posts with a dark shadow on the ramp, in the right depth order, car on top. Weak point for the board: on the ramp the bar lies right beside the white centre lane line, so it reads mainly through its posts and shadow, not strongly against the markings. Untracked game/data/levels/new_level.json in the folder was not committed.
