@@ -1,6 +1,6 @@
 # Short GDD
 
-Last updated from long GDD: bee8037e79c6e451231d90018af13f74de236e44dd9a9fc416b5b4f9b0734062
+Last updated from long GDD: ebc3f19f8289dbd28ff1746553dd1e35e0ef0cdbaa63214a652780294d07a8a8
 Last updated from long GDD: a72f14e32634781a37860dba90b6a4a55851536453376d3bfda8cb5ccdc9d4ca
 (The line above is read by `python tools/generate_long_gdd.py --check`. It holds the SHA-256 fingerprint of the long GDD the short GDD was last updated from. Update it whenever the short GDD is brought up to date with the long GDD.)
 

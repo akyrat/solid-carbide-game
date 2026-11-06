@@ -3640,3 +3640,8 @@ Entry format:
 - Decision or change: The pause screen gets Resume, and its buttons sit in one column right of the settings: Resume, Trick list, Edit HUD layout, Restart, Exit, God mode; approved in the batch-1105 playtest.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-537
+
+## 2026-11-06: No frame drops with many minions
+- Decision or change: Minions cost about half per step (200 alive: 8.6-10.4 ms a frame, was 14.3-15.6), and the cap on minions alive rises from 100 to 200; approved in the batch-1105 playtest.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-538

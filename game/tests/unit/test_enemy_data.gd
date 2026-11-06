@@ -65,7 +65,7 @@ func test_spawning_speeds_up_and_peaks_by_the_boss_time() -> void:
 		last = v
 	assert_almost_eq(e.spawn_interval(boss_time), boss, 0.0001, "at its peak when the kaiju arrives")
 	assert_almost_eq(e.spawn_interval(RunState.RUN_SECONDS), boss, 0.0001, "held in the kaiju's minute")
-	assert_eq(e.max_minions_alive(), 100)
+	assert_eq(e.max_minions_alive(), 200, "T-538: raised from 100 once the crowd is cheaper")
 	# About how many come before the kaiju with no combo (the rate's average times the growth time).
 	var total := (1.0 / start + 1.0 / boss) / 2.0 * until
 	assert_gt(total, 100.0)
