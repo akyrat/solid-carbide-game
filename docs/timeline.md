@@ -3680,3 +3680,8 @@ Entry format:
 - Decision or change: The wheel's bursts get a cooldown (3 s at tier 1, 4 s at tier 2) so chained bursts can't stack speed without end; approved in the board's playtest.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-527
+
+## 2026-11-06: Minion death animation sample
+- Decision or change: The south-east death animation sample (8 frames of 48x48, 4 PixelLab generations, best 6/10), approved by the board as it is; the request builder moved to game/tools/pixellab_animate_req.py.
+- Documents touched: none
+- Tasks: T-532
