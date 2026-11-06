@@ -1,7 +1,7 @@
 ---
 id: T-537
 title: Pause screen: a Resume button, buttons stacked vertically and reordered
-status: in-qa
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd, game/scenes/, game/data/pause_text.json, game/tests/, game/docs/hud-and-menus/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: the agent is working in C:\solid-carbide-worktrees\T-537.
 
 Built: pause buttons in one column, Resume, Trick list, Edit HUD layout, Restart, Exit (then God mode). QA is checking it.
 
+### 2026-11-06, In QA → In progress
+
+QA round 1 failed: the stacked column makes the pause strip taller than its height limit, and a button-count test needs updating. Back to the agent: the column goes beside the settings so the strip stays short.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -71,3 +75,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Built. Pause screen buttons now one vertical column (VBox RunButtonsColumn): Resume, Trick list, Edit HUD layout (run only), Restart, Exit, God mode (when unlocked). Resume text 'Resume' = T-533, new key resume_button in game/data/pause_text.json; pressing it calls resume() (same as Escape). Order reason: safe/most-used first; screens that return next; Restart and Exit (end the run) together at bottom, away from accidental hits; secret entry last. Keyboard: focus starts on Resume (was Restart); Up/Down/Tab/Shift+Tab walk the column in order and wrap (explicit focus neighbours, relinked when God mode joins). Proposals for playtest: button gap 4 px (BUTTON_GAP const), buttons full strip-content width (520). Tests: new game/tests/unit/game/test_pause_resume_stack.gd (6 pass: text, resume unpauses, column order and one x, keyboard order, God mode last, fits 720); updated test_pause_restart_exit (focus on Resume). Also green: pause_restart_exit, pause_trick_list, god_mode_page, pause_slider_saves, hud_layout_editor, hud_style, hud_size_slider, drift_guide/rain toggle. Full sets not run (QA). Screenshots in art-archive/T-537/screenshots/: pause_1280.png (1280x720), pause_large.png (2560x1440), pause_small.png (960x540), pause_god.png (God mode entry); fixtures game/tests/fixtures/pause_stack_*.tscn. Docs: docs/hud-and-menus.md Content updated (new bullet, Restart/Trick list wording).
 
 QA round: criteria 1,2,3,4,6 pass (screenshot 1280 checked: inside window, Resume first). Criterion 5 fail (code): full Godot run 2744 tests, 3 failing, all caused by this change: hud/test_shared_button (pause shared buttons now 35, test expects 34, line 100) and game/test_screen_flow strip tests (strip height 354 vs limit 259.2 'thin band'; 436 vs 380 'compact') since the stacked column makes the strip taller. Both reproduced on rerun of the single files. Fix: update the expected count and height limits (proposal for playtest) and record counts in result notes.
+
+QA round 1 fix: button column moved to the right of the settings (new HBox StripColumns: settings left, 200 px column right, 32 px gap; consts BUTTON_COLUMN_WIDTH, COLUMN_GAP, proposals), so the strip height is back within test_screen_flow's limits. test_shared_button pause count 11 -> 12 (Resume). Order and keyboard unchanged. Foreground runs, all green: test_shared_button 12/12, test_screen_flow 28/28, test_pause_resume_stack 6/6, test_pause_restart_exit 4/4, test_pause_trick_list 8/8, test_god_mode_page 8/8, test_pause_slider_saves 8/8, test_hud_layout_editor 13/13. Screenshots in art-archive/T-537/screenshots/ retaken (1280, 2560x1440, 960x540, God mode). docs/hud-and-menus.md updated.

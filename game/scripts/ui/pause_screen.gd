@@ -51,6 +51,9 @@ const GOD_MODE_BUTTON_KEY := "god_mode_button"
 ## The Resume button text (T-533, key in data/pause_text.json) and the gap between the stacked buttons (T-537).
 const RESUME_KEY := "resume_button"
 const BUTTON_GAP := 4
+## The button column stands right of the settings (T-537): its width and the gap between the two.
+const BUTTON_COLUMN_WIDTH := 200.0
+const COLUMN_GAP := 32
 const HUD_SIZE_STEP := 5.0
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
 const LABEL_WIDTH := 170.0
@@ -142,10 +145,15 @@ func setup(t: Node) -> void:
 	_root.add_child(strip)
 	var center := CenterContainer.new()
 	strip.add_child(center)
+	# T-537: the settings on the left, the button column on the right, so the strip stays thin.
+	var outer := HBoxContainer.new()
+	outer.name = "StripColumns"
+	outer.add_theme_constant_override("separation", COLUMN_GAP)
+	center.add_child(outer)
 	var box := VBoxContainer.new()
 	box.custom_minimum_size.x = 520.0
 	box.add_theme_constant_override("separation", 4)
-	center.add_child(box)
+	outer.add_child(box)
 
 	title_label = Label.new()
 	title_label.text = TEXT_TITLE
@@ -184,7 +192,7 @@ func setup(t: Node) -> void:
 	_build_music_slider(box)
 	_build_hud_size_slider(box)
 	_build_camera_controls(box)
-	_build_run_buttons(box)
+	_build_run_buttons(outer)
 	_build_trick_panel()
 	_build_hud_layout_editor()
 	_build_god_mode()
@@ -240,7 +248,7 @@ func close_trick_list() -> void:
 
 ## The "Restart" and "Exit" buttons (T-327): a row at the bottom of the strip, in its look.
 ## They only emit signals; the run's owner does the rest. No confirm prompt.
-func _build_run_buttons(box: VBoxContainer) -> void:
+func _build_run_buttons(outer: HBoxContainer) -> void:
 	# T-537: one vertical column, Resume first (proposal for the playtest): Resume, Trick list,
 	# Edit HUD layout, Restart, Exit, then God mode when unlocked. Safe action first, the two
 	# that end the run (Restart, Exit) together at the bottom, the secret entry after them.
@@ -248,8 +256,9 @@ func _build_run_buttons(box: VBoxContainer) -> void:
 	col.name = "RunButtonsColumn"
 	_run_row = col
 	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.custom_minimum_size.x = BUTTON_COLUMN_WIDTH
 	col.add_theme_constant_override("separation", BUTTON_GAP)
-	box.add_child(col)
+	outer.add_child(col)
 	resume_button = _make_game_button("ResumeButton", pause_text(RESUME_KEY))
 	resume_button.pressed.connect(resume)
 	col.add_child(resume_button)
