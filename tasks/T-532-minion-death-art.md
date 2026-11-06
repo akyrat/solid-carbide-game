@@ -4,7 +4,7 @@ title: Minion death animation through PixelLab: a sample direction first
 status: in-progress
 from: project-lead
 to: asset-generation
-lead: Greenbull
+lead: Rails
 epic: audit
 milestone: mvp
 goal:
@@ -65,3 +65,7 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Plan (before any PixelLab call): sample direction SE. Style loop run: python tools/style_loop/run.py art --task T-532 --brief art-archive/T-532/brief.md --out art-archive/T-532/minion_death_se.png --size 48x48 --frames 8 --max-colors 32 --allow-red 147,93,93. Planned PixelLab calls: /animate-with-text-v3 (first_frame = minion_se frame 0, 8 frames, 48x48, no_background, 600 s HTTP timeout), 1 generation each (as in T-068: usage 1.0 generation). At most 4 calls in all (version 1 plus up to 3 refines), free script fixes first. Everything kept in art-archive/T-532/.
 
 Run 1 of the style loop (2026-11-03) stopped before any PixelLab call: the loop's headless generator agent wrote its request builder art-archive/T-532/build_req.py but the permission system refused 'python art-archive/T-532/build_req.py' (only python game/tools/*, tools/style_loop/run.py and a few more are pre-approved in .claude/settings.json). 0 of 4 generations spent, no cost. Not worked around. Needs the board/Project Lead: either approve the script run, or allow moving the builder into game/tools/ (an approved path), then rerun the same loop command.
+
+2026-11-06 (board's decision): request builder moved to game/tools/pixellab_animate_req.py (generic: --first-frame, --out, --seed, --frames, --action/--action-file); old copy kept as art-archive/T-532/build_req_old_refused.py; brief.md names the new path. Planned: rerun 'python tools/style_loop/run.py art --task T-532 --brief art-archive/T-532/brief.md --out art-archive/T-532/minion_death_se.png --size 48x48 --frames 8 --max-colors 32 --allow-red 147,93,93'; /animate-with-text-v3, 1 generation per call (about 1.0 generation each), at most 4 calls, 600 s HTTP timeout.
+
+2026-11-06, run 2, version 1: request built with the approved script (art-archive/T-532/req_v1.json, seed 1). The send stopped before any PixelLab call: pixellab_client.py passed the style loop gate but exited with "PIXELLAB_API_KEY is not set" because this worktree (C:\solid-carbide-worktrees\T-532) has no .env. Checking for the main checkout's .env needed approval, so I didn't work around it and didn't copy any secret. 0 of 4 generations spent, no cost. No v1.png was made. Needs the board/Project Lead: give this worktree the key (a .env at its root, or PIXELLAB_API_KEY in the loop's environment), then run the same loop command again.
