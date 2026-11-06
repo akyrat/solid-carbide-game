@@ -3690,3 +3690,8 @@ Entry format:
 - Decision or change: A dark veil over the wheel's HUD slot icon shrinks as the cooldown reloads, with a short white flash when it is ready; approved in the board's playtest.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-528
+
+## 2026-11-06: A Hotshot Racing-style drive, a prototype
+- Decision or change: The board wants to try a drive modelled on Hotshot Racing's drift: grip on plain steering, a Space tap while steering snaps into a held drift that keeps its speed, Space alone brakes, S stays reverse with today's reverse drift, Jump moves to Left Shift, no boost meter. A hidden test key switches the run between this and today's drive.
+- Documents touched: docs/drifting.md
+- Tasks: T-545

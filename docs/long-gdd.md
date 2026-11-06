@@ -328,6 +328,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - **An aura trick** (board, 2026-11-05): a car that stays stationary for 5 seconds starts earning the aura trick, paid once every second after that for as long as it stays still. What counts as stationary and the amount per second are proposals for the playtest. Its popup text comes from the Narrative Theme Agent.
 - **Bouncier Bouncy Bumpers** (board, 2026-11-05): Bouncy Bumpers bounces the car noticeably further than today at every tier. The new factors are the Game Data Agent's proposal for the playtest (T-540): tier 1 ×2.1 (was ×1.4), tier 2 ×3.9 (was ×2.6), about 1.5 times each; measured head-on bounce at cruise speed 1.85 / 3.48 units (was 1.23 / 2.30; 0.87 without). The hardest-hit cap stays; its bounce scales by the same factor.
 - **Rail grinding, a prototype** (board, 2026-11-05); its own playtest: rails can be placed anywhere on the map (Level design, Decisions, "Rails"). A car that jumps or drops onto a rail grinds along it; grinding counts as a trick. The player can ride a rail to get around the map, and with the Jump power-up can jump from one rail to another. How the car locks on, its speed along the rail and how it leaves the rail are the Driving & Drift Agent's proposals, starting from the old wall grind (Content, "Trick prototype (reference)").
+- **A Hotshot Racing-style drive, a prototype** (board, 2026-11-06); its own playtest: a second way to drive, modelled on the drift of Hotshot Racing (the feel only; nothing of that game's look or content). A **hidden test key** switches the run between today's drive and this one at any time (no on-screen text). With it on: **plain W + A or D turns on grip, with no slide**; **tapping Space while steering at speed snaps the car into a drift** that holds a steady, generous drift angle and keeps nearly all its speed, where steering tightens or widens the arc instead of spinning the car; straightening up or counter-steering ends it cleanly back onto grip. **Space held without steering brakes.** **S stays reverse**, and the reverse drift works exactly as today, so the alternate drift trick still works. **Jump moves from Space to Left Shift.** No boost meter for now (drift feel first). The drift counts as drifting for the tricks and the Drift Guide. The key, the drift angle, how fast the car snaps in and out, the speed kept and how steering shapes the arc are the Driving & Drift Agent's proposals for the playtest.
 
 ### Content
 
@@ -2358,7 +2359,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
-| `drifting.md` | `7241066e91ba4dd8c628cdc18008ac0b2588c188c3896afc44efe1553ca22c8c` |
+| `drifting.md` | `1427a2b1a4635c5ff79d7436a6a8d8e6aedbbb42ce2b898b69a29c21af5d1c55` |
 | `level-design.md` | `cf69dbec8759a60511a16d611e53660d2ae74d8b389b465d1a9f4b21615eef79` |
 | `enemies.md` | `b35e4e316043c348a521146e401595af5722fabd533f61c6d67bbb589cd5a645` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
