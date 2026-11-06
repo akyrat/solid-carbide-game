@@ -70,10 +70,12 @@ func _init(start_clock: float = 0.0) -> void:
 ## for the step lasts (enemy_navigation.gd, PATHS_PER_STEP); otherwise it
 ## keeps its old path (or walks at the car) and asks again next step. The
 ## kaiju, one enemy, passes false.
-func target(nav, from: Vector2, car_units: Vector2, dt: float, budgeted: bool = true) -> Vector2:
+## T-538: `car_surface_now` is nav.surface_at(car_units) when the caller already has it (the
+## spawner asks once a step for the whole crowd); below -1 (the default) it is asked here.
+func target(nav, from: Vector2, car_units: Vector2, dt: float, budgeted: bool = true, car_surface_now: int = -3) -> Vector2:
 	if nav == null:
 		return car_units
-	var car_s: int = nav.surface_at(car_units)
+	var car_s: int = car_surface_now if car_surface_now >= -1 else nav.surface_at(car_units)
 	if by_sight:
 		# T-380: straight only while nothing stands between it and the car.
 		sight_clock -= dt

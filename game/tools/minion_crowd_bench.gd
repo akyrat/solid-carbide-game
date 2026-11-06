@@ -14,7 +14,12 @@ extends SceneTree
 ##
 ## Usage (normally through tools/minion_crowd_bench.sh, from the repo root):
 ##   godot --headless --fixed-fps 50 --path game -s res://tools/minion_crowd_bench.gd -- \
-##       [--counts=50,100,200,300] [--seconds=6] [--warmup=1] [--seed=444] [--breakdown]
+##       [--counts=50,100,200,300] [--seconds=6] [--warmup=1] [--seed=444] [--breakdown] \
+##       [--csv=PATH] [--label=TEXT]
+## T-538: --csv=PATH adds one line per count to PATH (made with a header if new): the label,
+## the count, and the average, median, 99th percentile and worst of the frame, physics and
+## minions' step times (ms), for tools/plot_minion_crowd.py. Run without --headless (the .sh's
+## --window) the frame time also holds drawing the crowd on screen.
 ## --breakdown also times the parts of the minions' step (separation, paths, walking,
 ## contact, removing, drawing), by running the same parts the spawner runs, one at a time.
 ## Exit codes: 0 = measured; 1 = the run did not start; 2 = bad arguments.
@@ -33,6 +38,8 @@ var seconds := 6.0
 var warmup := 1.0
 var seed_value := 444
 var breakdown := false
+var csv_path := ""
+var label := ""
 
 var game: Node
 var run: Node2D
@@ -116,6 +123,10 @@ func _parse(args: PackedStringArray) -> bool:
 			seed_value = a.trim_prefix("--seed=").to_int()
 		elif a == "--breakdown":
 			breakdown = true
+		elif a.begins_with("--csv="):
+			csv_path = a.trim_prefix("--csv=")
+		elif a.begins_with("--label="):
+			label = a.trim_prefix("--label=")
 		else:
 			printerr("minion_crowd_bench: unknown argument %s" % a)
 			return false
@@ -190,6 +201,7 @@ func _process(delta: float) -> bool:
 		_last_usec = Time.get_ticks_usec()
 	elif _phase == "measure" and _time >= seconds:
 		_results.append(_result_line())
+		_write_csv()
 		print(_results[-1])
 		if breakdown:
 			print(_parts_line())
@@ -267,6 +279,51 @@ static func summary(values: Array) -> String:
 	for x in v:
 		sum += float(x)
 	return "avg %.2f, p99 %.2f, worst %.2f" % [sum / v.size(), v[mini(v.size() - 1, int(v.size() * 0.99))], v[v.size() - 1]]
+
+
+## T-538: the measure of this count as one line of --csv (see the top).
+func _write_csv() -> void:
+	if csv_path == "":
+		return
+	var exists := FileAccess.file_exists(csv_path)
+	var f := FileAccess.open(csv_path, FileAccess.READ_WRITE if exists else FileAccess.WRITE)
+	if f == null:
+		printerr("minion_crowd_bench: cannot write %s" % csv_path)
+		return
+	if exists:
+		f.seek_end()
+	else:
+		f.store_line(",".join(csv_header()))
+	f.store_line(",".join(csv_row(label, counts[_count_index], DisplayServer.get_name() == "headless", _frame_ms, _physics_ms, _minion_ms)))
+	f.close()
+
+
+static func csv_header() -> PackedStringArray:
+	var h := PackedStringArray(["label", "count", "headless"])
+	for what in ["frame", "physics", "minions"]:
+		for stat in ["avg", "median", "p99", "worst"]:
+			h.append("%s_%s_ms" % [what, stat])
+	return h
+
+
+static func csv_row(the_label: String, count: int, headless: bool, frame: Array, physics: Array, minions: Array) -> PackedStringArray:
+	var row := PackedStringArray([the_label.replace(",", " "), str(count), "1" if headless else "0"])
+	for values in [frame, physics, minions]:
+		for x in stats(values):
+			row.append("%.3f" % x)
+	return row
+
+
+## [average, median, 99th percentile, worst] of `values` (ms); zeros when empty.
+static func stats(values: Array) -> Array:
+	if values.is_empty():
+		return [0.0, 0.0, 0.0, 0.0]
+	var v := values.duplicate()
+	v.sort()
+	var sum := 0.0
+	for x in v:
+		sum += float(x)
+	return [sum / v.size(), float(v[v.size() / 2]), float(v[mini(v.size() - 1, int(v.size() * 0.99))]), float(v[v.size() - 1])]
 
 
 func _report() -> void:
