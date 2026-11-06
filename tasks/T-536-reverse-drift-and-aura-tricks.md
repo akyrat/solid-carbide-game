@@ -1,7 +1,7 @@
 ---
 id: T-536
 title: Two new tricks: the reverse drift and the aura
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -43,12 +43,12 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A reverse drift that meets the proposed rule pays the reverse drift trick once with T-533's popup text; a forward drift doesn't (tests). (QA: pass / fail)
-- [ ] Staying still pays nothing for the first 5 s, then one aura trick each second; moving above the threshold resets it; nothing pays while paused or wrecked (tests). (QA: pass / fail)
-- [ ] Both tricks add to the combo and pay subs like the other tricks, with their numbers in game/data/combo.json (test). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/tricks.md describe both, with each proposed number and its reason. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots or GIFs in art-archive/T-536/screenshots/ show each popup in a run. (QA: pass / fail)
+- [ ] A reverse drift that meets the proposed rule pays the reverse drift trick once with T-533's popup text; a forward drift doesn't (tests). (QA: pass)
+- [ ] Staying still pays nothing for the first 5 s, then one aura trick each second; moving above the threshold resets it; nothing pays while paused or wrecked (tests). (QA: pass)
+- [ ] Both tricks add to the combo and pay subs like the other tricks, with their numbers in game/data/combo.json (test). (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/tricks.md describe both, with each proposed number and its reason. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots or GIFs in art-archive/T-536/screenshots/ show each popup in a run. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-05, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees\T-536.
+
+### 2026-11-06, In progress → In QA
+
+Built: REVERSE DRIFT! and AURA FARMING! (still 5 s, first pay at 6 s, then every second). QA is checking it.
 
 ## Style review
 
@@ -94,3 +98,5 @@ Done. Both tricks are built in the trick detector like the other tricks: popup w
 - aura: art-archive/T-536/screenshots/aura_popup.png (car left still at the start, AURA FARMING! +x0.1 at 6 s, clock 3:54)
 
 Note: the older fixture base `tests/fixtures/run_elevation_demo.gd` no longer reaches a run (the main menu's Start now shows the tutorial slides first, so `game.run` is null); my fixture sets `tutorial_enabled = false`. Not fixed here (outside this ticket).
+
+QA (Sonnet): all 6 criteria pass. qa_check: tests 2 sets pass, documents changed, 2 screenshots. Popup texts REVERSE DRIFT!/AURA FARMING! confirmed in trick_popups.gd; numbers in combo.json; docs mention both; aura screenshot viewed.
