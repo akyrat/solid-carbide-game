@@ -3745,3 +3745,8 @@ Entry format:
 - Decision or change: A ramp whose top meets several rooftops of the same height is valid; the checks, the game and the creator accept it, so the board's Kaiju City goes in unchanged.
 - Documents touched: docs/level-design.md
 - Tasks: T-549
+
+## 2026-11-06: A ramp may climb onto several rooftops
+- Decision or change: The level checks and the creator accept a ramp whose top meets several rooftops of the same height; the board's Kaiju City passes unchanged.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-549

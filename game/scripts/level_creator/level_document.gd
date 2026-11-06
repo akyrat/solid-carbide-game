@@ -652,6 +652,9 @@ func rooftop_under(r: Rect2, height: float, except: Dictionary = {}) -> Dictiona
 
 ## The rooftop a ramp climbs to: at its top height, with the ramp's top end on its `side` and
 ## within it (check_height_data.py's rule); {} for none.
+## T-549: when no one rooftop holds the whole top end but several of its height side by side cover
+## it together (top_areas), the first of them in the file's order: the ramp climbs onto all of them
+## (the game reads the heights, not this link), and "platform" names that one.
 func ramp_target(ramp: Dictionary) -> Dictionary:
 	var rr := _rect(ramp)
 	for p in surfaces():
@@ -659,7 +662,49 @@ func ramp_target(ramp: Dictionary) -> Dictionary:
 			continue
 		if top_touches(str(ramp.side), rr, _rect(p)):
 			return p
-	return {}
+	var shared := top_areas(str(ramp.side), rr, surfaces(), float(ramp.top_height))
+	return shared.areas[0] if shared.covered else {}
+
+
+## T-549 (check_height_data.py, top_areas): the areas (of `areas`) at `top_height` whose `side`
+## lies on the ramp's top end and shares a stretch of it, in order, and whether together they cover
+## the whole top end: {"areas": [...], "covered": bool}.
+static func top_areas(side: String, ramp: Rect2, areas: Array, top_height: float) -> Dictionary:
+	const E := 0.001
+	var out := {"areas": [], "covered": false}
+	var along := 1 if side in ["east", "west"] else 0
+	var line := 0.0
+	match side:
+		"east": line = ramp.position.x
+		"west": line = ramp.end.x
+		"north": line = ramp.end.y
+		"south": line = ramp.position.y
+		_: return out
+	var lo: float = ramp.position[along]
+	var hi: float = ramp.end[along]
+	var runs: Array = []
+	for p in areas:
+		if absf(float(p.height) - top_height) > E:
+			continue
+		var a := _rect(p)
+		var a_line := 0.0
+		match side:
+			"east": a_line = a.end.x
+			"west": a_line = a.position.x
+			"north": a_line = a.position.y
+			"south": a_line = a.end.y
+		if absf(a_line - line) > E or minf(a.end[along], hi) - maxf(a.position[along], lo) <= E:
+			continue
+		out.areas.append(p)
+		runs.append([float(a.position[along]), float(a.end[along])])
+	runs.sort_custom(func(x, y) -> bool: return x[0] < y[0])
+	var reach := lo
+	for run in runs:
+		if run[0] > reach + E:
+			break
+		reach = maxf(reach, run[1])
+	out.covered = not out.areas.is_empty() and reach >= hi - E
+	return out
 
 
 ## True when a ramp `ramp` (units) touches area `area` along its `side` (the side of the area it
@@ -703,10 +748,20 @@ func _relink() -> void:
 	for r in _list("ramps"):
 		var cur := str(r.get("platform", ""))
 		if cur != "" and by_id.has(cur) and absf(float(by_id[cur].height) - float(r.top_height)) <= 0.001 \
-				and top_touches(str(r.side), _rect(r), _rect(by_id[cur])):
+				and _still_climbs(r, by_id[cur]):
 			continue
 		var t := ramp_target(r)
 		r["platform"] = str(t.id) if not t.is_empty() else ""
+
+
+## True when ramp `r` still climbs onto `area`: its top end lies on the area's side, alone or (T-549)
+## with other areas of its height that cover the top end together.
+func _still_climbs(r: Dictionary, area: Dictionary) -> bool:
+	if top_touches(str(r.side), _rect(r), _rect(area)):
+		return true
+	var shared := top_areas(str(r.side), _rect(r), surfaces(), float(r.top_height))
+	var id := str(area.get("id", ""))
+	return shared.covered and shared.areas.any(func(a) -> bool: return str(a.get("id", "")) == id)
 
 
 func _list(key: String) -> Array:

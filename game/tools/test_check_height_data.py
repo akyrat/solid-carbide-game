@@ -179,5 +179,66 @@ class TestJumpRamps(unittest.TestCase):
         self.assertTrue(any("unknown area" in p for p in c.check_data(d)))
 
 
+TWO_ROOFTOPS = ROOT / "game/tests/fixtures/height/ramp_onto_two_rooftops.json"
+# The board's own level (main checkout, untracked): read only, never changed. Skipped when absent.
+BOARD_KAIJU_CITY = Path("C:/solid-carbide-game/game/data/levels/kaiju_city.json")
+
+
+class TestRampOntoSeveralRooftops(unittest.TestCase):
+    """T-549: a ramp whose top meets several areas of its top_height side by side is valid."""
+
+    def setUp(self):
+        self.data = load(TWO_ROOFTOPS)
+
+    def ramp(self, rid):
+        return next(r for r in self.data["ramps"] if r["id"] == rid)
+
+    def test_the_fixture_with_empty_platforms_is_valid(self):
+        self.assertEqual(c.check_data(self.data), [])
+        self.assertEqual(run_tool(TWO_ROOFTOPS).stdout.strip(), "OK")
+
+    def test_platform_may_name_either_rooftop(self):
+        for rid, roofs in (("ramp-2", ("roof-6", "roof-7")), ("ramp-13", ("roof-3", "roof-6"))):
+            for roof in roofs:
+                d = load(TWO_ROOFTOPS)
+                next(r for r in d["ramps"] if r["id"] == rid)["platform"] = roof
+                self.assertEqual(c.check_data(d), [], "%s -> %s" % (rid, roof))
+
+    def test_naming_an_area_off_its_top_is_refused(self):
+        self.ramp("ramp-2")["platform"] = "roof-3"
+        problems = c.check_data(self.data)
+        self.assertTrue(any("ramp-2" in p and "doesn't touch" in p for p in problems), problems)
+
+    def test_a_top_meeting_nothing_at_its_height_is_refused(self):
+        self.ramp("ramp-2")["x"] = -90.0  # 2 units short of the rooftops' west sides
+        self.ramp("ramp-2")["w"] = 12.0
+        problems = c.check_data(self.data)
+        self.assertTrue(any("ramp-2" in p and "unknown area" in p and "meets no area" in p for p in problems),
+                        problems)
+
+    def test_a_top_only_partly_covered_is_refused(self):
+        self.ramp("ramp-2")["y"], self.ramp("ramp-2")["h"] = -112.0, 22.0  # 4 units north of roof-6
+        problems = c.check_data(self.data)
+        self.assertTrue(any("ramp-2" in p and "unknown area" in p for p in problems), problems)
+
+    def test_a_top_meeting_rooftops_of_another_height_is_refused(self):
+        self.ramp("ramp-2")["top_height"] = 5.0
+        problems = c.check_data(self.data)
+        self.assertTrue(any("ramp-2" in p and "meets no area at height 5" in p for p in problems), problems)
+
+    def test_top_areas_lists_both_rooftops_and_covers(self):
+        plats = [(p["id"], c._rect(p), float(p["height"])) for p in self.data["platforms"]]
+        self.assertEqual(c.top_areas("west", c._rect(self.ramp("ramp-2")), plats, 6.0), (["roof-6", "roof-7"], True))
+        self.assertEqual(c.top_areas("east", c._rect(self.ramp("ramp-13")), plats, 6.0), (["roof-3", "roof-6"], True))
+
+    @unittest.skipUnless(BOARD_KAIJU_CITY.is_file(), "the board's Kaiju City is not on this computer")
+    def test_the_boards_kaiju_city_passes_both_checks(self):
+        res = run_tool(BOARD_KAIJU_CITY)
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"), res.stdout)
+        level = subprocess.run([sys.executable, str(ROOT / "game/tools/check_level.py"), str(BOARD_KAIJU_CITY)],
+                               capture_output=True, text=True)
+        self.assertEqual((level.returncode, level.stdout.strip()), (0, "OK"), level.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1148,6 +1148,14 @@ Task T-251 (Decisions, "Level creator piece set"). Every number here is the Leve
 
 ![The level creator with the multi-layer test level: rooftops of three sizes, a 6 on a 3, ramps in all four directions](../art-archive/T-251/screenshots/creator.png)
 
+#### A ramp onto several rooftops (task T-549)
+
+Task T-549 (Decisions, "A ramp may climb onto several rooftops"). How it works: `game/docs/level/game-map.md`, "A ramp onto several rooftops (T-549)".
+
+- **The rule:** a ramp's top end may meet two or more rooftops of its top height side by side; it is valid when together they cover its whole top end, with no gap. It climbs onto all of them: the car drives up it and onto whichever rooftop it reaches. A ramp whose top meets no rooftop at its height, or covers only part of it, is still an error.
+- **In the level file:** such a ramp's `platform` link is empty or names one of the rooftops. The level checks accept both, so the board's Kaiju City (ramp-2 onto roof-6 and roof-7, ramp-13 onto roof-3 and roof-6) passes unchanged.
+- **In the level creator:** it links such a ramp to the first of its rooftops in the file, keeps a link to any of them, and snaps a ramp onto rooftops of its height whose sides continue each other on one line, as onto one rooftop.
+
 #### Level creator: props
 
 Task T-253 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. How it works and how to rebuild the placeholder art: `game/docs/level/level-creator-pieces.md`, "Level creator", "Props (T-253)".
@@ -2406,7 +2414,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
 | `drifting.md` | `ebeda14f941b9082f36bc0b34939aeac54c082f113cc24d9e29f3471823a9605` |
-| `level-design.md` | `6f00c67e0e84f5b0e77c10e913e85d08b32561dde74dcdadf778ad4801d89ccf` |
+| `level-design.md` | `7e9d0106715fbd6fa878b83642e0ccf7b80eea3c2941a927214e1ca755a16217` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |
