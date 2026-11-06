@@ -1,7 +1,7 @@
 ---
 id: T-542
 title: Rails in the level creator
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/level_creator/]
 files_expected_to_change: [game/scripts/level_creator/, game/scenes/level_creator/, game/tests/, game/docs/level/, docs/level-design.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -73,6 +73,10 @@ Back with the agent: rails drawn properly on ramps and platforms, easy snapping 
 ### 2026-11-06, In progress → In QA
 
 Round 2 built: rails sit on ramps and rooftops with shadows, snapping from a platform matches the street, angled joints keep all speed. QA round 2 next, with a visual check of the screenshots.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA round 2 passed all 8 criteria. Play it from C:\solid-carbide-worktrees\T-542\game\project.godot (creator: rails on ramps and platforms, then a run).
 
 ## Style review
 
