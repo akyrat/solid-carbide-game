@@ -735,6 +735,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **A small jump ramp** (board, 2026-10-30): besides today's ramps (0 to 3, 3 to 6 and 0 to 6, each about three tiles long), a small ramp only one tile long that rises about 2 units from the ground it stands on, for small jumps: the car drives up it and flies off its top. It is placed, turned and raised like the other ramps (on the ground or on a rooftop). Its exact length, height and whether its tall end is open or closed are proposals for the playtest. (T-400)
 - **Rain over the map** (board, 2026-11-02; built in T-506 to T-509): it rains on the map during a run. A toggle in the settings turns the rain on or off; the choice is saved like the other settings. Its art is made with PixelLab, and the board said not to be stingy with generations (the board's go for this feature, 2026-11-02; still through the style loop, every generation kept in art-archive). **Off by default** (board, 2026-11-02, after playing it; T-510): a new player has no rain until they tick the toggle; a player who already chose keeps their choice. After the board's playtest the rain has half the drops it first had (T-509). Proposals for the playtest: steady light rain over the whole run, falling at a slant that suits the isometric view, drawn over the map and under the HUD; small splashes where drops hit the ground and rooftops; it changes nothing in how the car drives or how enemies behave; it keeps the frame time low, in the desktop and the web build alike.
 - **Rails** (board, 2026-11-05); a prototype with its own playtest (Drifting, Decisions, "Rail grinding, a prototype"): rails are a map piece that can be placed anywhere on the map, in the level creator like the other pieces, and saved in the level file. For the prototype they use placeholder art; the playtest build has a few rails on the map to try.
+- **No rails on the default map** (board, 2026-11-06): the game's default map has no rails; the playtest rails T-541 put on it are removed. The board places rails itself in the level creator, once the creator's rail piece (T-542) is merged.
 
 ### Content
 
@@ -2382,7 +2383,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
 | `drifting.md` | `79654281876780dd81ae6a8e8f854cfe98ea22725f818a10928359f61a2936a9` |
-| `level-design.md` | `cf69dbec8759a60511a16d611e53660d2ae74d8b389b465d1a9f4b21615eef79` |
+| `level-design.md` | `1ee7921a9df3744ea1f3ac96f7bd5c0259341df131f52eac492568441f9cd9d6` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `b3f77a1d21985f1d94c80cebbc4a078dafcb763bc09a9eda8f447fad72c069e7` |

@@ -3710,3 +3710,8 @@ Entry format:
 - Decision or change: The board played the Hotshot-style drive prototype and doesn't like it; the whole thing is cancelled. Nothing merged; Jump stays on Space and the driving stays as it was.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-545
+
+## 2026-11-06: No rails on the default map
+- Decision or change: The default map has no rails; T-541's playtest rails are removed, and the board places rails itself later.
+- Documents touched: docs/level-design.md
+- Tasks: T-546
