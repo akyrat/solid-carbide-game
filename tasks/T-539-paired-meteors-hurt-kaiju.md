@@ -1,7 +1,7 @@
 ---
 id: T-539
 title: Paired meteors: drifting between a pair hurts the kaiju
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/enemies/kaiju_meteors.gd]
 files_expected_to_change: [game/scripts/enemies/, game/data/enemies.json, game/data/meteor_fx.json, game/tests/, game/docs/enemies/, docs/enemies.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -73,6 +73,10 @@ The board's tweak: the pair's meteors a bit further apart. Back with the agent; 
 ### 2026-11-06, In progress → In QA
 
 Tweak in: pair meteors 9 units apart (was 7). QA is checking it; it merges once QA passes.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA passed after the board's tweak; the board approved merging.
 
 ## Style review
 
