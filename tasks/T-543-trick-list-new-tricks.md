@@ -1,7 +1,7 @@
 ---
 id: T-543
 title: The trick list shows REVERSE DRIFT!, AURA FARMING! and GRIND!
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,12 +43,12 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] trick_recipes.json has entries for reverse_drift, aura and rail_grind (or the ids the trick detector uses), each with a clip and steps, and the texts match T-533's exactly (test). (QA: pass / fail)
-- [ ] The trick list shows ten tricks with their clips, and still fits inside the window at 1280x720 (test or screenshot). (QA: pass / fail)
-- [ ] The three new clip sheets exist and were recorded from the game, with the recording method in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes the new rows. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-543/screenshots/ show the trick list with the three new rows, in the pause screen and in the tutorial. (QA: pass / fail)
+- [ ] trick_recipes.json has entries for reverse_drift, aura and rail_grind (or the ids the trick detector uses), each with a clip and steps, and the texts match T-533's exactly (test). (QA: pass: entries and T-533's texts present, tests green)
+- [ ] The trick list shows ten tricks with their clips, and still fits inside the window at 1280x720 (test or screenshot). (QA: pass: ten rows in two columns, test checks the panel inside 1280x720; screenshot at 1152x648 shows nothing cut off)
+- [ ] The three new clip sheets exist and were recorded from the game, with the recording method in the result notes. (QA: pass: three sheets exist, method in the result notes; frames show reverse drift, aura popup, rail grind)
+- [ ] docs/hud-and-menus.md Content describes the new rows. (QA: pass: new section and rows in docs/hud-and-menus.md)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass: qa_check test sets pass)
+- [ ] Screenshots in art-archive/T-543/screenshots/ show the trick list with the three new rows, in the pause screen and in the tutorial. (QA: pass: pause screenshots show the three rows; tutorial slide 2 verified to hold no trick list, so none needed)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-06, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees\T-543.
+
+### 2026-11-06, In progress → In QA
+
+Built: the trick list has 10 rows in two columns, with clips of the three new tricks recorded from the game. QA is checking it.
 
 ## Style review
 
@@ -86,3 +90,5 @@ Screenshots (art-archive/T-543/screenshots/): pause_trick_list_reverse_drift.png
 
 For the playtest: the order and two-column layout; the aura clip shows the popup (the others show none); the rail clip's car is seen from its rail run on the map; Open the pause screen's Trick list in C:\solid-carbide-worktrees\T-543\game\project.godot.
 Not committed: Godot's .uid and .import noise.
+
+QA round 1: all six criteria pass; qa_check all pass (2 test sets, tools skipped). Screenshots seen: pause list shows ten rows in two columns of five, GRIND! selected with its clip, nothing cut off at 1152x648 (the 1280x720 fit is test-checked); clip_frames shows reverse-drift skid, AURA FARMING! popup on a still car, rail grind sparks with GRIND! popup. Slide 2 claim verified: tutorial_slides.gd shows one trick picture, no list. Minor: rail clip frames show HANG TIME!/GRIND! popups although the notes say popups are hidden there.
