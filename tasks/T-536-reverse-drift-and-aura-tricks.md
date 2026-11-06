@@ -1,7 +1,7 @@
 ---
 id: T-536
 title: Two new tricks: the reverse drift and the aura
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -104,3 +104,4 @@ Done. Both tricks are built in the trick detector like the other tricks: popup w
 Note: the older fixture base `tests/fixtures/run_elevation_demo.gd` no longer reaches a run (the main menu's Start now shows the tutorial slides first, so `game.run` is null); my fixture sets `tutorial_enabled = false`. Not fixed here (outside this ticket).
 
 QA (Sonnet): all 6 criteria pass. qa_check: tests 2 sets pass, documents changed, 2 screenshots. Popup texts REVERSE DRIFT!/AURA FARMING! confirmed in trick_popups.gd; numbers in combo.json; docs mention both; aura screenshot viewed.
+- 2026-11-06, needs-playtest → done: The board played the combined build: lgtm (aura's first pay at 6 s kept).
