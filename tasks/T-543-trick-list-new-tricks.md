@@ -1,7 +1,7 @@
 ---
 id: T-543
 title: The trick list shows REVERSE DRIFT!, AURA FARMING! and GRIND!
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, game/data/trick_recipes.json, game/scripts/menu/trick_list.gd]
 files_expected_to_change: [game/data/trick_recipes.json, game/data/tutorial_text.json, game/art/tutorial/clips/, game/tools/, game/tests/, game/docs/hud-and-menus/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the agent is working in C:\solid-carbide-worktrees\T-543.
 ### 2026-11-06, In progress → In QA
 
 Built: the trick list has 10 rows in two columns, with clips of the three new tricks recorded from the game. QA is checking it.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA passed. Play it from C:\solid-carbide-worktrees\T-543\game\project.godot: pause, Trick list.
 
 ## Style review
 
