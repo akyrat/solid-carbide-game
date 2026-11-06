@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -43,14 +43,14 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Rails load from the level file in the documented format and draw at the right depth (test plus screenshot). (QA: pass / fail)
-- [ ] A car landing on a rail moving along it locks on, slides along it and leaves at its end; one landing across it doesn't lock on (tests). (QA: pass / fail)
-- [ ] Jump while grinding hops off; landing on a second rail starts a new grind (test). (QA: pass / fail)
-- [ ] Ending a grind pays the grind trick with T-533's text, adds to the combo and pays subs, with its numbers in game/data/combo.json (test). (QA: pass / fail)
-- [ ] The playtest switch starts runs with the Jump power-up and is off in the committed default data on master (test). (QA: pass / fail)
-- [ ] docs/drifting.md and docs/level-design.md Content describe the grind and the rail format, with each proposed number. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] GIFs in art-archive/T-541/screenshots/ show a car landing on a rail, grinding, and jumping to a second rail in a run. (QA: pass / fail)
+- [ ] Rails load from the level file in the documented format and draw at the right depth (test plus screenshot). (QA: pass)
+- [ ] A car landing on a rail moving along it locks on, slides along it and leaves at its end; one landing across it doesn't lock on (tests). (QA: pass)
+- [ ] Jump while grinding hops off; landing on a second rail starts a new grind (test). (QA: pass)
+- [ ] Ending a grind pays the grind trick with T-533's text, adds to the combo and pays subs, with its numbers in game/data/combo.json (test). (QA: pass)
+- [ ] The playtest switch starts runs with the Jump power-up and is off in the committed default data on master (test). (QA: pass)
+- [ ] docs/drifting.md and docs/level-design.md Content describe the grind and the rail format, with each proposed number. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] GIFs in art-archive/T-541/screenshots/ show a car landing on a rail, grinding, and jumping to a second rail in a run. (QA: pass)
 
 ## Updates
 
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-05, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees\T-541.
+
+### 2026-11-06, In progress → In QA
+
+Built: rails on the map, GRIND! trick, Jump hops rail to rail. QA is checking it.
 
 ## Style review
 
@@ -109,3 +113,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 - Depth stills: rails_jump_pair_by_spawn.png, rail_1_depth_roof_12_to_roof_13.png, rail_2_depth_roof_13_to_roof_10.png.
 
 **For the Project Lead:** an earlier recording run of mine was left orphaned: a Godot window (PID 36536, `--write-movie ...scratchpad/mjump/f.png`) paused on its pause screen and still writing frames into my scratchpad. My `Stop-Process` on it was refused by the auto-mode classifier, so I did not try another way. Please close that Godot window (or end PID 36536). The fixture now unpauses itself and quits, so this won't happen again.
+
+### QA, 2026-11-06: PASS. qa_check: 2 test sets passed (tools set skipped), documents and screenshots pass; all 8 criteria marked pass (rail tests, jump_at_start 0 in committed data, combo.json rail_grind, docs sections present, GIFs present). Orphaned Godot PID 36536 from the agent still needs closing by the board.
