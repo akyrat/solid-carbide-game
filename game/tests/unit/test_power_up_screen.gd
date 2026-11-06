@@ -94,7 +94,7 @@ func test_each_description_names_the_offered_tiers_numbers() -> void:
 	assert_eq(PowerUpScreen.describe(data, "jump", last_jump),
 			"Press Space to Jump higher.")
 	assert_eq(PowerUpScreen.describe(data, "bouncy_bumpers", data.max_tier("bouncy_bumpers")),
-			"Bounce 2.6x farther off walls and obstacles.")
+			"Bounce 3.9x farther off walls and obstacles.")
 	assert_eq(PowerUpScreen.describe(data, "rev_charge", data.max_tier("rev_charge")),
 			"Faster charge, bigger boost.")
 	assert_eq(PowerUpScreen.describe(data, "rusty_overcoat", 1),

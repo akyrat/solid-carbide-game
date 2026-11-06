@@ -48,7 +48,7 @@ func _count(id: String) -> int:
 # --- Extended drift --------------------------------------------------------------------
 
 func test_ids() -> void:
-	assert_eq(TrickDetector.TRICK_IDS, ["extended_drift", "three_sixty", "alternate_drift", "air_one_eighty", "air_three_sixty"])
+	assert_eq(TrickDetector.TRICK_IDS, ["extended_drift", "three_sixty", "alternate_drift", "reverse_drift", "aura", "air_one_eighty", "air_three_sixty"])
 
 
 func _stop() -> void:
@@ -275,9 +275,9 @@ func test_car_emits_one_signal_per_trick() -> void:
 	car.trick.connect(func(id: String) -> void: got.append(id))
 	_drive(car, 94, true, false, A)   # 1.88 s: one 360, paid at once
 	_drive(car, 5, false, false, A)   # the drift ends: one extended drift (T-246)
-	_drive(car, 50, false, true, A)   # backward drift: an alternate drift
+	_drive(car, 50, false, true, A)   # backward drift: an alternate drift, and 1 s moving backwards: a reverse drift (T-536)
 	_drive(car, 1, false, false, A)   # it ends: a second extended drift
-	assert_eq(got, ["three_sixty", "extended_drift", "alternate_drift", "extended_drift"])
+	assert_eq(got, ["three_sixty", "extended_drift", "alternate_drift", "reverse_drift", "extended_drift"])
 	assert_eq(car.tricks.last_trick, "extended_drift")
 
 

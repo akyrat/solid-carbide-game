@@ -203,19 +203,93 @@ func test_the_burst_grows_from_tier_1_to_2_as_in_the_data() -> void:
 		assert_gt(speeds[i], speeds[i - 1], "tier %d is bigger than tier %d" % [i + 1, i])
 
 
-func test_no_cooldown_between_bursts() -> void:
-	var car := _car(2)
-	_lift_and_steer(car, 75.0)
-	_press_w(car)
-	_steps(car, 3, true, false)
-	assert_true(car.polarized.is_bursting())
+func test_every_wheel_tier_has_a_cooldown_the_wheel_reads() -> void:
+	for tier in range(1, 3):
+		var car := _car(tier)
+		var secs := float(_data.at(ID, tier).get("cooldown_seconds", 0.0))
+		assert_gt(secs, 0.0, "tier %d has cooldown_seconds" % tier)
+		assert_eq(car.polarized.cooldown_seconds, secs)
+	assert_eq(_car(0).polarized.cooldown_seconds, 0.0, "not owned: none")
+
+
+## A burst, then a second trigger right after it: lift and steer until 75 degrees, press W.
+func _second_trigger(car) -> void:
 	car.scripted_input = [false, false, -1.0]
 	var n := 0
 	while _angle(car) < 75.0 and n < 100:
 		car.physics_step()
 		n += 1
 	_press_w(car)
-	assert_eq(car.polarized.bursts_fired, 2, "a second burst right after the first")
+
+
+func test_a_trigger_during_the_cooldown_gives_no_burst_and_the_next_one_after_does() -> void:
+	var car := _car(2)
+	_lift_and_steer(car, 75.0)
+	_press_w(car)
+	assert_eq(car.polarized.bursts_fired, 1)
+	assert_false(car.polarized.is_ready())
+	_steps(car, 3, true, false)
+	_second_trigger(car)
+	assert_eq(car.polarized.bursts_fired, 1, "during the cooldown: no second burst")
+	# Run out the cooldown driving straight on, then trigger again.
+	var guard := 0
+	while not car.polarized.is_ready() and guard < 2000:
+		_steps(car, 1, true, false)
+		guard += 1
+	assert_true(car.polarized.is_ready())
+	_second_trigger(car)
+	assert_eq(car.polarized.bursts_fired, 2, "after the cooldown: a burst")
+
+
+func test_cooldown_fraction_goes_from_1_to_0_and_ready_again_fires_once() -> void:
+	var car := _car(1)
+	var wheel = car.polarized
+	watch_signals(wheel)
+	assert_true(wheel.is_ready())
+	assert_eq(wheel.cooldown_fraction_left(), 0.0)
+	_lift_and_steer(car, 75.0)
+	_press_w(car)
+	assert_almost_eq(wheel.cooldown_fraction_left(), 1.0, 0.02, "just after a burst")
+	assert_false(wheel.is_ready())
+	assert_signal_not_emitted(wheel, "ready_again")
+	var steps := int(wheel.cooldown_seconds / car.model.dt)
+	_steps(car, steps / 2, true, false)
+	assert_almost_eq(wheel.cooldown_fraction_left(), 0.5, 0.05, "halfway")
+	_steps(car, steps / 2 + 3, true, false)
+	assert_eq(wheel.cooldown_fraction_left(), 0.0)
+	assert_true(wheel.is_ready())
+	assert_signal_emit_count(wheel, "ready_again", 1)
+
+
+## The bot's idea in small (game/tools/speed_bot.gd): chain lift, steer, press for 40 s.
+## With the cooldown the speed does not keep growing burst after burst.
+func test_chained_bursts_do_not_keep_growing_with_the_cooldown() -> void:
+	for tier in range(1, 3):
+		var car := _car(tier)
+		var first_half := 0.0
+		var second_half := 0.0
+		var steps := 2000
+		for i in steps:
+			var phase := i % 100
+			# 1.0 s of W, then a lift while steering, then W again.
+			var w := phase < 50 or phase >= 80
+			car.scripted_input = [w, false, 0.0 if phase < 50 or phase >= 80 else 1.0]
+			car.physics_step()
+			var v: float = car.model.get_velocity().length()
+			if i < steps / 2:
+				first_half = maxf(first_half, v)
+			else:
+				second_half = maxf(second_half, v)
+		assert_gt(car.polarized.bursts_fired, 1, "tier %d fired several bursts" % tier)
+		assert_lte(second_half, first_half + 0.5, "tier %d: no growth from the first 20 s to the last 20 s" % tier)
+
+
+func test_reset_clears_the_cooldown() -> void:
+	var car := _car(1)
+	_lift_and_steer(car, 75.0)
+	_press_w(car)
+	car.polarized.reset()
+	assert_true(car.polarized.is_ready())
 
 
 func test_the_burst_shows_the_stronger_motion_lines() -> void:

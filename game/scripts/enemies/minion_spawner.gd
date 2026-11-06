@@ -58,6 +58,7 @@ const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 const EnemyNavigationScript := preload("res://scripts/enemies/enemy_navigation.gd")
 const FollowerScript := preload("res://scripts/enemies/enemy_path_follower.gd")
+const GroundIndexScript := preload("res://scripts/enemies/enemy_ground_index.gd")
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -341,6 +342,9 @@ func move_step(dt: float, contacts := true) -> void:
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if navigation != null:
 		navigation.new_step()
+	_refresh_ground_index()
+	# T-538: the car's surface, asked once for the whole crowd (the same answer each would get).
+	var car_s: int = navigation.surface_at(car_units) if navigation != null else -1
 	Perf.begin(&"minions.separation")
 	var pushes := _separation()
 	Perf.end(&"minions.separation")
@@ -349,7 +353,7 @@ func move_step(dt: float, contacts := true) -> void:
 		var target := car_units
 		if Perf.on: Perf.each_begin(&"minions.path")
 		if navigation != null and m.follower != null:
-			target = m.follower.target(navigation, m.position_units(), car_units, dt)
+			target = m.follower.target(navigation, m.position_units(), car_units, dt, true, car_s)
 			# T-444: dropping() is false without a path; asked only with one (it reads the height).
 			m.may_drop = m.follower.has_path() and m.follower.dropping(navigation, m.position_units(), m.body_height())
 		if Perf.on: Perf.each_end(&"minions.path")
@@ -399,29 +403,45 @@ func _spawn_step(dt: float) -> void:
 ## heights only minions at the same level push apart (T-207).
 ## T-444: the minions are first put in a grid of cells as wide as the push's reach, so each
 ## one is only compared with the minions in its own and the eight cells round it (every
-## minion nearer than the reach is in one of them), in the same order as before (by index),
-## so the pushes are the same sums as comparing every pair. Before, each step compared every
-## pair: 300 minions were 90 000 pairs.
+## minion nearer than the reach is in one of them). Before, each step compared every pair:
+## 300 minions were 90 000 pairs.
+## T-538: each pair is worked out once, for the first of the two (by index), and added to
+## both: the second's share is the first's turned round, exactly (the same distance, the
+## opposite direction). Every minion still adds its shares in the order of the other's index,
+## as comparing every pair does (the ones before it while they take their turn, then its own
+## turn's in order), so the pushes are the same sums, to the last bit
+## (_separation_all_pairs, the tests).
 func _separation() -> Array:
-	var out := []
+	var n := minions.size()
 	var sep: float = MinionScript.SEPARATION_UNITS * float(_stats.get("size_scale", 1.0))
-	var pos := []
-	var hs := []
+	var pos := PackedVector2Array()
+	pos.resize(n)
+	var hs := PackedFloat64Array()
+	hs.resize(n)
+	var push := PackedVector2Array()
+	push.resize(n)
 	var cells := {}
-	var keys := []
-	for i in minions.size():
+	var keys: Array[Vector2i] = []
+	keys.resize(n)
+	var with_heights := ground != null
+	for i in n:
 		var m = minions[i]
 		var p: Vector2 = m.position_units()
-		pos.append(p)
-		hs.append(m.body_height() if ground != null else 0.0)
+		pos[i] = p
+		if with_heights:
+			hs[i] = m.body_height()
 		var key := Vector2i(floori(p.x / sep), floori(p.y / sep))
-		keys.append(key)
-		if not cells.has(key):
-			cells[key] = []
-		cells[key].append(i)
-	for a in minions.size():
-		var push := Vector2.ZERO
-		var near := []
+		keys[i] = key
+		var c = cells.get(key)
+		if c == null:
+			cells[key] = PackedInt32Array([i])
+		else:
+			c.append(i)
+			cells[key] = c
+	var tol: float = EnemyHeightScript.LEVEL_TOLERANCE
+	var near := PackedInt32Array()
+	for a in n:
+		near.clear()
 		var ka: Vector2i = keys[a]
 		for dy in range(-1, 2):
 			for dx in range(-1, 2):
@@ -429,16 +449,25 @@ func _separation() -> Array:
 				if c != null:
 					near.append_array(c)
 		near.sort()
+		var pa := pos[a]
+		var ha := hs[a]
+		var sum := push[a]
 		for b in near:
-			if a == b:
+			if b <= a:
 				continue
-			if absf(hs[a] - hs[b]) > EnemyHeightScript.LEVEL_TOLERANCE:
+			if absf(ha - hs[b]) > tol:
 				continue
-			var d: Vector2 = pos[a] - pos[b]
+			var d: Vector2 = pa - pos[b]
 			var l := d.length()
 			if l < sep and l > 0.0001:
-				push += d / l * (1.0 - l / sep)
-		out.append(push * SEPARATION_WEIGHT)
+				var share := d / l * (1.0 - l / sep)
+				sum += share
+				push[b] += -share
+		push[a] = sum
+	var out := []
+	out.resize(n)
+	for i in n:
+		out[i] = push[i] * SEPARATION_WEIGHT
 	return out
 
 
@@ -657,9 +686,22 @@ func _keep_rect() -> Rect2:
 
 
 ## Puts every sprite at its body's place in the view and in the depth order.
+## T-538: the depth order checks once for the whole crowd that the map's buildings, boulders
+## and raised areas are the ones its grid was built from (enemy_depth.gd, begin_batch).
 func update_drawing() -> void:
+	_refresh_ground_index()
+	depth.begin_batch()
 	for m in minions:
 		_place_sprite(m)
+	depth.end_batch()
+
+
+## T-538: brings the ground's quick lookup up to date once a step (rebuilt if the ground's
+## lists changed, which moves GroundIndexScript.generation on), so what each minion kept
+## from it (minion.gd, ground_height and _ground_index) is the ground's current answer.
+func _refresh_ground_index() -> void:
+	if ground != null:
+		GroundIndexScript.of(ground)
 
 
 func _place_sprite(m: Node) -> void:

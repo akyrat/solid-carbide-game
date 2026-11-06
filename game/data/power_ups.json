@@ -27,8 +27,8 @@
       "name_id": "bouncy_bumpers",
       "icon": "res://art/power_ups/bouncy_bumpers.png",
       "tiers": [
-        {"tier": 1, "bounce_distance_multiplier": 1.4, "proposal": true, "reason": "Multiplies the T-435 wall bounce distance; 1.4 is felt but not wild."},
-        {"tier": 2, "bounce_distance_multiplier": 2.6, "proposal": true, "reason": "Top tier: walls act like springs."}
+        {"tier": 1, "bounce_distance_multiplier": 2.1, "proposal": true, "reason": "T-540: about 1.5 times the old 1.4, so the wall bounce is clearly further than before (2.1 times the plain T-435 bounce)."},
+        {"tier": 2, "bounce_distance_multiplier": 3.9, "proposal": true, "reason": "T-540: 1.5 times the old 2.6; top tier, walls act like springs (3.9 times the plain bounce, still away from the wall, never into it)."}
       ]
     },
     "rusty_overcoat": {
@@ -43,8 +43,8 @@
       "name_id": "polarized_steering_wheel",
       "icon": "res://art/power_ups/polarized_steering_wheel.png",
       "tiers": [
-        {"tier": 1, "burst_speed_multiplier": 1.2, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+20% for half a second: felt as a kick, small enough that the lift-steer-gas move is a skill, not a must. Shared by every tier: W pressed again with the nose at least 60 degrees from where the car moves (the board's start), at most 1.2 s after letting go of W (long enough to swing the nose round 180 degrees at the turn rate, short enough to read as one move; S held during the coast cancels it), on the ground, the car moving at least 2 units/s (a stopped car has no direction); the burst holds the forward speed at least at the multiplier x the speed carried into the press (cruise speed at the least) for 0.5 s; no cooldown."},
-        {"tier": 2, "burst_speed_multiplier": 1.45, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "shock_bricks_tier": 1, "proposal": true, "reason": "+45% (only a little more: the shock is this tier's prize) and Bricks' tier 1 wave at the car on every burst (shock_bricks_tier 1: radius 4, damage 6, minions pushed 4, the kaiju damaged and never pushed, read from weapons.json so it follows Bricks), owned or not."}
+        {"tier": 1, "burst_speed_multiplier": 1.2, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "cooldown_seconds": 3.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+20% for half a second: felt as a kick, small enough that the lift-steer-gas move is a skill, not a must. Shared by every tier: W pressed again with the nose at least 60 degrees from where the car moves (the board's start), at most 1.2 s after letting go of W (long enough to swing the nose round 180 degrees at the turn rate, short enough to read as one move; S held during the coast cancels it), on the ground, the car moving at least 2 units/s (a stopped car has no direction); the burst holds the forward speed at least at the multiplier x the speed carried into the press (cruise speed at the least) for 0.5 s; then a cooldown (T-527, 3 s here: after a burst the wheel gives none until it has run out, so bursts cannot be chained back to back; the speed a burst starts from has slowed back towards top speed by then)."},
+        {"tier": 2, "burst_speed_multiplier": 1.45, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "cooldown_seconds": 4.0, "shock_bricks_tier": 1, "proposal": true, "reason": "+45% (only a little more: the shock is this tier's prize) and Bricks' tier 1 wave at the car on every burst (shock_bricks_tier 1: radius 4, damage 6, minions pushed 4, the kaiju damaged and never pushed, read from weapons.json so it follows Bricks), owned or not. Cooldown 4 s (T-527): longer than tier 1's because the bigger multiplier gains more speed per burst, so it needs more time for the speed to fall back."}
       ]
     }
   }

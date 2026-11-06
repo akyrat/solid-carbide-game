@@ -70,6 +70,26 @@ func airtime_min_seconds() -> float:
 	return float(_data["airtime"]["min_seconds"])
 
 
+## Task T-536 (combo.json, "reverse_drift"): seconds a reverse drift must last to pay.
+func reverse_drift_min_seconds() -> float:
+	return float(_data.get("reverse_drift", {}).get("min_seconds", 1.0))
+
+
+## Task T-536 (combo.json, "aura"): the speed (units/s) at or under which the car is still.
+func aura_still_speed() -> float:
+	return float(_data.get("aura", {}).get("still_speed", 0.5))
+
+
+## Task T-536 (combo.json, "aura"): seconds still before the aura starts paying.
+func aura_wait_seconds() -> float:
+	return float(_data.get("aura", {}).get("wait_seconds", 5.0))
+
+
+## Task T-536 (combo.json, "aura"): seconds per aura trick once it pays.
+func aura_every_seconds() -> float:
+	return float(_data.get("aura", {}).get("every_seconds", 1.0))
+
+
 ## Whether a crash pays the trick in progress before it cuts the combo (task
 ## T-315; combo.json, crash_pays_trick_first). true (the default): the trick's
 ## popup shows, then COMBO BROKEN!; false: the cut comes first, then the trick
@@ -89,6 +109,35 @@ func needle_rules() -> Dictionary:
 		"touch_window_seconds": float(n.get("touch_window_seconds", 0.5)),
 		"clear_seconds": float(n.get("clear_seconds", 0.25)),
 	}
+
+
+## The rail grind (task T-541; combo.json, "rail_grind"): its numbers, with defaults.
+func _grind() -> Dictionary:
+	return _data.get("rail_grind", {})
+
+
+## Shortest grind that pays, in seconds (rail_grind.min_seconds).
+func grind_min_seconds() -> float:
+	return float(_grind().get("min_seconds", 0.3))
+
+
+## What a whole grind of `seconds` adds to the multiplier, paid once when it ends: seconds times
+## rail_grind.add_per_second, at most rail_grind.max_add, nothing under min_seconds. Rounded to
+## hundredths, as the popup shows it.
+func grind_add(seconds: float) -> float:
+	if seconds < grind_min_seconds() - 1e-6:
+		return 0.0
+	var g := _grind()
+	return snappedf(minf(seconds * float(g.get("add_per_second", 0.25)), float(g.get("max_add", 1.0))), 0.01)
+
+
+## The subs a whole grind of `seconds` pays (before the combo multiplier): seconds times
+## rail_grind.subs_per_second, at most rail_grind.max_subs, nothing under min_seconds.
+func grind_subs(seconds: float) -> float:
+	if seconds < grind_min_seconds() - 1e-6:
+		return 0.0
+	var g := _grind()
+	return minf(seconds * float(g.get("subs_per_second", 5.0)), float(g.get("max_subs", 20.0)))
 
 
 ## Shortest drift that pays, in seconds (drift_pay.min_seconds, task T-246).

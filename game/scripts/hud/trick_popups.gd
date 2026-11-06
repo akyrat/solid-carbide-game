@@ -30,6 +30,9 @@ const TEXTS := {
 	"extended_drift": "LONG DRIFT!",
 	"three_sixty": "FULL 360!",
 	"alternate_drift": "ALT DRIFT!",
+	# The reverse drift and the aura (task T-536), texts approved in task T-533.
+	"reverse_drift": "REVERSE DRIFT!",
+	"aura": "AURA FARMING!",
 	# The aerial tricks (task T-219), texts approved in task T-218.
 	"air_one_eighty": "AIR 180!",
 	"air_three_sixty": "AIR 360!",
@@ -37,6 +40,8 @@ const TEXTS := {
 	"airtime": "HANG TIME!",
 	# Thread the needle (task T-272), text approved in task T-271.
 	"thread_the_needle": "THREAD THE NEEDLE!",
+	# The rail grind (task T-541), text approved in task T-533.
+	"rail_grind": "GRIND!",
 }
 ## Combo broken popup text approved in task T-244 (docs/hud-and-menus.md, "Combo broken popup").
 const BROKEN_TEXT := "COMBO BROKEN!"
@@ -53,10 +58,13 @@ const SIZES := {
 	"extended_drift": SIZE_SMALL,
 	"three_sixty": SIZE_NORMAL,
 	"alternate_drift": SIZE_NORMAL,
+	"reverse_drift": SIZE_NORMAL,
+	"aura": SIZE_NORMAL,
 	"air_one_eighty": SIZE_NORMAL,
 	"air_three_sixty": SIZE_NORMAL,
 	"airtime": SIZE_NORMAL,
 	"thread_the_needle": SIZE_NORMAL,
+	"rail_grind": SIZE_NORMAL,
 }
 ## Drawn pixels per popup image pixel: one popup pixel is 2 art pixels (0.4 drawn px each).
 ## Task T-125 round 3: 0.5 so that three popups stack under the top limit at the default zoom.

@@ -34,9 +34,12 @@
     "extended_drift": "LONG DRIFT!",
     "three_sixty": "FULL 360!",
     "alternate_drift": "ALT DRIFT!",
+    "reverse_drift": "REVERSE DRIFT!",
+    "aura": "AURA FARMING!",
     "air_one_eighty": "AIR 180!",
     "air_three_sixty": "AIR 360!",
     "airtime": "HANG TIME!",
-    "thread_the_needle": "THREAD THE NEEDLE!"
+    "thread_the_needle": "THREAD THE NEEDLE!",
+    "rail_grind": "GRIND!"
   }
 }

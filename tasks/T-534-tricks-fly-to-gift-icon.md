@@ -1,0 +1,78 @@
+---
+id: T-534
+title: Tricks fly to the gift icon
+status: done
+from: project-lead
+to: ui
+lead: Rails
+epic: hud-menus
+milestone: mvp
+goal:
+user_facing_text: no
+changes_visuals: yes
+board_approved_art: no
+depends_on: []
+documents_affected: [docs/hud-and-menus.md]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, game/docs/hud-and-menus/hud.md]
+files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/data/hud.json, game/tests/, game/docs/hud-and-menus/hud.md, docs/hud-and-menus.md]
+model: sonnet
+qa_rounds: 1
+---
+
+<!--
+status: open | planning | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+lead: the name of the Project Lead session that owns the task; empty until a session claims it with python tools/task_status.py T-NNN --lead <Name> (tasks/README.md, "Owners").
+epic and milestone: one of the ids listed in tasks/README.md.
+goal: the goal id (G-001) when the goal runner wrote or reused the task; empty otherwise (tasks/README.md, "Goal runs").
+user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
+board_approved_art: yes only for a ticket that swaps in art the board has already approved, with no code or data change; it skips QA and the tests (tasks/README.md, "QA"). Default no.
+model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
+qa_rounds: how many times QA has checked this task. The maximum is 2.
+A task is not done until every document listed in documents_affected has been updated.
+-->
+
+## Description
+
+Build HUD and menus, Decisions, "Tricks fly to the gift icon". Each time a trick or the combo pays subs, a small effect (for example a few glowing particles or a token) flies from the car's place on screen to the gift icon at the right end of the sub goal bar, and arrives about when the bar fills. Placeholder effect drawn in code, no generated art, no new text. It must follow the HUD's scale and the player's HUD layout (the icon can be moved by the HUD layout editor). Keep it cheap: several tricks at once must not drop the frame rate.
+
+The board's review: play the combined build from C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot before merging.
+
+Never write, move or commit anything in game/data/levels/ (the board's own levels). SFX stay off. Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` (your ticket's id) and hand back in one short line (tasks/README.md, "Handing back"). Every number you choose is a proposal for the board's playtest: list each with its reason in the result notes and keep it in data where the code already reads data.
+
+## Acceptance criteria
+
+Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
+
+- [ ] When a trick pays subs, an effect node is spawned that travels from the car's screen position to the gift icon's current position and frees itself on arrival (test). (QA: pass)
+- [ ] It goes to the icon's moved position when the HUD layout has been edited, and scales with the HUD size (test). (QA: pass)
+- [ ] Ten tricks paid on the same frame spawn at most a bounded number of nodes, with the bound in data (test). (QA: pass)
+- [ ] docs/hud-and-menus.md Content and game/docs/hud-and-menus/hud.md describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF or frame strip in art-archive/T-534/screenshots/ shows the effect flying from the car to the gift icon in a run. (QA: pass)
+
+## Updates
+
+The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-05, Open → In progress
+
+Started: the agent is working in C:\solid-carbide-worktrees$t.
+
+### 2026-11-05, In progress → In QA
+
+Built: dots fly from the car to the gift icon when a trick pays subs. QA is checking it.
+
+### 2026-11-05, In QA → Needs playtest
+
+QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
+
+## Style review
+
+Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+
+## Result notes
+
+Built. Each RunState.trick_subs_paid makes Hud.spawn_subs_flight(): a SubsFlight (scripts/hud/subs_flight.gd), 5 glowing dots on an arc, a child of the HUD's scaled area (HUD pixels, so it scales with HUD size), from the car's place (screen centre) to Hud.gift_center(), asked each frame so it follows a gift moved in the layout editor; frees itself on arrival. Bounds in data. Proposals (game/data/hud.json subs_flight): seconds 0.4 (short because the sub goal fill springs at once when subs are paid, so dots land just after the bar starts to fill; I did not delay the bar), arc 60 px, 5 dots, radius 4, colour #ffe23a, max_per_frame 3 (ten tricks on one frame make 3 nodes), max_alive 12 (cheap). Tests: tests/unit/hud/test_hud_subs_flight.gd 5 pass (spawn/arrive/free, signal wiring, moved gift + HUD size 50, per-frame bound, alive bound); all test_hud_* 203/203 pass. Docs: docs/hud-and-menus.md Decisions entry, game/docs/hud-and-menus/hud.md section. Screenshots: art-archive/T-534/screenshots/subs_fly_to_gift.gif (a run, tricks paying 1, 3, 10, 1) and subs_fly_strip.png (6 frames); fixture tests/fixtures/subs_flight_demo.tscn. Dots are small and plain (placeholder); the board may want them bigger. Full QA run not done by me.
+
+QA round 1: all 6 criteria pass. Godot set: first qa_check run red (2 failing), rerun alone green: 2743 tests, 2742 passing, 0 failing, 1 risky/pending (flaky under load, not in T-534's code; subs_flight tests 5/5 in the agent's notes). Docs lines present in docs/hud-and-menus.md and game/docs/hud-and-menus/hud.md; hud.json subs_flight has max_per_frame 3 and max_alive 12; GIF and strip in art-archive/T-534/screenshots/. Not visually checked by QA.
+- 2026-11-06, needs-playtest → done: The board played the combined build: lgtm.

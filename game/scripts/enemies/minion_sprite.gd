@@ -106,6 +106,12 @@ var death_seconds := 0.0
 var death_total := 0.5
 ## Which way the body tips over: 1 or -1.
 var death_side := 1.0
+## T-538: what the last drawing showed (draw_key()); _process asks for a new drawing only when
+## it changes. Moving the sprite needs none (its position is its transform), and a walking
+## minion's frame changes 10 times a second, not every frame.
+var _drawn_key = null
+## How many times _process asked for a new drawing (tests).
+var redraws := 0
 
 
 func _ready() -> void:
@@ -115,9 +121,25 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	advance(delta)
-	queue_redraw()
+	var key = draw_key()
+	if key == null or key != _drawn_key:
+		_drawn_key = key
+		redraws += 1
+		queue_redraw()
 	if dying and death_seconds >= death_total:
 		set_process(false)  # T-531: a settled corpse is drawn once, not every frame
+
+
+## T-538: everything _draw() shows while walking, standing on the ground: the sheet's
+## direction, the walk frame and the size. null while it falls, lands or shows its shadow,
+## or without its art (those change every frame, so it is drawn every frame, as before).
+func draw_key():
+	if dying or falling or land_left > 0.0 or shows_shadow():
+		return null  # T-531: a dying minion animates, so it is drawn every frame until it settles
+	var ci := compass_index(facing)
+	if _sheet(SHEETS[ci][0]) == null:
+		return null  # the placeholder follows the exact facing: drawn every frame
+	return Vector3i(ci, frame_for(_walk), int(size_scale * 1000.0))
 
 
 ## Moves the animation on `delta` seconds (the walk, the fall, the squash).

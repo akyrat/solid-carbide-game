@@ -25,6 +25,21 @@ extends RefCounted
 ##   backward drift (S + A or D) with the same steering direction. See the
 ##   alternate_* values in car_tuning.gd for its timing limits.
 ##
+## - "reverse_drift" (task T-536; Drifting, Decisions, "A reverse drift
+##   trick"): a drift on S without W (the model's is_drifting with reverse)
+##   while the car's velocity points backwards relative to its nose
+##   (forward_speed() below 0), unbroken for combo.json's
+##   reverse_drift.min_seconds. Paid once per unbroken reverse drift, at the
+##   step it reaches that time; any step that is not such a drift starts it
+##   again from zero.
+## - "aura" (task T-536; Drifting, Decisions, "An aura trick"): the car on the
+##   ground with its speed at most combo.json's aura.still_speed. After
+##   aura.wait_seconds still, one aura is paid every aura.every_seconds for as
+##   long as it stays still (5 s and 1 s: the first at 6 s, then 7 s, ...).
+##   Moving faster, or leaving the ground, starts the count again. It counts
+##   only observed steps, so a paused tree (pause, level-up, time's up) adds
+##   nothing, and the run turns detection off and resets it while wrecked.
+##
 ## A "break" is any physics step on which the car is not drifting.
 ##
 ## A crash pays the trick in progress (task T-315; Game loop architecture,
@@ -62,7 +77,11 @@ const TRICK_THREE_SIXTY := "three_sixty"
 const TRICK_ALTERNATE_DRIFT := "alternate_drift"
 const TRICK_AIR_ONE_EIGHTY := "air_one_eighty"
 const TRICK_AIR_THREE_SIXTY := "air_three_sixty"
+## Task T-536: the reverse drift and the aura.
+const TRICK_REVERSE_DRIFT := "reverse_drift"
+const TRICK_AURA := "aura"
 const TRICK_IDS := [TRICK_EXTENDED_DRIFT, TRICK_THREE_SIXTY, TRICK_ALTERNATE_DRIFT,
+	TRICK_REVERSE_DRIFT, TRICK_AURA,
 	TRICK_AIR_ONE_EIGHTY, TRICK_AIR_THREE_SIXTY]
 ## The airtime trick's id (task T-242), in `counts`, last_trick and the popups.
 const TRICK_AIRTIME := "airtime"
@@ -94,6 +113,14 @@ var drift_min_seconds: float = ComboData.new().drift_min_seconds()
 ## settle() reads it (task T-315): a crash in the air pays the airtime so far
 ## from this length on.
 var airtime_min_seconds: float = ComboData.new().airtime_min_seconds()
+## Task T-536 (combo.json, reverse_drift and aura; proposals for the playtest):
+## how long a reverse drift must last, the speed at or under which the car is
+## still (units/s), the seconds still before the aura starts, and the seconds
+## per aura after that.
+var reverse_drift_min_seconds: float = ComboData.new().reverse_drift_min_seconds()
+var aura_still_speed: float = ComboData.new().aura_still_speed()
+var aura_wait_seconds: float = ComboData.new().aura_wait_seconds()
+var aura_every_seconds: float = ComboData.new().aura_every_seconds()
 var seconds_since_last := 0.0
 ## trick id -> how many have been found since the last reset().
 var counts := {}
@@ -124,6 +151,12 @@ var _air_turn := 0.0
 var _air_best := 0.0
 # Seconds of the current airtime so far (task T-242).
 var _air_seconds := 0.0
+# Task T-536: seconds of the current unbroken reverse drift and whether it has
+# paid; seconds the car has been still and the auras paid in that stillness.
+var _reverse_time := 0.0
+var _reverse_paid := false
+var _still_time := 0.0
+var _auras_paid := 0
 
 
 func _init() -> void:
@@ -153,6 +186,10 @@ func reset() -> void:
 	_air_turn = 0.0
 	_air_best = 0.0
 	_air_seconds = 0.0
+	_reverse_time = 0.0
+	_reverse_paid = false
+	_still_time = 0.0
+	_auras_paid = 0
 
 
 ## One physics step. model is the CarModel after its update_velocity() for this
@@ -167,6 +204,8 @@ func observe(model, w: bool, s: bool, steer: float, rotation_before: float, airb
 	var steer_side := 0
 	if absf(steer) > 0.01:
 		steer_side = 1 if steer > 0.0 else -1
+	_observe_reverse_drift(model, drifting and s and not w and not airborne, dt)  # T-536
+	_observe_aura(model, airborne, dt)  # T-536
 
 	# Extended drift.
 	if drifting:
@@ -275,6 +314,32 @@ func _land() -> void:
 		seconds_since_last = 0.0
 		counts[TRICK_AIRTIME] = int(counts.get(TRICK_AIRTIME, 0)) + 1
 		airtime_trick.emit(seconds)
+
+
+## Task T-536: the reverse drift. `reversing` is a drift on S without W this
+## step; it counts while the velocity points backwards from the nose.
+func _observe_reverse_drift(model, reversing: bool, dt: float) -> void:
+	if not reversing or model.forward_speed() >= 0.0:
+		_reverse_time = 0.0
+		_reverse_paid = false
+		return
+	_reverse_time += dt
+	if not _reverse_paid and _reverse_time >= reverse_drift_min_seconds - EPSILON:
+		_reverse_paid = true
+		_emit(TRICK_REVERSE_DRIFT)
+
+
+## Task T-536: the aura. Still = on the ground at or under aura_still_speed.
+func _observe_aura(model, airborne: bool, dt: float) -> void:
+	if airborne or model.total_speed() > aura_still_speed:
+		_still_time = 0.0
+		_auras_paid = 0
+		return
+	_still_time += dt
+	var every := maxf(aura_every_seconds, 0.01)
+	while _still_time >= aura_wait_seconds + every * float(_auras_paid + 1) - EPSILON:
+		_auras_paid += 1
+		_emit(TRICK_AURA)
 
 
 func _end_segment() -> void:

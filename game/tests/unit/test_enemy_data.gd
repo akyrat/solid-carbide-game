@@ -38,7 +38,8 @@ func test_every_section_has_its_numbers() -> void:
 	assert_eq_deep(_sorted(e.meteor_attack().keys()), _sorted(["first_attack_after_seconds",
 		"seconds_between_attacks", "windup_seconds", "meteors_per_attack", "warning_seconds",
 		"land_within_units_of_car", "impact_radius_units", "impact_damage", "minion_damage", "knockback",
-		"boulder_lifetime_seconds", "boulder_fade_seconds", "boulder_clearance_units"]))
+		"boulder_lifetime_seconds", "boulder_fade_seconds", "boulder_clearance_units",
+		"pair_distance_units", "pair_damage_to_kaiju"]))  # T-539
 	for section in [e.minion(), e.kaiju(), e.spawning(), e.coins(), e.kaiju_coins(), e.meteor_attack()]:
 		for k in section:
 			assert_gt(section[k], 0.0, "%s is positive" % k)
@@ -65,7 +66,7 @@ func test_spawning_speeds_up_and_peaks_by_the_boss_time() -> void:
 		last = v
 	assert_almost_eq(e.spawn_interval(boss_time), boss, 0.0001, "at its peak when the kaiju arrives")
 	assert_almost_eq(e.spawn_interval(RunState.RUN_SECONDS), boss, 0.0001, "held in the kaiju's minute")
-	assert_eq(e.max_minions_alive(), 100)
+	assert_eq(e.max_minions_alive(), 200, "T-538: raised from 100 once the crowd is cheaper")
 	# About how many come before the kaiju with no combo (the rate's average times the growth time).
 	var total := (1.0 / start + 1.0 / boss) / 2.0 * until
 	assert_gt(total, 100.0)
@@ -125,7 +126,8 @@ func test_meteor_attacks_in_the_kaiju_minute() -> void:
 	assert_eq(m.warning_seconds, 2.0, "warning circle is decided at 2 s")
 	# The last attack's meteors land before the 60 seconds are up.
 	assert_lt(times[-1] + m.windup_seconds + m.warning_seconds, 60.0)
-	assert_eq(times.size() * int(m.meteors_per_attack), 21)
+	assert_eq(times.size() * int(m.meteors_per_attack), 28)  # T-539: 2 pairs an attack (was 3 meteors, 21)
+	assert_eq(int(m.meteors_per_attack) % 2, 0, "whole pairs")
 
 
 func test_kaiju_time_to_kill_for_a_three_weapon_build() -> void:

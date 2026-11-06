@@ -35,6 +35,7 @@ const LAYER_OBSTACLES := 1 << 0
 const LAYER_ENEMIES := 1 << 2
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 const EnemyFallScript := preload("res://scripts/enemies/enemy_fall.gd")
+const GroundIndexScript := preload("res://scripts/enemies/enemy_ground_index.gd")
 
 ## The placeholder's body radius on the ground, in units (the collision
 ## circle, and the reach for touching the car). A size, not a balancing number.
@@ -121,6 +122,19 @@ var _knockback_time := 0.0
 var _edge_normal := Vector2.ZERO
 ## True while the current move may go over an edge (walking with may_drop).
 var _drop_now := false
+## T-538: the ground's height under the body, kept for the place it was read at (pixels),
+## the ground and the ground lookup's generation it came from (ground_height()); a minion
+## asked for it about seven times a step at the same place.
+var _gh_at := Vector2.INF
+var _gh_ground = null
+var _gh_gen := -1
+var _gh := 0.0
+## T-538: the ground's quick lookup (enemy_ground_index.gd), kept with the ground and the
+## generation it came from (_ground_index()).
+var _gi = null
+var _gi_ground = null
+var _gi_gen := -1
+var _gi_is_index := false
 
 
 ## Sets the numbers from EnemyData.minion().
@@ -181,8 +195,29 @@ func set_position_units(p: Vector2) -> void:
 
 
 ## The height of the ground it stands on, units (0 with no ground).
+## T-538: kept while the minion stays on the same spot (the same number: the ground does not
+## move; a rebuilt ground lookup, a new generation, is read again).
 func ground_height() -> float:
-	return EnemyHeightScript.height_at(ground, position_units())
+	if ground == null:
+		return 0.0
+	if position == _gh_at and is_same(ground, _gh_ground) and _gh_gen == GroundIndexScript.generation:
+		return _gh
+	# The same as EnemyHeightScript.height_at(ground, ...): the ground's quick lookup's answer.
+	_gh = _ground_index().height_at(position_units())
+	_gh_at = position
+	_gh_ground = ground
+	_gh_gen = GroundIndexScript.generation
+	return _gh
+
+
+## T-538: the ground's quick lookup, asked once and kept (GroundIndexScript.of(ground)).
+func _ground_index():
+	if _gi == null or not is_same(ground, _gi_ground) or _gi_gen != GroundIndexScript.generation:
+		_gi = GroundIndexScript.of(ground)
+		_gi_is_index = _gi != null and _gi.get("is_enemy_ground_index") == true
+		_gi_ground = ground
+		_gi_gen = GroundIndexScript.generation
+	return _gi
 
 
 ## The height of its body, units (T-226): in the air while it falls off an
@@ -214,8 +249,18 @@ func _move(motion: Vector2) -> KinematicCollision2D:
 	_edge_normal = Vector2.ZERO
 	if ground == null:
 		return move_and_collide(motion)
-	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, position_units(), motion / PX_PER_UNIT, BASE_RADIUS_UNITS,
-		body_height(), _drop_now or fall.falling)
+	var from := position_units()
+	var units := motion / PX_PER_UNIT
+	var bh := body_height()
+	var drop: bool = _drop_now or fall.falling
+	# T-538: the move limit_motion lets through whole (nothing to move, or over flat street:
+	# enemy_height.gd, _flat_move), made here without building its answer.
+	if units.length() < 0.000001:
+		return null
+	var gi = _ground_index()
+	if _gi_is_index and EnemyHeightScript._flat_move(gi, from, units, BASE_RADIUS_UNITS, bh, drop):
+		return move_and_collide(units * PX_PER_UNIT)
+	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, from, units, BASE_RADIUS_UNITS, bh, drop)
 	_edge_normal = lim.normal
 	for seg in lim.segments:
 		if (seg as Vector2).length() < 0.000001:

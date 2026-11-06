@@ -76,7 +76,7 @@ func test_not_owned_is_todays_bounce() -> void:
 	assert_almost_eq(_bounce_distance(0), none, 1e-6, "same hit, same distance")
 	var car: CharacterBody2D = CarScript.new()
 	assert_eq(car.bounce_distance_multiplier, 1.0, "no multiplier by default")
-	car.set_bouncy_bumpers_tier(3)
+	car.set_bouncy_bumpers_tier(2)
 	car.set_bouncy_bumpers_tier(0)
 	assert_eq(car.bounce_distance_multiplier, 1.0, "losing the power-up resets the multiplier")
 	car.free()
@@ -99,7 +99,17 @@ func test_the_maximum_scales_the_same_way() -> void:
 	await wait_physics_frames(2)
 	var cap: float = preload("res://scripts/driving/car_tuning.gd").new().wall_bounce_max_hit_speed
 	var base := _bounce_distance(0, cap + 10.0)
-	var tier4 := _bounce_distance(4, cap + 10.0)
-	var m := _multiplier(4)
+	var top: int = PowerUpDataScript.new().max_tier("bouncy_bumpers")
+	var tier4 := _bounce_distance(top, cap + 10.0)
+	var m := _multiplier(top)
 	assert_almost_eq(tier4 / base, m, m * RATIO_TOLERANCE, "a hit over the cap also bounces x%.1f further" % m)
-	assert_almost_eq(_bounce_distance(4, cap + 30.0), tier4, 1e-3, "above the (scaled) cap every hit bounces the same")
+	assert_almost_eq(_bounce_distance(top, cap + 30.0), tier4, 1e-3, "above the (scaled) cap every hit bounces the same")
+
+
+## T-540: every tier is clearly further than the T-435/T-462 factors (1.4 and 2.6).
+func test_factors_are_higher_than_before_t540() -> void:
+	var old := {1: 1.4, 2: 2.6}
+	for tier in old:
+		assert_gt(_multiplier(tier), float(old[tier]) * 1.3, "tier %d is clearly above the old x%.1f" % [tier, old[tier]])
+	assert_almost_eq(_multiplier(1), 2.1, 1e-6)
+	assert_almost_eq(_multiplier(2), 3.9, 1e-6)
