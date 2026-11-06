@@ -1,7 +1,7 @@
 ---
 id: T-527
 title: Polarized Steering Wheel: a cooldown between bursts, and a speed-stacking playtest bot
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -73,3 +73,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 DONE. Cooldown: polarized_steering_wheel.gd (cooldown_seconds per tier in power_ups.json: proposals 3 s tier 1, 4 s tier 2; API cooldown_fraction_left(), is_ready(), signal ready_again; reset() clears it). Speed bot: bash game/tools/speed_bot.sh [--csv=f] [--seconds=60] (speed_bot.gd, speed_bot_plot.py); real car, open ground, wheel tier 1 and 2 with Rev Charge tier 2, grid of policies (chain trigger, drift, rev between), best by peak. Ramps/jumps not used (jump adds no speed). Top speed 16.5. BEFORE (no cooldown): runaway. Tier 1: 10x top after 2.1 s, 100x after 3.7 s, per-10s peaks 1.0e7 then 1.6e13, float overflow at 29.9 s. Tier 2: 10x after 1.9 s, 100x after 3.1 s, peaks 1.6e8 then 4.6e15, overflow at 24.9 s. AFTER (3 s / 4 s): bounded and flat. Tier 1 peak 88.2 avg 72.3 (20 bursts), every 10 s window 88.2. Tier 2 peak 90.5 avg 49.0 (15 bursts), windows 90.3 then 90.5. No growth burst after burst. What-if 8 s / 8 s: peaks 83.8 and 88.0 (avg 46, 41) so the cooldown length barely changes the peak. WHY ~5.4x top remains (for the board, I added no cap): a trace shows it is one Rev Charge boost or one wheel burst held while STEERING: the rule holds forward speed at least X along the turning nose every step while the sideways part stays, so speed is pumped into the side (Rev Charge tier 2 alone to about 81 units/s in 1.4 s of steering). Without steering a burst peaks at 19.8 (1.2 x 16.5). The board decides about that rule or a cap. Tests: test_polarized_steering_wheel.gd 16/16 (cooldown from data, trigger blocked then allowed, fraction 1 to 0 + ready_again once, reset, chained bursts do not grow); full Godot set 2741/2742 passing, 0 failing, 1 risky/pending (pre-existing); game/tools/test_speed_bot_plot.py OK. Docs: docs/drifting.md (Content, wheel section), game/docs/driving/drift.md. Screenshots: art-archive/T-527/screenshots/ speed_before.png, speed_after.png, speed_after_8s.png (+ _light), data: art-archive/T-527/speed_*.csv/.txt. Note: a first bot attempt outside the physics frame hung 2 headless Godot processes (started 18:31 and 18:52-18:59); they may still be running, not killed by me.
+- 2026-11-06, needs-playtest → done: The board played the wheel-handbrake-deaths build: everything good except the handbrake (T-530, cancelled).
