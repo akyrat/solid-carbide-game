@@ -1,7 +1,7 @@
 ---
 id: T-535
 title: The Garage button pulses when an upgrade can be bought
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -101,3 +101,4 @@ Board's tweak (2026-11-06): "just make the letters light blue, no button yellow 
 - Docs: docs/hud-and-menus.md (Decisions line and Content) and game/docs/hud-and-menus/main-menu.md updated.
 
 QA (after the board's light-blue-letters tweak): all 5 criteria pass. qa_check: tests PASS (2 sets, tools skipped), documents PASS (1), screenshots PASS (3: letters_blue_f5, letters_blue_f50, not_pulsing). Docs (Decisions and Content in docs/hud-and-menus.md) describe the light blue letters, no tint, no scale pulse. Agent's tests: garage_button_pulse 9/9, main_menu 9/9, arrow_keys 14/14, screen_flow 28/28; QA full run green.
+- 2026-11-06, needs-playtest → done: The board, after the playtest: light blue letters, no yellow highlighting; approved to merge once QA passes.
