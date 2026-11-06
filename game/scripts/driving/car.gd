@@ -324,8 +324,8 @@ func physics_step() -> void:
 
 ## T-541: one physics step on a rail. A or D spin the body at the air turn rate, as in the air
 ## (the board's tweak, 2026-11-06; the car stays on the rail); Jump (owned; the regular Jump's
-## cooldown doesn't apply on a rail, quick tuning 2) hops off, slightly toward the side of the
-## rail the nose points to; otherwise the grind slides on. Returns true while it
+## cooldown doesn't apply on a rail, quick tuning 2) hops off where the car faces, at the grind's
+## jump_speed (T-548); otherwise the grind slides on. Returns true while it
 ## goes on (the step is done here: no driving, no collisions, the height held on the bar), false
 ## when it ended: the car is then off the rail with its leaving velocity, and physics_step()
 ## carries on with its normal step (the hop, the fall).

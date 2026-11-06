@@ -2,8 +2,8 @@ extends GutTest
 ## Task T-541: rails in a run. T-546: the game's own map has no rails now, so the run here is on
 ## a copy of it with T-541's five rails added (written to user://, the old playtest layout). The run gives
 ## the map's rails to the car, draws them in the map's depth order, and a grind pays the GRIND!
-## trick into the combo and the subs. A Jump from the street lands on rail-3, and a Jump with D
-## held hops from rail-3 to rail-4, the pair placed a first-tier Jump apart.
+## trick into the combo and the subs. A Jump from the street lands on rail-3, and a Jump with the nose
+## turned right by D (T-548: the jump goes where the car faces) hops from rail-3 to rail-4, the pair placed a first-tier Jump apart.
 
 const GAME_MAP := "res://data/level/kaiju_city_map.json"
 const TEST_MAP := "user://t546_map_with_rails.json"
@@ -119,7 +119,7 @@ func test_a_jump_from_the_street_lands_on_rail_3_and_the_grind_pays_grind() -> v
 	assert_gt(run.state.combo, before)
 
 
-func test_jump_with_d_held_hops_from_rail_3_to_rail_4() -> void:
+func test_jump_with_the_nose_turned_right_hops_from_rail_3_to_rail_4() -> void:
 	run.state.set_power_up_tier("jump", 1)
 	_place(Vector2(5.0, 0.0), 11.0)
 	run.car.press_jump()
@@ -128,11 +128,20 @@ func test_jump_with_d_held_hops_from_rail_3_to_rail_4() -> void:
 		if run.car.grind.active:
 			break
 	assert_eq(run.car.grind.rail_index, _rail("rail-3"))
-	# Wait for the Jump's cooldown, then D (right of a car going north: east, rail-4's side).
-	run.car.scripted_input = [false, false, -1.0]
-	for i in int(ceil(run.car.jump.cooldown_seconds / run.car.model.dt)) + 1:
+	# T-548: D turns the nose about 40 degrees right of the rail (a car going north: east, rail-4's
+	# side), and the Jump goes where it faces.
+	for i in 40:  # first along rail-3 to beside rail-4 (from y -14 on)
 		run.car.physics_step()
+	for i in 300:
+		var off: float = rad_to_deg(angle_difference(run.car.grind.travel().angle(), run.car.grind.body_heading))
+		if off >= 40.0:
+			break
+		run.car.scripted_input = [false, false, -1.0]
+		run.car.physics_step()
+	run.car.scripted_input = [false, false, 0.0]
 	assert_true(run.car.grind.active)
+	gut.p("on rail-3 at %s, nose %.1f deg right of it, speed %.2f" % [run.car.model.get_position(),
+		rad_to_deg(run.car.grind.body_heading - run.car.grind.travel().angle()), run.car.grind.speed])
 	run.car.press_jump()
 	run.car.physics_step()
 	assert_false(run.car.grind.active)
@@ -140,5 +149,6 @@ func test_jump_with_d_held_hops_from_rail_3_to_rail_4() -> void:
 		run.car.physics_step()
 		if run.car.grind.active or not run.car.airborne:
 			break
+	gut.p("came down at %s, height %.2f" % [run.car.model.get_position(), run.car.height])
 	assert_true(run.car.grind.active, "landed on the second rail")
 	assert_eq(run.car.grind.rail_index, _rail("rail-4"))
