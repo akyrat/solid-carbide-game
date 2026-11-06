@@ -1,7 +1,7 @@
 ---
 id: T-538
 title: No frame drops with many minions alive
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -43,12 +43,12 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The stress measurement exists, is documented in game/docs/enemies/, and the result notes give before and after frame times at each minion count. (QA: pass / fail)
-- [ ] With 200 minions alive the measured average frame time is under 16.6 ms, or the result notes explain why not and what the proposed cap gives. (QA: pass / fail)
-- [ ] Existing minion behaviour tests still pass unchanged (QA's full run). (QA: pass / fail)
-- [ ] docs/enemies.md Content describes the change and any cap. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A plot or screenshot in art-archive/T-538/screenshots/ shows frame time against minion count before and after. (QA: pass / fail)
+- [ ] The stress measurement exists, is documented in game/docs/enemies/, and the result notes give before and after frame times at each minion count. (QA: pass)
+- [ ] With 200 minions alive the measured average frame time is under 16.6 ms, or the result notes explain why not and what the proposed cap gives. (QA: pass)
+- [ ] Existing minion behaviour tests still pass unchanged (QA's full run). (QA: pass)
+- [ ] docs/enemies.md Content describes the change and any cap. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A plot or screenshot in art-archive/T-538/screenshots/ shows frame time against minion count before and after. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-05, Open → In progress
 
 Started: the agent is working in C:\solid-carbide-worktrees$t.
+
+### 2026-11-06, In progress → In QA
+
+Built: 200 minions now cost 9-10 ms a frame (was 14-16). Proposal: the existing cap on minions alive goes from 100 to 200. QA is checking it.
 
 ## Style review
 
@@ -106,3 +110,6 @@ The headless 13.8 at 200 was one round hit by a burst of the machine's other wor
 **Notes for QA:** run the benchmark from the folder's root with `bash game/tools/minion_crowd_ab.sh --csv=<absolute path> --rounds=3 --window --counts=100,200,400 --seconds=5`. It opens a game window for each run. The numbers move with the machine's load, so compare before and after from the same run, not against my table.
 
 **Documents affected:** docs/enemies.md (Content: the 200 ceiling under Spawning, and a new entry, "No slowdown from many minions (built in task T-538)"), game/docs/enemies/minions.md ("Performance, T-538", and the ceiling under Spawning), game/data/enemies.json (`max_minions_alive` and its `_comment`).
+
+### QA, 2026-11-06: pass
+All 6 criteria pass. qa_check: tests (2 sets: Godot and Python) pass, documents changed, 1 screenshot (art-archive/T-538/screenshots/frame_time_vs_minions.png, shows before/after frame time at 100/200/400, window and headless). Criteria: 1 measurement + docs in game/docs/enemies/minions.md + before/after table in notes; 2 window 200 alive 8.6-10.4 ms (plot shows ~9.3 ms) under 16.6; 3 existing minion tests pass unchanged (only test_enemy_data ceiling 100->200, a data change); 4 docs/enemies.md describes change and 200 cap; 5 test counts in notes, qa_check full run green; 6 plot present. Not re-run: the window benchmark (judged from the plot and CSVs).
