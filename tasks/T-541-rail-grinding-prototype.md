@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md, docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/tricks.md]
 files_expected_to_change: [game/scripts/driving/, game/scripts/level/, game/scenes/, game/data/combo.json, game/data/level/kaiju_city_map.json, game/tests/, game/docs/driving/, docs/drifting.md, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Started: the agent is working in C:\solid-carbide-worktrees\T-541.
 ### 2026-11-06, In progress → In QA
 
 Built: rails on the map, GRIND! trick, Jump hops rail to rail. QA is checking it.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA passed. In the grind playtest build: C:\solid-carbide-worktrees\playtest-grind-rails\game\project.godot
 
 ## Style review
 
