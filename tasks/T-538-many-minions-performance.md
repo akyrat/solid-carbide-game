@@ -1,7 +1,7 @@
 ---
 id: T-538
 title: No frame drops with many minions alive
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/docs/game-loop/perf-recorder.md, game/docs/enemies/]
 files_expected_to_change: [game/scripts/enemies/, game/data/enemies.json, game/tests/, game/tools/, game/docs/enemies/, docs/enemies.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the agent is working in C:\solid-carbide-worktrees$t.
 ### 2026-11-06, In progress → In QA
 
 Built: 200 minions now cost 9-10 ms a frame (was 14-16). Proposal: the existing cap on minions alive goes from 100 to 200. QA is checking it.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
 ## Style review
 
