@@ -459,6 +459,23 @@ The board's airtime trick (Decisions, "Airtime trick", 2026-10-21): every airtim
 - **Next to the aerial tricks:** it pays on the same landing step, after AIR 180! or AIR 360!, as its own popup. A spin does not replace it: a 360 off a height-6 rooftop pays AIR 360! +0.5 and HANG TIME! +0.2.
 - **Recording:** [airtime_run.gif](../art-archive/T-242/screenshots/airtime_run.gif), a run on the elevation map: the car drives straight off a height-6 rooftop's side, flies 0.98 s over its shadow and lands to HANG TIME! +0.2 (combo x1.2). Popup: [airtime_popup.png](../art-archive/T-242/screenshots/airtime_popup.png).
 
+#### Reverse drift and aura (task T-536)
+
+The board's two tricks (Decisions, "A reverse drift trick" and "An aura trick", 2026-11-05), built in `game/scripts/driving/trick_detector.gd` like the other tricks (how: `game/docs/driving/tricks.md`, "Tricks"). Each pays with its popup and its amount, adds to the combo, pays subs (T-513) and counts for the recap's tricks. Popups (HUD and menus, Content, T-533): **REVERSE DRIFT!** and **AURA FARMING!**, normal size. Neither changes the driving. Every number below is a proposal for the board's playtest, in `game/data/combo.json` (`reverse_drift`, `aura`, `trick_add` and `trick_subs`).
+
+- **What counts as a reverse drift:** a drift on S without W (the driving model's own drift: S with A or D) while the car's velocity points backwards relative to its nose (the forward speed is below 0). Braking with S and A while the car still rolls forward is not one yet: the time starts once it moves backwards. Reversing straight (no A or D), any step with W, a takeoff, or a step that rolls forward ends it.
+- **When it pays:** once per unbroken reverse drift, as soon as it has lasted `reverse_drift.min_seconds` (so the popup comes while the player is still sliding). Holding it longer pays nothing more; a new reverse drift after a break pays again. It also still counts as a drift for LONG DRIFT! and as the backward half of ALT DRIFT!, as before.
+- **Reverse drift numbers and why:**
+  - `min_seconds` **1.0**: the same as the shortest drift that pays (`drift_pay.min_seconds`), so a tap of S and A does not pay; S with A from a standstill reaches it in exactly 1 s.
+  - Worth `trick_add.reverse_drift` **0.25** and `trick_subs.reverse_drift` **5**: as FULL 360! and AIR 180!, half of ALT DRIFT! (0.5, 10), since it asks for one held pair of keys and no timing.
+- **What counts as still (aura):** the car on the ground with its speed (in any direction) at most `aura.still_speed`. In the air is never still.
+- **When the aura pays:** after `aura.wait_seconds` still (the board's 5 s), one AURA FARMING! every `aura.every_seconds` (the board's 1 s) for as long as the car stays still: the first at 6 s, then 7 s, 8 s and so on. Moving faster than the threshold, or leaving the ground, starts the count from zero. Only the car's physics steps count, so the pause menu, the level-up screen and the time's up hold (all pause the game) add nothing, and the count carries on after them. While wrecked, the run turns trick detection off and resets it (T-413), so nothing pays; after a revive the count starts from zero. The time's up and the end of the run pay nothing either, as for every trick (the run is no longer going).
+- **Aura numbers and why:**
+  - `still_speed` **0.5** units/s: under 5% of cruise speed (11). With no keys the car coasts to a full stop in about a second, so a stopped car counts and a rolling one does not; a nudge from a hit that leaves it moving faster restarts the wait.
+  - Worth per aura `trick_add.aura` **0.1** and `trick_subs.aura` **2**: small, since it repeats every second with no skill. 2 subs is a fifth of a drift second's 10; 0.1 a second keeps the combo from draining (each aura resets the drain wait) and climbs it slowly, about 50 s still from x1 to the x6 cap, while the enemies close in.
+- **Not in this ticket:** the trick list and the tutorial, and the missions' known tricks.
+- **Screenshots:** `art-archive/T-536/screenshots/` (each popup in a run).
+
 #### Drift pays once, at its end (task T-246)
 
 The Decision "Drift pays once, at its end" (board, 2026-10-22), built in `trick_detector.gd` and `combo.json`; how: `game/docs/driving/tricks.md`, "Tricks". Nothing pays while a drift lasts. When it ends (the keys let go, W alone, or a takeoff, "No drifting in the air") it pays one `extended_drift` trick, with the existing LONG DRIFT! popup and its amount (the amount is `+0.12` for a 2.37 s drift). FULL 360!, ALT DRIFT! and the XP from drifting seconds are unchanged. The numbers are in `game/data/combo.json`, `drift_pay`; every one is a proposal for the board's playtest:
@@ -2292,7 +2309,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
-| `drifting.md` | `9c3c2d4b26207b2e63399d0cb530c6504d5932021abd48e3c5e358663f74af72` |
+| `drifting.md` | `4c8cd12bf844363ac0a3abed7346b6ac4812fff38438c6dfe88e1f4671d4e3a9` |
 | `level-design.md` | `c9de0ca0c421a86961c3262136ce2527a1c82ae16663f527fc4ce183ee16e8db` |
 | `enemies.md` | `9189bfcec47f6a37cd45571484ccea1fe0281c2d48c7aee50465b0e2cd6577dc` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |

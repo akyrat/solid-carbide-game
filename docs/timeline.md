@@ -3630,3 +3630,8 @@ Entry format:
 - Decision or change: Five glowing dots fly from the car to the sub goal bar's gift icon each time a trick pays subs; the board approved it in the batch-1105 playtest.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-534
+
+## 2026-11-06: Reverse drift and aura tricks
+- Decision or change: REVERSE DRIFT! (1 s of drifting backwards, +0.25) and AURA FARMING! (5 s still, then +0.1 each second from 6 s); the board approved them in the batch-1105 playtest.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-536
