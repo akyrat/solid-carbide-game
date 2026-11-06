@@ -1,7 +1,7 @@
 ---
 id: T-531
 title: Minion deaths: death animation (code placeholder), physics green spill, knockable corpses that fade 2 s after their last hit
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -78,3 +78,4 @@ Sample video (board's request): tests/fixtures/minion_deaths_demo.tscn/.gd + gam
 Merged master (T-538, T-539) into the branch. One conflict, game/scripts/enemies/minion_sprite.gd: kept T-531's dying state, death animation and settled-corpse set_process(false), and T-538's draw_key redraw skipping; draw_key() returns null while dying so a dying minion redraws every frame until it settles, and the settled corpse gets its last drawing before processing stops. Tests: tests/unit/enemies (all) 19 scripts, 271/271 passing (includes test_minion_deaths); test_enemy_data 10/10 passing.
 
 Second merge of master (T-541, T-527, T-528, T-532, T-545 and others). Conflicts: docs/timeline.md (kept every entry from both sides), docs/short-gdd/README.md and docs/long-gdd.md (took master's; regenerated at the merge). Tests rerun: tests/unit/enemies 19 scripts, 271/271 passing; test_enemy_data 10/10 passing.
+- 2026-11-06, needs-playtest → done: The board played the wheel-handbrake-deaths build: good (code placeholder death animation; the art set is T-544).
