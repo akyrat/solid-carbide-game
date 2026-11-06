@@ -1,10 +1,10 @@
 ---
 id: T-104
 title: Board describes the full pause menu: what it contains and how it looks
-status: open
+status: cancelled
 from: project-lead
 to: board
-lead:
+lead: Rails
 epic: hud-menus
 milestone: final-release
 user_facing_text: no
@@ -38,3 +38,4 @@ T-016 (the full pause menu with settings, final release) waits for the board to 
 ## Result notes
 
 Written by the Project Lead when the board has decided.
+- 2026-11-06, open → cancelled: The board, 2026-11-06: cancelled while clearing the backlog. The pause screen was built up since (settings, trick list, HUD editor, Restart, Exit, Resume); nothing left to describe.

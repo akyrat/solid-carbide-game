@@ -3661,6 +3661,16 @@ Entry format:
 - Documents touched: `docs/enemies.md`
 - Tasks: T-539
 
+## 2026-11-06: The new tricks in the trick list
+- Decision or change: The trick list and the tutorial's trick slide show REVERSE DRIFT!, AURA FARMING! and GRIND! with their recipes and clips.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-543
+
+## 2026-11-06: The minion's death animation, full set
+- Decision or change: The board approved the south-east sample; the other directions are made from it and swapped into the game.
+- Documents touched: docs/visual-style.md
+- Tasks: T-544
+
 ## 2026-11-06: Rail grinding
 - Decision or change: Rails as a map piece (straight segments at a height, in the level file); the car locks on within 2 units and 60 degrees, grinds with sparks, A/D turn it as in midair, GRIND! pays when the grind ends; Jump hops off 15 degrees toward the nose's side, with no Jump cooldown on a rail. The board approved it after two tweaks.
 - Documents touched: `docs/drifting.md`, `docs/level-design.md`
@@ -3670,3 +3680,18 @@ Entry format:
 - Decision or change: The wheel's bursts get a cooldown (3 s at tier 1, 4 s at tier 2) so chained bursts can't stack speed without end; approved in the board's playtest.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-527
+
+## 2026-11-06: Minion death animation sample
+- Decision or change: The south-east death animation sample (8 frames of 48x48, 4 PixelLab generations, best 6/10), approved by the board as it is; the request builder moved to game/tools/pixellab_animate_req.py.
+- Documents touched: none
+- Tasks: T-532
+
+## 2026-11-06: The steering wheel's cooldown on its slot icon
+- Decision or change: A dark veil over the wheel's HUD slot icon shrinks as the cooldown reloads, with a short white flash when it is ready; approved in the board's playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-528
+
+## 2026-11-06: A Hotshot Racing-style drive, a prototype
+- Decision or change: The board wants to try a drive modelled on Hotshot Racing's drift: grip on plain steering, a Space tap while steering snaps into a held drift that keeps its speed, Space alone brakes, S stays reverse with today's reverse drift, Jump moves to Left Shift, no boost meter. A hidden test key switches the run between this and today's drive.
+- Documents touched: docs/drifting.md
+- Tasks: T-545

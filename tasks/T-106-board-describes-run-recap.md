@@ -1,10 +1,10 @@
 ---
 id: T-106
 title: Board lists the run recap screen's stats and describes its look
-status: open
+status: cancelled
 from: project-lead
 to: board
-lead:
+lead: Rails
 epic: game-loop
 milestone: final-release
 user_facing_text: no
@@ -38,3 +38,4 @@ T-017 (the run recap screen, final release) waits for the board to list the stat
 ## Result notes
 
 Written by the Project Lead when the board has decided.
+- 2026-11-06, open → cancelled: The board, 2026-11-06: cancelled while clearing the backlog. The run recap was built for the MVP; nothing left to describe.
