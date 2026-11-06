@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import build_creator_assets as bc  # noqa: E402
 
-KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert"}  # crater: T-398; alert: T-441
+KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail"}  # crater: T-398; alert: T-441; rail: T-542
 
 
 class CatalogueTest(unittest.TestCase):
@@ -163,7 +163,17 @@ class FamilyTest(unittest.TestCase):
         groups = [f["group"] for f in self.fams]
         self.assertEqual(groups, sorted(groups, key=self.cat["groups"].index))
         self.assertEqual([f["id"] for f in self.fams], bc.FAMILY_ORDER)
-        self.assertEqual(len(self.fams), 26)  # T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign and banner
+        self.assertEqual(len(self.fams), 27)  # T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign and banner; T-542: rail
+
+    def test_the_rail_is_a_levels_family_stepped_by_height(self):
+        # T-542: one entry, four heights (auto first), a hint line for each key.
+        rail = next(f for f in self.fams if f["id"] == "rail")
+        self.assertEqual(rail["group"], "levels")
+        self.assertEqual(rail["heights"], ["auto", "1", "3.1", "6.1"])
+        self.assertEqual([m["height"] for m in rail["members"]], rail["heights"])
+        texts = bc.load("data/level/creator_texts.json")
+        for k in rail["hints"]:
+            self.assertIn(k, texts)
 
     def test_labels_are_texts(self):
         texts = bc.load("data/level/creator_texts.json")
@@ -186,7 +196,7 @@ class FamilyTest(unittest.TestCase):
             if e.get("part") or e["kind"] == "road":
                 continue  # T-263: roads are painted with the brush; their tiles stay in the catalogue
             for t in e["textures"]:
-                if e["id"].startswith("skyscraper-") or e["id"].startswith("alert-banner-"):
+                if e["id"].startswith("skyscraper-") or e["id"].startswith("alert-banner-") or e["id"] == "rail":
                     key = (e["id"], t["view"], t["mirror"], t["variant"])
                 else:
                     key = (e["id"], t["view"], t["mirror"], "")

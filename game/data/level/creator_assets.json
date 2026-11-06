@@ -16273,6 +16273,47 @@
      "texture": "res://art/banners/kaiju_body_circle_building_wall.png"
     }
    ]
+  },
+  {
+   "id": "rail",
+   "kind": "rail",
+   "label": "piece_rail",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "auto",
+     "texture": "res://art/creator_pieces/icon_rail.png"
+    },
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "1",
+     "texture": "res://art/creator_pieces/icon_rail.png"
+    },
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "3.1",
+     "texture": "res://art/creator_pieces/icon_rail.png"
+    },
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "6.1",
+     "texture": "res://art/creator_pieces/icon_rail.png"
+    }
+   ]
   }
  ],
  "groups": [
@@ -16878,6 +16919,69 @@
      "flip": false,
      "height": "6-8"
     }
+   ]
+  },
+  {
+   "id": "rail",
+   "group": "levels",
+   "label": "piece_rail",
+   "looks": 1,
+   "turns": 1,
+   "mirrors": [
+    false
+   ],
+   "heights": [
+    "auto",
+    "1",
+    "3.1",
+    "6.1"
+   ],
+   "members": [
+    {
+     "asset": "rail",
+     "view": "iso",
+     "mirror": false,
+     "variant": "auto",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "auto"
+    },
+    {
+     "asset": "rail",
+     "view": "iso",
+     "mirror": false,
+     "variant": "1",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "1"
+    },
+    {
+     "asset": "rail",
+     "view": "iso",
+     "mirror": false,
+     "variant": "3.1",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "3.1"
+    },
+    {
+     "asset": "rail",
+     "view": "iso",
+     "mirror": false,
+     "variant": "6.1",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "6.1"
+    }
+   ],
+   "hints": [
+    "rail_drag_hint",
+    "rail_turn_hint",
+    "rail_height_hint"
    ]
   },
   {
