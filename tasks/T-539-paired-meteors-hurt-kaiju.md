@@ -1,7 +1,7 @@
 ---
 id: T-539
 title: Paired meteors: drifting between a pair hurts the kaiju
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -139,3 +139,4 @@ The board, after playing: "space the meteor a bit further apart to make it easie
 
 ### QA, 2026-11-06 (after the 7 to 9 tweak)
 All 6 criteria pass. qa_check: 2 test sets passed (tools set skipped), documents changed, 4 screenshots. pair_distance_units is 9 in data and docs/enemies.md.
+- 2026-11-06, needs-playtest → done: The board, after the playtest: the pair's meteors a bit further apart; approved to merge once QA passes.
