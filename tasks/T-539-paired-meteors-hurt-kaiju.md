@@ -1,7 +1,7 @@
 ---
 id: T-539
 title: Paired meteors: drifting between a pair hurts the kaiju
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Rails
@@ -66,6 +66,10 @@ Built: meteors land in 2 pairs 7 units apart (4 per attack, was 3); a drift thro
 
 QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
+### 2026-11-06, Needs playtest → In progress
+
+The board's tweak: the pair's meteors a bit further apart. Back with the agent; merges after QA.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -115,3 +119,4 @@ Documents affected: docs/enemies.md (and game/docs/enemies/meteors.md).
 
 ### QA, 2026-11-05
 All 6 criteria pass. qa_check: 2 test sets passed (tools set skipped), documents changed, 4 screenshots, 6 marks pass.
+- 2026-11-06, needs-playtest → in-progress: The board: space the meteors of a pair a bit further apart, so it is easier to drift through. No board QA needed: pass QA and merge.
