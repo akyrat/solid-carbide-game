@@ -3625,3 +3625,38 @@ Entry format:
 - Decision or change: Popups REVERSE DRIFT!, AURA FARMING!, GRIND! (reused) and the pause screen's Resume label, with trick list entries and recipes for later.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-533
+
+## 2026-11-06: Tricks fly to the gift icon
+- Decision or change: Five glowing dots fly from the car to the sub goal bar's gift icon each time a trick pays subs; the board approved it in the batch-1105 playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-534
+
+## 2026-11-06: Reverse drift and aura tricks
+- Decision or change: REVERSE DRIFT! (1 s of drifting backwards, +0.25) and AURA FARMING! (5 s still, then +0.1 each second from 6 s); the board approved them in the batch-1105 playtest.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-536
+
+## 2026-11-06: Resume and one button column on the pause screen
+- Decision or change: The pause screen gets Resume, and its buttons sit in one column right of the settings: Resume, Trick list, Edit HUD layout, Restart, Exit, God mode; approved in the batch-1105 playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-537
+
+## 2026-11-06: No frame drops with many minions
+- Decision or change: Minions cost about half per step (200 alive: 8.6-10.4 ms a frame, was 14.3-15.6), and the cap on minions alive rises from 100 to 200; approved in the batch-1105 playtest.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-538
+
+## 2026-11-06: Bouncier Bouncy Bumpers
+- Decision or change: Bouncy Bumpers x2.1 / x3.9 (was x1.4 / x2.6): head-on bounces of 1.85 / 3.48 units; approved in the batch-1105 playtest.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-540
+
+## 2026-11-06: The Garage button's letters turn light blue
+- Decision or change: On the main menu, while an upgrade can be bought, the Garage button's letters turn light blue with a soft colour breath; no yellow tint or scale pulse (the board's tweak after the batch-1105 playtest).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-535
+
+## 2026-11-06: Paired meteors hurt the kaiju
+- Decision or change: The kaiju drops 4 meteors per attack in 2 pairs, 9 units apart (the board's tweak, was 7); drifting between a landed pair does 100 to the kaiju with a beam and breaks both.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-539

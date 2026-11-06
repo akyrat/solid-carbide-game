@@ -70,6 +70,26 @@ func airtime_min_seconds() -> float:
 	return float(_data["airtime"]["min_seconds"])
 
 
+## Task T-536 (combo.json, "reverse_drift"): seconds a reverse drift must last to pay.
+func reverse_drift_min_seconds() -> float:
+	return float(_data.get("reverse_drift", {}).get("min_seconds", 1.0))
+
+
+## Task T-536 (combo.json, "aura"): the speed (units/s) at or under which the car is still.
+func aura_still_speed() -> float:
+	return float(_data.get("aura", {}).get("still_speed", 0.5))
+
+
+## Task T-536 (combo.json, "aura"): seconds still before the aura starts paying.
+func aura_wait_seconds() -> float:
+	return float(_data.get("aura", {}).get("wait_seconds", 5.0))
+
+
+## Task T-536 (combo.json, "aura"): seconds per aura trick once it pays.
+func aura_every_seconds() -> float:
+	return float(_data.get("aura", {}).get("every_seconds", 1.0))
+
+
 ## Whether a crash pays the trick in progress before it cuts the combo (task
 ## T-315; combo.json, crash_pays_trick_first). true (the default): the trick's
 ## popup shows, then COMBO BROKEN!; false: the cut comes first, then the trick
