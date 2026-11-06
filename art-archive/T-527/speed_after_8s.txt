@@ -1,0 +1,56 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+run tier 1 { "rev": false, "hold": 0, "dir": -1.0, "drift": 0.0 } -> peak 19.8
+run tier 1 { "rev": false, "hold": 0, "dir": -1.0, "drift": 1.0 } -> peak 75.0
+run tier 1 { "rev": false, "hold": 0, "dir": 1.0, "drift": 0.0 } -> peak 19.8
+run tier 1 { "rev": false, "hold": 0, "dir": 1.0, "drift": 1.0 } -> peak 75.6
+run tier 1 { "rev": false, "hold": 10, "dir": -1.0, "drift": 0.0 } -> peak 19.8
+run tier 1 { "rev": false, "hold": 10, "dir": -1.0, "drift": 1.0 } -> peak 75.0
+run tier 1 { "rev": false, "hold": 10, "dir": 1.0, "drift": 0.0 } -> peak 19.8
+run tier 1 { "rev": false, "hold": 10, "dir": 1.0, "drift": 1.0 } -> peak 75.6
+run tier 1 { "rev": false, "hold": 30, "dir": -1.0, "drift": 0.0 } -> peak 19.8
+run tier 1 { "rev": false, "hold": 30, "dir": -1.0, "drift": 1.0 } -> peak 75.0
+run tier 1 { "rev": false, "hold": 30, "dir": 1.0, "drift": 0.0 } -> peak 19.8
+run tier 1 { "rev": false, "hold": 30, "dir": 1.0, "drift": 1.0 } -> peak 75.6
+run tier 1 { "rev": true, "hold": 0, "dir": -1.0, "drift": 0.0 } -> peak 31.8
+run tier 1 { "rev": true, "hold": 0, "dir": -1.0, "drift": 1.0 } -> peak 83.7
+run tier 1 { "rev": true, "hold": 0, "dir": 1.0, "drift": 0.0 } -> peak 31.8
+run tier 1 { "rev": true, "hold": 0, "dir": 1.0, "drift": 1.0 } -> peak 83.8
+run tier 1 { "rev": true, "hold": 10, "dir": -1.0, "drift": 0.0 } -> peak 31.8
+run tier 1 { "rev": true, "hold": 10, "dir": -1.0, "drift": 1.0 } -> peak 83.7
+run tier 1 { "rev": true, "hold": 10, "dir": 1.0, "drift": 0.0 } -> peak 31.8
+run tier 1 { "rev": true, "hold": 10, "dir": 1.0, "drift": 1.0 } -> peak 83.8
+run tier 1 { "rev": true, "hold": 30, "dir": -1.0, "drift": 0.0 } -> peak 31.8
+run tier 1 { "rev": true, "hold": 30, "dir": -1.0, "drift": 1.0 } -> peak 83.7
+run tier 1 { "rev": true, "hold": 30, "dir": 1.0, "drift": 0.0 } -> peak 31.8
+run tier 1 { "rev": true, "hold": 30, "dir": 1.0, "drift": 1.0 } -> peak 83.8
+TIER 1  top 16.5  cruise 11.0  |  peak 83.8  avg 46.0  bursts 8  policy { "rev": true, "hold": 0, "dir": 1.0, "drift": 1.0 }
+  peak per 10 s window: 81.6, 83.8, 83.8, 83.8, 83.8, 83.8
+  first above 10x top speed at t = -1.00 s, above 100x at t = -1.00 s (-1 = never)
+run tier 2 { "rev": false, "hold": 0, "dir": -1.0, "drift": 0.0 } -> peak 22.5
+run tier 2 { "rev": false, "hold": 0, "dir": -1.0, "drift": 1.0 } -> peak 87.4
+run tier 2 { "rev": false, "hold": 0, "dir": 1.0, "drift": 0.0 } -> peak 22.5
+run tier 2 { "rev": false, "hold": 0, "dir": 1.0, "drift": 1.0 } -> peak 88.0
+run tier 2 { "rev": false, "hold": 10, "dir": -1.0, "drift": 0.0 } -> peak 22.5
+run tier 2 { "rev": false, "hold": 10, "dir": -1.0, "drift": 1.0 } -> peak 87.4
+run tier 2 { "rev": false, "hold": 10, "dir": 1.0, "drift": 0.0 } -> peak 22.5
+run tier 2 { "rev": false, "hold": 10, "dir": 1.0, "drift": 1.0 } -> peak 88.0
+run tier 2 { "rev": false, "hold": 30, "dir": -1.0, "drift": 0.0 } -> peak 22.5
+run tier 2 { "rev": false, "hold": 30, "dir": -1.0, "drift": 1.0 } -> peak 87.4
+run tier 2 { "rev": false, "hold": 30, "dir": 1.0, "drift": 0.0 } -> peak 22.5
+run tier 2 { "rev": false, "hold": 30, "dir": 1.0, "drift": 1.0 } -> peak 88.0
+run tier 2 { "rev": true, "hold": 0, "dir": -1.0, "drift": 0.0 } -> peak 31.8
+run tier 2 { "rev": true, "hold": 0, "dir": -1.0, "drift": 1.0 } -> peak 84.4
+run tier 2 { "rev": true, "hold": 0, "dir": 1.0, "drift": 0.0 } -> peak 31.8
+run tier 2 { "rev": true, "hold": 0, "dir": 1.0, "drift": 1.0 } -> peak 84.5
+run tier 2 { "rev": true, "hold": 10, "dir": -1.0, "drift": 0.0 } -> peak 31.8
+run tier 2 { "rev": true, "hold": 10, "dir": -1.0, "drift": 1.0 } -> peak 84.4
+run tier 2 { "rev": true, "hold": 10, "dir": 1.0, "drift": 0.0 } -> peak 31.8
+run tier 2 { "rev": true, "hold": 10, "dir": 1.0, "drift": 1.0 } -> peak 84.5
+run tier 2 { "rev": true, "hold": 30, "dir": -1.0, "drift": 0.0 } -> peak 31.8
+run tier 2 { "rev": true, "hold": 30, "dir": -1.0, "drift": 1.0 } -> peak 84.4
+run tier 2 { "rev": true, "hold": 30, "dir": 1.0, "drift": 0.0 } -> peak 31.8
+run tier 2 { "rev": true, "hold": 30, "dir": 1.0, "drift": 1.0 } -> peak 84.5
+TIER 2  top 16.5  cruise 11.0  |  peak 88.0  avg 41.2  bursts 8  policy { "rev": false, "hold": 0, "dir": 1.0, "drift": 1.0 }
+  peak per 10 s window: 88.0, 88.0, 88.0, 88.0, 88.0, 88.0
+  first above 10x top speed at t = -1.00 s, above 100x at t = -1.00 s (-1 = never)

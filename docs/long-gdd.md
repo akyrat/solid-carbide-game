@@ -612,9 +612,11 @@ The decision is in Decisions ("Rusty Paintjob and the Polarized Steering Wheel")
   - **The coast may last 1.2 s** at most from letting go of W to pressing it again: enough to swing the nose round 180 degrees at the turn rate, short enough to read as one move. A longer coast gives no burst.
   - **S during the coast cancels it:** braking or reversing is not a coast, so S then W (the car moving backwards, nose forwards) is no burst.
   - **The car must be moving at least 2 units/s** (a standing car has no direction to turn away from), and on the ground: a press in the air does nothing.
-  - **The burst's size comes from the speed carried in**, so keeping speed through the turn pays. No cooldown: each new lift, steer and press gives a new burst (and at tier 4 a new shock).
+  - **The burst's size comes from the speed carried in**, so keeping speed through the turn pays. A cooldown (T-527, below) runs after each burst; a trigger during it gives nothing.
   - **Walls and the wreck:** a wall, building, boulder or ground-side hit ends a running burst (as for Rev Charge); the wreck drops it.
   - **Holding W throughout never bursts,** however far a drift turns the nose: the press of W is the trigger.
+- **The cooldown (task T-527; the board's decision is in Decisions, "A cooldown for the Polarized Steering Wheel"):** a burst starts a cooldown (`cooldown_seconds` in `power_ups.json`: proposals 3 s at tier 1, 4 s at tier 2). While it runs, lifting, steering and pressing W gives no burst and no shock. The HUD slot icon fills as it reloads (T-528): `cooldown_fraction_left()` (1 right after a burst, 0 when ready), `is_ready()`, signal `ready_again`. The wreck clears it.
+- **The speed bot (T-527):** `bash game/tools/speed_bot.sh [--csv=file.csv] [--seconds=60]` drives the real car on open ground for 60 s with the wheel at tier 1 and at tier 2 (Rev Charge at tier 2 too), tries a grid of policies (chain the trigger as fast as the rules allow, drift while W is held, charge Rev Charge between bursts) and prints the best one's peak and average speed, the peak of each 10 s window and when the speed passes 10x and 100x the top speed (`speed_bot_plot.py` draws the CSV). Measured on 2026-11-03 (top speed 16.5 units/s): **before the cooldown the speed explodes** (10x top speed after about 2 s, 100x after about 3.5 s, past the largest number a float holds after 25 to 30 s); **with the cooldown it stops climbing**: the peak is 88 units/s at tier 1 and 90 at tier 2 (about 5.4x top speed), the same in every 10 s window from the first on, average 72 and 49. A cooldown of 8 s instead of 3 and 4 s gives peaks of 84 and 88, so the remaining peak does not come from chaining: it is a single burst or Rev Charge boost held while steering (the held forward speed is rebuilt along the turning nose every step, and the sideways part stays). That is for the board to decide (a cap, or the rule); nothing beyond the cooldown was added.
 - **Where it appears:** in the mission gift's pool like the other four, and on the tutorial's missions slide with them.
 - Screenshots: `art-archive/T-502/screenshots/` (the burst, the tier 4 shock, the overlay cards at tiers 1 and 4, the tutorial slide, the placeholder icon).
 
@@ -2356,7 +2358,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
-| `drifting.md` | `da544ea4487dd347fb85bd87d5f742394510cf329e890ae93a380658937a5d5f` |
+| `drifting.md` | `7241066e91ba4dd8c628cdc18008ac0b2588c188c3896afc44efe1553ca22c8c` |
 | `level-design.md` | `cf69dbec8759a60511a16d611e53660d2ae74d8b389b465d1a9f4b21615eef79` |
 | `enemies.md` | `b35e4e316043c348a521146e401595af5722fabd533f61c6d67bbb589cd5a645` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
