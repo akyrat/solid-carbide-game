@@ -1,0 +1,16 @@
+{
+  "_comment": "Rail grinding (T-541, a prototype; Drifting, Content, \"Rail grinding (task T-541)\"). The grind's numbers, read by scripts/driving/rail_grind.gd when a car is made. All proposals for the board's playtest; the GRIND! trick's pay is in combo.json, rail_grind. Units are map units and seconds.",
+  "_catch_comment": "Locking on, loosened after the board's playtest of 2026-11-06 (\"make it easier to snap on the rail\"): the car's centre within reach units of the rail's line (was 1.0), up to end_margin past an end (was 0.5), its height from catch_below under to catch_above over the bar (was 0.5 and 0.25), falling or level, moving along the rail at min_start_speed or more and within max_angle_deg of it (was 45: 60 still keeps a landing straight across from catching).",
+  "reach": 2.0,
+  "end_margin": 1.0,
+  "catch_above": 0.5,
+  "catch_below": 0.75,
+  "min_start_speed": 2.0,
+  "max_angle_deg": 60.0,
+  "_slide_comment": "Sliding: the speed along the rail drops by decel units/s every second; below end_speed the car drops off beside the rail at drop_side_speed. While grinding, A and D spin the car's body at the air turn rate (as in the air); it keeps sliding along the rail whichever way it faces.",
+  "decel": 1.0,
+  "end_speed": 2.0,
+  "drop_side_speed": 2.0,
+  "_jump_comment": "Jump off a rail (board, 2026-11-06): the hop leaves at jump_angle_deg off the rail's line, toward the side of the rail line the car's nose points to (left of it: left, right: right; exactly along it: straight on), keeping its speed. 15 degrees is slight: at cruise speed (11 units/s) that is about 2.8 units/s sideways, about 2.4 units over a first-tier Jump's 0.83 s in the air, enough for the jump pair (3.5 units apart, with reach 2).",
+  "jump_angle_deg": 15.0
+}

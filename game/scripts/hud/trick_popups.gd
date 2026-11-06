@@ -40,6 +40,8 @@ const TEXTS := {
 	"airtime": "HANG TIME!",
 	# Thread the needle (task T-272), text approved in task T-271.
 	"thread_the_needle": "THREAD THE NEEDLE!",
+	# The rail grind (task T-541), text approved in task T-533.
+	"rail_grind": "GRIND!",
 }
 ## Combo broken popup text approved in task T-244 (docs/hud-and-menus.md, "Combo broken popup").
 const BROKEN_TEXT := "COMBO BROKEN!"
@@ -62,6 +64,7 @@ const SIZES := {
 	"air_three_sixty": SIZE_NORMAL,
 	"airtime": SIZE_NORMAL,
 	"thread_the_needle": SIZE_NORMAL,
+	"rail_grind": SIZE_NORMAL,
 }
 ## Drawn pixels per popup image pixel: one popup pixel is 2 art pixels (0.4 drawn px each).
 ## Task T-125 round 3: 0.5 so that three popups stack under the top limit at the default zoom.

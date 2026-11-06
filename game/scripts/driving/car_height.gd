@@ -84,6 +84,21 @@ func hop(vz: float) -> bool:
 	return true
 
 
+## Task T-541 (rail grinding, rail_grind.gd): holds the car on a rail's bar at height h (units):
+## not in the air, no vertical speed, no signal (the car's grind step moves it; step() is not
+## called while it grinds). A hop (the Jump power-up) takes off from there as from the ground.
+func set_on_rail(h: float) -> void:
+	airborne = false
+	vertical_speed = 0.0
+	height = h
+
+
+## Task T-541: the car leaves a rail's bar into the air with vertical speed vz (0: it just falls
+## off the bar's end or side). took_off(false, vz) is sent as for a drop-off edge.
+func leave_rail(vz: float = 0.0) -> void:
+	_take_off(false, vz, height)
+
+
 ## Task T-478: sets the top (units) of the obstacle under the car (0 = none). Leaving
 ## it while the car stands on it (not airborne, above the ground), the car falls.
 func set_floor(top: float, pos: Vector2) -> void:

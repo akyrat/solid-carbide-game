@@ -3660,3 +3660,8 @@ Entry format:
 - Decision or change: The kaiju drops 4 meteors per attack in 2 pairs, 9 units apart (the board's tweak, was 7); drifting between a landed pair does 100 to the kaiju with a beam and breaks both.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-539
+
+## 2026-11-06: Rail grinding
+- Decision or change: Rails as a map piece (straight segments at a height, in the level file); the car locks on within 2 units and 60 degrees, grinds with sparks, A/D turn it as in midair, GRIND! pays when the grind ends; Jump hops off 15 degrees toward the nose's side, with no Jump cooldown on a rail. The board approved it after two tweaks.
+- Documents touched: `docs/drifting.md`, `docs/level-design.md`
+- Tasks: T-541
