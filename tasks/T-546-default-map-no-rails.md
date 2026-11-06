@@ -1,7 +1,7 @@
 ---
 id: T-546
 title: No rails on the default map: remove T-541's playtest rails
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -53,10 +53,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-06, Open → In progress
+
+Started: removing T-541's 5 playtest rails from the default map. The agent is working in C:\solid-carbide-worktrees\T-546.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Removed the 5 rails from game/data/level/kaiju_city_map.json (now an empty "rails": []; nothing else changed). test_rail_grind.gd: the two game-map rail tests became test_the_game_map_has_no_rails and a jump-pair-gap test on the test layout. test_run_rails.gd now runs on a user:// copy of the map with the five old rails added (GameFlow.add_run), so run, draw, grind and hop tests keep working. docs/level-design.md Content: the default map has no rails (lines for the map copy, its contents, and the rails list). Tests run (GUT, -gselect): test_run_rails 225 asserts pass, test_rail_grind 27 tests pass, test_game_map pass, test_tutorial_clips 7 pass. Screenshots in art-archive/T-546/screenshots/: default_map_no_rails_spawn.png (street where rail-3/4 were, empty), default_map_no_rails_roofs.png. Note: the T-543 tutorial clip fixture (tutorial_clip_rail_grind) and rail_grind_gif_demo drive onto rail-3 on the game map, so they now show no rail; they are fixtures, not tests, left unchanged. Untracked Godot .uid files and .import noise left uncommitted.
