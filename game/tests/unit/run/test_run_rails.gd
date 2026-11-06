@@ -1,24 +1,34 @@
 extends GutTest
-## Task T-541: rails in a run on the game's map (data/level/kaiju_city_map.json). The run gives
+## Task T-541: rails in a run. T-546: the game's own map has no rails now, so the run here is on
+## a copy of it with T-541's five rails added (written to user://, the old playtest layout). The run gives
 ## the map's rails to the car, draws them in the map's depth order, and a grind pays the GRIND!
 ## trick into the combo and the subs. A Jump from the street lands on rail-3, and a Jump with D
 ## held hops from rail-3 to rail-4, the pair placed a first-tier Jump apart.
 
-const GameScene := preload("res://scenes/game/game.tscn")
+const GAME_MAP := "res://data/level/kaiju_city_map.json"
+const TEST_MAP := "user://t546_map_with_rails.json"
+const RAILS := [
+	{"id": "rail-1", "x1": -36.0, "x2": -36.0, "y1": 2.0, "y2": -21.0, "z1": 3.0, "z2": 6.1},
+	{"id": "rail-2", "x1": -30.0, "x2": -30.0, "y1": -45.0, "y2": -82.0, "z1": 6.1, "z2": 6.1},
+	{"id": "rail-3", "x1": 5.0, "x2": 5.0, "y1": -6.0, "y2": -60.0, "z1": 1.0, "z2": 1.0},
+	{"id": "rail-4", "x1": 8.5, "x2": 8.5, "y1": -14.0, "y2": -68.0, "z1": 1.0, "z2": 1.0},
+	{"id": "rail-5", "x1": -5.0, "x2": 30.0, "y1": 70.0, "y2": 70.0, "z1": 6.1, "z2": 1.0},
+]
 const Rails := preload("res://scripts/level/rails.gd")
 const RailDrawing := preload("res://scripts/level/rail_drawing.gd")
 
-var game: GameFlow
 var run: Node2D
 
 
 func before_each() -> void:
 	TestSave.isolate()
-	game = GameScene.instantiate()
-	game.quit_game = func(): pass
-	add_child_autofree(game)
-	game.menu.start_button.pressed.emit()
-	run = game.run
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_MAP))
+	data["rails"] = RAILS
+	var f := FileAccess.open(TEST_MAP, FileAccess.WRITE)
+	f.store_string(JSON.stringify(data))
+	f.close()
+	run = GameFlow.add_run(self, PlayerProgress.new(), TEST_MAP)
+	autofree(run)
 	run.car.use_keyboard = false
 	run.car.set_physics_process(false)
 	run.minions.set_physics_process(false)
@@ -29,6 +39,7 @@ func after_each() -> void:
 	get_tree().paused = false
 	await wait_process_frames(1)
 	TestSave.restore()
+	DirAccess.remove_absolute(TEST_MAP)
 
 
 ## Puts the car on the street at `pos` heading north at `speed` units/s.

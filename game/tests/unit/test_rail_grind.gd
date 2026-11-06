@@ -95,21 +95,18 @@ func test_bad_rail_entries_are_skipped() -> void:
 	assert_eq(Rails.from_layout({}).size(), 0, "a level with no rails")
 
 
-func test_the_game_map_has_rails_that_all_load() -> void:
+func test_the_game_map_has_no_rails() -> void:
+	# The board, 2026-11-06 (T-546): the default map has none; rails come from the creator's levels.
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_MAP))
-	var raw: Array = data.get("rails", [])
-	assert_gte(raw.size(), 4, "a handful of rails for the playtest")
-	for r in raw:
-		assert_eq(Rails.problem(r), "", str(r.get("id")))
-	assert_eq(Rails.from_layout(data).size(), raw.size())
+	assert_eq((data.get("rails", []) as Array).size(), 0, "no rails in the game's map file")
+	assert_eq(Rails.from_layout(data).size(), 0, "the map loads with no rails")
 
 
-func test_the_game_map_has_two_rails_a_first_tier_jump_apart() -> void:
+func test_two_parallel_rails_can_be_a_first_tier_jump_apart() -> void:
 	# Two parallel rails at the same height, no further apart than a Jump tier 1 hop carries
 	# the car sideways at cruise speed (11 units/s turned jump_angle_deg, over the hop's airtime)
-	# plus the reach.
-	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_MAP))
-	var rails := Rails.from_layout(data)
+	# plus the reach. The test layout's pair (3.5 apart) is the example.
+	var rails := Rails.from_layout(LAYOUT)
 	var j = preload("res://scripts/driving/jump_power_up.gd").new()
 	j.set_tier(1)
 	var g = RailGrind.new()
