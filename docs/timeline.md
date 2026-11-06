@@ -3655,3 +3655,8 @@ Entry format:
 - Decision or change: On the main menu, while an upgrade can be bought, the Garage button's letters turn light blue with a soft colour breath; no yellow tint or scale pulse (the board's tweak after the batch-1105 playtest).
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-535
+
+## 2026-11-06: Paired meteors hurt the kaiju
+- Decision or change: The kaiju drops 4 meteors per attack in 2 pairs, 9 units apart (the board's tweak, was 7); drifting between a landed pair does 100 to the kaiju with a beam and breaks both.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-539
