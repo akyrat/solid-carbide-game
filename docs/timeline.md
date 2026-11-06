@@ -3715,3 +3715,8 @@ Entry format:
 - Decision or change: The default map has no rails; T-541's playtest rails are removed, and the board places rails itself later.
 - Documents touched: docs/level-design.md
 - Tasks: T-546
+
+## 2026-11-06: Rails in the level creator
+- Decision or change: The level creator gets a Rail piece (lay, move, resize, turn, height, delete), saved in the level file; rails sit on ramps and rooftops with posts and shadows, snapping from a platform matches the street, and joints between connected rail pieces keep all speed up to 100 degrees; approved by the board after a second round.
+- Documents touched: `docs/drifting.md`, `docs/level-design.md`
+- Tasks: T-542

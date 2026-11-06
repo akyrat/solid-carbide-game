@@ -118,5 +118,15 @@
   "alert_design_head": {"text": "Head in triangle", "where": "Editor side panel, looks strip under a picked alert sign or banner (T-440): the red triangle design with the kaiju's head."},
   "alert_design_body": {"text": "Body in circle", "where": "Editor side panel, looks strip under a picked alert sign or banner (T-440): the red circle design with the kaiju's body."},
   "banner_wall_hint": {"text": "R: next wall.", "where": "Editor strip under a picked alert banner (T-440): hint for choosing which wall of the skyscraper it hangs on; R is the same turn key as for pieces (a proposal for the creator to follow)."},
-  "banner_height_hint": {"text": "H: next height.", "where": "Editor strip under a picked alert banner (T-440): hint for choosing how high it hangs; H is the same height key as for pieces (a proposal for the creator to follow)."}
+  "banner_height_hint": {"text": "H: next height.", "where": "Editor strip under a picked alert banner (T-440): hint for choosing how high it hangs; H is the same height key as for pieces (a proposal for the creator to follow)."},
+  "piece_rail": {"text": "Rail", "where": "Editor side panel, Levels (T-542): button for the rail piece, a metal bar the car can grind."},
+  "rail_drag_hint": {"text": "Drag: lay a rail.", "where": "Editor strip under a picked rail (T-542): a drag lays a rail from one end to the other; a click lays one in the picked direction."},
+  "rail_turn_hint": {"text": "R: turn 45 degrees.", "where": "Editor strip under a picked rail (T-542): R turns the direction a clicked rail is laid in (with a rail selected it turns that rail)."},
+  "rail_height_hint": {"text": "H: next height. [ ]: shorter, longer.", "where": "Editor strip under a picked rail (T-542): H steps the height; [ and ] shorten and lengthen the selected rail."},
+  "rail_height_auto": {"text": "Rail height: on what is under it", "where": "Editor top bar (T-542): with the rail picked at its auto height, each end sits just above the street or rooftop under it."},
+  "rail_height_fixed": {"text": "Rail height: {h}", "where": "Editor top bar (T-542): with the rail picked at a fixed height, {h} is the height in units above the street."},
+  "rail_direction": {"text": "Direction: {deg} degrees", "where": "Editor top bar (T-542): the direction a clicked rail is laid in, degrees from east, clockwise on the map."},
+  "rail_hint": {"text": "Drag to lay a rail", "where": "Editor top bar (T-542): hint while the rail is picked."},
+  "rail_selected": {"text": "Rail {id}: length {length}, height {z1} to {z2}, direction {deg}. Drag it or an end.", "where": "Editor top bar (T-542): the selected rail's readout."},
+  "rail_refused": {"text": "Can't place the rail here: it has to be at least 1 unit long and inside the map.", "where": "Editor: message shown when a rail can't be laid or changed."}
 }

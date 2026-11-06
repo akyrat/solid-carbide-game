@@ -51,11 +51,11 @@ func test_six_groups_one_button_per_kind_with_labels_from_the_texts() -> void:
 	assert_eq(shown.keys(), GROUPS.map(func(g): return CreatorTexts.get_text("group_" + g)))
 	assert_eq(shown[CreatorTexts.get_text("group_roads")], ["road", "centre-line", "zebra-crossing", "cracked-road"])
 	assert_eq(shown[CreatorTexts.get_text("group_ground")], ["gravel", "sidewalk", "meteor-crater"])  # T-398
-	assert_eq(shown[CreatorTexts.get_text("group_levels")], ["platform", "ramp"])
+	assert_eq(shown[CreatorTexts.get_text("group_levels")], ["platform", "ramp", "rail"])
 	assert_eq(shown[CreatorTexts.get_text("group_buildings")], ["building-small", "building-long", "lowrise", "skyscraper"])
 	assert_eq(shown[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])  # T-398
 	assert_eq(shown[CreatorTexts.get_text("group_decoration")], ["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign", "alert-sign", "alert-banner"])
-	assert_eq(e.panel.buttons.size(), 26, "one button per kind (T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign, alert banner) (Pavement left out: no ground tile art)")
+	assert_eq(e.panel.buttons.size(), 27, "one button per kind (T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign, alert banner; T-542: rail) (Pavement left out: no ground tile art)")
 	for fid in e.panel.buttons:
 		var f := CreatorFamilies.family(fid)
 		var b: Button = e.panel.buttons[fid]
@@ -243,7 +243,7 @@ func test_a_new_level_with_every_kind_passes_check_level() -> void:
 	var x := -110.5
 	var y := -110.5
 	for fid in e.panel.buttons:
-		if fid in ["platform", "ramp", "alert-banner"]:
+		if fid in ["platform", "ramp", "alert-banner", "rail"]:
 			continue
 		e.panel.pick(fid)
 		e.look_pick()
@@ -254,6 +254,9 @@ func test_a_new_level_with_every_kind_passes_check_level() -> void:
 		if x > 100.0:
 			x = -110.5
 			y += 40.0
+	# T-542: a rail is laid with two ends (test_creator_rails.gd), on the street and clear of the pieces above.
+	e.panel.pick("rail")
+	assert_false(e.lay_rail(Vector2(-100, 100), Vector2(-80, 100)).is_empty(), "rail laid")
 	# A platform at 6 (H) and a ramp 0 to 6 (H twice) climbing north up its south side.
 	e.panel.pick("platform")
 	e.height_pick()

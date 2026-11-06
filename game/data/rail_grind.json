@@ -1,16 +1,21 @@
 {
   "_comment": "Rail grinding (T-541, a prototype; Drifting, Content, \"Rail grinding (task T-541)\"). The grind's numbers, read by scripts/driving/rail_grind.gd when a car is made. All proposals for the board's playtest; the GRIND! trick's pay is in combo.json, rail_grind. Units are map units and seconds.",
-  "_catch_comment": "Locking on, loosened after the board's playtest of 2026-11-06 (\"make it easier to snap on the rail\"): the car's centre within reach units of the rail's line (was 1.0), up to end_margin past an end (was 0.5), its height from catch_below under to catch_above over the bar (was 0.5 and 0.25), falling or level, moving along the rail at min_start_speed or more and within max_angle_deg of it (was 45: 60 still keeps a landing straight across from catching).",
+  "_catch_comment": "Locking on, loosened after the board's playtest of 2026-11-06 (\"make it easier to snap on the rail\"): the car's centre within reach units of the rail's line (was 1.0), up to end_margin past an end (was 0.5), its height from catch_below under to catch_above over the bar (was 0.5 and 0.25; catch_above went to 1.0 in T-542 round 2, see _platform_comment), falling or level, moving along the rail at min_start_speed or more and within max_angle_deg of it (was 45: 60 still keeps a landing straight across from catching).",
   "reach": 2.0,
   "end_margin": 1.0,
-  "catch_above": 0.5,
+  "catch_above": 1.0,
   "catch_below": 0.75,
   "min_start_speed": 2.0,
   "max_angle_deg": 60.0,
+  "_platform_comment": "T-542 round 2 (the board: snapping from a platform was very hard): the window is measured from the bar, so it must reach the whole arc of a first-tier Jump (about 1.03 units over the ground it left): a bar only 0.1 over a rooftop (the 3.1 pick on a 3 platform) was out of reach for most of the arc with catch_above 0.5. 1.0 catches it all along the arc at any height; the creator also lays auto rails 1.0 over the ground under each end, as over the street. The car and the bar are compared at their real heights.",
   "_slide_comment": "Sliding: the speed along the rail drops by decel units/s every second; below end_speed the car drops off beside the rail at drop_side_speed. While grinding, A and D spin the car's body at the air turn rate (as in the air); it keeps sliding along the rail whichever way it faces.",
   "decel": 1.0,
   "end_speed": 2.0,
   "drop_side_speed": 2.0,
   "_jump_comment": "Jump off a rail (board, 2026-11-06): the hop leaves at jump_angle_deg off the rail's line, toward the side of the rail line the car's nose points to (left of it: left, right: right; exactly along it: straight on), keeping its speed. 15 degrees is slight: at cruise speed (11 units/s) that is about 2.8 units/s sideways, about 2.4 units over a first-tier Jump's 0.83 s in the air, enough for the jump pair (3.5 units apart, with reach 2).",
-  "jump_angle_deg": 15.0
+  "jump_angle_deg": 15.0,
+  "_join_comment": "Joints (T-542 round 2; the board: a joint between connected rail pieces at an angle must cost no speed, and long rails curve round corners built of angled pieces). Two rails are connected when an end of one is within join_distance units (flat) of the end the car leaves by and within join_height units of its height. The car then crosses straight onto the next piece, at the same speed (nothing lost to the angle), as long as that piece's way on turns the travel by no more than join_max_angle_deg (100: a right angle and a little over, never a fold back). All proposals for the board's playtest.",
+  "join_distance": 1.0,
+  "join_height": 0.6,
+  "join_max_angle_deg": 100.0
 }

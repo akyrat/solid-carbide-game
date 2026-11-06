@@ -51,6 +51,9 @@ extends RefCounted
 ##   building), or a banner {id, asset: "alert-banner-<design>", building: [x, y], wall, along,
 ##   bottom_units} on a skyscraper's south or east wall (place_alert). Pictures only, no body. A banner
 ##   goes with its skyscraper when that is deleted.
+## - rail (T-542; scripts/level/rails.gd, the format): {id: "rail-N", x1, y1, z1, x2, y2, z2} in rails, a
+##   straight bar between two points of the map at a height at each end (units above the street). Laid with
+##   place_rail (no catalogue pose), changed with set_rail. Not a body: nothing blocks it being laid.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -67,9 +70,11 @@ const CELL := 2
 const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
-const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert"]
+const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail"]
 ## T-441: the kaiju alert signs' geometry (one place, shared with the run).
 const KaijuSignsScript := preload("res://scripts/level/kaiju_signs.gd")
+## T-542: the rails' format and check (one place, shared with the run).
+const RailsScript := preload("res://scripts/level/rails.gd")
 const LEGEND := {"R": "road", "G": "gravel", "B": "building"}
 ## mvp_map.gd's ground tiles: cell values from here on draw the layout's "extra" textures.
 const EXTRA_BASE := 1000
@@ -417,6 +422,8 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	var kind := str(e.kind)
 	if kind == "alert":
 		return place_alert(asset_id, units, view, mirror)
+	if kind == "rail":
+		return {}  # T-542: a rail has two ends: place_rail
 	var corner := cell_corner(c)
 	view = valid_view(asset_id, view)
 	mirror = valid_mirror(asset_id, mirror)
@@ -491,6 +498,43 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+## Lays a rail (T-542) from `a` to `b` (map points, units) at heights `za` and `zb`. Not laid (returns {})
+## when either end is outside the map or the rail fails the game's own check (Rails.problem: shorter than
+## 1 unit, a height at or under the street). Returns {kind: "rail", item}.
+func place_rail(a: Vector2, b: Vector2, za: float, zb: float) -> Dictionary:
+	var it := RailPiece.make_item(_next_id("rails", "rail-"), a, b, za, zb)
+	if rail_problem(it) != "":
+		return {}
+	_list("rails").append(it)
+	return {"kind": "rail", "item": it}
+
+
+## Why `it` (a rail entry) can't stand in this level, "" when it can: outside the map, or the game's check.
+func rail_problem(it: Dictionary) -> String:
+	var r := map_rect()
+	for p in [RailPiece.end_a(it), RailPiece.end_b(it)]:
+		if not r.has_point(p):
+			return "outside the map"
+	return RailsScript.problem(it)
+
+
+## Changes a placed rail (T-542): its ends and heights. Nothing changes (false) when the new rail would fail
+## rail_problem.
+func set_rail(it: Dictionary, a: Vector2, b: Vector2, za: float, zb: float) -> bool:
+	var next := RailPiece.make_item(str(it.id), a, b, za, zb)
+	if rail_problem(next) != "":
+		return false
+	for k in next:
+		it[k] = next[k]
+	return true
+
+
+## The rails of the level (T-542), the entries themselves.
+func rails() -> Array:
+	var l = data.get("rails", [])
+	return l if l is Array else []
 
 
 ## Places a kaiju alert sign or banner (T-441) with the mouse at `units` (on the ground, units).
@@ -577,6 +621,12 @@ func height_at(units: Vector2) -> float:
 	var g := GroundHeight.new()
 	g.load_data(data)
 	return g.height_at(units)
+
+
+## T-542 round 2: the height an auto rail's end at `units` is laid at: RailPiece.STREET_HEIGHT over the
+## ground under it, the street, a rooftop or a ramp (a ramp's foot included).
+func auto_rail_height(units: Vector2) -> float:
+	return RailPiece.auto_height(height_at(units))
 
 
 ## Every surface at a height a piece can stand on or a ramp climb to: the rooftops (the entries of
@@ -768,6 +818,10 @@ func piece_rect(piece: Dictionary) -> Rect2:
 		if KaijuSignsScript.wall_name(str(it.get("wall", "south"))) == "south":
 			return Rect2(foot.position.x + along, foot.end.y, length, 0.5)
 		return Rect2(foot.end.x, foot.end.y - along - length, 0.5, length)
+	if piece.kind == "rail":
+		var ra := RailPiece.end_a(it)
+		var rb := RailPiece.end_b(it)
+		return Rect2(Vector2(minf(ra.x, rb.x), minf(ra.y, rb.y)), (ra - rb).abs())
 	if piece.kind == "boulder":
 		var r := float(it.diameter) / 2.0
 		return Rect2(float(it.x) - r, float(it.y) - r, 2.0 * r, 2.0 * r)
@@ -828,6 +882,9 @@ func _delete(piece: Dictionary) -> bool:
 				return true
 		"alert":
 			if _erase_same(_list("alert_signs"), piece.item):
+				return true
+		"rail":
+			if _erase_same(_list("rails"), piece.item):
 				return true
 	return false
 
@@ -1156,4 +1213,6 @@ func placed_pieces() -> Array:
 		out.append({"kind": "crater", "item": cr})
 	for al in data.get("alert_signs", []):
 		out.append({"kind": "alert", "item": al})
+	for ra in data.get("rails", []):
+		out.append({"kind": "rail", "item": ra})
 	return out

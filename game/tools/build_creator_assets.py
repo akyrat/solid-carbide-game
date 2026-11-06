@@ -207,6 +207,22 @@ def alert_entries():
     return out
 
 
+# T-542 (Level design, Content, "Rails in the level creator"): the rail piece. One entry (kind "rail"), its
+# picture the button's icon only (the rail itself is drawn in code, rail_drawing.gd). The family's members are
+# its heights (H): "auto" = the surface under each end (RailPiece.auto_height), then fixed heights in units.
+# Proposals for the board's playtest.
+RAIL_ICON = "res://art/creator_pieces/icon_rail.png"
+RAIL_HEIGHTS = ["auto", "1", "3.1", "6.1"]
+RAIL_HINTS = ["rail_drag_hint", "rail_turn_hint", "rail_height_hint"]
+
+
+def rail_entries():
+    return [{"id": "rail", "kind": "rail", "label": "piece_rail", "footprint_units": [2.0, 2.0],
+             "views": ["iso"], "mirrors": [False],
+             # One pose per height (the variant names it), so each is one member.
+             "textures": [{"view": "iso", "mirror": False, "variant": h, "texture": RAIL_ICON} for h in RAIL_HEIGHTS]}]
+
+
 PIECE_DIR = "art/creator_pieces/"
 PIECE_STYLE = "res://" + PIECE_DIR + "piece_style.tres"
 # T-251 (proposals for the board's playtest): a rooftop is dragged to any even size from
@@ -346,7 +362,7 @@ HEIGHT_FAMILIES = [
 ]
 # The panel's order: by group, buildings smallest to tallest.
 FAMILY_ORDER = ["road", "centre-line", "zebra-crossing", "cracked-road", "gravel", "sidewalk", "meteor-crater",
-                "platform", "ramp", "building-small", "building-long", "lowrise", "skyscraper", "boulder", "barrier",
+                "platform", "ramp", "rail", "building-small", "building-long", "lowrise", "skyscraper", "boulder", "barrier",
                 "cones", "crates", "parked-car", "broken-car", "street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign",
                 "alert-sign", "alert-banner"]
 # T-441: the alert families' looks strip names each design (creator_texts.json, T-440); the banner's strip
@@ -450,7 +466,13 @@ def family_entries(entries):
                 ms.append(member(e["id"], wall, False, look, turn, height=str(h), variant=str(h)))
     if ms:
         fams.append(summarise("alert-banner", "decoration", "piece_alert_banner", ms))
+    # T-542: the rail, its heights the members (H).
+    if "rail" in by_id:
+        fams.append(summarise("rail", "levels", "piece_rail",
+                              [member("rail", "iso", False, 0, 0, height=h, variant=h) for h in RAIL_HEIGHTS]))
     for f in fams:
+        if f["id"] == "rail":
+            f["hints"] = list(RAIL_HINTS)
         if f["id"] in ("alert-sign", "alert-banner"):
             f["look_labels"] = list(ALERT_LOOK_LABELS)
         if f["id"] == "alert-banner":
@@ -477,6 +499,7 @@ def build():
     entries += sidewalk_entries(load("art/ground/sidewalk_tiles.json"))
     entries += crater_entries(load("data/level/craters.json"))
     entries += alert_entries()
+    entries += rail_entries()
     return {
         "about": "T-232: every placeable asset already in the game, built by game/tools/build_creator_assets.py "
                  "from the art data. Do not edit by hand; rebuild with the script.",
