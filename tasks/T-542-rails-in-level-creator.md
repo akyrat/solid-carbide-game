@@ -43,11 +43,11 @@ Never write, move or commit anything in game/data/levels/ (the board's own level
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The creator can place, move, rotate, resize and delete a rail (tests where the creator has tests, otherwise a scripted check named in the result notes). (QA: pass / fail)
-- [ ] A saved level with rails loads back the same rails, and playing it as a full run has grindable rails (test). (QA: pass / fail)
-- [ ] docs/level-design.md Content describes the rail piece in the creator. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-542/screenshots/ show rails placed in the creator and the same level in a run. (QA: pass / fail)
+- [ ] The creator can place, move, rotate, resize and delete a rail (tests where the creator has tests, otherwise a scripted check named in the result notes). (QA: pass)
+- [ ] A saved level with rails loads back the same rails, and playing it as a full run has grindable rails (test). (QA: fail: code - the board: snapping onto a rail from a platform is very hard; angled joints cost a lot of speed)
+- [ ] docs/level-design.md Content describes the rail piece in the creator. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - full run not finished, round stopped for the board's feedback)
+- [ ] Screenshots in art-archive/T-542/screenshots/ show rails placed in the creator and the same level in a run. (QA: fail: code - the board: rails look horrible on ramps and platforms; no screenshots show them there)
 
 ## Updates
 
@@ -77,3 +77,5 @@ Tests: new game/tests/unit/level_creator/test_creator_rails.gd (24 tests: panel,
 Test levels only under the test folder/user://; nothing written to game/data/levels/.
 Screenshots (art-archive/T-542/screenshots/): creator_rails_placed.png (rails, one selected with handles), creator_laying_a_rail.png (Rail picked, a rail being dragged), run_on_the_creator_level.png (the same level in a run, car grinding). Regenerate: T542_MODE=creator|laying|run bash game/tools/screenshot.sh res://tools/shots/rails_creator_shots.tscn <out.png> 40.
 Notes: Godot's untracked .uid files left uncommitted. The 5 rails of the game's map can now be edited by opening a copy in the creator.
+
+QA round 1 stopped early for the board's playtest. Criteria 1 and 3 pass (creator piece and docs section present). 2 fails: snapping onto a rail from a platform is very hard, angled joints cost a lot of speed. 4 fails: full run not finished. 5 fails: rails look horrible on ramps and platforms, no screenshots show them there. Paperwork note: review line names the playtest-grind-rails folder; use this ticket's folder.
