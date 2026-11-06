@@ -1,7 +1,7 @@
 ---
 id: T-544
 title: Art: the minion's death animation, the full set, swapped into the game
-status: open
+status: blocked
 from: project-lead
 to: asset-generation
 lead: Rails
