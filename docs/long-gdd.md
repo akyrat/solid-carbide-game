@@ -326,7 +326,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - **A handbrake on Space, for a playtest** (board, 2026-11-03): **Space becomes a handbrake**, and the Jump power-up moves from Space to **Left Shift**. **While the handbrake is held**, the car steers the way it steers today (the drift). **While it is not held**, the car steers less sharply (lower steering sensitivity) but reaches a **higher top speed**. The board tries it in a playtest build before deciding to keep it; nothing merges before that. Proposals for the playtest, the Driving & Drift Agent's: how much less sensitive the steering is without the handbrake, how much higher the top speed is, how the car passes between the two states (at once or eased), and what happens when the handbrake is pressed at speed. (T-529, T-530)
 - **A reverse drift trick** (board, 2026-11-05): drifting while the car moves backwards (reversing with S and steering) is a trick of its own, which adds to the combo like the other tricks. What counts as a reverse drift, how long it must last and what it is worth are the Driving & Drift Agent's proposals for the playtest. Its popup text comes from the Narrative Theme Agent.
 - **An aura trick** (board, 2026-11-05): a car that stays stationary for 5 seconds starts earning the aura trick, paid once every second after that for as long as it stays still. What counts as stationary and the amount per second are proposals for the playtest. Its popup text comes from the Narrative Theme Agent.
-- **Bouncier Bouncy Bumpers** (board, 2026-11-05): Bouncy Bumpers bounces the car noticeably further than today at every tier. The new factors are the Game Data Agent's proposal for the playtest.
+- **Bouncier Bouncy Bumpers** (board, 2026-11-05): Bouncy Bumpers bounces the car noticeably further than today at every tier. The new factors are the Game Data Agent's proposal for the playtest (T-540): tier 1 ×2.1 (was ×1.4), tier 2 ×3.9 (was ×2.6), about 1.5 times each; measured head-on bounce at cruise speed 1.85 / 3.48 units (was 1.23 / 2.30; 0.87 without). The hardest-hit cap stays; its bounce scales by the same factor.
 - **Rail grinding, a prototype** (board, 2026-11-05); its own playtest: rails can be placed anywhere on the map (Level design, Decisions, "Rails"). A car that jumps or drops onto a rail grinds along it; grinding counts as a trick. The player can ride a rail to get around the map, and with the Jump power-up can jump from one rail to another. How the car locks on, its speed along the rail and how it leaves the rail are the Driving & Drift Agent's proposals, starting from the old wall grind (Content, "Trick prototype (reference)").
 
 ### Content
@@ -533,13 +533,13 @@ The board's "little side slip out of a drift" (Decisions). The values are **prop
 
 #### Driving power-ups: the tiers (task T-455, proposals)
 
-**Since T-520 each power-up has two tiers (tier 1 as below, tier 2 = the old tier 4, the last number of every list below; the tier 2 and 3 numbers in the lists are the record of the 4-tier build):** Rev Charge tier 2: 0.7 s charge, boost x1.9 for 1.5 s. Jump tier 2: takeoff 8, cooldown 1.1 s. Bouncy Bumpers tier 2: x2.6. Rusty Overcoat tier 2: 5 damage, 0.3 s repeat, hits the kaiju. Polarized Steering Wheel tier 2: +45% burst for 0.5 s and the Bricks shock (written "tier 4" in its section below, which is its last tier). `max_tier` is 2 in `game/data/power_ups.json` and God mode caps at 2. Unit test: `game/tests/unit/test_four_minute_run_data.gd`.
+**Since T-520 each power-up has two tiers (tier 1 as below, tier 2 = the old tier 4, the last number of every list below; the tier 2 and 3 numbers in the lists are the record of the 4-tier build):** Rev Charge tier 2: 0.7 s charge, boost x1.9 for 1.5 s. Jump tier 2: takeoff 8, cooldown 1.1 s. Bouncy Bumpers tier 2: x3.9 (T-540; was x2.6). Rusty Overcoat tier 2: 5 damage, 0.3 s repeat, hits the kaiju. Polarized Steering Wheel tier 2: +45% burst for 0.5 s and the Bricks shock (written "tier 4" in its section below, which is its last tier). `max_tier` is 2 in `game/data/power_ups.json` and God mode caps at 2. Unit test: `game/tests/unit/test_four_minute_run_data.gd`.
 
 The data is `game/data/power_ups.json` (read through `PowerUpData`), four tiers each until T-520, every number a **proposal for the board's playtest** with its reason in the file (Game Data wrote them on the Driving & Drift Agent's behalf). Icons are fixed at `res://art/power_ups/<id>.png`; the files come with the art ticket.
 
 - **Rev Charge:** charge time to full 1.6 / 1.3 / 1.0 / 0.7 s; boost speed ×1.5 / 1.6 / 1.75 / 1.9 for 0.8 / 1.0 / 1.2 / 1.5 s. Slow and short at first, so the idea shows; the top tier is cheap to use mid-drift.
 - **Jump:** takeoff speed 5 / 6 / 7 / 8 (hop height, hence airtime) with a cooldown of 2.0 / 1.7 / 1.4 / 1.1 s. The first hop is enough for the airtime missions, the third for an air 180, the fourth for an air 360.
-- **Bouncy Bumpers:** the T-435 wall bounce distance ×1.4 / 1.8 / 2.2 / 2.6.
+- **Bouncy Bumpers:** the T-435 wall bounce distance, since T-540 ×2.1 (tier 1) and ×3.9 (tier 2), the run's two tiers (the old 4-tier build: ×1.4 / 1.8 / 2.2 / 2.6).
 - **Polarized Steering Wheel** (task T-502): a burst of +20 / +30 / +40 / +45% speed for 0.5 s; tier 4 adds the shock (Bricks' tier 1 wave). Details in "The Polarized Steering Wheel (task T-502)" below.
 - **Rusty Overcoat:** contact damage 2 / 3 / 4 / 5 (a minion has 4 health, T-408), a per-enemy repeat cooldown of 0.5 / 0.5 / 0.4 / 0.3 s, and the kaiju is hit only at tier 4. **Open questions for the board:** the repeat cooldown (so a crowd does not melt each frame) and whether the kaiju is hit.
 - **When every power-up is at its last tier** (`offer_when_exhausted`): the mission gift is skipped, with no overlay and no pause, and the run goes on. Reason: an overlay with nothing to choose would only interrupt the run.
@@ -589,13 +589,13 @@ The decision is in Decisions ("The Jump clears obstacles"). How it is built: `ga
 
 #### Bouncy Bumpers (task T-462)
 
-The decision is in Decisions ("Driving power-ups"); the tier numbers (×1.4 / 1.8 / 2.2 / 2.6) are above. How it is built: `game/docs/driving/collisions.md`, "Bouncy Bumpers (T-462)".
+The decision is in Decisions ("Driving power-ups"); the tier numbers (since T-540 ×2.1 and ×3.9) are above. How it is built: `game/docs/driving/collisions.md`, "Bouncy Bumpers (T-462)".
 
-- **What it does:** with Bouncy Bumpers owned, the wall bounce of "The car bounces off walls" (T-435: walls, buildings, raised sides, the map's edge, boulders) carries the car further, by the owned tier's factor. A head-on hit at cruise speed that travels about 0.9 units from the wall goes about 1.23 / 1.59 / 1.94 / 2.30 units at tiers 1 to 4 (measured, 0.87 without it; tests/unit/test_bouncy_bumpers.gd).
+- **What it does:** with Bouncy Bumpers owned, the wall bounce of "The car bounces off walls" (T-435: walls, buildings, raised sides, the map's edge, boulders) carries the car further, by the owned tier's factor. A head-on hit at cruise speed that travels about 0.9 units from the wall goes about 1.85 / 3.48 units at tiers 1 and 2 (T-540, measured; was 1.23 / 2.30 at ×1.4 / ×2.6; 0.87 without it; tests/unit/test_bouncy_bumpers.gd).
 - **Without it:** the bounce is exactly the T-435 bounce.
 - **The proposals for the playtest** (Driving & Drift Agent's calls):
   - **The factor multiplies the distance, not the speed:** a bounce's distance goes with its speed squared (W pulls the car back at a steady rate), so the bounce speed is scaled by the square root of the factor. Reason: the data calls it a distance multiplier and the screen text says "Bounce 1.4x farther".
-  - **The bounce's maximum scales the same way:** a hit faster than the hardest-hit cap bounces like one at the cap, and that bounce is also times the factor, so the farthest bounce is the factor times today's (about 1.75 × 2.6 = 4.5 units at tier 4).
+  - **The bounce's maximum scales the same way:** a hit faster than the hardest-hit cap bounces like one at the cap, and that bounce is also times the factor, so the farthest bounce is the factor times today's (about 1.75 × 3.9 = 6.8 units at tier 2 since T-540).
   - **Everything else is unchanged:** the drift still ends on a hit, the combo still cuts, W still pulls the car back at the same rate.
 - Screenshots: `art-archive/T-462/screenshots/` (bounce distance per tier).
 
@@ -2311,7 +2311,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `3883c7f2e460d7364fd5c2ff7bd18c8089575204b92b55190cce6bad0aa7a8e7` |
-| `drifting.md` | `4c8cd12bf844363ac0a3abed7346b6ac4812fff38438c6dfe88e1f4671d4e3a9` |
+| `drifting.md` | `b842deb596486c21637188dfc36fc24300a68e00c36bbcfcc357ffab11d5a5d4` |
 | `level-design.md` | `c9de0ca0c421a86961c3262136ce2527a1c82ae16663f527fc4ce183ee16e8db` |
 | `enemies.md` | `b3522a0d4956feacd55308bfac4a7043bf9d64de90261cca6a1e279630505dbd` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |

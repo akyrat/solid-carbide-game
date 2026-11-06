@@ -3645,3 +3645,8 @@ Entry format:
 - Decision or change: Minions cost about half per step (200 alive: 8.6-10.4 ms a frame, was 14.3-15.6), and the cap on minions alive rises from 100 to 200; approved in the batch-1105 playtest.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-538
+
+## 2026-11-06: Bouncier Bouncy Bumpers
+- Decision or change: Bouncy Bumpers x2.1 / x3.9 (was x1.4 / x2.6): head-on bounces of 1.85 / 3.48 units; approved in the batch-1105 playtest.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-540
