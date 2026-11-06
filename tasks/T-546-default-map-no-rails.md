@@ -1,7 +1,7 @@
 ---
 id: T-546
 title: No rails on the default map: remove T-541's playtest rails
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/data/level/kaiju_city_map.json]
 files_expected_to_change: [game/data/level/kaiju_city_map.json, game/tests/, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Started: removing T-541's 5 playtest rails from the default map. The agent is wo
 ### 2026-11-06, In progress → In QA
 
 Built: the default map's 5 rails are removed. QA is checking it.
+
+### 2026-11-06, In QA → Needs playtest
+
+QA passed: only the 5 rails removed from the default map, street empty in the screenshot.
 
 ## Style review
 
