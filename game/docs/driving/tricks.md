@@ -24,6 +24,8 @@ The car node (`scripts/driving/car.gd`) emits it once per trick, at the physics 
 | `air_one_eighty` | Air 180 (task T-219) | On landing, when the heading turned at least 180 degrees in one direction during that airtime and an odd half turn is left after the air 360s: 180 gives 1, 540 an air 360 and an air 180 |
 | `air_three_sixty` | Air 360 (task T-219) | On landing, once per full 360 degrees turned in one direction during that airtime (not its 180 too): 720 gives 2 |
 
+A third, the rail grind (`rail_grind`, task T-541; `scripts/driving/rail_grind.gd`, `RunState`'s `TRICK_RAIL_GRIND`), also raises the combo without the `trick` signal: it pays when a grind ends; the trick list shows it as GRIND! (T-543).
+
 Two more tricks raise the combo without the `trick` signal: the airtime trick (`airtime`, the car's `airtime_trick` signal, "Airtime trick (task T-242)" below) and **thread the needle** (`thread_the_needle`, task T-272: driving between two obstacles paired in the level creator; found by `scripts/level/thread_the_needle.gd` from the map's pairs, not by the car; "Level creator", "Thread the needle (T-272)").
 
 The ids are constants on `TrickDetector` (`TRICK_EXTENDED_DRIFT`, `TRICK_THREE_SIXTY`, `TRICK_ALTERNATE_DRIFT`, `TRICK_REVERSE_DRIFT`, `TRICK_AURA`, `TRICK_AIR_ONE_EIGHTY`, `TRICK_AIR_THREE_SIXTY`, the list `TRICK_IDS` and the aerial ones `AIR_TRICK_IDS`); they match the keys of `trick_add` in `data/combo.json` (except `extended_drift`, which `drift_pay` scales by length). `car.tricks.last_trick`, `car.tricks.seconds_since_last` and `car.tricks.counts` (trick id to count) are there for readouts; `car.tricks.reset()` forgets every drift in progress and the counts. `car.detect_tricks = false` turns detection off.

@@ -42,6 +42,10 @@ extends Node
 @export var tail_steps := 0
 ## ramp clips: the ground file (empty: the scene's own, tutorial_ramp.json).
 @export var ramp_data := ""
+## T-543: the trick popups stay on screen (the aura clip: a still car shows nothing else).
+@export var show_popups := false
+## T-543: quit at this physics step even in the middle of a part (0: off), so a clip can end before a trick that pays on release.
+@export var quit_at_step := 0
 
 ## [steps, W, steer, S]. A = +1, D = -1; S (optional 4th entry) is the reverse key.
 ## A part with the 4th entry "aim", then x and y (units), steers toward that point.
@@ -88,7 +92,7 @@ func _ready() -> void:
 		scene.set_view("iso")
 		scene.panel.visible = false
 		scene.hint.visible = false
-		scene.trick_popups.visible = false
+		scene.trick_popups.visible = show_popups
 		# The test room's walls and boulder: gone (drawing and bodies), so the plain grid is all there is.
 		scene.test_room.walls_body.free()
 		scene.test_room.boulder_body.free()
@@ -227,6 +231,9 @@ func _on_stepped() -> void:
 		_needle.touching(car.held_contacts())
 		_needle.observe(car.model.get_position(), car.airborne, car.model.dt)
 	_frames += 1
+	if quit_at_step > 0 and _frames >= quit_at_step:
+		_quit()
+		return
 	_fix_camera()
 	if car.airborne:
 		_air_steps += 1

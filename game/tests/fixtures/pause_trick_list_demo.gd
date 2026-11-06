@@ -17,3 +17,6 @@ func _process(_delta: float) -> void:
 	if _frames == 40:
 		game.pause_screen.pause()
 		game.pause_screen.open_trick_list()
+		var pick := OS.get_environment("TRICK_SELECT")  # T-543: which trick is selected in the shot
+		if pick != "":
+			game.pause_screen.trick_list.select(pick)

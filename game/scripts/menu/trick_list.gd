@@ -1,6 +1,6 @@
 class_name TrickList
 extends Control
-## The trick list (tasks T-382, T-491): the seven tricks as a list (illustration and name), and the
+## The trick list (tasks T-382, T-491, T-543): the ten tricks as a list in two columns (illustration and name), and the
 ## selected one large on the right: its name, rule, clip with the live key pad (KeyPad), and keycap
 ## recipe. The pause screen's trick list panel holds it. Names, rules, notes and badges come from
 ## res://data/tutorial_text.json; the recipe's structure (which keys per step, which get a /D tag)
@@ -18,17 +18,20 @@ const DEFAULT_FOLDER := "res://art/tutorial/tricks"
 const PIXEL_FONT_PATH := "res://fonts/press_start_2p/PressStart2P-Regular.ttf"
 ## The trick ids (game/docs/driving/tricks.md), in the order they are listed.
 const TRICK_IDS: Array[String] = [
-	"extended_drift", "three_sixty", "alternate_drift", "air_one_eighty",
-	"air_three_sixty", "airtime", "thread_the_needle",
+	# T-543, a proposal for the playtest: the ground tricks, then the air tricks, then the rail and the needle.
+	"extended_drift", "three_sixty", "alternate_drift", "reverse_drift", "aura",
+	"air_one_eighty", "air_three_sixty", "airtime", "rail_grind", "thread_the_needle",
 ]
+## The list stands in this many columns (T-543: ten rows would not fit one column under the pause strip's top line).
+const LIST_COLUMNS := 2
 ## One illustration is this many pixels; the list shows it at LIST_SCALE times that, nearest filtering.
 const ILLUSTRATION_SIZE := Vector2i(64, 48)
 const LIST_SCALE := 1
 ## The selected trick's clip box (the clips are 3:2), the detail pane's width and the list rows' width.
 const CLIP_BOX := Vector2(372, 248)
 const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
-const DETAIL_WIDTH := 600.0
-const ROW_WIDTH := 300.0
+const DETAIL_WIDTH := 564.0
+const ROW_WIDTH := 262.0
 const KEY_PX := 44.0
 const STEP_WIDTH := 172.0
 const KEY_FACE := Color("e9e8f2")
@@ -126,12 +129,18 @@ func rebuild() -> void:
 	layout.name = "Layout"
 	layout.add_theme_constant_override("separation", 20)
 	add_child(layout)
-	var list := VBoxContainer.new()
+	var list := HBoxContainer.new()
 	list.name = "List"
-	list.add_theme_constant_override("separation", 4)
+	list.add_theme_constant_override("separation", 8)
 	layout.add_child(list)
-	for id in TRICK_IDS:
-		list.add_child(_make_row(id))
+	var per_column := ceili(float(TRICK_IDS.size()) / LIST_COLUMNS)
+	for c in LIST_COLUMNS:
+		var column := VBoxContainer.new()
+		column.name = "Column%d" % (c + 1)
+		column.add_theme_constant_override("separation", 4)
+		list.add_child(column)
+		for id in TRICK_IDS.slice(c * per_column, (c + 1) * per_column):
+			column.add_child(_make_row(id))
 	var detail := VBoxContainer.new()
 	detail.name = "Detail"
 	detail.custom_minimum_size.x = DETAIL_WIDTH

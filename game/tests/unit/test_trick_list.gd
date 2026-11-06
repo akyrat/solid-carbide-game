@@ -1,5 +1,5 @@
 extends GutTest
-## Task T-382: the trick list scene: seven tricks, names from the text file, illustrations
+## Task T-382: the trick list scene: ten tricks, names from the text file, illustrations
 ## from one fixed path per trick, an empty picture while a file is missing (T-390: placeholder retired).
 
 const TMP := "user://t382_tricks"
@@ -29,9 +29,9 @@ func test_default_folder() -> void:
 	assert_eq(list.illustration_path("airtime"), "res://art/tutorial/tricks/airtime.png")
 
 
-func test_seven_tricks_with_names_from_the_file() -> void:
+func test_ten_tricks_with_names_from_the_file() -> void:
 	list = _make(TMP)
-	assert_eq(list.labels.size(), 7)
+	assert_eq(list.labels.size(), 10)
 	for id in TrickList.TRICK_IDS:
 		var expected: String = JSON.parse_string(
 			FileAccess.get_file_as_string("res://data/tutorial_text.json"))["trick"][id]

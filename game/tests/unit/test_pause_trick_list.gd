@@ -43,12 +43,12 @@ func test_button_text_is_from_the_file_and_panel_starts_hidden() -> void:
 	assert_true(ps.strip.visible)
 
 
-func test_pressing_opens_panel_with_seven_tricks_only() -> void:
+func test_pressing_opens_panel_with_ten_tricks_only() -> void:
 	ps.trick_list_button.pressed.emit()
 	assert_true(ps.is_trick_list_open())
 	assert_false(ps.strip.visible)
 	assert_eq(ps.trick_list.scene_file_path, "res://scenes/menu/trick_list.tscn")
-	assert_eq(ps.trick_list.labels.size(), 7)
+	assert_eq(ps.trick_list.labels.size(), 10)
 	for id in TrickList.TRICK_IDS:
 		assert_eq(ps.trick_list.labels[id].text, TrickList.text("trick." + id))
 	for key in ["slide2.chain", "slide2.gift"]:
@@ -127,4 +127,19 @@ func test_panel_fits_with_the_recipe_and_clip() -> void:
 		await wait_process_frames(2)
 		var r: Rect2 = ps.trick_panel.get_global_rect()
 		assert_true(Rect2(Vector2.ZERO, Vector2(1152, 648)).encloses(r), "%s: %s" % [id, r])
+	get_tree().root.size = old_size
+
+
+## T-543: ten rows in the list, and the panel still inside the window at 1280 x 720 (the screens scale with the window).
+func test_panel_with_ten_tricks_fits_at_1280_by_720() -> void:
+	var old_size := get_tree().root.size
+	get_tree().root.size = Vector2i(1280, 720)
+	ps.trick_list_button.pressed.emit()
+	await wait_process_frames(3)
+	for id in TrickList.TRICK_IDS:
+		ps.trick_list.select(id)
+		await wait_process_frames(2)
+		var r: Rect2 = ps.trick_panel.get_global_rect()
+		assert_true(Rect2(Vector2.ZERO, Vector2(1280, 720)).encloses(r), "%s: %s" % [id, r])
+	assert_eq(ps.trick_list.rows.size(), 10)
 	get_tree().root.size = old_size
