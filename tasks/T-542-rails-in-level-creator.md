@@ -1,7 +1,7 @@
 ---
 id: T-542
 title: Rails in the level creator
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-06, Blocked → In progress
 
 Started now that the rail grind (T-541) is in master: the agent is working in C:\solid-carbide-worktrees\T-542.
+
+### 2026-11-06, In progress → In QA
+
+Built: a Rail piece in the level creator (lay, move, resize, turn, height, delete), saved in T-541's format and grindable in a run. QA next.
 
 ## Style review
 
