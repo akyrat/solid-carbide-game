@@ -1,7 +1,7 @@
 ---
 id: T-543
 title: The trick list shows REVERSE DRIFT!, AURA FARMING! and GRIND!
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -96,3 +96,4 @@ For the playtest: the order and two-column layout; the aura clip shows the popup
 Not committed: Godot's .uid and .import noise.
 
 QA round 1: all six criteria pass; qa_check all pass (2 test sets, tools skipped). Screenshots seen: pause list shows ten rows in two columns of five, GRIND! selected with its clip, nothing cut off at 1152x648 (the 1280x720 fit is test-checked); clip_frames shows reverse-drift skid, AURA FARMING! popup on a still car, rail grind sparks with GRIND! popup. Slide 2 claim verified: tutorial_slides.gd shows one trick picture, no list. Minor: rail clip frames show HANG TIME!/GRIND! popups although the notes say popups are hidden there.
+- 2026-11-06, needs-playtest → done: The board: trick list lgtm, merge it.
