@@ -1,7 +1,7 @@
 ---
 id: T-535
 title: The Garage button pulses when an upgrade can be bought
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -68,6 +68,10 @@ QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-b
 ### 2026-11-06, Needs playtest → In progress
 
 The board's tweak: light blue letters only, no yellow tint. Back with the agent; merges after QA.
+
+### 2026-11-06, In progress → In QA
+
+Tweak in: light blue letters, no yellow tint or scale pulse. QA is checking it; it merges once QA passes.
 
 ## Style review
 
