@@ -1,7 +1,7 @@
 ---
 id: T-546
 title: No rails on the default map: remove T-541's playtest rails
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -76,3 +76,4 @@ Removed the 5 rails from game/data/level/kaiju_city_map.json (now an empty "rail
 QA round: all 5 criteria pass. qa_check: tests (2 sets, tools set skipped: nothing under tools/ changed), documents, screenshots all PASS. Map diff: only the rails list removed (now "rails": []). Screenshot default_map_no_rails_spawn.png shows the empty street. T-543 grind clip fixtures (tutorial_clip_rail_grind, rail_grind_gif_demo) are fixtures under game/tests/fixtures, not referenced by any test in tests/unit or tests/integration; test_run_rails uses its own map copy with the old rails. No test depends on the default map's rails.
 
 Merged master (T-542) into the branch: docs/level-design.md conflict resolved keeping T-542's rail-piece section and the 'default map has no rails' bullet; also changed T-542's sentence about removing the game map's five rails to say the game map has none. Default map still has 0 rails. Reran test_run_rails (5), test_rail_grind (27), test_game_map (12): all pass.
+- 2026-11-06, needs-playtest → done: The board asked for the default map's rails to be removed; QA verified only the rails changed.
