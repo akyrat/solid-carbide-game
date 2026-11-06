@@ -1,7 +1,7 @@
 ---
 id: T-532
 title: Minion death animation through PixelLab: a sample direction first
-status: flagged-for-review
+status: done
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-03, Open → In progress
 
 Asset agent: PixelLab sample of the death animation, one direction, up to 4 generations (board's go).
+
+### 2026-11-06, Flagged for review → Done
+
+The board approved the sample. Next: the full set (other directions, mirrored, swapped into the game) in a new ticket.
 
 ## Style review
 
@@ -179,3 +183,4 @@ Run 1 of the style loop (2026-11-03) stopped before any PixelLab call: the loop'
 - 2026-11-06, in-progress → flagged-for-review: the style loop kept version 4 (score 6/10), still below 8 after 3 refines; every version is in its Style review
 
 2026-11-06 run 3 (after .env added): style loop ran 4 versions = 4 PixelLab generations (v1 to v4, raw_v1..raw_v4, req_v1..v4), the whole budget; scores 3, 4, 5, 6 of 10, all 41/41 script checks. Kept v4 (6/10): art-archive/T-532/style-loop/v4.png, copied to art-archive/T-532/minion_death_se.png (8 frames 48x48). Below 8, so the loop flagged the ticket for the board's review (status set by the loop's tool, not by me). Generator also added game/tools/build_minion_death_sheet.py (+ test) as a free fix. Strips (x4, dark and light): art-archive/T-532/screenshots/death_se_strip_dark.png, death_se_strip_light.png; per-version x6 strips are in the same folder. Nothing put in game/art/. Round 1 Style review logs a refused PowerShell probe by the generator (key check); it was not worked around.
+- 2026-11-06, flagged-for-review → done: The board approved the sample (6/10 after 4 generations) as it is, 2026-11-06, and asked for the full set.
