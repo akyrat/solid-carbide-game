@@ -1,7 +1,7 @@
 ---
 id: T-541
 title: Rail grinding prototype: rails on the map, grind along them, jump between them
-status: in-qa
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md, docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/tricks.md]
 files_expected_to_change: [game/scripts/driving/, game/scripts/level/, game/scenes/, game/data/combo.json, game/data/level/kaiju_city_map.json, game/tests/, game/docs/driving/, docs/drifting.md, docs/level-design.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -75,6 +75,14 @@ The board's tweak: easier to snap onto rails, steer on the rail like in midair, 
 ### 2026-11-06, In progress → In QA
 
 Tweak in: snap within 2 units and 60 degrees, A/D turn the car on the rail like in midair, Jump hops off 15 degrees toward the nose's side. Ready to play in the grind build.
+
+### 2026-11-06, In QA → Needs playtest
+
+Back in the board's playtest.
+
+### 2026-11-06, Needs playtest → In progress
+
+The board's tweak 2: a jump off a rail ignores the Jump cooldown, so you can hop again quickly after landing on a rail. Back with the agent.
 
 ## Style review
 
@@ -147,3 +155,4 @@ Playtest build (2026-11-06): playtest/grind-rails commit 0b7fa1fb sets game/data
 
 **GIFs retaken:** art-archive/T-541/screenshots/rail_jump_between_rails.gif (hop onto rail-3, D turns the nose right, a slightly diagonal Jump onto rail-4) and rail_climb_to_roof_13.gif (the car now faces the way it landed). The other stills are unchanged.
 - 2026-11-06, in-progress → in-qa: Ready for the board to play (quick tuning 1), no QA agent yet.
+- 2026-11-06, needs-playtest → in-progress: The board: jumping off a rail is not subject to the regular jump's cooldown; after landing on a rail the player can jump again quickly.
