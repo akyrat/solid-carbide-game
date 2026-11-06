@@ -1,0 +1,127 @@
+{
+  "file": "death_e_5.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADzUlEQVR4nOWYS0wTURSG/7kWKQVJqUVFUZGKKEZTUePCqAtZEeMWdWfcGRNX6koXxp1bo2FhiHEhupCkC6KhRtHEaIyAwRcSHzEFNBSstvQRtGPOHW470+n0AQK58dtMZ+6d3v8/59wz0yo7162EzDBIDoPkMEgOg+QwSA6D5DBIDoPkMEgOg+QwSA6D5DBIDoPkMEiOTfdZzRhTFlCHanFdKcYAXPsS/Dj5pBQLLd41s7ZgRoOaz4zBANHQEsbz9M3KP4hiXuzeKRw+E0WDezU/v337m5UZJacBmhhrjvBo5LrJSjwJcSwzxSQrIst27xQ2HYhz8etX7cLNez4cbHXA3VbBx4PhEG5csq4K/WokVA30VfAsDJudZ6bTEHESQtC9zur0UE2tedG+B/reYUNNYxKPB0YB+HBozw68HOnHtXOAu34aW1umAVRaBsIUrmj4N0Ze2bD76C+8QKWhFklkfKA8dS4yJcQLQuMKN7Hfq0VVj/+1D21tq/C4cZTP00PzPwWH4Ltcie+n2oErJ/DGb6k9uwESGMQUv1FkgkxRadQ2xxHQlYgYb2iJccEU7Xf9aVHDwVEMB32mRaksmjwOwAM8fRbj1+hemt95wYGlZ7swuHcXKu9sRisG+fpA/hJKlQaZCAwA0fEEqjZG0FCnYti/jKe6zBXG845y2J3JVKnQGJkJjRuzQOdbdqgpU2L+GKLcwI9EFM5qYGyIITSu8nEKFMnd1tONtV+/Ak25M6BY/C9k6ihULrXNEZS5VF5iVJu0MJmiI13X86qrjG9OcT02qZjmxiYV/jn4xVhKvW838OOBps8Y6beLshUBLsiApRFhxgrKRDYTmSLLZ/ZloE/rNpRpQeLnEm3srtOgNdt6+Xqeks2IVUsjYyTUXadNP3IxyjekXpwV9d+P4ecvrRm8GHgENWKQZtnKC2vaxi+wfGCRMW3DxbFxd5L39mg4hCrdHCoJ4vxVJ2+dH3p/8xLpwX0rWTmfQ4UaKOQLuTESk6ifRk1tknebeIjx6BJrKqrRiXYunjrOG3+Jvr4LXWfOBiwRG108rAavlwIRG3q+pKNr92ptdCxgqvFZvUT+UwNa+QAfeg2dwwBdf9A9YXqTd6VfX4oiXxcqBl5CnuMkTqMkvgLvb/1JraXfP9tPT6Q6ED3175+sNuhaNAN6Ex87lmeKMjQAj5j30AElWKLvPItiIN8rddaW7Dk+kWlUP3fBDRT6y27Wv8DmdRMXISJrNmbDfBgoBgX/+78SDJLDIDkMksMgOQySwyA5DJLDIDkMksMWW8Bc+QvvX3jFFTaRDgAAAABJRU5ErkJggg==",
+      "format": "png"
+    },
+    "action": "dying lizard death animation, dramatic and clear: frame 1 it is struck and its head and front legs jerk up and back; frames 2 to 4 its legs buckle and it topples over sideways onto its side, belly turned toward the viewer, legs sticking out stiffly then going limp; frame 5 its body lies flat on its side on the ground, low and flat, tail lying limp and flat on the ground, jaw hanging open, eye closed; frames 6 to 8 it lies completely still on its side as a dead body, identical frames, no movement. It falls in place, it does not walk or slide. Not walking, not standing, not idle, not crouching. No blood, no liquid, no splatter, no particles, no shadow",
+    "frame_count": 8,
+    "no_background": true,
+    "seed": 2
+  },
+  "prompt": "",
+  "job_id": "ec0a1775-5edb-46b8-8455-e3c1b630d172",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-06T21:47:03+00:00",
+  "image": {
+    "width": 48,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-544",
+  "job_status": "completed",
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 5,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "death_e_0.png",
+    "death_e_1.png",
+    "death_e_2.png",
+    "death_e_3.png",
+    "death_e_4.png",
+    "death_e_5.png",
+    "death_e_6.png",
+    "death_e_7.png",
+    "death_e_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 1.0
+    },
+    "id": "ec0a1775-5edb-46b8-8455-e3c1b630d172",
+    "status": "completed",
+    "created_at": "2026-11-06T21:45:15.719097+00:00",
+    "last_response": {
+      "seed": 2,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 1,
+        "cost_if_paid": 0.0276034579012129
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1376 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1336 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1296 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1284 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1308 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1284 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1212 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1236 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1236 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.8,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 1.0
+      },
+      "generation_id": "08060606-4dbf-4aaa-a3bb-61b06b2a9d7b",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-11-06T21:45:32.905131+00:00"
+    }
+  }
+}
