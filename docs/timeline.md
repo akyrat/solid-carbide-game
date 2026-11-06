@@ -3705,3 +3705,8 @@ Entry format:
 - Decision or change: The pause screen's trick list shows 10 tricks in two columns, adding REVERSE DRIFT!, AURA FARMING! and GRIND! with their recipes and clips recorded from the game; approved by the board.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-543
+
+## 2026-11-06: The Hotshot Racing-style drive is cancelled
+- Decision or change: The board played the Hotshot-style drive prototype and doesn't like it; the whole thing is cancelled. Nothing merged; Jump stays on Space and the driving stays as it was.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-545
