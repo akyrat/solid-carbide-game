@@ -15,7 +15,8 @@
 | `scripts/driving/rail_sparks.gd` | The sparks, in the run's car view (child `RailSparks` of View). `step(car, dt)` each physics step. |
 | `scripts/run/run.gd` | `_build_rails()` with every map: the rails to `car.grind`, the drawing (`rail_drawing`, with the elevation layer's `z_for` as its depth), and `car.grind.grind_ended` to `state.add_grind_trick(seconds)`. `_on_car_rails_step()` after each car step: the sparks and `update_for_car`. |
 | `scripts/run/run_state.gd` | `add_grind_trick(seconds)`: the combo up by `ComboData.grind_add(seconds)`, `combo_trick("rail_grind", added, multiplier)` (the GRIND! popup, `trick_popups.gd` TEXTS), the subs `ComboData.grind_subs(seconds)` times the multiplier before (`trick_subs_paid`). `jump_at_start()`: the playtest switch. |
-| `data/rail_grind.json` | The grind's numbers (proposals; each explained in its `_comment` lines): `reach`, `end_margin`, `catch_above`, `catch_below`, `min_start_speed`, `max_angle_deg`, `decel`, `end_speed`, `drop_side_speed`, `jump_angle_deg`. |
+| `rail_grind.gd` joints (T-542 round 2) | `joint_at_end()` finds the connected rail past the end the car leaves by (`join_distance`, `join_height`, `join_max_angle_deg`); `step()` crosses to it (`_cross_joint`, counted in `joints`) with the speed untouched and the rest of the step carried along it; `rail`, `rail_index`, `direction` and `s` switch to the new piece. |
+| `data/rail_grind.json` | The grind's numbers (proposals; each explained in its `_comment` lines): `reach`, `end_margin`, `catch_above`, `catch_below`, `min_start_speed`, `max_angle_deg`, `decel`, `end_speed`, `drop_side_speed`, `jump_angle_deg`, `join_distance`, `join_height`, `join_max_angle_deg` (`catch_above` is 1.0 since T-542 round 2). |
 | `data/combo.json` | `rail_grind`: `min_seconds`, `add_per_second`, `max_add`, `subs_per_second`, `max_subs`. |
 | `data/playtest.json` | `jump_at_start`: the Jump tier every run starts with (0, off, on master). Tests override it with `RunState.jump_at_start_override`. |
 
@@ -24,6 +25,7 @@ The trick detector (`trick_detector.gd`) is not changed: while grinding the car 
 ## Tests
 
 - `tests/unit/test_rail_grind.gd`: the format, locking on and not (across, rising, beside, too slow, above, under, past an end, on the ground), sliding and leaving at the end, backwards, too slow, Jump to a second rail (15 degrees off the rail), A and D spinning the car at the air turn rate on the rail, the jump's side from the nose against the rail line (forwards and backwards), the numbers from rail_grind.json, the rail left shut until the ground, paying the trick from combo.json, the popup text, the playtest switch, the posts and the projection.
+- `tests/unit/test_rail_joints_and_heights.gd` (T-542 round 2): a joint at 30 and 90 degrees keeps the speed of a straight rail, one grind across a joint, which rail is connected (distance, height, fold-back, fork), the numbers in the data file, a hop from the street, a 3 and a 6 rooftop is caught for the same steps, lock-on distance and angle equal on a platform, real heights compared, the per-piece shadow on raised ground.
 - `tests/unit/run/test_run_rails.gd`: a run on the game's map: the rails reach the car, are drawn in the map's depth order, a Jump from the street lands on rail-3 and its grind pays GRIND!, and a Jump with D held hops from rail-3 to rail-4.
 
 ## Recordings

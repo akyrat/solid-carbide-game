@@ -1330,7 +1330,7 @@ func rail_fixed_height() -> float:
 ## A rail end's height at map point `u`: the picked fixed height, or just above what is under it.
 func rail_height_at(u: Vector2) -> float:
 	var fz := rail_fixed_height()
-	return fz if fz >= 0.0 else RailPiece.auto_height(document.height_at(u))
+	return fz if fz >= 0.0 else document.auto_rail_height(u)
 
 
 ## The local mouse position (the map view's pixels) as map pixels.
@@ -1342,13 +1342,27 @@ func local_px(local: Vector2) -> Vector2:
 ## surface under the end sets the height the end is drawn at, so it settles in a few steps.
 func rail_point_at(px: Vector2) -> Vector2:
 	var fz := rail_fixed_height()
-	var z := fz if fz >= 0.0 else RailPiece.STREET_HEIGHT
-	var u := RailPiece.ground_for(px, z)
-	if fz < 0.0:
-		for i in 3:
-			z = RailPiece.auto_height(document.height_at(u))
+	if fz >= 0.0:
+		return RailPiece.snap(RailPiece.ground_for(px, fz))
+	# Auto (T-542 round 2): the pixel is the end drawn at 1 over the ground under it, so the ground under it
+	# and the drawn height depend on each other. Settle from three starting heights (7, 4, 1 units) and take
+	# the highest height that settles on itself: a rail on a rooftop can be reached where the street would be
+	# hidden behind it (a ramp settles in a few steps).
+	var best_u := Vector2.ZERO
+	var best_z := -1.0
+	var fallback := Vector2.ZERO
+	for start in [1.0, 4.0, 7.0]:
+		var z: float = start
+		var u := RailPiece.ground_for(px, z)
+		for i in 6:
+			z = document.auto_rail_height(u)
 			u = RailPiece.ground_for(px, z)
-	return RailPiece.snap(u)
+		if fallback == Vector2.ZERO:
+			fallback = u
+		if absf(z - document.auto_rail_height(u)) < 0.05 and z > best_z:
+			best_z = z
+			best_u = u
+	return RailPiece.snap(best_u if best_z >= 0.0 else fallback)
 
 
 ## Lays a rail from `a` to `b` (map points, units) at the picked height. A rail shorter than the game takes
@@ -1529,7 +1543,7 @@ func rail_height_pick() -> bool:
 	var a := RailPiece.end_a(it)
 	var b := RailPiece.end_b(it)
 	if heights[next] == RailPiece.AUTO:
-		return _set_selected_rail(a, b, RailPiece.auto_height(document.height_at(a)), RailPiece.auto_height(document.height_at(b)))
+		return _set_selected_rail(a, b, document.auto_rail_height(a), document.auto_rail_height(b))
 	return _set_selected_rail(a, b, float(heights[next]), float(heights[next]))
 
 

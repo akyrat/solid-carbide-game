@@ -63,11 +63,13 @@ func build(map: Node2D, the_rails: Array, height_at := Callable(), depth_for := 
 	if map.get("ground_tiles") != null:
 		map.view_root.move_child(shadows, map.ground_tiles.get_index() + 1)
 	for r in rails:
-		shadows.lines.append([screen_of(r.a, _ground(height_at, r.a)), screen_of(r.b, _ground(height_at, r.b))])
 		var n := maxi(1, ceili(float(r.length) / PIECE_UNITS))
 		var rot := atan2(r.dir.y, r.dir.x)
 		var post_at := post_places(float(r.length))
 		var k := 0
+		# T-542 round 2: the shadow on the street is one line per run of pieces over the street; a piece
+		# over a ramp or a rooftop draws its own shadow on that surface (_Piece.shadow), at its depth.
+		var run_from := -1.0
 		for i in n:
 			var s0 := float(r.length) * float(i) / float(n)
 			var s1 := float(r.length) * float(i + 1) / float(n)
@@ -82,11 +84,23 @@ func build(map: Node2D, the_rails: Array, height_at := Callable(), depth_for := 
 				var at := Rails.point_at(r, float(post_at[k]))
 				p.posts.append([screen_of(at, Rails.height_at(r, float(post_at[k]))), screen_of(at, _ground(height_at, at))])
 				k += 1
+			var g0 := _ground(height_at, Rails.point_at(r, s0))
+			var g1 := _ground(height_at, Rails.point_at(r, s1))
+			var gm := _ground(height_at, p.mid)
+			if maxf(g0, maxf(g1, gm)) > 0.001:
+				p.shadow = [screen_of(Rails.point_at(r, s0), g0), screen_of(Rails.point_at(r, s1), g1)]
+				if run_from >= 0.0:
+					shadows.lines.append([screen_of(Rails.point_at(r, run_from), 0.0), screen_of(Rails.point_at(r, s0), 0.0)])
+					run_from = -1.0
+			elif run_from < 0.0:
+				run_from = s0
 			if depth_for.is_valid():
 				p.base_z = int(depth_for.call(p.mid, rot, p.mid_height)) - 1
 			p.z_index = p.base_z
 			add_child(p)
 			pieces.append(p)
+		if run_from >= 0.0:
+			shadows.lines.append([screen_of(Rails.point_at(r, run_from), 0.0), screen_of(r.b, 0.0)])
 	shadows.queue_redraw()
 
 
@@ -130,9 +144,13 @@ class _Piece extends Node2D:
 	var from := Vector2.ZERO
 	var to := Vector2.ZERO
 	var posts: Array = []
+	## The shadow on the ground under the piece when that is a ramp or a rooftop: [from, to] pixels, or [].
+	var shadow: Array = []
 	var base_z := 0
 
 	func _draw() -> void:
+		if shadow.size() == 2:
+			draw_line((shadow[0] as Vector2).floor(), (shadow[1] as Vector2).floor(), SHADOW_COLOR, SHADOW_WIDTH_PX, false)
 		for post in posts:
 			var top: Vector2 = (post[0] as Vector2).floor()
 			var foot: Vector2 = (post[1] as Vector2).floor()

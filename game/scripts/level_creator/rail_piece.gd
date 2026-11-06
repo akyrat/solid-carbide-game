@@ -16,10 +16,11 @@ const DEFAULT_LENGTH := 12.0
 const TURN_STEP_DEG := 45.0
 ## "[" and "]" shorten and lengthen the selected rail by this, units.
 const LENGTH_STEP := 1.0
-## Auto height: a rail over the street is at this height (the jump pair's, Rails format); over a
-## rooftop or ramp it is the surface's height plus RAIL_LIFT (a car leaving that edge is caught).
+## Auto height: a rail is this high over the surface under each end (the jump pair's height over the street,
+## Rails format), over a rooftop or a ramp too (T-542 round 2): the same height over the ground everywhere,
+## so a rail stands on its posts on any ground and a car's jump off it is caught as easily as from the street
+## (a rail only 0.1 over a rooftop was out of reach for most of a jump's arc).
 const STREET_HEIGHT := 1.0
-const RAIL_LIFT := 0.1
 ## The picked heights besides auto, the family members' "height" (units).
 const AUTO := "auto"
 ## Mouse: an end's handle is grabbed within this many screen pixels, the bar within BODY_PX.
@@ -71,7 +72,7 @@ static func angle_deg(item: Dictionary) -> float:
 
 ## The auto height over a surface of height `ground`.
 static func auto_height(ground: float) -> float:
-	return STREET_HEIGHT if ground <= 0.0 else ground + RAIL_LIFT
+	return ground + STREET_HEIGHT
 
 
 ## The screen pixel (map pixels) of a point of the map at a height.

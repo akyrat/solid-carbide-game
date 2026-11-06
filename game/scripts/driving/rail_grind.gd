@@ -18,6 +18,12 @@ extends RefCounted
 ##    board's tweak, 2026-11-06); the car keeps sliding along the rail whatever way it faces.
 ##  - step(dt): slides on along the rail, losing `decel` units/s every second, and returns "end"
 ##    past the rail's end or "slow" below `end_speed` ("" while it goes on).
+##  - Joints (T-542 round 2; the board: a joint between rail pieces at an angle must cost no speed):
+##    past a rail's end, a CONNECTED rail takes the car on: another rail with an end within
+##    `join_distance` of this end (flat) and `join_height` of its height, whose way on turns the
+##    travel by no more than `join_max_angle_deg`. The car carries its whole speed onto that rail's
+##    direction (nothing lost to the angle, no fall, no new catch), and the extra distance of the
+##    step goes on along it. The grind goes on as one: its seconds and length go on adding up.
 ##  - stop(reason): ends it ("end", "slow", "jump"), sending grind_ended with its seconds and
 ##    length, which the run pays as the GRIND! trick. leave_velocity(reason) is the car's flat
 ##    velocity as it leaves: along the rail; for a jump turned `jump_angle_deg` toward the side
@@ -34,7 +40,7 @@ const DATA_FILE := "rail_grind"
 const DEFAULTS := {
 	"reach": 2.0,
 	"end_margin": 1.0,
-	"catch_above": 0.5,
+	"catch_above": 1.0,
 	"catch_below": 0.75,
 	"min_start_speed": 2.0,
 	"max_angle_deg": 60.0,
@@ -42,6 +48,9 @@ const DEFAULTS := {
 	"end_speed": 2.0,
 	"drop_side_speed": 2.0,
 	"jump_angle_deg": 15.0,
+	"join_distance": 1.0,
+	"join_height": 0.6,
+	"join_max_angle_deg": 100.0,
 }
 
 ## Sent when a grind starts, with the rail's index in `rails`.
@@ -60,6 +69,9 @@ var decel: float = DEFAULTS.decel
 var end_speed: float = DEFAULTS.end_speed
 var drop_side_speed: float = DEFAULTS.drop_side_speed
 var jump_angle_deg: float = DEFAULTS.jump_angle_deg
+var join_distance: float = DEFAULTS.join_distance
+var join_height: float = DEFAULTS.join_height
+var join_max_angle_deg: float = DEFAULTS.join_max_angle_deg
 
 ## The map's rails (Rails.from_layout).
 var rails: Array = []
@@ -82,6 +94,8 @@ var length := 0.0
 var exclude := -1
 ## Grinds started so far (tests, readouts).
 var grinds := 0
+## Joints crossed so far (tests, readouts).
+var joints := 0
 
 
 func _init() -> void:
@@ -162,10 +176,57 @@ func step(dt: float) -> String:
 	seconds += dt
 	length += moved
 	if (direction > 0.0 and s > float(rail.length)) or (direction < 0.0 and s < 0.0):
+		var over := s - float(rail.length) if direction > 0.0 else -s
+		if _cross_joint(over):
+			return ""
 		return "end"
 	if speed < end_speed:
 		return "slow"
 	return ""
+
+
+## T-542 round 2: the connected rail past this rail's end (see the top), as {"index", "s", "direction"} with
+## s the joint's distance along it from its end a, or {}. The smallest turn wins, then the nearest end.
+func joint_at_end() -> Dictionary:
+	var end_s := float(rail.length) if direction > 0.0 else 0.0
+	var exit_point := Rails.point_at(rail, end_s)
+	var exit_h := Rails.height_at(rail, end_s)
+	var best := {}
+	var best_key := Vector2(INF, INF)
+	var cos_max := cos(deg_to_rad(join_max_angle_deg))
+	for i in rails.size():
+		if i == rail_index:
+			continue
+		var r: Dictionary = rails[i]
+		for at_b in [false, true]:
+			var p: Vector2 = r.b if at_b else r.a
+			var h: float = float(r.zb) if at_b else float(r.za)
+			var gap := p.distance_to(exit_point)
+			if gap > join_distance or absf(h - exit_h) > join_height:
+				continue
+			var way: Vector2 = -r.dir if at_b else r.dir  # the way on from this end
+			var c := travel().dot(way)
+			if c < cos_max - 1e-9:
+				continue
+			var key := Vector2(-c, gap)
+			if key.x < best_key.x - 1e-9 or (absf(key.x - best_key.x) <= 1e-9 and key.y < best_key.y):
+				best_key = key
+				best = {"index": i, "s": float(r.length) if at_b else 0.0, "direction": -1.0 if at_b else 1.0}
+	return best
+
+
+## Crosses to the connected rail with `over` units of the step left, true when there is one.
+func _cross_joint(over: float) -> bool:
+	var j := joint_at_end()
+	if j.is_empty():
+		return false
+	rail_index = int(j.index)
+	rail = rails[rail_index]
+	direction = float(j.direction)
+	s = float(j.s) + direction * over
+	# Short rails: the extra distance may pass this one's far end too (the next step crosses on).
+	joints += 1
+	return true
 
 
 ## Ends the grind: the rail can't be caught again until the ground (or another rail).

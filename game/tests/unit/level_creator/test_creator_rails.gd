@@ -119,17 +119,17 @@ func test_a_drag_lays_a_rail_between_its_ends_at_the_picked_height() -> void:
 	assert_eq(second.item.id, "rail-2", "the next free id")
 
 
-func test_auto_height_is_just_above_the_street_or_the_rooftop_under_each_end() -> void:
+func test_auto_height_is_one_over_the_street_or_the_rooftop_under_each_end() -> void:
 	var e := _editor()
 	_with_roof(e)
 	_pick_rail(e, "auto")
-	# From the street onto the rooftop: the bar climbs from 1 to 3.1.
-	var it: Dictionary = _drag_lay(e, Vector2(-40, -52), Vector2(-22, -52), 1.0, 3.1).item
-	assert_eq([it.x1, it.y1, it.z1, it.x2, it.y2, it.z2], [-40.0, -52.0, 1.0, -22.0, -52.0, 3.1])
-	# Along the rooftop: level at 3.1; and the whole piece reads back through the game's own check.
-	var it2: Dictionary = _drag_lay(e, Vector2(-28, -58), Vector2(-16, -46), 3.1, 3.1).item
-	assert_almost_eq(float(it2.z1), 3.1, 1e-6)
-	assert_almost_eq(float(it2.z2), 3.1, 1e-6)
+	# From the street onto the rooftop: the bar climbs from 1 to 4 (T-542 round 2: 1 over the ground under each end).
+	var it: Dictionary = _drag_lay(e, Vector2(-40, -52), Vector2(-22, -52), 1.0, 4.0).item
+	assert_eq([it.x1, it.y1, it.z1, it.x2, it.y2, it.z2], [-40.0, -52.0, 1.0, -22.0, -52.0, 4.0])
+	# Along the rooftop: level at 4; and the whole piece reads back through the game's own check.
+	var it2: Dictionary = _drag_lay(e, Vector2(-28, -58), Vector2(-16, -46), 4.0, 4.0).item
+	assert_almost_eq(float(it2.z1), 4.0, 1e-6)
+	assert_almost_eq(float(it2.z2), 4.0, 1e-6)
 	assert_eq(Rails.from_layout(e.document.data).size(), 2)
 
 
@@ -306,7 +306,7 @@ func test_h_steps_the_selected_rails_height_for_both_ends() -> void:
 	assert_eq([it.z1, it.z2], [6.1, 6.1])
 	e.height_pick()
 	assert_eq([it.z1, it.z2], [1.0, 1.0], "auto: the street under both ends")
-	# Over the rooftop: the rail from the street onto it, then round again to auto: 1.0 and 3.1.
+	# Over the rooftop: the rail from the street onto it, then round again to auto: 1.0 and 4.0.
 	assert_true(e.move_rail(Vector2(-30, -52)))
 	e.step_pick("height")
 	assert_eq([it.z1, it.z2], [3.1, 3.1])
@@ -314,7 +314,7 @@ func test_h_steps_the_selected_rails_height_for_both_ends() -> void:
 	assert_eq([it.z1, it.z2], [6.1, 6.1])
 	e.step_pick("height")
 	assert_almost_eq(float(it.z1), 1.0, 1e-6)
-	assert_almost_eq(float(it.z2), 3.1, 1e-6)
+	assert_almost_eq(float(it.z2), 4.0, 1e-6)
 
 
 func test_escape_during_an_edit_puts_the_rail_back() -> void:
@@ -468,3 +468,41 @@ func test_the_saved_level_played_as_a_run_has_the_rails_drawn_and_grindable() ->
 		car.physics_step()
 	assert_true(locked, "the car locks onto the rail the creator laid")
 	assert_eq(str(car.grind.rail.id), str(rail.id))
+
+
+func test_auto_height_on_a_ramp_follows_the_slope_and_a_rail_on_it_stands_one_over_it() -> void:
+	# T-542 round 2: a rail laid on a ramp sits 1 over the ramp's surface at each end (a ramp's foot too),
+	# not 1 over the street at the foot and 0.1 over the top.
+	var e := _editor()
+	e.place_asset("ramp-0-3", Vector2(-9.5, -9.5))
+	var r: Dictionary = e.level_data.ramps[0]
+	var x: float = float(r.x) + float(r.w) / 2.0
+	var y_foot: float = float(r.y) + float(r.h) - 0.5
+	var y_top: float = float(r.y) + 0.5
+	assert_almost_eq(e.document.auto_rail_height(Vector2(x, y_foot)), e.document.height_at(Vector2(x, y_foot)) + 1.0, 1e-6)
+	assert_gt(e.document.height_at(Vector2(x, y_foot)), -1e-6)
+	_pick_rail(e, "auto")
+	var it: Dictionary = e.lay_rail(Vector2(x, y_foot), Vector2(x, y_top)).item
+	assert_almost_eq(float(it.z1) - e.document.height_at(Vector2(x, y_foot)), 1.0, 1e-6, "1 over the foot")
+	assert_almost_eq(float(it.z2) - e.document.height_at(Vector2(x, y_top)), 1.0, 1e-6, "1 over the top")
+	assert_gt(float(it.z2), float(it.z1) + 1.0, "the bar climbs with the ramp")
+	# The drawing: every piece's depth is at least the ramp's (it is drawn over the ramp, not under it).
+	var ramp_z: int = int(e.elevation.areas[e.elevation.areas.size() - 1].z_index)
+	for p in e.rail_drawing.pieces:
+		assert_gt(p.base_z, ramp_z, "drawn over the ramp's own drawing")
+		var ground := e.document.height_at(p.mid)
+		assert_almost_eq(float(p.mid_height) - ground, 1.0, 0.01, "one over the ramp under the piece")
+		assert_eq(p.shadow.size(), 2, "its shadow lies on the ramp")
+
+
+func test_a_rail_on_a_rooftop_is_drawn_over_it_with_its_shadow_on_the_roof() -> void:
+	var e := _editor()
+	_with_roof(e)
+	_pick_rail(e, "auto")
+	var it: Dictionary = _drag_lay(e, Vector2(-28, -58), Vector2(-16, -58), 4.0, 4.0).item
+	assert_not_null(e.rail_drawing)
+	for p in e.rail_drawing.pieces:
+		assert_eq(p.shadow.size(), 2)
+		assert_almost_eq(float(p.mid_height), 4.0, 1e-6)
+	assert_eq(e.rail_drawing.shadows.lines.size(), 0)
+	assert_eq(it.z1, 4.0)

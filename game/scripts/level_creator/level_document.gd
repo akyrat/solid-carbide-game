@@ -623,6 +623,12 @@ func height_at(units: Vector2) -> float:
 	return g.height_at(units)
 
 
+## T-542 round 2: the height an auto rail's end at `units` is laid at: RailPiece.STREET_HEIGHT over the
+## ground under it, the street, a rooftop or a ramp (a ramp's foot included).
+func auto_rail_height(units: Vector2) -> float:
+	return RailPiece.auto_height(height_at(units))
+
+
 ## Every surface at a height a piece can stand on or a ramp climb to: the rooftops (the entries of
 ## `platforms` themselves) and, since T-405, the platforms the short buildings make
 ## (ShortPlatforms.platforms_of: {id: "building@x,y", x, y, w, h, height 3, short: true}).
