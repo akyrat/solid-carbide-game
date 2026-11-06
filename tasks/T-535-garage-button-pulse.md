@@ -1,7 +1,7 @@
 ---
 id: T-535
 title: The Garage button pulses when an upgrade can be bought
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -65,6 +65,10 @@ Built: the Garage button pulses while an upgrade can be bought. QA is checking i
 
 QA passed. In the combined playtest build: C:\solid-carbide-worktrees\playtest-batch-1105\game\project.godot
 
+### 2026-11-06, Needs playtest → In progress
+
+The board's tweak: light blue letters only, no yellow tint. Back with the agent; merges after QA.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -80,3 +84,4 @@ Built: the Garage button pulses while the saved coins cover the next level of at
 - Untracked .uid files for other scripts in the folder were left out of the commit.
 
 QA round 1: all 5 criteria pass. qa_check: tests PASS (2 sets; tools set skipped), documents PASS (1 changed), screenshots PASS (5 files). Agent's tests: test_garage_button_pulse 8/8, test_main_menu 9/9, test_menu_arrow_keys 14/14, test_screen_flow 28/28; QA full run green. Docs line present in docs/hud-and-menus.md.
+- 2026-11-06, needs-playtest → in-progress: The board: the Garage button's letters turn light blue; no yellow highlighting on the button. No board QA needed: pass QA and merge.
