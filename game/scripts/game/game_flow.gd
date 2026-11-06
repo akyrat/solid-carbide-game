@@ -79,6 +79,7 @@ func show_menu() -> void:
 	_clear_screens()
 	menu = MainMenuScene.instantiate()
 	menu.name = "MainMenu"
+	menu.progress = progress  # the Garage button pulses when something can be bought (T-535)
 	add_child(menu)
 	menu.start_pressed.connect(_on_menu_start)
 	menu.exit_pressed.connect(_on_exit_pressed)

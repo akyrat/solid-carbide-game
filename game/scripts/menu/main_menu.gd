@@ -25,8 +25,20 @@ const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
 ## Darkens the splash so the buttons stay readable over any image.
 const SCRIM_COLOR := Color(0, 0, 0, 0.35)
 
+## T-535: the Garage button's pulse while something can be bought (proposals for the playtest).
+const PULSE_SECONDS := 1.6  # one full breath of the letters' colour, slow and gentle
+const LETTER_BLUE := Color(0.45, 0.8, 1.0)  # the light blue letters; reads on the steel plate
+const LETTER_BLUE_PALE := Color(0.75, 0.92, 1.0)  # the top of the colour breath
+## The button's text colour states the letters take (the plate, size and position never change).
+const LETTER_STATES := ["font_color", "font_hover_color", "font_focus_color", "font_pressed_color", "font_hover_pressed_color"]
+
 ## Set before the menu enters the tree to use another image (tests).
 var splash_path: String = SPLASH_PATH
+## The save and buy object (the screen flow passes the game's own before the menu enters the
+## tree). The Garage button pulses from its coins, prices and levels. Null: no pulse.
+var progress: PlayerProgress
+var _pulse_tween: Tween
+var _letter_originals: Dictionary = {}
 
 var start_button: Button
 var garage_button: Button
@@ -100,6 +112,48 @@ func _ready() -> void:
 	exit_button.pressed.connect(func(): exit_pressed.emit())
 	KeyNav.chain_column([start_button, garage_button, exit_button])  # T-492
 	start_button.grab_focus()
+	refresh_garage_pulse()
+
+
+## True while the saved coins cover the next level of at least one garage upgrade that is
+## not maxed. Read from the garage's own data through PlayerProgress (T-535).
+func can_buy_something() -> bool:
+	if progress == null:
+		return false
+	for id in GarageData.UPGRADES:
+		if progress.can_buy(id) == PlayerProgress.OK:
+			return true
+	return false
+
+
+## True while the Garage button is pulsing.
+func is_garage_pulsing() -> bool:
+	return _pulse_tween != null and _pulse_tween.is_valid()
+
+
+## Starts or stops the pulse to match the saved coins. The screen flow builds a fresh menu
+## each time the player comes back from the garage, so this runs again after buying.
+func refresh_garage_pulse() -> void:
+	var want := can_buy_something()
+	if want and not is_garage_pulsing():
+		for state in LETTER_STATES:
+			_letter_originals[state] = garage_button.get_theme_color(state)
+		_pulse_tween = create_tween().set_loops()
+		_pulse_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		var half := PULSE_SECONDS / 2.0
+		_pulse_tween.tween_method(_set_letters, LETTER_BLUE, LETTER_BLUE_PALE, half)
+		_pulse_tween.tween_method(_set_letters, LETTER_BLUE_PALE, LETTER_BLUE, half)
+		_set_letters(LETTER_BLUE)
+	elif not want and is_garage_pulsing():
+		_pulse_tween.kill()
+		_pulse_tween = null
+		for state in LETTER_STATES:
+			garage_button.add_theme_color_override(state, _letter_originals[state])
+
+
+func _set_letters(color: Color) -> void:
+	for state in LETTER_STATES:
+		garage_button.add_theme_color_override(state, color)
 
 
 func _style_pixel_label(label: Label, size: int, color: Color, outline: int) -> void:

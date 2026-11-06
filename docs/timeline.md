@@ -3650,3 +3650,8 @@ Entry format:
 - Decision or change: Bouncy Bumpers x2.1 / x3.9 (was x1.4 / x2.6): head-on bounces of 1.85 / 3.48 units; approved in the batch-1105 playtest.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-540
+
+## 2026-11-06: The Garage button's letters turn light blue
+- Decision or change: On the main menu, while an upgrade can be bought, the Garage button's letters turn light blue with a soft colour breath; no yellow tint or scale pulse (the board's tweak after the batch-1105 playtest).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-535
