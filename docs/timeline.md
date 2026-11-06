@@ -3685,3 +3685,8 @@ Entry format:
 - Decision or change: The south-east death animation sample (8 frames of 48x48, 4 PixelLab generations, best 6/10), approved by the board as it is; the request builder moved to game/tools/pixellab_animate_req.py.
 - Documents touched: none
 - Tasks: T-532
+
+## 2026-11-06: The steering wheel's cooldown on its slot icon
+- Decision or change: A dark veil over the wheel's HUD slot icon shrinks as the cooldown reloads, with a short white flash when it is ready; approved in the board's playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-528
