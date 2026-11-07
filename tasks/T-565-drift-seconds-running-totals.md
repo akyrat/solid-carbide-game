@@ -1,7 +1,7 @@
 ---
 id: T-565
 title: The drift slide counts 3 s of drifting in total; total-time mission goals show their running total
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, tasks/T-561-practice-session.md, tasks/T-563-notebook-trick-splash.md, game/scripts/hud/mission_page.gd]
 files_expected_to_change: [game/scripts/run/, game/scripts/hud/, game/tests/, game/docs/game-loop/, docs/game-loop-architecture.md, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: the drift slide counts 3 s of drifting in total; airtime goals show the
 
 Built: the drift slide counts 3 s in total; airtime shows its running total (e.g. 2.7/3.0). QA now.
 
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6). Into the tutorial build.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -89,3 +93,4 @@ GIF: art-archive/T-565/screenshots/running_totals.gif (fixture tests/fixtures/ru
 Docs: docs/hud-and-menus.md (Content, The HUD: new paragraph 'Running totals in the notebook'; The interactive slides: the drift's 3 s), docs/game-loop-architecture.md (Content, Missions in the run: Running totals; The practice session: the drift counts 3 s), game/docs/game-loop/practice-session.md, game/docs/game-loop/the-run.md.
 
 Update after T-564 was merged (2026-11-07): the seams now use T-564's keys. PracticeSession.DRIFT_SECONDS_TEXT_KEYS = tutorial.goal.drift (T-564 rewrote it in place: 'Drift seconds {done}/{total}'). MissionPage.TOTAL_GOALS_KEY = total_seconds (the one template '{name} seconds {done}/{total}'). New MissionPage.TOTAL_NAMES_KEY = total_seconds_names, which gives the {name} per trick (airtime: 'Airtime'); a seconds goal without a name keeps its usual missions.goals line. For a running total, {total} now shows one decimal too, as T-564's comments ask ('Airtime seconds 2.7/3.0', 'Drift seconds 3.0/3.0'). The fixture's stand-in line is gone. Tests for the changed code: test_mission_page_running_total 9/9 (now checks the real total_seconds line), test_practice_session 28/28, test_tutorial* 57/57, test_hud_mission_page 11/11, every mission* test passes (56). game/tools/test_text_inventory.py: 8 passed. The inventory finds no code text in mission_page.gd, practice_session.gd or missions.gd. GIF re-recorded with the real texts: art-archive/T-565/screenshots/running_totals.gif. The drift slide goes 1.5, 2.1, then 3.0/3.0, ticked; the run's airtime goes 0.9, 2.2, then 2.7/3.0. Stills updated: drift_slide_3s_done.png, run_airtime_total.png. Docs updated: hud-and-menus.md, game-loop-architecture.md, game/docs/game-loop/practice-session.md and the-run.md. A hook refused an 'rm -rf' of my own scratchpad frames folder (it guards tickets); I didn't retry it and recorded to a new folder instead.
+- 2026-11-07, needs-playtest → done: Board: interactive tutorial build played, lgtm
