@@ -1,7 +1,7 @@
 ---
 id: T-563
 title: A trick falls into the mission notebook with a splash
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,11 +43,11 @@ Part of the interactive tutorial (board, 2026-11-07; HUD and menus, Decisions, "
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A trick that counts toward a mission goal plays the falling box with the trick's name and the splash, then the count updates; a trick that doesn't count plays nothing (tests). (QA: pass / fail)
-- [ ] Quick tricks in a row don't hide the count or break the page (test). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-563/screenshots/ shows it in a run. (QA: pass / fail)
+- [ ] A trick that counts toward a mission goal plays the falling box with the trick's name and the splash, then the count updates; a trick that doesn't count plays nothing (tests). (QA: pass: test_mission_page_fall covers a counting trick's box and delayed count, and a non-counting trick playing nothing)
+- [ ] Quick tricks in a row don't hide the count or break the page (test). (QA: pass: queue and burst tests keep every count arriving)
+- [ ] docs/hud-and-menus.md Content describes it. (QA: pass: Content paragraph at hud-and-menus.md line 146)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass: qa_check test sets pass; counts in result notes)
+- [ ] A GIF in art-archive/T-563/screenshots/ shows it in a run. (QA: pass: GIF 87 frames at 1152x648; strip shows ALT DRIFT! box falling onto the goal line, splash of blue droplets, count 0/10 to 1/10)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: a trick's name box falls into the mission notebook with a splash.
+
+### 2026-11-07, In progress → In QA
+
+Built: a counting trick drops its name box into the notebook with a splash. QA now.
 
 ## Style review
 
