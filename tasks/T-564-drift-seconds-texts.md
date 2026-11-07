@@ -1,7 +1,7 @@
 ---
 id: T-564
 title: Texts: drift seconds goal and running totals in the notebook
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -43,10 +43,10 @@ A tweak to the interactive tutorial build after the board played it (branch play
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each text exists with a key and a _comment, listed in the result notes. (QA: pass / fail)
-- [ ] Each scores 8 or more in the style loop, or is noted for the playtest. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists them. (QA: pass / fail)
-- [ ] The tests for the changed data pass and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] Each text exists with a key and a _comment, listed in the result notes. (QA: pass)
+- [ ] Each scores 8 or more in the style loop, or is noted for the playtest. (QA: pass)
+- [ ] docs/hud-and-menus.md Content lists them. (QA: pass)
+- [ ] The tests for the changed data pass and QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: goal lines for the drift slide's 3 s total and the notebook's running totals.
+
+### 2026-11-07, In progress → In QA
+
+Texts written (9/10). QA now.
 
 ## Style review
 
