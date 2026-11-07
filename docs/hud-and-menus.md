@@ -207,6 +207,14 @@ Each scored 8 or more in the style loop (the rule line for the reverse drift nee
 - **Trick list rules** (`trick_rule.<id>`): REVERSE DRIFT!: Hold reverse and steer to drift while moving backwards. AURA FARMING!: Stop and sit still for 5 seconds, then every second you stay put pays subs. GRIND!: In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. (T-550; it was "Jump or drop onto a rail and grind along it.")
 - **Keycap recipes** (`trick_recipe.<id>.step1_*`, notes at most 20 characters): REVERSE DRIFT!: keys S + A/D, note "Slide backwards". AURA FARMING!: no keys, badge "STAND STILL", note "5 s, then every s". GRIND!: no keys, badge "HOLD SPACE", note "Touch a rail mid-air" (T-550).
 
+### Texts for the Settings screen (T-570; proposals for the playtest)
+
+Decisions, "A Settings screen from the main menu". All three are in `game/data/pause_text.json` (T-571 reads them); each scored 9 or more in the style loop. The settings' own labels are the pause screen's, reused as they are.
+
+- **Main menu button** (`settings_button`): "Settings", next to Start, Garage, Cosmetics and Exit (9).
+- **Screen title** (`settings_title`): "Settings" (10).
+- **Back button** (`settings_back`): "Back", returns to the main menu (10). Same word as `god_mode_back`, with its own key so the screens stay independent.
+
 ### Combo broken popup
 
 Task T-244 (decision: Decisions, "Combo broken popup", 2026-10-21). When a crash cuts the combo, the popup pops from the car like the trick popups, in red and broken-looking, with this exact text, for T-245 to use word for word: **COMBO BROKEN!**. It is one short line in the trick popups' voice (capitals, exclamation mark, like LONG DRIFT! and AIR 360!) and reads as a loss. Proposal for the playtest: it shows no amount lost (no "-{amount}"), only the line; the combo counter dropping to nothing already shows the size of the loss, and a bare line stays readable at a glance mid-crash.

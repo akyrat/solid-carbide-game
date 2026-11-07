@@ -3945,3 +3945,8 @@ Entry format:
 - Decision or change: Every new itch.io build shows the tutorial again, even to players who ticked Don't show again.
 - Documents touched: docs/hud-and-menus.md, docs/working-with-the-board.md
 - Tasks: T-572
+
+## 2026-11-07: Texts for the Settings screen
+- Decision or change: The main menu's Settings button and the Settings screen's title (Settings) and Back.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`
+- Tasks: T-570
