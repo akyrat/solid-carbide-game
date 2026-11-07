@@ -1,22 +1,22 @@
 {
-  "_comment": "T-381, the tutorial slides' and the pause screen's trick list's text (HUD and menus, Content, 'Tutorial slides and trick list'); the UI tickets read it, no text in code. Every line scored 8 or more in the style loop (T-381's Style review). Keys: slide1.*, slide2.*, slide3.*, trick.<id> (reused word for word from the trick popups and recap_text.json), button.*, checkbox.*, arrow.*. Each entry has a '<key>_comment' line saying where it appears. T-484 (the redrawn four-slide tutorial, HUD and menus, Decisions, 'The tutorial slides are redrawn, with clips of the real car'): new keys kicker.*, slide1.title, slide1.key_*, slide1.drift_rule, slide2.title, slide2.step*, slide2.clip_ramp, slide3.title, slide3.missions, slide4.*, button.skip, all scored 8 or more in T-484's Style review. Headlines, labels and captions are stored in sentence case (the style loop's label kind); the slides show them in capitals in the display font, so the UI upcases them for display (trick.* are stored in capitals, as popups).",
+  "_comment": "T-381, the tutorial slides' and the pause screen's trick list's text (HUD and menus, Content, 'Tutorial slides and trick list'); the UI tickets read it, no text in code. Every line scored 8 or more in the style loop (T-381's Style review). Keys: slide1.*, slide2.*, slide3.*, trick.<id> (reused word for word from the trick popups and recap_text.json), button.*, checkbox.*, arrow.*. Each entry has a '<key>_comment' line saying where it appears. T-484 (the redrawn four-slide tutorial, HUD and menus, Decisions, 'The tutorial slides are redrawn, with clips of the real car'): new keys kicker.*, slide1.title, slide1.key_*, slide1.drift_rule, slide2.title, slide2.step*, slide2.clip_ramp, slide3.title, slide3.missions, slide4.*, button.skip, all scored 8 or more in T-484's Style review. Headlines, labels and captions are stored in sentence case (the style loop's label kind); the slides show them in capitals in the display font, so the UI upcases them for display (trick.* are stored in capitals, as popups). T-559 (the interactive tutorial, HUD and menus, Decisions, 'Interactive tutorial slides'): new block tutorial.* (loop slide, trick slides, notebook goals, success, grind hint), all scored 8 or more in T-559's Style review. slide1.*, slide2.*, slide3.* and kicker.controls/loop/missions are UNUSED from T-559 on; slide4.*, button.*, checkbox.*, arrow.*, kicker.goal, trick.* and trick_rule.* stay.",
   "slide1": {
     "controls": "[W] accelerate, [S] brake/reverse, [A] left, [D] right; subs reward confidence, so fake it.",
     "controls_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 1 (the controls), first line: what W, A, S and D do.",
     "drift": "Accelerate while turning and the car drifts on its own. No drift button, zero friction.",
     "drift_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 1 (the controls), second line under the controls: accelerating while turning drifts the car.",
     "title": "Drive",
-    "title_comment": "Slide 1's headline (shown in capitals).",
+    "title_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 1's headline (shown in capitals).",
     "key_w": "Gas",
-    "key_w_comment": "Slide 1: the small label on the W keycap.",
+    "key_w_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 1: the small label on the W keycap.",
     "key_a": "Left",
-    "key_a_comment": "Slide 1: the small label on the A keycap.",
+    "key_a_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 1: the small label on the A keycap.",
     "key_s": "Brake",
-    "key_s_comment": "Slide 1: the small label on the S keycap.",
+    "key_s_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 1: the small label on the S keycap.",
     "key_d": "Right",
-    "key_d_comment": "Slide 1: the small label on the D keycap.",
+    "key_d_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 1: the small label on the D keycap.",
     "drift_rule": "W + turn = drift",
-    "drift_rule_comment": "Slide 1: the drift rule under the keys, written with the W as part of the line (the UI may draw the W as a keycap and split the line on '+' and '=')."
+    "drift_rule_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 1: the drift rule under the keys, written with the W as part of the line (the UI may draw the W as a keycap and split the line on '+' and '=')."
   },
   "slide2": {
     "chain": "Tricks raise your multiplier. Tricks and drifting bring subs.",
@@ -24,33 +24,33 @@
     "gift": "Every sub goal brings a gift pack: a weapon that keeps enemies away and the stream alive.",
     "gift_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 2 (the loop), second line under the trick list: a sub goal brings a gift pack with a weapon that helps survive and keeps enemies away.",
     "title": "Tricks bring gift packs",
-    "title_comment": "Slide 2's headline (shown in capitals).",
+    "title_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2's headline (shown in capitals).",
     "step1_title": "Pull tricks",
-    "step1_title_comment": "Slide 2, step 1 title (the trick clip step).",
+    "step1_title_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 1 title (the trick clip step).",
     "step1_caption": "Full list in settings menu",
-    "step1_caption_comment": "Slide 2, step 1 caption under its title.",
+    "step1_caption_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 1 caption under its title.",
     "step2_title": "Chain trick combos",
-    "step2_title_comment": "Slide 2, step 2 title (the multiplier beside the car rising).",
+    "step2_title_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 2 title (the multiplier beside the car rising).",
     "step2_caption": "",
-    "step2_caption_comment": "Slide 2, step 2 caption under its title.",
+    "step2_caption_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 2 caption under its title.",
     "step3_title": "Hit a sub goal",
-    "step3_title_comment": "Slide 2, step 3 title (the sub goal ring).",
+    "step3_title_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 3 title (the sub goal ring).",
     "step3_caption": "",
-    "step3_caption_comment": "Slide 2, step 3 caption under its title.",
+    "step3_caption_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 3 caption under its title.",
     "step4_title": "Gift pack",
-    "step4_title_comment": "Slide 2, step 4 title (the gift pack).",
+    "step4_title_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 4 title (the gift pack).",
     "step4_caption": "All weapons auto-fire",
-    "step4_caption_comment": "Slide 2, step 4 caption under its title.",
+    "step4_caption_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2, step 4 caption under its title.",
     "clip_ramp": "HANG TIME! + AIR 180!",
-    "clip_ramp_comment": "Slide 2: the caption under the ramp clip, joining two trick names word for word (trick.airtime and trick.air_one_eighty). The other two clip captions are trick.extended_drift and trick.alternate_drift, read from trick.*, not repeated here."
+    "clip_ramp_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2: the caption under the ramp clip, joining two trick names word for word (trick.airtime and trick.air_one_eighty). The other two clip captions are trick.extended_drift and trick.alternate_drift, read from trick.*, not repeated here."
   },
   "slide3": {
     "goal": "Chain tricks for gift packs. Be maxed out for the kaiju at 1 minute left. Peak content.",
     "goal_comment": "UNUSED since T-484 (the redrawn slides no longer show it; the UI ticket removes its use). Was: Slide 3 (the goal): chain tricks to get the most weapons and be strongest when the kaiju arrives with 1 minute left.",
     "title": "Missions power your car",
-    "title_comment": "Slide 3's headline (shown in capitals).",
+    "title_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 3's headline (shown in capitals).",
     "missions": "The notebook on the left gives you one mission at a time: clear it, then pick a driving power-up.",
-    "missions_comment": "Slide 3: the one line beside the notebook page and the four driving power-ups. The notebook's sample lines and the power-up names come from screen_texts.json, not from here."
+    "missions_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 3: the one line beside the notebook page and the four driving power-ups. The notebook's sample lines and the power-up names come from screen_texts.json, not from here."
   },
   "trick": {
     "extended_drift": "LONG DRIFT!",
@@ -89,11 +89,11 @@
     "pattern": "{n} / {total} · {topic}",
     "pattern_comment": "Above every slide's headline: the slide number out of the total, then that slide's kicker topic below. Built by code from this pattern (not scored; it holds no wording).",
     "controls": "Controls",
-    "controls_comment": "Slide 1's kicker topic, after '1 / 4 · '.",
+    "controls_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 1's kicker topic, after '1 / 4 · '.",
     "loop": "How you get stronger",
-    "loop_comment": "Slide 2's kicker topic, after '2 / 4 · '.",
+    "loop_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 2's kicker topic, after '2 / 4 · '.",
     "missions": "Missions",
-    "missions_comment": "Slide 3's kicker topic, after '3 / 4 · '.",
+    "missions_comment": "UNUSED since T-559 (the interactive tutorial replaces slides 1 to 3; the UI ticket T-562 removes their use). Slide 3's kicker topic, after '3 / 4 · '.",
     "goal": "The goal",
     "goal_comment": "Slide 4's kicker topic, after '4 / 4 · '."
   },
@@ -197,5 +197,62 @@
       "steps_comment": "One step: no keys, a badge."
     },
     "comment": "Pause screen, trick list panel (T-489): each trick's key recipe, steps joined by an arrow. Notes sit under keycaps in tiny pixel type (20 characters at most); badges are a word or two shown in capitals where no key is pressed. Stored in sentence case. THREAD THE NEEDLE! has no recipe (no keys: just drive through the gap)."
+  },
+  "tutorial": {
+    "_comment": "T-559: the interactive tutorial's texts. Goal lines keep {done}/{total} for code to fill. Titles stored in sentence case, shown in capitals.",
+    "loop": {
+      "title": "The content loop",
+      "title_comment": "Loop slide (slide 1) headline (shown in capitals).",
+      "step1": "Do tricks",
+      "step1_comment": "Loop slide, chain step 1 label.",
+      "step2": "Gain subs",
+      "step2_comment": "Loop slide, chain step 2 label.",
+      "step3": "Unbox new weapons",
+      "step3_comment": "Loop slide, chain step 3 label (a gift pack opens: weapons).",
+      "step4": "Repeat for content",
+      "step4_comment": "Loop slide, chain step 4 label (the repeat).",
+      "point": "By the 4-minute mark, you're strong enough to take on the kaiju. Huge for engagement.",
+      "point_comment": "Loop slide, the closing line under the chain."
+    },
+    "trick": {
+      "drift": {
+        "title": "Drift",
+        "title_comment": "Drift trick slide's headline (shown in capitals).",
+        "instruction": "Hold W and a turn key, A or D, to drift. Let go to cash it in.",
+        "instruction_comment": "Drift trick slide: the one-line instruction beside the practice window."
+      },
+      "altdrift": {
+        "title": "Alt drift",
+        "title_comment": "Alt drift trick slide's headline (shown in capitals).",
+        "instruction": "Drift forward, then swap W for S while holding the same turn key.",
+        "instruction_comment": "Alt drift trick slide: the one-line instruction beside the practice window."
+      },
+      "airspin": {
+        "title": "Air spins",
+        "title_comment": "Air spins trick slide's headline (shown in capitals).",
+        "instruction": "Hit a ramp holding W, then hold A or D in the air: AIR 180! or AIR 360! both count.",
+        "instruction_comment": "Air spins trick slide: the one-line instruction beside the practice window."
+      },
+      "grind": {
+        "title": "Grind style",
+        "title_comment": "Grind trick slide's headline (shown in capitals).",
+        "instruction": "In the air, hold Space and touch a rail to grind it. Let go to launch the way you face.",
+        "instruction_comment": "Grind trick slide: the one-line instruction beside the practice window."
+      }
+    },
+    "goal": {
+      "drift": "Drifts {done}/{total}",
+      "drift_comment": "Notebook goal line in the drift practice window, a quantity goal like the missions': drifts, 3 successes.",
+      "altdrift": "Alt drifts {done}/{total}",
+      "altdrift_comment": "Notebook goal line in the altdrift practice window, a quantity goal like the missions': alt drifts, 3 successes.",
+      "airspin": "Air spins {done}/{total}",
+      "airspin_comment": "Notebook goal line in the airspin practice window, a quantity goal like the missions': air spins (AIR 180! or AIR 360!), 3 successes.",
+      "grind": "Rail grinds {done}/{total}",
+      "grind_comment": "Notebook goal line in the grind practice window, a quantity goal like the missions': rail grinds, 3 successes."
+    },
+    "success": "Content secured!",
+    "success_comment": "Shown over a practice window only (not the whole slide) after the third success, on every trick slide.",
+    "grind_hint": "One power-up on the house: Jump. Take it, jump, then hold Space over a rail.",
+    "grind_hint_comment": "Grind slide: hint under or beside the practice window about the Jump gift offered when the practice starts."
   }
 }
