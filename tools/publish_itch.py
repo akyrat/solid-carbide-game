@@ -164,7 +164,13 @@ def run_butler(cmd, env, key):
     return r.returncode, redact(((r.stdout or "") + (r.stderr or "")), key).rstrip()
 
 
-def run(argv, out=print, exporter=export_web):
+def safe_print(text):
+    """Print on a console whose encoding can't show butler's characters: replace them (T-558)."""
+    enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+    print(str(text).encode(enc, errors="replace").decode(enc, errors="replace"))
+
+
+def run(argv, out=safe_print, exporter=export_web):
     ap = argparse.ArgumentParser(description="Publish a browser build of master to itch.io.")
     ap.add_argument("--dry-run", action="store_true", help="do everything except the push")
     ap.add_argument("--repo", default=str(DEFAULT_REPO), help="the checkout to publish (default: this one)")

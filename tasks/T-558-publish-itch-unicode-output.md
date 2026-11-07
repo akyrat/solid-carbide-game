@@ -1,7 +1,7 @@
 ---
 id: T-558
 title: publish_itch.py crashes printing butler's output on the Windows console
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Rails
@@ -50,10 +50,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: the publish script prints butler's output without crashing.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Fix: run()'s default output is now safe_print, which replaces characters the console encoding can't show (cp1252 crashed on ∙/√); butler output was already read as UTF-8 with errors replaced and the key redaction is unchanged. New test test_cp1252_console_prints_butler_symbols runs the push path with a fake butler printing ∙ √ under a strict cp1252 stdout: exit 0, Pushed version, page link, channel status. Ran: python -m unittest tools.test_publish_itch, 23 tests OK (includes the redaction test and test_dry_run_does_not_push). Real 'publish_itch.py --dry-run' on this branch stops with 'not on master' (correct, it refuses off master), so the dry-run path was checked by the fake-butler dry-run test only. No push made.
