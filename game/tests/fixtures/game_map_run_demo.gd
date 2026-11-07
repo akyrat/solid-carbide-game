@@ -11,11 +11,16 @@ extends Node
 @export var shot := "start"
 
 const ROOF_1_AT := Vector2(-32.0, 36.0)
+## T-547: parked beside the board's rails (rail-1 and rail-2 near the spawn) and its ramps up to roof-1.
+const AT := {"rails": Vector2(20.0, -30.0), "rails_far": Vector2(-46.0, -96.0), "ramps": Vector2(-84.0, -100.0), "ramp13": Vector2(-24.0, -112.0)}
+const ZOOMS := {"ramps": 14.0, "ramp13": 14.0, "rails_far": 14.0}
+var game: Node
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	GameFlow.tutorial_enabled = false  # Start goes straight to the run
-	var game: Node = preload("res://scenes/game/game.tscn").instantiate()
+	game = preload("res://scenes/game/game.tscn").instantiate()
 	add_child(game)
 	game.menu.start_button.pressed.emit()
 	await get_tree().process_frame
@@ -28,6 +33,13 @@ func _ready() -> void:
 	if shot == "wide":
 		run.camera_follow.dynamic = false
 		run.set_zoom(20.0)
+	if ZOOMS.has(shot):
+		run.camera_follow.dynamic = false
+		run.set_zoom(ZOOMS[shot])
+	if AT.has(shot):
+		run.car.model.set_position(AT[shot])
+		run.car.model.set_velocity(Vector2.ZERO)
+		run.car._sync_from_model()
 	if shot == "rooftop":
 		run.car.model.set_position(ROOF_1_AT)
 		run.car.model.set_velocity(Vector2.ZERO)
@@ -37,7 +49,7 @@ func _ready() -> void:
 	run.camera.reset_physics_interpolation()
 	for i in 3:  # the camera catches up with the car before minions spawn round the screen
 		await get_tree().process_frame
-	if shot in ["start", "wide", "rooftop"]:
+	if shot in ["start", "wide", "rooftop"]:  # (the T-547 shots show the rails and ramps without minions)
 		for i in 300:  # 15 s of the run's minions, as in a run
 			run.state.health = run.state.max_health
 			run.state.advance(0.05)
@@ -63,3 +75,10 @@ func _ready() -> void:
 	print("T-372 demo %s: map=%s car=%s minions=%d kaiju=%s packages=%d" % [shot,
 		run.map.layout_path, run.car.position / 16.0, spawner.minions.size(),
 		run.kaiju_boss.has_appeared(), run.gift_drops.landed_packages().size()])
+
+
+## A headless screenshot window has no focus, so the game pauses the run (T-416); the pictures
+## are of the map, so the pause screen is closed again.
+func _process(_dt: float) -> void:
+	if game != null and game.pause_screen != null and game.pause_screen.is_paused():
+		game.pause_screen.toggle()

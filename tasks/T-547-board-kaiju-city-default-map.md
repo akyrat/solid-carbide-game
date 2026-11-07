@@ -1,7 +1,7 @@
 ---
 id: T-547
 title: The board's new Kaiju City becomes the default map
-status: open
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/level/game-map.md]
 files_expected_to_change: [game/data/level/kaiju_city_map.json, game/tests/, game/docs/level/game-map.md, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -43,16 +43,40 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/level/kaiju_city_map.json is byte-for-byte the board's game/data/levels/kaiju_city.json (same hash, given in the result notes). (QA: pass / fail)
-- [ ] The level checks game/docs/level/game-map.md names pass on it, with their output in the result notes. (QA: pass / fail)
-- [ ] A run starts on it, and the rails grind (test). (QA: pass / fail)
-- [ ] game/docs/level/game-map.md and docs/level-design.md Content describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-547/screenshots/ show the new map in a run, including a few of its rails and ramps. (QA: pass / fail)
+- [ ] game/data/level/kaiju_city_map.json is byte-for-byte the board's game/data/levels/kaiju_city.json (same hash, given in the result notes). (QA: pass)
+- [ ] The level checks game/docs/level/game-map.md names pass on it, with their output in the result notes. (QA: pass)
+- [ ] A run starts on it, and the rails grind (test). (QA: pass)
+- [ ] game/docs/level/game-map.md and docs/level-design.md Content describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-547/screenshots/ show the new map in a run, including a few of its rails and ramps. (QA: pass; round 2: ramps.png and ramp13.png show ramps, rails.png and rails_far.png show rails, no pause menu in any)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-06, Open → In progress
+
+Started: copying the board's Kaiju City over the default map, with the level checks.
+
+### 2026-11-06, In progress
+
+Paused: waits for T-549 (ramp-2 and ramp-13 meet two rooftops each); then the checks run again on the same copy.
+
+### 2026-11-06, In progress → In QA
+
+Built: your Kaiju City is the default map (exact copy, checks OK). QA now, then it's yours to play.
+
+### 2026-11-07, In QA → In progress
+
+QA round 1: all pass but the screenshots (no ramp shown, two covered by the pause menu). Back to the agent for new screenshots only.
+
+### 2026-11-07, In progress → In QA
+
+Screenshots retaken (no pause menu; ramp-2 and ramp-13 shown). QA round 2.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6). Ready for you to play: C:\solid-carbide-worktrees\T-547\game\project.godot
 
 ## Style review
 
@@ -60,4 +84,9 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+STOPPED, level checks fail on the board's level (not fixed, per the ticket). Copied game/data/levels/kaiju_city.json to game/data/level/kaiju_city_map.json (byte-identical, sha256 5a5d671151c6b2443935a87b9fe7c3a1217f9d9d8fcea096bf4873c96ab769b2; 72 rails, 28 ramps, 12 platforms, 41 buildings, 73 props); copy left uncommitted in the worktree. Both check_level.py and check_height_data.py exit 1 with the same output: "ramp 'ramp-2': climbs to unknown area ''" and "ramp 'ramp-13': climbs to unknown area ''" (two ramps with an empty climbs-to area id). No tests, docs or screenshots done. Needs the board's decision: fix the two ramps in the level creator, or allow them.
+
+UNBLOCKED after T-549. Copy committed, byte-identical to the board's file (sha256 5a5d671151c6b2443935a87b9fe7c3a1217f9d9d8fcea096bf4873c96ab769b2; 41 buildings, 12 platforms, 28 ramps, 73 props, 72 rails). check_level.py: OK. check_height_data.py: OK. Note: git's autocrlf had turned the working copy to CRLF after the merge; re-copied, the committed blob is LF and identical. Tests: added a test in test_game_map.gd (72 rails, 28 ramps, 12 platforms, the run gives the rails to the car, the grind finds the longest rail); test_rail_grind.gd's 'game map has no rails' test now expects 72 (T-546's old expectation). Full run before that fix: 2918 tests, 2916 pass, 1 failing (that old test); after the fix test_game_map.gd (13/13) and test_rail_grind.gd (27/27) pass. Docs: docs/level-design.md Content and game/docs/level/game-map.md updated. Screenshots in art-archive/T-547/screenshots/ (start, wide, rails, rails_far, ramps; new fixture shots in game_map_run_demo.gd).
+
+Screenshots retaken (QA round 1): the screenshot window has no focus, so the game paused the run and the pause menu covered start and wide; the fixture now closes it. New: start, wide (run on the map, no menu), rails, rails_far (rails on roof-10 and around), ramps (ramp-2 and the west rooftops), ramp13 (ramp-13), all looked at. The old set is in art-archive/T-547/screenshots/round1/. Fixture: game_map_run_demo.gd with game_map_run_ramp13.tscn.
+- 2026-11-07, needs-playtest → done: Board: grind overhaul build played, lgtm

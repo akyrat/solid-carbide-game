@@ -3790,3 +3790,8 @@ Entry format:
 - Decision or change: The jump effects as cosmetics: dash cloud free, the others 150/300/450/600 coins; unlocked and picked ones saved.
 - Documents touched: `docs/garage-design.md`
 - Tasks: T-552
+
+## 2026-11-07: The board's Kaiju City is the default map
+- Decision or change: The board's edited Kaiju City (72 rails, 28 ramps) is the default map, a byte-for-byte copy.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-547
