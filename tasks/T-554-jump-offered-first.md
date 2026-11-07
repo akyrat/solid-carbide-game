@@ -1,7 +1,7 @@
 ---
 id: T-554
 title: Jump is offered on the first two mission gifts
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Rails
@@ -50,10 +50,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: Jump offered on the first two mission gifts.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. power_up_offers.gd: gifts_opened counter (reset on run start, skipped gifts not counted); while < 2 gifts opened and Jump not owned and in the pool, Jump is forced as one of the 2 choices, the other drawn as usual. Slot caps unaffected (Jump not in pool when slots full of other power-ups). Hooks unchanged. 4 new tests in test_power_up_offers.gd (200 seeds first gift, second gift when not taken, usual rules when taken, third gift unforced). Full suite: 254 scripts, 2921 tests, 2920 pass, 0 fail, 1 risky. Docs: game-loop-architecture.md Content bullet added (Decisions line already existed).

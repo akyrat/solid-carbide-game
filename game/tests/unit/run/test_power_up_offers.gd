@@ -165,3 +165,61 @@ func test_the_polarized_steering_wheel_is_a_mission_gift() -> void:
 	_max_out("polarized_steering_wheel")
 	assert_eq(state.power_up_tier("polarized_steering_wheel"), data.max_tier("polarized_steering_wheel"))
 	assert_false(offers.available_offers().has("polarized_steering_wheel"), "never past its last tier")
+
+
+func _open_gift(i: int) -> Array:
+	state.missions.mission_completed.emit(i)
+	return offers.current_offers.duplicate()
+
+
+func test_the_first_gift_always_offers_jump_over_many_seeds() -> void:
+	for s in 200:
+		state.start_run()
+		offers.rng.seed = s
+		var ids := _open_gift(0)
+		assert_eq(ids.size(), 2, "seed %d" % s)
+		assert_true(ids.has("jump"), "seed %d" % s)
+		offers.current_offers = []
+		offers.current_mission = -1
+
+
+func test_the_second_gift_offers_jump_again_when_it_was_not_taken() -> void:
+	for s in 100:
+		state.start_run()
+		offers.rng.seed = s
+		var first := _open_gift(0)
+		var other: String = first[0] if first[0] != "jump" else first[1]
+		assert_true(offers.choose(other))
+		var second := _open_gift(1)
+		assert_true(second.has("jump"), "seed %d" % s)
+		offers.choose(second[0])
+
+
+func test_the_second_gift_follows_the_usual_rules_when_jump_was_taken() -> void:
+	var without := 0
+	for s in 100:
+		state.start_run()
+		offers.rng.seed = s
+		assert_true(_open_gift(0).has("jump"))
+		assert_true(offers.choose("jump"))
+		var second := _open_gift(1)
+		assert_false(second.has("jump") and offers.offered_tier("jump") != 2, "tier 2 only")
+		if not second.has("jump"):
+			without += 1
+		offers.choose(second[0])
+	assert_gt(without, 0, "no forcing: some second gifts leave Jump out")
+
+
+func test_from_the_third_gift_jump_is_offered_by_the_usual_rules() -> void:
+	var without := 0
+	for s in 100:
+		state.start_run()
+		offers.rng.seed = s
+		offers.choose(_open_gift(0)[0])
+		offers.choose(_open_gift(1)[0])
+		if state.power_up_tier("jump") > 0:
+			continue
+		if not _open_gift(2).has("jump"):
+			without += 1
+		offers.choose(offers.current_offers[0])
+	assert_gt(without, 0, "the third gift does not force Jump")

@@ -34,6 +34,10 @@ signal gift_skipped(mission_index: int)
 ## How many choices a gift offers (Game loop architecture, Decisions, "Mission packs": 2).
 const OFFER_COUNT := 2
 const SKIP_GIFT := "skip_gift"
+## The power-up the first gifts offer (Game loop architecture, Decisions, "Jump is offered
+## first", T-554) and how many gifts do: the first, and the second when it wasn't taken.
+const FIRST_OFFER_ID := "jump"
+const FIRST_OFFER_GIFTS := 2
 
 var state: RunState = null
 var data: PowerUpData = null
@@ -43,6 +47,8 @@ var current_offers: Array = []
 var current_mission := -1
 ## Completed missions whose gift waits its turn, oldest first.
 var pending: Array[int] = []
+## How many gifts have opened this run (a skipped gift doesn't count).
+var gifts_opened := 0
 ## The random draw's generator. Randomized once; tests set rng.seed.
 var rng := RandomNumberGenerator.new()
 ## Set when the tree must be checked at the start of the next frame (see _sync).
@@ -114,6 +120,10 @@ func _draw() -> Array:
 		return pool
 	var all := pool.duplicate()
 	var picked := []
+	# T-554: Jump is one of the first two gifts' choices while the car doesn't own it.
+	if gifts_opened < FIRST_OFFER_GIFTS and pool.has(FIRST_OFFER_ID) 			and state.power_up_tier(FIRST_OFFER_ID) == 0:
+		picked.append(FIRST_OFFER_ID)
+		pool.erase(FIRST_OFFER_ID)
 	while picked.size() < OFFER_COUNT:
 		var i := rng.randi_range(0, pool.size() - 1)
 		picked.append(pool[i])
@@ -160,6 +170,7 @@ func _open_next() -> void:
 			# "skip_gift" (the data's proposal; the only action there is): no overlay, no pause.
 			gift_skipped.emit(mission_index)
 			continue
+		gifts_opened += 1
 		current_offers = ids
 		current_mission = mission_index
 		_set_paused(true)
@@ -193,6 +204,7 @@ func _on_run_started() -> void:
 	current_offers = []
 	current_mission = -1
 	pending.clear()
+	gifts_opened = 0
 	_sync_armed = false
 
 
