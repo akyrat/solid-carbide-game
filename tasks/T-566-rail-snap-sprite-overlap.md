@@ -1,7 +1,7 @@
 ---
 id: T-566
 title: Snap to a rail when the car's sprite crosses the rail's sprite, whatever the height
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -65,6 +65,10 @@ Built: snaps when the car's drawn pixels cross the rail's, at any height. Open q
 ### 2026-11-07, In QA → Needs playtest
 
 QA passed (6/6), square-on included. Into the tutorial build; also playable from its own folder.
+
+### 2026-11-07, Needs playtest → In progress
+
+T-559..T-565 merged. T-566 broke 3 popup tests in the merge run, so it's back with Driving & Drift to fix; then QA, merge and the itch push.
 
 ## Style review
 
@@ -153,3 +157,25 @@ Fixed the one red test that came from the snap rule meeting T-560's practice pla
 I changed the drive, not the rails. I did not move any of the playground's rails. _drive() takes a new optional space_from_x (default 11, as before). The lane drive holds Space only from x 37, past rail-1's end at 34, and catches rail-3 at x 38.7. This is what a player would do to pick rail-3. The middle drive (rail-2) and the cruise drive (rail-1) are unchanged. The test still checks that every rail can be caught from the ramp.
 
 Tests (foreground, one at a time): test_practice_playground.gd 9/9 (50 asserts), test_tutorial_practice_real.gd 6/6 (77), test_practice_session.gd 28/28 (186). Rechecked after the merge: test_rail_snap_drawing.gd 14/14 (71), test_rail_grind.gd 36/36 (199).
+- 2026-11-07, needs-playtest → in-progress: Merge test run failed: 3 Godot tests (test_trick_popups_follow.gd, test_drift_guide_label_text.gd, weapons/test_starting_gun.gd) hit null textures in trick_popups.gd (lines 267, 418, 446) only when T-566 is merged on top of T-559..T-565. Log: .board/merge_batch-20261107-191753.log
+
+### Driving & Drift Agent, 2026-11-07: the merge run's 3 red popup tests
+
+**Cause.** The cause is not in T-566's rail code. It is a race in the popup baking that is already on master (T-480's worker threads, scripts/hud/trick_popup_art.gd). The baking font (a fresh duplicate of the comic font) makes its text server data the first time get_rids() is called. The first bakes of a process ran on several worker threads at once, and one of them could find no data yet: 'Out of bounds get index 0 (on base: Array[RID])' at _letter:336, in test_starting_gun (merge log line 19394). Its bake returned null, and poll() pinned ImageTexture.create_from_image(null) = null ('Invalid image: null', p_image.is_null) for the rest of that Godot process. Later tests in the same shard then drew the null popup ('get_size on a null value', trick_popups.gd:267). T-566 only set it off: it adds a test script (test_rail_snap_drawing.gd), which reshuffles run_tests_parallel.py's 12 shards, so a popup test landed in a process whose first bake happened on worker threads.
+
+**Fix.**
+- TrickPopupArt._get_font() now calls get_rids() once when it makes the font. request() warms the font on the main thread before any worker starts, so the font's data exists before any worker reads it.
+- TrickPopupArt.poll() and ComboBrokenArt.poll() no longer keep a failed bake (a null image). Nothing is cached, and drawing bakes the popup again on the spot.
+- Test: game/tests/unit/test_trick_popup_threads.gd (new). The font data exists once warmed. 20 rounds of a fresh font with 32 requests each on worker threads all come back with pictures. A failed bake is not kept and is baked again when drawn.
+
+**Merge.** I merged master (20dcc99f) into the branch. There were no conflicts.
+
+**Tests (foreground, after the merge):**
+- Full Godot set (run_tests.sh): 267 scripts, 3055 tests, 3054 passing, 0 failing, 1 risky/pending. The pending test is not one of mine. The log has none of the 3 errors.
+- -gselect=test_trick_popup: 61/61 passing.
+- python game/tools: 1047 tests OK (4 skipped).
+- python tools: 640 tests OK.
+
+**Process slip:** I sent the two Python runs in the same message, so for a few seconds they overlapped. I then ran game/tools again on its own, and it passed. No job is left running.
+
+**Files:** game/scripts/hud/trick_popup_art.gd, game/scripts/hud/combo_broken_art.gd, game/tests/unit/test_trick_popup_threads.gd. No documents affected.

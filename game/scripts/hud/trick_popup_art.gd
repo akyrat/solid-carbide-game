@@ -201,6 +201,10 @@ static func poll() -> void:
 		_pending.erase(key)
 	_mutex.unlock()
 	for key in done:
+		# A bake that failed hands back no image: nothing is kept, so drawing bakes it
+		# again on the spot instead of keeping a null texture for the run (T-566's merge run).
+		if done[key][0] == null:
+			continue
 		if not is_cached(key):
 			_store(key, ImageTexture.create_from_image(done[key][0]), done[key][1])
 
@@ -323,6 +327,11 @@ static func _get_font() -> FontFile:
 	# Its own copy of HudStyle's comic font, as before T-428: the baking keeps its glyph cache apart.
 	if _font == null:
 		_font = HudStyle.new_comic_font()
+		# The font's text server data is made lazily, by its first get_rids(). Made here, on
+		# the main thread (request() warms the font before any worker starts), so worker
+		# threads only read it: two first bakes racing to make it could find none and fail
+		# (T-566's merge run, a null popup texture).
+		_font.get_rids()
 	return _font
 
 
