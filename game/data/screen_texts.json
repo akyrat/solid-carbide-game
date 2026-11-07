@@ -55,6 +55,6 @@
       "polarized_steering_wheel": "+{burst_percent}% speed, shock hits and shoves minions."
     },
     "descriptions_last_tier_comment": "T-519 (the 4-minute run; Drifting, Decisions, 'Two tiers and three slots'): each power-up has 2 tiers, and this is the card text for tier 2, the last tier (the old tier 4's numbers), replacing its descriptions entry; the descriptions entry is the tier 1 text. power_up_screen.gd describe() uses it when the tier is the power-up's max_tier. Slots are that tier's numbers from power_ups.json. All five scored 8 or more in the style loop (T-519).",
-    "descriptions_comment": "One template per power-up, shown on its card for tier 1 (and for any tier before the last); the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."
+    "descriptions_comment": "One template per power-up, shown on its card for tier 1 (and for any tier before the last); the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, the burst's cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."
   }
 }
