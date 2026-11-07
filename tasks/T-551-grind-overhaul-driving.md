@@ -1,7 +1,7 @@
 ---
 id: T-551
 title: Grind overhaul: hold Space in the air to tilt and grind, release to launch; no Jump cooldown; jump effect and facing arrow
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-548-rail-landing-boost-facing-jump.md, game/docs/driving/]
 files_expected_to_change: [game/scripts/driving/, game/data/rail_grind.json, game/data/power_ups.json, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,10 @@ Started: hold Space in the air to tilt and grind, release to launch; no Jump coo
 ### 2026-11-07, In progress → In QA
 
 Built: hold Space in the air to tilt and grind, release to launch; no Jump cooldown; effect and arrow placeholders. QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (9/9). Waits for you in the combined build.
 
 ## Style review
 
@@ -134,3 +138,4 @@ The full sets are left for QA.
 **Honest quality note:** the tilt placeholder (a shear) and the effect placeholders are stand-ins: readable, but plain. The spring and jet are hard to see under a car that is barely off the ground, so the effect is drawn over the car.
 
 **Refusals on the way:** a Bash redirect to a scratch file was refused by the command guard, and `task_notes.py --text` from PowerShell was refused by the auto-mode classifier. These notes went in through the coordinator's route: the Write tool, then `task_notes.py --append`.
+- 2026-11-07, needs-playtest → done: Board: grind overhaul build played, lgtm
