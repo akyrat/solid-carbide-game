@@ -1,7 +1,7 @@
 ---
 id: T-568
 title: No Skip button on the last tutorial slide
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -53,10 +53,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: UI agent at work in its folder.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Skip is hidden on slide 6 (tutorial_slides.gd show_slide); back to slide 5 shows it again. New test test_the_last_slide_has_no_skip_and_going_back_brings_it_back; the Skip-from-every-slide test now covers slides 1-5. Tutorial tests: 58/58 pass (624 asserts). Docs: docs/hud-and-menus.md (slide 6 bullet), game/docs/hud-and-menus/tutorial-slides.md. Screenshots: art-archive/T-568/screenshots/last_slide_no_skip.png and slide5_with_skip.png.
