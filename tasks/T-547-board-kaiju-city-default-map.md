@@ -1,7 +1,7 @@
 ---
 id: T-547
 title: The board's new Kaiju City becomes the default map
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -48,7 +48,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] A run starts on it, and the rails grind (test). (QA: pass)
 - [ ] game/docs/level/game-map.md and docs/level-design.md Content describe it. (QA: pass)
 - [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
-- [ ] Screenshots in art-archive/T-547/screenshots/ show the new map in a run, including a few of its rails and ramps. (QA: fail: paperwork - rails.png and rails_far.png show rails, but ramps.png shows only a road with arrows and no identifiable ramp; start.png and wide.png are covered by the pause menu)
+- [ ] Screenshots in art-archive/T-547/screenshots/ show the new map in a run, including a few of its rails and ramps. (QA: pass; round 2: ramps.png and ramp13.png show ramps, rails.png and rails_far.png show rails, no pause menu in any)
 
 ## Updates
 
@@ -69,6 +69,10 @@ Built: your Kaiju City is the default map (exact copy, checks OK). QA now, then 
 ### 2026-11-07, In QA → In progress
 
 QA round 1: all pass but the screenshots (no ramp shown, two covered by the pause menu). Back to the agent for new screenshots only.
+
+### 2026-11-07, In progress → In QA
+
+Screenshots retaken (no pause menu; ramp-2 and ramp-13 shown). QA round 2.
 
 ## Style review
 
