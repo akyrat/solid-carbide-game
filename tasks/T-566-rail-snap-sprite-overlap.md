@@ -1,7 +1,7 @@
 ---
 id: T-566
 title: Snap to a rail when the car's sprite crosses the rail's sprite, whatever the height
-status: in-progress
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/rail-grind.md, tasks/T-551-grind-overhaul-driving.md]
 files_expected_to_change: [game/scripts/driving/, game/data/rail_grind.json, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -69,6 +69,14 @@ QA passed (6/6), square-on included. Into the tutorial build; also playable from
 ### 2026-11-07, Needs playtest → In progress
 
 T-559..T-565 merged. T-566 broke 3 popup tests in the merge run, so it's back with Driving & Drift to fix; then QA, merge and the itch push.
+
+### 2026-11-07, In progress → In QA
+
+Fixed: a font race in the popup baking (already on master, exposed by T-566's new tests). Back to QA.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6). The board already approved it in the tutorial build; merging now, then the itch push.
 
 ## Style review
 
@@ -179,3 +187,4 @@ Tests (foreground, one at a time): test_practice_playground.gd 9/9 (50 asserts),
 **Process slip:** I sent the two Python runs in the same message, so for a few seconds they overlapped. I then ran game/tools again on its own, and it passed. No job is left running.
 
 **Files:** game/scripts/hud/trick_popup_art.gd, game/scripts/hud/combo_broken_art.gd, game/tests/unit/test_trick_popup_threads.gd. No documents affected.
+- 2026-11-07, needs-playtest → done: Board: interactive tutorial build played, lgtm
