@@ -33,6 +33,19 @@ const CHECKBOX_ART := "res://art/hud/mission_checkbox.png"
 const TICK_ART := "res://art/hud/mission_tick.png"
 const CROSS_ART := "res://art/hud/mission_cross.png"
 
+## A trick falls into the page (T-563): a small box with the trick's name drops from above
+## the page's top onto its goal line, splashes, and only then the count updates. All numbers
+## are proposals for the playtest.
+const FALL_TIME := 0.32  ## seconds from the top to the goal line
+const FALL_GAP := 0.14  ## least seconds between two boxes starting, so quick tricks queue
+const SPLASH_TIME := 0.28
+const SQUASH_TIME := 0.07
+const MAX_QUEUED := 4  ## more than this waiting: the trick counts at once, no box
+const BOX_START_Y := -34.0
+const BOX_H := 24.0
+const BOX_FONT_SIZE := 16
+const DROPLETS := 7
+
 static var _texts: Dictionary = {}
 static var _art_cache: Dictionary = {}
 
@@ -51,6 +64,14 @@ var rows: Array = []
 var goal_templates: Dictionary = {}
 var header_label: Label
 var _missions: RunMissions
+## The boxes still falling, splashing or waiting to start (see _on_trick_counted).
+var _falls: Array = []
+## Page updates held back until the box before them has landed: {"after": fall id, "call"}.
+var _deferred: Array = []
+var _fall_seq := 0
+var _clock := 0.0
+var _last_start := -100.0
+var _overlay: Control
 
 
 ## One goal's line: a checkbox, the text, and the stroke across it when done.
@@ -140,7 +161,14 @@ func _init() -> void:
 	header_label.size = Vector2(PAGE_SIZE.x - TEXT_X - PAD.x, HEADER_H)
 	header_label.text = String(texts().get("header", ""))
 	add_child(header_label)
+	_overlay = Control.new()
+	_overlay.name = "Falls"
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay.size = PAGE_SIZE
+	_overlay.draw.connect(_draw_falls)
+	add_child(_overlay)
 	visible = false
+	set_process(false)
 
 
 ## The notebook page's texts (screen_texts.json, missions), read once.
@@ -186,7 +214,10 @@ func bind(missions: RunMissions) -> void:
 		_missions.goal_progress.disconnect(_on_goal_progress)
 		_missions.goal_completed.disconnect(_on_goal_completed)
 		_missions.mission_started.disconnect(_on_mission_started)
+		_missions.trick_counted.disconnect(_on_trick_counted)
+	_clear_falls()
 	_missions = missions
+	missions.trick_counted.connect(_on_trick_counted)
 	missions.goal_progress.connect(_on_goal_progress)
 	missions.goal_completed.connect(_on_goal_completed)
 	missions.mission_started.connect(_on_mission_started)
@@ -195,6 +226,7 @@ func bind(missions: RunMissions) -> void:
 
 ## Rebuilds the rows from the tracker's current mission; hidden when all are done.
 func show_current() -> void:
+	_clear_falls()
 	for r in rows:
 		remove_child(r)
 		(r as Node).free()
@@ -209,6 +241,8 @@ func show_current() -> void:
 		add_child(row)
 		rows.append(row)
 		y += row.size.y + ROW_GAP
+	if _overlay != null:
+		move_child(_overlay, get_child_count() - 1)
 	queue_redraw()
 
 
@@ -242,24 +276,155 @@ func _make_row(i: int, g: Dictionary) -> Row:
 
 
 func _on_goal_progress(_mission: int, goal: int, done: float, _total: float) -> void:
-	if goal >= rows.size():
-		return
-	var row: Row = rows[goal]
-	row.label.text = line_text(row.trick, row.kind, done, row.amount)
-	row.queue_redraw()
+	_defer(func() -> void:
+		if goal >= rows.size():
+			return
+		var row: Row = rows[goal]
+		row.label.text = line_text(row.trick, row.kind, done, row.amount)
+		row.queue_redraw())
 
 
 func _on_goal_completed(_mission: int, goal: int) -> void:
-	if goal >= rows.size():
-		return
-	var row: Row = rows[goal]
-	row.ticked = true
-	row.crossed = true
-	row.queue_redraw()
+	_defer(func() -> void:
+		if goal >= rows.size():
+			return
+		var row: Row = rows[goal]
+		row.ticked = true
+		row.crossed = true
+		row.queue_redraw())
 
 
 func _on_mission_started(_index: int) -> void:
-	show_current()
+	# The next mission replaces the page only after the last box has landed.
+	_defer(func() -> void: show_current(), true)
+
+
+## Runs `what` now, or after the last box in flight has landed, so the page changes in order.
+func _defer(what: Callable, replaces_page := false) -> void:
+	if _falls.is_empty():
+		what.call()
+		return
+	_deferred.append({"after": _fall_seq, "call": what, "page": replaces_page})
+
+
+## A trick counts toward goal `goal`: its name falls into the page.
+func _on_trick_counted(_mission: int, goal: int, trick_id: String) -> void:
+	if goal >= rows.size() or not TrickPopups.TEXTS.has(trick_id):
+		return
+	if _falls.size() >= MAX_QUEUED:
+		return  # a burst: the count just updates
+	_fall_seq += 1
+	var row: Row = rows[goal]
+	var text: String = TrickPopups.TEXTS[trick_id]
+	var font := header_label.get_theme_font("font")
+	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, BOX_FONT_SIZE).x + 14.0
+	w = minf(w, PAGE_SIZE.x - 8.0)
+	var start := maxf(_clock, _last_start + FALL_GAP)
+	_last_start = start
+	_falls.append({
+		"id": _fall_seq, "text": text, "w": w, "start": start,
+		"x": clampf(row.position.x + row.label.position.x, 4.0, PAGE_SIZE.x - w - 4.0),
+		"land_y": row.position.y + 2.0 - BOX_H * 0.5,
+		"landed_at": -1.0})
+	set_process(true)
+
+
+## Moves the boxes on by `delta` seconds (also called by the tests).
+func advance(delta: float) -> void:
+	_clock += delta
+	for f in _falls:
+		if f["landed_at"] < 0.0 and _clock >= f["start"] + FALL_TIME:
+			f["landed_at"] = f["start"] + FALL_TIME
+			_run_deferred(int(f["id"]))
+	var kept: Array = []
+	for f in _falls:
+		if f["landed_at"] < 0.0 or _clock < f["landed_at"] + SPLASH_TIME:
+			kept.append(f)
+	_falls = kept
+	if _falls.is_empty():
+		set_process(false)
+		_deferred.clear()
+	_overlay.queue_redraw()
+
+
+func _process(delta: float) -> void:
+	advance(delta)
+
+
+func _run_deferred(fall_id: int) -> void:
+	while not _deferred.is_empty() and int(_deferred[0]["after"]) <= fall_id:
+		var d: Dictionary = _deferred.pop_front()
+		(d["call"] as Callable).call()
+
+
+## Drops every box and applies the held-back changes at once (not a mission change that
+## is rebuilding the page itself).
+func _clear_falls() -> void:
+	_falls.clear()
+	var held := _deferred.duplicate()
+	_deferred.clear()
+	for d in held:
+		if not bool(d["page"]):
+			(d["call"] as Callable).call()
+	if _overlay != null:
+		_overlay.queue_redraw()
+	set_process(false)
+
+
+## Plays every box out at once (a tick of the clock each), so the page shows its final state.
+func finish_falls() -> void:
+	var guard := 0
+	while not _falls.is_empty() and guard < 1000:
+		advance(0.1)
+		guard += 1
+
+
+## True while a box is falling, waiting or splashing.
+func is_falling() -> bool:
+	return not _falls.is_empty()
+
+
+## Where a box is at the clock's time: {"y", "squash"}, or {} before it starts.
+func box_state(f: Dictionary) -> Dictionary:
+	var t: float = _clock - float(f["start"])
+	if t < 0.0:
+		return {}
+	var u := clampf(t / FALL_TIME, 0.0, 1.0)
+	var y := lerpf(BOX_START_Y, float(f["land_y"]), u * u)  # gravity: it speeds up
+	var squash := 1.0
+	if f["landed_at"] >= 0.0:
+		var since: float = _clock - float(f["landed_at"])
+		squash = 1.0 - 0.45 * clampf(1.0 - since / SQUASH_TIME, 0.0, 1.0)
+	return {"y": y, "squash": squash}
+
+
+func _draw_falls() -> void:
+	var font := header_label.get_theme_font("font")
+	for f in _falls:
+		var st := box_state(f)
+		if st.is_empty():
+			continue
+		var landed: bool = f["landed_at"] >= 0.0
+		var since := _clock - float(f["landed_at"]) if landed else 0.0
+		var w: float = f["w"]
+		var x: float = f["x"]
+		if not landed or since < SQUASH_TIME:
+			var h := BOX_H * float(st["squash"])
+			var box := Rect2(x, float(st["y"]) + BOX_H - h, w, h)
+			_overlay.draw_rect(box.grow(2.0), HudStyle.MISSION_INK)
+			_overlay.draw_rect(box, HudStyle.MISSION_PAPER)
+			_overlay.draw_string(font, box.position + Vector2(0, h * 0.5 + 5.0), String(f["text"]),
+				HORIZONTAL_ALIGNMENT_CENTER, w, BOX_FONT_SIZE, HudStyle.MISSION_INK)
+		if landed:
+			var p := clampf(since / SPLASH_TIME, 0.0, 1.0)
+			var base := Vector2(x + w * 0.5, float(f["land_y"]) + BOX_H)
+			for k in DROPLETS:
+				var a := PI + PI * (float(k) + 0.5) / float(DROPLETS)  # an upward fan
+				var dir := Vector2(cos(a) * 1.5, sin(a))
+				var pos := base + dir * (14.0 + 26.0 * p) + Vector2(0, 30.0 * p * p)
+				var d := 6.0 * (1.0 - p) + 2.0
+				_overlay.draw_rect(Rect2(pos - Vector2(d, d) * 0.5, Vector2(d, d)),
+					Color(0.25, 0.45, 0.75))
 
 
 func _draw() -> void:

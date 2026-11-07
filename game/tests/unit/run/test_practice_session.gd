@@ -44,6 +44,7 @@ func _do(trick_id: String) -> void:
 
 
 func _goal_line() -> String:
+	session.notebook.finish_falls()  # T-563: the count arrives when the name box has landed
 	return session.notebook.rows[0].label.text
 
 
@@ -185,6 +186,7 @@ func test_the_notebook_shows_the_goal_and_its_count() -> void:
 	_do("extended_drift")
 	_do("extended_drift")
 	assert_eq(_goal_line(), drift.replace("{done}", "3").replace("{total}", "3"))
+	session.notebook.finish_falls()
 	assert_true(session.notebook.rows[0].ticked, "the goal is ticked on the third")
 
 

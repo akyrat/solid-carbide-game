@@ -3895,3 +3895,8 @@ Entry format:
 - Decision or change: Six tutorial slides: the loop, drift, alt drift, air spins, grind (each with a practice window), and the kaiju timeline; A, D and Space drive on the trick slides.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-562
+
+## 2026-11-07: Tricks fall into the mission notebook
+- Decision or change: A counting trick falls into the mission notebook as a name box with a splash, in runs and practice windows.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-563

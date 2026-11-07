@@ -30,6 +30,9 @@ signal mission_completed(mission_index: int)
 ## Mission `mission_index` is the current one now (a new run, or the one before it completed).
 ## Not sent after the last mission.
 signal mission_started(mission_index: int)
+## A trick counts toward goal `goal_index` of the current mission; sent just before that
+## goal's goal_progress (T-563: the notebook drops the trick's name into the page first).
+signal trick_counted(mission_index: int, goal_index: int, trick_id: String)
 
 const KIND_COUNT := "count"
 const KIND_SECONDS := "seconds"
@@ -136,6 +139,7 @@ func on_trick(trick_id: String, seconds := 0.0) -> void:
 		if completed[i] or String(missions[index][i]["trick"]) != trick_id:
 			continue
 		var g: Dictionary = missions[index][i]
+		trick_counted.emit(index, i, trick_id)
 		if String(g["kind"]) == KIND_SECONDS:
 			if trick_id == TRICK_DRIFT:
 				_set_progress(i, seconds)  # one unbroken drift: its whole length

@@ -119,6 +119,7 @@ func test_every_trick_slide_counts_to_three_and_shows_the_success_message() -> v
 			assert_false(msg.visible, "slide %d: no message after %d" % [i + 2, n])
 			_do(session, tricks[i])
 			assert_eq(session.successes, n + 1)
+		session.notebook.finish_falls()  # T-563: the count arrives when the name box has landed
 		assert_true(session.notebook.rows[0].label.text.contains("3/3"), "the notebook shows 3/3")
 		assert_true(msg.visible, "slide %d: the message after the third" % (i + 2))
 
