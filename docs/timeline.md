@@ -3820,3 +3820,8 @@ Entry format:
 - Decision or change: The tilt art: 32 directions x 3 frames (78 PixelLab generations); GRIND! clip re-recorded.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-555
+
+## 2026-11-07: The jump effects' art
+- Decision or change: Five jump effects, script-drawn: dash cloud, spring, jet thrust, stunt sparks, shockwave ring.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-556
