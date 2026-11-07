@@ -157,11 +157,12 @@ func start_run() -> void:
 ## and the run's coins banked into `progress` when it ends. `layout_path`, when given, is the
 ## map file it plays (T-230); empty is the game's own map. The level creator's Play uses it
 ## too (T-239). The run starts itself when it enters the tree.
-static func add_run(parent: Node, progress: PlayerProgress, layout_path: String = "", history: RunHistory = null) -> Node2D:
+static func add_run(parent: Node, progress: PlayerProgress, layout_path: String = "", history: RunHistory = null, start_point_id: String = "") -> Node2D:
 	var r: Node2D = RunScene.instantiate()
 	r.name = "Run"
 	if layout_path != "":
 		r.layout_path = layout_path
+	r.start_point_id = start_point_id  # T-560: one of the level's start_points (empty: its spawn)
 	r.progress = progress  # the car health upgrade applies at the run's start (T-061)
 	parent.add_child(r)  # the run starts itself in _ready()
 	r.car.tuning.apply_acceleration_upgrade(progress)  # garage upgrade (T-060)
