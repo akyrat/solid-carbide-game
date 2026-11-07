@@ -42,9 +42,7 @@ extends Node2D
 ##   data/level/practice_stand_in.json. The start point of each trick is the level's
 ##   "practice_starts" entry for it ({x, y, heading} like "spawn"), else the level's spawn.
 ##   A level with no painted "ground" gets the drift prototype's grid ground (ground_grid.gd).
-## - GOAL_TEXT_KEYS: the notebook's goal line per trick, from data/tutorial_text.json (T-559's
-##   keys), a template with {done} and {total}. Until those keys exist the line is the trick's own
-##   name(s) from tutorial_text.json trick.* and "{done}/{total}" (GOAL_TEXT_FALLBACK).
+## - The notebook's goal lines are T-559's (GOAL_TEXT_KEYS, data/tutorial_text.json tutorial.goal.*).
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MapScript := preload("res://scripts/level/mvp_map.gd")
@@ -87,16 +85,14 @@ const GOAL_TRICK := {
 	"air_spin": "air_spin",
 	"grind": "rail_grind",
 }
-## SEAM (T-559): where each goal line's text is in tutorial_text.json: [section, key].
+## Where each goal line's text is in tutorial_text.json (T-559's keys, tutorial.goal.*): a
+## template with {done} and {total}. No text lives in code.
 const GOAL_TEXT_KEYS := {
-	"drift": ["practice", "goal_drift"],
-	"alt_drift": ["practice", "goal_alt_drift"],
-	"air_spin": ["practice", "goal_air_spin"],
-	"grind": ["practice", "goal_grind"],
+	"drift": ["tutorial", "goal", "drift"],
+	"alt_drift": ["tutorial", "goal", "altdrift"],
+	"air_spin": ["tutorial", "goal", "airspin"],
+	"grind": ["tutorial", "goal", "grind"],
 }
-## Until T-559's lines exist: the trick's name(s) (tutorial_text.json trick.<id>, joined by
-## " / ") followed by this.
-const GOAL_TEXT_FALLBACK := " {done}/{total}"
 ## How many successes the goal asks (HUD and menus, Decisions, "Interactive tutorial slides").
 const GOAL := 3
 ## The power-up gift a practice opens with (the grind's Jump).
@@ -259,20 +255,16 @@ func start_point(trick_name: String = "") -> Dictionary:
 	return {"position": LevelSpawn.position_of(map.layout), "rotation": LevelSpawn.rotation_of(map.layout)}
 
 
-## The notebook's goal line for `trick_name`: T-559's text when it is in tutorial_text.json, else
-## the trick's own name(s) and "{done}/{total}".
+## The notebook's goal line for `trick_name`: T-559's text in tutorial_text.json (an error and ""
+## when it is missing).
 static func goal_template(trick_name: String) -> String:
-	var texts := _texts()
-	var key: Array = GOAL_TEXT_KEYS.get(trick_name, [])
-	if key.size() == 2:
-		var section = texts.get(key[0], {})
-		if section is Dictionary and String(section.get(key[1], "")) != "":
-			return String(section[key[1]])
-	var names: Array = []
-	var trick_names = texts.get("trick", {})
-	for id in COUNTED.get(trick_name, []):
-		names.append(String(trick_names.get(id, id)) if trick_names is Dictionary else String(id))
-	return " / ".join(names) + GOAL_TEXT_FALLBACK
+	var node: Variant = _texts()
+	for part in GOAL_TEXT_KEYS.get(trick_name, []):
+		node = node.get(part) if node is Dictionary else null
+	if node is String and node != "":
+		return node
+	push_error("PracticeSession: no goal line for '%s' in %s" % [trick_name, TEXTS_PATH])
+	return ""
 
 
 static func _texts() -> Dictionary:

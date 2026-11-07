@@ -173,19 +173,24 @@ func test_the_notebook_shows_the_goal_and_its_count() -> void:
 		var template := PracticeSession.goal_template(t)
 		assert_eq(_goal_line(), template.replace("{done}", "0").replace("{total}", "3"), t)
 	session.setup("drift")
-	assert_eq(_goal_line(), "LONG DRIFT! 0/3", "until T-559's line: the trick's own name")
+	var drift := PracticeSession.goal_template("drift")
+	assert_eq(_goal_line(), drift.replace("{done}", "0").replace("{total}", "3"))
 	_do("extended_drift")
-	assert_eq(_goal_line(), "LONG DRIFT! 1/3")
+	assert_eq(_goal_line(), drift.replace("{done}", "1").replace("{total}", "3"))
 	_do("extended_drift")
 	_do("extended_drift")
-	assert_eq(_goal_line(), "LONG DRIFT! 3/3")
+	assert_eq(_goal_line(), drift.replace("{done}", "3").replace("{total}", "3"))
 	assert_true(session.notebook.rows[0].ticked, "the goal is ticked on the third")
 
 
-func test_the_air_spin_goal_names_both_spins() -> void:
-	assert_eq(PracticeSession.goal_template("air_spin"), "AIR 180! / AIR 360! {done}/{total}")
-	assert_eq(PracticeSession.goal_template("grind"), "GRIND! {done}/{total}")
-	assert_eq(PracticeSession.goal_template("alt_drift"), "ALT DRIFT! {done}/{total}")
+func test_the_goal_lines_are_t559s_texts_word_for_word() -> void:
+	var goals: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string(PracticeSession.TEXTS_PATH))["tutorial"]["goal"]
+	var keys := {"drift": "drift", "alt_drift": "altdrift", "air_spin": "airspin", "grind": "grind"}
+	for t in PracticeSession.TRICKS:
+		var line := PracticeSession.goal_template(t)
+		assert_eq(line, String(goals[keys[t]]), t)
+		assert_true(line.contains("{done}") and line.contains("{total}"), "%s has the counter" % t)
 
 
 func test_the_run_notebook_keeps_its_own_lines() -> void:

@@ -1,7 +1,7 @@
 ---
 id: T-561
 title: The practice session: a small live run in a window, counting one trick
-status: in-qa
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/drifting.md, game/docs/game-loop/the-run.md]
 files_expected_to_change: [game/scripts/run/, game/scripts/game/, game/scenes/, game/tests/, game/docs/game-loop/, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: the practice session that runs the car in a window and counts one trick
 ### 2026-11-07, In progress → In QA
 
 Built: the practice session (24 tests). QA now.
+
+### 2026-11-07, In QA → In progress
+
+QA round 1: a hard-coded fallback goal text trips the text check. Back to the agent to read T-559's keys instead.
 
 ## Style review
 
@@ -121,3 +125,24 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 - practice_done.png: "LONG DRIFT! 3/3", ticked.
 
 **Documents affected:** docs/game-loop-architecture.md (Content, "The practice session (task T-561)"), game/docs/game-loop/practice-session.md (new), game/README.md (index).
+
+### Game Loop Agent, 2026-11-07, after QA round 1 (the failed text inventory test)
+
+**Fixed:** the game no longer has any player text in its code. The hard-coded `GOAL_TEXT_FALLBACK`, and the fallback that built goal lines from trick names, are gone.
+- `GOAL_TEXT_KEYS` now reads T-559's keys from `game/data/tutorial_text.json` (merged into this branch): `tutorial.goal.drift`, `tutorial.goal.altdrift`, `tutorial.goal.airspin` and `tutorial.goal.grind`, word for word ("Drifts {done}/{total}", "Alt drifts ...", "Air spins ...", "Rail grinds ...").
+- If a key is missing, the game logs an error and shows an empty line.
+- The inventory was not changed.
+
+**Tests:**
+- The tests no longer expect the old lines. They now check the goal lines against the data file (new test: `test_the_goal_lines_are_t559s_texts_word_for_word`).
+- Results, run in the foreground, one at a time:
+  - game/tools Python set: 1042 tests, OK (4 skipped), exit 0. This includes test_text_inventory.
+  - test_practice_session: 24/24 passed, 149 asserts.
+
+**Screenshots:** retaken in `art-archive/T-561/screenshots/` (same file names), so the notebook shows T-559's lines, for example "AIR SPINS 1/3".
+
+**Still a seam:** T-560's playground (`PLAYGROUND_PATH` and the `practice_starts` key), as before.
+
+**Docs:** `game/docs/game-loop/practice-session.md` now describes the wired T-559 keys.
+
+**Still open for T-562:** `tutorial.success` ("Content secured!") and `tutorial.grind_hint` are T-562's to show. The session only sends `completed` and `gift_opened`.

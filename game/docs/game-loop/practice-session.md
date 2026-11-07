@@ -34,10 +34,10 @@ session.pause()                  # when the slide is left
 - **The gift:** `PracticeOffers` (`scripts/run/practice_offers.gd`) is the real `PowerUpOffers` with two changes: it opens only through `offer_only(id)` (never from a mission) and pauses only the session (`pause_with`). The real `PowerUpScreen` shows it. `GIFT` says which practice opens with which power-up (the grind with Jump); it opens on the first `start()` after `setup`/`restart`.
 - **The car** is rebuilt by `reset_car()` (no drift, grind or jump left over) at `start_point()`: the level's `"practice_starts"[trick]` (`{x, y, heading}`, like `"spawn"`), else the level's spawn. Leaving the map's rectangle (plus `AREA_MARGIN`) resets it on the next frame.
 
-## Seams for T-560 and T-559
+## Seams for T-560 (and T-559, now wired)
 
 - **The playground (T-560):** `PLAYGROUND_PATH` is the stand-in `data/level/practice_stand_in.json` (a 100 x 100 square, a ramp up to a short rooftop, one rail at height 1, no painted ground) until T-560's level is in; then point it at that file. The start points are read from the level's `"practice_starts"` (`drift`, `alt_drift`, `air_spin`, `grind`), so T-560's level gives them there (or the session's `start_point()` is changed to where T-560 puts them).
-- **The goal lines (T-559):** `GOAL_TEXT_KEYS` names where each goal line is in `data/tutorial_text.json` (`practice.goal_drift`, `practice.goal_alt_drift`, `practice.goal_air_spin`, `practice.goal_grind`), each a template with `{done}` and `{total}`. Until they exist, `goal_template()` uses the trick's own name(s) from `tutorial_text.json` `trick.*` and `" {done}/{total}"`: "LONG DRIFT! 0/3", "ALT DRIFT! 0/3", "AIR 180! / AIR 360! 0/3", "GRIND! 0/3". Change the keys to T-559's.
+- **The goal lines (T-559, wired):** `GOAL_TEXT_KEYS` reads each goal line from `data/tutorial_text.json`, `tutorial.goal.drift`, `.altdrift`, `.airspin` and `.grind` (T-559's keys), each a template with `{done}` and `{total}`, word for word. No player text is in the code: a missing key logs an error and gives an empty line.
 - **The falling box (T-563)** uses the same notebook: the goal's trick id is the car's own trick id (`extended_drift`, `alternate_drift`, `rail_grind`), except air spins, whose goal id is `air_spin` (two tricks); `trick_counted` gives the actual one.
 
 ## Tests and pictures
