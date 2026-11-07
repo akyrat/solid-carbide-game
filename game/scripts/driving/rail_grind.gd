@@ -11,12 +11,16 @@ extends RefCounted
 ## (leave_velocity("jump"), at jump_speed flat and launch_takeoff_speed up, any car, no power-up).
 ##
 ## The car (car.gd) owns one, `car.grind`, and the run gives it the map's rails (`rails`).
-##  - find(pos, vel, height, vz): after each step in the air, the rail the car catches: its
-##    centre within `reach` of the rail's line (square to it) and no more than `end_margin` past
-##    an end, falling or level (vz <= 0) with its height within `catch_below` under to
-##    `catch_above` over the bar, and moving roughly along it: its flat speed along the rail at
-##    least `min_start_speed` and its direction within `max_angle_deg` of the rail's line (either
-##    way). A landing across a rail doesn't catch it. The nearest rail wins.
+##  - find(pos, vel, height, vz, heading, tilt_step): after each step in the air, the rail the car
+##    catches. T-566 (Drifting, Decisions, "A grind starts when the car's drawing crosses the
+##    rail's"): the car's drawing on screen (car_outline.gd: its own pixels for its heading and tilt
+##    frame, lifted by its height) crosses the rail's drawn bar (its 3 pixel rows), whatever the
+##    car's height above or below the bar, rising or falling; this replaced the catch reach, the end
+##    margin and the height window. Still asked: moving roughly along it, its flat speed along the
+##    rail at least `min_start_speed` and its direction within `max_angle_deg` of the rail's line
+##    (either way), so a car crossing square-on doesn't stop dead on the bar. Two rails crossed:
+##    the one whose bar is nearest the car's drawn centre on screen wins. The car lands on the
+##    point of the bar nearest its drawn centre on screen, so its drawing barely moves at the snap.
 ##  - start(info, heading): locks on. The car sits on the bar facing the way it landed. Only the
 ##    speed along the rail is kept, and the landing boost (T-548; the board, 2026-11-06: every
 ##    landing on a rail boosts) adds `land_boost` units/s to it. A joint is not a landing.
@@ -43,14 +47,14 @@ extends RefCounted
 ## Node-free: tests drive it directly.
 
 const Rails := preload("res://scripts/level/rails.gd")
+const CarOutline := preload("res://scripts/driving/car_outline.gd")
+
+## T-566: half the thickness of the rail's drawn bar, screen px (rail_drawing.gd draws 3 rows).
+const BAR_HALF_PX := 1.5
 
 ## The data file and the defaults (data/rail_grind.json explains each).
 const DATA_FILE := "rail_grind"
 const DEFAULTS := {
-	"reach": 2.5,
-	"end_margin": 1.0,
-	"catch_above": 1.0,
-	"catch_below": 0.75,
 	"min_start_speed": 2.0,
 	"max_angle_deg": 60.0,
 	"decel": 1.0,
@@ -71,10 +75,6 @@ signal grind_started(rail_index: int)
 signal grind_ended(reason: String, seconds: float, length: float)
 
 ## The numbers (data/rail_grind.json).
-var reach: float = DEFAULTS.reach
-var end_margin: float = DEFAULTS.end_margin
-var catch_above: float = DEFAULTS.catch_above
-var catch_below: float = DEFAULTS.catch_below
 var min_start_speed: float = DEFAULTS.min_start_speed
 var max_angle_deg: float = DEFAULTS.max_angle_deg
 var decel: float = DEFAULTS.decel
@@ -129,13 +129,17 @@ func load_numbers(file: String = DATA_FILE) -> void:
 
 
 ## The rail the car catches at `pos` (units) with flat velocity `vel` (units/s), at `height`
-## falling at `vz` (units/s, up positive), or {}: {"index", "s", "speed_along"}.
-func find(pos: Vector2, vel: Vector2, height: float, vz: float) -> Dictionary:
-	if vz > 0.0:
-		return {}
+## (units; `vz`, its vertical speed, no longer matters since T-566), heading `heading` (radians;
+## NAN: the velocity's direction) drawn at tilt step `tilt_step` (0 to 3), or {}:
+## {"index", "s", "speed_along", "screen_gap"}.
+func find(pos: Vector2, vel: Vector2, height: float, _vz: float = 0.0, heading: float = NAN,
+		tilt_step: int = 3) -> Dictionary:
 	var flat := vel.length()
 	if flat < min_start_speed:
 		return {}
+	if is_nan(heading):
+		heading = atan2(vel.y, vel.x)
+	var at := CarOutline.screen_of(pos, height)
 	var cos_max := cos(deg_to_rad(max_angle_deg))
 	var best := {}
 	var best_gap := INF
@@ -143,22 +147,29 @@ func find(pos: Vector2, vel: Vector2, height: float, vz: float) -> Dictionary:
 		if i == exclude:
 			continue
 		var r: Dictionary = rails[i]
-		var at := Rails.along(r, pos)
-		if at < -end_margin or at > float(r.length) + end_margin:
-			continue
-		var gap := Rails.side_distance(r, pos)
-		if gap > reach or gap >= best_gap:
-			continue
-		at = clampf(at, 0.0, float(r.length))
-		var bar := Rails.height_at(r, at)
-		if height > bar + catch_above or height < bar - catch_below:
-			continue
 		var v: float = vel.dot(r.dir)
 		if absf(v) < min_start_speed or absf(v) < flat * cos_max - 1e-9:
 			continue
-		best = {"index": i, "s": at, "speed_along": v}
+		var a := CarOutline.screen_of(r.a, float(r.za))
+		var b := CarOutline.screen_of(r.b, float(r.zb))
+		if not CarOutline.touches_segment(at, heading, tilt_step, a, b, BAR_HALF_PX):
+			continue
+		var t := snap_t(at, a, b)
+		var gap := at.distance_to(a.lerp(b, t))
+		if gap >= best_gap:
+			continue
+		best = {"index": i, "s": t * float(r.length), "speed_along": v, "screen_gap": gap}
 		best_gap = gap
 	return best
+
+
+## T-566: where along the screen segment a-b (0 to 1) the point nearest `p` is.
+static func snap_t(p: Vector2, a: Vector2, b: Vector2) -> float:
+	var d := b - a
+	var len2 := d.length_squared()
+	if len2 < 1e-9:
+		return 0.0
+	return clampf((p - a).dot(d) / len2, 0.0, 1.0)
 
 
 ## Locks onto info's rail (from find()); heading is the car's heading (radians) as it lands.
