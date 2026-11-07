@@ -5,6 +5,11 @@ extends RefCounted
 ## car's real height (car_height.gd) and the map's rails (scripts/level/rails.gd). Its numbers
 ## are in data/rail_grind.json (proposals; the defaults below are used when a key is missing).
 ##
+## T-551 (the grind overhaul; Drifting, Decisions, "The grind overhaul"): the car decides WHEN
+## (car.gd): find() is asked only while Space is held in the air, the grind lasts only while Space
+## stays held, and letting go ends it with stop("jump"), the launch where the car faces
+## (leave_velocity("jump"), at jump_speed flat and launch_takeoff_speed up, any car, no power-up).
+##
 ## The car (car.gd) owns one, `car.grind`, and the run gives it the map's rails (`rails`).
 ##  - find(pos, vel, height, vz): after each step in the air, the rail the car catches: its
 ##    centre within `reach` of the rail's line (square to it) and no more than `end_margin` past
@@ -13,10 +18,13 @@ extends RefCounted
 ##    least `min_start_speed` and its direction within `max_angle_deg` of the rail's line (either
 ##    way). A landing across a rail doesn't catch it. The nearest rail wins.
 ##  - start(info, heading): locks on. The car sits on the bar facing the way it landed. Only the
-##    speed along the rail is kept.
+##    speed along the rail is kept, and the landing boost (T-548; the board, 2026-11-06: every
+##    landing on a rail boosts) adds `land_boost` units/s to it. A joint is not a landing.
 ##  - turn(steer, rate, dt): A or D spin the car's body (`body_heading`) as in the air (the
 ##    board's tweak, 2026-11-06); the car keeps sliding along the rail whatever way it faces.
-##  - step(dt): slides on along the rail, losing `decel` units/s every second, and returns "end"
+##  - step(dt): slides on along the rail, losing `decel` units/s every second, and the landing
+##    boost's part of the speed (`boost_left`) another `boost_decline` units/s every second until
+##    it is used up; returns "end"
 ##    past the rail's end or "slow" below `end_speed` ("" while it goes on).
 ##  - Joints (T-542 round 2; the board: a joint between rail pieces at an angle must cost no speed):
 ##    past a rail's end, a CONNECTED rail takes the car on: another rail with an end within
@@ -24,11 +32,12 @@ extends RefCounted
 ##    travel by no more than `join_max_angle_deg`. The car carries its whole speed onto that rail's
 ##    direction (nothing lost to the angle, no fall, no new catch), and the extra distance of the
 ##    step goes on along it. The grind goes on as one: its seconds and length go on adding up.
-##  - stop(reason): ends it ("end", "slow", "jump"), sending grind_ended with its seconds and
+##  - stop(reason): ends it ("end", "slow", "jump": the launch when Space is let go), sending grind_ended with its seconds and
 ##    length, which the run pays as the GRIND! trick. leave_velocity(reason) is the car's flat
-##    velocity as it leaves: along the rail; for a jump turned `jump_angle_deg` toward the side
-##    of the rail line the nose points to (nose_side()), for a slow drop with a sideways push
-##    (`drop_side_speed`) to that side.
+##    velocity as it leaves: along the rail; for a jump (T-548; the board, 2026-11-06) where the
+##    car faces, at `jump_speed`, whatever its travel along the rail (backwards too; the speed along
+##    the rail is not kept); for a slow drop with a sideways push (`drop_side_speed`) toward the
+##    side of the rail line the nose points to (nose_side()).
 ## The rail it left can't be caught again until the car touches the ground or another rail
 ## (`exclude`, cleared by touched_ground()), so a jump off a rail never lands back on it.
 ## Node-free: tests drive it directly.
@@ -38,7 +47,7 @@ const Rails := preload("res://scripts/level/rails.gd")
 ## The data file and the defaults (data/rail_grind.json explains each).
 const DATA_FILE := "rail_grind"
 const DEFAULTS := {
-	"reach": 2.0,
+	"reach": 2.5,
 	"end_margin": 1.0,
 	"catch_above": 1.0,
 	"catch_below": 0.75,
@@ -47,7 +56,10 @@ const DEFAULTS := {
 	"decel": 1.0,
 	"end_speed": 2.0,
 	"drop_side_speed": 2.0,
-	"jump_angle_deg": 15.0,
+	"land_boost": 4.0,
+	"boost_decline": 2.0,
+	"jump_speed": 6.0,
+	"launch_takeoff_speed": 5.0,
 	"join_distance": 1.0,
 	"join_height": 0.6,
 	"join_max_angle_deg": 100.0,
@@ -68,7 +80,11 @@ var max_angle_deg: float = DEFAULTS.max_angle_deg
 var decel: float = DEFAULTS.decel
 var end_speed: float = DEFAULTS.end_speed
 var drop_side_speed: float = DEFAULTS.drop_side_speed
-var jump_angle_deg: float = DEFAULTS.jump_angle_deg
+var land_boost: float = DEFAULTS.land_boost
+var boost_decline: float = DEFAULTS.boost_decline
+var jump_speed: float = DEFAULTS.jump_speed
+## T-551: the launch's vertical speed off the bar (units/s, up), for any car (car.gd _leave_grind).
+var launch_takeoff_speed: float = DEFAULTS.launch_takeoff_speed
 var join_distance: float = DEFAULTS.join_distance
 var join_height: float = DEFAULTS.join_height
 var join_max_angle_deg: float = DEFAULTS.join_max_angle_deg
@@ -85,6 +101,8 @@ var rail_index := -1
 var s := 0.0
 var speed := 0.0
 var direction := 1.0
+## T-548: the part of `speed` that is still the landing boost (units/s); it fades at boost_decline.
+var boost_left := 0.0
 ## The car's heading while grinding (radians): where it landed facing, turned by A and D.
 var body_heading := 0.0
 ## The current grind's seconds and length so far.
@@ -149,7 +167,8 @@ func start(info: Dictionary, heading: float) -> void:
 	rail = rails[rail_index]
 	s = float(info.s)
 	direction = signf(float(info.speed_along))
-	speed = absf(float(info.speed_along))
+	boost_left = land_boost  # T-548: every landing on a rail boosts (joints never call start)
+	speed = absf(float(info.speed_along)) + boost_left
 	body_heading = heading
 	seconds = 0.0
 	length = 0.0
@@ -170,7 +189,9 @@ func turn(steer: float, rate_deg: float, dt: float) -> void:
 func step(dt: float) -> String:
 	if not active:
 		return ""
-	speed = maxf(0.0, speed - decel * dt)
+	var fade := minf(boost_left, boost_decline * dt)  # T-548: the landing boost declines
+	boost_left -= fade
+	speed = maxf(0.0, speed - decel * dt - fade)
 	var moved := speed * dt
 	s += direction * moved
 	seconds += dt
@@ -286,15 +307,12 @@ func heading() -> float:
 
 
 ## The car's flat velocity as it leaves for `reason` (units/s): along the rail at its speed; a
-## jump turned jump_angle_deg toward nose_side() (same speed), a slow drop with drop_side_speed
-## toward it.
+## jump where the car faces at jump_speed (T-548: the travel along the rail is not kept, so a car
+## facing backwards jumps backwards); a slow drop with drop_side_speed toward nose_side().
 func leave_velocity(reason: String) -> Vector2:
-	var v := velocity()
-	var side := nose_side()
 	match reason:
 		"jump":
-			# Turning by -angle goes toward the left of the travel (travel_left()).
-			v = v.rotated(-side * deg_to_rad(jump_angle_deg))
+			return Vector2(cos(body_heading), sin(body_heading)) * jump_speed
 		"slow":
-			v += travel_left() * side * drop_side_speed
-	return v
+			return velocity() + travel_left() * nose_side() * drop_side_speed
+	return velocity()

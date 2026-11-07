@@ -50,7 +50,6 @@ func _place(at: Vector2, v := Vector2.ZERO) -> void:
 	car.model.set_velocity(v)
 	car.height_model.reset(at)
 	car._sync_from_model()
-	car.jump.reset()
 	hits.clear()
 
 

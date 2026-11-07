@@ -23,11 +23,38 @@ const AIR_SHEETS := {
 	"iso": "res://art/car/car_iso_noshadow",
 }
 
+## The tilt (task T-551; Drifting, Decisions, "The grind overhaul"): Space held in the air tilts
+## the car through 3 frames (car_tilt.gd). The hook: set_tilt_step(step) with step 0 (normal) to 3
+## (the held pose). When the tilt sheet below exists for the view (T-555's art), steps 1 to 3 draw
+## from it: same frame size, centre pixel and px_per_unit as the normal sheet, `columns` = the
+## normal sheet's direction count (frame_count), one row per step (row 0 = step 1, row 2 = the held
+## pose), drawn without the sprite's drop shadow (the tilt happens in the air and on a rail), and
+## its own JSON beside it (the same fields; "rows": 3). Until it exists, the placeholder: the normal
+## frame sheared and squashed in code (TILT_PLACEHOLDER_*), more with each step.
+const TILT_SHEETS := {
+	"iso": "res://art/car/car_iso_tilt",
+}
+## The placeholder's shear (radians) and vertical squash at the held pose; steps 1 and 2 a third and
+## two thirds of it. Only a stand-in for T-555's art: the drawing looks rolled, its top side
+## slid right and down a little.
+const TILT_PLACEHOLDER_SKEW := 0.5
+const TILT_PLACEHOLDER_SQUASH := 0.12
+
 var layout := {}
 var sheet := ""
 var in_air := false
+## The tilt frame shown (0 normal, 1 to 3; set_tilt_step).
+var tilt_step := 0
+## True when the tilt art (TILT_SHEETS) is in use for this view; false: the placeholder.
+var has_tilt_art := false
 var _ground_texture: Texture2D
 var _air_texture: Texture2D
+var _tilt_texture: Texture2D
+var _tilt_columns := 0
+var _normal_hframes := 1
+var _normal_vframes := 1
+## The direction frame for the heading (frame_for_rotation), kept for the tilt sheet.
+var _dir_frame := 0
 ## World pixels per unit of the drawing (the flat world's scale).
 var world_px_per_unit := 16.0
 
@@ -61,10 +88,13 @@ func use_sheet(view: String) -> void:
 	sheet = view
 	_ground_texture = load(base + ".png")
 	_air_texture = load(AIR_SHEETS[view] + ".png") if AIR_SHEETS.has(view) else null
+	_load_tilt_sheet(view)
 	in_air = false
 	texture = _ground_texture
 	hframes = int(layout.get("columns", layout.frame_count))
 	vframes = int(layout.get("rows", 1))
+	_normal_hframes = hframes
+	_normal_vframes = vframes
 	var frame_size := Vector2(float(layout.frame_width), float(layout.frame_height))
 	var center := Vector2(float(layout.center_px.x), float(layout.center_px.y))
 	# Put the car's centre pixel on the node's origin.
@@ -111,7 +141,7 @@ static func lift_for_height(height_units: float, px_per_unit: float = 16.0) -> V
 ## drawing's scale is the sheet's own at every height (task T-192).
 func place(drawn_ground_px: Vector2, height_units: float) -> void:
 	position = drawn_ground_px + lift_for_height(height_units, world_px_per_unit)
-	scale = _base_scale
+	_apply_tilt_look()
 
 
 ## True when the car's height is above the ground under it.
@@ -123,9 +153,62 @@ static func is_in_air(height_units: float, ground_under_units: float) -> bool:
 ## the air). The frame stays the same: both sheets share one layout.
 func set_in_air(value: bool) -> void:
 	in_air = value
+	_refresh_texture()
+
+
+## The texture and frame for the air state, the tilt step and the direction.
+func _refresh_texture() -> void:
 	if _ground_texture == null:
 		return
-	texture = _air_texture if (value and _air_texture != null) else _ground_texture
+	if tilt_step > 0 and has_tilt_art:
+		texture = _tilt_texture
+		hframes = _tilt_columns
+		vframes = 3
+		frame = tilt_frame_index(_dir_frame, tilt_step, _tilt_columns)
+		return
+	texture = _air_texture if (in_air and _air_texture != null) else _ground_texture
+	hframes = _normal_hframes
+	vframes = _normal_vframes
+	frame = _dir_frame
+
+
+## T-551: the tilt sheet's frame for direction frame `dir_frame` at tilt step 1 to 3 (row step - 1).
+static func tilt_frame_index(dir_frame: int, step: int, columns: int) -> int:
+	return (clampi(step, 1, 3) - 1) * columns + dir_frame
+
+
+## T-551, the tilt's hook (T-555 swaps its art in through TILT_SHEETS): shows tilt step 0 (normal)
+## to 3 (the held pose) for the current direction.
+func set_tilt_step(step: int) -> void:
+	step = clampi(step, 0, 3)
+	if step == tilt_step:
+		return
+	tilt_step = step
+	_refresh_texture()
+	_apply_tilt_look()
+
+
+## The placeholder's shear and squash for tilt_step (none with the tilt art, or at step 0).
+func _apply_tilt_look() -> void:
+	var k := 0.0 if has_tilt_art else float(tilt_step) / 3.0
+	skew = TILT_PLACEHOLDER_SKEW * k
+	scale = Vector2(_base_scale.x, _base_scale.y * (1.0 - TILT_PLACEHOLDER_SQUASH * k))
+
+
+func _load_tilt_sheet(view: String) -> void:
+	has_tilt_art = false
+	_tilt_texture = null
+	if not TILT_SHEETS.has(view):
+		return
+	var base: String = TILT_SHEETS[view]
+	if not ResourceLoader.exists(base + ".png") or not FileAccess.file_exists(base + ".json"):
+		return
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(base + ".json"))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return
+	_tilt_texture = load(base + ".png")
+	_tilt_columns = int(parsed.get("columns", layout.get("frame_count", 16)))
+	has_tilt_art = _tilt_texture != null
 
 
 ## Frame index for a car rotation (radians, nose along +x at 0, clockwise).
@@ -137,4 +220,8 @@ func frame_for_rotation(rot: float) -> int:
 
 
 func set_heading(rot: float) -> void:
-	frame = frame_for_rotation(rot)
+	_dir_frame = frame_for_rotation(rot)
+	if tilt_step > 0 and has_tilt_art:
+		frame = tilt_frame_index(_dir_frame, tilt_step, _tilt_columns)
+	else:
+		frame = _dir_frame

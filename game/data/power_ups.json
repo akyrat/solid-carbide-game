@@ -19,8 +19,8 @@
       "name_id": "jump",
       "icon": "res://art/power_ups/jump.png",
       "tiers": [
-        {"tier": 1, "takeoff_speed": 5.0, "cooldown_seconds": 2.0, "proposal": true, "reason": "A small hop: about 0.6 s in the air with the car's gravity, enough for the airtime missions."},
-        {"tier": 2, "takeoff_speed": 8.0, "cooldown_seconds": 1.1, "proposal": true, "reason": "Long enough for an air 360, jumping often."}
+        {"tier": 1, "takeoff_speed": 5.0, "proposal": true, "reason": "A small hop: about 0.83 s in the air with the car's gravity (12), enough for the airtime missions. No cooldown (T-551; the board, 2026-11-07, Drifting, Decisions, \"Jump has no cooldown\"): a press on the ground always hops."},
+        {"tier": 2, "takeoff_speed": 8.0, "proposal": true, "reason": "Long enough for an air 360 (about 1.33 s in the air). No cooldown at this tier either (T-551): tier 2 keeps only its higher takeoff."}
       ]
     },
     "bouncy_bumpers": {

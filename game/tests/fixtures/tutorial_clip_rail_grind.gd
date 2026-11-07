@@ -4,8 +4,9 @@ extends Node
 ## (tools/record_tutorial_clips.py, Godot's movie maker, 480 x 320 crop of the window), but the
 ## scene is a run started from the main menu on the game's map (the rails are the level's), with
 ## the HUD hidden, no minions and no kaiju, Jump at tier 1 (as the playtest switch gives it),
-## W held, one Jump from south of the spawn onto rail-3 (the T-541 GIF fixture's route), and the
-## camera following. It quits `after_end` steps after the grind ends.
+## W held, one Jump from south of the spawn onto rail-3 (the T-541 GIF fixture's route) with Space
+## held (T-551: a grind starts only while Space is held in the air), Space let go after
+## `jump_off_after` seconds on the rail (the launch), and the camera following. It quits `after_end` steps after the grind ends.
 ## Prints the same "tutorial_clip_demo: ..." lines the recorder reads (tricks, key timeline).
 
 @export var hop_step := 15
@@ -58,14 +59,15 @@ func _ready() -> void:
 
 func _on_stepped() -> void:
 	_steps += 1
-	_keys.append("W")
 	var car = run.car
+	_keys.append("W")  # the clip's key pad (key_pad.gd) has W, A, S and D only, no Space
 	run.state.health = run.state.max_health
 	if _steps == hop_step:
 		car.press_jump()
-	if car.grind.active and car.grind.seconds > jump_off_after and car.jump.cooldown_left <= 0.0 and not _jumped_off:
+		car.scripted_jump_held = true
+	if car.grind.active and car.grind.seconds > jump_off_after and not _jumped_off:
 		_jumped_off = true
-		car.press_jump()  # off the rail: the grind pays
+		car.scripted_jump_held = false  # let go: the launch off the rail, the grind pays
 	if _end_step >= 0 and _steps - _end_step >= after_end or _steps >= max_steps:
 		print("tutorial_clip_demo: keys " + ",".join(_keys))
 		get_tree().quit()

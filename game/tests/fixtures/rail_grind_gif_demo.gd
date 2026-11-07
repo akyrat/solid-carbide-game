@@ -28,6 +28,7 @@ var _steps := 0
 var _grinds_ended := 0
 var _end_step := -1
 var _jumped_off := false
+var _release_step := -10
 var _popup_saved := false
 
 
@@ -92,6 +93,9 @@ func _on_stepped() -> void:
 	if scene == "jump":
 		if _steps == hop_step:
 			car.press_jump()  # the hop onto rail-3
+			car.scripted_jump_held = true  # T-551: Space held to catch and grind
+		elif _steps == _release_step + 1:
+			car.scripted_jump_held = true  # held again to catch rail-4
 		if car.grind.active and car.grind.rail_index >= 0 and car.grind.rails[car.grind.rail_index].id == "rail-3":
 			# From 1 s on the rail, D turns the nose about 25 degrees to the right of the rail line
 			# (east, rail-4's side; the board's tweak: A and D spin the car on the rail), then let go.
@@ -100,9 +104,10 @@ func _on_stepped() -> void:
 				car.scripted_input = [true, false, -1.0]
 			else:
 				car.scripted_input = [true, false, 0.0]
-			if not _jumped_off and car.jump.cooldown_left <= 0.0 and car.grind.seconds > 1.6:
+			if not _jumped_off and car.grind.seconds > 1.6:
 				_jumped_off = true
-				car.press_jump()
+				car.scripted_jump_held = false  # T-551: let go of Space: the launch
+				_release_step = _steps
 		elif car.grind.active:
 			car.scripted_input = [true, false, 0.0]
 	if _end_step < 0 and _steps >= max_steps:
