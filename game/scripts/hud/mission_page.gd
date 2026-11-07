@@ -8,7 +8,10 @@ extends Control
 ## The header and every goal line are the texts of data/screen_texts.json (missions.header,
 ## missions.goals.<trick id>, T-456), word for word. A quantity goal's line holds
 ## "{done}/{total}" and follows goal_progress live; a duration goal has {seconds} (its amount)
-## and no count. Each goal has a checkbox; a done goal is ticked and its line crossed off.
+## and no count, except a running total (T-565: time added up, like the airtime), whose line
+## shows the seconds so far with one decimal against its goal and follows goal_progress too.
+## Its name box falls only when a trick adds a lump of seconds (a landing's airtime), never for
+## time added a little at a time (RunMissions.add_seconds, the tutorial's drift slide). Each goal has a checkbox; a done goal is ticked and its line crossed off.
 ## When a mission completes the next one replaces it (mission_started); after the last one
 ## the page hides (RunMissions.is_all_done).
 ##
@@ -16,6 +19,10 @@ extends Control
 ## above (down to about y 300 with four weapons) and the coins at y 496 below.
 
 const TEXTS_PATH := "res://data/screen_texts.json"
+## Where a running total's goal lines are (T-565; the texts are T-564's): missions.<this>.<trick>,
+## each a template with {done} and {total}. The seam until T-564 is merged: one name to change if
+## its key differs; while it is missing the goal's usual line (missions.goals.<trick>) shows.
+const TOTAL_GOALS_KEY := "goals_total"
 const PAGE_POS := Vector2(12, 304)
 const PAGE_SIZE := Vector2(176, 180)
 const PAD := Vector2(10, 8)
@@ -189,12 +196,37 @@ static func format_number(v: float) -> String:
 	return "%.1f" % v
 
 
+## A running total's seconds (T-565): always one decimal, cut down (not rounded) so the line
+## never reads its goal before the goal is done.
+static func format_seconds(v: float) -> String:
+	return "%.1f" % (floorf(v * 10.0 + 0.0001) / 10.0)
+
+
+## The template of a goal's line in screen_texts.json: a running total (RunMissions.is_running_total,
+## T-565) uses missions.<TOTAL_GOALS_KEY>.<trick> when it has one, else missions.goals.<trick>.
+static func goal_template(trick: String, kind: String) -> String:
+	if RunMissions.is_running_total(trick, kind):
+		var totals: Variant = texts().get(TOTAL_GOALS_KEY, {})
+		if totals is Dictionary and String((totals as Dictionary).get(trick, "")) != "":
+			return String(totals[trick])
+	return String(texts().get("goals", {}).get(trick, ""))
+
+
+## Fills a goal line's template: {done} (a count as a whole number, a running total's seconds
+## with one decimal), {total} and {goal} (the amount), {seconds} (the amount of a duration goal).
+static func fill(template: String, trick: String, kind: String, done: float, amount: float) -> String:
+	var done_text := format_number(floorf(done))
+	if kind != "count":
+		done_text = format_seconds(done) if RunMissions.is_running_total(trick, kind) else format_number(done)
+	return template.replace("{done}", done_text) \
+		.replace("{total}", format_number(amount)) \
+		.replace("{goal}", format_number(amount)) \
+		.replace("{seconds}", format_number(amount))
+
+
 ## A goal's line: its text with {done}/{total} or {seconds} filled in.
 static func goal_text(trick: String, kind: String, done: float, amount: float) -> String:
-	var template := String(texts().get("goals", {}).get(trick, ""))
-	return template.replace("{done}", format_number(floorf(done) if kind == "count" else done)) \
-		.replace("{total}", format_number(amount)) \
-		.replace("{seconds}", format_number(amount))
+	return fill(goal_template(trick, kind), trick, kind, done, amount)
 
 
 ## The line this page shows for a goal: its goal_templates entry when it has one (T-561), else
@@ -202,10 +234,7 @@ static func goal_text(trick: String, kind: String, done: float, amount: float) -
 func line_text(trick: String, kind: String, done: float, amount: float) -> String:
 	if not goal_templates.has(trick):
 		return goal_text(trick, kind, done, amount)
-	return String(goal_templates[trick]) \
-		.replace("{done}", format_number(floorf(done) if kind == "count" else done)) \
-		.replace("{total}", format_number(amount)) \
-		.replace("{seconds}", format_number(amount))
+	return fill(String(goal_templates[trick]), trick, kind, done, amount)
 
 
 ## Follows this tracker from now on, and shows its current mission.

@@ -106,9 +106,47 @@ func _check_counts(trick: String, counts: Array, others: Array) -> void:
 	assert_eq(counted.size(), 3)
 
 
-func test_the_drift_practice_counts_long_drifts_only() -> void:
-	_check_counts("drift", ["extended_drift"],
-		["alternate_drift", "three_sixty", "air_one_eighty", "air_three_sixty", "airtime", "rail_grind"])
+## T-565: the drift slide counts seconds of drifting, not tricks: no trick counts, LONG DRIFT! either.
+func test_the_drift_practice_counts_no_trick() -> void:
+	session.setup("drift")
+	for o in ["extended_drift", "alternate_drift", "three_sixty", "air_one_eighty", "air_three_sixty",
+			"airtime", "rail_grind"]:
+		_do(o)
+	assert_eq(session.successes, 0)
+	assert_eq(session.drift_seconds, 0.0, "a trick adds no drift seconds")
+	assert_eq(counted.size(), 0)
+	assert_eq(completions, 0)
+
+
+func test_the_drift_practice_adds_drift_seconds_up_and_completes_at_3_s() -> void:
+	session.setup("drift")
+	var totals: Array = []
+	session.seconds_progress.connect(func(done: float, goal: float) -> void: totals.append([done, goal]))
+	session.add_drift_seconds(1.2)
+	session.add_drift_seconds(0.4)  # a drift too short to pay counts too
+	assert_almost_eq(session.drift_seconds, 1.6, 0.0001)
+	assert_eq(completions, 0)
+	assert_false(session.is_completed())
+	session.add_drift_seconds(1.3)
+	assert_eq(completions, 0, "2.9 s is not 3 s")
+	session.add_drift_seconds(0.5)
+	assert_eq(session.drift_seconds, 3.0, "the total stops at 3 s")
+	assert_eq(completions, 1, "completed when the total reaches 3 s")
+	assert_true(session.is_completed())
+	session.add_drift_seconds(1.0)
+	assert_eq(completions, 1, "completed once")
+	assert_eq(totals.size(), 4)
+	assert_eq(totals[3], [3.0, 3.0])
+
+
+func test_the_other_slides_still_count_3_tricks() -> void:
+	for t in ["alt_drift", "air_spin", "grind"]:
+		session.setup(t)
+		session.add_drift_seconds(5.0)
+		assert_eq(session.drift_seconds, 0.0, "%s: drift seconds count only on the drift slide" % t)
+		assert_false(session.is_completed(), t)
+		assert_eq(session.missions.current_goals()[0]["kind"], RunMissions.KIND_COUNT, t)
+		assert_eq(session.missions.current_goals()[0]["amount"], 3, t)
 
 
 func test_the_alt_drift_practice_counts_alt_drifts_only() -> void:
@@ -142,22 +180,46 @@ func test_a_grind_too_short_to_pay_does_not_count() -> void:
 	assert_eq(session.successes, 0)
 
 
-func test_a_real_drift_of_over_a_second_counts_when_it_ends() -> void:
+## T-565: the real car's drifting adds up over two drifts, live, and completes at 3 s in total.
+func test_real_drifts_add_up_live_and_complete_at_3_s_in_total() -> void:
 	session.setup("drift")
 	session.start()  # a paused session's bodies are out of the physics space
 	session.set_focused(true)
 	var car = session.car
 	car.use_keyboard = false
+	var drifted := 0.0
 	car.scripted_input = [true, false, 1.0]  # W + A: drifting
-	for i in 75:  # 1.5 s at 50 steps a second
+	for i in 50:
 		car.physics_step()
+		if car.model.is_drifting:
+			drifted += car.model.dt
 	assert_true(car.model.is_drifting)
-	assert_eq(session.successes, 0, "a drift pays when it ends")
+	assert_gt(session.drift_seconds, 0.0, "the total grows while the drift goes on")
+	assert_almost_eq(session.drift_seconds, drifted, 0.0001, "every drifting step adds its seconds")
+	assert_almost_eq(float(session.missions.current_goals()[0]["done"]), drifted, 0.0001)
+	var first := session.drift_seconds
 	car.scripted_input = [false, false, 0.0]
-	for i in 25:
+	var steps := 0
+	while car.model.is_drifting and steps < 200:
 		car.physics_step()
-	assert_eq(session.successes, 1)
-	assert_eq(counted[0][0], "extended_drift")
+		steps += 1
+	assert_false(car.model.is_drifting)
+	var after_first := session.drift_seconds
+	assert_gt(after_first, first - 0.0001)
+	for i in 20:
+		car.physics_step()
+	assert_almost_eq(session.drift_seconds, after_first, 0.0001, "the total stays between drifts")
+	assert_eq(completions, 0)
+	car.scripted_input = [true, false, 1.0]
+	var guard := 0
+	while completions == 0 and guard < 600:
+		car.physics_step()
+		guard += 1
+	assert_eq(completions, 1, "the second drift tops the total up to 3 s")
+	assert_eq(session.drift_seconds, 3.0)
+	assert_eq(counted.size(), 0, "no trick counted")
+	session.notebook.finish_falls()
+	assert_true(session.notebook.rows[0].ticked)
 
 
 func test_restart_starts_the_count_over() -> void:
@@ -177,23 +239,41 @@ func test_the_notebook_shows_the_goal_and_its_count() -> void:
 		assert_true(session.notebook.visible, t)
 		assert_eq(session.notebook.rows.size(), 1, "%s: one goal" % t)
 		var template := PracticeSession.goal_template(t)
-		assert_eq(_goal_line(), template.replace("{done}", "0").replace("{total}", "3"), t)
-	session.setup("drift")
-	var drift := PracticeSession.goal_template("drift")
-	assert_eq(_goal_line(), drift.replace("{done}", "0").replace("{total}", "3"))
-	_do("extended_drift")
-	assert_eq(_goal_line(), drift.replace("{done}", "1").replace("{total}", "3"))
-	_do("extended_drift")
-	_do("extended_drift")
-	assert_eq(_goal_line(), drift.replace("{done}", "3").replace("{total}", "3"))
+		var zero := "0.0" if t == "drift" else "0"  # T-565: the drift's seconds, one decimal
+		assert_eq(_goal_line(), template.replace("{done}", zero).replace("{total}", "3"), t)
+	session.setup("alt_drift")
+	var alt := PracticeSession.goal_template("alt_drift")
+	_do("alternate_drift")
+	assert_eq(_goal_line(), alt.replace("{done}", "1").replace("{total}", "3"))
+	_do("alternate_drift")
+	_do("alternate_drift")
+	assert_eq(_goal_line(), alt.replace("{done}", "3").replace("{total}", "3"))
 	session.notebook.finish_falls()
 	assert_true(session.notebook.rows[0].ticked, "the goal is ticked on the third")
+
+
+## T-565: the drift's line shows the running total live (no name box to wait for).
+func test_the_drift_notebook_line_shows_the_running_total_live() -> void:
+	session.setup("drift")
+	var drift := PracticeSession.goal_template("drift")
+	session.add_drift_seconds(0.46)
+	assert_false(session.notebook.is_falling(), "no name box for a fraction of a second")
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "0.4").replace("{total}", "3"))
+	session.add_drift_seconds(1.0)
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "1.4").replace("{total}", "3"))
+	session.add_drift_seconds(2.0)
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "3.0").replace("{total}", "3"))
+	assert_true(session.notebook.rows[0].ticked, "ticked at 3 s")
 
 
 func test_the_goal_lines_are_t559s_texts_word_for_word() -> void:
 	var goals: Dictionary = JSON.parse_string(
 		FileAccess.get_file_as_string(PracticeSession.TEXTS_PATH))["tutorial"]["goal"]
 	var keys := {"drift": "drift", "alt_drift": "altdrift", "air_spin": "airspin", "grind": "grind"}
+	# T-565: the drift's line is T-564's seconds line once it is in (the seam's key), else T-559's.
+	var seconds_key: String = PracticeSession.DRIFT_SECONDS_TEXT_KEYS[2]
+	if String(goals.get(seconds_key, "")) != "":
+		keys["drift"] = seconds_key
 	for t in PracticeSession.TRICKS:
 		var line := PracticeSession.goal_template(t)
 		assert_eq(line, String(goals[keys[t]]), t)

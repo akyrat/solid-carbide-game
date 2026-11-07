@@ -110,8 +110,10 @@ func test_every_goal_line_is_a_known_text() -> void:
 
 
 func test_whole_and_half_seconds_format() -> void:
-	assert_eq(MissionPage.goal_text("airtime", "seconds", 0.0, 4.5), "Rack up 4.5 seconds of airtime")
-	assert_eq(MissionPage.goal_text("airtime", "seconds", 0.0, 3.0), "Rack up 3 seconds of airtime")
+	# T-565: the airtime is a running total now (test_mission_page_running_total.gd); the unbroken
+	# drift keeps the duration line.
+	assert_eq(MissionPage.goal_text("extended_drift", "seconds", 0.0, 4.5), "Hold one drift for 4.5 seconds")
+	assert_eq(MissionPage.goal_text("extended_drift", "seconds", 0.0, 3.0), "Hold one drift for 3 seconds")
 
 
 func test_page_hides_after_the_last_mission() -> void:
