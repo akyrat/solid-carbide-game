@@ -1,7 +1,7 @@
 ---
 id: T-547
 title: The board's new Kaiju City becomes the default map
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/level/kaiju_city_map.json is byte-for-byte the board's game/data/levels/kaiju_city.json (same hash, given in the result notes). (QA: pass / fail)
-- [ ] The level checks game/docs/level/game-map.md names pass on it, with their output in the result notes. (QA: pass / fail)
-- [ ] A run starts on it, and the rails grind (test). (QA: pass / fail)
-- [ ] game/docs/level/game-map.md and docs/level-design.md Content describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-547/screenshots/ show the new map in a run, including a few of its rails and ramps. (QA: pass / fail)
+- [ ] game/data/level/kaiju_city_map.json is byte-for-byte the board's game/data/levels/kaiju_city.json (same hash, given in the result notes). (QA: pass)
+- [ ] The level checks game/docs/level/game-map.md names pass on it, with their output in the result notes. (QA: pass)
+- [ ] A run starts on it, and the rails grind (test). (QA: pass)
+- [ ] game/docs/level/game-map.md and docs/level-design.md Content describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-547/screenshots/ show the new map in a run, including a few of its rails and ramps. (QA: fail: paperwork - rails.png and rails_far.png show rails, but ramps.png shows only a road with arrows and no identifiable ramp; start.png and wide.png are covered by the pause menu)
 
 ## Updates
 
@@ -61,6 +61,10 @@ Started: copying the board's Kaiju City over the default map, with the level che
 ### 2026-11-06, In progress
 
 Paused: waits for T-549 (ramp-2 and ramp-13 meet two rooftops each); then the checks run again on the same copy.
+
+### 2026-11-06, In progress → In QA
+
+Built: your Kaiju City is the default map (exact copy, checks OK). QA now, then it's yours to play.
 
 ## Style review
 
