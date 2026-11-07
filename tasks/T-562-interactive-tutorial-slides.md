@@ -1,7 +1,7 @@
 ---
 id: T-562
 title: The interactive tutorial slides
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -55,10 +55,64 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: the six interactive slides, with practice windows; A, D and Space drive on the trick slides.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+### UI Agent, 2026-11-07 (first pass, built against a stand-in for T-561)
+
+**Built.** `game/scripts/menu/tutorial_slides.gd` now has six slides:
+- **The content loop:** four steps with the HUD's own pictures (the long drift illustration, the subs ring, the gift pack with weapons, a pink loop arrow drawn in code), then `tutorial.loop.point` under them.
+- **Four trick slides:** drift, altdrift, airspin, grind. Each has its title, its instruction (the grind slide adds `tutorial.grind_hint`) and a 600 x 400 practice window.
+- **The last slide:** unchanged (timeline, Go live, Don't show again).
+- **The missions slide and the clips** are gone.
+
+All texts are T-559's keys. No placeholder text.
+
+**The practice windows.** Each one is a SubViewportContainer and SubViewport.
+- **Built when needed:** the first time its slide shows, it instances `TutorialSlides.PRACTICE_SCENE` (`res://scenes/run/practice_session.tscn`, T-561) and calls `setup("drift" | "alt_drift" | "air_spin" | "grind")`.
+- **Only the showing practice is live:** it gets `set_focused(true)` and `start()`. Every other one gets `set_focused(false)` and `pause()`, and so do all of them when the slides are hidden. Sessions are kept, so their counts survive leaving the slide.
+- **The success message:** `completed` shows `tutorial.success` over that window only, with a 0.25 s pop, and it stays.
+- **Rendering:** the window renders at screen pixels (container scaled 1/s and sized s times bigger).
+- **The seam:** `practice_scene_path`. If the scene is missing, the window is an empty frame with one warning, and the slides work as normal.
+
+**Keys (proposal for the playtest).**
+- The Left and Right arrow keys change slides on every slide. A and D change slides only on slides 1 and 6.
+- On the trick slides the practice window has the keyboard as soon as its slide shows, with no click needed. The arrows and Skip get FOCUS_NONE there and the focus is released. They work by mouse only, so A, D, Space, Enter and Tab press nothing and reach the practice.
+- On slides 1 and 6, Enter or Space presses the focused button as before.
+
+**Numbers proposed:**
+- The window is 600 x 400 at (565, 214) with a 4 px frame. The old slide 1 clip box was 546 x 364.
+- The instruction is Bangers 32 and the hint is muted 24.
+- The success message is gold Bangers 64, outline 12, with a 0.25 s back-out pop.
+
+**For the playtest:** the kickers of slides 1 to 5 show only "n / 6", because T-559 has kicker topics for the last slide only (the Project Lead says this is fine; noted for the playtest).
+
+**Waiting on the merge of T-561 and T-560 into this branch (the Project Lead's plan):**
+- The real-scene check: `game/tests/unit/test_tutorial_practice_real.gd`, pending until the scene exists.
+- The seam wiring: PLAYGROUND_PATH `res://data/level/practice_playground.json`, start ids drift, alt_drift, air_spin, grind, and GOAL_TEXT_KEYS set to T-559's keys. Both live in T-561's practice_session.gd.
+- The screenshots in `art-archive/T-562/screenshots/` (each slide, a practice in progress, the success message). None are taken yet, so that criterion is open.
+
+**Also changed:**
+- `game/tests/unit/game/test_tutorial_flow.gd`: it walks SLIDE_COUNT - 1 arrows and uses the stand-in.
+- `game/tools/screen_gallery.gd`: it shoots six slides.
+- New fixture `game/tests/fixtures/fake_practice_session.tscn/.gd`: a stand-in with T-561's API.
+
+**A refusal:** a hook refused a temporary `cp` of T-561's files into this folder (for the real-scene check). Nothing was copied, and the Project Lead confirmed not to copy.
+
+**Tests run (foreground, the changed code only):**
+- `test_tutorial_slides`: 33/33, 410 asserts.
+- `test_tutorial_flow`: 8/8, 49 asserts.
+- `test_shared_button`: 12/12, 6610 asserts.
+- `test_tutorial_practice_real`: 4 tests, all pending until T-561 is merged.
+- The full run is left to QA.
+
+**Documents affected:**
+- `docs/hud-and-menus.md`: Content, new "The interactive slides (T-562)", and the T-485 heading marked as replaced.
+- `game/docs/hud-and-menus/tutorial-slides.md`: scenes, practice windows, keys and tests.
