@@ -1,7 +1,7 @@
 ---
 id: T-553
 title: The Cosmetics submenu from the main menu, and the jump arrow checkbox
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,13 +43,13 @@ This ticket is part of the grind overhaul (board, 2026-11-07; Drifting, Decision
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The main menu's Cosmetics button opens the submenu and Back returns (test). (QA: pass / fail)
-- [ ] The submenu lists the 5 jump effects with T-550's names and descriptions, shows prices and the coin count, buys and equips through the API, and refuses a purchase without enough coins with T-550's text (tests). (QA: pass / fail)
-- [ ] The pause screen's jump arrow checkbox shows and saves jump_arrow_enabled and fits the settings row (test). (QA: pass / fail)
-- [ ] Every text comes from T-550's keys (a search finds no hard-coded label). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md and docs/garage-design.md Content describe the screens. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-553/screenshots/ show the main menu with the button, the submenu (locked, bought, picked), and the pause settings with the checkbox. (QA: pass / fail)
+- [ ] The main menu's Cosmetics button opens the submenu and Back returns (test). (QA: pass; opens and Back returns, tested)
+- [ ] The submenu lists the 5 jump effects with T-550's names and descriptions, shows prices and the coin count, buys and equips through the API, and refuses a purchase without enough coins with T-550's text (tests). (QA: pass; 5 effects, prices, coins, buy/equip, refusal text tested; screenshots match)
+- [ ] The pause screen's jump arrow checkbox shows and saves jump_arrow_enabled and fits the settings row (test). (QA: pass; saves via GameSettings.save_jump_arrow_enabled, tested; fits row in screenshot)
+- [ ] Every text comes from T-550's keys (a search finds no hard-coded label). (QA: pass; no-hard-coded-label test, texts from cosmetics_text.json)
+- [ ] docs/hud-and-menus.md and docs/garage-design.md Content describe the screens. (QA: pass; both docs changed with Content sections)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass; both test sets green (2960 tests, 0 failing per notes))
+- [ ] Screenshots in art-archive/T-553/screenshots/ show the main menu with the button, the submenu (locked, bought, picked), and the pause settings with the checkbox. (QA: pass; 5 screenshots: menu with button, locked, bought, picked, pause checkbox)
 
 ## Updates
 
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: Cosmetics button and submenu, the Facing arrow checkbox, and wiring the picked effect to the car.
+
+### 2026-11-07, In progress → In QA
+
+Built: Cosmetics button and submenu, Facing arrow checkbox, picked effect wired to the car. QA now.
 
 ## Style review
 
