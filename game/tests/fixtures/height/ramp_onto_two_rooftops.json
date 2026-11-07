@@ -1,0 +1,16 @@
+{
+  "name": "T-549: ramps onto two rooftops of the same height (the board's Kaiju City, ramp-2 and ramp-13)",
+  "platforms": [
+    {"id": "roof-3", "x": -60.0, "y": -120.0, "w": 32.0, "h": 12.0, "height": 6.0},
+    {"id": "roof-4", "x": -108.0, "y": -108.0, "w": 32.0, "h": 18.0, "height": 3.0},
+    {"id": "roof-6", "x": -76.0, "y": -108.0, "w": 48.0, "h": 12.0, "height": 6.0},
+    {"id": "roof-7", "x": -76.0, "y": -96.0, "w": 14.0, "h": 30.0, "height": 6.0},
+    {"id": "roof-8", "x": -28.0, "y": -120.0, "w": 38.0, "h": 46.0, "height": 3.0}
+  ],
+  "ramps": [
+    {"id": "ramp-2", "platform": "", "side": "west", "x": -88.0, "y": -108.0, "w": 12.0, "h": 18.0,
+     "bottom_height": 3.0, "top_height": 6.0},
+    {"id": "ramp-13", "platform": "", "side": "east", "x": -28.0, "y": -120.0, "w": 12.0, "h": 24.0,
+     "bottom_height": 3, "top_height": 6}
+  ]
+}

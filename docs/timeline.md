@@ -3740,3 +3740,48 @@ Entry format:
 - Decision or change: Each rail landing gives a set speed boost that then declines; Jump off a rail goes where the car faces at a set speed.
 - Documents touched: docs/drifting.md
 - Tasks: T-548
+
+## 2026-11-06: A ramp may climb onto several rooftops
+- Decision or change: A ramp whose top meets several rooftops of the same height is valid; the checks, the game and the creator accept it, so the board's Kaiju City goes in unchanged.
+- Documents touched: docs/level-design.md
+- Tasks: T-549
+
+## 2026-11-06: A ramp may climb onto several rooftops
+- Decision or change: The level checks and the creator accept a ramp whose top meets several rooftops of the same height; the board's Kaiju City passes unchanged.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-549
+
+## 2026-11-07: Texts for the grind overhaul and the Cosmetics menu
+- Decision or change: Texts for the Cosmetics menu, the jump effects and the jump arrow checkbox; texts about grinding and the Jump cooldown brought up to date.
+- Documents touched: docs/hud-and-menus.md, docs/garage-design.md
+- Tasks: T-550
+
+## 2026-11-07: The grind overhaul in the car's code
+- Decision or change: Hold Space in the air to tilt and to grind; release to launch where the car faces; no Jump cooldown; jump effect and facing arrow (placeholders).
+- Documents touched: docs/drifting.md
+- Tasks: T-551
+
+## 2026-11-07: Cosmetics data and save
+- Decision or change: The jump effects as cosmetics with coin prices; unlocked and picked ones saved.
+- Documents touched: docs/garage-design.md
+- Tasks: T-552
+
+## 2026-11-07: The Cosmetics submenu and the jump arrow checkbox
+- Decision or change: A Cosmetics submenu from the main menu to buy and pick jump effects; a jump arrow checkbox in the pause settings.
+- Documents touched: docs/hud-and-menus.md, docs/garage-design.md
+- Tasks: T-553
+
+## 2026-11-07: Jump offered on the first two mission gifts
+- Decision or change: The first mission gift always offers Jump; if not taken, the second offers it again.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-554
+
+## 2026-11-07: The car's tilt art
+- Decision or change: PixelLab art for the mid-air tilt: 3 frames in 16 directions.
+- Documents touched: docs/visual-style.md
+- Tasks: T-555
+
+## 2026-11-07: The jump effects' art
+- Decision or change: Five jump effects: dash cloud, spring, jet thrust, stunt sparks, shockwave ring.
+- Documents touched: docs/visual-style.md
+- Tasks: T-556

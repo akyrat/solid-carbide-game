@@ -13,7 +13,8 @@ extends RefCounted
 ##    lined up with it (a 6 on a 3, along the 3's edges). Each axis moves by its closest such edge.
 ## 3. A ramp: when its top end is within SNAP_DISTANCE of the side it climbs (its view's side) of a
 ##    rooftop at its top height, it goes onto that side, and within it (check_height_data.py's rule);
-##    that wins over 2.
+##    that wins over 2. T-549: the sides of rooftops of that height on the same line, end to end,
+##    count as one side, so a ramp may go onto several rooftops side by side.
 ## Every neighbour edge is on even units already, so a snapped piece stays on the grid. A move that
 ## would take the piece out of the map is not made.
 ##
@@ -149,8 +150,11 @@ static func ramp_snap(doc: LevelDocument, rect: Rect2, side: String, top_height:
 				along = 0
 			_:
 				continue
-		var lo: float = a.position[along]
-		var hi: float = a.end[along] - rect.size[along]
+		# T-549: rooftops of that height whose sides continue this one's on the same line join it,
+		# so a ramp may snap onto several side by side (LevelDocument.top_areas).
+		var run := _joined_side(doc.surfaces(), a, side, top_height)
+		var lo: float = run.x
+		var hi: float = run.y - rect.size[along]
 		if hi < lo - E:
 			continue  # the side is shorter than the ramp
 		pos[along] = clampf(pos[along], lo, hi)
@@ -161,6 +165,36 @@ static func ramp_snap(doc: LevelDocument, rect: Rect2, side: String, top_height:
 			best_d = d.x + d.y
 			best = {"rect": Rect2(pos, rect.size), "platform": p}
 	return best
+
+
+## T-549: the stretch (start, end along it) of the line of `a`'s `side` covered without a gap by
+## `a`'s side and the sides on that line of other areas at `top_height` that meet it end to end.
+static func _joined_side(areas: Array, a: Rect2, side: String, top_height: float) -> Vector2:
+	var along := 1 if side in ["east", "west"] else 0
+	var line := _side_line(a, side)
+	var run := Vector2(a.position[along], a.end[along])
+	var grew := true
+	while grew:
+		grew = false
+		for p in areas:
+			if absf(float(p.height) - top_height) > E:
+				continue
+			var q := _rect(p)
+			if absf(_side_line(q, side) - line) > E or q.position[along] > run.y + E or q.end[along] < run.x - E:
+				continue
+			if q.position[along] < run.x - E or q.end[along] > run.y + E:
+				run = Vector2(minf(run.x, q.position[along]), maxf(run.y, q.end[along]))
+				grew = true
+	return run
+
+
+## Where the line of a rectangle's `side` lies (x for east and west, y for north and south).
+static func _side_line(a: Rect2, side: String) -> float:
+	match side:
+		"east": return a.end.x
+		"west": return a.position.x
+		"north": return a.position.y
+	return a.end.y
 
 
 static func _holds(outer: Rect2, inner: Rect2) -> bool:
