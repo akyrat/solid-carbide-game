@@ -209,10 +209,13 @@ func refresh() -> void:
 			b.visible = false
 		elif e.unlocked:
 			b.visible = true
+			b.disabled = false  # an unlocked one can always be picked
 			b.text = text("pick")
 		else:
 			row.price.text = text("locked").replace("{price}", str(e.price))
 			b.visible = true
+			# disabled (HudStyle's disabled look) while the coins are below the price (T-569)
+			b.disabled = progress.get_coins() < int(e.price)
 			b.text = text("buy")
 		b.focus_mode = Control.FOCUS_ALL if b.visible else Control.FOCUS_NONE
 	KeyNav.chain_column(focus_order())
