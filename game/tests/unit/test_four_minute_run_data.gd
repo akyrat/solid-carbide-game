@@ -109,7 +109,7 @@ func test_every_power_up_has_two_tiers_and_tier_2_is_the_old_tier_4() -> void:
 	assert_eq(d.max_tier(), 2)
 	var old_tier_4 := {
 		"rev_charge": {"charge_seconds": 0.7, "boost_speed_multiplier": 1.9, "boost_seconds": 1.5},
-		"jump": {"takeoff_speed": 8.0, "cooldown_seconds": 1.1},
+		"jump": {"takeoff_speed": 8.0},  # T-551: no cooldown any more
 		"bouncy_bumpers": {"bounce_distance_multiplier": 3.9},
 		"rusty_overcoat": {"contact_damage": 5.0, "repeat_cooldown_seconds": 0.3, "hits_kaiju": true},
 		"polarized_steering_wheel": {"burst_speed_multiplier": 1.45, "shock_bricks_tier": 1},

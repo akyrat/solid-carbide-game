@@ -5,6 +5,11 @@ extends RefCounted
 ## car's real height (car_height.gd) and the map's rails (scripts/level/rails.gd). Its numbers
 ## are in data/rail_grind.json (proposals; the defaults below are used when a key is missing).
 ##
+## T-551 (the grind overhaul; Drifting, Decisions, "The grind overhaul"): the car decides WHEN
+## (car.gd): find() is asked only while Space is held in the air, the grind lasts only while Space
+## stays held, and letting go ends it with stop("jump"), the launch where the car faces
+## (leave_velocity("jump"), at jump_speed flat and launch_takeoff_speed up, any car, no power-up).
+##
 ## The car (car.gd) owns one, `car.grind`, and the run gives it the map's rails (`rails`).
 ##  - find(pos, vel, height, vz): after each step in the air, the rail the car catches: its
 ##    centre within `reach` of the rail's line (square to it) and no more than `end_margin` past
@@ -27,7 +32,7 @@ extends RefCounted
 ##    travel by no more than `join_max_angle_deg`. The car carries its whole speed onto that rail's
 ##    direction (nothing lost to the angle, no fall, no new catch), and the extra distance of the
 ##    step goes on along it. The grind goes on as one: its seconds and length go on adding up.
-##  - stop(reason): ends it ("end", "slow", "jump"), sending grind_ended with its seconds and
+##  - stop(reason): ends it ("end", "slow", "jump": the launch when Space is let go), sending grind_ended with its seconds and
 ##    length, which the run pays as the GRIND! trick. leave_velocity(reason) is the car's flat
 ##    velocity as it leaves: along the rail; for a jump (T-548; the board, 2026-11-06) where the
 ##    car faces, at `jump_speed`, whatever its travel along the rail (backwards too; the speed along
@@ -42,7 +47,7 @@ const Rails := preload("res://scripts/level/rails.gd")
 ## The data file and the defaults (data/rail_grind.json explains each).
 const DATA_FILE := "rail_grind"
 const DEFAULTS := {
-	"reach": 2.0,
+	"reach": 2.5,
 	"end_margin": 1.0,
 	"catch_above": 1.0,
 	"catch_below": 0.75,
@@ -54,6 +59,7 @@ const DEFAULTS := {
 	"land_boost": 4.0,
 	"boost_decline": 2.0,
 	"jump_speed": 6.0,
+	"launch_takeoff_speed": 5.0,
 	"join_distance": 1.0,
 	"join_height": 0.6,
 	"join_max_angle_deg": 100.0,
@@ -77,6 +83,8 @@ var drop_side_speed: float = DEFAULTS.drop_side_speed
 var land_boost: float = DEFAULTS.land_boost
 var boost_decline: float = DEFAULTS.boost_decline
 var jump_speed: float = DEFAULTS.jump_speed
+## T-551: the launch's vertical speed off the bar (units/s, up), for any car (car.gd _leave_grind).
+var launch_takeoff_speed: float = DEFAULTS.launch_takeoff_speed
 var join_distance: float = DEFAULTS.join_distance
 var join_height: float = DEFAULTS.join_height
 var join_max_angle_deg: float = DEFAULTS.join_max_angle_deg

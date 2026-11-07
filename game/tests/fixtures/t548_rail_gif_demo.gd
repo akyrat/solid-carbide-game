@@ -31,6 +31,7 @@ var label: Label
 var _steps := 0
 var _end_step := -1
 var _jumped_off := false
+var _release_step := -10
 var _turn_target := 40.0
 
 
@@ -89,13 +90,17 @@ func _on_stepped() -> void:
 	run.state.health = run.state.max_health
 	if _steps == hop_step:
 		car.press_jump()  # the hop onto rail-3
+		car.scripted_jump_held = true  # T-551: Space held to catch and grind
+	elif _steps == _release_step + 1:
+		car.scripted_jump_held = true  # held again to catch rail-4
 	var g = car.grind
 	if g.active and g.rails[g.rail_index].id == "rail-3":
 		var off: float = rad_to_deg(g.body_heading - g.travel().angle())
 		car.scripted_input = [true, false, -1.0 if g.seconds > 0.8 and off < _turn_target else 0.0]
 		if not _jumped_off and off >= _turn_target:
 			_jumped_off = true
-			car.press_jump()
+			car.scripted_jump_held = false  # T-551: let go of Space: the launch
+			_release_step = _steps
 	else:
 		car.scripted_input = [true, false, 0.0]
 	if g.active:

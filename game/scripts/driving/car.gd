@@ -25,6 +25,7 @@ const RevCharge := preload("res://scripts/driving/rev_charge.gd")
 const JumpPowerUp := preload("res://scripts/driving/jump_power_up.gd")
 const PolarizedWheel := preload("res://scripts/driving/polarized_steering_wheel.gd")
 const RailGrind := preload("res://scripts/driving/rail_grind.gd")
+const CarTilt := preload("res://scripts/driving/car_tilt.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -77,6 +78,12 @@ signal trick(trick_id: String)
 ## Emitted on each landing with the seconds the car was in the air (task T-242,
 ## the airtime trick). Whether it pays is combo.json's airtime numbers.
 signal airtime_trick(seconds: float)
+## Emitted when the car jumps (task T-551, the jump effect; Drifting, Decisions, "A jump effect
+## around the car"): kind "hop" (the Jump power-up's jump from the ground) or "rail_launch" (Space
+## let go on a rail). at_units is where it left (flat, units) and at_height the height it left from
+## (the ground's, or the bar's). A ramp's take-off sends nothing (the proposal: the effect is for
+## the player's own jumps; ramps launch every car that drives over them).
+signal jump_started(kind: String, at_units: Vector2, at_height: float)
 
 var model = CarModel.new()
 ## Watches the driving for tricks (task T-079). It only reads the model.
@@ -99,6 +106,13 @@ var polarized = PolarizedWheel.new()
 ## air that catches a rail locks on and slides along it (_grind_step); grind.grind_ended is the
 ## GRIND! trick's signal.
 var grind = RailGrind.new()
+## The tilt (task T-551, car_tilt.gd): Space held in the air (or on a rail) tilts the car through 3
+## frames; let go, or landed, it plays them back. The drawing reads tilt.step (car_sprite.gd).
+var tilt = CarTilt.new()
+## True when Space (car_jump) was held on the last physics step (T-551). Dead keys read false.
+var jump_held := false
+## [T-551] Space held, used when use_keyboard is false (tests, scripted driving).
+var scripted_jump_held := false
 ## Bouncy Bumpers (task T-462): the owned tier (0 = not owned) and its
 ## bounce_distance_multiplier from power_ups.json (1.0 when not owned). A wall
 ## bounce carries the car that many times further: the bounce speed (and its
@@ -180,6 +194,8 @@ var _bounce_point := Vector2.ZERO
 
 
 func _init() -> void:
+	jump.jumped.connect(func(_vz: float) -> void:
+		jump_started.emit("hop", model.get_position(), height_model.height))
 	tricks.trick.connect(func(trick_id: String) -> void: trick.emit(trick_id))
 	tricks.airtime_trick.connect(func(seconds: float) -> void: airtime_trick.emit(seconds))
 
@@ -226,26 +242,31 @@ func physics_step() -> void:
 	var w: bool
 	var s: bool
 	var steer: float
+	var held: bool
 	if use_keyboard:
 		w = Input.is_action_pressed(ACTION_ACCELERATE)
 		s = Input.is_action_pressed(ACTION_REVERSE)
 		steer = Input.get_action_strength(ACTION_STEER_LEFT) - Input.get_action_strength(ACTION_STEER_RIGHT)
+		held = Input.is_action_pressed(ACTION_JUMP)
 	else:
 		w = scripted_input[0]
 		s = scripted_input[1]
 		steer = scripted_input[2]
+		held = scripted_jump_held
 	if not input_enabled:
 		w = false
 		s = false
 		steer = 0.0
+		held = false
 		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
 		rev_charge.reset()
 		polarized.reset()  # T-502: and the Polarized Steering Wheel's coast and burst
 		_jump_pressed = false
 	last_input = [w, s, steer]
+	jump_held = held
 	# T-541: on a rail the grind moves the car; when it ends this step, the car carries on below
-	# from the rail (in the air, or hopping with Jump).
-	if grind.active and _grind_step(steer):
+	# from the rail (in the air: off the end, too slow, or launched by letting go of Space, T-551).
+	if grind.active and _grind_step(steer, held):
 		return
 	# T-461: Jump (nothing at all when not owned). Before the model's update, so
 	# the hop's first step is already in the air (air turn rate, no driving).
@@ -301,15 +322,19 @@ func physics_step() -> void:
 	_update_side_contacts()
 	_update_bounce_rearm(w)
 	# T-541: a car in the air that catches a rail locks on; on the ground every rail is free again.
+	# T-551 (the grind overhaul): only while Space is held.
 	if not grind.rails.is_empty():
 		if height_model.airborne:
-			var info: Dictionary = grind.find(model.get_position(), model.get_velocity(),
-				height_model.height, height_model.vertical_speed)
-			if not info.is_empty():
-				grind.start(info, model.rotation)
-				_place_on_grind()
+			if held:
+				var info: Dictionary = grind.find(model.get_position(), model.get_velocity(),
+					height_model.height, height_model.vertical_speed)
+				if not info.is_empty():
+					grind.start(info, model.rotation)
+					_place_on_grind()
 		else:
 			grind.touched_ground()
+	# T-551: tilted while Space is held in the air (or on the rail just caught); back otherwise.
+	tilt.update(held and (height_model.airborne or grind.active), model.dt)
 	if detect_tricks:
 		# Tricks (task T-079), observed after the height step so the detector
 		# knows whether this step ends in the air: the drift 360 ignores those
@@ -323,24 +348,21 @@ func physics_step() -> void:
 
 
 ## T-541: one physics step on a rail. A or D spin the body at the air turn rate, as in the air
-## (the board's tweak, 2026-11-06; the car stays on the rail); Jump (owned; the regular Jump's
-## cooldown doesn't apply on a rail, quick tuning 2) hops off where the car faces, at the grind's
-## jump_speed (T-548); otherwise the grind slides on. Returns true while it
-## goes on (the step is done here: no driving, no collisions, the height held on the bar), false
-## when it ended: the car is then off the rail with its leaving velocity, and physics_step()
-## carries on with its normal step (the hop, the fall).
-func _grind_step(steer: float) -> bool:
+## (the board's tweak, 2026-11-06; the car stays on the rail). T-551 (the grind overhaul): the
+## grind lasts while Space stays held (`held`); letting go ends it with the launch where the car
+## faces (reason "jump": RailGrind.leave_velocity, jump_speed flat, launch_takeoff_speed up), for any
+## car, no power-up needed. Otherwise the grind slides on. Returns true while it goes on (the step
+## is done here: no driving, no collisions, the height held on the bar, the tilt held), false when
+## it ended: the car is then off the rail with its leaving velocity, and physics_step() carries on
+## with its normal step (the launch's climb, or the fall).
+func _grind_step(steer: float, held: bool) -> bool:
 	var rotation_before: float = model.rotation
 	grind.turn(steer, tuning.turn_rate_for(true), model.dt)
-	var reason := ""
-	if _jump_pressed and jump.is_owned():
-		reason = "jump"
-	else:
-		_jump_pressed = false  # used up (or of no use), before stepped is sent
-		jump.step(height_model, false, model.dt)  # the cooldown runs on
-		reason = grind.step(model.dt)
+	_jump_pressed = false  # a press on a rail does nothing (Space is held to be here at all)
+	var reason := "jump" if not held else grind.step(model.dt)
 	if reason == "":
 		_place_on_grind()
+		tilt.update(true, model.dt)
 		if detect_tricks:
 			tricks.observe(model, false, false, 0.0, rotation_before, false)
 			tricks.observe_air(false, 0.0, model.dt)
@@ -364,9 +386,11 @@ func _place_on_grind() -> void:
 
 
 ## T-541: ends the grind for `reason` ("end", "slow", "jump"): the car leaves from its place on
-## the rail with the grind's leaving velocity, facing the way it faced on the rail. Off the end or too slow
-## it falls from the bar; for a jump, the Jump hops it from there with no cooldown
-## (JumpPowerUp.hop_off_rail: the regular Jump's cooldown is neither checked nor started).
+## the rail with the grind's leaving velocity, facing the way it faced on the rail. Off the end or
+## too slow it falls from the bar (off the end with Space still held it stays tilted and can catch
+## the next rail, T-551's proposal). "jump" is T-551's launch (Space let go): the car climbs off the
+## bar at the grind's launch_takeoff_speed, or the owned Jump tier's takeoff if higher (tier 2's 8),
+## and the jump effect plays (jump_started "rail_launch").
 func _leave_grind(reason: String) -> void:
 	var p: Vector2 = grind.position_units()
 	var v: Vector2 = grind.leave_velocity(reason)
@@ -377,10 +401,17 @@ func _leave_grind(reason: String) -> void:
 	model.rotation = heading
 	_sync_from_model()
 	if reason == "jump":
-		jump.hop_off_rail(height_model)
-		_jump_pressed = false  # used: the normal step's Jump doesn't see it again
+		var bar: float = height_model.height
+		height_model.hop(launch_takeoff_speed())
+		jump_started.emit("rail_launch", p, bar)
 	else:
 		height_model.leave_rail(0.0)
+
+
+## T-551: the launch's vertical speed off a rail (units/s): the grind's launch_takeoff_speed, or
+## the owned Jump power-up's takeoff when that is higher.
+func launch_takeoff_speed() -> float:
+	return maxf(grind.launch_takeoff_speed, jump.takeoff_speed)
 
 
 ## The car crashed (task T-315; the run scene calls it on RunState.crashed):

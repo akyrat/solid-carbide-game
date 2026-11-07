@@ -57,7 +57,6 @@ func _begin() -> void:
 	car.model.set_velocity(Vector2(float(s[3]), 0.0))
 	car.height_model.reset(at)
 	car._sync_from_model()
-	car.jump.reset()
 	_pressed = false
 	_t = 0
 
