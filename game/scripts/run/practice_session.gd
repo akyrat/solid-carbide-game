@@ -37,11 +37,10 @@ extends Node2D
 ## The car resets to its start point when it leaves the playground (the map's rectangle and
 ## AREA_MARGIN; the map's hard edges normally keep it in) or on R.
 ##
-## SEAMS for the tickets built alongside (T-561's result notes):
-## - PLAYGROUND_PATH: the level file. Until T-560's practice playground is in, a stand-in,
-##   data/level/practice_stand_in.json. The start point of each trick is the level's
-##   "practice_starts" entry for it ({x, y, heading} like "spawn"), else the level's spawn.
-##   A level with no painted "ground" gets the drift prototype's grid ground (ground_grid.gd).
+## The level and the texts (T-560 and T-559, both in):
+## - PLAYGROUND_PATH: the practice playground, data/level/practice_playground.json. Each trick
+##   starts on the level's start point with its id (LevelStartPoints: drift, alt_drift, air_spin,
+##   grind), else on the level's spawn. The level draws its own grid ground ("ground_style").
 ## - The notebook's goal lines are T-559's (GOAL_TEXT_KEYS, data/tutorial_text.json tutorial.goal.*).
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
@@ -57,7 +56,6 @@ const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
 const FacingArrowScript := preload("res://scripts/driving/facing_arrow.gd")
 const JumpEffectScript := preload("res://scripts/driving/jump_effect.gd")
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
-const GroundGridScript := preload("res://scripts/driving/ground_grid.gd")
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 const RailsScript := preload("res://scripts/level/rails.gd")
 const RailDrawingScript := preload("res://scripts/level/rail_drawing.gd")
@@ -65,8 +63,8 @@ const RailSparksScript := preload("res://scripts/driving/rail_sparks.gd")
 const PowerUpScreenScript := preload("res://scripts/ui/power_up_screen.gd")
 const PracticeOffersScript := preload("res://scripts/run/practice_offers.gd")
 
-## SEAM (T-560): the practice playground's level file.
-const PLAYGROUND_PATH := "res://data/level/practice_stand_in.json"
+## The practice playground (T-560; Level design, Content, "The practice playground").
+const PLAYGROUND_PATH := "res://data/level/practice_playground.json"
 const TEXTS_PATH := "res://data/tutorial_text.json"
 
 ## The tricks a practice can count, as the slides name them.
@@ -132,7 +130,6 @@ var focused := false
 
 ## Everything that moves, paused as one (process_mode).
 var world: Node2D
-var ground: Node2D
 var map: Node2D
 var elevation = null
 var physics_world: Node2D
@@ -244,14 +241,13 @@ func take_gift() -> void:
 
 
 ## The start point of `trick_name` on the level: {"position": units, "rotation": radians}. The
-## level's practice_starts entry, else its spawn.
+## level's start point with the trick's id (T-560, LevelStartPoints: drift, alt_drift, air_spin,
+## grind), else its spawn.
 func start_point(trick_name: String = "") -> Dictionary:
 	var t := trick_name if trick_name != "" else trick
-	var starts = map.layout.get("practice_starts", {})
-	var s = starts.get(t) if starts is Dictionary else null
-	if s is Dictionary and s.has("x") and s.has("y"):
-		return {"position": Vector2(float(s.x), float(s.y)),
-			"rotation": deg_to_rad(float(s.get("heading", LevelSpawn.DEFAULT_HEADING)))}
+	var s := LevelStartPoints.of(map.layout, t)
+	if not s.is_empty():
+		return {"position": Vector2(s.x, s.y), "rotation": deg_to_rad(float(s.heading))}
 	return {"position": LevelSpawn.position_of(map.layout), "rotation": LevelSpawn.rotation_of(map.layout)}
 
 
@@ -305,20 +301,6 @@ func _build() -> void:
 	elevation.name = "Elevation"
 	map.add_child(elevation)
 	elevation.setup(map, layout_path)
-	if not map.layout.has("ground"):
-		# No painted ground: the drift prototype's grid (the stand-in; T-560 may paint its own).
-		map.ground_draw.visible = false
-		map.ground_tiles.visible = false
-		ground = GroundGridScript.new()
-		ground.name = "Ground"
-		ground.px_per_unit = PX
-		ground.transform = ISO_TRANSFORM
-		ground.z_index = -1000
-		world.add_child(ground)
-		world.move_child(ground, 0)
-		var edge := _Edge.new()
-		edge.rect = MapScript.rect_of(map.layout.map.rect)
-		ground.add_child(edge)
 
 	drift_marks = DriftMarksScene.instantiate()
 	drift_marks.name = "DriftMarks"
@@ -530,8 +512,6 @@ func _sync_view(snap_camera: bool) -> void:
 	view_root.z_index = elevation.z_for(units, car.rotation, car.height)
 	shadow.z_index = elevation.shadow_z_for(units, car.rotation, car.height, ground_h)
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
-	if ground != null:
-		ground.follow(units * PX)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	var car_lift: Vector2 = CarSpriteScript.lift_for_height(car.height, PX)
 	if snap_camera:
@@ -572,11 +552,3 @@ func _set_gift_paused(on: bool) -> void:
 func _apply_pause() -> void:
 	if world != null:
 		world.process_mode = Node.PROCESS_MODE_INHERIT if is_running() else Node.PROCESS_MODE_DISABLED
-
-
-## The playground's edge, drawn on the grid ground (flat pixels; the ground has the iso transform).
-class _Edge extends Node2D:
-	var rect := Rect2()
-
-	func _draw() -> void:
-		draw_rect(Rect2(rect.position * 16.0, rect.size * 16.0), Color(0.85, 0.35, 0.65), false, 3.0)

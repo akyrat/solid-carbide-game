@@ -1,12 +1,13 @@
 extends GutTest
 ## Task T-561: the tutorial's practice session (practice_session.gd). It loads the practice
-## playground (until T-560's level is in, the stand-in) with the real car and none of the run's
+## playground (T-560's level) with the real car and none of the run's
 ## enemies, clock or damage; counts its one trick and no other, and signals on the third; shows
 ## the goal and its count in the real notebook; the grind's practice opens with the Jump gift
 ## and gives Jump when taken; it pauses only itself; the car resets on leaving and on R.
 
 const SessionScene := preload("res://scenes/run/practice_session.tscn")
 const CarScript := preload("res://scripts/driving/car.gd")
+const Rails := preload("res://scripts/level/rails.gd")
 
 var session: PracticeSession
 var counted: Array = []
@@ -52,9 +53,12 @@ func test_it_loads_the_playground_with_the_real_car_and_no_enemies_clock_or_dama
 	assert_eq(session.map.layout_path, PracticeSession.PLAYGROUND_PATH)
 	assert_eq(session.car.get_script(), CarScript, "the game's own car")
 	assert_eq(session.car.ground, session.elevation.ground_height, "the car's real height")
-	assert_eq(session.elevation.areas.size(), 2, "the stand-in's rooftop and ramp")
-	assert_eq(session.car.grind.rails.size(), 1, "the stand-in's rail goes to the car")
-	assert_not_null(session.ground, "no painted ground: the drift prototype's grid")
+	var layout: Dictionary = session.map.layout
+	assert_eq(session.elevation.areas.size(), layout.platforms.size() + layout.ramps.size(),
+		"the playground's rooftop and ramps")
+	assert_eq(session.car.grind.rails.size(), Rails.from_layout(layout).size(), "its rails go to the car")
+	assert_gt(session.car.grind.rails.size(), 0)
+	assert_false(session.map.grid_style.is_empty(), "the level's own grid ground")
 	for n in ["Minions", "Kaiju", "Weapons", "GiftDrops", "LevelUpScreen", "Hud", "Sounds"]:
 		assert_null(session.find_child(n, true, false), "no %s" % n)
 	assert_eq(session.state.process_mode, Node.PROCESS_MODE_DISABLED, "the clock never runs")
@@ -70,13 +74,14 @@ func test_it_loads_the_playground_with_the_real_car_and_no_enemies_clock_or_dama
 func test_the_car_starts_on_the_tricks_start_point() -> void:
 	for t in PracticeSession.TRICKS:
 		session.setup(t)
-		var s: Dictionary = session.map.layout.practice_starts[t]
+		var s: Dictionary = LevelStartPoints.of(session.map.layout, t)
+		assert_false(s.is_empty(), "%s has a start point" % t)
 		assert_almost_eq(session.car.model.get_position(), Vector2(s.x, s.y), Vector2(0.001, 0.001), t)
 		assert_almost_eq(session.car.model.rotation, deg_to_rad(float(s.heading)), 0.001, t)
 
 
-func test_a_level_without_practice_starts_starts_every_trick_on_its_spawn() -> void:
-	session.map.layout.erase("practice_starts")
+func test_a_level_without_start_points_starts_every_trick_on_its_spawn() -> void:
+	session.map.layout.erase("start_points")
 	var p: Dictionary = session.start_point("grind")
 	assert_eq(p.position, LevelSpawn.position_of(session.map.layout))
 
@@ -250,31 +255,15 @@ func test_the_other_practices_open_no_gift() -> void:
 		session.pause()
 
 
-func test_a_real_hop_onto_the_rail_counts_a_grind() -> void:
+func test_on_the_real_playground_a_grind_from_the_grind_start_counts() -> void:
 	session.setup("grind")
 	session.start()
 	session.gift_screen.skip_animation()
 	session.take_gift()
-	session.set_focused(true)
-	var car = session.car
-	car.use_keyboard = false
-	car.model.set_position(Vector2(-20.0, 16.0))
-	car.model.rotation = -PI / 2.0
-	car.model.set_velocity(Vector2(0, -11.0))
-	car.position = Vector2(-20.0, 16.0) * 16.0
-	car.press_jump()
-	car.scripted_jump_held = true
-	for i in 80:
-		car.physics_step()
-		if car.grind.active:
-			break
-	assert_true(car.grind.active, "caught the rail from a hop")
-	for i in 600:
-		car.physics_step()
-		if not car.grind.active:
-			break
-	assert_false(car.grind.active)
-	assert_eq(session.successes, 1)
+	assert_eq(session.car.jump.tier, 1)
+	var r := _drive_east(false, true)
+	assert_ne(r.caught, "", "a rail is caught from the ramp")
+	assert_eq(session.successes, 1, "the grind counts when it ends: %s" % [r])
 	assert_eq(counted[0][0], "rail_grind")
 
 
@@ -323,8 +312,8 @@ func test_leaving_the_playground_puts_the_car_back() -> void:
 	session.setup("air_spin")
 	var start: Vector2 = session.start_point().position
 	assert_true(session.in_area(start))
-	assert_false(session.in_area(Vector2(60.0, 0.0)))
-	session.car.model.set_position(Vector2(60.0, 0.0))
+	assert_false(session.in_area(Vector2(70.0, 0.0)))
+	session.car.model.set_position(Vector2(70.0, 0.0))
 	session.car.stepped.emit()
 	await wait_process_frames(1)
 	assert_eq(session.car.model.get_position(), start)
@@ -338,19 +327,50 @@ func test_the_count_survives_a_car_reset() -> void:
 	assert_eq(session.successes, 2)
 
 
-func test_driving_up_the_stand_ins_ramp_takes_off() -> void:
+## Drives east from the trick's start point with W held (scripted), the car stepped by the test
+## (T-560's test_practice_playground.gd drive): A in the air when `spin`, Space held in the air when
+## `hold_space`, both only past the ramp (x > 11). Stops after the landing, or once a grind ended.
+func _drive_east(spin: bool, hold_space: bool) -> Dictionary:
+	session.set_focused(true)
+	var car = session.car
+	car.use_keyboard = false
+	var out := {"caught": "", "flew": false}
+	for i in 900:
+		var in_air: bool = car.airborne
+		var past: bool = car.model.get_position().x > 11.0
+		car.scripted_input = [true, false, 1.0 if (spin and in_air and past) else 0.0]
+		car.scripted_jump_held = hold_space and (in_air or car.grind.active) and past
+		car.physics_step()
+		if car.grind.active:
+			out.caught = car.grind.rail.id
+		if car.airborne and past:
+			out.flew = true
+		if out.caught != "" and not car.grind.active and not car.airborne:
+			break
+		if out.caught == "" and out.flew and not car.airborne and car.model.get_position().x > 12.0:
+			break
+	out["end"] = car.model.get_position()
+	return out
+
+
+func test_on_the_real_playground_an_air_spin_from_the_air_spin_start_counts() -> void:
 	session.setup("air_spin")
+	session.start()
+	var r := _drive_east(true, false)
+	assert_true(r.flew, "flew off the jump ramp")
+	assert_eq(session.successes, 1, "one landing, one success: %s %s" % [r, counted])
+	assert_true(["air_one_eighty", "air_three_sixty"].has(counted[0][0]))
+
+
+func test_on_the_real_playground_an_alt_drift_from_the_alt_drift_start_counts() -> void:
+	session.setup("alt_drift")
 	session.start()
 	session.set_focused(true)
 	var car = session.car
 	car.use_keyboard = false
-	car.scripted_input = [true, false, 0.0]
-	var flew := false
-	var top := 0.0
-	for i in 200:
-		car.physics_step()
-		top = maxf(top, car.height)
-		if car.airborne and car.model.get_position().x < 14.0:
-			flew = true
-	gut.p("top height %.2f, at %s, speed %.2f" % [top, car.model.get_position(), car.model.get_velocity().length()])
-	assert_true(flew, "flies off the ramp's top")
+	for leg in [[1.0, true, false], [0.2, false, false], [1.0, false, true]]:  # forward, release, backward
+		car.scripted_input = [leg[1], leg[2], 1.0]
+		for i in roundi(float(leg[0]) * 50.0):
+			car.physics_step()
+	assert_eq(session.successes, 1, "%s" % [counted])
+	assert_eq(counted[0][0], "alternate_drift")

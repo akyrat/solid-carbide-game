@@ -3,7 +3,7 @@ extends Control
 ## window-sized SubViewport on a dark page, as the tutorial slide (T-562) will embed it. The env
 ## var PRACTICE_SHOT picks what it shows:
 ##   drift, alt_drift: the car drifting (scripted W + A), the goal at 1/3 (alt drift 2/3);
-##   air_spin: the car driven over the ramp, turning in the air, the goal at 1/3;
+##   air_spin: the car driven off the jump ramp, turning in the air, the goal at 1/3;
 ##   grind_gift: the grind practice's start, the Jump gift on show;
 ##   grind: Jump taken, the car hopped onto the rail and grinding;
 ##   done: the drift goal at 3/3, ticked.
@@ -56,20 +56,30 @@ func _ready() -> void:
 			session.state.add_trick("alternate_drift")
 			session.state.add_trick("alternate_drift")
 		"air_spin":
-			car.model.set_velocity(Vector2(-14.0, 0.0))
-			car.scripted_input = [true, false, 0.0]
 			session.state.add_trick("air_one_eighty")
+			_drive_east(true, false, func() -> bool: return car.airborne and car.model.get_position().x > 14.0, 25)
 		"grind":
 			session.gift_screen.skip_animation()
 			session.take_gift()
-			car.model.set_position(Vector2(-20.0, 16.0))
-			car.model.rotation = -PI / 2.0
-			car.model.set_velocity(Vector2(0, -11.0))
-			car.position = Vector2(-20.0, 16.0) * 16.0
-			car.press_jump()
-			car.scripted_jump_held = true
+			_drive_east(false, true, func() -> bool: return car.grind.active, 25)
 
 
-func _physics_process(_delta: float) -> void:
-	if shot == "air_spin" and session != null and session.car.airborne:
-		session.car.scripted_input = [false, false, 1.0]  # A in the air: the spin
+## T-560's drive from the start point, stepped here (the screenshot tool's physics runs slowly):
+## W held, A in the air when `spin`, Space held in the air when `hold_space`, both past the ramp
+## (x > 11); `extra` steps after `reached` is first true, then the car stops (frozen for the shot).
+func _drive_east(spin: bool, hold_space: bool, reached: Callable, extra: int) -> void:
+	var car = session.car
+	var left := -1
+	for i in 900:
+		var in_air: bool = car.airborne
+		var past: bool = car.model.get_position().x > 11.0
+		car.scripted_input = [true, false, 1.0 if (spin and in_air and past) else 0.0]
+		car.scripted_jump_held = hold_space and (in_air or car.grind.active) and past
+		car.physics_step()
+		if left < 0 and reached.call():
+			left = extra
+		if left == 0:
+			break
+		if left > 0:
+			left -= 1
+	car.set_physics_process(false)

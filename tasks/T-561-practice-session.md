@@ -146,3 +146,31 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Docs:** `game/docs/game-loop/practice-session.md` now describes the wired T-559 keys.
 
 **Still open for T-562:** `tutorial.success` ("Content secured!") and `tutorial.grind_hint` are T-562's to show. The session only sends `completed` and `gift_opened`.
+
+### Game Loop Agent, 2026-11-07: T-560's playground wired
+
+**Level:**
+- `PLAYGROUND_PATH` now points to `res://data/level/practice_playground.json` (T-560, merged into this branch).
+- The start points come from the level's `start_points`, read with `LevelStartPoints.of(layout, trick)`. The ids are `drift`, `alt_drift`, `air_spin` and `grind`; if one is missing, the car starts at the level's spawn.
+- The level draws its own grid ground (`ground_style`), so the session's grid and edge drawing are removed.
+- The stand-in `practice_stand_in.json` is removed, since nothing reads it now.
+
+**All four tricks count on the real level:** each is driven with scripted keys from its own start point, as in T-560's drive.
+- Drift: W + A, then let go, counts 1 LONG DRIFT!.
+- Alt drift: forward drift, release, backward drift, counts 1 ALT DRIFT!.
+- Air spin: W to the jump ramp, A in the air, counts exactly 1 (AIR 180! or AIR 360!) for the one landing.
+- Grind: after taking the Jump gift, W to the ramp with Space held in the air. The car catches a rail, and the GRIND! counts 1 when it ends.
+
+**Tests:**
+- The tests now use the real level: area and rail counts come from the level, plus its grid style, its start points, and the spawn fallback.
+- The stand-in hop and ramp tests are replaced by the four real-drive tests above.
+- Results, run in the foreground, one at a time:
+  - test_practice_session: 25/25 passed. Run together with T-560's test_practice_playground (selected by `test_practice_`): 34/34 passed, 208 asserts.
+  - game/tools Python set: 1043 tests, OK (4 skipped).
+
+**Screenshots:** retaken on the real playground in `art-archive/T-561/screenshots/` (same names). The fixture now steps the car itself, from each start point, and freezes it for the shot.
+- practice_air_spin.png: the car in the air off the jump ramp, "AIR SPINS 1/3".
+- practice_grind.png: the car on a rail with sparks.
+- practice_air_spin_later.png is removed, since the main air-spin shot already shows the car in the air.
+
+**Docs:** `game/docs/game-loop/practice-session.md` and docs/game-loop-architecture.md (Content) now name the real level and its start points.
