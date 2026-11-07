@@ -21,6 +21,12 @@
       "air_three_sixty_comment": "Notebook page goal line, a quantity goal: air 360s.",
       "thread_the_needle": "Needles threaded {done}/{total}",
       "thread_the_needle_comment": "Notebook page goal line, a quantity goal: thread the needle."
+    },
+    "total_seconds": "{name} seconds {done}/{total}",
+    "total_seconds_comment": "T-564 (Game loop architecture, Decisions, 'Total-time mission goals show their running total'): notebook page goal line for a goal that adds time up across tricks, with its running total so far. {name} is the goal's word from total_seconds_names, {done} and {total} are seconds, one decimal (code fills them), for example 'Airtime seconds 1.4/3.0'. Replaces goals.airtime's 'Rack up {seconds} seconds of airtime' while the total shows. Scored 9 in T-564's Style review.",
+    "total_seconds_names": {
+      "airtime": "Airtime",
+      "airtime_comment": "T-564: the {name} for the airtime total-time goal in total_seconds."
     }
   },
   "heal": {
