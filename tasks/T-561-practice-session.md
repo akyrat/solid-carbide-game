@@ -1,7 +1,7 @@
 ---
 id: T-561
 title: The practice session: a small live run in a window, counting one trick
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Rails
@@ -48,7 +48,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] The notebook in the window shows the goal and its count (test). (QA: pass)
 - [ ] The grind practice opens with the Jump gift and gives Jump when taken (test). (QA: pass)
 - [ ] docs/game-loop-architecture.md Content and game/docs/game-loop/ describe it. (QA: pass)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - game/tools test_text_inventory red: the new text in scripts/run/practice_session.gd:99 (GOAL_TEXT_FALLBACK) has screen '(unlisted)'; list it in the text inventory tool's screens; rerun that set; the Godot practice tests pass 24/24)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 - [ ] Screenshots in art-archive/T-561/screenshots/ show the scene with each trick's notebook goal. (QA: pass)
 
 ## Updates
@@ -66,6 +66,10 @@ Built: the practice session (24 tests). QA now.
 ### 2026-11-07, In QA → In progress
 
 QA round 1: a hard-coded fallback goal text trips the text check. Back to the agent to read T-559's keys instead.
+
+### 2026-11-07, In progress → In QA
+
+Fixed: goal lines from the texts, running on the real playground (34 tests). QA round 2.
 
 ## Style review
 
