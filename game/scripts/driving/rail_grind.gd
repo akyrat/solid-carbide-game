@@ -16,9 +16,11 @@ extends RefCounted
 ##    rail's"): the car's drawing on screen (car_outline.gd: its own pixels for its heading and tilt
 ##    frame, lifted by its height) crosses the rail's drawn bar (its 3 pixel rows), whatever the
 ##    car's height above or below the bar, rising or falling; this replaced the catch reach, the end
-##    margin and the height window. Still asked: moving roughly along it, its flat speed along the
-##    rail at least `min_start_speed` and its direction within `max_angle_deg` of the rail's line
-##    (either way), so a car crossing square-on doesn't stop dead on the bar. Two rails crossed:
+##    margin and the height window. Any crossing angle catches (the board, 2026-11-07, Drifting,
+##    Decisions: "A crossing square-on to the rail catches too"): a car moving along the rail at
+##    `min_start_speed` or more grinds on its way along it at its speed along it, as before; one
+##    slower along it (square-on, or standing) grinds the way its nose points along the rail at
+##    `square_start_speed` (its velocity's way along it when the nose is exactly square). Two rails crossed:
 ##    the one whose bar is nearest the car's drawn centre on screen wins. The car lands on the
 ##    point of the bar nearest its drawn centre on screen, so its drawing barely moves at the snap.
 ##  - start(info, heading): locks on. The car sits on the bar facing the way it landed. Only the
@@ -56,7 +58,7 @@ const BAR_HALF_PX := 1.5
 const DATA_FILE := "rail_grind"
 const DEFAULTS := {
 	"min_start_speed": 2.0,
-	"max_angle_deg": 60.0,
+	"square_start_speed": 6.0,
 	"decel": 1.0,
 	"end_speed": 2.0,
 	"drop_side_speed": 2.0,
@@ -76,7 +78,8 @@ signal grind_ended(reason: String, seconds: float, length: float)
 
 ## The numbers (data/rail_grind.json).
 var min_start_speed: float = DEFAULTS.min_start_speed
-var max_angle_deg: float = DEFAULTS.max_angle_deg
+## T-566: the speed along the rail a square-on catch starts at, before the landing boost (units/s).
+var square_start_speed: float = DEFAULTS.square_start_speed
 var decel: float = DEFAULTS.decel
 var end_speed: float = DEFAULTS.end_speed
 var drop_side_speed: float = DEFAULTS.drop_side_speed
@@ -129,27 +132,20 @@ func load_numbers(file: String = DATA_FILE) -> void:
 
 
 ## The rail the car catches at `pos` (units) with flat velocity `vel` (units/s), at `height`
-## (units; `vz`, its vertical speed, no longer matters since T-566), heading `heading` (radians;
+## (units; `vz`, its vertical speed, no longer matters since T-566; any flat velocity catches), heading `heading` (radians;
 ## NAN: the velocity's direction) drawn at tilt step `tilt_step` (0 to 3), or {}:
 ## {"index", "s", "speed_along", "screen_gap"}.
 func find(pos: Vector2, vel: Vector2, height: float, _vz: float = 0.0, heading: float = NAN,
 		tilt_step: int = 3) -> Dictionary:
-	var flat := vel.length()
-	if flat < min_start_speed:
-		return {}
 	if is_nan(heading):
 		heading = atan2(vel.y, vel.x)
 	var at := CarOutline.screen_of(pos, height)
-	var cos_max := cos(deg_to_rad(max_angle_deg))
 	var best := {}
 	var best_gap := INF
 	for i in rails.size():
 		if i == exclude:
 			continue
 		var r: Dictionary = rails[i]
-		var v: float = vel.dot(r.dir)
-		if absf(v) < min_start_speed or absf(v) < flat * cos_max - 1e-9:
-			continue
 		var a := CarOutline.screen_of(r.a, float(r.za))
 		var b := CarOutline.screen_of(r.b, float(r.zb))
 		if not CarOutline.touches_segment(at, heading, tilt_step, a, b, BAR_HALF_PX):
@@ -158,9 +154,23 @@ func find(pos: Vector2, vel: Vector2, height: float, _vz: float = 0.0, heading: 
 		var gap := at.distance_to(a.lerp(b, t))
 		if gap >= best_gap:
 			continue
-		best = {"index": i, "s": t * float(r.length), "speed_along": v, "screen_gap": gap}
+		best = {"index": i, "s": t * float(r.length), "speed_along": start_speed_along(vel, heading, r.dir),
+			"screen_gap": gap}
 		best_gap = gap
 	return best
+
+
+## T-566: the signed speed along a rail of direction `dir` a catch starts with (before the landing
+## boost): the car's own speed along it when that is min_start_speed or more; otherwise (a square-on
+## crossing) square_start_speed the way the nose (`heading`) points along it, or the velocity's way
+## along it when the nose is exactly square, or toward end b when both are.
+func start_speed_along(vel: Vector2, heading: float, dir: Vector2) -> float:
+	var v := vel.dot(dir)
+	if absf(v) >= min_start_speed:
+		return v
+	var nose := Vector2(cos(heading), sin(heading)).dot(dir)
+	var way := signf(nose) if absf(nose) > 1e-6 else (signf(v) if absf(v) > 1e-6 else 1.0)
+	return way * square_start_speed
 
 
 ## T-566: where along the screen segment a-b (0 to 1) the point nearest `p` is.

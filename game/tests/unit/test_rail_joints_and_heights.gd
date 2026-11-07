@@ -108,7 +108,7 @@ func test_the_smallest_turn_wins_at_a_fork() -> void:
 
 func test_the_numbers_for_joints_are_in_the_data_file() -> void:
 	var json: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/rail_grind.json"))
-	for k in ["join_distance", "join_height", "join_max_angle_deg", "max_angle_deg"]:
+	for k in ["join_distance", "join_height", "join_max_angle_deg", "square_start_speed"]:
 		assert_true(json.has(k), k)
 	assert_almost_eq(RailGrind.new().join_distance, float(json.join_distance), 1e-9)
 

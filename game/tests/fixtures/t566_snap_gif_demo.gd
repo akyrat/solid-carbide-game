@@ -10,7 +10,11 @@ extends Node
 ##   2. From above: off the high rail's end with Space still held, the car flies on; a low rail (bar
 ##      at 1) runs on 3 units west of it, and the falling car's drawing crosses the low bar's with
 ##      the car about 3 units over it: it snaps down onto it.
-## The scene quits `after_end` frames after the second snap (or after max_steps).
+## T566_SCENE=square (the board's answer of 2026-11-07, any crossing angle catches): one rail runs east
+## across the car's way north at height 1. Jump from the street, Space held, D held in the air turns
+## the nose about 35 degrees east while the car keeps flying north: it crosses the bar square-on,
+## catches it, and grinds east, the way its nose points along the rail, at the set speed.
+## The scene quits `after_end` frames after the last snap (or after max_steps).
 ##   "$GODOT_BIN" --path game --fixed-fps 50 --write-movie C:/abs/dir/f.png res://tests/fixtures/t566_snap_gif.tscn
 ## then: python game/tools/make_turn_gif.py C:/abs/dir out.gif --glob "f*.png" --every 2 --size 640 420 --scale 1 --ms 40
 
@@ -19,6 +23,10 @@ const TEST_MAP := "user://t566_map_with_rails.json"
 const RAILS := [
 	{"id": "high", "x1": 5.0, "x2": 5.0, "y1": -4.0, "y2": -30.0, "z1": 5.0, "z2": 5.0},
 	{"id": "low", "x1": 2.0, "x2": 2.0, "y1": -32.0, "y2": -76.0, "z1": 1.0, "z2": 1.0},
+]
+
+const SQUARE_RAILS := [
+	{"id": "across", "x1": -8.0, "x2": 24.0, "y1": -9.0, "y2": -9.0, "z1": 1.0, "z2": 1.0},
 ]
 
 @export var after_end := 45
@@ -30,14 +38,17 @@ var label: Label
 var _steps := 0
 var _end_step := -1
 var _last := "no snap yet"
+var scene := "both"
 ## The car's height at the end of the last step, so a snap can say how far over or under the bar it was.
 var _height_before := 0.0
+var _vel_before := Vector2.ZERO
 
 
 func _ready() -> void:
 	GameFlow.tutorial_enabled = false
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_MAP))
-	data["rails"] = RAILS
+	scene = OS.get_environment("T566_SCENE") if OS.get_environment("T566_SCENE") != "" else "both"
+	data["rails"] = SQUARE_RAILS if scene == "square" else RAILS
 	var f := FileAccess.open(TEST_MAP, FileAccess.WRITE)
 	f.store_string(JSON.stringify(data))
 	f.close()
@@ -49,7 +60,7 @@ func _ready() -> void:
 	var car: CharacterBody2D = run.car
 	car.use_keyboard = false
 	car.detect_tricks = true
-	car.model.set_position(Vector2(1.0, 8.0))
+	car.model.set_position(Vector2(5.0, 6.0) if scene == "square" else Vector2(1.0, 8.0))
 	car.model.rotation = -PI / 2.0
 	car.model.set_velocity(Vector2.ZERO)
 	car._sync_from_model()
@@ -79,12 +90,14 @@ func _on_stepped() -> void:
 	if _steps == hop_step:
 		car.press_jump()
 		car.scripted_jump_held = true
-	car.scripted_input = [true, false, 0.0]
+	var turning: bool = scene == "square" and car.airborne and not car.grind.active and car.grind.grinds == 0 		and rad_to_deg(car.model.rotation) < -55.0
+	car.scripted_input = [not car.airborne or car.grind.active, false, -1.0 if turning else 0.0]
 	label.text = "Space %s   height %.1f   %s" % ["held" if car.scripted_jump_held else "up", car.height, _last]
 	if _end_step < 0 and _steps >= max_steps:
 		print("t566_snap_gif_demo: no end in %d steps" % max_steps)
 		_end_step = _steps
 	_height_before = car.height
+	_vel_before = car.model.get_velocity()
 
 
 ## The car's grind_started: prints and shows how far over or under the bar the car snapped from.
@@ -95,7 +108,12 @@ func _on_snap(i: int, height_before: float) -> void:
 	var gap := height_before - bar
 	_last = "snapped onto %s from %.1f %s the bar" % [r.id, absf(gap), "over" if gap > 0.0 else "under"]
 	print("t566_snap_gif_demo: step %d, %s" % [_steps, _last])
-	if car.grind.grinds >= 2:
+	if scene == "square":
+		_last = "caught square-on, grinding %s at %.1f" % ["east" if car.grind.direction > 0.0 else "west", car.grind.speed]
+		print("t566_snap_gif_demo: %s (nose %.0f deg, flight before (%.1f, %.1f))" % [_last,
+			rad_to_deg(car.grind.heading()), _vel_before.x, _vel_before.y])
+		_end_step = _steps + 40
+	elif car.grind.grinds >= 2:
 		_end_step = _steps
 
 

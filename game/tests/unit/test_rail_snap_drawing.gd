@@ -96,6 +96,63 @@ func test_the_drawing_moves_only_onto_the_bar_at_the_snap() -> void:
 	assert_lte(before.distance_to(after), half, "its centre goes onto the bar where the player sees it cross, no further")
 
 
+# --- Square-on (the board, 2026-11-07: any crossing angle catches) ------------------------------
+
+## A car flying `vel` with its nose at `heading_deg` (degrees; 90 is south), 3 units north of the
+## bar and 3 under it, so its drawing is on the bar from the start.
+func _square_car(vel: Vector2, heading_deg: float) -> CharacterBody2D:
+	var car := _car(Vector2(20, -3), vel, BAR - 3.0, 0.0)
+	car.model.rotation = deg_to_rad(heading_deg)
+	car._sync_from_model()
+	_fly(car)
+	return car
+
+
+func test_a_square_on_crossing_grinds_the_way_the_nose_points_at_the_set_speed() -> void:
+	var g = RailGrind.new()
+	var east := _square_car(Vector2(0, 10), 70.0)  # crossing south, the nose 20 degrees east of south
+	assert_true(east.grind.active, "square-on: caught")
+	assert_eq(east.grind.direction, 1.0, "east, the way the nose points along the rail")
+	assert_almost_eq(east.grind.speed, g.square_start_speed + g.land_boost, 1e-6, "the set speed and the landing boost")
+	assert_almost_eq(east.height, BAR, 1e-6)
+	var west := _square_car(Vector2(0, 10), 110.0)  # the nose 20 degrees west of south
+	assert_true(west.grind.active)
+	assert_eq(west.grind.direction, -1.0, "west")
+	assert_almost_eq(west.grind.heading(), deg_to_rad(110.0), 1e-6, "it keeps facing the way it landed")
+	# The grind goes on: a few steps later it has slid west along the bar.
+	var x0: float = west.model.get_position().x
+	for i in 10:
+		west.physics_step()
+	assert_true(west.grind.active, "still grinding")
+	assert_lt(west.model.get_position().x, x0 - 1.0, "slid west")
+
+
+func test_a_car_crossing_backwards_grinds_the_way_its_nose_points() -> void:
+	# Flying south tail first (the nose to the north, a little east): the nose decides, not the travel.
+	var back := _square_car(Vector2(0, 10), -70.0)
+	assert_true(back.grind.active, "caught backwards")
+	assert_eq(back.grind.direction, 1.0, "east, where the nose points, though it flew south tail first")
+	var back_w := _square_car(Vector2(0, 10), -110.0)
+	assert_eq(back_w.grind.direction, -1.0, "west")
+	# Moving along the rail fast enough, the travel still decides (as before T-566), whatever the nose.
+	var g = RailGrind.new()
+	assert_almost_eq(g.start_speed_along(Vector2(10, 3), PI, Vector2.RIGHT), 10.0, 1e-9, "east at 10, nose west")
+	assert_almost_eq(g.start_speed_along(Vector2(1, 10), PI, Vector2.RIGHT), -g.square_start_speed, 1e-9,
+		"1 along (under min_start_speed): the nose's way, west")
+	assert_almost_eq(g.start_speed_along(Vector2(-1, 10), PI / 2.0, Vector2.RIGHT), -g.square_start_speed, 1e-9,
+		"the nose exactly square: the velocity's way along")
+	assert_almost_eq(g.start_speed_along(Vector2.ZERO, PI / 2.0, Vector2.RIGHT), g.square_start_speed, 1e-9,
+		"both square: toward end b")
+
+
+func test_a_standing_hop_under_a_bar_catches_too() -> void:
+	var g = RailGrind.new()
+	g.rails = Rails.from_layout(LAYOUT)
+	var f := g.find(Vector2(20, -3), Vector2.ZERO, BAR - 3.0, 4.0, 0.0)
+	assert_true(f.has("index"), "no flat speed at all, the drawing on the bar")
+	assert_almost_eq(float(f.speed_along), g.square_start_speed, 1e-9, "east, the nose's way")
+
+
 # --- Not without Space, not without crossing ----------------------------------------------------
 
 func test_without_space_held_it_never_snaps() -> void:
@@ -111,10 +168,6 @@ func test_drawings_that_never_cross_never_snap() -> void:
 	var car := _car(Vector2(2, 4), Vector2(10, 0), 3.0, 0.0)
 	_fly(car)
 	assert_eq(car.grind.grinds, 0, "no grind")
-	# Straight across the bar's drawing: square-on, so not caught (only the speed along is kept).
-	var across := _car(Vector2(20, -6), Vector2(0, 10), BAR, 0.0)
-	_fly(across)
-	assert_eq(across.grind.grinds, 0, "crossing square-on")
 
 
 func test_a_rail_through_the_empty_corner_of_the_frame_is_not_caught() -> void:

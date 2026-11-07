@@ -1,7 +1,7 @@
 ---
 id: T-566
 title: Snap to a rail when the car's sprite crosses the rail's sprite, whatever the height
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: holding Space in the air, the car snaps to a rail when its sprite crosses the rail's, at any height.
 
+### 2026-11-07, In progress → In QA
+
+Built: snaps when the car's drawn pixels cross the rail's, at any height. Open question: a square-on crossing doesn't catch yet. QA now.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -109,3 +113,31 @@ Done. With Space held in the air, the car now snaps onto a rail on the first ste
 - `game/docs/driving/rail-grind.md`: new section "The rail snap on the drawing (T-566)", and the table rows are updated.
 
 **Refusals:** the PreToolUse guard ("Task statuses change only through the status script") refused two read-only PowerShell commands: a Select-String over `tasks/T-56[0-3]*.md` and one over `mvp_map.gd`, because they used `$_.Filename` and `$_.LineNumber`. Nothing was written. I did those reads with the Grep tool instead, as the guard's message allows for reads. I did not retry the refused commands. The Project Lead may want to know that the guard flags read-only Select-String pipelines.
+
+### Driving & Drift Agent, 2026-11-07: the board's tweak, square-on crossings catch
+
+Built the board's answer word for word: "yes, square-on crossings should catch too".
+- Any crossing angle now catches. The 60-degree limit `max_angle_deg` is gone from the code and from `rail_grind.json`. So is the minimum flat speed, so a hop in place under a bar catches too.
+- A car moving along the rail at 2 units/s or more (`min_start_speed`) grinds its own way along it at its speed along it, as before.
+- A car slower than that along the rail (square-on) grinds the way its nose points along the rail at `square_start_speed` = 6 units/s, whatever way it was flying, then gets the landing boost (10 in all).
+  - If the nose is exactly square to the rail, the car goes the way its flight goes along the rail. If both are square, it goes toward end b.
+  - Proposal for the speed: 6 is `jump_speed`, the speed a launch leaves a rail at. So a launch that crosses the next rail square-on rides it at the speed it left the last one. 10 with the boost is just under cruise (11). It lasts about 4 s before the car drops off below 2, so even a short ride pays GRIND!.
+- Code: `game/scripts/driving/rail_grind.gd` (`find()` and the new `start_speed_along()`) and `game/data/rail_grind.json` (`square_start_speed` and `_square_comment`).
+
+**Tests (foreground, one file at a time):**
+- `test_rail_snap_drawing.gd`: 14/14 tests, 71 asserts. Three tests are new:
+  - square-on east and west at 6 + 4, still sliding 10 steps later
+  - crossing tail first goes where the nose points; `start_speed_along()`'s cases
+  - a standing hop under a bar catches
+- `test_rail_grind.gd`: 36/36 (199). "Landing across a rail locks on too", and the "too slow" case now catches at the set speed.
+- Other rail tests, all passing: `test_rail_joints_and_heights.gd` 14/14 (59), `test_run_rails.gd` 5/5 (225), `test_grind_overhaul.gd` 16/16 (65), `test_game_map.gd` 13/13 (61), `test_creator_rails.gd` 26/26 (225), `test_trick_list_recipes.gd` 12/12 (275), `test_tutorial_clips.gd` 7/7 (79), `test_camera_options.gd` 20/20 (522).
+
+**GIF:**
+- `art-archive/T-566/screenshots/rail_snap_square_on.gif` (fixture `T566_SCENE=square`). The car flies straight north (velocity (0, -16.5)), D turns its nose 38 degrees east in the air, it catches the bar square-on, and it grinds east at 10.0.
+- Stills: `square_on_just_before_snap.png`, `square_on_grinding_east.png`.
+
+**Docs:**
+- `docs/drifting.md`, Content, "The rail snap on the drawing (task T-566)": a new bullet "Any crossing angle catches".
+- `game/docs/driving/rail-grind.md`: the `find()` row, the data row, the tests and the recordings.
+
+**Refusal:** Claude Code's built-in safety check refused `rm -f "$D"/*.png` (clearing my own scratchpad frame folder before re-recording), because the target is a shell variable. Nothing was deleted. I did not retry the removal. I recorded into a new empty folder instead (scratchpad `t566sq2`), so the old frames in scratchpad `t566sq` are still there. They are scratch files and harmless.
