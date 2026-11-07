@@ -1,7 +1,7 @@
 ---
 id: T-571
 title: A Settings screen opened from the main menu
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -54,10 +54,30 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: UI builds the Settings screen.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, 2026-11-07. Built the main menu's Settings screen.
+
+What changed:
+- game/scripts/ui/settings_rows.gd (new, SettingsRows): the shared pieces, slider_row() (label, slider without focus, bare value), check() (the shared checkbox) and SaveOnRelease (T-427's rule: save on drag release and on close). The pause screen now builds its zoom, SFX, music and HUD size rows and its checkboxes with them; its fields, look and behaviour are unchanged (screenshot t571_pause_screen_unchanged.png, all pause tests pass).
+- game/scripts/menu/settings_screen.gd + game/scenes/menu/settings_screen.tscn (new, SettingsScreen): title (settings_title), a panel in the pause strip's look with Camera zoom level, SFX volume (only when GameSettings.sfx_enabled()), Music volume, then Camera smoothing, Dynamic camera, Rain, Drift Guide, Facing arrow; Back (settings_back). Labels are the pause screen's. Values read from GameSettings at open; sliders save on release and on Back/Escape; checkboxes save at once; the music slider applies to the Music bus at once (the menu music follows); zoom and camera options are read by the next run. Back and Escape (pause action) save pending and return to the menu. Keyboard: focus on Back, Up/Down to the checkboxes, Left/Right along them.
+- game/scripts/menu/main_menu.gd: Settings button (settings_button) between Cosmetics and Exit, in the KeyNav chain, signal settings_pressed.
+- game/scripts/game/game_flow.gd: show_settings(), the settings field, cleared in _clear_screens().
+- Tests: new game/tests/unit/test_settings_screen.gd (13 tests: button, exact controls with SFX switch off/on, Back, Escape, read at open, music heard at once and one write on release, saved on Back, checkboxes saved at once, values on the next run's pause screen and in a fresh game flow, pause change shown here, keyboard order). Updated test_menu_arrow_keys.gd (Settings in the chain, Space presses it) and hud/test_shared_button.gd (5 shared buttons).
+- Fixtures: game/tests/fixtures/t571_settings_demo.gd, t571_menu.tscn, t571_settings.tscn, t571_settings_sfx.tscn (throwaway settings file).
+
+Tests: full Godot set (bash game/tools/run_tests.sh): 269 scripts, 3069 tests, 3068 passing, 0 failing, 1 risky/pending (pre-existing). A first full run had 1 failure (test_menu_enter_and_space_press_the_selected_button expected Exit one Down after Cosmetics); fixed in the test, then the full run passed.
+
+Screenshots (art-archive/T-571/screenshots/): t571_menu.png (main menu with Settings selected), t571_settings.png (Settings screen, SFX switch off as in the MVP), t571_settings_sfx.png (with the SFX switch on), t571_pause_screen_unchanged.png (pause screen after the refactor).
+
+Documents affected: docs/hud-and-menus.md (Content: new 'The Settings screen (T-571)'; the Rain and Drift Guide lines no longer say the pause screen is the only settings screen), game/docs/hud-and-menus/main-menu.md (Settings button, new 'Settings screen' section), game/docs/hud-and-menus/pause-screen.md (shared rows).
+
+Proposals for the playtest: the button's place (after Cosmetics), the slider order (zoom, SFX, music, as on the pause screen), the plain dark background without the splash, and the panel's size. Not done: the screen gallery tool (game/tools/screen_gallery.gd) does not yet include the Settings screen.
