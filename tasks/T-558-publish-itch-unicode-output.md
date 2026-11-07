@@ -1,7 +1,7 @@
 ---
 id: T-558
 title: publish_itch.py crashes printing butler's output on the Windows console
-status: open
+status: done
 from: project-lead
 to: qa-integration
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/publish_itch.py, tools/test_publish_itch.py, docs/working-with-the-board.md]
 files_expected_to_change: [tools/publish_itch.py, tools/test_publish_itch.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,14 +41,22 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test runs the script's push path with a fake butler printing \u2219 and \u221a under a cp1252 stdout: it prints "Pushed version", the page link and the status, and exits 0. (QA: pass / fail)
-- [ ] The redaction of the API key in butler's output still works (the existing test still passes). (QA: pass / fail)
-- [ ] `python tools/publish_itch.py --dry-run` still works (the agent runs it). (QA: pass / fail)
-- [ ] The tools test set passes (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] A test runs the script's push path with a fake butler printing \u2219 and \u221a under a cp1252 stdout: it prints "Pushed version", the page link and the status, and exits 0. (QA: pass - test_cp1252_console_prints_butler_symbols covers it)
+- [ ] The redaction of the API key in butler's output still works (the existing test still passes). (QA: pass - existing redaction test passes)
+- [ ] `python tools/publish_itch.py --dry-run` still works (the agent runs it). (QA: pass - dry-run path covered by test_dry_run_does_not_push and unchanged; real run refuses off master by design)
+- [ ] The tools test set passes (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass - qa_check ran all 3 test sets green; tools set 23 tests OK)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-07, Open → In progress
+
+Started: the publish script prints butler's output without crashing.
+
+### 2026-11-07, In progress → In QA
+
+Built: butler's output prints safely; 23 tests pass. QA now.
 
 ## Style review
 
@@ -56,4 +64,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Fix: run()'s default output is now safe_print, which replaces characters the console encoding can't show (cp1252 crashed on ∙/√); butler output was already read as UTF-8 with errors replaced and the key redaction is unchanged. New test test_cp1252_console_prints_butler_symbols runs the push path with a fake butler printing ∙ √ under a strict cp1252 stdout: exit 0, Pushed version, page link, channel status. Ran: python -m unittest tools.test_publish_itch, 23 tests OK (includes the redaction test and test_dry_run_does_not_push). Real 'publish_itch.py --dry-run' on this branch stops with 'not on master' (correct, it refuses off master), so the dry-run path was checked by the fake-butler dry-run test only. No push made.
+- 2026-11-07, in-qa → done: QA passed; tooling, no board review needed

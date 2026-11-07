@@ -3830,3 +3830,8 @@ Entry format:
 - Decision or change: publish_itch.py no longer crashes on butler's non-ASCII output on the Windows console after a successful push.
 - Documents touched: docs/working-with-the-board.md
 - Tasks: T-558
+
+## 2026-11-07: The itch.io publish script prints butler's output safely
+- Decision or change: publish_itch.py prints butler's output through a safe print, so a successful push no longer ends in a console encoding crash.
+- Documents touched: none
+- Tasks: T-558

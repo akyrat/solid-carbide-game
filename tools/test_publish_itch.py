@@ -138,7 +138,7 @@ class FullRun(unittest.TestCase):
             os.environ.pop(k, None)
         self.d = tempfile.TemporaryDirectory()
         self.repo = make_repo(self.d.name)
-        (self.repo / ".gitignore").write_text("web-build/\n.env\nstub*\nbutler.*\nfail\npushed\n")
+        (self.repo / ".gitignore").write_text("web-build/\n.env\nstub*\nbutler.*\nfail\nuni\npushed\n")
         (self.repo / ".env").write_text(
             f"BUTLER_API_KEY={KEY}\nITCH_TARGET=me/game:html5\nGODOT_BIN={sys.executable}\n")
         git(self.repo, "add", ".gitignore")
@@ -150,6 +150,8 @@ class FullRun(unittest.TestCase):
             "here=os.path.dirname(os.path.abspath(__file__))\n"
             "if os.path.exists(os.path.join(here,'fail')):\n"
             "    print('boom '+os.environ['BUTLER_API_KEY']); sys.exit(3)\n"
+            "if os.path.exists(os.path.join(here,'uni')):\n"
+            "    sys.stdout.buffer.write('\\u2219 \\u221a\\n'.encode('utf-8')); sys.stdout.flush()\n"
             "sys.stdout.buffer.write(b'progress \\x90\\xe2\\x96\\x88\\n'); sys.stdout.flush()\n"
             "if sys.argv[1]=='status':\n"
             "    print('html5 channel version '+open(os.path.join(here,'pushed')).read())\n"
@@ -195,6 +197,24 @@ class FullRun(unittest.TestCase):
         code, out = self.go()
         self.assertEqual(code, 0, out)
         self.assertIn("progress", out)
+
+    def test_cp1252_console_prints_butler_symbols(self):
+        import io
+        (self.repo / "uni").write_text("x")
+        buf = io.BytesIO()
+        old = sys.stdout
+        sys.stdout = io.TextIOWrapper(buf, encoding="cp1252", errors="strict")
+        try:
+            code = p.run(["--repo", str(self.repo), "--butler", str(self.bat)], exporter=fake_exporter)
+            sys.stdout.flush()
+        finally:
+            text = buf.getvalue().decode("cp1252")
+            sys.stdout = old
+        self.assertEqual(code, 0, text)
+        self.assertIn("Pushed version", text)
+        self.assertIn("https://me.itch.io/game", text)
+        self.assertIn("Channel html5: now shows version", text)
+        self.assertNotIn(KEY, text)
 
     def test_status_runs_after_push_and_prints_version(self):
         code, out = self.go()
