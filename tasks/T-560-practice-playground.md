@@ -1,7 +1,7 @@
 ---
 id: T-560
 title: The practice playground level
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -43,12 +43,12 @@ Part of the interactive tutorial (board, 2026-11-07; HUD and menus, Decisions, "
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The playground level file loads in the game and passes check_level.py and check_height_data.py (output in the result notes). (QA: pass / fail)
-- [ ] It has an open drift area, a ramp from which the car reaches an AIR 360! at full speed, and rails reachable from the ramp (tests). (QA: pass / fail)
-- [ ] It names a start point for each of the four trick slides (test). (QA: pass / fail)
-- [ ] Screenshots show the car drifting, on the ramp and on a rail on it, and the result notes say how the contrast was checked. (QA: pass / fail)
-- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] The playground level file loads in the game and passes check_level.py and check_height_data.py (output in the result notes). (QA: pass)
+- [ ] It has an open drift area, a ramp from which the car reaches an AIR 360! at full speed, and rails reachable from the ramp (tests). (QA: pass)
+- [ ] It names a start point for each of the four trick slides (test). (QA: pass)
+- [ ] Screenshots show the car drifting, on the ramp and on a rail on it, and the result notes say how the contrast was checked. (QA: pass; contrast note: dark green car and the smoke edges are low-contrast on the purple ground, tyre marks faint but visible, rails thin, ramp, notebook and HUD clear)
+- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: a small practice playground on the dark purple grid, with a ramp and rails.
+
+### 2026-11-07, In progress → In QA
+
+Built: the practice playground (ground lightened a little so the tyre marks show). QA now.
 
 ## Style review
 
