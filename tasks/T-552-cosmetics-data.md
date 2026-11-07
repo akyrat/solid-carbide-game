@@ -1,7 +1,7 @@
 ---
 id: T-552
 title: Cosmetics data: the jump effects, their prices, unlocking with coins, the saved choice
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/drifting.md, docs/hud-and-menus.md]
 files_expected_to_change: [game/data/, game/scripts/, game/tests/, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -66,3 +66,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. Added game/data/cosmetics.json (5 jump effects; prices proposed: dash_cloud 0 free+unlocked, spring 150, jet_thrust 300, stunt_sparks 450, shockwave_ring 600; reasons in docs/garage-design.md 'Cosmetics data': a run earns ~250 coins, cheapest upgrade level 40, so ~0.6 run of coins per step), game/scripts/data/cosmetics_data.gd (CosmeticsData), and the saved choice in PlayerProgress (progress.json gains cosmetics:{unlocked,jump_effect}, same SafeSave version/backup; an old save loads with dash_cloud unlocked and picked, nothing lost; unknown ids dropped, a locked pick falls back to dash_cloud). API for T-551 and T-553, all on PlayerProgress (GameFlow.progress): cosmetics_list() -> [{id,price,unlocked,equipped}] in menu order; is_unlocked(id); can_afford(id); buy_cosmetic(id) -> {ok,reason} (reasons NOT_ENOUGH_COINS, ALREADY_UNLOCKED, UNKNOWN_COSMETIC; spends, saves, does not equip); equip(id) -> bool (unlocked only, saves); equipped_jump_effect() -> String (the car reads this at jump). 'changed' signal emits after buy/equip. Docs: docs/garage-design.md, game/docs/data/game-data.md. Tests run (foreground): test_cosmetics.gd (7 tests, all pass), test_player_progress.gd, test_safe_save.gd, test_garage_data.gd all pass. No screenshots: nothing to show (data only).
+- 2026-11-07, in-qa → done: QA passed; data, no board review needed
