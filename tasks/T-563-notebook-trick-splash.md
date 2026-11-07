@@ -1,7 +1,7 @@
 ---
 id: T-563
 title: A trick falls into the mission notebook with a splash
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -53,10 +53,26 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: a trick's name box falls into the mission notebook with a splash.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. A trick that counts toward a mission goal now drops a small paper box with its popup name into the notebook, with a splash, and the count updates on landing.
+
+How: `RunMissions` gets a signal `trick_counted(mission, goal, trick_id)`, sent in `on_trick` just before that goal's progress (a trick that matches no open goal sends nothing). `MissionPage` (game/scripts/hud/mission_page.gd) listens, draws the box in an overlay child in code (paper box, ink border, comic font, popup text from `TrickPopups.TEXTS`, no PixelLab, no new text), and holds back the page's own updates (count, tick, next mission) until the box lands, in order. The same page is used by the tutorial practice windows, so they get it too.
+
+Proposals for the playtest: fall 0.32 s (gravity ease), squash 0.07 s, splash 0.28 s (7 blue droplets fanning up), boxes start at least 0.14 s apart so quick tricks queue and each count arrives in order, at most 4 waiting (a bigger burst only updates the count), a mission-completing trick plays its box before the next page appears. Box lands over the goal's line.
+
+Existing tests changed: test_hud_mission_page.gd now calls `finish_falls()` before checking counts (counts arrive after the box).
+
+Tests run (foreground): test_mission_page_fall (new, 7/7), test_hud_mission_page 11/11, all `test_hud*` 210/210, test_tutorial_slides 26/26, test_missions* 20/20, test_missions_power_ups_run 4/4.
+
+Docs: docs/hud-and-menus.md Content (new paragraph after the mission notebook page). Screenshots: art-archive/T-563/screenshots/notebook_fall.gif (a run: one alt drift, three quick ones, then a rail grind that counts for nothing, so nothing falls) and notebook_fall_strip.png (frames). Recorded with new `game/tools/record_notebook_fall_gif.sh` and fixture `game/tests/fixtures/notebook_fall_demo.tscn`.
+
+Not committed: the many untracked `.uid` files Godot made.

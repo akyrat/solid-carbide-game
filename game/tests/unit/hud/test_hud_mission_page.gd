@@ -46,6 +46,7 @@ func test_quantity_goal_shows_live_count() -> void:
 	assert_eq(_label_texts(p), ["Alt drifts 0/10"])
 	for i in 4:
 		m.on_trick("alternate_drift")
+	p.finish_falls()
 	assert_eq(_label_texts(p), ["Alt drifts 4/10"])
 	assert_false(p.rows[0].ticked)
 
@@ -69,6 +70,7 @@ func test_done_goal_is_ticked_and_crossed_then_next_mission_shows() -> void:
 			else:
 				for i in int(g["amount"]):
 					m.on_trick(String(g["trick"]))
+	p.finish_falls()
 	assert_eq(p.rows.size(), 2)
 	var first: Dictionary = m.current_goals()[0]
 	if String(first["kind"]) == "seconds":
@@ -76,6 +78,7 @@ func test_done_goal_is_ticked_and_crossed_then_next_mission_shows() -> void:
 	else:
 		for i in int(first["amount"]):
 			m.on_trick(String(first["trick"]))
+	p.finish_falls()
 	assert_true(p.rows[0].ticked)
 	assert_true(p.rows[0].crossed)
 	assert_false(p.rows[1].ticked)
@@ -88,6 +91,7 @@ func test_done_goal_is_ticked_and_crossed_then_next_mission_shows() -> void:
 	else:
 		for i in int(second["amount"]):
 			m.on_trick(String(second["trick"]))
+	p.finish_falls()
 	assert_eq(m.current_number(), number + 1)
 	for r in p.rows:
 		assert_false(r.ticked)
@@ -125,6 +129,7 @@ func test_hud_has_the_page_and_follows_the_run() -> void:
 	assert_true(hud.mission_page.visible)
 	assert_eq(hud.mission_page.header_label.text, "Content quota")
 	r.state.missions.on_trick("alternate_drift")
+	hud.mission_page.finish_falls()
 	assert_eq(hud.mission_page.rows.size(), 1)
 
 
