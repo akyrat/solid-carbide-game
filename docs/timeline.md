@@ -3785,3 +3785,8 @@ Entry format:
 - Decision or change: Five jump effects: dash cloud, spring, jet thrust, stunt sparks, shockwave ring.
 - Documents touched: docs/visual-style.md
 - Tasks: T-556
+
+## 2026-11-07: Cosmetics data and save
+- Decision or change: The jump effects as cosmetics: dash cloud free, the others 150/300/450/600 coins; unlocked and picked ones saved.
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-552

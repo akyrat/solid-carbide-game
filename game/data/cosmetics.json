@@ -1,0 +1,11 @@
+{
+  "_comment": "Cosmetics (Garage design, Decisions, 'Cosmetics'; T-552): the jump effects the player unlocks with coins and picks in the Cosmetics menu. Price 0 = free and unlocked from the start. No texts here: names come from T-550's data. Prices are proposals for the playtest: a run earns about 250 coins and the cheapest garage upgrade level costs 40, so the effects cost about 0.6, 1.2, 1.8 and 2.4 runs of coins.",
+  "default_jump_effect": "dash_cloud",
+  "jump_effects": [
+    {"id": "dash_cloud", "price": 0},
+    {"id": "spring", "price": 150},
+    {"id": "jet_thrust", "price": 300},
+    {"id": "stunt_sparks", "price": 450},
+    {"id": "shockwave_ring", "price": 600}
+  ]
+}

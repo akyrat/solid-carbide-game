@@ -1759,6 +1759,14 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 
 ### Content
 
+#### Cosmetics data (T-552)
+
+`game/data/cosmetics.json` lists the 5 jump effects in menu order, each with its price in coins and no text (names come from T-550's data). Prices, proposals for the playtest: **dash_cloud 0** (free, unlocked and picked from the start), **spring 150**, **jet_thrust 300**, **stunt_sparks 450**, **shockwave_ring 600**. Reasons: a run earns about 250 coins and the cheapest garage upgrade level costs 40 (the top levels 240 to 300), so the first effect is within reach after one run (about 0.6 runs), and each next one costs about another 0.6 runs, so all four cost about 6 runs together and sit beside the upgrades instead of competing with them.
+
+The save (`progress.json`, same version and backup rules) gains `"cosmetics": {"unlocked": [ids], "jump_effect": id}`. A save without it (an old one) loads with dash_cloud unlocked and picked, and loses nothing; unknown ids are dropped and a pick that is not unlocked falls back to dash_cloud.
+
+The API is on `PlayerProgress` (`game/scripts/data/player_progress.gd`; prices from `CosmeticsData`): `cosmetics_list() -> Array` of `{id, price, unlocked, equipped}` in menu order; `is_unlocked(id) -> bool`; `can_afford(id) -> bool` (known, still locked, enough coins); `buy_cosmetic(id) -> {ok, reason}` (spends the price, unlocks, saves, does not equip; refused with `NOT_ENOUGH_COINS`, `ALREADY_UNLOCKED` or `UNKNOWN_COSMETIC`, nothing changed); `equip(id) -> bool` (unlocked only, saves); `equipped_jump_effect() -> String`. `changed` is emitted after a buy or an equip. Tests: `game/tests/unit/test_cosmetics.gd`.
+
 #### Pickup magnet text (T-223)
 
 The fourth upgrade's text, in the form of the other three (name up to 25 characters, description up to 80; T-224 uses it word for word, with the key `pickup_magnet`). It names no number, because the Game Data Agent proposes how far each level reaches.
@@ -2424,7 +2432,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `7e9d0106715fbd6fa878b83642e0ccf7b80eea3c2941a927214e1ca755a16217` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
-| `garage-design.md` | `49b98f9e2163f121fde8f13a2d6cb0b752f6f0eeff48359980656ded7838e68b` |
+| `garage-design.md` | `1f13e8046396bff4a5e73ee3ddb838b44f0203e11b899f59e7771190aff6b32b` |
 | `visual-style.md` | `33f6e1e3da4e5f96dae886d8f875a0896c7c08a013e2608364b6f621d99c8b3d` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
 | `hud-and-menus.md` | `3905f0125380a49ca3126f8395c10b6ef4c395edbedcbba862f8077f51bea6ef` |
