@@ -1,0 +1,79 @@
+{
+  "car_size_note": "px_per_unit is fitted to the PixelLab art so the car is drawn about 3 units long on average over the 16 T-101 directions (Drifting, Decisions); the drawing only, the physics body is a 1 by 1 unit square. To scale the sprite to the world: scale = world size of 1 unit / px_per_unit",
+  "car_size_px": {
+    "length": 96.0,
+    "width": 32.0
+  },
+  "car_size_units": {
+    "length": 3.0,
+    "width": 1.0
+  },
+  "center_note": "point in frame pixel coordinates (top-left of the frame = 0, 0) where the car's centre sits: the centre of the approved frame 4's bounding box; every other frame was moved by whole pixels to put its own bounding-box centre there",
+  "center_px": {
+    "x": 64.5,
+    "y": 65.5
+  },
+  "columns": 32,
+  "drop_shadow": false,
+  "file": "v3_sheet.png",
+  "frame0_faces": "world heading 0 degrees, nose along world +x: drawn pointing down-right on screen (PixelLab south-east)",
+  "frame0_heading_deg": 0.0,
+  "frame_count": 32,
+  "frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(11.25)), 32) for a car body whose nose is +x at rotation 0; the same formula as the placeholder sheets",
+  "frame_height": 128,
+  "frame_width": 128,
+  "order": "clockwise on screen: frame i shows world heading i * 11.25 degrees, Godot axes (y down), the same direction Godot's rotation grows",
+  "palette": [
+    "#03151b",
+    "#042809",
+    "#06021b",
+    "#060918",
+    "#06260e",
+    "#071c19",
+    "#072112",
+    "#0a041f",
+    "#0a2c11",
+    "#0a3e1f",
+    "#0c0a21",
+    "#0c4c2c",
+    "#165d3c",
+    "#176c4d",
+    "#228a64",
+    "#2c2251",
+    "#36b48b",
+    "#413b58",
+    "#514d68",
+    "#53f2bb",
+    "#686082",
+    "#7c76a6",
+    "#7df6d6",
+    "#8b85b5",
+    "#958fc3",
+    "#9dfff4",
+    "#9e9acc",
+    "#d2caf6",
+    "#dff1f9",
+    "#e66e66",
+    "#edfbfb",
+    "#f3b42e",
+    "#f6ddf8"
+  ],
+  "placeholder": false,
+  "projection": "PixelLab's isometric view (high top-down), drawn by PixelLab; the game draws the world in 2:1 isometric, screen = (x - y, (x + y) / 2). PixelLab's diagonals are flatter than 2:1, so the nose's angle on screen is close to, not exactly, nose_screen_angle_deg (see seen_nose_screen_angle_deg_approx per frame)",
+  "px_per_unit": 32.0,
+  "record": {
+    "command": "python game/tools/build_car_tilt.py sheet --frames-dir art-archive/T-555/full-v3",
+    "frames_dir": "art-archive/T-555/full-v3",
+    "task": "T-555"
+  },
+  "rows": 3,
+  "rows_note": "row 0 = tilt step 1, row 1 = step 2, row 2 = step 3 (the held pose); column = the car's direction frame, as in car_iso.png (T-551's hook, car_sprite.gd tilt_frame_index)",
+  "step_deg": 11.25,
+  "tilt": "the car's front left wheel down and its back right wheel up, about the diagonal through its front right and back left wheels; it keeps facing the same way (Drifting, Decisions, \"The grind overhaul\")",
+  "tilt_steps_deg": [
+    10.0,
+    20.0,
+    30.0
+  ],
+  "view": "iso"
+}

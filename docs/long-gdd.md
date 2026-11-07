@@ -1976,6 +1976,23 @@ Task T-009 made the cruise boost's motion lines (Decisions, "The cruise boost") 
 
 Task T-466 made the art for Rev Charge's effect (Drifting, Decisions, "Driving power-ups") with a free script, `game/tools/build_rev_charge.py`, no PixelLab (0 generations), through the style loop: kept version 1, scored 7/10, below 8 after 3 refines, noted for the board's playtest (the Style Evaluator's notes: the glow's flame reads as a pointed teardrop rather than a small flame). Eleven frames of 64 x 64, drawn pointing right: four charging frames (a heat glow in oranges and yellows, stepped with a dithered outer halo, growing 25, 50, 75, 100 %), two full-charge pulse frames (a hot white core, alternated), and five boost frames (pale blue-grey speed lines that shorten as the boost runs down). The game sheet `game/art/driving/rev_charge/rev_charge.png` (record `rev_charge.json`) turns them to 16 screen directions like the cruise boost's lines; `rev_charge_effect.gd` picks the column by the charge or the boost's time left and the row by the car's heading, drawn at 0.5. The unturned sheet is `rev_charge_base.png` there. Pictures: `art-archive/T-466/screenshots/`.
 
+#### The car's mid-air tilt (T-555)
+
+The art for Drifting, Decisions, "The grind overhaul": while Space is held in the air, the car's own front left wheel goes down and its back right wheel goes up (a tilt about the diagonal through its front right and back left wheels; the car keeps facing the same way).
+
+- **The sheet:** `game/art/car/car_iso_tilt.png` with `car_iso_tilt.json`. It has 32 columns (the car's 32 directions, as in `car_iso.png`) and 3 rows (tilt steps 1, 2 and 3; step 3 is the held pose). The frames are 128 x 128, with the car's own centre (64.5, 65.5), 32 px per unit, no drop shadow, the car's 33 colours, and alpha 0 or 255. The game draws it through T-551's hook (`car_sprite.gd`, `TILT_SHEETS`, `set_tilt_step`) instead of the placeholder shear.
+- **Angles (a proposal for the playtest):** 10, 20 and 30 degrees.
+  - In the rear views the angle is eased by up to three quarters (`tilt_deg_for`, `AWAY_EASE` 0.75). There, lowering the front left side tips the roof away from the viewer, and the full angle squashed the sprite into a sliver.
+  - The first sample at 7, 14 and 20 degrees was too subtle. A try at 8, 16 and 24 made the tilt barely visible.
+- **How it was made:** `game/tools/build_car_tilt.py` (tests: `game/tools/test_build_car_tilt.py`).
+  - First a free pose guide for every frame: the shadowless car frame, warped in 3D. Each pixel gets a height from a simple car-shaped volume fitted to that frame's silhouette, seen from a 45-degree orthographic camera. The volume is tilted about the diagonal, and every pixel is moved forward as 3 x 3 samples, the nearest to the viewer kept. The edges are then tidied and the outline closed.
+  - Then, for steps 2 and 3 of directions 0 to 7 and 9 to 15, PixelLab `/rotate`. T-157's method: the real frame is the from_image and colour image, and the guide is the init_image at strength 625.
+  - The output is cleaned for free: the car's palette, alpha cut, specks removed, centred like the guide.
+  - Every step 1, direction 8 and directions 16 to 31 are the free guides.
+- **Spend:** 78 PixelLab generations: 8 on the sample (direction 8) and 70 on the full set. Every call is in `art-archive/T-555/pixellab-calls.md` and `game/art/pixellab-generation-log.jsonl`.
+- **Style loop:** below 8 in every run, so the art is noted for the playtest. The kept version scored 5/10: it is clean but reads more as a lean than a crisp 3D roll in some directions, and the PixelLab frames soften the stripes' gap. Every version and its score are in T-555's Style review.
+- **Files:** contact sheet `art-archive/T-555/contact_sheet.png`. In-game GIFs: `art-archive/T-555/screenshots/tilt_in_out.gif` and `tilt_spin.gif` (several directions).
+
 #### The car without its shadow
 
 Task T-204 made the shadowless sheet (Decisions, "The car without its shadow") with a free script, no PixelLab: `game/art/car/car_iso_noshadow.png` (record `car_iso_noshadow.json`, same size, frames and centre as `car_iso.png`), made by `game/tools/build_car_noshadow.py`. Per frame, a near-black pixel becomes transparent only when it is connected to the transparent background through near-black pixels, lies outside the convex hull of the frame's other car pixels, and is more than one step from them; the thin outline and every other pixel stay as they are, with no new colours. Dark body panels inside that hull (under the sill between the wheels, under the bumpers) keep a little shadow, because it cannot be told from the body there. Used only while the car is in the air (T-205); on the ground the car uses `car_iso.png`. Screenshots of all 16 frames, original next to shadowless: `art-archive/T-204/screenshots/`.
@@ -2476,6 +2493,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `aecd7f696197b5bf8d4d075d9c86d661d8e07309a0a672eb6b43c319c1400622` |
-| `visual-style.md` | `33f6e1e3da4e5f96dae886d8f875a0896c7c08a013e2608364b6f621d99c8b3d` |
+| `visual-style.md` | `6a5d0c58a769a53f8829b8a69ce1517769030adb25ddfdfc6c4d4e8acf2f2466` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
 | `hud-and-menus.md` | `ae27cbc619eda5aa86ce1ef7b1aca9bbf3db3b74b429160337e9b61421c90277` |

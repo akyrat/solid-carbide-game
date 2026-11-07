@@ -3815,3 +3815,8 @@ Entry format:
 - Decision or change: The first mission gift always offers Jump; if not taken, the second offers it again.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-554
+
+## 2026-11-07: The car's tilt art
+- Decision or change: The tilt art: 32 directions x 3 frames (78 PixelLab generations); GRIND! clip re-recorded.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-555
