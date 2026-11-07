@@ -218,8 +218,8 @@
       "drift": {
         "title": "Drift",
         "title_comment": "Drift trick slide's headline (shown in capitals).",
-        "instruction": "Hold W and a turn key, A or D, to drift. Let go to cash it in.",
-        "instruction_comment": "Drift trick slide: the one-line instruction beside the practice window."
+        "instruction": "Hold W and A or D to drift. Drift seconds add up, so short drifts count.",
+        "instruction_comment": "T-564: drift trick slide: the one-line instruction beside the practice window; says the seconds add up (the goal is 3 seconds in total). Replaces 'Hold W and a turn key, A or D, to drift. Let go to cash it in.'"
       },
       "altdrift": {
         "title": "Alt drift",
@@ -241,8 +241,8 @@
       }
     },
     "goal": {
-      "drift": "Drifts {done}/{total}",
-      "drift_comment": "Notebook goal line in the drift practice window, a quantity goal like the missions': drifts, 3 successes.",
+      "drift": "Drift seconds {done}/{total}",
+      "drift_comment": "T-564: notebook goal line in the drift practice window, a total-time goal: 3 seconds of drifting in total, added up over all drifts. {done} and {total} are seconds, one decimal (code fills them). Replaces T-559's 'Drifts {done}/{total}'.",
       "altdrift": "Alt drifts {done}/{total}",
       "altdrift_comment": "Notebook goal line in the altdrift practice window, a quantity goal like the missions': alt drifts, 3 successes.",
       "airspin": "Air spins {done}/{total}",
