@@ -241,6 +241,7 @@ The run keeps its missions and the car's driving power-ups (Decisions, "Mission 
 - **Signals** for the HUD page and the gift overlay: a goal's progress (done out of total), a goal completed, a mission completed, and a mission started.
 - **The car's driving power-ups:** the run keeps which power-ups the car owns and at which tier (0 = not owned); a gift gives a new one at tier 1 or the next tier of one owned, never past its last tier; a signal fires when they change; a new run clears them.
 - **The gift's pause (T-459):** a completed mission pauses the run for the driving power-up overlay, like the level-up's weapon choice, and taking a power-up resumes it. The two never show at once: whichever opens second waits for the first to close, and the run stays paused between them; a gift with nothing left to offer is skipped without a pause. The rules and the look: HUD and menus, Content, "Power-up overlay".
+- **Jump is offered first (T-554):** `PowerUpOffers` counts the gifts that open in a run (`gifts_opened`, reset at every run start; a skipped gift doesn't count). While fewer than 2 have opened and the car doesn't own Jump, Jump is always one of the gift's 2 choices (`FIRST_OFFER_ID`, `FIRST_OFFER_GIFTS`), the other drawn at random from the usual pool. If Jump was taken on the first gift, the second follows the usual rules; from the third gift on, all rules are usual. The slot caps still apply: with 3 power-ups owned (none Jump) Jump is not in the pool, so it is not offered.
 - **Proposals for the playtest** (T-457, not the board's yet): after mission 30 nothing more is offered; a trick that completes a mission does not count for the next one too; a new mission's drift goal counts only drifting done after it appeared.
 
 #### Screen flow
@@ -2469,7 +2470,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `c96fd90e1453bfe2fa09694404242edd92ba17ee5ad95dd9cc542ee507583ac1` |
+| `game-loop-architecture.md` | `a2472174b53429a614f29528499164d8139f63fecd133a115d5f63eadd84298b` |
 | `drifting.md` | `3e11cb8233d68373f6824fe708abe29b795c1226e99687209fdbe18a758b7e00` |
 | `level-design.md` | `a87d0690160711832d9f428b95edfb529a8556f008f84f5005899a9a4abb94ac` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |

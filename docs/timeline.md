@@ -3810,3 +3810,8 @@ Entry format:
 - Decision or change: A Cosmetics submenu on the main menu to buy and pick jump effects; a Facing arrow checkbox in the pause settings.
 - Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
 - Tasks: T-553
+
+## 2026-11-07: Jump offered on the first two mission gifts
+- Decision or change: The first mission gift always offers Jump; if not taken, the second offers it again.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-554
