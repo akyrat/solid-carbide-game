@@ -149,6 +149,15 @@ class TiltRound2Tests(unittest.TestCase):
         self.assertLess(b.tilt_deg_for(24, 30.0), 20.0)              # it tips away: eased
         self.assertGreaterEqual(b.tilt_deg_for(24, 30.0), 30.0 * (1 - b.AWAY_EASE) - 1e-9)
 
+    def test_tidy_silhouette_closes_the_outline(self):
+        frame = b.normal_frame(20)
+        out = b.splat_frame(frame, 20 * b.STEP_DEG, 30.0)
+        a = out[:, :, 3] > 0
+        edge = a & (b._neighbours(a, eight=False) < 4)
+        self.assertTrue(np.all(out[edge] == b.outline_colour(frame)))     # closed, one colour
+        self.assertFalse(np.any(a & (b._neighbours(a) <= 1)))             # no one-pixel spurs
+        self.assertTrue(colours(out) <= colours(frame))
+
     def test_zero_tilt_splat_is_identity(self):
         frame = b.normal_frame(3)
         self.assertTrue(np.array_equal(b.splat_frame(frame, 3 * b.STEP_DEG, 0.0), frame))

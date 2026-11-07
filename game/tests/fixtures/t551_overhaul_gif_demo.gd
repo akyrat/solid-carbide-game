@@ -12,6 +12,9 @@ extends Node
 ##              again catches rail-4.
 ##   "back"     onto rail-3 as above, D spins the car round to face backwards (the arrow with it),
 ##              and letting go launches it backwards (south), against its travel.
+##   "spin"     (T-555, the tilt art in several directions) Jump tier 2, the car standing: three hops, each with
+##              Space held and A held in the air, so the tilted car turns through many directions, Space let
+##              go before landing (the frames play back).
 ##   "effects"  five hops in a row, each with the next jump effect (dash_cloud, spring, jet_thrust,
 ##              stunt_sparks, shockwave_ring), the car standing still.
 ## The scene quits `after_end` frames after it is done (or after max_steps).
@@ -54,20 +57,20 @@ func _ready() -> void:
 	run = GameFlow.add_run(self, PlayerProgress.new(), TEST_MAP)
 	run.minions.enabled = false
 	run.kaiju_boss.enabled = false
-	run.state.set_power_up_tier("jump", 2 if scene == "tilt" else 1)
+	run.state.set_power_up_tier("jump", 2 if scene in ["tilt", "spin"] else 1)
 	run.facing_arrow.set_enabled(true)
 	var car: CharacterBody2D = run.car
 	car.use_keyboard = false
 	car.detect_tricks = true
 	var start := Vector2(5.0, 6.0)
-	if scene in ["tilt", "effects"]:
+	if scene in ["tilt", "effects", "spin"]:
 		start = Vector2(-4.0, 6.0)  # beside the rails, on the street
 	car.model.set_position(start)
 	car.model.rotation = -PI / 2.0
 	car.model.set_velocity(Vector2.ZERO)
 	car._sync_from_model()
 	car.ground = run.elevation.ground_height
-	car.scripted_input = [scene != "effects", false, 0.0]
+	car.scripted_input = [scene not in ["effects", "spin"], false, 0.0]
 	run.sync_view()
 	run.car_sprite.reset_physics_interpolation()
 	run.camera.reset_physics_interpolation()
@@ -103,6 +106,8 @@ func _on_stepped() -> void:
 			_tilt_step(car)
 		"effects":
 			_effects_step(car)
+		"spin":
+			_spin_step(car)
 		_:
 			_rail_step(car)
 	label.text = "Space %s   tilt frame %d   %s   effect %s" % [
@@ -144,6 +149,26 @@ func _rail_step(car) -> void:
 			car.scripted_jump_held = false  # let go: the launch where the car faces
 	else:
 		car.scripted_input = [true, false, 0.0]
+
+
+## T-555: hops 100 steps apart; Space and A held from the takeoff, Space let go 40 steps in.
+func _spin_step(car) -> void:
+	var t := _steps - hop_step
+	if t < 0:
+		return
+	var hop := t / 100
+	var into := t % 100
+	if hop >= 3:
+		if _end_step < 0:
+			_end_step = _steps
+		car.scripted_input = [false, false, 0.0]
+		return
+	if into == 0:
+		car.press_jump()
+		car.scripted_jump_held = true
+	elif into == 40:
+		car.scripted_jump_held = false
+	car.scripted_input = [false, false, -1.0 if into < 45 else 0.0]
 
 
 func _effects_step(car) -> void:

@@ -47,7 +47,8 @@ FRAME = 128
 DIRECTIONS = 32
 STEP_DEG = 11.25
 CENTER = (64.5, 65.5)            # car_iso.json center_px
-TILT_STEPS_DEG = (10.0, 20.0, 30.0)   # steps 1, 2, 3 (3 = the held pose); a proposal for the playtest (round 1 used 7, 14, 20: too subtle)
+TILT_STEPS_DEG = (10.0, 20.0, 30.0)   # steps 1, 2, 3 (3 = the held pose), the kept full set v3; a proposal for the playtest
+# (the sample round 1 used 7, 14, 20: too subtle; the full set v4 tried 8, 16, 24: the tilt barely showed, not kept)
 
 # The camera: orthographic, the game's isometric azimuth, ELEV_DEG above the ground, K screen px per unit.
 ELEV_DEG = 45.0
@@ -80,7 +81,7 @@ def tilt_axes():
     return d, n
 
 
-AWAY_EASE = 0.45   # how much less the car tilts when the tilt tips its top away from the viewer (see tilt_deg_for)
+AWAY_EASE = 0.75   # (v1/v2 used 0.45: the rear views halved in area at step 3) how much less the car tilts when the tilt tips its top away from the viewer (see tilt_deg_for)
 
 
 def tilt_deg_for(i: int, deg: float) -> float:
@@ -201,7 +202,7 @@ def _blur(a: np.ndarray, sigma: float) -> np.ndarray:
     return sum(k[i] * p[:, i:i + a.shape[1]] for i in range(2 * r + 1))
 
 
-HEIGHT_SMOOTH = 4.0   # px: the height map is smoothed so the warp bends the car instead of tearing it
+HEIGHT_SMOOTH = 6.0   # px (v1 used 4: tears in the front and rear views): the height map is smoothed so the warp bends the car instead of tearing it
 
 
 def height_map(alpha: np.ndarray, heading_deg: float, fit=None) -> np.ndarray:
@@ -284,7 +285,41 @@ def splat_frame(frame: np.ndarray, heading_deg: float, tilt_deg: float) -> np.nd
     order = np.argsort(dep, kind="stable")          # far first; the nearest is written last and stays
     out = np.zeros_like(frame)
     out[ty[order], tx[order]] = frame[ys[src[order]], xs[src[order]]]
-    return remove_specks(fill_holes(out))
+    out = remove_specks(fill_holes(out))
+    return tidy_silhouette(out, frame) if TIDY_EDGES else out
+
+
+TIDY_EDGES = True   # T-555 v2: the splat's ragged, speckled edges smoothed and given back a closed outline
+
+
+def _neighbours(a: np.ndarray, eight: bool = True) -> np.ndarray:
+    pad = np.pad(a, 1)
+    h, w = a.shape
+    offs = [(dy, dx) for dy in (-1, 0, 1) for dx in (-1, 0, 1) if (dy, dx) != (0, 0)]
+    if not eight:
+        offs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    return sum(pad[1 + dy:h + 1 + dy, 1 + dx:w + 1 + dx].astype(int) for dy, dx in offs)
+
+
+def outline_colour(frame: np.ndarray) -> np.ndarray:
+    """The frame's darkest own colour (its outline)."""
+    px = frame[frame[:, :, 3] > 0][:, :4]
+    return px[np.argmin(px[:, :3].astype(int).sum(1))]
+
+
+def tidy_silhouette(img: np.ndarray, source: np.ndarray) -> np.ndarray:
+    """Spurs and one-pixel slivers on the edge removed, notches filled, specks dropped, then every edge pixel
+    (opaque, next to a transparent one) drawn in the source frame's outline colour, so the outline is closed.
+    Uses only the source frame's own colours."""
+    out = img.copy()
+    for _ in range(2):
+        a = out[:, :, 3] > 0
+        out[a & (_neighbours(a) <= 2)] = 0
+    out = remove_specks(fill_holes(out, passes=3), min_size=12)
+    a = out[:, :, 3] > 0
+    edge = a & (_neighbours(a, eight=False) < 4)
+    out[edge] = outline_colour(source)
+    return out
 
 
 def warp_frame(frame: np.ndarray, heading_deg: float, tilt_deg: float) -> np.ndarray:
