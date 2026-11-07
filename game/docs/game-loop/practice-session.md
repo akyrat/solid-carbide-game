@@ -38,7 +38,7 @@ session.pause()                  # when the slide is left
 ## The level and the texts (T-560 and T-559, both wired)
 
 - **The playground (T-560, wired):** `PLAYGROUND_PATH` is `data/level/practice_playground.json` ([../level/practice-playground.md](../level/practice-playground.md)); each trick starts on its start point of the same id. The stand-in this ticket used before (`practice_stand_in.json`) is removed.
-- **The drift's seconds line (T-564, a seam):** `goal_template("drift")` reads `DRIFT_SECONDS_TEXT_KEYS` (`tutorial.goal.drift_seconds`) first; while that key is missing it falls back to T-559's `tutorial.goal.drift`. If T-564's key differs, change that one constant.
+- **The drift's seconds line (T-564):** `goal_template("drift")` reads `DRIFT_SECONDS_TEXT_KEYS`, `tutorial.goal.drift`, which T-564 rewrote in place ("Drift seconds {done}/{total}"); both numbers show with one decimal.
 - **The goal lines (T-559, wired):** `GOAL_TEXT_KEYS` reads each goal line from `data/tutorial_text.json`, `tutorial.goal.drift`, `.altdrift`, `.airspin` and `.grind` (T-559's keys), each a template with `{done}` and `{total}`, word for word. No player text is in the code: a missing key logs an error and gives an empty line.
 - **The falling box (T-563)** uses the same notebook: the goal's trick id is the car's own trick id (`extended_drift`, `alternate_drift`, `rail_grind`), except air spins, whose goal id is `air_spin` (two tricks); `trick_counted` gives the actual one.
 

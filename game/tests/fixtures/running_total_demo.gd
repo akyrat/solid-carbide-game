@@ -6,9 +6,7 @@ extends Node
 ## HANG TIME! box, and the line's total grows to 2.7 s (stopped short of 3 s, where the mission's
 ## power-up gift would cover the page). Record it with record_running_total_gif.sh.
 ##
-## The texts are the game's own (T-564's when merged). While T-564's airtime line is not in
-## screen_texts.json (MissionPage.TOTAL_GOALS_KEY), part 2 uses a stand-in made of the goal's usual
-## line with the counter after it, so the total shows; re-record after T-564 is merged.
+## The texts are the game's own (T-564's).
 
 const SessionScene := preload("res://scenes/run/practice_session.tscn")
 const WINDOW_POS := Vector2(224, 104)
@@ -73,11 +71,6 @@ func _airtime_part() -> void:
 	RunHistory.path = "user://running_total_history.json"
 	GameSettings.path = "user://running_total_settings.cfg"
 	GameFlow.tutorial_enabled = false
-	var totals: Variant = MissionPage.texts().get(MissionPage.TOTAL_GOALS_KEY, {})
-	if not (totals is Dictionary and (totals as Dictionary).has("airtime")):
-		var t := MissionPage.texts().duplicate(true)
-		t[MissionPage.TOTAL_GOALS_KEY] = {"airtime": String(t["goals"]["airtime"]) + " {done}/{total}"}
-		MissionPage._texts = t
 	game = preload("res://scenes/game/game.tscn").instantiate()
 	add_child(game)
 	game.menu.start_button.pressed.emit()

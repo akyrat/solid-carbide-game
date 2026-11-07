@@ -240,7 +240,8 @@ func test_the_notebook_shows_the_goal_and_its_count() -> void:
 		assert_eq(session.notebook.rows.size(), 1, "%s: one goal" % t)
 		var template := PracticeSession.goal_template(t)
 		var zero := "0.0" if t == "drift" else "0"  # T-565: the drift's seconds, one decimal
-		assert_eq(_goal_line(), template.replace("{done}", zero).replace("{total}", "3"), t)
+		var goal := "3.0" if t == "drift" else "3"
+		assert_eq(_goal_line(), template.replace("{done}", zero).replace("{total}", goal), t)
 	session.setup("alt_drift")
 	var alt := PracticeSession.goal_template("alt_drift")
 	_do("alternate_drift")
@@ -258,11 +259,11 @@ func test_the_drift_notebook_line_shows_the_running_total_live() -> void:
 	var drift := PracticeSession.goal_template("drift")
 	session.add_drift_seconds(0.46)
 	assert_false(session.notebook.is_falling(), "no name box for a fraction of a second")
-	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "0.4").replace("{total}", "3"))
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "0.4").replace("{total}", "3.0"))
 	session.add_drift_seconds(1.0)
-	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "1.4").replace("{total}", "3"))
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "1.4").replace("{total}", "3.0"))
 	session.add_drift_seconds(2.0)
-	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "3.0").replace("{total}", "3"))
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "3.0").replace("{total}", "3.0"))
 	assert_true(session.notebook.rows[0].ticked, "ticked at 3 s")
 
 
@@ -270,10 +271,8 @@ func test_the_goal_lines_are_t559s_texts_word_for_word() -> void:
 	var goals: Dictionary = JSON.parse_string(
 		FileAccess.get_file_as_string(PracticeSession.TEXTS_PATH))["tutorial"]["goal"]
 	var keys := {"drift": "drift", "alt_drift": "altdrift", "air_spin": "airspin", "grind": "grind"}
-	# T-565: the drift's line is T-564's seconds line once it is in (the seam's key), else T-559's.
-	var seconds_key: String = PracticeSession.DRIFT_SECONDS_TEXT_KEYS[2]
-	if String(goals.get(seconds_key, "")) != "":
-		keys["drift"] = seconds_key
+	# T-565: the drift's line is T-564's seconds line, written in place of T-559's.
+	keys["drift"] = PracticeSession.DRIFT_SECONDS_TEXT_KEYS[2]
 	for t in PracticeSession.TRICKS:
 		var line := PracticeSession.goal_template(t)
 		assert_eq(line, String(goals[keys[t]]), t)

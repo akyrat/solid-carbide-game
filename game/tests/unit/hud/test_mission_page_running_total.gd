@@ -3,12 +3,11 @@ extends GutTest
 ## total"): a mission goal that adds time up (the airtime) shows its total so far against its goal
 ## in the notebook, updating as it grows; the unbroken drift goal is unchanged.
 ##
-## The texts are T-564's (missions.<MissionPage.TOTAL_GOALS_KEY>.<trick> in screen_texts.json).
-## Tests that need a line with {done} in it use a stand-in template set on the page's text cache
-## here, so they test the code whether or not T-564's texts are merged; the last test checks the
-## real file's line once it is.
+## The texts are T-564's (missions.total_seconds with missions.total_seconds_names.<trick> in
+## screen_texts.json). Most tests use a stand-in template set on the page's text cache here, so
+## they test the code apart from the wording; the last test checks the real file's line.
 
-const STAND_IN := "Air {done}/{total}"  # a test template, never shown to the player
+const STAND_IN := "{name} {done}/{total}"  # a test template, never shown to the player
 
 var _saved_texts: Dictionary
 
@@ -23,7 +22,8 @@ func after_each() -> void:
 
 func _with_stand_in() -> void:
 	var t := _saved_texts.duplicate(true)
-	t[MissionPage.TOTAL_GOALS_KEY] = {"airtime": STAND_IN}
+	t[MissionPage.TOTAL_GOALS_KEY] = STAND_IN
+	t[MissionPage.TOTAL_NAMES_KEY] = {"airtime": "Air"}
 	MissionPage._texts = t
 
 
@@ -83,18 +83,18 @@ func test_the_airtime_line_shows_its_running_total_and_follows_it() -> void:
 	_with_stand_in()
 	var p := _page([{"trick": "airtime", "kind": "seconds", "amount": 3.0}])
 	var m: RunMissions = p._missions
-	assert_eq(p.rows[0].label.text, "Air 0.0/3")
+	assert_eq(p.rows[0].label.text, "Air 0.0/3.0")
 	m.on_airtime(0.84)
 	assert_true(p.is_falling(), "a landing drops its name box (HANG TIME!)")
 	p.finish_falls()
-	assert_eq(p.rows[0].label.text, "Air 0.8/3", "seconds with one decimal, cut down")
+	assert_eq(p.rows[0].label.text, "Air 0.8/3.0", "seconds with one decimal, cut down")
 	m.on_airtime(1.2)
 	p.finish_falls()
-	assert_eq(p.rows[0].label.text, "Air 2.0/3")
+	assert_eq(p.rows[0].label.text, "Air 2.0/3.0")
 	assert_false(p.rows[0].ticked)
 	m.on_airtime(0.97)
 	p.finish_falls()
-	assert_eq(p.rows[0].label.text, "Air 3.0/3")
+	assert_eq(p.rows[0].label.text, "Air 3.0/3.0")
 	assert_true(p.rows[0].ticked, "ticked and crossed off at its goal")
 
 
@@ -125,13 +125,17 @@ func test_count_goals_keep_their_lines() -> void:
 		"an airtime count goal is no running total")
 
 
-func test_the_real_file_airtime_line() -> void:
-	# T-564's line when it is in (with {done}), else the goal's usual line (the seam's fallback).
-	var totals: Variant = MissionPage.texts().get(MissionPage.TOTAL_GOALS_KEY, {})
-	var line := MissionPage.goal_text("airtime", "seconds", 1.26, 4.0)
+func test_the_real_file_airtime_line_is_t564s() -> void:
+	var texts := MissionPage.texts()
+	var template := String(texts[MissionPage.TOTAL_GOALS_KEY])
+	var name := String(texts[MissionPage.TOTAL_NAMES_KEY]["airtime"])
+	assert_true(template.contains("{name}") and template.contains("{done}") and template.contains("{total}"))
+	assert_eq(MissionPage.goal_template("airtime", "seconds"), template.replace("{name}", name))
+	var line := MissionPage.goal_text("airtime", "seconds", 1.46, 3.0)
+	assert_eq(line, template.replace("{name}", name).replace("{done}", "1.4").replace("{total}", "3.0"))
 	assert_false("{" in line, "no unfilled slot in '%s'" % line)
-	if totals is Dictionary and (totals as Dictionary).has("airtime"):
-		assert_true(String(totals["airtime"]).contains("{done}"), "T-564's line shows the total")
-		assert_true(line.contains("1.2"), "the running total is in '%s'" % line)
-	else:
-		assert_eq(line, String(MissionPage.texts()["goals"]["airtime"]).replace("{seconds}", "4"))
+
+
+func test_a_seconds_goal_without_a_total_name_keeps_its_usual_line() -> void:
+	assert_eq(MissionPage.goal_template("thread_the_needle", "seconds"),
+		String(MissionPage.texts()["goals"]["thread_the_needle"]))

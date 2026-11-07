@@ -19,10 +19,11 @@ extends Control
 ## above (down to about y 300 with four weapons) and the coins at y 496 below.
 
 const TEXTS_PATH := "res://data/screen_texts.json"
-## Where a running total's goal lines are (T-565; the texts are T-564's): missions.<this>.<trick>,
-## each a template with {done} and {total}. The seam until T-564 is merged: one name to change if
-## its key differs; while it is missing the goal's usual line (missions.goals.<trick>) shows.
-const TOTAL_GOALS_KEY := "goals_total"
+## A running total's goal line (T-565; T-564's texts): missions.<TOTAL_GOALS_KEY>, one template with
+## {name}, {done} and {total} for every such goal, and its {name} per trick in
+## missions.<TOTAL_NAMES_KEY>.<trick>. A trick without a name keeps its usual line (missions.goals).
+const TOTAL_GOALS_KEY := "total_seconds"
+const TOTAL_NAMES_KEY := "total_seconds_names"
 const PAGE_POS := Vector2(12, 304)
 const PAGE_SIZE := Vector2(176, 180)
 const PAD := Vector2(10, 8)
@@ -203,24 +204,31 @@ static func format_seconds(v: float) -> String:
 
 
 ## The template of a goal's line in screen_texts.json: a running total (RunMissions.is_running_total,
-## T-565) uses missions.<TOTAL_GOALS_KEY>.<trick> when it has one, else missions.goals.<trick>.
+## T-565) uses missions.<TOTAL_GOALS_KEY> with its {name} (missions.<TOTAL_NAMES_KEY>.<trick>)
+## filled in when the trick has a name, else missions.goals.<trick>.
 static func goal_template(trick: String, kind: String) -> String:
 	if RunMissions.is_running_total(trick, kind):
-		var totals: Variant = texts().get(TOTAL_GOALS_KEY, {})
-		if totals is Dictionary and String((totals as Dictionary).get(trick, "")) != "":
-			return String(totals[trick])
+		var names: Variant = texts().get(TOTAL_NAMES_KEY, {})
+		var line := String(texts().get(TOTAL_GOALS_KEY, ""))
+		if names is Dictionary and String((names as Dictionary).get(trick, "")) != "" and line != "":
+			return line.replace("{name}", String(names[trick]))
 	return String(texts().get("goals", {}).get(trick, ""))
 
 
-## Fills a goal line's template: {done} (a count as a whole number, a running total's seconds
-## with one decimal), {total} and {goal} (the amount), {seconds} (the amount of a duration goal).
+## Fills a goal line's template: {done} (a count as a whole number; a running total's seconds with
+## one decimal), {total} and {goal} (the amount; a running total's with one decimal too, T-564's
+## "1.4/3.0"), {seconds} (the amount of a duration goal).
 static func fill(template: String, trick: String, kind: String, done: float, amount: float) -> String:
 	var done_text := format_number(floorf(done))
-	if kind != "count":
-		done_text = format_seconds(done) if RunMissions.is_running_total(trick, kind) else format_number(done)
+	var total_text := format_number(amount)
+	if RunMissions.is_running_total(trick, kind):
+		done_text = format_seconds(done)
+		total_text = format_seconds(amount)
+	elif kind != "count":
+		done_text = format_number(done)
 	return template.replace("{done}", done_text) \
-		.replace("{total}", format_number(amount)) \
-		.replace("{goal}", format_number(amount)) \
+		.replace("{total}", total_text) \
+		.replace("{goal}", total_text) \
 		.replace("{seconds}", format_number(amount))
 
 

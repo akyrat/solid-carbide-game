@@ -98,10 +98,9 @@ const GOAL_TEXT_KEYS := {
 	"grind": ["tutorial", "goal", "grind"],
 }
 ## The drift slide's goal line (T-564's text, HUD and menus, Decisions, "The drift slide counts
-## drift seconds"): a template with {done} (seconds, one decimal) and {total}. The seam until T-564
-## is merged: one name to change if its key differs; while it is missing, GOAL_TEXT_KEYS' drift
-## line shows with the seconds in it.
-const DRIFT_SECONDS_TEXT_KEYS := ["tutorial", "goal", "drift_seconds"]
+## drift seconds"): a template with {done} and {total}, both seconds with one decimal. T-564 wrote
+## it in place of T-559's drift line, so it is the same key as GOAL_TEXT_KEYS' drift.
+const DRIFT_SECONDS_TEXT_KEYS := ["tutorial", "goal", "drift"]
 ## How many successes the goal asks (HUD and menus, Decisions, "Interactive tutorial slides").
 const GOAL := 3
 ## The drift slide's goal: seconds of drifting in total (HUD and menus, Decisions, "The drift slide
