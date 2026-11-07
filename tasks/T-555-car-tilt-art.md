@@ -1,7 +1,7 @@
 ---
 id: T-555
 title: Art: the car's mid-air tilt, 3 transition frames in 16 directions
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, game/art/car/car_iso.json]
 files_expected_to_change: [game/art/car/, art-archive/T-555/, game/scripts/driving/, docs/visual-style.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -66,6 +66,10 @@ Sample scored 5/10 (tilt too weak). I chose: improve the free guide, try again w
 ### 2026-11-07, In progress → In QA
 
 Tilt art in: 32 directions x 3 frames, 78 of 200 generations. Style score 5/10, noted for your playtest. QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (7/7); GRIND! clip re-recorded on your map. In the combined build.
 
 ## Style review
 
@@ -567,3 +571,4 @@ Every call is in art-archive/T-555/pixellab-calls.md and game/art/pixellab-gener
 - 2026-11-07, flagged-for-review → in-progress: Project Lead: kept at 5/10, noted for the board's playtest as decided; on to QA.
 
 - 2026-11-07, Asset Generation Agent: the GRIND! clip is re-recorded on T-547's Kaiju City map, merged into this branch. Kept take: game/art/tutorial/clips/rail_grind.gif, 34 frames, 2.72 s, 1.43 MB; every take is in art-archive/T-555/clip-takes/. It shows a hop with Space held, the grind on rail-1 with the car tilted and the facing arrow, then the launch on release. The fixture tutorial_clip_rail_grind.gd now starts 12 units south of rail-1, at (18.5, -8), the same route as before. The old start, (5, 6), has no rail on the new map; that was take 02. test_tutorial_clips.gd: 7/7 pass. The Write tool is refused for note files here, so this line went in with --text.
+- 2026-11-07, needs-playtest → done: Board: grind overhaul build played, lgtm
