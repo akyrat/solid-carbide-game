@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-550, T-552]
+depends_on: [T-552]
 documents_affected: [docs/hud-and-menus.md, docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/garage-design.md, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [game/scripts/ui/, game/scenes/, game/tests/, docs/hud-and-menus.md, docs/garage-design.md]
