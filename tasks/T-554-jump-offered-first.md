@@ -1,7 +1,7 @@
 ---
 id: T-554
 title: Jump is offered on the first two mission gifts
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Rails
@@ -41,10 +41,10 @@ This ticket is part of the grind overhaul (board, 2026-11-07; Drifting, Decision
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Over many seeded runs, the first mission gift always offers Jump as one of 2 choices (test). (QA: pass / fail)
-- [ ] If Jump isn't taken on the first gift, the second offers it; if it was, the second follows the usual rules (tests). (QA: pass / fail)
-- [ ] docs/game-loop-architecture.md Content describes it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] Over many seeded runs, the first mission gift always offers Jump as one of 2 choices (test). (QA: pass)
+- [ ] If Jump isn't taken on the first gift, the second offers it; if it was, the second follows the usual rules (tests). (QA: pass)
+- [ ] docs/game-loop-architecture.md Content describes it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: Jump offered on the first two mission gifts.
 
+### 2026-11-07, In progress → In QA
+
+Built: Jump is one of the 2 choices on the first mission gift, and on the second if skipped. QA now.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -61,3 +65,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. power_up_offers.gd: gifts_opened counter (reset on run start, skipped gifts not counted); while < 2 gifts opened and Jump not owned and in the pool, Jump is forced as one of the 2 choices, the other drawn as usual. Slot caps unaffected (Jump not in pool when slots full of other power-ups). Hooks unchanged. 4 new tests in test_power_up_offers.gd (200 seeds first gift, second gift when not taken, usual rules when taken, third gift unforced). Full suite: 254 scripts, 2921 tests, 2920 pass, 0 fail, 1 risky. Docs: game-loop-architecture.md Content bullet added (Decisions line already existed).
+
+QA round 1: all 4 criteria pass. qa_check full run: all checks pass (three test sets green).
