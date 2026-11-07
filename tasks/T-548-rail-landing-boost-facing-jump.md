@@ -1,7 +1,7 @@
 ---
 id: T-548
 title: Grind: a speed boost on every rail landing; Jump off a rail goes where the car faces
-status: in-progress
+status: cancelled
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/driving/]
 files_expected_to_change: [game/scripts/driving/, game/data/rail_grind.json, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,18 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-06, Open → In progress
 
 Started: a speed boost on every rail landing, and Jump off a rail in the facing direction.
+
+### 2026-11-06, In progress → In QA
+
+Ready for you to play: each rail landing adds 4 u/s, fading at 2 u/s per second; Jump off a rail goes where the nose points at 6 u/s. Tell me more or less.
+
+### 2026-11-07, In QA
+
+Folded into the grind overhaul: T-551 builds on this branch; you play it in the combined build.
+
+### 2026-11-07, In QA → Cancelled
+
+Folded into T-551: its landing boost and facing launch merge with the grind overhaul.
 
 ## Style review
 
@@ -105,3 +117,5 @@ Built both of the board's decisions of 2026-11-06 in the rail grind. Every numbe
 - `car.gd`: only a comment.
 
 Documents affected: docs/drifting.md (updated). Nothing in game/data/levels/ was touched.
+- 2026-11-06, in-progress → in-qa: Ready for the board to play and tune (quick tuning); one QA round after.
+- 2026-11-07, in-qa → cancelled: Folded into the grind overhaul (board, 2026-11-07: rescoped). Its commits are in T-551's branch and merge with it; QA'd there (9/9) and played by the board in the combined build.
