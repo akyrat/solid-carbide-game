@@ -1,7 +1,7 @@
 ---
 id: T-563
 title: A trick falls into the mission notebook with a splash
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, game/scripts/hud/mission_page.gd]
 files_expected_to_change: [game/scripts/hud/, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: a trick's name box falls into the mission notebook with a splash.
 
 Built: a counting trick drops its name box into the notebook with a splash. QA now.
 
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (5/5). Waits for you in the combined build.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -80,3 +84,5 @@ Tests run (foreground): test_mission_page_fall (new, 7/7), test_hud_mission_page
 Docs: docs/hud-and-menus.md Content (new paragraph after the mission notebook page). Screenshots: art-archive/T-563/screenshots/notebook_fall.gif (a run: one alt drift, three quick ones, then a rail grind that counts for nothing, so nothing falls) and notebook_fall_strip.png (frames). Recorded with new `game/tools/record_notebook_fall_gif.sh` and fixture `game/tests/fixtures/notebook_fall_demo.tscn`.
 
 Not committed: the many untracked `.uid` files Godot made.
+
+Merge of task/T-562-interactive-tutorial-slides: one conflict in mission_page.gd (goal progress handler); resolved by keeping the deferred update and using T-561's line_text (goal_templates), so practice windows get the falling box too. test_practice_session now calls finish_falls() before reading the count (the count arrives on landing). Tests: test_practice_session 25/25, test_tutorial_slides 33/33, test_hud_mission_page 11/11, test_mission_page_fall 7/7.

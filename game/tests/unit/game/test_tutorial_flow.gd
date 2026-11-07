@@ -40,13 +40,13 @@ func _screens(g: Node) -> Array:
 	return g.get_children().filter(func(c): return c != g.music)
 
 
-## Goes to slide 4 with the arrows, sets the checkbox and presses the slides' Start.
+## Goes to the last slide with the arrows, sets the checkbox and presses the slides' Start.
 func _finish_slides(tick: bool) -> void:
 	var t: TutorialSlides = game.tutorial
-	t.right_arrow.pressed.emit()
-	t.right_arrow.pressed.emit()
-	t.right_arrow.pressed.emit()
-	assert_eq(t.current, 3, "on the last slide")
+	t.practice_scene_path = "res://tests/fixtures/fake_practice_session.tscn"  # T-562: a light stand-in
+	for i in range(TutorialSlides.SLIDE_COUNT - 1):
+		t.right_arrow.pressed.emit()
+	assert_eq(t.current, TutorialSlides.SLIDE_COUNT - 1, "on the last slide")
 	t.dont_show_checkbox.button_pressed = tick
 	t.start_button.pressed.emit()
 

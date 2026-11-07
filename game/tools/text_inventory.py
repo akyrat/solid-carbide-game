@@ -76,6 +76,7 @@ SCREEN_BY_PREFIX = {
     "tutorial_text:button.back": "Pause screen, trick list",
     "tutorial_text:checkbox": "Tutorial slide 3",
     "tutorial_text:arrow": "Tutorial slides (arrow tooltips)",
+    "tutorial_text:tutorial": "Interactive tutorial (loop slide, trick slides, practice windows)",
     "level_up_texts:levelup": "Level-up gift pack screen",
     "level_up_texts:": "Level-up gift pack screen (weapon cards)",
 }

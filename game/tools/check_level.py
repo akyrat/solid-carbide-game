@@ -19,6 +19,8 @@ also checks that:
 - the level has a spawn point (spawn: {x, y, heading}, T-280): a heading that is a multiple of 45
   degrees, inside the map and where a car can stand (clear of every building, prop and boulder; a
   rooftop or ramp is fine), the same rules as scripts/level/level_spawn.gd;
+- the level's optional start_points (T-560: [{id, x, y, heading}], the practice playground's one per
+  trick slide) have unique ids and each follow the spawn point's rules;
 - ground_rows has as many rows and columns as the map's size in tiles (1 tile = 1 unit).
 
 Usage, from the repo root:
@@ -264,6 +266,27 @@ def check_spawn(data, map_rect, require=True):
     return []
 
 
+def check_start_points(data, map_rect):
+    """Problems with the level's optional start_points (T-560): a list of {id, x, y, heading}, each
+    id unique, each a place the spawn point rules accept (check_spawn)."""
+    pts = data.get("start_points")
+    if pts is None:
+        return []
+    if not isinstance(pts, list):
+        return ["start_points: must be a list of {id, x, y, heading}"]
+    problems, seen = [], set()
+    for i, p in enumerate(pts):
+        if not isinstance(p, dict) or not isinstance(p.get("id"), str) or not p["id"]:
+            problems.append("start point #%d: needs an id" % i)
+            continue
+        if p["id"] in seen:
+            problems.append("start point %r: the id is used twice" % p["id"])
+        seen.add(p["id"])
+        for why in check_spawn(dict(data, spawn=p), map_rect, True):
+            problems.append("start point %r%s" % (p["id"], why[len("spawn"):]))
+    return problems
+
+
 def check_level(data, require_spawn=True):
     """Returns a list of problems (strings); empty when the level is valid. `require_spawn` False
     only for the game's own map files (game/data/level/), which have no spawn point (T-280)."""
@@ -305,6 +328,7 @@ def check_level(data, require_spawn=True):
     problems.extend(check_craters(data, map_rect))
     problems.extend(check_pairs(data))
     problems.extend(check_spawn(data, map_rect, require_spawn))
+    problems.extend(check_start_points(data, map_rect))
 
     # ground_rows: one string per tile row, one letter per tile column.
     try:

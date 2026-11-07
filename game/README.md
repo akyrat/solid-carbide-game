@@ -50,6 +50,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/game-loop/the-run.md](docs/game-loop/the-run.md): The run. The run scene, its state, likes, combo, clock, and the recap summary (`RunState.recap()`). The likes curve (T-328): 30 likes for the first gift pack, 3,501 in total for the 11 level-ups.
 - [docs/game-loop/perf-recorder.md](docs/game-loop/perf-recorder.md): The performance recorder (T-468). Recording a run's frame times, monitors, counts, timed zones and events (`--record-perf`), and the analysis (`tools/analyse_perf.py`).
 - [docs/game-loop/gift-pack-and-pickups.md](docs/game-loop/gift-pack-and-pickups.md): Gift pack and pickup magnet. The gift pack drop (helicopter drawn at scale 0.65, set in game/data/gift_pack.json) and the pickup magnet.
+- [docs/game-loop/practice-session.md](docs/game-loop/practice-session.md): The practice session (T-561). A tutorial practice window's live session: the real car on the practice playground counting one trick 3 times, its API for the slide, and the seams for T-560 and T-559.
 
 ## driving/
 
@@ -70,6 +71,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/level/elevation-test-scene.md](docs/level/elevation-test-scene.md): Elevation test scene. Ground-height data, the query, the car's height, the test scene.
 - [docs/level/elevation-sample-map.md](docs/level/elevation-sample-map.md): Elevation sample map. The sample map with rooftops and ramps.
 - [docs/level/game-map.md](docs/level/game-map.md): The game's map. The board's level that the main menu's Start plays (T-372).
+- [docs/level/practice-playground.md](docs/level/practice-playground.md): The practice playground, the tutorial's level with a start point per trick slide (T-560).
 - [docs/level/level-creator.md](docs/level/level-creator.md): Level creator. Storage, editor, side panel, rotate, snapping, saving.
 - [docs/level/level-creator-pieces.md](docs/level/level-creator-pieces.md): Level creator: pieces and tools. Road brush, ramps, banners, thread the needle, spawn, any-size rooftops, props, road pieces.
 

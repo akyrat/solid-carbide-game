@@ -59,6 +59,9 @@ static func art(path: String) -> Texture2D:
 
 ## The rows of the mission on show, top to bottom.
 var rows: Array = []
+## Goal lines this page shows instead of the missions' texts (task T-561: the tutorial's practice
+## windows): goal trick id -> a template with {done} and {total} (or {seconds}). Empty in the run.
+var goal_templates: Dictionary = {}
 var header_label: Label
 var _missions: RunMissions
 ## The boxes still falling, splashing or waiting to start (see _on_trick_counted).
@@ -194,6 +197,17 @@ static func goal_text(trick: String, kind: String, done: float, amount: float) -
 		.replace("{seconds}", format_number(amount))
 
 
+## The line this page shows for a goal: its goal_templates entry when it has one (T-561), else
+## goal_text().
+func line_text(trick: String, kind: String, done: float, amount: float) -> String:
+	if not goal_templates.has(trick):
+		return goal_text(trick, kind, done, amount)
+	return String(goal_templates[trick]) \
+		.replace("{done}", format_number(floorf(done) if kind == "count" else done)) \
+		.replace("{total}", format_number(amount)) \
+		.replace("{seconds}", format_number(amount))
+
+
 ## Follows this tracker from now on, and shows its current mission.
 func bind(missions: RunMissions) -> void:
 	if _missions != null:
@@ -247,7 +261,7 @@ func _make_row(i: int, g: Dictionary) -> Row:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var w := PAGE_SIZE.x - MARGIN_X - TEXT_X + 6.0 - PAD.x
 	l.custom_minimum_size = Vector2(w, 0)
-	l.text = goal_text(row.trick, row.kind, float(g["done"]), row.amount)
+	l.text = line_text(row.trick, row.kind, float(g["done"]), row.amount)
 	l.position = Vector2(TEXT_X - MARGIN_X, 0)
 	row.label = l
 	row.add_child(l)
@@ -266,7 +280,7 @@ func _on_goal_progress(_mission: int, goal: int, done: float, _total: float) -> 
 		if goal >= rows.size():
 			return
 		var row: Row = rows[goal]
-		row.label.text = goal_text(row.trick, row.kind, done, row.amount)
+		row.label.text = line_text(row.trick, row.kind, done, row.amount)
 		row.queue_redraw())
 
 
