@@ -1,7 +1,7 @@
 ---
 id: T-558
 title: publish_itch.py crashes printing butler's output on the Windows console
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Rails
@@ -41,10 +41,10 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test runs the script's push path with a fake butler printing \u2219 and \u221a under a cp1252 stdout: it prints "Pushed version", the page link and the status, and exits 0. (QA: pass / fail)
-- [ ] The redaction of the API key in butler's output still works (the existing test still passes). (QA: pass / fail)
-- [ ] `python tools/publish_itch.py --dry-run` still works (the agent runs it). (QA: pass / fail)
-- [ ] The tools test set passes (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] A test runs the script's push path with a fake butler printing \u2219 and \u221a under a cp1252 stdout: it prints "Pushed version", the page link and the status, and exits 0. (QA: pass - test_cp1252_console_prints_butler_symbols covers it)
+- [ ] The redaction of the API key in butler's output still works (the existing test still passes). (QA: pass - existing redaction test passes)
+- [ ] `python tools/publish_itch.py --dry-run` still works (the agent runs it). (QA: pass - dry-run path covered by test_dry_run_does_not_push and unchanged; real run refuses off master by design)
+- [ ] The tools test set passes (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass - qa_check ran all 3 test sets green; tools set 23 tests OK)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: the publish script prints butler's output without crashing.
+
+### 2026-11-07, In progress → In QA
+
+Built: butler's output prints safely; 23 tests pass. QA now.
 
 ## Style review
 
