@@ -565,3 +565,5 @@ Every call is in art-archive/T-555/pixellab-calls.md and game/art/pixellab-gener
 - Raw outputs: raw/.
 - Briefs: brief-sample.md, brief-sample2.md, brief-full.md.
 - 2026-11-07, flagged-for-review → in-progress: Project Lead: kept at 5/10, noted for the board's playtest as decided; on to QA.
+
+- 2026-11-07, Asset Generation Agent: the GRIND! clip is re-recorded on T-547's Kaiju City map, merged into this branch. Kept take: game/art/tutorial/clips/rail_grind.gif, 34 frames, 2.72 s, 1.43 MB; every take is in art-archive/T-555/clip-takes/. It shows a hop with Space held, the grind on rail-1 with the car tilted and the facing arrow, then the launch on release. The fixture tutorial_clip_rail_grind.gd now starts 12 units south of rail-1, at (18.5, -8), the same route as before. The old start, (5, 6), has no rail on the new map; that was take 02. test_tutorial_clips.gd: 7/7 pass. The Write tool is refused for note files here, so this line went in with --text.

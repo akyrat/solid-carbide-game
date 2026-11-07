@@ -8,7 +8,11 @@ extends Node
 ## held (T-551: a grind starts only while Space is held in the air), Space let go after
 ## `jump_off_after` seconds on the rail (the launch), and the camera following. It quits `after_end` steps after the grind ends.
 ## Prints the same "tutorial_clip_demo: ..." lines the recorder reads (tricks, key timeline).
+## T-555: on T-547's Kaiju City map the run's rails are its own; the route is the same (12 units
+## south of a north-south rail's south end, W held, a hop) onto rail-1 (x 18.5, y -20 to -46.5).
 
+## Where the car starts, facing north (T-555: 12 units south of rail-1's south end).
+@export var start := Vector2(18.5, -8.0)
 @export var hop_step := 15
 @export var after_end := 12
 @export var max_steps := 700
@@ -38,7 +42,7 @@ func _ready() -> void:
 	var car: CharacterBody2D = run.car
 	car.use_keyboard = false
 	car.detect_tricks = true
-	car.model.set_position(Vector2(5.0, 6.0))
+	car.model.set_position(start)
 	car.model.rotation = -PI / 2.0
 	car.model.set_velocity(Vector2.ZERO)
 	car._sync_from_model()
