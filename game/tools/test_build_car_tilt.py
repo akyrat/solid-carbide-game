@@ -116,6 +116,66 @@ class TiltImageTests(unittest.TestCase):
             self.assertEqual(img.size, (128, 128))
 
 
+class TiltRound2Tests(unittest.TestCase):
+    def test_fit_puts_volume_on_the_silhouette(self):
+        frame = b.normal_frame(8)
+        cs, cp, sc = b.frame_fit(frame[:, :, 3] > 0, 8 * b.STEP_DEG)
+        self.assertTrue(np.all(sc > 0.3) and np.all(sc < 3.0))
+        self.assertAlmostEqual(float(cs[0]), b.bbox_center(frame)[0])
+
+    def test_splat_is_closed_and_uses_own_pixels(self):
+        frame = b.normal_frame(8)
+        out = b.splat_frame(frame, 8 * b.STEP_DEG, 30.0)
+        self.assertTrue(colours(out) <= colours(frame))
+        self.assertTrue(set(np.unique(out[:, :, 3])) <= {0, 255})
+        self.assertTrue(np.array_equal(b.remove_specks(out), out))   # no loose fragments
+        self.assertGreater((out[:, :, 3] > 0).sum(), 0.8 * (frame[:, :, 3] > 0).sum())
+
+    def test_splat_lowers_the_front_left_and_raises_the_back_right(self):
+        # Frame 8: nose down-left; the front left corner is the bottom-left of the car, the back right the top-right.
+        frame = b.normal_frame(8)
+        out = b.splat_frame(frame, 8 * b.STEP_DEG, 30.0)
+
+        def edge(img, cols, top):
+            rows = np.nonzero((img[:, cols, 3] > 0).any(axis=1))[0]
+            return rows.min() if top else rows.max()
+        xs = np.nonzero((frame[:, :, 3] > 0).any(axis=0))[0]
+        left, right = slice(xs.min(), xs.min() + 20), slice(xs.max() - 20, xs.max() + 1)
+        self.assertGreater(edge(out, left, False), edge(frame, left, False))   # front left goes down
+        self.assertLess(edge(out, right, True), edge(frame, right, True))      # back right goes up
+
+    def test_zero_tilt_splat_is_identity(self):
+        frame = b.normal_frame(3)
+        self.assertTrue(np.array_equal(b.splat_frame(frame, 3 * b.STEP_DEG, 0.0), frame))
+
+    def test_generate_set_calls_once_per_missing_frame_and_caps(self):
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            guides, raw, frames = d / "g", d / "raw", d / "f"
+            for s in (1, 2, 3):
+                b.save_rgba(b.normal_frame(5), guides / b.frame_name(5, s))
+            calls = []
+
+            def fake_run(cmd):
+                name = cmd[cmd.index("--name") + 1]
+                calls.append(name)
+                b.save_rgba(b.normal_frame(5), raw / f"{name}.png")
+                return 0
+            old_log, old_archive = b.CALLS_LOG, b.ARCHIVE
+            b.CALLS_LOG, b.ARCHIVE = d / "calls.md", d
+            try:
+                got = b.generate_set([5], [2, 3], 500, 1, guides, raw, frames, "t", 1, run=fake_run)
+                self.assertEqual(got, ["d05_s2_st500_t"])
+                got = b.generate_set([5], [2, 3], 500, 1, guides, raw, frames, "t", 5, run=fake_run)
+                self.assertEqual(got, ["d05_s3_st500_t"])     # the first frame's raw exists: not paid again
+                self.assertTrue((frames / b.frame_name(5, 2)).is_file())
+                self.assertTrue((frames / b.frame_name(5, 3)).is_file())
+                self.assertEqual(len((d / "calls.md").read_text(encoding="utf-8").splitlines()), 2)
+            finally:
+                b.CALLS_LOG, b.ARCHIVE = old_log, old_archive
+            self.assertEqual(calls, ["d05_s2_st500_t", "d05_s3_st500_t"])
+
+
 class TiltSheetTests(unittest.TestCase):
     def test_assemble_sheet_layout(self):
         with tempfile.TemporaryDirectory() as d:

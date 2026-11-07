@@ -47,7 +47,7 @@ FRAME = 128
 DIRECTIONS = 32
 STEP_DEG = 11.25
 CENTER = (64.5, 65.5)            # car_iso.json center_px
-TILT_STEPS_DEG = (7.0, 14.0, 20.0)   # steps 1, 2, 3 (3 = the held pose); a proposal for the playtest
+TILT_STEPS_DEG = (10.0, 20.0, 30.0)   # steps 1, 2, 3 (3 = the held pose); a proposal for the playtest (round 1 used 7, 14, 20: too subtle)
 
 # The camera: orthographic, the game's isometric azimuth, ELEV_DEG above the ground, K screen px per unit.
 ELEV_DEG = 30.0
@@ -98,15 +98,44 @@ def _inside(u, v, z):
     return out
 
 
-def pixel_heights(alpha: np.ndarray, heading_deg: float):
+def volume_bbox(heading_deg: float):
+    """The car-shaped volume's bounding box on screen (model px, relative to CENTER): (x0, y0, x1, y1)."""
+    pts = []
+    for (u0, u1, v0, v1, z0, z1) in (BODY, CABIN):
+        for u in (u0, u1):
+            for v in (v0, v1):
+                for z in (z0, z1):
+                    sx, sy, _ = project(np.array(u), np.array(v), np.array(z), heading_deg)
+                    pts.append((float(sx) - CENTER[0], float(sy) - CENTER[1]))
+    p = np.array(pts)
+    return p[:, 0].min(), p[:, 1].min(), p[:, 0].max(), p[:, 1].max()
+
+
+def frame_fit(alpha: np.ndarray, heading_deg: float):
+    """Fits the volume to the frame's own silhouette (T-555 round 2): the scale (fx, fy) and the centres that
+    put the volume's screen bounding box on the sprite's. Returns (sprite_centre, volume_centre, scale), with a
+    sprite pixel p at model point volume_centre + (p - sprite_centre) / scale."""
+    ys, xs = np.nonzero(alpha)
+    sx0, sx1, sy0, sy1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
+    x0, y0, x1, y1 = volume_bbox(heading_deg)
+    scale = np.array([(sx1 - sx0) / (x1 - x0), (sy1 - sy0) / (y1 - y0)])
+    return np.array([(sx0 + sx1) / 2.0, (sy0 + sy1) / 2.0]), np.array([(x0 + x1) / 2.0, (y0 + y1) / 2.0]), scale
+
+
+def pixel_heights(alpha: np.ndarray, heading_deg: float, fit=None):
     """For each opaque pixel of a frame: its local (u, v, z) on the car-shaped volume, found by walking down its
     view ray from above and taking the first point inside the volume; a ray that misses it gets the point where
-    it is closest to the volume's middle height. Returns arrays (ys, xs, u, v, z)."""
+    it is closest to the volume's middle height. With `fit` (frame_fit), the volume is fitted to the frame's
+    silhouette first. Returns arrays (ys, xs, u, v, z)."""
     ex, ey, ez = screen_basis()
     f, l = local_axes(heading_deg)
     ys, xs = np.nonzero(alpha)
     px = xs + 0.5 - CENTER[0]
     py = ys + 0.5 - CENTER[1]
+    if fit is not None:
+        cs, cp, sc = fit
+        px = cp[0] + (xs + 0.5 - cs[0]) / sc[0]
+        py = cp[1] + (ys + 0.5 - cs[1]) / sc[1]
     zs = np.linspace(1.4, -0.3, 86)
     m = np.array([[ex[0], ey[0]], [ex[1], ey[1]]])
     minv = np.linalg.inv(m)
@@ -161,10 +190,10 @@ def _blur(a: np.ndarray, sigma: float) -> np.ndarray:
 HEIGHT_SMOOTH = 4.0   # px: the height map is smoothed so the warp bends the car instead of tearing it
 
 
-def height_map(alpha: np.ndarray, heading_deg: float) -> np.ndarray:
+def height_map(alpha: np.ndarray, heading_deg: float, fit=None) -> np.ndarray:
     """A smooth height (z, local units) for every pixel of the frame: the opaque pixels' heights on the
     car-shaped volume, spread to the rest of the frame and smoothed."""
-    ys, xs, _, _, z = pixel_heights(alpha, heading_deg)
+    ys, xs, _, _, z = pixel_heights(alpha, heading_deg, fit)
     zmap = np.zeros(alpha.shape)
     mask = np.zeros(alpha.shape)
     zmap[ys, xs] = z
@@ -174,14 +203,23 @@ def height_map(alpha: np.ndarray, heading_deg: float) -> np.ndarray:
     return _blur(filled, HEIGHT_SMOOTH)
 
 
-def displacement(alpha: np.ndarray, heading_deg: float, tilt_deg: float):
-    """Screen displacement (dx, dy) of every pixel of the frame under the tilt, from the smooth height map."""
+def displacement(alpha: np.ndarray, heading_deg: float, tilt_deg: float, fitted: bool = False,
+                 with_depth: bool = False):
+    """Screen displacement (dx, dy) of every pixel of the frame under the tilt, from the smooth height map.
+    `fitted`: the volume is fitted to the frame's silhouette (frame_fit), and the displacement scaled back to the
+    sprite's pixels. `with_depth` also returns each pixel's depth after the tilt (larger = nearer the viewer)."""
     ex, ey, ez = screen_basis()
     f, l = local_axes(heading_deg)
-    z = height_map(alpha, heading_deg)
+    fit = frame_fit(alpha, heading_deg) if fitted else None
+    z = height_map(alpha, heading_deg, fit)
     yy, xx = np.mgrid[0:FRAME, 0:FRAME]
     px = xx + 0.5 - CENTER[0]
     py = yy + 0.5 - CENTER[1]
+    sc = np.ones(2)
+    if fit is not None:
+        cs, cp, sc = fit
+        px = cp[0] + (xx + 0.5 - cs[0]) / sc[0]
+        py = cp[1] + (yy + 0.5 - cs[1]) / sc[1]
     minv = np.linalg.inv(np.array([[ex[0], ey[0]], [ex[1], ey[1]]]))
     rx = px - (z - PIVOT_Z) * ez[0]
     ry = py - (z - PIVOT_Z) * ez[1]
@@ -191,8 +229,48 @@ def displacement(alpha: np.ndarray, heading_deg: float, tilt_deg: float):
     v = wx * l[0] + wy * l[1]
     u2, v2, z2 = tilt_local(u, v, z, tilt_deg)
     sx0, sy0, _ = project(u, v, z, heading_deg)
-    sx1, sy1, _ = project(u2, v2, z2, heading_deg)
-    return sx1 - sx0, sy1 - sy0
+    sx1, sy1, depth = project(u2, v2, z2, heading_deg)
+    dx, dy = (sx1 - sx0) * sc[0], (sy1 - sy0) * sc[1]
+    return (dx, dy, depth) if with_depth else (dx, dy)
+
+
+def _bilinear(field: np.ndarray, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    x = np.clip(x - 0.5, 0, FRAME - 1.001)
+    y = np.clip(y - 0.5, 0, FRAME - 1.001)
+    x0, y0 = np.floor(x).astype(int), np.floor(y).astype(int)
+    tx, ty = x - x0, y - y0
+    return (field[y0, x0] * (1 - tx) * (1 - ty) + field[y0, x0 + 1] * tx * (1 - ty)
+            + field[y0 + 1, x0] * (1 - tx) * ty + field[y0 + 1, x0 + 1] * tx * ty)
+
+
+SUBSAMPLES = 3   # each source pixel is moved as 3 x 3 samples, so a stretched part leaves no holes
+
+
+def splat_frame(frame: np.ndarray, heading_deg: float, tilt_deg: float) -> np.ndarray:
+    """The frame tilted (T-555 round 2 guide): the volume fitted to the frame's silhouette, every source pixel
+    moved forward as SUBSAMPLES x SUBSAMPLES samples along the smooth displacement field, the sample nearest the
+    viewer kept per output pixel (so a raised part covers what is behind it instead of tearing), the few holes
+    left filled from their neighbours, specks dropped. Only the frame's own pixels are used."""
+    alpha = frame[:, :, 3] > 0
+    if not alpha.any() or tilt_deg == 0:
+        return frame.copy()
+    dx, dy, depth = displacement(alpha, heading_deg, tilt_deg, fitted=True, with_depth=True)
+    ys, xs = np.nonzero(alpha)
+    k = SUBSAMPLES
+    offs = (np.arange(k) + 0.5) / k
+    oy, ox = np.meshgrid(offs, offs, indexing="ij")
+    sx = (xs[:, None] + ox.ravel()[None, :]).ravel()
+    sy = (ys[:, None] + oy.ravel()[None, :]).ravel()
+    src = np.repeat(np.arange(len(xs)), k * k)
+    tx = np.floor(sx + _bilinear(dx, sx, sy)).astype(int)
+    ty = np.floor(sy + _bilinear(dy, sx, sy)).astype(int)
+    dep = _bilinear(depth, sx, sy)
+    ok = (tx >= 0) & (tx < FRAME) & (ty >= 0) & (ty < FRAME)
+    tx, ty, dep, src = tx[ok], ty[ok], dep[ok], src[ok]
+    order = np.argsort(dep, kind="stable")          # far first; the nearest is written last and stays
+    out = np.zeros_like(frame)
+    out[ty[order], tx[order]] = frame[ys[src[order]], xs[src[order]]]
+    return remove_specks(fill_holes(out))
 
 
 def warp_frame(frame: np.ndarray, heading_deg: float, tilt_deg: float) -> np.ndarray:
@@ -377,7 +455,7 @@ def build_guides(dirs, out_dir: Path) -> list[Path]:
         frame = normal_frame(i, sheet)
         for s, deg in enumerate(TILT_STEPS_DEG, start=1):
             p = out_dir / frame_name(i, s)
-            save_rgba(remove_specks(warp_frame(frame, i * STEP_DEG, deg)), p)
+            save_rgba(splat_frame(frame, i * STEP_DEG, deg), p)
             made.append(p)
     return made
 
@@ -417,6 +495,49 @@ def rotate_request(i: int, step: int, strength: int, seed: int, guides_dir: Path
         "isometric": True,
         "seed": int(seed),
     }
+
+
+CALLS_LOG = ARCHIVE / "pixellab-calls.md"
+
+
+def generate_set(dirs, steps, strength: int, seed0: int, guides_dir: Path, raw_dir: Path, frames_dir: Path,
+                 tag: str, max_calls: int, run=None) -> list[str]:
+    """The paid part of the full set, in one command: for each direction and step, the /rotate request
+    (rotate_request), one `pixellab_client.py generate` call (only inside a live style loop run, which its
+    environment carries), then the free clean into frames_dir. A frame whose raw file already exists is not paid
+    for again (only cleaned), so a stopped run carries on. Stops before going over max_calls. Every call is a
+    line in art-archive/T-555/pixellab-calls.md. Returns the names called."""
+    import subprocess
+    run = run or (lambda cmd: subprocess.run(cmd, cwd=REPO).returncode)
+    called = []
+    for i in dirs:
+        for s in steps:
+            name = f"d{i:02d}_s{s}_st{strength}_{tag}"
+            raw = raw_dir / f"{name}.png"
+            if not raw.is_file():
+                if len(called) >= max_calls:
+                    print(f"stopped: {max_calls} calls reached before {name}")
+                    return called
+                req = ARCHIVE / "requests" / f"{name}.json"
+                req.parent.mkdir(parents=True, exist_ok=True)
+                seed = seed0 + i * 10 + s
+                req.write_text(json.dumps(rotate_request(i, s, strength, seed, guides_dir)) + "\n", encoding="utf-8")
+                with CALLS_LOG.open("a", encoding="utf-8") as fh:
+                    fh.write(f"| {name} | dir {i} | step {s} | strength {strength} | {seed} | {tag} | full set |")
+                code = run([sys.executable, "game/tools/pixellab_client.py", "generate", "--endpoint", "rotate",
+                            "--params-file", str(req), "--out-dir", str(raw_dir), "--name", name,
+                            "--consulted", "docs/visual-style.md", "--consulted", "docs/extended-narrative.md",
+                            "--consulted", "docs/drifting.md", "--consulted", guides_dir.as_posix(),
+                            "--task", "T-555"])
+                called.append(name)
+                with CALLS_LOG.open("a", encoding="utf-8") as fh:
+                    fh.write(" saved |\n" if code == 0 else f" failed (exit {code}) |\n")
+                if code != 0:
+                    print(f"stopped: {name} failed (exit {code})")
+                    return called
+            guide = load_rgba(guides_dir / frame_name(i, s))
+            save_rgba(clean(load_rgba(raw), guide), frames_dir / frame_name(i, s))
+    return called
 
 
 def strip(frames, out: Path) -> None:
@@ -484,7 +605,7 @@ def contact_sheet(tilt_sheet: np.ndarray, dirs, scale: int = 2) -> Image.Image:
 
 
 def _dirs(text: str | None):
-    return list(range(DIRECTIONS)) if not text else [int(x) for x in text.split(",")]
+    return list(range(DIRECTIONS)) if not text or text == "all" else [int(x) for x in text.split(",")]
 
 
 def main(argv=None) -> int:
@@ -492,13 +613,13 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     g = sub.add_parser("guides")
     g.add_argument("--dirs")
-    g.add_argument("--out", default=str(ARCHIVE / "guides"))
+    g.add_argument("--out", default=str(ARCHIVE / "guides2"))
     c = sub.add_parser("clean")
     c.add_argument("inp")
     c.add_argument("out")
     c.add_argument("--dir", type=int, required=True)
     c.add_argument("--step", type=int, default=3)
-    c.add_argument("--guides", default=str(ARCHIVE / "guides"))
+    c.add_argument("--guides", default=str(ARCHIVE / "guides2"))
     s = sub.add_parser("sheet")
     s.add_argument("--frames-dir", required=True)
     s.add_argument("--out", default=str(CAR_DIR / "car_iso_tilt"))
@@ -508,12 +629,27 @@ def main(argv=None) -> int:
     r.add_argument("--strength", type=int, default=450)
     r.add_argument("--seed", type=int, required=True)
     r.add_argument("--guidance", type=float, default=4.0)
-    r.add_argument("--guides", default=str(ARCHIVE / "guides"))
+    r.add_argument("--guides", default=str(ARCHIVE / "guides2"))
     r.add_argument("--out", required=True)
     t = sub.add_parser("strip")
     t.add_argument("--dir", type=int, required=True)
     t.add_argument("--frames-dir", required=True)
     t.add_argument("--out", required=True)
+    gs = sub.add_parser("generate-set")
+    gs.add_argument("--dirs", required=True)
+    gs.add_argument("--steps", default="1,2,3")
+    gs.add_argument("--strength", type=int, required=True)
+    gs.add_argument("--seed0", type=int, default=556000)
+    gs.add_argument("--guides", default=str(ARCHIVE / "guides2"))
+    gs.add_argument("--raw-dir", default=str(ARCHIVE / "raw"))
+    gs.add_argument("--frames-dir", required=True)
+    gs.add_argument("--tag", required=True)
+    gs.add_argument("--max-calls", type=int, required=True)
+    cp = sub.add_parser("copy-guides")
+    cp.add_argument("--dirs", required=True)
+    cp.add_argument("--steps", default="1")
+    cp.add_argument("--guides", default=str(ARCHIVE / "guides2"))
+    cp.add_argument("--frames-dir", required=True)
     h = sub.add_parser("shear")
     h.add_argument("--dir", type=int, required=True)
     h.add_argument("--out-dir", required=True)
@@ -545,6 +681,15 @@ def main(argv=None) -> int:
         fd = Path(a.frames_dir)
         strip([load_rgba(fd / frame_name(a.dir, s)) for s in (1, 2, 3)], Path(a.out))
         print(a.out)
+    elif a.cmd == "generate-set":
+        called = generate_set(_dirs(a.dirs), [int(x) for x in a.steps.split(",")], a.strength, a.seed0,
+                              Path(a.guides), Path(a.raw_dir), Path(a.frames_dir), a.tag, a.max_calls)
+        print(f"{len(called)} PixelLab calls: {', '.join(called) or 'none'}")
+    elif a.cmd == "copy-guides":
+        for i in _dirs(a.dirs):
+            for s in [int(x) for x in a.steps.split(",")]:
+                save_rgba(load_rgba(Path(a.guides) / frame_name(i, s)), Path(a.frames_dir) / frame_name(i, s))
+        print(f"copied to {a.frames_dir}")
     elif a.cmd == "shear":
         src = normal_frame(a.dir)
         for s, deg in enumerate(TILT_STEPS_DEG, start=1):

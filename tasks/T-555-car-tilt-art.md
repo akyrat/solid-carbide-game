@@ -1,7 +1,7 @@
 ---
 id: T-555
 title: Art: the car's mid-air tilt, 3 transition frames in 16 directions
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: tilt art, one direction first through the style loop, then the other 15 (up to 200 generations).
+
+### 2026-11-07, Flagged for review → In progress
+
+Sample scored 5/10 (tilt too weak). I chose: improve the free guide, try again with more refines, then build all 32 directions; anything below 8 is noted for your playtest.
 
 ## Style review
 
@@ -227,3 +231,4 @@ The sheet has 32 columns, not 16: T-551's hook indexes by the car's direction fr
 - (c) A different PixelLab route, for example a new endpoint added to the client, on the board's say-so.
 
 The GRIND! clip is not re-recorded (it waits for the art). `docs/visual-style.md` is not updated yet: nothing is decided. Criteria 1, 2, 3, 5 and 7 are not met.
+- 2026-11-07, flagged-for-review → in-progress: Project Lead (the board's go to decide and not stop, 2026-11-07; generous trial and error): option (b) then carry on. Improve the free guide, new sample loop with more refines within the 200; then build all 32 directions from the best method. If still below 8, keep the best version that clearly shows the tilt, note it for the playtest, and go on.
