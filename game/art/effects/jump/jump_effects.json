@@ -1,0 +1,18 @@
+{
+ "ids": [
+  "dash_cloud",
+  "spring",
+  "jet_thrust",
+  "stunt_sparks",
+  "shockwave_ring"
+ ],
+ "frames": 8,
+ "frame_size": 96,
+ "anchor": [
+  48,
+  68
+ ],
+ "task": "T-556",
+ "made_by": "game/tools/build_jump_effects.py (a script; no PixelLab call). Byte-identical every run.",
+ "used_by": "game/scripts/driving/jump_effect.gd (draw_effect), drawn at 0.5, one row of frames per sheet; no per-direction art: every effect is round or stands straight under the car."
+}
