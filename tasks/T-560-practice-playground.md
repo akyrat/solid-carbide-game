@@ -84,3 +84,5 @@ T-560 done by level-challenge.
 **Documents affected:** docs/level-design.md (Content, "The practice playground (task T-560)", one open question), game/docs/level/practice-playground.md (new), game/README.md index. Long GDD and fingerprint not regenerated (Project Lead).
 
 Notes: new .gd.uid files for my two scripts were left untracked like the repo's other uid files; I did not touch game/data/levels/.
+
+Follow-up (the board: contrast of the car and its effects): the tyre marks were nearly invisible on the prototype ground (1.06). Chose the smallest change: the playground level lightens its own ground_style colours (ground 59/54/94, lines 76/71/122 and 115/105/173), nothing else changes (marks, main map untouched). The marks now read clearly (about 1.7; screenshot art-archive/T-560/screenshots/drift.png); smoke edges and ramp lose some contrast (about 1.3 and 2.1), smoke core, rails and notebook stay about 8 to 9. Screenshots retaken; docs/level-design.md (Content, open question) and game/docs/level/practice-playground.md updated; test_practice_playground 9/9, check_level OK.

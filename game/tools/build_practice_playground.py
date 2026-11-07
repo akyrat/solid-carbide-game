@@ -23,12 +23,12 @@ W, H = 120, 72
 HALF_W, HALF_H = W // 2, H // 2
 CELL = 2
 
-# Grid ground colours: the drift prototype's (ground_grid.gd), kept; see the docs for the contrast check.
+# Grid ground colours: the drift prototype's purple (ground_grid.gd) lightened, so the dark tyre marks show (T-560).
 GROUND_STYLE = {
     "kind": "grid",
-    "ground_color": [0.07, 0.07, 0.14],
-    "minor_color": [0.17, 0.17, 0.30],
-    "major_color": [0.33, 0.30, 0.52],
+    "ground_color": [0.23, 0.21, 0.37],
+    "minor_color": [0.30, 0.28, 0.48],
+    "major_color": [0.45, 0.41, 0.68],
     "major_every": 5,
 }
 

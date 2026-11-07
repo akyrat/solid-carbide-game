@@ -80,7 +80,7 @@ func test_each_start_point_starts_the_car_there_and_no_id_keeps_the_spawn() -> v
 func test_the_run_draws_the_grid_ground_not_the_tiles() -> void:
 	_run()
 	assert_false(run.map.grid_style.is_empty())
-	assert_eq(run.map.grid_style.ground_color, GridGround.GROUND_COLOR)
+	assert_eq(run.map.grid_style.ground_color, Color(0.23, 0.21, 0.37), "lightened so the dark tyre marks show")
 	assert_false(run.map.ground_tiles.visible, "no tiles over the grid")
 	assert_false(run.map.uses_ground_art())
 	assert_true(GridGround.of({}).is_empty(), "a level without it keeps the usual ground")

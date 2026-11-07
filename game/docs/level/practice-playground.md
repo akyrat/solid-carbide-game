@@ -23,4 +23,4 @@ The level the tutorial's practice windows load (T-561): `data/level/practice_pla
 
 ## Screenshots
 
-`game/tools/shots/practice_playground_shots.tscn` (mode from the environment variable `T560_MODE`: `drift`, `ramp`, `air`, `rail`, `overview`) with `bash game/tools/screenshot.sh res://tools/shots/practice_playground_shots.tscn <out.png> 150`. The task's pictures are in `art-archive/T-560/screenshots/`.
+`game/tools/shots/practice_playground_shots.tscn` (mode from the environment variable `T560_MODE`: `drift`, `ramp`, `air`, `rail`, `overview`) with `bash game/tools/screenshot.sh res://tools/shots/practice_playground_shots.tscn <out.png> 150`. Colours: lightened from the prototype's (Level design, Content, "The practice playground") so the tyre marks show. The task's pictures are in `art-archive/T-560/screenshots/`.
