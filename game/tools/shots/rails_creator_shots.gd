@@ -89,6 +89,7 @@ func _run() -> void:
 	run.car.model.set_velocity(Vector2(0, -12))
 	run.car.height_model.height = 1.5
 	run.car.height_model.leave_rail(0.0)
+	run.car.scripted_jump_held = true  # T-551: a grind starts only while Space is held
 
 
 ## T-542 round 2: a platform (3) with a rail along its top and a ramp (0 to 3, climbing north) with a rail

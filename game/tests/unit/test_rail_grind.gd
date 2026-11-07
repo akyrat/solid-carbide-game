@@ -2,9 +2,10 @@ extends GutTest
 ## Task T-541: the rail grinding prototype (Drifting, Content, "Rail grinding (task T-541)"; the
 ## rail format: Level design, Content, "Rails (task T-541)"). Rails load from a level file; a car
 ## that lands on a rail moving along it locks on, slides along it and leaves at its end; one
-## landing across it doesn't; Jump while grinding hops off and can land on a second rail; a grind
-## that ends pays the GRIND! trick (combo.json "rail_grind"); the playtest switch starts runs with
-## the Jump power-up and is off in the committed data.
+## landing across it doesn't; letting go of Space while grinding launches off and can land on a
+## second rail (T-551, the grind overhaul: a grind starts only while Space is held in the air and
+## lasts while it stays held); a grind that ends pays the GRIND! trick (combo.json "rail_grind");
+## the playtest switch starts runs with the Jump power-up and is off in the committed data.
 
 const CarScript := preload("res://scripts/driving/car.gd")
 const Rails := preload("res://scripts/level/rails.gd")
@@ -34,7 +35,7 @@ func after_each() -> void:
 
 ## A car with no ground source (flat street at 0), the layout's rails, Jump at `jump_tier`, at
 ## `pos` heading `heading` (radians) with flat velocity `vel`, in the air at `height` going up
-## at `vz`.
+## at `vz`, Space held (T-551: a grind starts only while it is held).
 func _car(pos: Vector2, vel: Vector2, height: float, vz: float, jump_tier := 0, layout := LAYOUT) -> CharacterBody2D:
 	var car: CharacterBody2D = CarScript.new()
 	car.model.set_position(pos)
@@ -45,10 +46,32 @@ func _car(pos: Vector2, vel: Vector2, height: float, vz: float, jump_tier := 0, 
 	car.model.set_velocity(vel)
 	car.grind.rails = Rails.from_layout(layout)
 	car.jump.set_tier(jump_tier)
+	car.scripted_jump_held = true
 	if height > 0.0 or vz > 0.0:
 		car.height_model.height = height
 		car.height_model.leave_rail(vz)
 	return car
+
+
+## T-548: D (or A for negative degrees) on the rail until the nose is `deg` degrees right of the
+## travel (left for negative), then lets go.
+func _face(car, deg: float) -> void:
+	var steer := -1.0 if deg > 0.0 else 1.0
+	for i in 300:
+		var off: float = rad_to_deg(car.grind.body_heading - car.grind.travel().angle())  # unwrapped
+		if absf(off) >= absf(deg):
+			break
+		car.scripted_input = [false, false, steer]
+		car.physics_step()
+	car.scripted_input = [false, false, 0.0]
+
+
+## T-551: lets go of Space for one step (the launch off the rail), then holds it again, so the
+## car can catch the next rail.
+func _launch(car) -> void:
+	car.scripted_jump_held = false
+	car.physics_step()
+	car.scripted_jump_held = true
 
 
 ## Steps until `cond` holds or `max_steps` pass; returns the steps taken.
@@ -104,13 +127,13 @@ func test_the_game_map_has_the_boards_72_rails() -> void:
 
 func test_two_parallel_rails_can_be_a_first_tier_jump_apart() -> void:
 	# Two parallel rails at the same height, no further apart than a Jump tier 1 hop carries
-	# the car sideways at cruise speed (11 units/s turned jump_angle_deg, over the hop's airtime)
-	# plus the reach. The test layout's pair (3.5 apart) is the example.
+	# the car sideways (T-548: jump_speed with the car facing 45 degrees off the rail, over the
+	# hop's airtime) plus the reach. The test layout's pair (3.5 apart) is the example.
 	var rails := Rails.from_layout(LAYOUT)
 	var j = preload("res://scripts/driving/jump_power_up.gd").new()
 	j.set_tier(1)
 	var g = RailGrind.new()
-	var carry: float = 11.0 * sin(deg_to_rad(g.jump_angle_deg)) * j.airtime_for(j.takeoff_speed, 12.0) + g.reach
+	var carry: float = g.jump_speed * sin(deg_to_rad(45.0)) * j.airtime_for(j.takeoff_speed, 12.0) + g.reach
 	var found := false
 	for a in rails:
 		for b in rails:
@@ -144,7 +167,8 @@ func test_landing_along_a_rail_locks_on_slides_and_leaves_at_its_end() -> void:
 	assert_true(car.grind.active, "still on the rail with W and A held")
 	assert_gt(car.model.get_position().x, x0 + 1.5)
 	assert_almost_eq(car.model.get_position().y, 0.0, 1e-6)
-	assert_almost_eq(car.grind.speed, v0 - car.grind.decel * 10 * car.model.dt, 1e-6)
+	# T-548: the landing boost's part fades at boost_decline on top of decel.
+	assert_almost_eq(car.grind.speed, v0 - (car.grind.decel + car.grind.boost_decline) * 10 * car.model.dt, 1e-6)
 	assert_almost_eq(car.model.get_velocity().x, car.grind.speed, 1e-6, "the car's speed is the grind's")
 	car.scripted_input = [false, false, 0.0]
 	_step_until(car, func() -> bool: return not car.grind.active, 500)
@@ -218,59 +242,94 @@ func test_too_slow_drops_the_car_off_beside_the_rail() -> void:
 	assert_lt(car.model.get_velocity().y, -1.0, "a sideways push off the bar, to the nose's side")
 
 
-# --- Jumping between rails ------------------------------------------------------------------
+# --- Jumping between rails (T-551: letting go of Space launches) -----------------------------
 
-func test_jump_while_grinding_hops_off_and_lands_on_the_second_rail() -> void:
-	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+func test_letting_go_of_space_while_grinding_launches_and_lands_on_the_second_rail() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0)
 	var started: Array = []
 	car.grind.grind_started.connect(func(i: int) -> void: started.append(i))
 	var ended: Array = []
 	car.grind.grind_ended.connect(func(reason: String, _s: float, _l: float) -> void: ended.append(reason))
 	_step_until(car, func() -> bool: return car.grind.active, 100)
 	assert_eq(started, [0])
-	# D held (steer < 0, right): the nose turns right of the rail line; rail-b lies south of
-	# rail-a, the right of a car going east.
-	car.scripted_input = [false, false, -1.0]
-	car.physics_step()
-	car.press_jump()
-	car.physics_step()
-	assert_false(car.grind.active, "hopped off")
+	# D held (steer < 0, right): the nose turns about 40 degrees right of the rail line; rail-b
+	# lies south of rail-a, the right of a car going east.
+	_face(car, 40.0)
+	var facing: float = car.model.rotation
+	_launch(car)
+	assert_false(car.grind.active, "launched off")
 	assert_eq(ended, ["jump"])
 	assert_true(car.airborne)
 	assert_gt(car.vertical_speed, 0.0, "going up")
 	assert_gt(car.model.get_velocity().y, 0.0, "toward the right")
 	var v: Vector2 = car.model.get_velocity()
-	assert_almost_eq(rad_to_deg(atan2(v.y, v.x)), car.grind.jump_angle_deg, 1e-3, "slightly diagonal: jump_angle_deg off the rail")
-	assert_eq(car.jump.hops, 1)
+	assert_almost_eq(v.angle(), wrapf(facing, -PI, PI), 1e-3, "where the car faces (T-548)")
+	assert_almost_eq(v.length(), car.grind.jump_speed, 1e-3, "at jump_speed")
+	assert_eq(car.jump.hops, 0, "no power-up hop: any car launches")
 	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
-	assert_true(car.grind.active, "landed on the second rail")
+	assert_true(car.grind.active, "landed on the second rail, Space held again")
 	assert_eq(started, [0, 1])
 	assert_almost_eq(car.model.get_position().y, 3.5, 1e-6)
 
 
-func test_a_jump_pressed_between_steps_while_grinding_is_kept_for_the_next_step() -> void:
-	# A press that arrives after a grind step (from the keyboard, or a listener of `stepped`)
-	# hops on the next step: the grind step doesn't throw it away.
-	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+func test_a_grind_starts_only_while_space_is_held() -> void:
+	var car := _car(Vector2(2, 0.3), Vector2(10, 0), 1.6, 0.0)
+	car.scripted_jump_held = false
+	_step_until(car, func() -> bool: return not car.airborne, 200)
+	assert_eq(car.grind.grinds, 0, "falls past the rail with Space let go")
+	var held := _car(Vector2(2, 0.3), Vector2(10, 0), 1.6, 0.0)
+	_step_until(held, func() -> bool: return held.grind.active or not held.airborne, 200)
+	assert_true(held.grind.active, "the same landing with Space held catches it")
+
+
+func test_holding_space_later_in_the_fall_still_catches() -> void:
+	var car := _car(Vector2(2, 0.3), Vector2(10, 0), 1.9, 0.0)
+	car.scripted_jump_held = false
+	car.physics_step()
+	car.physics_step()
+	assert_false(car.grind.active)
+	car.scripted_jump_held = true
+	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
+	assert_true(car.grind.active, "held before reaching the bar: it catches")
+
+
+func test_the_grind_lasts_while_space_is_held_and_ends_on_release() -> void:
+	var long_rail := {"rails": [{"id": "long", "x1": 0.0, "y1": 0.0, "x2": 200.0, "y2": 0.0, "z1": 1.0, "z2": 1.0}]}
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 0, long_rail)
 	_step_until(car, func() -> bool: return car.grind.active, 100)
-	var pressed := [false]
+	for i in 100:
+		car.physics_step()
+	assert_true(car.grind.active, "2 s held: still grinding")
+	car.scripted_jump_held = false
+	car.physics_step()
+	assert_false(car.grind.active, "let go: off at once")
+	assert_true(car.airborne)
+
+
+func test_a_release_between_steps_while_grinding_launches_on_the_next_step() -> void:
+	# A release that arrives after a grind step (from the keyboard, or a listener of `stepped`)
+	# launches on the next step.
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	var released := [false]
 	car.stepped.connect(func() -> void:
-		if car.grind.active and not pressed[0]:
-			pressed[0] = true
-			car.press_jump())
+		if car.grind.active and not released[0]:
+			released[0] = true
+			car.scripted_jump_held = false)
 	car.physics_step()
-	assert_true(pressed[0])
+	assert_true(released[0])
+	assert_true(car.grind.active, "the step that saw it held still grinds")
 	car.physics_step()
-	assert_false(car.grind.active, "hopped off on the next step")
-	assert_eq(car.jump.hops, 1)
+	assert_false(car.grind.active, "launched on the next step")
 
 
-func test_jump_without_the_power_up_does_nothing_on_a_rail() -> void:
-	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 0)
+func test_a_space_press_while_grinding_does_nothing() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
 	_step_until(car, func() -> bool: return car.grind.active, 100)
 	car.press_jump()
 	car.physics_step()
-	assert_true(car.grind.active)
+	assert_true(car.grind.active, "Space still held: grinding")
+	assert_eq(car.jump.hops, 0)
 
 
 func test_the_rail_left_is_not_caught_again_until_the_ground() -> void:
@@ -278,16 +337,35 @@ func test_the_rail_left_is_not_caught_again_until_the_ground() -> void:
 	_step_until(car, func() -> bool: return car.grind.active, 100)
 	car.scripted_input = [false, false, 1.0]  # A: the nose to the north, away from rail-b
 	car.physics_step()
-	car.press_jump()
-	car.physics_step()
+	_launch(car)
 	assert_false(car.grind.active)
-	assert_lt(car.model.get_velocity().y, 0.0, "hopping north")
+	assert_lt(car.model.get_velocity().y, 0.0, "launched north")
 	assert_eq(car.grind.exclude, 0, "rail-a is shut")
 	assert_eq(car.grind.find(Vector2(5, 0.2), Vector2(10, 0), 1.0, -1.0), {}, "even right on it")
 	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
 	assert_false(car.grind.active, "no rail where it lands")
 	assert_eq(car.grind.exclude, -1, "free again once on the ground")
 	assert_true(car.grind.find(Vector2(5, 0.2), Vector2(10, 0), 1.0, -1.0).has("index"))
+
+
+func test_off_the_end_with_space_held_the_car_flies_on_and_catches_the_next_rail() -> void:
+	# T-551's proposal: the rail ends while Space is held: no launch, the car flies on along the
+	# rail (still tilted) and catches the next rail it reaches.
+	var layout := {"rails": [
+		{"id": "first", "x1": 0.0, "y1": 0.0, "x2": 8.0, "y2": 0.0, "z1": 1.5, "z2": 1.5},
+		{"id": "next", "x1": 11.0, "y1": 0.0, "x2": 30.0, "y2": 0.0, "z1": 1.0, "z2": 1.0}]}
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 2.0, 0.0, 0, layout)
+	var ended: Array = []
+	car.grind.grind_ended.connect(func(reason: String, _s: float, _l: float) -> void: ended.append(reason))
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	_step_until(car, func() -> bool: return not car.grind.active, 200)
+	assert_eq(ended, ["end"], "off the end, not a launch")
+	assert_true(car.airborne)
+	assert_lte(car.vertical_speed, 0.0, "no launch climb: it falls")
+	assert_eq(car.tilt.step, car.tilt.FRAMES, "still tilted")
+	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
+	assert_true(car.grind.active, "caught the next rail")
+	assert_eq(car.grind.rail_index, 1)
 
 
 # --- Paying the trick -----------------------------------------------------------------------
@@ -363,7 +441,7 @@ func test_screen_of_lifts_by_the_height() -> void:
 	assert_eq(q.x, p.x)
 
 
-# --- The board's tweak (2026-11-06): steering on the rail and the diagonal jump -----------------
+# --- The board's tweak (2026-11-06): steering on the rail; T-548: the jump where the car faces ---
 
 func test_the_numbers_come_from_rail_grind_json() -> void:
 	var json: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/rail_grind.json"))
@@ -395,68 +473,143 @@ func test_a_and_d_spin_the_car_on_the_rail_at_the_air_turn_rate() -> void:
 	assert_almost_eq(car.model.rotation - h0, -want, 1e-6, "D the other way")
 
 
-func test_the_jump_goes_to_the_side_of_the_rail_line_the_nose_points_to() -> void:
+func test_the_jump_goes_where_the_car_faces_at_jump_speed() -> void:
+	# T-548 (the board, 2026-11-06): where the nose points, at jump_speed, whatever the travel.
 	var g = RailGrind.new()
 	g.rails = Rails.from_layout(LAYOUT)
 	g.start({"index": 0, "s": 5.0, "speed_along": 10.0}, 0.0)
-	assert_eq(g.nose_side(), 0.0, "exactly along the line")
-	assert_eq(g.leave_velocity("jump"), Vector2(10, 0), "straight on")
-	var a := deg_to_rad(g.jump_angle_deg)
-	g.body_heading = deg_to_rad(-20.0)  # the nose a little to the north: left of a car going east
-	assert_eq(g.nose_side(), 1.0)
+	assert_almost_eq(g.leave_velocity("jump").x, g.jump_speed, 1e-6, "straight on: jump_speed, not the rail speed")
+	assert_almost_eq(g.leave_velocity("jump").y, 0.0, 1e-6)
+	g.body_heading = deg_to_rad(-20.0)  # the nose a little to the north
 	var v: Vector2 = g.leave_velocity("jump")
-	assert_almost_eq(v.x, 10.0 * cos(a), 1e-6)
-	assert_almost_eq(v.y, -10.0 * sin(a), 1e-6, "slightly left")
-	g.body_heading = deg_to_rad(160.0)  # facing backwards, the nose to the south: right of the line
-	assert_eq(g.nose_side(), -1.0)
-	assert_almost_eq(g.leave_velocity("jump").y, 10.0 * sin(a), 1e-6, "slightly right")
-	assert_almost_eq(g.leave_velocity("jump").length(), 10.0, 1e-6, "the speed is kept")
+	assert_almost_eq(v.angle(), deg_to_rad(-20.0), 1e-6, "along the nose")
+	assert_almost_eq(v.length(), g.jump_speed, 1e-6)
+	g.body_heading = deg_to_rad(110.0)  # sideways and back
+	assert_almost_eq(g.leave_velocity("jump").angle(), deg_to_rad(110.0), 1e-6)
+	g.body_heading = PI  # facing backwards: it jumps backwards (west), the rail's east travel lost
+	assert_almost_eq(g.leave_velocity("jump").x, -g.jump_speed, 1e-6, "backwards")
+	assert_almost_eq(g.leave_velocity("jump").y, 0.0, 1e-6)
 
 
-# --- Quick tuning 2 (board, 2026-11-06): no cooldown for a Jump off a rail -------------------
+func test_a_car_turned_180_degrees_jumps_off_backwards() -> void:
+	var long_rail := {"rails": [{"id": "long", "x1": 0.0, "y1": 0.0, "x2": 200.0, "y2": 0.0, "z1": 1.0, "z2": 1.0}]}
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1, long_rail)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	_face(car, 179.0)
+	assert_true(car.grind.active, "still on the rail")
+	var facing: float = car.model.rotation
+	assert_gt(absf(rad_to_deg(angle_difference(0.0, facing))), 170.0, "turned round")
+	assert_gt(car.grind.velocity().x, 0.0, "still sliding east")
+	car.scripted_jump_held = false  # T-551: let go of Space
+	car.physics_step()
+	assert_false(car.grind.active)
+	var v: Vector2 = car.model.get_velocity()
+	assert_lt(v.x, 0.0, "flying west, against its travel on the rail")
+	assert_almost_eq(v.angle(), wrapf(facing, -PI, PI), 1e-3, "along the nose")
+	assert_almost_eq(v.length(), car.grind.jump_speed, 1e-3, "at jump_speed")
+	assert_gt(car.vertical_speed, 0.0, "a hop")
+	assert_almost_eq(car.model.get_velocity().length(), car.grind.jump_speed, 1e-3, "the old momentum gone")
 
-func test_a_jump_off_a_rail_ignores_the_regular_cooldown_and_leaves_it_alone() -> void:
+
+# --- T-548: the landing boost -----------------------------------------------------------------
+
+func test_landing_adds_the_boost_and_it_declines_at_its_rate() -> void:
+	var g = RailGrind.new()
+	g.rails = Rails.from_layout({"rails": [{"id": "long", "x1": 0.0, "y1": 0.0, "x2": 200.0, "y2": 0.0, "z1": 1.0, "z2": 1.0}]})
+	g.start({"index": 0, "s": 0.0, "speed_along": 11.0}, 0.0)
+	assert_almost_eq(g.speed, 11.0 + g.land_boost, 1e-9, "the boost is added on landing")
+	var dt := 1.0 / 50.0
+	var boost_steps := int(round(g.land_boost / g.boost_decline / dt))
+	for i in boost_steps:
+		g.step(dt)
+	assert_almost_eq(g.speed, 11.0 + g.land_boost - (g.decel + g.boost_decline) * boost_steps * dt, 1e-6,
+		"the boost's part declines at boost_decline on top of decel")
+	assert_almost_eq(g.boost_left, 0.0, 1e-6, "used up after land_boost / boost_decline seconds")
+	var v: float = g.speed
+	for i in 50:
+		g.step(dt)
+	assert_almost_eq(g.speed, v - g.decel * 50 * dt, 1e-6, "then only decel")
+
+
+func test_the_boost_and_jump_numbers_are_in_the_data() -> void:
+	var json: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/rail_grind.json"))
+	assert_gt(float(json.land_boost), 0.0)
+	assert_gt(float(json.boost_decline), 0.0)
+	assert_gt(float(json.jump_speed), 0.0)
+	assert_false(json.has("jump_angle_deg"), "the diagonal hop is replaced")
+
+
+func test_every_landing_boosts_again() -> void:
+	# rail-a, a launch onto rail-b: the second landing adds the boost to its speed along rail-b.
 	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
 	_step_until(car, func() -> bool: return car.grind.active, 100)
-	car.jump.cooldown_left = car.jump.cooldown_seconds  # as if it had just hopped
-	var before: float = car.jump.cooldown_left
-	car.press_jump()
-	car.physics_step()
-	assert_false(car.grind.active, "hopped off, cooldown or not")
-	assert_true(car.airborne)
-	assert_gt(car.vertical_speed, 0.0)
-	assert_eq(car.jump.hops, 1)
-	assert_lte(car.jump.cooldown_left, before, "not started again or extended")
-	assert_gt(car.jump.cooldown_left, before - 2.0 * car.model.dt, "only ticked down as usual")
+	_face(car, 40.0)
+	_launch(car)
+	var along := 0.0
+	for i in 200:
+		along = absf(car.model.get_velocity().x)  # the speed along rail-b (east) before the catch
+		car.physics_step()
+		if car.grind.active or not car.airborne:
+			break
+	assert_true(car.grind.active, "on rail-b")
+	assert_eq(car.grind.grinds, 2)
+	assert_almost_eq(car.grind.speed, along + car.grind.land_boost, 0.05, "its speed along rail-b plus the boost")
+	assert_gt(car.grind.speed, car.grind.jump_speed, "faster than the jump left it")
 
 
-func test_two_rail_jumps_in_quick_succession() -> void:
-	# rail-a, a Jump to the right onto rail-b, and at once a Jump off rail-b: well inside the
-	# regular cooldown (2 s at tier 1).
-	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+func test_a_joint_is_not_a_new_landing() -> void:
+	var g = RailGrind.new()
+	g.rails = Rails.from_layout({"rails": [
+		{"id": "p1", "x1": 0.0, "y1": 0.0, "x2": 10.0, "y2": 0.0, "z1": 1.0, "z2": 1.0},
+		{"id": "p2", "x1": 10.0, "y1": 0.0, "x2": 20.0, "y2": 0.0, "z1": 1.0, "z2": 1.0}]})
+	g.start({"index": 0, "s": 9.0, "speed_along": 11.0}, 0.0)
+	var dt := 1.0 / 50.0
+	var steps := 0
+	while g.rail_index == 0 and steps < 100:
+		assert_eq(g.step(dt), "")
+		steps += 1
+	assert_eq(g.rail_index, 1, "across the joint")
+	assert_eq(g.joints, 1)
+	assert_eq(g.grinds, 1, "one grind")
+	g.step(dt)
+	steps += 1
+	assert_almost_eq(g.speed, 11.0 + g.land_boost - (g.decel + g.boost_decline) * steps * dt, 1e-6,
+		"no new boost at the joint, the first one still declining")
+
+
+# --- T-551: the launch needs no power-up; the Jump power-up's tier 2 launches higher -----------
+
+func test_the_launch_climbs_at_launch_takeoff_speed_without_the_power_up() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 0)
 	_step_until(car, func() -> bool: return car.grind.active, 100)
-	car.scripted_input = [false, false, -1.0]  # D: the nose right of the line, toward rail-b
-	car.physics_step()
-	car.scripted_input = [false, false, 0.0]
-	car.press_jump()
-	car.physics_step()
-	var steps := _step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
+	var effects: Array = []
+	car.jump_started.connect(func(kind: String, _at: Vector2, h: float) -> void: effects.append([kind, h]))
+	_launch(car)
+	assert_false(car.grind.active)
+	# One step of gravity has already run on the launch's climb.
+	assert_almost_eq(car.vertical_speed, car.grind.launch_takeoff_speed - 12.0 * car.model.dt, 1e-6)
+	assert_eq(effects.size(), 1, "the jump effect's signal")
+	assert_eq(effects[0][0], "rail_launch")
+	assert_almost_eq(float(effects[0][1]), 1.0, 1e-6, "from the bar's height")
+
+
+func test_with_jump_tier_2_the_launch_uses_its_higher_takeoff() -> void:
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 2)
+	assert_gt(car.jump.takeoff_speed, car.grind.launch_takeoff_speed)
+	assert_almost_eq(car.launch_takeoff_speed(), car.jump.takeoff_speed, 1e-9)
+	var tier1 := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 1)
+	assert_almost_eq(tier1.launch_takeoff_speed(), maxf(tier1.grind.launch_takeoff_speed, tier1.jump.takeoff_speed), 1e-9)
+
+
+func test_two_rail_launches_in_quick_succession() -> void:
+	# rail-a, a launch to the right onto rail-b, and at once a launch off rail-b.
+	var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0)
+	_step_until(car, func() -> bool: return car.grind.active, 100)
+	_face(car, 40.0)  # D: the nose 40 degrees right of the line, toward rail-b
+	_launch(car)
+	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
 	assert_true(car.grind.active, "on rail-b")
 	assert_eq(car.grind.rail_index, 1)
-	assert_lt(float(steps + 2) * car.model.dt, car.jump.cooldown_seconds, "inside the regular cooldown")
-	car.press_jump()
+	car.scripted_jump_held = false
 	car.physics_step()
-	assert_false(car.grind.active, "jumped off rail-b at once")
-	assert_eq(car.jump.hops, 2)
-
-
-func test_off_the_rails_the_regular_jump_keeps_its_cooldown() -> void:
-	var car := _car(Vector2(2, 10), Vector2(10, 0), 0.0, 0.0, 1)  # on the street, no rail near
-	car.press_jump()
-	car.physics_step()
-	assert_eq(car.jump.hops, 1)
-	_step_until(car, func() -> bool: return not car.airborne, 200)
-	assert_gt(car.jump.cooldown_left, 0.0, "the cooldown still runs")
-	car.press_jump()
-	car.physics_step()
-	assert_eq(car.jump.hops, 1, "a press during the cooldown does nothing on the ground")
+	assert_false(car.grind.active, "launched off rail-b at once")

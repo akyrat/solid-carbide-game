@@ -77,7 +77,7 @@ func test_tier_numbers_come_from_power_ups_json() -> void:
 		j.set_tier(tier)
 		var t: Dictionary = _data.at("jump", tier)
 		assert_almost_eq(j.takeoff_speed, float(t.takeoff_speed), 1e-9, "tier %d" % tier)
-		assert_almost_eq(j.cooldown_seconds, float(t.cooldown_seconds), 1e-9, "tier %d" % tier)
+		assert_false(t.has("cooldown_seconds"), "T-551: no cooldown at tier %d" % tier)
 
 
 ## Acceptance 1: per tier, the hop's airtime and peak match the takeoff speed
@@ -161,31 +161,26 @@ func test_without_the_power_up_space_changes_nothing_with_no_ground() -> void:
 		assert_false(car.airborne)
 
 
-## Proposal: only on the ground (no double jump) and the cooldown counts from the takeoff.
-func test_no_double_jump_and_the_cooldown_holds_the_next_hop() -> void:
-	var car := _car(1)
-	car.scripted_input = [false, false, 0.0]
-	car.press_jump()
-	car.physics_step()
-	assert_true(car.airborne)
-	var vz: float = car.vertical_speed
-	car.press_jump()
-	car.physics_step()
-	assert_lt(car.vertical_speed, vz, "a press in the air does not lift it again")
-	assert_eq(car.jump.hops, 1)
-	while car.airborne:
+## Proposal: only on the ground (no double jump). T-551 (the board, 2026-11-07, "Jump has no
+## cooldown"): at either tier, a press as soon as the car is back on the ground hops again.
+func test_no_double_jump_and_no_cooldown_at_either_tier() -> void:
+	for tier in [1, 2]:
+		var car := _car(tier)
+		car.scripted_input = [false, false, 0.0]
+		car.press_jump()
 		car.physics_step()
-	# Landed before the 2 s cooldown is over: a press does nothing.
-	assert_gt(car.jump.cooldown_left, 0.0)
-	car.press_jump()
-	car.physics_step()
-	assert_false(car.airborne, "still on cooldown")
-	while car.jump.cooldown_left > 0.0:
+		assert_true(car.airborne)
+		var vz: float = car.vertical_speed
+		car.press_jump()
 		car.physics_step()
-	car.press_jump()
-	car.physics_step()
-	assert_true(car.airborne, "the cooldown is over")
-	assert_eq(car.jump.hops, 2)
+		assert_lt(car.vertical_speed, vz, "a press in the air does not lift it again")
+		assert_eq(car.jump.hops, 1)
+		while car.airborne:
+			car.physics_step()
+		car.press_jump()
+		car.physics_step()
+		assert_true(car.airborne, "tier %d: hops again on the first step back on the ground" % tier)
+		assert_eq(car.jump.hops, 2)
 
 
 ## A held Space is one press: the car gets one hop per press_jump(), never one per step.

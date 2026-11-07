@@ -460,6 +460,7 @@ func test_the_saved_level_played_as_a_run_has_the_rails_drawn_and_grindable() ->
 	car.grind.rails = run.car.grind.rails
 	car.height_model.height = Rails.height_at(rail, 3.0) + 0.6
 	car.height_model.leave_rail(0.0)
+	car.scripted_jump_held = true  # T-551: a grind starts only while Space is held
 	var locked := false
 	for i in 120:
 		if car.grind.active:

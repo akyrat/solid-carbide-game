@@ -58,6 +58,9 @@ const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
 ## The Drift Guide (task T-517, drift_guide.gd): the predicted-path arrow during a drift.
 const DriftGuideScript := preload("res://scripts/driving/drift_guide.gd")
+## The jump arrow and the jump effect (task T-551, facing_arrow.gd and jump_effect.gd).
+const FacingArrowScript := preload("res://scripts/driving/facing_arrow.gd")
+const JumpEffectScript := preload("res://scripts/driving/jump_effect.gd")
 ## The Rev Charge placeholder effect (task T-460).
 const RevChargeEffectScript := preload("res://scripts/driving/rev_charge_effect.gd")
 ## The wreck's smoke and flames (task T-360, wreck_effect.gd; placeholders in code).
@@ -143,6 +146,12 @@ var drift_smoke: Node2D
 var boost_effect: Node2D
 ## The Drift Guide (T-517); follows GameSettings' drift_guide_enabled at once.
 var drift_guide: Node2D
+## The jump arrow (T-551): where the car faces, while grinding; GameSettings jump_arrow_enabled.
+## Child "FacingArrow" of the View, over the car.
+var facing_arrow: Node2D
+## The jump effect (T-551): the equipped effect's placeholder where the car jumps. Child
+## "JumpEffect" of the View, over the car.
+var jump_effect: Node2D
 ## The Rev Charge placeholder effect (task T-460, rev_charge_effect.gd): a glow at
 ## the rear while charging, speed lines while boosting. Child "RevChargeEffect" of
 ## the View, drawn over the car.
@@ -272,6 +281,12 @@ func _ready() -> void:
 	view_root.add_child(drift_guide)
 	view_root.move_child(drift_guide, car_sprite.get_index())  # under the car
 
+	jump_effect = JumpEffectScript.new()
+	jump_effect.view_transform = ISO_TRANSFORM
+	view_root.add_child(jump_effect)
+	# Over the car: under it, the car's sprite hides the spring and the jet (T-551's placeholders).
+	view_root.move_child(jump_effect, car_sprite.get_index() + 1)
+
 	rev_charge_effect = RevChargeEffectScript.new()
 	rev_charge_effect.name = "RevChargeEffect"
 	rev_charge_effect.view_transform = ISO_TRANSFORM
@@ -289,6 +304,10 @@ func _ready() -> void:
 	rail_sparks = RailSparksScript.new()
 	rail_sparks.name = "RailSparks"
 	view_root.add_child(rail_sparks)  # over the car, where it touches the rail (T-541)
+
+	facing_arrow = FacingArrowScript.new()
+	facing_arrow.view_transform = ISO_TRANSFORM
+	view_root.add_child(facing_arrow)  # over the car: an arrow pointing backwards is not hidden (T-551)
 
 	trick_popups = TrickPopupsScript.new()
 	trick_popups.name = "TrickPopups"
@@ -501,6 +520,9 @@ func _build_world() -> void:
 	# Boost effect (T-008): when W snaps the car to cruise speed.
 	boost_effect.clear()
 	boost_effect.bind(car)
+	# T-551: the jump effect and the jump arrow.
+	jump_effect.bind(car)
+	facing_arrow.bind(car)
 	# Drift Guide (T-517): the path ends where the car would hit a wall (test_move, no side effects).
 	drift_guide.bind(car)
 	drift_guide.blocked = func(from_units: Vector2, to_units: Vector2) -> bool:
@@ -686,6 +708,7 @@ func sync_view(snap_camera: bool = true) -> void:
 	var drawn := ISO_TRANSFORM * car.position
 	car_sprite.position = drawn
 	car_sprite.set_heading(car.rotation)
+	car_sprite.set_tilt_step(car.tilt.step)  # T-551
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
 		camera_follow.snap(drawn, frac)
@@ -715,6 +738,7 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	car_sprite.place(at_ground, car.height)
 	car_sprite.set_in_air(CarSpriteScript.is_in_air(car.height, ground_h))
 	car_sprite.set_heading(car.rotation)
+	car_sprite.set_tilt_step(car.tilt.step)  # T-551
 	shadow.place(units, ground_h, car.height)  # T-454: smaller the higher the car
 	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
 	drift_smoke.position = lift

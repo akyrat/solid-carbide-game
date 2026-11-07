@@ -3800,3 +3800,8 @@ Entry format:
 - Decision or change: Texts for Cosmetics, the jump effects and the Facing arrow; grind and Jump texts updated.
 - Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
 - Tasks: T-550
+
+## 2026-11-07: The grind overhaul
+- Decision or change: Hold Space in the air to tilt and grind; release to launch where the car faces at 6 u/s; +4 u/s on each rail landing; no Jump cooldown; jump effect and Facing arrow. Includes T-548.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-551
