@@ -8,7 +8,7 @@ extends Control
 ## practice session in a SubViewport) until the trick is done three times, and
 ## 6 survive the stream (the 4-minute timeline, Go live, Don't show again).
 ## A left and a right arrow move between them (slide 1 has no left arrow, slide 6 no right arrow),
-## a Skip control at the top right jumps to slide 6. It only shows the screen and sends
+## a Skip control at the top right jumps to slide 6 (slide 6 itself has none, T-568). It only shows the screen and sends
 ## start_pressed(dont_show_again); starting the run is the screen flow's job, counting the tricks
 ## is the practice session's.
 ##
@@ -169,6 +169,7 @@ func show_slide(index: int) -> void:
 		_dots[i].custom_minimum_size.x = 46 if i == current else 15
 	left_arrow.visible = current > 0
 	right_arrow.visible = current < SLIDE_COUNT - 1
+	skip_button.visible = current < SLIDE_COUNT - 1  # Go live already starts the run (T-568)
 	var on_trick := is_trick_slide()
 	for b in [left_arrow, right_arrow, skip_button]:
 		# On a trick slide the buttons are clicked only: none takes the focus, so Space never presses one.
