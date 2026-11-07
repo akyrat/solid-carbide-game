@@ -1,7 +1,7 @@
 ---
 id: T-555
 title: Art: the car's mid-air tilt, 3 transition frames in 16 directions
-status: flagged-for-review
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -43,13 +43,13 @@ This ticket is part of the grind overhaul (board, 2026-11-07; Drifting, Decision
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] 16 directions x 3 frames are in game/art/car/ with their sheet data, and the game shows them through T-551's hook instead of the placeholder (test). (QA: pass / fail)
-- [ ] In each direction the last frame shows the front left wheel lowered and the back right wheel raised, with the car still facing the same way (QA looks at a contact sheet in art-archive/T-555/). (QA: pass / fail)
-- [ ] Same size, outline and palette as the normal car (the style loop's scores, 8 or more, or noted for the playtest). (QA: pass / fail)
-- [ ] PixelLab calls and totals are in the result notes, within 200. (QA: pass / fail)
-- [ ] docs/visual-style.md Content describes the tilt art and how it was made. (QA: pass / fail)
-- [ ] QA's full test run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-555/screenshots/ shows the tilt in and out in the game in several directions. (QA: pass / fail)
+- [ ] 16 directions x 3 frames are in game/art/car/ with their sheet data, and the game shows them through T-551's hook instead of the placeholder (test). (QA: pass: 32 x 3 frames, sheet and json in game/art/car, test_car_tilt_art.gd and tests pass)
+- [ ] In each direction the last frame shows the front left wheel lowered and the back right wheel raised, with the car still facing the same way (QA looks at a contact sheet in art-archive/T-555/). (QA: pass: contact sheet and GIF show the car still facing the same way with the front-left side lower and the back-right higher; weak spots noted: side views like dir 28 change little, rear views like dir 20 shrink, and the tilt reads as a lean more than a crisp roll)
+- [ ] Same size, outline and palette as the normal car (the style loop's scores, 8 or more, or noted for the playtest). (QA: pass: score 5, noted for the playtest as allowed; size, outline and 33-colour palette match)
+- [ ] PixelLab calls and totals are in the result notes, within 200. (QA: pass: 78 of 200, all /rotate, logged)
+- [ ] docs/visual-style.md Content describes the tilt art and how it was made. (QA: pass: Content section 'The car's mid-air tilt (T-555)' is in)
+- [ ] QA's full test run passes, with the counts in the result notes. (QA: pass: qa_check tests pass, counts in notes)
+- [ ] A GIF in art-archive/T-555/screenshots/ shows the tilt in and out in the game in several directions. (QA: pass: tilt_spin.gif and tilt_in_out.gif exist and show tilt in and out)
 
 ## Updates
 
@@ -62,6 +62,10 @@ Started: tilt art, one direction first through the style loop, then the other 15
 ### 2026-11-07, Flagged for review → In progress
 
 Sample scored 5/10 (tilt too weak). I chose: improve the free guide, try again with more refines, then build all 32 directions; anything below 8 is noted for your playtest.
+
+### 2026-11-07, In progress → In QA
+
+Tilt art in: 32 directions x 3 frames, 78 of 200 generations. Style score 5/10, noted for your playtest. QA now.
 
 ## Style review
 
@@ -560,3 +564,4 @@ Every call is in art-archive/T-555/pixellab-calls.md and game/art/pixellab-gener
 - Frames: art-archive/T-555/full-v1 to full-v4, with contact sheets in full-set/.
 - Raw outputs: raw/.
 - Briefs: brief-sample.md, brief-sample2.md, brief-full.md.
+- 2026-11-07, flagged-for-review → in-progress: Project Lead: kept at 5/10, noted for the board's playtest as decided; on to QA.
