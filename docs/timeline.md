@@ -3900,3 +3900,8 @@ Entry format:
 - Decision or change: A counting trick falls into the mission notebook as a name box with a splash, in runs and practice windows.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-563
+
+## 2026-11-07: Texts for drift seconds and running totals
+- Decision or change: Goal lines for the drift slide's seconds and total-time mission goals.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-564

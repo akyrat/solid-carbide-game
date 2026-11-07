@@ -2352,7 +2352,7 @@ Written through the style loop (Extended narrative, Text rules). Keys for T-553,
 Task T-456 (goal G-009; Game loop architecture, Decisions, "Mission packs"; Drifting, Decisions, "Driving power-ups"). All in `game/data/screen_texts.json`, under `missions` and `power_ups`, each with a `_comment` line saying where it appears. Every text scored 8 or more in the style loop (T-456's Style review). `{...}` are slots the UI fills; goal lines are labels in sentence case, so the count comes after the words. Proposals for the playtest.
 
 - **Notebook page header** (`missions.header`), top of the small notebook page on the left of the HUD: "Content quota".
-- **Goal lines** (`missions.goals.<trick id>`), one per trick type in `game/data/missions.json`, fixed missions and generator rules. Quantity goals hold `{done}/{total}`: alternate_drift "Alt drifts {done}/{total}" (the board's example "2/4 Alt drifts", reworded to pass the label rule); three_sixty "Full 360s {done}/{total}"; air_one_eighty "Air 180s {done}/{total}"; air_three_sixty "Air 360s {done}/{total}"; thread_the_needle "Needles threaded {done}/{total}". Duration goals have no count: extended_drift "Hold one drift for {seconds} seconds"; airtime "Rack up {seconds} seconds of airtime".
+- **Goal lines** (`missions.goals.<trick id>`), one per trick type in `game/data/missions.json`, fixed missions and generator rules. Quantity goals hold `{done}/{total}`: alternate_drift "Alt drifts {done}/{total}" (the board's example "2/4 Alt drifts", reworded to pass the label rule); three_sixty "Full 360s {done}/{total}"; air_one_eighty "Air 180s {done}/{total}"; air_three_sixty "Air 360s {done}/{total}"; thread_the_needle "Needles threaded {done}/{total}". Duration goals have no count: extended_drift "Hold one drift for {seconds} seconds"; airtime "Rack up {seconds} seconds of airtime". **Running total** (T-564, `missions.total_seconds`, scored 9): a total-time goal shows "{name} seconds {done}/{total}" with the word from `missions.total_seconds_names` ("Airtime"), seconds with one decimal, for example "Airtime seconds 1.4/3.0"; it replaces the airtime duration line while the total shows (Game loop architecture, Decisions, "Total-time mission goals show their running total"; T-565 reads it). The unbroken-drift line is unchanged.
 - **Power-up overlay header** (`power_ups.overlay_header`), opened when a mission completes: "Mission done: pimp your ride" (T-526; was "soup up the car"). It talks about the car and a mission, not Greenbull or a gift pack, so it reads differently from the weapons gift screen.
 - **Take button** (`power_ups.take_button`): "Take power-up". Not shown since T-475 (the cards have no button); the text stays in the data.
 - **Power-up names** (`power_ups.names.<id>`), on each card, the board's names unchanged (the style loop scored them 9): Rev Charge, Jump, Bouncy Bumpers, Rusty Paintjob (Rusty Overcoat until the board renamed it, 2026-11-02, T-501), Polarized Steering Wheel (T-501).
@@ -2495,11 +2495,11 @@ Decisions, "Interactive tutorial slides" and "A trick falls into the notebook". 
 | Loop slide, headline | `tutorial.loop.title` | The content loop |
 | Loop slide, chain steps 1 to 4 | `tutorial.loop.step1` to `step4` | Do tricks / Gain subs / Unbox new weapons / Repeat for content |
 | Loop slide, closing line | `tutorial.loop.point` | By the 4-minute mark, you're strong enough to take on the kaiju. Huge for engagement. |
-| Drift slide, headline and instruction | `tutorial.trick.drift.title`, `.instruction` | Drift / Hold W and a turn key, A or D, to drift. Let go to cash it in. |
+| Drift slide, headline and instruction | `tutorial.trick.drift.title`, `.instruction` | Drift / Hold W and A or D to drift. Drift seconds add up, so short drifts count. (T-564; was "Hold W and a turn key, A or D, to drift. Let go to cash it in.") |
 | Alt drift slide | `tutorial.trick.altdrift.title`, `.instruction` | Alt drift / Drift forward, then swap W for S while holding the same turn key. |
 | Air spins slide | `tutorial.trick.airspin.title`, `.instruction` | Air spins / Hit a ramp holding W, then hold A or D in the air: AIR 180! or AIR 360! both count. |
 | Grind slide | `tutorial.trick.grind.title`, `.instruction` | Grind style / In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. |
-| Notebook goal lines (3 successes) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drifts {done}/{total} / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
+| Notebook goal lines (3 successes) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drift seconds {done}/{total} (T-564, seconds with one decimal; was "Drifts {done}/{total}") / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
 | Success message over a practice window | `tutorial.success` | Content secured! |
 | Grind slide, hint about the Jump gift | `tutorial.grind_hint` | One power-up on the house: Jump. Take it, jump, then hold Space over a rail. |
 
@@ -2559,4 +2559,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `aecd7f696197b5bf8d4d075d9c86d661d8e07309a0a672eb6b43c319c1400622` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `ec3ea066adfcf94d5fffcc3ec394b57638bf425729dda5c2225415c33eebd446` |
+| `hud-and-menus.md` | `2ae8330e8cd1e181fdf0a9602fb4f12b04eb2bd426864ecc12220822195a0cc4` |
