@@ -108,7 +108,7 @@ func test_the_smallest_turn_wins_at_a_fork() -> void:
 
 func test_the_numbers_for_joints_are_in_the_data_file() -> void:
 	var json: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/rail_grind.json"))
-	for k in ["join_distance", "join_height", "join_max_angle_deg", "catch_above"]:
+	for k in ["join_distance", "join_height", "join_max_angle_deg", "square_start_speed"]:
 		assert_true(json.has(k), k)
 	assert_almost_eq(RailGrind.new().join_distance, float(json.join_distance), 1e-9)
 
@@ -175,7 +175,7 @@ func test_the_lock_on_compares_real_heights() -> void:
 	var g := RailGrind.new()
 	g.rails = [Rails.make("r", Vector2(0, 0), Vector2(60, 0), 4.0, 4.0), Rails.make("s", Vector2(0, 8), Vector2(60, 8), 1.0, 1.0)]
 	assert_false(g.find(Vector2(10, 0.0), Vector2(11, 0), 4.2, -1.0).is_empty())
-	assert_true(g.find(Vector2(10, 8.0), Vector2(11, 0), 4.2, -1.0).is_empty(), "a street rail under the platform is out of reach")
+	assert_true(g.find(Vector2(10, 8.0), Vector2(11, 0), 4.2, -1.0).is_empty(), "a street rail under the platform: the drawings don't cross (T-566)")
 
 
 # --- Drawing on raised ground --------------------------------------------------------------------

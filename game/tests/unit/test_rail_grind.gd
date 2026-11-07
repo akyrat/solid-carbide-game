@@ -133,7 +133,13 @@ func test_two_parallel_rails_can_be_a_first_tier_jump_apart() -> void:
 	var j = preload("res://scripts/driving/jump_power_up.gd").new()
 	j.set_tier(1)
 	var g = RailGrind.new()
-	var carry: float = g.jump_speed * sin(deg_to_rad(45.0)) * j.airtime_for(j.takeoff_speed, 12.0) + g.reach
+	# T-566: the reach is gone; the drawing's own width across the rail takes its place: how far
+	# beside a bar, at the bar's height, a car moving along it still catches it.
+	g.rails = [Rails.make("probe", Vector2(0, 0), Vector2(20, 0), 1.0, 1.0)]
+	var across := 0.0
+	while not g.find(Vector2(10, across + 0.05), Vector2(10, 0), 1.0).is_empty():
+		across += 0.05
+	var carry: float = g.jump_speed * sin(deg_to_rad(45.0)) * j.airtime_for(j.takeoff_speed, 12.0) + across
 	var found := false
 	for a in rails:
 		for b in rails:
@@ -183,30 +189,34 @@ func test_landing_along_a_rail_locks_on_slides_and_leaves_at_its_end() -> void:
 	assert_almost_eq(car.height, 0.0, 1e-6, "landed on the street")
 
 
-func test_landing_across_a_rail_does_not_lock_on() -> void:
+func test_landing_across_a_rail_locks_on_too() -> void:
+	# T-566, the board (2026-11-07): any crossing angle catches; test_rail_snap_drawing.gd has the
+	# square-on start (the nose's way along the rail at square_start_speed).
 	var car := _car(Vector2(10, -0.6), Vector2(0, 10), 1.6, 0.0)
-	_step_until(car, func() -> bool: return not car.airborne, 200)
-	assert_eq(car.grind.grinds, 0, "straight across")
+	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
+	assert_true(car.grind.active, "straight across")
 	var diag := _car(Vector2(10, -0.6), Vector2(4.2, 9.1), 1.6, 0.0)  # 65 degrees off the rail
-	_step_until(diag, func() -> bool: return not diag.airborne, 200)
-	assert_eq(diag.grind.grinds, 0, "past max_angle_deg (60)")
+	_step_until(diag, func() -> bool: return diag.grind.active or not diag.airborne, 200)
+	assert_true(diag.grind.active, "65 degrees off: once past max_angle_deg (60), now caught")
+	assert_eq(diag.grind.direction, 1.0, "on its way along the rail (4.2 along, over min_start_speed)")
 	var close := _car(Vector2(2, -0.6), Vector2(6, 8), 1.6, 0.0)  # 53 degrees off: catches since 2026-11-06
 	_step_until(close, func() -> bool: return close.grind.active or not close.airborne, 200)
-	assert_true(close.grind.active, "within max_angle_deg")
+	assert_true(close.grind.active)
 
 
-func test_rising_or_too_far_or_too_slow_does_not_lock_on() -> void:
+func test_too_far_does_not_lock_on_rising_and_slow_do() -> void:
+	# T-566: caught when the car's drawing crosses the bar's (test_rail_snap_drawing.gd has the
+	# heights); rising catches too, the reach, end margin and height window are gone.
 	var g = RailGrind.new()
 	g.rails = Rails.from_layout(LAYOUT)
 	assert_true(g.find(Vector2(5, 0.5), Vector2(10, 0), 1.0, -1.0).has("index"), "the reference catch")
-	assert_eq(g.find(Vector2(5, 0.5), Vector2(10, 0), 1.0, 2.0), {}, "going up")
-	assert_eq(g.find(Vector2(5, -g.reach - 0.1), Vector2(10, 0), 1.0, -1.0), {}, "beside it")
-	assert_true(g.find(Vector2(5, -1.9), Vector2(10, 0), 1.0, -1.0).has("index"), "1.9 units beside it catches (was 1)")
-	assert_eq(g.find(Vector2(5, 0.0), Vector2(1, 0), 1.0, -1.0), {}, "too slow")
-	assert_eq(g.find(Vector2(5, 0.0), Vector2(10, 0), 1.0 + g.catch_above + 0.1, -1.0), {}, "above it")
-	assert_eq(g.find(Vector2(5, 0.0), Vector2(10, 0), 1.0 - g.catch_below - 0.1, -1.0), {}, "under it")
-	assert_eq(g.find(Vector2(-g.end_margin - 0.2, 0.0), Vector2(10, 0), 1.0, -1.0), {}, "past its end")
-	assert_eq(int(g.find(Vector2(-0.4, 0.0), Vector2(10, 0), 1.0, -1.0).s), 0, "just past an end: from the end")
+	assert_true(g.find(Vector2(5, 0.5), Vector2(10, 0), 1.0, 2.0).has("index"), "going up catches too (T-566)")
+	assert_eq(g.find(Vector2(5, -3.0), Vector2(10, 0), 1.0, -1.0), {}, "well beside it at its height: the drawings don't cross")
+	assert_almost_eq(float(g.find(Vector2(5, 0.0), Vector2(1, 0), 1.0, -1.0).speed_along), g.square_start_speed, 1e-9,
+		"too slow along it: caught at square_start_speed the way the nose points (T-566)")
+	assert_eq(g.find(Vector2(5, 0.0), Vector2(10, 0), 5.0, -1.0), {}, "straight above it, drawn well above its bar")
+	assert_eq(g.find(Vector2(-4.0, 0.0), Vector2(10, 0), 1.0, -1.0), {}, "past its end, drawn clear of it")
+	assert_eq(int(g.find(Vector2(-0.4, 0.0), Vector2(10, 0), 1.0, -1.0).s), 0, "just past an end, the drawing on it: from the end")
 
 
 func test_a_car_on_the_ground_never_locks_on() -> void:
@@ -449,9 +459,10 @@ func test_the_numbers_come_from_rail_grind_json() -> void:
 	for k in RailGrind.DEFAULTS.keys():
 		assert_true(json.has(k), k)
 		assert_almost_eq(float(g.get(k)), float(json[k]), 1e-9, k)
-	assert_gt(float(json.reach), 1.0, "easier to snap on than the first prototype's 1 unit")
-	assert_gt(float(json.max_angle_deg), 45.0)
-	assert_lt(float(json.max_angle_deg), 90.0, "a landing straight across still doesn't catch")
+	for gone in ["reach", "end_margin", "catch_above", "catch_below"]:
+		assert_false(json.has(gone), "%s is gone: T-566 snaps on the drawing" % gone)
+	assert_false(json.has("max_angle_deg"), "T-566: any crossing angle catches")
+	assert_gt(float(json.square_start_speed), float(json.end_speed), "a square-on catch grinds, not drops off at once")
 
 
 func test_a_and_d_spin_the_car_on_the_rail_at_the_air_turn_rate() -> void:
