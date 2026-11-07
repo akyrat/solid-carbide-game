@@ -326,8 +326,10 @@ func physics_step() -> void:
 	if not grind.rails.is_empty():
 		if height_model.airborne:
 			if held:
+				# T-566: caught when the car's drawing (its heading's frame at the tilt step shown)
+				# crosses the rail's, at any height.
 				var info: Dictionary = grind.find(model.get_position(), model.get_velocity(),
-					height_model.height, height_model.vertical_speed)
+					height_model.height, height_model.vertical_speed, model.rotation, tilt.step)
 				if not info.is_empty():
 					grind.start(info, model.rotation)
 					_place_on_grind()

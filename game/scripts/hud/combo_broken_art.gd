@@ -101,6 +101,10 @@ static func poll() -> void:
 		_pending.erase(key)
 	_mutex.unlock()
 	for key in done:
+		# A failed bake (no images) is not kept, so drawing bakes it again (as TrickPopupArt.poll).
+		var imgs = done[key]
+		if not imgs is Array or imgs.size() < 2 or imgs[0] == null or imgs[1] == null:
+			continue
 		if not is_cached(key):
 			_store(key, [ImageTexture.create_from_image(done[key][0]), ImageTexture.create_from_image(done[key][1])])
 

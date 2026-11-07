@@ -101,8 +101,9 @@ func test_the_rails_are_in_the_ramps_flight_path_and_one_a_jump_beside_another()
 
 
 ## Drives east from `from` with W held (scripted), turning with A (steer 1) in the air when
-## `spin`, Space held in the air. Returns {tricks, caught, airtime, speed_at_top, land_x}.
-func _drive(from: Vector2, speed: float, spin: bool, hold_space: bool = true, w: bool = true) -> Dictionary:
+## `spin`, Space held in the air past x `space_from_x`. Returns {tricks, caught, airtime, speed_at_top, land_x}.
+func _drive(from: Vector2, speed: float, spin: bool, hold_space: bool = true, w: bool = true,
+		space_from_x: float = 11.0) -> Dictionary:
 	_run()
 	_place(from, speed)
 	var tricks: Array = []
@@ -112,7 +113,7 @@ func _drive(from: Vector2, speed: float, spin: bool, hold_space: bool = true, w:
 	for i in 900:
 		var in_air: bool = run.car.airborne
 		run.car.scripted_input = [w, false, 1.0 if (spin and in_air and run.car.model.get_position().x > 11.0) else 0.0]
-		run.car.scripted_jump_held = hold_space and in_air and run.car.model.get_position().x > 11.0
+		run.car.scripted_jump_held = hold_space and in_air and run.car.model.get_position().x > space_from_x
 		run.car.physics_step()
 		var x: float = run.car.model.get_position().x
 		if run.car.airborne and not airborne_before and x > 10.0 and out.speed_at_top == 0.0:
@@ -158,9 +159,14 @@ func test_the_grind_start_reaches_a_rail_from_the_ramp() -> void:
 func test_every_rail_is_caught_from_the_ramp() -> void:
 	# Full speed down the middle: rail-2; a lane over (y 3.5, 3.5 units beside it): rail-3; with W let go
 	# at 11 units/s on the roof: the nearer rail-1.
+	# T-566 (a grind starts when the car's drawing crosses a rail's, at any height): in the lane over,
+	# the car flying high off the ramp is drawn on rail-1 (a car 3.5 units nearer the viewer and 3.5
+	# higher is drawn on a bar), so Space held from the takeoff catches rail-1 there. The player catches
+	# rail-3 by holding Space later, once past rail-1 (x 37, rail-1 ends at 34) and low enough over rail-3.
 	var r2 := _drive(Vector2(-55.0, 0.0), 0.0, false)
 	assert_eq(r2.caught, "rail-2")
-	var r3 := _drive(Vector2(-55.0, 3.5), 0.0, false)
+	var r3 := _drive(Vector2(-55.0, 3.5), 0.0, false, true, true, 37.0)
+	gut.p("lane drive: %s" % [r3])
 	assert_eq(r3.caught, "rail-3")
 	var r1 := _drive(Vector2(4.0, 0.0), 11.0, false, true, false)
 	gut.p("cruise drive: %s" % [r1])
