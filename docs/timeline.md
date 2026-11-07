@@ -3825,3 +3825,8 @@ Entry format:
 - Decision or change: Five jump effects, script-drawn: dash cloud, spring, jet thrust, stunt sparks, shockwave ring.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-556
+
+## 2026-11-07: The itch.io publish script prints butler's output safely
+- Decision or change: publish_itch.py no longer crashes on butler's non-ASCII output on the Windows console after a successful push.
+- Documents touched: docs/working-with-the-board.md
+- Tasks: T-558
