@@ -263,7 +263,27 @@ static func save_hud_layout(layout: Dictionary) -> bool:
 
 ## Whether the tutorial slides are hidden (task T-382), in section "tutorial": true after the
 ## player ticked "Don't show again" and pressed Start. False by default.
+## Since T-572 (HUD and menus, Decisions, "The tutorial comes back with each new itch.io build")
+## the tick also saves the build id it was made on (key `hidden_build`), and in a build that has
+## an id the slides stay hidden only while that id matches the running build's. A build with no
+## id (the desktop game run from the editor) keeps T-382's behaviour. An old tick with no saved
+## id shows the slides once in the first build with an id.
 const DEFAULT_TUTORIAL_HIDDEN := false
+## The running build's id (T-572): the short commit tools/publish_itch.py writes into this
+## git-ignored file just before the Web export (the preset's include_filter packs it). Missing
+## or empty means no id. Tests point this at a test file.
+const DEFAULT_BUILD_ID_PATH := "res://build_id.txt"
+static var build_id_path := DEFAULT_BUILD_ID_PATH
+
+
+## The running build's id, or "" when the build has none.
+static func build_id() -> String:
+	if not FileAccess.file_exists(build_id_path):
+		return ""
+	var f := FileAccess.open(build_id_path, FileAccess.READ)
+	if f == null:
+		return ""
+	return f.get_as_text().strip_edges()
 
 
 static func load_tutorial_hidden() -> bool:
@@ -271,13 +291,20 @@ static func load_tutorial_hidden() -> bool:
 	if cfg.load(path) != OK:
 		return DEFAULT_TUTORIAL_HIDDEN
 	var v = cfg.get_value("tutorial", "hidden", DEFAULT_TUTORIAL_HIDDEN)
-	return v if v is bool else DEFAULT_TUTORIAL_HIDDEN
+	if not (v is bool):
+		return DEFAULT_TUTORIAL_HIDDEN
+	var current := build_id()
+	if not v or current == "":
+		return v
+	var ticked_on = cfg.get_value("tutorial", "hidden_build", "")
+	return ticked_on is String and ticked_on == current
 
 
 static func save_tutorial_hidden(hidden: bool) -> bool:
 	var cfg := ConfigFile.new()
 	cfg.load(path)
 	cfg.set_value("tutorial", "hidden", hidden)
+	cfg.set_value("tutorial", "hidden_build", build_id())
 	return cfg.save(path) == OK
 
 
