@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Holding Space in the air, the car snaps onto a rail when its drawn sprite crosses the rail's drawn sprite, also when the car is well above or below the rail's height (tests at several heights). (QA: pass / fail)
-- [ ] Without Space held, or with the sprites not crossing, it does not snap (tests). (QA: pass / fail)
-- [ ] The rest of the grind (release to launch, landing boost) works as before (the existing tests pass). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/ describe the rule and the overlap measure, with reasons. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-566/screenshots/ shows a snap from well above a rail and one from below. (QA: pass / fail)
+- [ ] Holding Space in the air, the car snaps onto a rail when its drawn sprite crosses the rail's drawn sprite, also when the car is well above or below the rail's height (tests at several heights). (QA: pass)
+- [ ] Without Space held, or with the sprites not crossing, it does not snap (tests). (QA: pass)
+- [ ] The rest of the grind (release to launch, landing boost) works as before (the existing tests pass). (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/ describe the rule and the overlap measure, with reasons. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-566/screenshots/ shows a snap from well above a rail and one from below. (QA: pass)
 
 ## Updates
 
