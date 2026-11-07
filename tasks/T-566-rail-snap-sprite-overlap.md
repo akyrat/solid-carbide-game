@@ -1,7 +1,7 @@
 ---
 id: T-566
 title: Snap to a rail when the car's sprite crosses the rail's sprite, whatever the height
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/rail-grind.md, tasks/T-551-grind-overhaul-driving.md]
 files_expected_to_change: [game/scripts/driving/, game/data/rail_grind.json, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: holding Space in the air, the car snaps to a rail when its sprite cross
 ### 2026-11-07, In progress → In QA
 
 Built: snaps when the car's drawn pixels cross the rail's, at any height. Open question: a square-on crossing doesn't catch yet. QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6), square-on included. Into the tutorial build; also playable from its own folder.
 
 ## Style review
 
@@ -141,3 +145,11 @@ Built the board's answer word for word: "yes, square-on crossings should catch t
 - `game/docs/driving/rail-grind.md`: the `find()` row, the data row, the tests and the recordings.
 
 **Refusal:** Claude Code's built-in safety check refused `rm -f "$D"/*.png` (clearing my own scratchpad frame folder before re-recording), because the target is a shell variable. Nothing was deleted. I did not retry the removal. I recorded into a new empty folder instead (scratchpad `t566sq2`), so the old frames in scratchpad `t566sq` are still there. They are scratch files and harmless.
+
+### Driving & Drift Agent, 2026-11-07: the practice playground test (combined tutorial build)
+
+Fixed the one red test that came from the snap rule meeting T-560's practice playground: game/tests/unit/level/test_practice_playground.gd, test_every_rail_is_caught_from_the_ramp. In the lane one over (y 3.5), the car flies high off the ramp, and a car 3.5 units nearer the viewer and 3.5 units higher than a bar is drawn on it. So with Space held from the takeoff, it now catches rail-1 instead of rail-3. That is the new rule working as intended.
+
+I changed the drive, not the rails. I did not move any of the playground's rails. _drive() takes a new optional space_from_x (default 11, as before). The lane drive holds Space only from x 37, past rail-1's end at 34, and catches rail-3 at x 38.7. This is what a player would do to pick rail-3. The middle drive (rail-2) and the cruise drive (rail-1) are unchanged. The test still checks that every rail can be caught from the ramp.
+
+Tests (foreground, one at a time): test_practice_playground.gd 9/9 (50 asserts), test_tutorial_practice_real.gd 6/6 (77), test_practice_session.gd 28/28 (186). Rechecked after the merge: test_rail_snap_drawing.gd 14/14 (71), test_rail_grind.gd 36/36 (199).
