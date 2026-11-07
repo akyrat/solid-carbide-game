@@ -50,6 +50,10 @@ The fifth upgrade's text, in the form of the other four (name up to 25 character
 
 Each upgrade row begins with a small icon. The art is `game/art/garage/<upgrade key>.png` (a proposal: 16 x 16, drawn at 3x with hard pixel edges), one file per upgrade (`acceleration`, `car_health`, `damage_bonus`, `pickup_magnet`, `air_turn`); the art tickets T-366 to T-370 each add only their file and the garage picks it up with no code change. A missing file shows a grey pixel-square placeholder drawn in code, without text or Greenbull's colours. The rest of the row is unchanged. (Built in T-365: `game/docs/garage/garage-screen.md`.)
 
+### Cosmetics menu texts (T-550; proposals for the playtest)
+
+In `game/data/cosmetics_text.json`, all scored 8 or more in the style loop but the shockwave ring's name (7, kept for the playtest). Full list with scores: HUD and menus, Content, "Texts for the grind overhaul, the jump arrow and the Cosmetics menu". Button "Cosmetics"; title "Cosmetics"; labels "Unlock for {price} coins", "Unlock", "Flex it", "Equipped", "Not enough coins: style isn't free."; effects: Dash cloud, Engagement Spring, Jet Thrust Zero Sugar, Stunt sparks, Premium Shockwave Ring, each with a one-line description.
+
 ### Saving
 
 The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/docs/data/game-data.md` ("Game data", "Saving and buying").

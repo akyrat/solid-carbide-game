@@ -113,7 +113,7 @@
     "thread_the_needle": "Drive between two paired obstacles without touching either.",
     "reverse_drift": "Hold reverse and steer to drift while moving backwards.",
     "aura": "Stop and sit still for 5 seconds, then every second you stay put pays subs.",
-    "rail_grind": "Jump or drop onto a rail and grind along it.",
+    "rail_grind": "In the air, hold Space and touch a rail to grind it. Let go to launch the way you face.",
     "comment": "Pause screen, trick list panel (HUD and menus, Content, 'Tutorial slides and trick list'; T-489): the one-line rule beside each trick's clip, under its name (trick.<id>). One per trick id. Written without key letters: the keys are drawn as keycaps in the recipe beside it. Stored in sentence case."
   },
   "trick_recipe": {
@@ -190,8 +190,8 @@
       "steps_comment": "One step: no keys, a badge."
     },
     "rail_grind": {
-      "step1_badge": "On a rail",
-      "step1_note": "Jump or drop on",
+      "step1_badge": "Hold space",
+      "step1_note": "Touch a rail mid-air",
       "step1_badge_comment": "Trick list, rail_grind recipe, step 1: the badge word (shown in capitals) in place of keys (Jump is its own key, not drawn), T-533's text.",
       "step1_note_comment": "Trick list, rail_grind recipe, step 1: the tiny note under the badge, 20 characters at most (T-533's text).",
       "steps_comment": "One step: no keys, a badge."

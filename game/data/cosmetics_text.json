@@ -1,0 +1,32 @@
+{
+  "_comment": "T-550, the Cosmetics submenu's text (HUD and menus, Content, 'Cosmetics menu texts'; Garage design, Decisions, 'Cosmetics'); T-553 reads it, no text in code. Keys: menu_button (the main menu's button that opens the submenu, next to Start, Garage, Past streams and Exit); title; locked (a locked item's label, slot {price} in coins); buy (the button that unlocks it); pick (the button that picks an unlocked item); equipped (the label on the picked item); not_enough_coins (the message when the player cannot pay); effects.<id>.name and .description for the 5 jump effects (dash_cloud the default and free, spring, jet_thrust, stunt_sparks, shockwave_ring). Every line scored 8 or more in the style loop, except effects.shockwave_ring.name (7, noted for the playtest).",
+  "menu_button": "Cosmetics",
+  "title": "Cosmetics",
+  "locked": "Unlock for {price} coins",
+  "buy": "Unlock",
+  "pick": "Flex it",
+  "equipped": "Equipped",
+  "not_enough_coins": "Not enough coins: style isn't free.",
+  "effects": {
+    "dash_cloud": {
+      "name": "Dash cloud",
+      "description": "A little puff of dust under every jump. Free, which Greenbull finds awkward."
+    },
+    "spring": {
+      "name": "Engagement Spring",
+      "description": "A spring pops the car into the air. Gravity's contract is under review."
+    },
+    "jet_thrust": {
+      "name": "Jet Thrust Zero Sugar",
+      "description": "A jet flame blasts under your car on every jump. Safety review pending."
+    },
+    "stunt_sparks": {
+      "name": "Stunt sparks",
+      "description": "Sparks burst under the car on every jump. Greenbull calls it content."
+    },
+    "shockwave_ring": {
+      "name": "Premium Shockwave Ring",
+      "description": "A ring ripples out on the ground when you jump. Disruptive, like the brand."
+    }
+  }
+}
