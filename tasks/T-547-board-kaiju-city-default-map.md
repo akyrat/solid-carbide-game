@@ -1,7 +1,7 @@
 ---
 id: T-547
 title: The board's new Kaiju City becomes the default map
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/level/game-map.md]
 files_expected_to_change: [game/data/level/kaiju_city_map.json, game/tests/, game/docs/level/game-map.md, docs/level-design.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -74,6 +74,10 @@ QA round 1: all pass but the screenshots (no ramp shown, two covered by the paus
 
 Screenshots retaken (no pause menu; ramp-2 and ramp-13 shown). QA round 2.
 
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6). Ready for you to play: C:\solid-carbide-worktrees\T-547\game\project.godot
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -85,3 +89,4 @@ STOPPED, level checks fail on the board's level (not fixed, per the ticket). Cop
 UNBLOCKED after T-549. Copy committed, byte-identical to the board's file (sha256 5a5d671151c6b2443935a87b9fe7c3a1217f9d9d8fcea096bf4873c96ab769b2; 41 buildings, 12 platforms, 28 ramps, 73 props, 72 rails). check_level.py: OK. check_height_data.py: OK. Note: git's autocrlf had turned the working copy to CRLF after the merge; re-copied, the committed blob is LF and identical. Tests: added a test in test_game_map.gd (72 rails, 28 ramps, 12 platforms, the run gives the rails to the car, the grind finds the longest rail); test_rail_grind.gd's 'game map has no rails' test now expects 72 (T-546's old expectation). Full run before that fix: 2918 tests, 2916 pass, 1 failing (that old test); after the fix test_game_map.gd (13/13) and test_rail_grind.gd (27/27) pass. Docs: docs/level-design.md Content and game/docs/level/game-map.md updated. Screenshots in art-archive/T-547/screenshots/ (start, wide, rails, rails_far, ramps; new fixture shots in game_map_run_demo.gd).
 
 Screenshots retaken (QA round 1): the screenshot window has no focus, so the game paused the run and the pause menu covered start and wide; the fixture now closes it. New: start, wide (run on the map, no menu), rails, rails_far (rails on roof-10 and around), ramps (ramp-2 and the west rooftops), ramp13 (ramp-13), all looked at. The old set is in art-archive/T-547/screenshots/round1/. Fixture: game_map_run_demo.gd with game_map_run_ramp13.tscn.
+- 2026-11-07, needs-playtest → done: Board: grind overhaul build played, lgtm
