@@ -1,7 +1,7 @@
 ---
 id: T-562
 title: The interactive tutorial slides
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,13 +43,13 @@ Part of the interactive tutorial (board, 2026-11-07; HUD and menus, Decisions, "
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The tutorial shows the six slides in order with T-559's texts (test). (QA: pass / fail)
-- [ ] Each trick slide embeds the practice scene set to its trick, and the success message appears over the window only after the third success (tests). (QA: pass / fail)
-- [ ] On the trick slides, A, D and Space don't change slides or press buttons, and they drive the car (test). (QA: pass / fail)
-- [ ] The arrows, Skip, Go live and Don't show again still work (tests). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes the slides and the keys. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-562/screenshots/ show each slide, a practice in progress and the success message. (QA: pass / fail)
+- [ ] The tutorial shows the six slides in order with T-559's texts (test). (QA: pass)
+- [ ] Each trick slide embeds the practice scene set to its trick, and the success message appears over the window only after the third success (tests). (QA: pass)
+- [ ] On the trick slides, A, D and Space don't change slides or press buttons, and they drive the car (test). (QA: pass)
+- [ ] The arrows, Skip, Go live and Don't show again still work (tests). (QA: pass)
+- [ ] docs/hud-and-menus.md Content describes the slides and the keys. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-562/screenshots/ show each slide, a practice in progress and the success message. (QA: pass)
 
 ## Updates
 
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: the six interactive slides, with practice windows; A, D and Space drive on the trick slides.
+
+### 2026-11-07, In progress → In QA
+
+Built: the six interactive slides on the real practice scene. QA now.
 
 ## Style review
 
