@@ -3795,3 +3795,8 @@ Entry format:
 - Decision or change: The board's edited Kaiju City (72 rails, 28 ramps) is the default map, a byte-for-byte copy.
 - Documents touched: `docs/level-design.md`
 - Tasks: T-547
+
+## 2026-11-07: Texts for the grind overhaul and Cosmetics
+- Decision or change: Texts for Cosmetics, the jump effects and the Facing arrow; grind and Jump texts updated.
+- Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
+- Tasks: T-550

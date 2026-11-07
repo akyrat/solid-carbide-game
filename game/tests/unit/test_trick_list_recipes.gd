@@ -130,10 +130,10 @@ func test_the_three_new_tricks_have_t533s_texts_and_recipes() -> void:
 	var rules := {
 		"reverse_drift": "Hold reverse and steer to drift while moving backwards.",
 		"aura": "Stop and sit still for 5 seconds, then every second you stay put pays subs.",
-		"rail_grind": "Jump or drop onto a rail and grind along it.",
+		"rail_grind": "In the air, hold Space and touch a rail to grind it. Let go to launch the way you face.",
 	}
-	var notes := {"reverse_drift": "Slide backwards", "aura": "5 s, then every s", "rail_grind": "Jump or drop on"}
-	var badges := {"aura": "Stand still", "rail_grind": "On a rail"}
+	var notes := {"reverse_drift": "Slide backwards", "aura": "5 s, then every s", "rail_grind": "Touch a rail mid-air"}
+	var badges := {"aura": "Stand still", "rail_grind": "Hold space"}
 	for id in names:
 		assert_true(id in TrickList.TRICK_IDS, id)
 		assert_eq(_texts["trick"][id], names[id])

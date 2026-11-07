@@ -1789,6 +1789,10 @@ The fifth upgrade's text, in the form of the other four (name up to 25 character
 
 Each upgrade row begins with a small icon. The art is `game/art/garage/<upgrade key>.png` (a proposal: 16 x 16, drawn at 3x with hard pixel edges), one file per upgrade (`acceleration`, `car_health`, `damage_bonus`, `pickup_magnet`, `air_turn`); the art tickets T-366 to T-370 each add only their file and the garage picks it up with no code change. A missing file shows a grey pixel-square placeholder drawn in code, without text or Greenbull's colours. The rest of the row is unchanged. (Built in T-365: `game/docs/garage/garage-screen.md`.)
 
+#### Cosmetics menu texts (T-550; proposals for the playtest)
+
+In `game/data/cosmetics_text.json`, all scored 8 or more in the style loop but the shockwave ring's name (7, kept for the playtest). Full list with scores: HUD and menus, Content, "Texts for the grind overhaul, the jump arrow and the Cosmetics menu". Button "Cosmetics"; title "Cosmetics"; labels "Unlock for {price} coins", "Unlock", "Flex it", "Equipped", "Not enough coins: style isn't free."; effects: Dash cloud, Engagement Spring, Jet Thrust Zero Sugar, Stunt sparks, Premium Shockwave Ring, each with a one-line description.
+
 #### Saving
 
 The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/docs/data/game-data.md` ("Game data", "Saving and buying").
@@ -2233,7 +2237,7 @@ Built from the board's 2026-11-06 decision ("The trick list shows the new tricks
 
 - **REVERSE DRIFT!** (`reverse_drift`): one step, the keycaps **S + A** with the /D tag (either turn key works), note "Slide backwards". Clip `reverse_drift`: the real car from a standstill, S and A held; the pad shows A and S lit; REVERSE DRIFT! pays at 1 s and the clip ends before the drift does (so LONG DRIFT! does not pay in it).
 - **AURA FARMING!** (`aura`): one step with no keys, the badge STAND STILL, note "5 s, then every s". Clip `aura`: the car stands still for about 7 s with the trick popups left on (the only clip that shows them: a still car shows nothing else), AURA FARMING! appears at 6 s and 7 s; the pad shows no key lit.
-- **GRIND!** (`rail_grind`): one step with no keys drawn (Jump is its own key, not a pad key), the badge ON A RAIL, note "Jump or drop on". Clip `rail_grind`: the real car in a run on the game's map (T-541's rails), W held, one Jump onto rail-3, a grind of about 1.6 s, a Jump off; HUD, popups, enemies and the kaiju hidden or off like the other clips; the pad shows W lit.
+- **GRIND!** (`rail_grind`): one step with no keys drawn (Jump is its own key, not a pad key), the badge HOLD SPACE, note "Touch a rail mid-air" (T-550; was ON A RAIL and "Jump or drop on"). Clip `rail_grind`: the real car in a run on the game's map (T-541's rails), W held, one Jump onto rail-3, a grind of about 1.6 s, a Jump off; HUD, popups, enemies and the kaiju hidden or off like the other clips; the pad shows W lit.
 - **Pictures:** each row has a 64 x 48 picture like the others, script-drawn by `game/tools/build_trick_illustrations.py` (no PixelLab): the extended drift's curve with the car facing back (reverse drift), a parked car in cyan rings (aura), the car on a rail with sparks (grind). The tutorial's slide 2 does not list tricks (it shows three clips), so it is unchanged; the trick list is shown only in the pause screen.
 - **How the clips were recorded:** `python game/tools/record_tutorial_clips.py --only reverse_drift aura rail_grind` (the same recorder as T-483 and T-490: Godot's movie maker, one frame per physics step, kept every 3rd, 5th or 4th, cropped to 480 x 320, one shared palette); the recorder checks the detector fired the trick and not the unwanted ones (`EXPECT`).
 
@@ -2243,8 +2247,8 @@ Each scored 8 or more in the style loop (the rule line for the reverse drift nee
 
 - **Popups:** **REVERSE DRIFT!** (drifting while moving backwards), **AURA FARMING!** (the aura trick: still for 5 s, then paid each second; a nod to social-media "aura"), **GRIND!** (the rail grind; the old prototype's card, reused word for word).
 - **Pause screen button:** **Resume**.
-- **Trick list rules** (`trick_rule.<id>`): REVERSE DRIFT!: Hold reverse and steer to drift while moving backwards. AURA FARMING!: Stop and sit still for 5 seconds, then every second you stay put pays subs. GRIND!: Jump or drop onto a rail and grind along it.
-- **Keycap recipes** (`trick_recipe.<id>.step1_*`, notes at most 20 characters): REVERSE DRIFT!: keys S + A/D, note "Slide backwards". AURA FARMING!: no keys, badge "STAND STILL", note "5 s, then every s". GRIND!: no keys, badge "ON A RAIL", note "Jump or drop on".
+- **Trick list rules** (`trick_rule.<id>`): REVERSE DRIFT!: Hold reverse and steer to drift while moving backwards. AURA FARMING!: Stop and sit still for 5 seconds, then every second you stay put pays subs. GRIND!: In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. (T-550; it was "Jump or drop onto a rail and grind along it.")
+- **Keycap recipes** (`trick_recipe.<id>.step1_*`, notes at most 20 characters): REVERSE DRIFT!: keys S + A/D, note "Slide backwards". AURA FARMING!: no keys, badge "STAND STILL", note "5 s, then every s". GRIND!: no keys, badge "HOLD SPACE", note "Touch a rail mid-air" (T-550).
 
 #### Combo broken popup
 
@@ -2257,6 +2261,16 @@ Task T-245 builds it (proposals for the playtest, the board decides the look): i
 Task T-316 (decision: Decisions, "Time's up screen", 2026-10-28). When the timer runs out with the kaiju alive, the 3-second failure screen shows this exact headline, for T-317 to use word for word: **STREAM OVER, KAIJU STILL TRENDING!**. It is in the trick popups' voice (capitals, ending in "!"), reads at a glance, and has no second line: the headline says the time is up and that the kaiju is still standing, in the stream's own language, a little out of touch about the disaster, and never makes fun of the city's people. The style loop scored it 9/10 in one round. It is stored in `game/data/screen_texts.json`, key `time_up.headline`.
 
 Task T-317 builds it (proposals for the playtest, the board decides the look and the motion). At 0:00 the run is lost and frozen: the clock stays at 0:00, the car, enemies and pickups stand still, and nothing counts (no damage, likes, coins or kills). The screen plays for 3 seconds (`game/data/run.json`, `time_up.seconds`), then the run ends exactly as before. It can't be skipped, and Escape doesn't open the pause screen over it (a skip key would be cheap if the board wants one). Look, a placeholder drawn in code: the headline on the COMBO BROKEN! popup's cracked warning red-orange card (black border, white Bangers letters with a black outline, hard pixel edges), at twice its pixel size on the default window, over the run dimmed to about half (the HUD too). The crack runs through the space between "OVER," and "KAIJU", so every letter stays whole. Motion: the run dims in a quarter second while the headline slams in from more than twice its size; it shakes on impact for about half a second; at about 1 second the crack opens, the halves part, the right one drops and tilts; it holds, cracked, until the 3 seconds are up. Health losses have their own wreck instead (T-360). How it is built: `game/docs/hud-and-menus/time-up-screen.md`. Screenshot and GIF: `art-archive/T-317/screenshots/`.
+
+#### Texts for the grind overhaul, the jump arrow and the Cosmetics menu (T-550; proposals for the playtest)
+
+Written through the style loop (Extended narrative, Text rules). Keys for T-553, in `game/data/cosmetics_text.json` unless noted. Scores in brackets.
+
+- **Main menu button** (`menu_button`): "Cosmetics" (9). **Submenu title** (`title`): "Cosmetics" (9).
+- **Item labels:** locked (`locked`, slot `{price}` in coins): "Unlock for {price} coins" (8); buy button (`buy`): "Unlock" (8); pick button (`pick`): "Flex it" (8); the picked one (`equipped`): "Equipped" (8); too poor (`not_enough_coins`): "Not enough coins: style isn't free." (8).
+- **Jump effects** (`effects.<id>.name` and `.description`): dash_cloud "Dash cloud" (8), "A little puff of dust under every jump. Free, which Greenbull finds awkward." (9); spring "Engagement Spring" (8), "A spring pops the car into the air. Gravity's contract is under review." (9); jet_thrust "Jet Thrust Zero Sugar" (9), "A jet flame blasts under your car on every jump. Safety review pending." (9); stunt_sparks "Stunt sparks" (8), "Sparks burst under the car on every jump. Greenbull calls it content." (9); shockwave_ring "Premium Shockwave Ring" (7, below 8 after 3 refines: kept for the playtest), "A ring ripples out on the ground when you jump. Disruptive, like the brand." (8).
+- **Jump arrow checkbox** (`game/data/pause_text.json`, `jump_arrow_label`): "Facing arrow" (9), in the Drift Guide checkbox's voice (no on/off words).
+- **Changed texts** (`game/data/tutorial_text.json`): `trick_rule.rail_grind`, `trick_recipe.rail_grind.step1_badge` ("Hold space", shown in capitals) and `step1_note` ("Touch a rail mid-air"), above. The Jump card ("Press Space to Jump.", "Press Space to Jump higher.") stays true and is unchanged; no mission or gift text mentions grinding or a Jump cooldown.
 
 #### Mission notebook and power-up texts
 
@@ -2432,7 +2446,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `a87d0690160711832d9f428b95edfb529a8556f008f84f5005899a9a4abb94ac` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
-| `garage-design.md` | `1f13e8046396bff4a5e73ee3ddb838b44f0203e11b899f59e7771190aff6b32b` |
+| `garage-design.md` | `de6284d890fb72f16ac7ddaf52af72731514ef55f9ae676751322b43a4b2ed5b` |
 | `visual-style.md` | `33f6e1e3da4e5f96dae886d8f875a0896c7c08a013e2608364b6f621d99c8b3d` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `3905f0125380a49ca3126f8395c10b6ef4c395edbedcbba862f8077f51bea6ef` |
+| `hud-and-menus.md` | `a51d34f9e1ad6eefd7be10d27c1cd4fbe3e984465fd43711f44dc771d20d5115` |
