@@ -308,6 +308,38 @@ def shift(img: np.ndarray, dx: int, dy: int) -> np.ndarray:
     return out
 
 
+SHEAR_RADIUS_PX = 17.0   # screen distance (px) of the lowered/raised corners from the tilt axis; a proposal
+
+
+def shear_offsets(width: int, cx: float, half_w: float, corner_dy: int) -> np.ndarray:
+    """Whole-pixel vertical offset per column: +corner_dy (down) at the left edge of the car, -corner_dy (up) at
+    the right edge, 0 at the centre, linear between and clamped outside."""
+    x = (np.arange(width) + 0.5 - cx) / max(half_w, 1.0)
+    return np.rint(-np.clip(x, -1.0, 1.0) * corner_dy).astype(int)
+
+
+def shear_frame(frame: np.ndarray, tilt_deg: float, radius: float = SHEAR_RADIUS_PX) -> np.ndarray:
+    """The tilt as a column shear of the real frame (T-555 v4): every column moves up or down by whole pixels,
+    so no pixel is resampled, the facing never changes, the palette and stripes stay exact. Left side (the
+    lowered front left corner in direction 8) goes down, right side (raised back right) goes up."""
+    corner_dy = int(round(radius * np.sin(np.radians(tilt_deg))))
+    ys, xs = np.nonzero(frame[:, :, 3] > 0)
+    if len(xs) == 0 or corner_dy == 0:
+        return frame.copy()
+    cx = (xs.min() + xs.max() + 1) / 2.0
+    half_w = (xs.max() + 1 - xs.min()) / 2.0
+    offs = shear_offsets(frame.shape[1], cx, half_w, corner_dy)
+    out = np.zeros_like(frame)
+    h = frame.shape[0]
+    for x, dy in enumerate(offs):
+        col = frame[:, x]
+        if dy >= 0:
+            out[dy:, x] = col[:h - dy]
+        else:
+            out[:h + dy, x] = col[-dy:]
+    return out
+
+
 def clean(img: np.ndarray, reference: np.ndarray, palette: np.ndarray | None = None) -> np.ndarray:
     """Alpha cut, the car's palette, no specks, and the car's bounding-box centre moved (whole pixels) onto the
     reference's (the guide for the same direction and step)."""
@@ -482,6 +514,10 @@ def main(argv=None) -> int:
     t.add_argument("--dir", type=int, required=True)
     t.add_argument("--frames-dir", required=True)
     t.add_argument("--out", required=True)
+    h = sub.add_parser("shear")
+    h.add_argument("--dir", type=int, required=True)
+    h.add_argument("--out-dir", required=True)
+    h.add_argument("--radius", type=float, default=SHEAR_RADIUS_PX)
     p = sub.add_parser("preview")
     p.add_argument("sheet")
     p.add_argument("out")
@@ -509,6 +545,12 @@ def main(argv=None) -> int:
         fd = Path(a.frames_dir)
         strip([load_rgba(fd / frame_name(a.dir, s)) for s in (1, 2, 3)], Path(a.out))
         print(a.out)
+    elif a.cmd == "shear":
+        src = normal_frame(a.dir)
+        for s, deg in enumerate(TILT_STEPS_DEG, start=1):
+            out = Path(a.out_dir) / frame_name(a.dir, s)
+            save_rgba(shear_frame(src, deg, a.radius), out)
+            print(out)
     elif a.cmd == "preview":
         img = contact_sheet(load_rgba(Path(a.sheet)), _dirs(a.dirs), a.scale)
         img.save(a.out)

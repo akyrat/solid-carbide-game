@@ -66,6 +66,24 @@ class TiltImageTests(unittest.TestCase):
         self.assertTrue(set(np.unique(out[:, :, 3])) <= {0, 255})
         self.assertFalse(np.array_equal(out, frame))
 
+    def test_shear_keeps_every_pixel_and_tilts_left_down_right_up(self):
+        frame = b.normal_frame(8)
+        out = b.shear_frame(frame, 20.0)
+        self.assertEqual(out.shape, frame.shape)
+        self.assertEqual(colours(out), colours(frame))
+        self.assertEqual(int((out[:, :, 3] > 0).sum()), int((frame[:, :, 3] > 0).sum()))
+        cols = np.nonzero(frame[:, :, 3].any(axis=0))[0]
+        left, right = cols.min(), cols.max()
+        top = lambda img, x: np.nonzero(img[:, x, 3])[0].min()
+        self.assertGreater(top(out, left), top(frame, left))     # front left corner lowered
+        self.assertLess(top(out, right), top(frame, right))      # back right corner raised
+
+    def test_shear_offsets_grow_with_the_step(self):
+        steps = [abs(b.shear_offsets(128, 64.0, 50.0, int(round(b.SHEAR_RADIUS_PX * np.sin(np.radians(d)))))).max()
+                 for d in b.TILT_STEPS_DEG]
+        self.assertEqual(steps, sorted(steps))
+        self.assertGreater(steps[0], 0)
+
     def test_clean_maps_to_palette_and_centres(self):
         ref = b.normal_frame(4)
         noisy = b.shift(ref, 5, -3).astype(int)
