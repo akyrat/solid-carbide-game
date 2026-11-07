@@ -1,7 +1,7 @@
 ---
 id: T-569
 title: Cosmetics the player can't afford are disabled
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -53,10 +53,16 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: UI agent at work in its folder.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. Cosmetics screen: the Unlock button is disabled (HudStyle disabled look, same as the garage Buy) while coins < price, enabled when they reach it, refreshed on every coin change; unlocked ones are never disabled. 2 new tests in game/tests/unit/test_cosmetics_screen.gd (10/10 pass); full run 3057 tests, 3056 pass, 0 fail, 1 risky. Doc: docs/garage-design.md Decisions line updated. To test by hand: set coins in the save (progress.json in the game's user folder, field coins; e.g. 350 gives two affordable, two not) and open Cosmetics. Screenshots: art-archive/T-569/screenshots/cosmetics_no_coins.png and cosmetics_350_coins_mixed.png (fixture game/tests/fixtures/cosmetics_shot.tscn, coins from env SHOT_COINS).
+
+Correction: the screenshot fixture is game/tests/fixtures/t569_coins_shot.tscn (coins from env SHOT_COINS); T-553's cosmetics_shot fixture is untouched.
