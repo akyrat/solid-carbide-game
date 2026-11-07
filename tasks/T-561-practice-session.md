@@ -1,7 +1,7 @@
 ---
 id: T-561
 title: The practice session: a small live run in a window, counting one trick
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Rails
@@ -43,13 +43,13 @@ Part of the interactive tutorial (board, 2026-11-07; HUD and menus, Decisions, "
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The practice scene loads the playground (or the stand-in) with the real car and no enemies, clock or damage (test). (QA: pass / fail)
-- [ ] Set to each of the four tricks, it counts that trick and no other, and signals on the third (tests for each). (QA: pass / fail)
-- [ ] The notebook in the window shows the goal and its count (test). (QA: pass / fail)
-- [ ] The grind practice opens with the Jump gift and gives Jump when taken (test). (QA: pass / fail)
-- [ ] docs/game-loop-architecture.md Content and game/docs/game-loop/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-561/screenshots/ show the scene with each trick's notebook goal. (QA: pass / fail)
+- [ ] The practice scene loads the playground (or the stand-in) with the real car and no enemies, clock or damage (test). (QA: pass)
+- [ ] Set to each of the four tricks, it counts that trick and no other, and signals on the third (tests for each). (QA: pass)
+- [ ] The notebook in the window shows the goal and its count (test). (QA: pass)
+- [ ] The grind practice opens with the Jump gift and gives Jump when taken (test). (QA: pass)
+- [ ] docs/game-loop-architecture.md Content and game/docs/game-loop/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - game/tools test_text_inventory red: the new text in scripts/run/practice_session.gd:99 (GOAL_TEXT_FALLBACK) has screen '(unlisted)'; list it in the text inventory tool's screens; rerun that set; the Godot practice tests pass 24/24)
+- [ ] Screenshots in art-archive/T-561/screenshots/ show the scene with each trick's notebook goal. (QA: pass)
 
 ## Updates
 
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: the practice session that runs the car in a window and counts one trick 3 times.
+
+### 2026-11-07, In progress → In QA
+
+Built: the practice session (24 tests). QA now.
 
 ## Style review
 
