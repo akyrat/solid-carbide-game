@@ -1,7 +1,7 @@
 ---
 id: T-570
 title: Texts: the main menu's Settings button and the Settings screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: Narrative Theme writes the Settings texts.
 
+### 2026-11-07, In progress → In QA
+
+Texts written: Settings button, title and Back. QA now.
+
 ## Style review
 
 ### Run 1
@@ -103,3 +107,5 @@ Run by `tools/style_loop/run.py` on 2026-11-07: text, kind label, brief `C:/User
 ## Result notes
 
 Added to game/data/pause_text.json (with _comment): settings_button 'Settings' (9), settings_title 'Settings' (10), settings_back 'Back' (10; same word as god_mode_back, own key). Settings labels reused from pause_text.json as-is. T-571 reads these 3 keys. docs/hud-and-menus.md Content: 'Texts for the Settings screen (T-570)'; long GDD regenerated. Tests: new game/tests/unit/test_settings_screen_text.gd 1/1 passed (2 asserts group), test_hud_size_slider 8/8, test_drift_guide_label_text passed, tools/test_generate_long_gdd.py 13 passed. Style review rounds recorded.
+
+Screenshots (art-archive/T-570/screenshots/): main_menu_settings_button.png (Settings button before Exit in the real main menu) and settings_title_and_back.png (title and Back in the menu's styles), made by the fixture game/tools/shots/settings_texts_shots.tscn.
