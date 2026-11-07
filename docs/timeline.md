@@ -3835,3 +3835,28 @@ Entry format:
 - Decision or change: publish_itch.py prints butler's output through a safe print, so a successful push no longer ends in a console encoding crash.
 - Documents touched: none
 - Tasks: T-558
+
+## 2026-11-07: Texts for the interactive tutorial
+- Decision or change: Texts for the loop slide, the four trick slides, their notebook goals and the success message.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-559
+
+## 2026-11-07: The practice playground
+- Decision or change: A small practice level on the dark purple grid for the tutorial's practice windows.
+- Documents touched: docs/level-design.md
+- Tasks: T-560
+
+## 2026-11-07: The practice session
+- Decision or change: A small live run in a window that counts one trick three times, for the tutorial slides.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-561
+
+## 2026-11-07: The interactive tutorial slides
+- Decision or change: Six slides: the loop, four trick slides with practice windows, and the kaiju timeline; A, D and Space drive there.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-562
+
+## 2026-11-07: Tricks fall into the mission notebook
+- Decision or change: A trick that counts toward a mission falls into the notebook as a name box with a splash.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-563

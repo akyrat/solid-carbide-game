@@ -75,6 +75,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **No rails on the default map** (board, 2026-11-06): the game's default map has no rails; the playtest rails T-541 put on it are removed. The board places rails itself in the level creator, once the creator's rail piece (T-542) is merged.
 - **The board's new Kaiju City is the default map** (board, 2026-11-06): the board edited its level Kaiju City in the level creator (ramps and rails added, saved as `game/data/levels/kaiju_city.json`) and made it the game's default map. The game plays a byte-for-byte copy of it, as before.
 - **A ramp may climb onto several rooftops** (board, 2026-11-06): a ramp whose top end meets two or more rooftops of the same height (side by side) is a proper ramp onto them, not an error. The level checks, the game and the level creator accept it, so a level made in the creator goes in unchanged (it came up with ramp-2 and ramp-13 of the board's Kaiju City).
+- **The practice playground** (board, 2026-11-07): a small level for the tutorial's practice windows (HUD and menus, Decisions, "Interactive tutorial slides"), on the dark purple grid ground of the drift prototype (`ground_grid.gd`), with room to drift and alt drift, a ramp to launch from for air spins, and rails to grind. The car, its effects and the HUD must stand out clearly against its colours. Its layout is the Level/Challenge Design Agent's proposal; the board may edit it in the level creator. (T-560)
 
 ## Content
 

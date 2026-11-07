@@ -770,6 +770,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **No rails on the default map** (board, 2026-11-06): the game's default map has no rails; the playtest rails T-541 put on it are removed. The board places rails itself in the level creator, once the creator's rail piece (T-542) is merged.
 - **The board's new Kaiju City is the default map** (board, 2026-11-06): the board edited its level Kaiju City in the level creator (ramps and rails added, saved as `game/data/levels/kaiju_city.json`) and made it the game's default map. The game plays a byte-for-byte copy of it, as before.
 - **A ramp may climb onto several rooftops** (board, 2026-11-06): a ramp whose top end meets two or more rooftops of the same height (side by side) is a proper ramp onto them, not an error. The level checks, the game and the level creator accept it, so a level made in the creator goes in unchanged (it came up with ramp-2 and ramp-13 of the board's Kaiju City).
+- **The practice playground** (board, 2026-11-07): a small level for the tutorial's practice windows (HUD and menus, Decisions, "Interactive tutorial slides"), on the dark purple grid ground of the drift prototype (`ground_grid.gd`), with room to drift and alt drift, a ramp to launch from for air spins, and rails to grind. The car, its effects and the HUD must stand out clearly against its colours. Its layout is the Level/Challenge Design Agent's proposal; the board may edit it in the level creator. (T-560)
 
 ### Content
 
@@ -2174,6 +2175,8 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **The trick list shows the new tricks** (board, 2026-11-06): the trick list (the pause screen's Trick list and the tutorial's trick slide) adds REVERSE DRIFT!, AURA FARMING! and GRIND! (Drifting, Decisions), each with its recipe and a recorded clip like the others, using the texts already written for them (Content, T-533).
 - **The jump arrow** (board, 2026-11-07; Drifting, Decisions, "The grind overhaul"): a small arrow around the car points the way the car faces, so the player knows where a launch off a rail will go. It is a setting the player can switch off, a checkbox in the pause screen's settings next to the Drift Guide, saved like the other settings. When it shows (proposal: while grinding), its look and whether it is on by default are proposals for the playtest. (T-551, T-553)
 - **A Cosmetics button on the main menu** (board, 2026-11-07): the main menu gets a button that opens the Cosmetics submenu (Garage design, Decisions, "Cosmetics"). (T-553)
+- **Interactive tutorial slides** (board, 2026-11-07; replaces the slides of "The tutorial slides are redrawn, with clips of the real car" above, except the last): the slides before the first run become interactive. **Slide 1, the loop:** do tricks, gain subs, get weapons, repeat, so that by the 4-minute mark the player is strong enough to take on the kaiju. **Then one slide per trick the player practises**, the ones most unique to this game: the **drift**, the **alt drift**, **air spins** (AIR 180! or AIR 360! both count) and the **grind**. Each trick slide has a **practice window**, a small rectangle a bit bigger than today's clips, where the player drives the real car in the practice playground (Level design, Decisions, "The practice playground") and tries the trick. The goal on each is the trick **3 times**, tracked in the **same notebook** the missions use, inside the window. On the third success a **success** message shows over the practice window only, not the whole slide. The grind slide's practice starts by offering one power-up gift, **Jump**. Practising is optional: the arrows and Skip always work. **The keys drive on the trick slides** (board, 2026-11-07): A, D and Space, which move between slides and press buttons today, are the car's keys in a practice window, so on the trick slides they no longer change slides or press buttons; the slides are moved with the mouse (the arrows and Skip), and the keys a slide still answers to are the UI Agent's proposal. **The last slide** still shows the kaiju timeline (the 4-minute run), with Go live and "Don't show again". The missions slide goes. (T-559 to T-563)
+- **A trick falls into the notebook** (board, 2026-11-07): when the player performs a trick that counts toward a mission goal, a box with that trick's name appears from the top of the notebook and falls into it, with a little splash, to show the progress. In the run and in the tutorial's practice windows. Drawn in code in the notebook's pixel look; its timing and splash are proposals for the playtest. (T-563)
 
 ### Content
 
@@ -2493,10 +2496,10 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `a2472174b53429a614f29528499164d8139f63fecd133a115d5f63eadd84298b` |
 | `drifting.md` | `1144890c24b3b2b5dab6a3abedcb4f1d2fab58e3ad41f094e6629734419adc0c` |
-| `level-design.md` | `a87d0690160711832d9f428b95edfb529a8556f008f84f5005899a9a4abb94ac` |
+| `level-design.md` | `3a4d8d4e1bad9cfae220f3a4a8ba34e5c7c5b42e137d4883c4258059b3d578c5` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `aecd7f696197b5bf8d4d075d9c86d661d8e07309a0a672eb6b43c319c1400622` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `ae27cbc619eda5aa86ce1ef7b1aca9bbf3db3b74b429160337e9b61421c90277` |
+| `hud-and-menus.md` | `b961651dffcec79d0a7ef26e21003800e5fdef8bb2958d2c3b0e2cf0ff7bfdf9` |
