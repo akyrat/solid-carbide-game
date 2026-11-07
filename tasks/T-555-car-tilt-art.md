@@ -1,7 +1,7 @@
 ---
 id: T-555
 title: Art: the car's mid-air tilt, 3 transition frames in 16 directions
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -55,10 +55,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: tilt art, one direction first through the style loop, then the other 15 (up to 200 generations).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+### Asset Generation Agent, 2026-11-07: plan before calling PixelLab
+
+- **Method (free first):** `game/tools/build_car_tilt.py` (tests `game/tools/test_build_car_tilt.py`) warps each shadowless car frame in 3D by the tilt (each pixel given a height from a car-shaped volume, rotated about the diagonal through the front right and back left wheels, a smooth warp, only the frame's own pixels): pose guides for all 32 directions x 3 steps in `art-archive/T-555/guides/`. Proposed angles: 7, 14 and 20 degrees (step 3 the held pose).
+- **The sheet has 32 columns, not 16:** T-551's hook picks the tilt frame by the car's direction frame, and the car has 32 (since T-102), so all 32 directions get 3 frames (96 frames).
+- **Sample (direction 8, the board's first approved frame), through the style loop:** version 1 is the free guides (0 calls). Refines use PixelLab `/rotate` (T-157's method: from_image and color_image = the real frame, init_image = the guide), at most 6 calls per version, 15 at most for the sample.
+- **The other 31 directions:** from what worked in the sample. If the free guides pass, 0 calls; if `/rotate` is needed, 1 to 3 calls per direction (31 to 93) plus refines, within the ticket's 200.
+- **Running total:** kept in `art-archive/T-555/pixellab-calls.md` and below. Balance before: 4981 of 5000 generations. HTTP timeout: the client's 600 s, no retries.
