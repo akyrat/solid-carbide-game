@@ -1,7 +1,7 @@
 ---
 id: T-561
 title: The practice session: a small live run in a window, counting one trick
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/drifting.md, game/docs/game-loop/the-run.md]
 files_expected_to_change: [game/scripts/run/, game/scripts/game/, game/scenes/, game/tests/, game/docs/game-loop/, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -70,6 +70,10 @@ QA round 1: a hard-coded fallback goal text trips the text check. Back to the ag
 ### 2026-11-07, In progress → In QA
 
 Fixed: goal lines from the texts, running on the real playground (34 tests). QA round 2.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA round 2 passed (7/7). Waits for you in the combined build.
 
 ## Style review
 
@@ -178,3 +182,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 - practice_air_spin_later.png is removed, since the main air-spin shot already shows the car in the air.
 
 **Docs:** `game/docs/game-loop/practice-session.md` and docs/game-loop-architecture.md (Content) now name the real level and its start points.
+- 2026-11-07, needs-playtest → done: Board: interactive tutorial build played, lgtm
