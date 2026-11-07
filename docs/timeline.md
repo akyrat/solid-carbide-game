@@ -3860,3 +3860,13 @@ Entry format:
 - Decision or change: A trick that counts toward a mission falls into the notebook as a name box with a splash.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-563
+
+## 2026-11-07: Texts for drift seconds and running totals
+- Decision or change: Goal lines for the drift slide's 3 seconds and for total-time mission goals' running totals.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-564
+
+## 2026-11-07: Drift seconds and running totals
+- Decision or change: The drift slide counts 3 s of drifting in total; total-time mission goals show their running total live.
+- Documents touched: docs/game-loop-architecture.md, docs/hud-and-menus.md
+- Tasks: T-565
