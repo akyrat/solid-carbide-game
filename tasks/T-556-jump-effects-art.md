@@ -1,7 +1,7 @@
 ---
 id: T-556
 title: Art: the five jump effects (dash cloud, spring, jet thrust, stunt sparks, shockwave ring)
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, docs/garage-design.md]
 files_expected_to_change: [game/art/effects/, art-archive/T-556/, game/scripts/driving/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the five jump effects (up to 50 generations, free tools first).
 ### 2026-11-07, In progress → In QA
 
 Five jump effects in, drawn by a free script (0 generations). Spring and jet 8; dash cloud, sparks and ring 7, noted for your playtest. QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6). In the combined build; dash cloud, sparks and ring noted for your playtest.
 
 ## Style review
 
@@ -499,3 +503,4 @@ Enlarged preview: C:\solid-carbide-worktrees\T-556\art-archive\T-556\style-loop\
 - **Docs:** `docs/visual-style.md` Content, "The five jump effects (T-556)".
 - **Pictures:** `art-archive/T-556/screenshots/jump_effects.gif` (all five in the game, one hop each), `jump_effects_in_game.png` (a still of each), `sheets_first_draft.png`; style-loop versions in `art-archive/T-556/style-loop/`, briefs and logs in `art-archive/T-556/`.
 - 2026-11-07, flagged-for-review → in-progress: Project Lead (the board's go to decide and not stop): the three effects at 7 are noted for the playtest, as the criteria allow.
+- 2026-11-07, needs-playtest → done: Board: grind overhaul build played, lgtm
