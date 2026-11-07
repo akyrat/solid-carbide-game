@@ -3915,3 +3915,18 @@ Entry format:
 - Decision or change: Holding Space in the air, the car snaps to a rail when its sprite crosses the rail's, whatever its height; square-on crossings catch too. Also fixes a font race in the trick popup baking.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-566
+
+## 2026-11-07: A music toggle on the main menu
+- Decision or change: A note button in the main menu's top right turns the music off (volume 0) and back on.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-567
+
+## 2026-11-07: No Skip on the last tutorial slide
+- Decision or change: The last tutorial slide has no Skip button; Go live starts the run.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-568
+
+## 2026-11-07: Unaffordable cosmetics are disabled
+- Decision or change: On the Cosmetics screen, an unlock button is disabled while the player can't afford it.
+- Documents touched: docs/garage-design.md
+- Tasks: T-569
