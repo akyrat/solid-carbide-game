@@ -2344,6 +2344,14 @@ Each scored 8 or more in the style loop (the rule line for the reverse drift nee
 - **Trick list rules** (`trick_rule.<id>`): REVERSE DRIFT!: Hold reverse and steer to drift while moving backwards. AURA FARMING!: Stop and sit still for 5 seconds, then every second you stay put pays subs. GRIND!: In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. (T-550; it was "Jump or drop onto a rail and grind along it.")
 - **Keycap recipes** (`trick_recipe.<id>.step1_*`, notes at most 20 characters): REVERSE DRIFT!: keys S + A/D, note "Slide backwards". AURA FARMING!: no keys, badge "STAND STILL", note "5 s, then every s". GRIND!: no keys, badge "HOLD SPACE", note "Touch a rail mid-air" (T-550).
 
+#### Texts for the Settings screen (T-570; proposals for the playtest)
+
+Decisions, "A Settings screen from the main menu". All three are in `game/data/pause_text.json` (T-571 reads them); each scored 9 or more in the style loop. The settings' own labels are the pause screen's, reused as they are.
+
+- **Main menu button** (`settings_button`): "Settings", next to Start, Garage, Cosmetics and Exit (9).
+- **Screen title** (`settings_title`): "Settings" (10).
+- **Back button** (`settings_back`): "Back", returns to the main menu (10). Same word as `god_mode_back`, with its own key so the screens stay independent.
+
 #### Combo broken popup
 
 Task T-244 (decision: Decisions, "Combo broken popup", 2026-10-21). When a crash cuts the combo, the popup pops from the car like the trick popups, in red and broken-looking, with this exact text, for T-245 to use word for word: **COMBO BROKEN!**. It is one short line in the trick popups' voice (capitals, exclamation mark, like LONG DRIFT! and AIR 360!) and reads as a loss. Proposal for the playtest: it shows no amount lost (no "-{amount}"), only the line; the combo counter dropping to nothing already shows the size of the loss, and a bare line stays readable at a glance mid-crash.
@@ -2578,4 +2586,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `7ef3543e0889e93278ac8b56e1e557974ee4e84545b28ea7afba46e9ef7579d1` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `b12e96eda6441c5023d0c6df8a75a7088888fa86a37883f090582e82ca0ab903` |
+| `hud-and-menus.md` | `f27901749fd83f426dbe915031e0b9969aea1543783edc986a43e2a5e8432479` |

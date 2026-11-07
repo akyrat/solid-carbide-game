@@ -1,7 +1,7 @@
 ---
 id: T-570
 title: Texts: the main menu's Settings button and the Settings screen
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -52,10 +52,54 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: Narrative Theme writes the Settings texts.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+### Run 1
+
+Run by `tools/style_loop/run.py` on 2026-11-07: text, kind label, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/b1.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Settings"
+- Script checks: 4 of 4 pass
+- Score: 9/10
+- Reason: "Settings" is one plain word in sentence case on a single line. It matches the brief and the voice of the sibling buttons (Start, Garage, Cosmetics, Exit). The script checks pass: no banned words, no "Greenbull says" line, one line, sentence case. It has no in-world flourish, but the brief asks for a plain button, so nothing needs fixing. I did not re-read the full Text rules, so I judged only against the brief and the script results.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Settings", copied to `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/o1.txt`): it reached 8 or more.
+
+### Run 2
+
+Run by `tools/style_loop/run.py` on 2026-11-07: text, kind label, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/b2.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Settings"
+- Script checks: 4 of 4 pass
+- Score: 10/10
+- Reason: "Settings" matches the brief exactly: one plain word in sentence case, the suggested title. All script checks pass (no banned words, no "Greenbull says" line, one line, sentence case). It has no punctuation, no jargon and no off-story content, and I found no text rule it breaks. A plain label like this is what the rules ask for.
+- Rules broken: none
+
+**Kept:** version 1, score 10/10 ("Settings", copied to `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/o2.txt`): it reached 8 or more.
+
+### Run 3
+
+Run by `tools/style_loop/run.py` on 2026-11-07: text, kind label, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/b3.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Back"
+- Script checks: 4 of 4 pass
+- Score: 10/10
+- Reason: "Back" matches the brief exactly. It is one plain word on one line, in sentence case. The script checks for rules 2 and 4 all pass. It has no banned words and no "Greenbull says" line. As a plain navigation label it carries no in-world voice and makes no claim that could break a narrative rule. I found nothing to fix.
+- Rules broken: none
+
+**Kept:** version 1, score 10/10 ("Back", copied to `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/o3.txt`): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added to game/data/pause_text.json (with _comment): settings_button 'Settings' (9), settings_title 'Settings' (10), settings_back 'Back' (10; same word as god_mode_back, own key). Settings labels reused from pause_text.json as-is. T-571 reads these 3 keys. docs/hud-and-menus.md Content: 'Texts for the Settings screen (T-570)'; long GDD regenerated. Tests: new game/tests/unit/test_settings_screen_text.gd 1/1 passed (2 asserts group), test_hud_size_slider 8/8, test_drift_guide_label_text passed, tools/test_generate_long_gdd.py 13 passed. Style review rounds recorded.
