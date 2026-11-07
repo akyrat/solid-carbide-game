@@ -1,7 +1,7 @@
 ---
 id: T-554
 title: Jump is offered on the first two mission gifts
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/drifting.md]
 files_expected_to_change: [game/scripts/, game/data/, game/tests/, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ Started: Jump offered on the first two mission gifts.
 
 Built: Jump is one of the 2 choices on the first mission gift, and on the second if skipped. QA now.
 
+### 2026-11-07, In QA
+
+QA passed (4/4). It changes what you're offered in a run, so it waits for your playtest in the combined build before merging.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -67,3 +71,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Done. power_up_offers.gd: gifts_opened counter (reset on run start, skipped gifts not counted); while < 2 gifts opened and Jump not owned and in the pool, Jump is forced as one of the 2 choices, the other drawn as usual. Slot caps unaffected (Jump not in pool when slots full of other power-ups). Hooks unchanged. 4 new tests in test_power_up_offers.gd (200 seeds first gift, second gift when not taken, usual rules when taken, third gift unforced). Full suite: 254 scripts, 2921 tests, 2920 pass, 0 fail, 1 risky. Docs: game-loop-architecture.md Content bullet added (Decisions line already existed).
 
 QA round 1: all 4 criteria pass. qa_check full run: all checks pass (three test sets green).
+- 2026-11-07, in-qa → done: Board: grind overhaul build played, lgtm
