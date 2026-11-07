@@ -313,6 +313,7 @@ class Notifier:
 	extends RefCounted
 	signal rain_enabled_changed(on: bool)
 	signal drift_guide_enabled_changed(on: bool)
+	signal jump_arrow_enabled_changed(on: bool)
 
 
 static var notifier := Notifier.new()
@@ -358,4 +359,31 @@ static func save_drift_guide_enabled(on: bool) -> bool:
 	cfg.set_value("graphics", "drift_guide_enabled", on)
 	var ok := cfg.save(path) == OK
 	notifier.drift_guide_enabled_changed.emit(on)
+	return ok
+
+
+## Whether the jump arrow shows (task T-551; HUD and menus, Decisions, "The jump arrow"), in section
+## "graphics", key "jump_arrow_enabled". On by default (T-551's proposal: the launch off a rail goes
+## where the car faces, which the isometric drawing doesn't always make plain, so the new mechanic
+## starts with its help on; the Drift Guide, a help for a skill players already have, starts off).
+## The pause screen's checkbox (T-553) calls save_jump_arrow_enabled; the arrow (facing_arrow.gd)
+## hears every save through `notifier` and shows or hides at once.
+const DEFAULT_JUMP_ARROW_ENABLED := true
+
+
+static func load_jump_arrow_enabled() -> bool:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_JUMP_ARROW_ENABLED
+	var v = cfg.get_value("graphics", "jump_arrow_enabled", DEFAULT_JUMP_ARROW_ENABLED)
+	return v if v is bool else DEFAULT_JUMP_ARROW_ENABLED
+
+
+## Saves the jump arrow setting, keeping the other settings, and tells the arrow at once.
+static func save_jump_arrow_enabled(on: bool) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("graphics", "jump_arrow_enabled", on)
+	var ok := cfg.save(path) == OK
+	notifier.jump_arrow_enabled_changed.emit(on)
 	return ok

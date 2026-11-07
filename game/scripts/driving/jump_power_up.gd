@@ -13,8 +13,11 @@ extends RefCounted
 ## Proposals (Drifting, Content, "Jump (task T-461)"), constants here:
 ## - only on the ground: a press in the air does nothing (no double jump), and
 ##   is not kept for the landing;
-## - the tier's cooldown_seconds count from the takeoff, in the air too; a
-##   press while it runs does nothing and is not kept.
+## - no cooldown (T-551; the board, 2026-11-07, Drifting, Decisions, "Jump has no
+##   cooldown"): a press on the ground always hops, at either tier, so the car can
+##   jump again as soon as it is back on the ground. Tier 2 keeps its higher takeoff.
+## Leaving a rail is not this power-up's any more (T-551, the grind overhaul): any
+## car releases Space on a rail to launch (car.gd _leave_grind).
 
 const PowerUpDataScript := preload("res://scripts/data/power_up_data.gd")
 
@@ -27,9 +30,6 @@ signal jumped(takeoff_speed: float)
 var tier := 0
 ## The tier's numbers (0 when not owned).
 var takeoff_speed := 0.0
-var cooldown_seconds := 0.0
-## Seconds of cooldown left; a hop needs it at 0.
-var cooldown_left := 0.0
 ## How many hops (tests, effects).
 var hops := 0
 
@@ -41,8 +41,6 @@ func set_tier(new_tier: int, data = null) -> void:
 	tier = maxi(new_tier, 0)
 	if tier == 0:
 		takeoff_speed = 0.0
-		cooldown_seconds = 0.0
-		cooldown_left = 0.0
 		return
 	if data != null:
 		_data = data
@@ -50,17 +48,10 @@ func set_tier(new_tier: int, data = null) -> void:
 		_data = PowerUpDataScript.new()
 	var t: Dictionary = _data.at(ID, tier)
 	takeoff_speed = maxf(float(t.get("takeoff_speed", 0.0)), 0.0)
-	cooldown_seconds = maxf(float(t.get("cooldown_seconds", 0.0)), 0.0)
-	cooldown_left = minf(cooldown_left, cooldown_seconds)
 
 
 func is_owned() -> bool:
 	return tier > 0
-
-
-## Forgets a running cooldown (the wreck, a new car).
-func reset() -> void:
-	cooldown_left = 0.0
 
 
 ## The hop's time in the air on flat ground with gravity g (units/s^2), seconds
@@ -76,30 +67,14 @@ static func peak_for(vz: float, g: float) -> float:
 
 ## One physics step. pressed: Space was pressed since the last step. Returns
 ## true when the car hopped. Nothing at all when the power-up is not owned.
-func step(height_model, pressed: bool, dt: float) -> bool:
+func step(height_model, pressed: bool, _dt: float) -> bool:
 	if tier <= 0:
 		return false
-	cooldown_left = maxf(cooldown_left - dt, 0.0)
-	if not pressed or cooldown_left > 0.0 or height_model.airborne:
-		return false
-	if not height_model.hop(takeoff_speed):
-		return false
-	cooldown_left = cooldown_seconds
-	hops += 1
-	jumped.emit(takeoff_speed)
-	return true
-
-
-## Task T-541 (rail grinding; the board's quick tuning 2, 2026-11-06): a Jump off a rail. It hops
-## like step() at the tier's takeoff speed, but ignores the cooldown and leaves it as it was (it
-## neither starts nor extends it), so a Jump off a rail always fires and the next rail can be
-## jumped off at once; off the rails the regular Jump keeps its cooldown. Nothing when not owned.
-## Returns true when the car hopped.
-func hop_off_rail(height_model) -> bool:
-	if tier <= 0:
+	if not pressed or height_model.airborne:
 		return false
 	if not height_model.hop(takeoff_speed):
 		return false
 	hops += 1
 	jumped.emit(takeoff_speed)
 	return true
+
