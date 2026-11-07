@@ -50,6 +50,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/game-loop/the-run.md](docs/game-loop/the-run.md): The run. The run scene, its state, likes, combo, clock, and the recap summary (`RunState.recap()`). The likes curve (T-328): 30 likes for the first gift pack, 3,501 in total for the 11 level-ups.
 - [docs/game-loop/perf-recorder.md](docs/game-loop/perf-recorder.md): The performance recorder (T-468). Recording a run's frame times, monitors, counts, timed zones and events (`--record-perf`), and the analysis (`tools/analyse_perf.py`).
 - [docs/game-loop/gift-pack-and-pickups.md](docs/game-loop/gift-pack-and-pickups.md): Gift pack and pickup magnet. The gift pack drop (helicopter drawn at scale 0.65, set in game/data/gift_pack.json) and the pickup magnet.
+- [docs/game-loop/practice-session.md](docs/game-loop/practice-session.md): The practice session (T-561). A tutorial practice window's live session: the real car on the practice playground counting one trick 3 times, its API for the slide, and the seams for T-560 and T-559.
 
 ## driving/
 
