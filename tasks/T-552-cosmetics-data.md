@@ -1,7 +1,7 @@
 ---
 id: T-552
 title: Cosmetics data: the jump effects, their prices, unlocking with coins, the saved choice
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Rails
@@ -41,11 +41,11 @@ This ticket is part of the grind overhaul (board, 2026-11-07; Drifting, Decision
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The cosmetics data lists the 5 jump effects with prices, dash_cloud free and unlocked (test). (QA: pass / fail)
-- [ ] Buying spends the coins and unlocks it, refused without enough coins; equipping saves the choice; both survive a reload (tests). (QA: pass / fail)
-- [ ] An old save without cosmetics loads with dash_cloud unlocked and picked, and loses nothing (test). (QA: pass / fail)
-- [ ] docs/garage-design.md Content gives the prices with their reasons and the API. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] The cosmetics data lists the 5 jump effects with prices, dash_cloud free and unlocked (test). (QA: pass; test_cosmetics 7 tests, full sets pass)
+- [ ] Buying spends the coins and unlocks it, refused without enough coins; equipping saves the choice; both survive a reload (tests). (QA: pass; test_cosmetics 7 tests, full sets pass)
+- [ ] An old save without cosmetics loads with dash_cloud unlocked and picked, and loses nothing (test). (QA: pass; test_cosmetics 7 tests, full sets pass)
+- [ ] docs/garage-design.md Content gives the prices with their reasons and the API. (QA: pass; test_cosmetics 7 tests, full sets pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass; test_cosmetics 7 tests, full sets pass)
 
 ## Updates
 
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: cosmetics data, prices and the saved choice.
+
+### 2026-11-07, In progress → In QA
+
+Built: cosmetics data, prices 0/150/300/450/600 coins, saved choice. QA now.
 
 ## Style review
 
