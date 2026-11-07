@@ -166,6 +166,9 @@ var layout: Dictionary = {}
 ## The ground tiles' layout: the level's own ground (LevelGround.layout_of, T-391), else as loaded
 ## from GROUND_PATH ({} if missing).
 var ground_layout: Dictionary = {}
+## The level's grid ground (T-560, GridGround.of): {} for the usual ground art, else the colours the
+## ground is drawn in as a grid instead (the practice playground).
+var grid_style: Dictionary = {}
 ## The boulder sprites' list, as loaded from BOULDER_ART_PATH ({} if missing).
 var boulder_art: Dictionary = {}
 ## The boulder variants' textures, in boulder_art's order.
@@ -261,6 +264,7 @@ func _ready() -> void:
 		ground_layout = LevelGround.layout_of(layout)
 	if ground_layout.is_empty():
 		ground_layout = load_layout(GROUND_PATH)
+	grid_style = GridGround.of(layout)
 	if boulder_art.is_empty():
 		boulder_art = load_layout(BOULDER_ART_PATH)
 	_load_boulder_textures()
@@ -1227,6 +1231,10 @@ class _GroundDraw extends Node2D:
 		if map.uses_ground_art():
 			if Perf.on: Perf.each_end(&"draw.map_layer")
 			return
+		if not map.grid_style.is_empty():
+			GridGround.draw(self, map.grid_style, m, u)
+			if Perf.on: Perf.each_end(&"draw.map_layer")
+			return
 		draw_rect(Rect2(m.position * u, m.size * u), map.road_color)
 		var g: Rect2 = map.rect_of(map.layout.gravel)
 		draw_rect(Rect2(g.position * u, g.size * u), map.gravel_color)
@@ -1249,6 +1257,8 @@ class _GroundTiles extends Node2D:
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 	func has_art() -> bool:
+		if not map.grid_style.is_empty():
+			return false  # T-560: a grid ground (GridGround) is drawn instead of the tiles
 		if atlas == null and not map.ground_layout.is_empty():
 			atlas = load(str(map.ground_layout.atlas))
 			extras = []

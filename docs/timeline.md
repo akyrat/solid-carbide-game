@@ -3880,3 +3880,8 @@ Entry format:
 - Decision or change: Texts for the loop slide, the four trick slides, their notebook goals and the success message.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-559
+
+## 2026-11-07: The practice playground
+- Decision or change: A small practice level on the dark purple grid (lightened slightly so tyre marks show) with a ramp and rails.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-560

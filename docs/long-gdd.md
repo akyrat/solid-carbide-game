@@ -786,6 +786,20 @@ The map the main menu's Start plays (task T-372; Decisions, "The board's own lev
 
 How the run loads it: `game/docs/level/game-map.md`.
 
+#### The practice playground (task T-560)
+
+The level the tutorial's practice windows load (Decisions, "The practice playground"; HUD and menus, Decisions, "Interactive tutorial slides"): **`game/data/level/practice_playground.json`**, made by `python game/tools/build_practice_playground.py` in the level creator's file format, so the board can open and edit it there. It has no buildings: one open plain, a ramp and rails. Every number is a proposal for the board's playtest.
+
+- **Size:** 120 by 72 units, a hard stop at the edges, to load fast. One rooftop, two ramps, three rails, no props.
+- **The ground:** the drift prototype's purple grid, lightened a little so the dark tyre marks show, drawn instead of road tiles through a new optional level key, `ground_style` (`{"kind": "grid", ...}`; ground 59/54/94, thin lines 76/71/122 every unit, strong lines 115/105/173 every 5; the prototype's own are 18/18/36, 43/43/76 and 84/76/132, `ground_grid.gd`). A level without it keeps its ground tiles (Kaiju City is unchanged).
+- **Open area:** the whole west half (x -60 to -16, all of y): room for drifts and alt drifts, away from the runway and the ramp.
+- **The ramp:** a runway along y = 0 from x -55 to a ramp (0 to 3, 12 long) onto a small rooftop (height 3, x -2 to 14, y -6 to 6), and on the rooftop a jump ramp (3 to 5, 4 long) whose top (x 12, height 5) throws the car east. Both are the creator's own pieces. A car at full speed (16.5 units/s) leaves it with 8.25 units/s up and is in the air 1.8 s, a 360 (1.5 s at the base air turn) with 0.3 s to spare; the car reaches full speed on the runway.
+- **Rails:** three, 1 unit over the street, where the car comes down: `rail-1` (y 0, x 16 to 34, for a slower car), `rail-2` (y 0, x 38 to 52, for full speed) and `rail-3` (y 3.5, x 38 to 56, a jump from `rail-2`, reached by starting the jump a lane over). Space held in the air catches them, and a car can fly on from one to the next.
+- **Start points:** a new optional key, `start_points` (`[{id, x, y, heading}]`, each with the spawn point's rules; `LevelStartPoints`): `drift` (-45, -19) and `alt_drift` (-45, 19), heading east in the open area; `air_spin` (-55, 1), heading east at the far end of the runway (50 units of run-up: full speed at the jump ramp); `grind` (-29, 1), heading east, 17 units from the ramp's foot, the same drive and a rail catch (the speed still reaches the top). The level's `spawn` is the drift start. A run started with a start point id (`GameFlow.add_run(..., start_point_id)`) starts the car there.
+- **Contrast (the board asked that the car and its effects stand out):** checked from screenshot pixels with the WCAG contrast ratio. On the prototype's own ground (18/18/36) the tyre marks were 1.06, nearly invisible, so the ground was lightened (the smallest change, this level only, no change to the marks or the main map): against 59/54/94 the tyre marks now read clearly in the screenshot (about 1.7), the white smoke core 9, the rail bars 8, the HUD's paper notebook 9; the car has white and cream stripes, outline and lights. Cost: the smoke's soft edges and the ramp's concrete lose some contrast (about 1.3 and 2.1).
+
+Tests: `game/tests/unit/level/test_practice_playground.gd`. How it works: `game/docs/level/practice-playground.md`.
+
 #### Rails (task T-541)
 
 The map side of the decision "Rails" (Decisions, above) for the rail grinding prototype; how the car grinds them is Drifting, Content, "Rail grinding (task T-541)". Proposals for the playtest. Code: `game/scripts/level/rails.gd` (reading and checking), `game/scripts/level/rail_drawing.gd` (the look).
@@ -2516,7 +2530,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `ce85c06ebc6c05021d6fca093a34ef273e765e0b64222769b3f92bd68ff8a6ac` |
 | `drifting.md` | `b9007b7ef713aa6d80e347d774a33625446069f8dbc4cd1144ae37d1aae34401` |
-| `level-design.md` | `3a4d8d4e1bad9cfae220f3a4a8ba34e5c7c5b42e137d4883c4258059b3d578c5` |
+| `level-design.md` | `bc33a788ac77fef0f063f45666cf8192a502e904a2eb33f6a3bc9dfac595e986` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `aecd7f696197b5bf8d4d075d9c86d661d8e07309a0a672eb6b43c319c1400622` |
