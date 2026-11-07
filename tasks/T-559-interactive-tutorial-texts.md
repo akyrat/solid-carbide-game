@@ -1,7 +1,7 @@
 ---
 id: T-559
 title: Texts for the interactive tutorial slides
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -43,10 +43,10 @@ Part of the interactive tutorial (board, 2026-11-07; HUD and menus, Decisions, "
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each text listed in the description exists with a key and a _comment, listed in the result notes with what it is for. (QA: pass / fail)
-- [ ] Each text has a style loop score of 8 or more in the Style review, or is noted for the playtest. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists the new texts. (QA: pass / fail)
-- [ ] The tests for the changed data pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] Each text listed in the description exists with a key and a _comment, listed in the result notes with what it is for. (QA: pass)
+- [ ] Each text has a style loop score of 8 or more in the Style review, or is noted for the playtest. (QA: pass)
+- [ ] docs/hud-and-menus.md Content lists the new texts. (QA: pass)
+- [ ] The tests for the changed data pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: texts for the loop slide, the four trick slides, their notebook goals and the success message.
+
+### 2026-11-07, In progress → In QA
+
+Texts written (scored 8 to 9). QA now.
 
 ## Style review
 
