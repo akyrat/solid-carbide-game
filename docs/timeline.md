@@ -3875,3 +3875,8 @@ Entry format:
 - Decision or change: Holding Space in the air, the car snaps to a rail when its sprite crosses the rail's, whatever its height.
 - Documents touched: docs/drifting.md
 - Tasks: T-566
+
+## 2026-11-07: Texts for the interactive tutorial
+- Decision or change: Texts for the loop slide, the four trick slides, their notebook goals and the success message.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-559

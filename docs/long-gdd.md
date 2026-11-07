@@ -2459,6 +2459,23 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 
 Proposals for the board to judge: the Start button reads "Go live" (loop score 9) where the board's word is "Start"; swap it in `button.start` if "Start" is wanted, like the main menu. Slide 2's single line failed the loop (card_desc is 90 characters at most; best 7), so it is two lines.
 
+#### The interactive tutorial's texts (T-559)
+
+Decisions, "Interactive tutorial slides" and "A trick falls into the notebook". Text task T-559, in `game/data/tutorial_text.json`, block `tutorial` (each entry has a `_comment` line), every line scored 8 or more in T-559's Style review; T-562 reads it. Stored in sentence case, shown in capitals in the display font. `{done}` and `{total}` in a goal line are filled by code. Slides 1 to 3 of the T-485 tutorial are no longer shown: their keys (`slide1.*`, `slide2.*`, `slide3.*`, `kicker.controls`, `kicker.loop`, `kicker.missions`) are marked UNUSED in their comments, nothing deleted. The last slide (`slide4.*`, `button.start`, `checkbox.dont_show`, `button.skip`, `arrow.*`, `kicker.goal`) is reused as it is.
+
+| Where | Key | Text |
+|---|---|---|
+| Loop slide, headline | `tutorial.loop.title` | The content loop |
+| Loop slide, chain steps 1 to 4 | `tutorial.loop.step1` to `step4` | Do tricks / Gain subs / Unbox new weapons / Repeat for content |
+| Loop slide, closing line | `tutorial.loop.point` | By the 4-minute mark, you're strong enough to take on the kaiju. Huge for engagement. |
+| Drift slide, headline and instruction | `tutorial.trick.drift.title`, `.instruction` | Drift / Hold W and a turn key, A or D, to drift. Let go to cash it in. |
+| Alt drift slide | `tutorial.trick.altdrift.title`, `.instruction` | Alt drift / Drift forward, then swap W for S while holding the same turn key. |
+| Air spins slide | `tutorial.trick.airspin.title`, `.instruction` | Air spins / Hit a ramp holding W, then hold A or D in the air: AIR 180! or AIR 360! both count. |
+| Grind slide | `tutorial.trick.grind.title`, `.instruction` | Grind style / In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. |
+| Notebook goal lines (3 successes) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drifts {done}/{total} / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
+| Success message over a practice window | `tutorial.success` | Content secured! |
+| Grind slide, hint about the Jump gift | `tutorial.grind_hint` | One power-up on the house: Jump. Take it, jump, then hold Space over a rail. |
+
 #### The four redrawn slides (T-485)
 
 Decisions, "The tutorial slides are redrawn, with clips of the real car"; the board approved the draft on 2026-11-01. Laid out on a 1280 x 720 stage that scales to the window (centred, nearest-neighbour). Every slide has its kicker (Press Start 2P, cyan, "{n} / 4 · topic" in capitals), its headline (Bangers, 82 px, in capitals, with a pink offset shadow), the left and right arrows (the right one hidden on slide 4, the left one on slide 1), four slide dots (the current one a long bar) and a **Skip** button at the top right (the shared small button) that jumps to slide 4. All the words come from `game/data/tutorial_text.json` (the retired `slide1.controls`, `slide1.drift`, `slide2.chain`, `slide2.gift` and `slide3.goal` are no longer used) and, for the power-up names and the notebook sample lines, `game/data/screen_texts.json`.
@@ -2505,4 +2522,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `aecd7f696197b5bf8d4d075d9c86d661d8e07309a0a672eb6b43c319c1400622` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `3e906262fa54d4a47354cb047b556ae42ee64a12d16ccf2a4523adc8d165f49c` |
+| `hud-and-menus.md` | `2f896aca4aaac37d2201fbf5579670f01b38afb2fad9cf1e69605f6112e1670e` |
