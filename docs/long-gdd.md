@@ -2501,7 +2501,17 @@ Decisions, "Interactive tutorial slides" and "A trick falls into the notebook". 
 | Success message over a practice window | `tutorial.success` | Content secured! |
 | Grind slide, hint about the Jump gift | `tutorial.grind_hint` | One power-up on the house: Jump. Take it, jump, then hold Space over a rail. |
 
-#### The four redrawn slides (T-485)
+#### The interactive slides (T-562; proposals for the playtest)
+
+Decisions, "Interactive tutorial slides"; the texts are T-559's (above). Six slides on the same 1280 x 720 stage, which scales to the window. Each slide has its kicker, its headline (Bangers, 82 px, in capitals, with the pink offset shadow), the two arrows, six dots and **Skip** at the top right, which jumps to the last slide. The kickers of slides 1 to 5 show only their number ("2 / 6"), because T-559 wrote a kicker topic for the last slide only ("6 / 6 · The goal"). The playtest judges whether they need topics.
+
+- **1, The content loop** (`tutorial.loop.*`): four step panels with pink chevrons between them, each a picture and its label. The steps are Do tricks (the long drift illustration), Gain subs (the HUD's subs icon in the gold sub-goal ring), Unbox new weapons (the gift pack with four weapon icons) and Repeat for content (a pink loop arrow drawn in code). The closing line `tutorial.loop.point` sits under them.
+- **2 to 5, the tricks: Drift, Alt drift, Air spins, Grind style** (`tutorial.trick.<drift|altdrift|airspin|grind>.*`). The instruction is on the left, in Bangers 32. On the grind slide, `tutorial.grind_hint` sits under it in muted 24. The **practice window** is on the right: 600 x 400 at (565, 214) with a 4 px steel frame, a bit bigger than the redrawn slide 1's 546 x 364 clip box. It holds the practice session (Game loop architecture, Content, "The practice session"; T-561) set to the slide's trick: the real car on the practice playground, with the mission notebook inside the window. A practice is built the first time its slide shows. It runs only while its slide shows and is paused otherwise, keeping its count when the player comes back. The window draws at the screen's own pixels, so the car is sharp and framed as in the run. After the **third** success, `tutorial.success` ("CONTENT SECURED!", Bangers 64, gold with the near-black outline 12) pops in over the window only (0.25 s), not over the whole slide, and stays. Practising is optional.
+- **6, Survive the stream:** the last slide as before (the 4-minute timeline with the kaiju, **Go live**, **Don't show again**).
+- **Keys:** the **Left and Right arrow keys** change slides on every slide. **A and D** change slides only on slides 1 and 6. On the trick slides, W, A, S, D, Space (and the practice's R reset) belong to the practice window, which has the keyboard as soon as its slide shows (no click needed). The arrows and Skip can't take the focus there and are clicked with the mouse, so no key presses a button: not Space, not Enter, not Tab. On slides 1 and 6, Enter or Space presses the focused button as before (the right arrow on slide 1, Go live on slide 6).
+- How it is built: `game/docs/hud-and-menus/tutorial-slides.md`.
+
+#### The four redrawn slides (T-485; replaced by the interactive slides, T-562, except the last slide)
 
 Decisions, "The tutorial slides are redrawn, with clips of the real car"; the board approved the draft on 2026-11-01. Laid out on a 1280 x 720 stage that scales to the window (centred, nearest-neighbour). Every slide has its kicker (Press Start 2P, cyan, "{n} / 4 · topic" in capitals), its headline (Bangers, 82 px, in capitals, with a pink offset shadow), the left and right arrows (the right one hidden on slide 4, the left one on slide 1), four slide dots (the current one a long bar) and a **Skip** button at the top right (the shared small button) that jumps to slide 4. All the words come from `game/data/tutorial_text.json` (the retired `slide1.controls`, `slide1.drift`, `slide2.chain`, `slide2.gift` and `slide3.goal` are no longer used) and, for the power-up names and the notebook sample lines, `game/data/screen_texts.json`.
 
@@ -2547,4 +2557,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `aecd7f696197b5bf8d4d075d9c86d661d8e07309a0a672eb6b43c319c1400622` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `2f896aca4aaac37d2201fbf5579670f01b38afb2fad9cf1e69605f6112e1670e` |
+| `hud-and-menus.md` | `89f550ba1c6ccc574d8305b3db8e999d884036b385d3967a9ef815951b644d1e` |

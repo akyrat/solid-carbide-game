@@ -85,10 +85,11 @@ func _menu_and_tutorial() -> void:
 	await _frames(10)
 	await _shot("main_menu", "Launch: the splash and main menu.")
 	_game.show_tutorial()
-	for i in 3:
+	var last: int = TutorialSlides.SLIDE_COUNT - 1  # T-562: six slides, the last one in _text_states
+	for i in last:
 		_game.tutorial.show_slide(i)
-		await _frames(6)
-		await _shot("tutorial_slide_%d" % (i + 1), "Main menu, Start: tutorial slide %d of 3." % (i + 1))
+		await _frames(6 if i == 0 else 30)  # a trick slide builds its practice window first
+		await _shot("tutorial_slide_%d" % (i + 1), "Main menu, Start: tutorial slide %d of %d." % [i + 1, last + 1])
 
 
 func _garage() -> void:
@@ -355,9 +356,10 @@ func _collect(n: Node, win: Vector2, out: Array) -> void:
 func _text_states() -> void:
 	await _fresh_game()
 	_game.show_tutorial()
-	_game.tutorial.show_slide(3)
+	var last: int = TutorialSlides.SLIDE_COUNT - 1
+	_game.tutorial.show_slide(last)
 	await _frames(8)
-	await _shot("tutorial_slide_4", "Main menu, Start: tutorial slide 4 of 4 (the goal).")
+	await _shot("tutorial_slide_%d" % (last + 1), "Main menu, Start: tutorial slide %d of %d (the goal)." % [last + 1, last + 1])
 	# The combo multiplier beside the car, a few tricks in.
 	await _start_run()
 	await _frames(20)

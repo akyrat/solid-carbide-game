@@ -3890,3 +3890,8 @@ Entry format:
 - Decision or change: A live practice run in a window that counts one trick, with the Jump gift on the grind slide.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-561
+
+## 2026-11-07: The interactive tutorial slides
+- Decision or change: Six tutorial slides: the loop, drift, alt drift, air spins, grind (each with a practice window), and the kaiju timeline; A, D and Space drive on the trick slides.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-562
