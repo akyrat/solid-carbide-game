@@ -59,7 +59,7 @@ func _close(a: Color, b: Color) -> bool:
 func test_main_menu_buttons_are_shared() -> void:
 	var menu: MainMenu = load("res://scenes/menu/main_menu.tscn").instantiate()
 	add_child_autofree(menu)
-	assert_eq(_all_shared(menu, "main menu"), 4)  # T-553: plus Cosmetics
+	assert_eq(_all_shared(menu, "main menu"), 5)  # T-553: plus Cosmetics; T-571: plus Settings
 
 
 func test_garage_buttons_are_shared() -> void:
