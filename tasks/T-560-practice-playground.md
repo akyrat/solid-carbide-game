@@ -1,7 +1,7 @@
 ---
 id: T-560
 title: The practice playground level
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -54,10 +54,33 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: a small practice playground on the dark purple grid, with a ramp and rails.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+T-560 done by level-challenge.
+
+**For T-561:** level file `res://data/level/practice_playground.json` (made by `python game/tools/build_practice_playground.py`). Start point ids: `drift`, `alt_drift`, `air_spin`, `grind` (all heading 0, east); `spawn` = drift. Load: `GameFlow.add_run(parent, progress, "res://data/level/practice_playground.json", null, "air_spin")` (new 5th parameter; `run.start_point_id` can be set before the run enters the tree). Helper: `LevelStartPoints` (ids, of, with_spawn).
+
+**What was built**
+- Level: 120x72 units, 1 rooftop (height 3), ramp-1 (0-3, 12 long) onto it, ramp-2 (3-5 jump ramp, 4 long) on it, rails rail-1 (y0, x16-34), rail-2 (y0, x38-52), rail-3 (y3.5, x38-56), all z=1. Open drift area in the west half. Creator-catalogue pieces only.
+- New optional level keys: `ground_style` (grid ground, `scripts/level/grid_ground.gd`, drawn by mvp_map.gd; ground tiles hidden when set; Kaiju City unchanged) and `start_points` (`scripts/level/start_points.gd`; run.gd `start_point_id`; GameFlow.add_run param). check_level.py checks start_points (unit test added).
+- Numbers (proposals): full speed 16.5 at the jump ramp top, airtime 1.82 s, AIR 360 paid with 0.3 s spare; rail-1 for a slow car, rail-2 at full speed, rail-3 a lane over.
+
+**Checks (output):** `check_level.py` OK, `check_height_data.py` OK on practice_playground.json.
+
+**Tests:** new `game/tests/unit/level/test_practice_playground.gd` (9 tests, scripted drives with the real car: air_three_sixty paid from air_spin; rails caught from the ramp; start points start the car). Python `unittest discover -s game/tools`: 1043 tests OK (4 skipped). Full GUT run: 261 scripts, 2981 tests, 2980 passing, 0 failing, 1 risky/pending (TESTS PASSED).
+
+**Contrast (checked from the screenshot's pixels, WCAG ratio vs ground 18/18/36):** drift smoke 2.1 edge / 15 core; rail bars 14; ramp concrete 3.6; HUD notebook paper 15, green clock 10; car has bright stripes/outline (dark green body 1.1, reads by its light parts). Ground kept as the drift prototype's (ground_grid.gd colours). Weak: tyre marks (dark) ~1.06, nearly invisible. Lightening the ground to ~60/56/96 gives 1.8 but hurts smoke edges (1.2) and ramp (2.1). Left as an open question in docs/level-design.md for the board; proposed keep.
+
+**Screenshots** (`art-archive/T-560/screenshots/`): drift.png (drifting with smoke), ramp.png (car on the rooftop jump ramp), air.png (in the air), rail.png (grinding, sparks, facing arrow), overview.png. Scene: `game/tools/shots/practice_playground_shots.tscn` (T560_MODE).
+
+**Documents affected:** docs/level-design.md (Content, "The practice playground (task T-560)", one open question), game/docs/level/practice-playground.md (new), game/README.md index. Long GDD and fingerprint not regenerated (Project Lead).
+
+Notes: new .gd.uid files for my two scripts were left untracked like the repo's other uid files; I did not touch game/data/levels/.

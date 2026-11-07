@@ -304,6 +304,23 @@ class TestSpawn(unittest.TestCase):
         self.assertEqual(res.returncode, 1, res.stdout)
         self.assertIn("spawn: missing", res.stdout)
 
+    def test_start_points_follow_the_spawn_rules_and_have_unique_ids(self):
+        d = small_level()
+        d["start_points"] = [{"id": "a", "x": -5.0, "y": 1.0, "heading": 0},
+                                     {"id": "b", "x": 5.0, "y": -1.0, "heading": 90}]
+        self.assertEqual(c.check_level(d), [])
+        d["start_points"].append({"id": "a", "x": 1.0, "y": 1.0, "heading": 0})
+        d["start_points"].append({"id": "c", "x": -7.0, "y": -7.0, "heading": 0})
+        d["start_points"].append({"id": "d", "x": 50.0, "y": 1.0, "heading": 0})
+        d["start_points"].append({"id": "e", "x": 1.0, "y": 1.0, "heading": 30})
+        d["start_points"].append({"x": 1.0, "y": 1.0, "heading": 0})
+        text = "; ".join(c.check_level(d))
+        self.assertIn("start point 'a': the id is used twice", text)
+        self.assertIn("start point 'c': a car can't stand there", text)
+        self.assertIn("start point 'd': lies outside the map", text)
+        self.assertIn("start point 'e': heading must be", text)
+        self.assertIn("start point #6: needs an id", text)
+
     def test_the_games_own_map_needs_none(self):
         self.assertEqual(run_tool(SAMPLE).returncode, 0)
         d = small_level()

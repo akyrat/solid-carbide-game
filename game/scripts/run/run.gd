@@ -229,6 +229,10 @@ var use_elevation_map: bool = USE_ELEVATION_MAP
 ## ELEVATION_LAYOUT_PATH (the main menu's run). Read only when
 ## use_elevation_map is true.
 var layout_path: String = ELEVATION_LAYOUT_PATH
+## T-560: the id of one of the level file's start_points (LevelStartPoints), where the car starts
+## instead of on the level's spawn; empty (or an id the level lacks) keeps the spawn. Set it before
+## the run enters the tree, like layout_path.
+var start_point_id: String = ""
 ## The map's rooftops and ramps (elevation_layer.gd), a child "Elevation" of
 ## the map; null on the MVP map. A new run's map brings a new one.
 var elevation = null
@@ -494,11 +498,12 @@ func _build_world() -> void:
 	# MVP map whatever layout_path says (T-372: the menu's Start now sets layout_path to the game map).
 	spawn_problem = ""
 	var from_file := use_elevation_map and current_layout_path() != ELEVATION_LAYOUT_PATH
-	if LevelSpawn.has_spawn(map.layout) or from_file:
+	var spawn_layout: Dictionary = LevelStartPoints.with_spawn(map.layout, start_point_id)
+	if LevelSpawn.has_spawn(spawn_layout) or from_file:
 		# A level made in the creator (T-280): the car starts on its spawn point, at the ground's
 		# height there (car.ground below), facing its heading. The game's own map has none.
-		start = LevelSpawn.position_of(map.layout)
-		start_rotation = LevelSpawn.rotation_of(map.layout)
+		start = LevelSpawn.position_of(spawn_layout)
+		start_rotation = LevelSpawn.rotation_of(spawn_layout)
 		spawn_problem = LevelSpawn.problem(map.layout, start)
 		if spawn_problem != "":
 			push_warning("Level spawn at %s is not a place a car can stand: %s" % [start, spawn_problem])
