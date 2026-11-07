@@ -1,7 +1,7 @@
 ---
 id: T-550
 title: Texts for the grind overhaul, the jump arrow and the Cosmetics menu
-status: flagged-for-review
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -43,11 +43,11 @@ This ticket is part of the grind overhaul (board, 2026-11-07; Drifting, Decision
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each new text in the description exists in a data file with a key, listed in the result notes with what it is for and where it appears. (QA: pass / fail)
-- [ ] Every existing text about grinding, Jump off a rail or the Jump cooldown that the overhaul makes wrong is changed, each listed with its file and key, and a search of game/data for "cooldown" near Jump shows none left. (QA: pass / fail)
-- [ ] Each text has a style loop score of 8 or more in the Style review, or is noted for the playtest. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md and docs/garage-design.md Content list the new texts. (QA: pass / fail)
-- [ ] The tests for the changed data pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] Each new text in the description exists in a data file with a key, listed in the result notes with what it is for and where it appears. (QA: pass)
+- [ ] Every existing text about grinding, Jump off a rail or the Jump cooldown that the overhaul makes wrong is changed, each listed with its file and key, and a search of game/data for "cooldown" near Jump shows none left. (QA: pass; only Jump's numeric cooldown_seconds in power_ups.json remains, T-551 removes it)
+- [ ] Each text has a style loop score of 8 or more in the Style review, or is noted for the playtest. (QA: pass; Premium Shockwave Ring 7 is noted for the playtest)
+- [ ] docs/hud-and-menus.md and docs/garage-design.md Content list the new texts. (QA: pass)
+- [ ] The tests for the changed data pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - game/tools test_text_inventory fails: 'data/cosmetics_text.json' is not listed in game/tools/text_inventory.py; also the result notes give no full-run counts)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: texts for Cosmetics, the jump effects, the arrow checkbox, and fixing texts about grinding and the Jump cooldown.
+
+### 2026-11-07, In progress → In QA
+
+Texts written; one effect name scored 7 (Premium Shockwave Ring), noted for your playtest. QA now.
 
 ## Style review
 
@@ -522,3 +526,4 @@ CHANGED (game/data/tutorial_text.json): trick_rule.rail_grind -> 'In the air, ho
 FOR T-552: game/data/power_ups.json still has cooldown_seconds on Jump tiers 1 and 2 (data, not text); that is the only 'cooldown' near Jump left in game/data.
 Docs: docs/hud-and-menus.md (new Content section, GRIND! lines fixed), docs/garage-design.md (new Content section).
 Tests: new game/tests/unit/test_cosmetics_text.gd (3 tests) plus test_trick_list_recipes, test_trick_list, test_tutorial_clips pass; full run left to QA.
+- 2026-11-07, flagged-for-review → in-progress: Project Lead: the one text below 8 (Premium Shockwave Ring, 7) is noted for the board's playtest, as the criteria allow.
