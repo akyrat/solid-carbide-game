@@ -3885,3 +3885,8 @@ Entry format:
 - Decision or change: A small practice level on the dark purple grid (lightened slightly so tyre marks show) with a ramp and rails.
 - Documents touched: `docs/level-design.md`
 - Tasks: T-560
+
+## 2026-11-07: The practice session
+- Decision or change: A live practice run in a window that counts one trick, with the Jump gift on the grind slide.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-561
