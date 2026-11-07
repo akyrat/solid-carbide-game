@@ -48,13 +48,15 @@ func test_menu_opens_on_start_and_arrows_walk_every_button() -> void:
 	_press(KEY_DOWN)
 	assert_eq(_focus(), m.garage_button)
 	_press(KEY_DOWN)
+	assert_eq(_focus(), m.cosmetics_button)
+	_press(KEY_DOWN)
 	assert_eq(_focus(), m.exit_button)
 	_press(KEY_DOWN)
 	assert_eq(_focus(), m.start_button, "down wraps round")
 	_press(KEY_UP)
 	assert_eq(_focus(), m.exit_button, "up wraps round")
 	_press(KEY_UP)
-	assert_eq(_focus(), m.garage_button)
+	assert_eq(_focus(), m.cosmetics_button)
 
 
 func test_menu_left_and_right_keep_the_selection() -> void:
@@ -73,6 +75,9 @@ func test_menu_enter_and_space_press_the_selected_button() -> void:
 	assert_signal_emitted(m, "garage_pressed")
 	_press(KEY_DOWN)
 	_press(KEY_SPACE)
+	assert_signal_emitted(m, "cosmetics_pressed")
+	_press(KEY_DOWN)
+	_press(KEY_ENTER)
 	assert_signal_emitted(m, "exit_pressed")
 	assert_signal_not_emitted(m, "start_pressed")
 
@@ -168,6 +173,8 @@ func test_wasd_menu_moves_like_the_arrows() -> void:
 	var m := _menu()
 	_press(KEY_S)
 	assert_eq(_focus(), m.garage_button)
+	_press(KEY_S)
+	assert_eq(_focus(), m.cosmetics_button)
 	_press(KEY_S)
 	assert_eq(_focus(), m.exit_button)
 	_press(KEY_S)

@@ -385,3 +385,11 @@ Decisions, "The tutorial slides are redrawn, with clips of the real car". Four l
 
 - The screens and how they connect (main menu, run, garage): Game loop architecture, Decisions.
 - The garage screen: Garage design, Decisions.
+
+### The Cosmetics submenu and the Facing arrow checkbox (T-553; proposals for the playtest)
+
+- **Main menu**: the Cosmetics button sits between Garage and Exit, in the shared button style, in the keyboard chain (W, A, S, D and the arrows like the other buttons). It opens the Cosmetics submenu; Back returns to the main menu.
+- **Cosmetics submenu** (`game/scripts/menu/cosmetics_screen.gd`, `game/scenes/menu/cosmetics_screen.tscn`; same look as the garage: dark background, title, coin count, one row per effect, a column scaled to fit the window). Each row: a preview square that loops the effect's animation (today the code-drawn placeholder of T-551; T-556's art replaces it in the same function), the name and description, then the state: a locked effect shows "Unlock for {price} coins" and an Unlock button; an unlocked one shows a "Flex it" button; the picked one shows "Equipped" and no button. Unlock spends the coins and does not pick (T-552); a purchase without enough coins stays refused and shows "Not enough coins: style isn't free." under the list. The coin count and Back reuse the garage's texts ("Coins: {n}", "Back"). The keyboard selection starts on the first button, walks down the buttons that are shown and ends on Back; when the picked button hides, the selection moves to Back. All texts are read from `game/data/cosmetics_text.json`.
+- **Facing arrow checkbox**: in the pause screen's settings row after Drift Guide, label `jump_arrow_label` ("Facing arrow"). It shows the saved `jump_arrow_enabled` (on by default), saves through `GameSettings.save_jump_arrow_enabled` and switches the arrow at once through the settings notifier. It fits the row, which still ends left of the button column at 1152 x 648.
+- **The picked effect on the car**: the screen flow sets `JumpEffectChoice.provider` to the save's `equipped_jump_effect`, so the car plays the picked effect (a run started outside the flow, such as the level creator's, plays the dash cloud).
+- Screenshots: `art-archive/T-553/screenshots/`.

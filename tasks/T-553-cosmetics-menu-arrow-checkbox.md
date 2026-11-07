@@ -1,7 +1,7 @@
 ---
 id: T-553
 title: The Cosmetics submenu from the main menu, and the jump arrow checkbox
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -55,10 +55,23 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-07, Open → In progress
+
+Started: Cosmetics button and submenu, the Facing arrow checkbox, and wiring the picked effect to the car.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (UI Agent). Built:
+- game/scripts/menu/cosmetics_screen.gd + scenes/menu/cosmetics_screen.tscn: the Cosmetics submenu in the garage's look: title, coins ("Coins: {n}", garage text), 5 rows (looping preview using JumpEffect.draw_placeholder, name, description, "Unlock for {price} coins" + Unlock, or "Flex it", or "Equipped"), message line for not_enough_coins, Back. Buying and picking go through PlayerProgress (buy_cosmetic, equip). Keyboard chain ends on Back; focus moves to Back when the picked button hides. Texts all from data/cosmetics_text.json (Back and the coin line reuse the garage's constants).
+- Main menu: Cosmetics button between Garage and Exit, signal cosmetics_pressed, in the key chain. GameFlow.show_cosmetics (Back returns to the menu).
+- Link (a): GameFlow._ready sets JumpEffectChoice.provider = progress.equipped_jump_effect (a run outside the flow, e.g. level creator, plays the dash cloud).
+- Link (b) and checkbox: pause_screen.gd jump_arrow_check "Facing arrow" after Drift Guide, saves through GameSettings.save_jump_arrow_enabled, switches the arrow through the notifier. The row got too wide (it overlapped the HUD weapon icons in test_hud_layout), so the checkbox gap went from 24 to 14 px.
+- game/tools/text_inventory.py: cosmetics_text entry no longer says "not in the game yet".
+Tests: new game/tests/unit/test_cosmetics_screen.gd (8: button opens/Back returns, 5 effects with texts and prices, buy then pick, refusal text, key order, no hard-coded label, provider wiring (a), checkbox label/default/saving/notifier (b)). Updated test_shared_button (menu 4, pause 13), test_menu_arrow_keys (Cosmetics in the chain). Full GUT run: 258 scripts, 2960 tests, 2959 passing, 0 failing, 1 risky/pending. text_inventory tests OK.
+Screenshots in art-archive/T-553/screenshots/: main_menu.png, cosmetics_locked.png (300 coins), cosmetics_bought.png, cosmetics_picked.png, cosmetics_pause.png (checkbox in the pause settings). Fixture: game/tests/fixtures/cosmetics_shot.tscn (env COSMETICS_SHOT=locked|bought|picked|pause).
+Docs: docs/hud-and-menus.md and docs/garage-design.md (new Content sections).
+Proposals for the playtest: preview loop 1.0 s + 0.4 s hold, the previews are the code placeholder (small; T-556's art replaces them in draw_placeholder).

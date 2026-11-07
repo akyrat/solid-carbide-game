@@ -17,6 +17,8 @@ extends Node
 const MainMenuScene := preload("res://scenes/menu/main_menu.tscn")
 const TutorialScene := preload("res://scenes/menu/tutorial_slides.tscn")
 const GarageScene := preload("res://scenes/menu/garage_screen.tscn")
+const CosmeticsScene := preload("res://scenes/menu/cosmetics_screen.tscn")
+const JumpEffectChoiceScript := preload("res://scripts/driving/jump_effect_choice.gd")
 const RunScene := preload("res://scenes/run/run.tscn")
 const RecapScene := preload("res://scenes/menu/recap_screen.tscn")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
@@ -49,6 +51,8 @@ var menu: Control
 var tutorial: TutorialSlides
 ## The garage screen while it is on screen, otherwise null.
 var garage: Control
+## The Cosmetics submenu while it is on screen, otherwise null (T-553).
+var cosmetics: Control
 ## The run while one is on screen, otherwise null.
 var run: Node2D
 ## The recap screen while it is on screen, otherwise null (T-320).
@@ -67,6 +71,8 @@ var quit_game: Callable = func(): get_tree().quit()
 
 func _ready() -> void:
 	progress = PlayerProgress.new()
+	# The car's jump effect is the saved, picked cosmetic (T-553 wires T-552 into T-551).
+	JumpEffectChoiceScript.provider = progress.equipped_jump_effect
 	history = RunHistory.new()
 	# The music (T-209) is a child of this node, so it outlives every screen change.
 	music = MusicPlayerScript.new()
@@ -84,6 +90,7 @@ func show_menu() -> void:
 	menu.start_pressed.connect(_on_menu_start)
 	menu.exit_pressed.connect(_on_exit_pressed)
 	menu.garage_pressed.connect(show_garage)
+	menu.cosmetics_pressed.connect(show_cosmetics)
 	menu_shown.emit()
 
 
@@ -120,6 +127,16 @@ func show_garage() -> void:
 	garage.progress = progress
 	add_child(garage)
 	garage.back_pressed.connect(show_menu)
+
+
+## Replaces the main menu with the Cosmetics submenu (T-553).
+func show_cosmetics() -> void:
+	_clear_screens()
+	cosmetics = CosmeticsScene.instantiate()
+	cosmetics.name = "Cosmetics"
+	cosmetics.progress = progress
+	add_child(cosmetics)
+	cosmetics.back_pressed.connect(show_menu)
 
 
 ## Replaces the screen on show with a fresh run, without the tutorial slides (the slides'
@@ -225,6 +242,10 @@ func _clear_screens() -> void:
 		remove_child(garage)
 		garage.queue_free()
 		garage = null
+	if cosmetics != null:
+		remove_child(cosmetics)
+		cosmetics.queue_free()
+		cosmetics = null
 	if tutorial != null:
 		remove_child(tutorial)
 		tutorial.queue_free()

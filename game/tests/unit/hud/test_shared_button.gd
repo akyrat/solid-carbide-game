@@ -59,7 +59,7 @@ func _close(a: Color, b: Color) -> bool:
 func test_main_menu_buttons_are_shared() -> void:
 	var menu: MainMenu = load("res://scenes/menu/main_menu.tscn").instantiate()
 	add_child_autofree(menu)
-	assert_eq(_all_shared(menu, "main menu"), 3)
+	assert_eq(_all_shared(menu, "main menu"), 4)  # T-553: plus Cosmetics
 
 
 func test_garage_buttons_are_shared() -> void:
@@ -97,7 +97,7 @@ func test_level_up_and_pause_buttons_are_shared() -> void:
 	# only exists once God mode is unlocked). Combined count: 11 (9 plus T-508's Rain and T-518's Drift Guide checkboxes)
 	# plus T-505's God mode page buttons.
 	var god_page_buttons: int = 1 + 2 * pause.god_mode_page.rows.size()
-	assert_eq(_all_shared(pause, "pause"), 12 + god_page_buttons)
+	assert_eq(_all_shared(pause, "pause"), 13 + god_page_buttons)  # T-553: plus the Facing arrow checkbox
 
 
 func test_recap_buttons_are_shared() -> void:

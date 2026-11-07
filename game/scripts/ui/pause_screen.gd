@@ -86,6 +86,8 @@ var dynamic_check: CheckBox
 var rain_check: CheckBox
 ## The Drift Guide checkbox (T-518): the saved setting drift_guide_enabled, label from data/pause_text.json.
 var drift_guide_check: CheckBox
+## The facing arrow checkbox (T-553): the saved setting jump_arrow_enabled, label from data/pause_text.json.
+var jump_arrow_check: CheckBox
 ## The temporary tuning row: shown only while the dynamic camera is on.
 var tuning_row: HBoxContainer
 var set_min_button: Button
@@ -524,7 +526,7 @@ func _cam():
 
 func _build_camera_controls(box: VBoxContainer) -> void:
 	var checks := HBoxContainer.new()
-	checks.add_theme_constant_override("separation", 24)
+	checks.add_theme_constant_override("separation", 14)  # was 24; T-553's fifth checkbox would reach the weapon icons
 	box.add_child(checks)
 	smoothing_check = _make_check("SmoothingCheck", TEXT_SMOOTHING)
 	smoothing_check.toggled.connect(_on_smoothing_toggled)
@@ -540,6 +542,10 @@ func _build_camera_controls(box: VBoxContainer) -> void:
 	drift_guide_check.set_pressed_no_signal(GameSettingsScript.load_drift_guide_enabled())
 	drift_guide_check.toggled.connect(_on_drift_guide_toggled)
 	checks.add_child(drift_guide_check)
+	jump_arrow_check = _make_check("JumpArrowCheck", pause_text("jump_arrow_label"))
+	jump_arrow_check.set_pressed_no_signal(GameSettingsScript.load_jump_arrow_enabled())
+	jump_arrow_check.toggled.connect(_on_jump_arrow_toggled)
+	checks.add_child(jump_arrow_check)
 	tuning_row = HBoxContainer.new()
 	tuning_row.name = "TuningRow"
 	tuning_row.add_theme_constant_override("separation", 8)
@@ -640,6 +646,10 @@ func _on_rain_toggled(on: bool) -> void:
 
 func _on_drift_guide_toggled(on: bool) -> void:
 	GameSettingsScript.save_drift_guide_enabled(on)  # the guide follows the notifier at once
+
+
+func _on_jump_arrow_toggled(on: bool) -> void:
+	GameSettingsScript.save_jump_arrow_enabled(on)  # the arrow follows the notifier at once
 
 
 func _on_smoothing_toggled(on: bool) -> void:
