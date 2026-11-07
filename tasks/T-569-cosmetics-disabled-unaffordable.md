@@ -64,3 +64,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Done. Cosmetics screen: the Unlock button is disabled (HudStyle disabled look, same as the garage Buy) while coins < price, enabled when they reach it, refreshed on every coin change; unlocked ones are never disabled. 2 new tests in game/tests/unit/test_cosmetics_screen.gd (10/10 pass); full run 3057 tests, 3056 pass, 0 fail, 1 risky. Doc: docs/garage-design.md Decisions line updated. To test by hand: set coins in the save (progress.json in the game's user folder, field coins; e.g. 350 gives two affordable, two not) and open Cosmetics. Screenshots: art-archive/T-569/screenshots/cosmetics_no_coins.png and cosmetics_350_coins_mixed.png (fixture game/tests/fixtures/cosmetics_shot.tscn, coins from env SHOT_COINS).
+
+Correction: the screenshot fixture is game/tests/fixtures/t569_coins_shot.tscn (coins from env SHOT_COINS); T-553's cosmetics_shot fixture is untouched.

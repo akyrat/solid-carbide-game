@@ -1,8 +1,23 @@
-extends Node
-## Screenshot fixture (T-569): the Cosmetics screen with coins from the environment variable SHOT_COINS.
+extends Control
+## Screenshot fixture (T-553): the Cosmetics submenu in a chosen state, or the pause screen. The state
+## comes from the environment variable COSMETICS_SHOT: locked, bought, picked or pause.
+
 func _ready() -> void:
-	var p := PlayerProgress.new(null, RunPaths.file("shot_cosmetics_t569.json"))
-	p.coins = int(OS.get_environment("SHOT_COINS"))
+	var mode := OS.get_environment("COSMETICS_SHOT")
+	if mode == "pause":
+		var p: Node2D = load("res://scenes/drift_prototype/drift_prototype.tscn").instantiate()
+		add_child(p)
+		p.car.use_keyboard = false
+		p.pause_screen.pause()
+		return
+	var progress := PlayerProgress.new(null, "user://cosmetics_shot.json")
+	progress.coins = 300
+	if mode == "bought" or mode == "picked":
+		progress.coins = 1000
+		progress.buy_cosmetic("spring")
+	if mode == "picked":
+		progress.equip("spring")
 	var s: CosmeticsScreen = load("res://scenes/menu/cosmetics_screen.tscn").instantiate()
-	s.progress = p
+	s.progress = progress
 	add_child(s)
+	s.set_anchors_preset(Control.PRESET_FULL_RECT)
