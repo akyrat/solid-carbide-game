@@ -144,6 +144,11 @@ class TiltRound2Tests(unittest.TestCase):
         self.assertGreater(edge(out, left, False), edge(frame, left, False))   # front left goes down
         self.assertLess(edge(out, right, True), edge(frame, right, True))      # back right goes up
 
+    def test_rear_views_tilt_less(self):
+        self.assertAlmostEqual(b.tilt_deg_for(8, 30.0), 30.0)        # the top tips towards the viewer
+        self.assertLess(b.tilt_deg_for(24, 30.0), 20.0)              # it tips away: eased
+        self.assertGreaterEqual(b.tilt_deg_for(24, 30.0), 30.0 * (1 - b.AWAY_EASE) - 1e-9)
+
     def test_zero_tilt_splat_is_identity(self):
         frame = b.normal_frame(3)
         self.assertTrue(np.array_equal(b.splat_frame(frame, 3 * b.STEP_DEG, 0.0), frame))

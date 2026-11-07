@@ -50,7 +50,7 @@ CENTER = (64.5, 65.5)            # car_iso.json center_px
 TILT_STEPS_DEG = (10.0, 20.0, 30.0)   # steps 1, 2, 3 (3 = the held pose); a proposal for the playtest (round 1 used 7, 14, 20: too subtle)
 
 # The camera: orthographic, the game's isometric azimuth, ELEV_DEG above the ground, K screen px per unit.
-ELEV_DEG = 30.0
+ELEV_DEG = 45.0
 K = 40.0
 # The car-shaped volume used to give each pixel a height (local units: u forward, v left, z up from the
 # wheels' bottom). The body, then the fastback cabin set a little back.
@@ -78,6 +78,20 @@ def tilt_axes():
     d = np.array([WHEEL_U, -WHEEL_V]); d /= np.linalg.norm(d)
     n = np.array([WHEEL_V, WHEEL_U]); n /= np.linalg.norm(n)
     return d, n
+
+
+AWAY_EASE = 0.45   # how much less the car tilts when the tilt tips its top away from the viewer (see tilt_deg_for)
+
+
+def tilt_deg_for(i: int, deg: float) -> float:
+    """The tilt drawn for direction frame i (T-555 round 2): the full angle when lowering the front left side tips
+    the car's top towards the viewer; up to AWAY_EASE less when it tips it away (the rear views), where the full
+    angle turns the roof edge-on and the sprite collapses into a sliver it has no pixels for."""
+    f, l = local_axes(i * STEP_DEG)
+    _, n = tilt_axes()
+    world_n = n[0] * f + n[1] * l                        # the front left side's direction on the ground
+    towards_viewer = float(world_n @ np.array([1.0, 1.0]) / math.sqrt(2.0))
+    return deg * (1.0 - AWAY_EASE * max(0.0, -towards_viewer))
 
 
 def tilt_local(u, v, z, deg: float):
@@ -455,7 +469,7 @@ def build_guides(dirs, out_dir: Path) -> list[Path]:
         frame = normal_frame(i, sheet)
         for s, deg in enumerate(TILT_STEPS_DEG, start=1):
             p = out_dir / frame_name(i, s)
-            save_rgba(splat_frame(frame, i * STEP_DEG, deg), p)
+            save_rgba(splat_frame(frame, i * STEP_DEG, tilt_deg_for(i, deg)), p)
             made.append(p)
     return made
 
@@ -613,13 +627,13 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     g = sub.add_parser("guides")
     g.add_argument("--dirs")
-    g.add_argument("--out", default=str(ARCHIVE / "guides2"))
+    g.add_argument("--out", default=str(ARCHIVE / "guides3"))
     c = sub.add_parser("clean")
     c.add_argument("inp")
     c.add_argument("out")
     c.add_argument("--dir", type=int, required=True)
     c.add_argument("--step", type=int, default=3)
-    c.add_argument("--guides", default=str(ARCHIVE / "guides2"))
+    c.add_argument("--guides", default=str(ARCHIVE / "guides3"))
     s = sub.add_parser("sheet")
     s.add_argument("--frames-dir", required=True)
     s.add_argument("--out", default=str(CAR_DIR / "car_iso_tilt"))
@@ -629,10 +643,10 @@ def main(argv=None) -> int:
     r.add_argument("--strength", type=int, default=450)
     r.add_argument("--seed", type=int, required=True)
     r.add_argument("--guidance", type=float, default=4.0)
-    r.add_argument("--guides", default=str(ARCHIVE / "guides2"))
+    r.add_argument("--guides", default=str(ARCHIVE / "guides3"))
     r.add_argument("--out", required=True)
     t = sub.add_parser("strip")
-    t.add_argument("--dir", type=int, required=True)
+    t.add_argument("--dir", required=True, help="a direction frame, or all (a 96-frame row, direction by direction)")
     t.add_argument("--frames-dir", required=True)
     t.add_argument("--out", required=True)
     gs = sub.add_parser("generate-set")
@@ -640,7 +654,7 @@ def main(argv=None) -> int:
     gs.add_argument("--steps", default="1,2,3")
     gs.add_argument("--strength", type=int, required=True)
     gs.add_argument("--seed0", type=int, default=556000)
-    gs.add_argument("--guides", default=str(ARCHIVE / "guides2"))
+    gs.add_argument("--guides", default=str(ARCHIVE / "guides3"))
     gs.add_argument("--raw-dir", default=str(ARCHIVE / "raw"))
     gs.add_argument("--frames-dir", required=True)
     gs.add_argument("--tag", required=True)
@@ -648,7 +662,7 @@ def main(argv=None) -> int:
     cp = sub.add_parser("copy-guides")
     cp.add_argument("--dirs", required=True)
     cp.add_argument("--steps", default="1")
-    cp.add_argument("--guides", default=str(ARCHIVE / "guides2"))
+    cp.add_argument("--guides", default=str(ARCHIVE / "guides3"))
     cp.add_argument("--frames-dir", required=True)
     h = sub.add_parser("shear")
     h.add_argument("--dir", type=int, required=True)
@@ -665,8 +679,8 @@ def main(argv=None) -> int:
             print(path)
     elif a.cmd == "clean":
         ref_path = Path(a.guides) / frame_name(a.dir, a.step)
-        reference = load_rgba(ref_path) if ref_path.is_file() else warp_frame(
-            normal_frame(a.dir), a.dir * STEP_DEG, TILT_STEPS_DEG[a.step - 1])
+        reference = load_rgba(ref_path) if ref_path.is_file() else splat_frame(
+            normal_frame(a.dir), a.dir * STEP_DEG, tilt_deg_for(a.dir, TILT_STEPS_DEG[a.step - 1]))
         save_rgba(clean(load_rgba(Path(a.inp)), reference), Path(a.out))
         print(a.out)
     elif a.cmd == "sheet":
@@ -679,7 +693,7 @@ def main(argv=None) -> int:
         print(a.out)
     elif a.cmd == "strip":
         fd = Path(a.frames_dir)
-        strip([load_rgba(fd / frame_name(a.dir, s)) for s in (1, 2, 3)], Path(a.out))
+        strip([load_rgba(fd / frame_name(i, s)) for i in _dirs(a.dir) for s in (1, 2, 3)], Path(a.out))
         print(a.out)
     elif a.cmd == "generate-set":
         called = generate_set(_dirs(a.dirs), [int(x) for x in a.steps.split(",")], a.strength, a.seed0,
