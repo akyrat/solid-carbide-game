@@ -1,7 +1,7 @@
 ---
 id: T-550
 title: Texts for the grind overhaul, the jump arrow and the Cosmetics menu
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md, docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, docs/garage-design.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md, docs/garage-design.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -68,6 +68,10 @@ QA round 1: a text inventory test fails (the new cosmetics text file isn't liste
 ### 2026-11-07, In progress → In QA
 
 Fixed: the text list test and screenshots. QA round 2.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA round 2 passed (5/5). Waits for you in the combined build.
 
 ## Style review
 
@@ -537,3 +541,4 @@ Tests: new game/tests/unit/test_cosmetics_text.gd (3 tests) plus test_trick_list
 - 2026-11-07, flagged-for-review → in-progress: Project Lead: the one text below 8 (Premium Shockwave Ring, 7) is noted for the board's playtest, as the criteria allow.
 
 QA round 1 fixes: (1) game/tools/text_inventory.py now lists cosmetics_text.json ('Cosmetics menu (not in the game yet)'). (2) Full runs on the branch: GUT 255 scripts, 2920 tests, 2919 passing, 0 failing, 1 risky/pending; python game/tools 1020 tests OK (4 skipped); python tools 639 tests OK. (3) Screenshots in art-archive/T-550/screenshots/: trick_list.png (the pause trick list) and trick_list_grind.png (GRIND! selected: the new rule text, badge HOLD SPACE and the note; the note wraps to two lines at 'mid-air' in the current layout, a UI matter). The tutorial slides do not show the grind rule (slide 2 shows no trick list), so the trick list is the only place it appears today. The new menu texts (Cosmetics button, submenu labels, effect names, Facing arrow checkbox) are shown by T-553, so no screenshots of them here.
+- 2026-11-07, needs-playtest → done: Board: grind overhaul build played, lgtm
