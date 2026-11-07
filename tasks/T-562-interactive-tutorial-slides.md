@@ -116,3 +116,33 @@ All texts are T-559's keys. No placeholder text.
 **Documents affected:**
 - `docs/hud-and-menus.md`: Content, new "The interactive slides (T-562)", and the T-485 heading marked as replaced.
 - `game/docs/hud-and-menus/tutorial-slides.md`: scenes, practice windows, keys and tests.
+
+### UI Agent, 2026-11-07 (second pass, after T-560 and T-561 were merged into this branch)
+
+**The merge was clean.** No conflicts. `practice_scene_path` already defaults to the real scene (`res://scenes/run/practice_session.tscn`), so no change was needed. The playground path and the goal-text keys are T-561's own (`res://data/level/practice_playground.json` and T-559's `tutorial.goal.*`), and they came in with the merge.
+
+**Real-scene check.** `game/tests/unit/test_tutorial_practice_real.gd` now runs: 6/6 tests, 76 asserts. It checks:
+- each trick slide holds the real session, set to its trick;
+- only the showing window runs and has the keyboard (the car's `input_enabled`);
+- Space reaches the car and presses no button;
+- the grind window opens with the Jump gift;
+- end to end on all four trick slides: three successes of the slide's trick (the grind takes the Jump gift first, and the car then has Jump) make the notebook read 3/3, with the success message hidden until the third;
+- W and A/D, held through `Input.parse_input_event`, drive and steer the car on the drift slide without changing slides.
+
+**Other tests, rerun after the merge:**
+- `test_tutorial_slides`: 33/33, 410 asserts.
+- `test_tutorial_flow`: 8/8, 49 asserts.
+- `test_shared_button`: 12/12, 6610 asserts.
+
+**Screenshots** are in `art-archive/T-562/screenshots/`. All are 1280 x 720, taken from `tests/fixtures/tutorial_slides_demo*.tscn`. The fixture gained `drive`, `take_gift` and `complete`, plus the scenes `_5`, `_6`, `_drive`, `_success` and `_airspin_drive`. I opened each one to check it.
+- `slide1_loop.png`: the content loop.
+- `slide2.png` to `slide5.png`: the four trick slides with their practice windows. On the grind slide (`slide5.png`) the Jump gift is open in the window.
+- `slide6.png`: the last slide.
+- `practice_in_progress_drift.png`: the car drifting with tyre marks and smoke, the notebook at "Drifts 0/3".
+- `success_grind.png`: "CONTENT SECURED!" over the grind window only, three GRIND! popups and the notebook line struck through.
+
+**For the playtest:**
+- **The car looks small** in the 600 x 400 window. The framing is T-561's zoom (the run's framing at the window's height).
+- **The notebook covers part of the window** at the top left.
+- **The gift overlay's title** in the grind window reads "MISSION DONE: PIMP YOUR RIDE", the run's power-up overlay text that T-561 reuses.
+- **The kickers of slides 1 to 5** show only "n / 6" (the Project Lead says this is fine).

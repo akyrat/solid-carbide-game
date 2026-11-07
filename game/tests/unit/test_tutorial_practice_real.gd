@@ -85,3 +85,69 @@ func test_the_real_completed_signal_shows_the_success_message() -> void:
 	assert_true(slides.success_messages[1].visible)
 	slides.show_slide(0)
 	assert_false(slides.practices[1].is_running(), "paused when its slide hides")
+
+
+## One success of `trick_id` from the car in the window, the way T-561's own tests make one.
+func _do(session, trick_id: String) -> void:
+	var car = session.car
+	match trick_id:
+		"rail_grind":
+			car.grind.grind_ended.emit("end", 1.0, 6.0)
+		"extended_drift":
+			car.tricks.last_trick_seconds = 1.2
+			car.trick.emit(trick_id)
+		_:
+			car.trick.emit(trick_id)
+	car.stepped.emit()
+
+
+func test_every_trick_slide_counts_to_three_and_shows_the_success_message() -> void:
+	if not _ready_or_pending():
+		return
+	var tricks := ["extended_drift", "alternate_drift", "air_three_sixty", "rail_grind"]
+	for i in range(4):
+		slides.show_slide(1 + i)
+		await wait_process_frames(3)
+		var session = slides.practices[i]
+		if i == 3:
+			assert_true(session.is_gift_open(), "the grind starts with the Jump gift")
+			session.gift_screen.skip_animation()
+			session.take_gift()
+			assert_eq(session.car.jump.tier, 1, "Jump taken")
+		var msg: Label = slides.success_messages[i]
+		for n in range(3):
+			assert_false(msg.visible, "slide %d: no message after %d" % [i + 2, n])
+			_do(session, tricks[i])
+			assert_eq(session.successes, n + 1)
+		assert_true(session.notebook.rows[0].label.text.contains("3/3"), "the notebook shows 3/3")
+		assert_true(msg.visible, "slide %d: the message after the third" % (i + 2))
+
+
+func _hold(code: Key, on: bool) -> void:
+	var e := InputEventKey.new()
+	e.keycode = code
+	e.physical_keycode = code
+	e.pressed = on
+	Input.parse_input_event(e)
+
+
+func test_w_and_a_drive_the_car_on_a_trick_slide_and_change_no_slide() -> void:
+	if not _ready_or_pending():
+		return
+	slides.show_slide(1)
+	await wait_process_frames(3)
+	var car = slides.practices[0].car
+	var start_pos: Vector2 = car.position
+	var start_rot: float = car.rotation
+	_hold(KEY_W, true)
+	_hold(KEY_A, true)
+	await wait_physics_frames(40)
+	_hold(KEY_A, false)
+	_hold(KEY_D, true)
+	await wait_physics_frames(10)
+	_hold(KEY_D, false)
+	_hold(KEY_W, false)
+	Input.flush_buffered_events()
+	assert_gt(car.position.distance_to(start_pos), 0.5, "W drove the car")
+	assert_ne(car.rotation, start_rot, "A and D steered it")
+	assert_eq(slides.current, 1, "A and D changed no slide")
