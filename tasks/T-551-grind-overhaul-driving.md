@@ -1,7 +1,7 @@
 ---
 id: T-551
 title: Grind overhaul: hold Space in the air to tilt and grind, release to launch; no Jump cooldown; jump effect and facing arrow
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -43,15 +43,15 @@ This ticket is part of the grind overhaul (board, 2026-11-07; Drifting, Decision
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Holding Space in the air puts the car in the tilted state through 3 transition frames, and releasing it in the air plays them backwards; on the ground nothing tilts (tests). (QA: pass / fail)
-- [ ] A grind starts only while Space is held in the air and the car touches a rail, lasts while it is held, and releasing Space launches the car along its facing at the data's speed with its old momentum gone, also facing backwards (tests). (QA: pass / fail)
-- [ ] Each rail landing still adds the landing boost to the car's speed (test). (QA: pass / fail)
-- [ ] The Jump power-up's jump from the ground has no cooldown at either tier (test). (QA: pass / fail)
-- [ ] Jumping plays the equipped jump effect's placeholder around the car, the dash cloud by default (test). (QA: pass / fail)
-- [ ] The facing arrow shows while grinding when jump_arrow_enabled is on and not when off (test). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/ describe all of it with each proposed number and its reason, and the result notes list every other system checked or updated. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] GIFs in art-archive/T-551/screenshots/ show a tilt in and out, a grind started by holding Space, a launch off a rail backwards, the arrow, and a jump effect placeholder. (QA: pass / fail)
+- [ ] Holding Space in the air puts the car in the tilted state through 3 transition frames, and releasing it in the air plays them backwards; on the ground nothing tilts (tests). (QA: pass)
+- [ ] A grind starts only while Space is held in the air and the car touches a rail, lasts while it is held, and releasing Space launches the car along its facing at the data's speed with its old momentum gone, also facing backwards (tests). (QA: pass)
+- [ ] Each rail landing still adds the landing boost to the car's speed (test). (QA: pass)
+- [ ] The Jump power-up's jump from the ground has no cooldown at either tier (test). (QA: pass)
+- [ ] Jumping plays the equipped jump effect's placeholder around the car, the dash cloud by default (test). (QA: pass)
+- [ ] The facing arrow shows while grinding when jump_arrow_enabled is on and not when off (test). (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/ describe all of it with each proposed number and its reason, and the result notes list every other system checked or updated. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] GIFs in art-archive/T-551/screenshots/ show a tilt in and out, a grind started by holding Space, a launch off a rail backwards, the arrow, and a jump effect placeholder. (QA: pass)
 
 ## Updates
 
@@ -60,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: hold Space in the air to tilt and grind, release to launch; no Jump cooldown; jump effect and arrow placeholders. Built on T-548.
+
+### 2026-11-07, In progress → In QA
+
+Built: hold Space in the air to tilt and grind, release to launch; no Jump cooldown; effect and arrow placeholders. QA now.
 
 ## Style review
 
