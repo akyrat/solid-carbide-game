@@ -86,3 +86,5 @@ Docs: docs/hud-and-menus.md Content (new paragraph after the mission notebook pa
 Not committed: the many untracked `.uid` files Godot made.
 
 Merge of task/T-562-interactive-tutorial-slides: one conflict in mission_page.gd (goal progress handler); resolved by keeping the deferred update and using T-561's line_text (goal_templates), so practice windows get the falling box too. test_practice_session now calls finish_falls() before reading the count (the count arrives on landing). Tests: test_practice_session 25/25, test_tutorial_slides 33/33, test_hud_mission_page 11/11, test_mission_page_fall 7/7.
+
+test_tutorial_practice_real.gd now calls finish_falls() before reading the 3/3 count. test_tutorial_practice_real 6/6, test_tutorial_slides 33/33.
