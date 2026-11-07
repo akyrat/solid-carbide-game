@@ -3930,3 +3930,18 @@ Entry format:
 - Decision or change: On the Cosmetics screen, an unlock button is disabled while the player can't afford it.
 - Documents touched: docs/garage-design.md
 - Tasks: T-569
+
+## 2026-11-07: Texts for the Settings screen
+- Decision or change: The main menu's Settings button and the Settings screen's title.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-570
+
+## 2026-11-07: A Settings screen from the main menu
+- Decision or change: The main menu opens a Settings screen with the settings that make sense outside a run.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-571
+
+## 2026-11-07: The tutorial comes back with each new build
+- Decision or change: Every new itch.io build shows the tutorial again, even to players who ticked Don't show again.
+- Documents touched: docs/hud-and-menus.md, docs/working-with-the-board.md
+- Tasks: T-572
