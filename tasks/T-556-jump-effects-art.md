@@ -1,7 +1,7 @@
 ---
 id: T-556
 title: Art: the five jump effects (dash cloud, spring, jet thrust, stunt sparks, shockwave ring)
-status: flagged-for-review
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -43,12 +43,12 @@ This ticket is part of the grind overhaul (board, 2026-11-07; Drifting, Decision
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each of the 5 effect ids plays its own animation around the car when it jumps, instead of the placeholder (test). (QA: pass / fail)
-- [ ] Each effect's style loop score is 8 or more, or it is noted for the playtest. (QA: pass / fail)
-- [ ] PixelLab calls and totals are in the result notes, within 50. (QA: pass / fail)
-- [ ] docs/visual-style.md Content describes the effects and how they were made. (QA: pass / fail)
-- [ ] QA's full test run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] GIFs in art-archive/T-556/screenshots/ show each effect in the game. (QA: pass / fail)
+- [ ] Each of the 5 effect ids plays its own animation around the car when it jumps, instead of the placeholder (test). (QA: pass: test_jump_effect_art.gd, 3 tests, 768x96 sheet per id, all five play and draw; the in-game still shows each effect)
+- [ ] Each effect's style loop score is 8 or more, or it is noted for the playtest. (QA: pass: spring 8, jet thrust 8; dash cloud, sparks and ring 7, noted for the playtest. Look: dash cloud = grey puffs spreading then dithering away; spring = steel coil on a plate stretching and collapsing; jet = orange flame cone from a nozzle with glow patch; sparks = orange flash then a thin burst, the weakest read at game size; ring = pale blue double ring rippling out)
+- [ ] PixelLab calls and totals are in the result notes, within 50. (QA: pass: 0 PixelLab calls of 50, free script)
+- [ ] docs/visual-style.md Content describes the effects and how they were made. (QA: pass: Content, The five jump effects (T-556))
+- [ ] QA's full test run passes, with the counts in the result notes. (QA: pass: Godot and game/tools sets pass via qa_check; the tools set skipped, nothing under tools/ changed; the script prints no counts, and the agent's notes gave none since it did not run the full sets)
+- [ ] GIFs in art-archive/T-556/screenshots/ show each effect in the game. (QA: pass: jump_effects.gif, jump_effects_in_game.png, sheets_first_draft.png)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: the five jump effects (up to 50 generations, free tools first).
+
+### 2026-11-07, In progress → In QA
+
+Five jump effects in, drawn by a free script (0 generations). Spring and jet 8; dash cloud, sparks and ring 7, noted for your playtest. QA now.
 
 ## Style review
 
@@ -494,3 +498,4 @@ Enlarged preview: C:\solid-carbide-worktrees\T-556\art-archive\T-556\style-loop\
 - **Swap-in:** `jump_effect.gd` `draw_placeholder()` now draws the sheet frame by progress (same signature, so the Cosmetics previews keep working; an unknown id draws the dash cloud). Test `game/tests/unit/test_jump_effect_art.gd` (3 tests: a sheet per id of 768 x 96, pixels in every frame, all play and draw) passes; `test_grind_overhaul` (the effect tests) still passes, 70 asserts. The full run is QA's.
 - **Docs:** `docs/visual-style.md` Content, "The five jump effects (T-556)".
 - **Pictures:** `art-archive/T-556/screenshots/jump_effects.gif` (all five in the game, one hop each), `jump_effects_in_game.png` (a still of each), `sheets_first_draft.png`; style-loop versions in `art-archive/T-556/style-loop/`, briefs and logs in `art-archive/T-556/`.
+- 2026-11-07, flagged-for-review → in-progress: Project Lead (the board's go to decide and not stop): the three effects at 7 are noted for the playtest, as the criteria allow.
