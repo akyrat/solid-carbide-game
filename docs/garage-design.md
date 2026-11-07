@@ -28,6 +28,14 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 
 ## Content
 
+### Cosmetics data (T-552)
+
+`game/data/cosmetics.json` lists the 5 jump effects in menu order, each with its price in coins and no text (names come from T-550's data). Prices, proposals for the playtest: **dash_cloud 0** (free, unlocked and picked from the start), **spring 150**, **jet_thrust 300**, **stunt_sparks 450**, **shockwave_ring 600**. Reasons: a run earns about 250 coins and the cheapest garage upgrade level costs 40 (the top levels 240 to 300), so the first effect is within reach after one run (about 0.6 runs), and each next one costs about another 0.6 runs, so all four cost about 6 runs together and sit beside the upgrades instead of competing with them.
+
+The save (`progress.json`, same version and backup rules) gains `"cosmetics": {"unlocked": [ids], "jump_effect": id}`. A save without it (an old one) loads with dash_cloud unlocked and picked, and loses nothing; unknown ids are dropped and a pick that is not unlocked falls back to dash_cloud.
+
+The API is on `PlayerProgress` (`game/scripts/data/player_progress.gd`; prices from `CosmeticsData`): `cosmetics_list() -> Array` of `{id, price, unlocked, equipped}` in menu order; `is_unlocked(id) -> bool`; `can_afford(id) -> bool` (known, still locked, enough coins); `buy_cosmetic(id) -> {ok, reason}` (spends the price, unlocks, saves, does not equip; refused with `NOT_ENOUGH_COINS`, `ALREADY_UNLOCKED` or `UNKNOWN_COSMETIC`, nothing changed); `equip(id) -> bool` (unlocked only, saves); `equipped_jump_effect() -> String`. `changed` is emitted after a buy or an equip. Tests: `game/tests/unit/test_cosmetics.gd`.
+
 ### Pickup magnet text (T-223)
 
 The fourth upgrade's text, in the form of the other three (name up to 25 characters, description up to 80; T-224 uses it word for word, with the key `pickup_magnet`). It names no number, because the Game Data Agent proposes how far each level reaches.
