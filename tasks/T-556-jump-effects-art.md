@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-551]
+depends_on: []
 documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, docs/garage-design.md]
 files_expected_to_change: [game/art/effects/, art-archive/T-556/, game/scripts/driving/, docs/visual-style.md]
