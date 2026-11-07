@@ -234,6 +234,17 @@ The run keeps its missions and the car's driving power-ups (Decisions, "Mission 
 - **Jump is offered first (T-554):** `PowerUpOffers` counts the gifts that open in a run (`gifts_opened`, reset at every run start; a skipped gift doesn't count). While fewer than 2 have opened and the car doesn't own Jump, Jump is always one of the gift's 2 choices (`FIRST_OFFER_ID`, `FIRST_OFFER_GIFTS`), the other drawn at random from the usual pool. If Jump was taken on the first gift, the second follows the usual rules; from the third gift on, all rules are usual. The slot caps still apply: with 3 power-ups owned (none Jump) Jump is not in the pool, so it is not offered.
 - **Proposals for the playtest** (T-457, not the board's yet): after mission 30 nothing more is offered; a trick that completes a mission does not count for the next one too; a new mission's drift goal counts only drifting done after it appeared.
 
+### The practice session (task T-561)
+
+The engine of the tutorial's practice windows (HUD and menus, Decisions, "Interactive tutorial slides"; how to use it: [game/docs/game-loop/practice-session.md](../game/docs/game-loop/practice-session.md)). Each trick slide (T-562) embeds one in its window. It is a small live run with one goal, not a run: it is never part of the screen flow below and never ends.
+
+- **What is in it:** the practice playground (Level design, Decisions, "The practice playground"; until T-560's level is in, a stand-in with one ramp and one rail on the drift prototype's grid ground), the real car with its real driving, combo, trick popups, drift marks and smoke, and the real mission notebook inside the window. **Nothing else:** no enemies, kaiju, clock, damage, gift packs, weapons, HUD or sounds.
+- **One trick, 3 times:** the slide sets it to the drift, the alt drift, air spins or the grind. The notebook shows one goal, the trick 3 times ("x/3"), and the count. A trick counts when it pays in the combo, the moment its popup shows: the drift is LONG DRIFT! (one unbroken drift of 1 s or more, counted when it ends), the alt drift ALT DRIFT!, air spins AIR 180! or AIR 360! (one landing counts once, also a 540 that pays both), the grind GRIND!. Nothing else counts. On the third the slide is told, and shows its success message over the window; the count then stays at 3 and the player can keep driving (proposals).
+- **The grind's Jump gift:** the grind practice starts by offering the real power-up gift overlay with one card, Jump; taking it gives the car Jump. The practice waits behind it.
+- **Start points and resets:** the car starts on the playground's start point for its trick. It goes back there when it leaves the playground, or when the player presses **R** (a proposal); the count stays.
+- **Keys and pausing:** the car reads the keyboard only while its window has focus; without focus it coasts as with no key held. The practice runs only while its slide shows it, and pauses only itself, never the game around it, so the slide's arrows and buttons keep working (also while the Jump gift is open).
+- **Proposals for the playtest:** the notebook drawn about 1.4 times the run's size for the window, in its top left corner; the camera frames the car as the run does at the window's height.
+
 ### Screen flow
 
 One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):

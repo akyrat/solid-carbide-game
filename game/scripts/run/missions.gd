@@ -76,6 +76,17 @@ func start(run_seed: int = -1) -> void:
 	_load_current()
 
 
+## A fresh set made of exactly these missions (task T-561, the tutorial's practice windows: one
+## mission with one goal): each an Array of goals {"trick", "kind", "amount"}, copied. Back to the
+## first; sends mission_started(0). The run itself uses start().
+func start_with(the_missions: Array) -> void:
+	missions = the_missions.duplicate(true)
+	mission_seed = -1
+	current = 0
+	_live_drift = 0.0
+	_load_current()
+
+
 ## How many missions the run has (12).
 func count() -> int:
 	return missions.size()
