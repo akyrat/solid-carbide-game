@@ -3870,3 +3870,8 @@ Entry format:
 - Decision or change: The drift slide counts 3 s of drifting in total; total-time mission goals show their running total live.
 - Documents touched: docs/game-loop-architecture.md, docs/hud-and-menus.md
 - Tasks: T-565
+
+## 2026-11-07: A grind starts when the drawings cross
+- Decision or change: Holding Space in the air, the car snaps to a rail when its sprite crosses the rail's, whatever its height.
+- Documents touched: docs/drifting.md
+- Tasks: T-566
