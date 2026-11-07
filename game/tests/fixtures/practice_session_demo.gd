@@ -2,11 +2,11 @@ extends Control
 ## Screenshot fixture for task T-561: the practice session (scenes/run/practice_session.tscn) in a
 ## window-sized SubViewport on a dark page, as the tutorial slide (T-562) will embed it. The env
 ## var PRACTICE_SHOT picks what it shows:
-##   drift, alt_drift: the car drifting (scripted W + A), the goal at 1/3 (alt drift 2/3);
+##   drift, alt_drift: the car drifting (scripted W + A), the goal at 1.2/3 s (alt drift 2/3);
 ##   air_spin: the car driven off the jump ramp, turning in the air, the goal at 1/3;
 ##   grind_gift: the grind practice's start, the Jump gift on show;
 ##   grind: Jump taken, the car hopped onto the rail and grinding;
-##   done: the drift goal at 3/3, ticked.
+##   done: the drift goal at 3.0/3 s, ticked.
 ## Run: PRACTICE_SHOT=drift bash game/tools/screenshot.sh res://tests/fixtures/practice_session_demo.tscn out.png 60
 
 const SessionScene := preload("res://scenes/run/practice_session.tscn")
@@ -49,8 +49,7 @@ func _ready() -> void:
 	match shot:
 		"drift", "done":
 			car.scripted_input = [true, false, 1.0]
-			for i in (3 if shot == "done" else 1):
-				session.state.add_trick("extended_drift", 1.5)
+			session.add_drift_seconds(3.0 if shot == "done" else 1.2)  # T-565: drift seconds
 		"alt_drift":
 			car.scripted_input = [true, false, 1.0]
 			session.state.add_trick("alternate_drift")

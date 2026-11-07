@@ -16,7 +16,10 @@ extends RefCounted
 ## Goal kinds: "count" adds 1 per trick (any trick id the data allows); "seconds" adds the
 ## seconds, except for "extended_drift", which counts only one unbroken drift: its progress is
 ## the length of the drift in progress (or the one that just ended), and a drift that ends,
-## by release or a crash, starts over from 0.
+## by release or a crash, starts over from 0. A seconds goal that adds up (airtime: each landing
+## adds its seconds) is a running total (is_running_total, T-565): the notebook shows it against
+## its goal. add_seconds() adds time a little at a time without a name box (the tutorial's drift
+## slide, T-565).
 ##
 ## Proposals for the playtest: a trick that completes a mission does not also count for the
 ## next one, and the next mission's drift goal counts only drifting done after it started.
@@ -149,6 +152,29 @@ func on_trick(trick_id: String, seconds := 0.0) -> void:
 			_set_progress(i, progress[i] + 1.0)
 		if index != current:
 			return  # this trick completed the mission: it does not count for the next one
+
+
+## Adds `seconds` to every open seconds goal of `trick_id` that adds time up (T-565; Game loop
+## architecture, Decisions, "Total-time mission goals show their running total"), a little at a
+## time: no trick_counted, so the notebook drops no name box for each fraction of a second. The
+## unbroken drift ("extended_drift") is never added up this way (on_drift_step follows it).
+func add_seconds(trick_id: String, seconds: float) -> void:
+	if is_all_done() or seconds <= 0.0 or trick_id == TRICK_DRIFT:
+		return
+	var index := current
+	for i in _goal_count():
+		var g: Dictionary = missions[index][i]
+		if completed[i] or String(g["trick"]) != trick_id or String(g["kind"]) != KIND_SECONDS:
+			continue
+		_set_progress(i, progress[i] + seconds)
+		if index != current:
+			return
+
+
+## True when a goal adds its time up and shows a running total (T-565): a seconds goal that is
+## not the unbroken drift.
+static func is_running_total(trick_id: String, kind: String) -> bool:
+	return kind == KIND_SECONDS and trick_id != TRICK_DRIFT
 
 
 ## The car landed after `seconds` in the air ("airtime"): seconds goals add them up,

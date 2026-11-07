@@ -4,7 +4,8 @@ extends Node2D
 ## tutorial slides"; Game loop architecture, Content, "The practice session"). The tutorial slide
 ## (T-562) embeds this scene (scenes/run/practice_session.tscn) in a SubViewport: the real car,
 ## with the real driving, combo and trick signals, on the practice playground, counting one trick
-## until it has been done GOAL (3) times. No enemies, kaiju, clock, damage, gift packs, weapons,
+## until it has been done GOAL (3) times (the drift: DRIFT_SECONDS, 3 seconds of drifting in total,
+## T-565). No enemies, kaiju, clock, damage, gift packs, weapons,
 ## sounds or HUD, only the real mission notebook (MissionPage) in the window with the goal, and,
 ## for the grind, the real power-up gift overlay (PowerUpScreen) offering Jump.
 ##
@@ -22,17 +23,22 @@ extends Node2D
 ##   work too, when the window gets the input).
 ## - Signals: trick_counted(trick_id, done) for each success (trick_id is the car's own trick id,
 ##   for example "air_three_sixty"), progress(done, goal), completed() on the third success,
-##   car_reset(), gift_opened(), gift_taken(id).
+##   car_reset(), gift_opened(), gift_taken(id). The drift sends seconds_progress(done, goal)
+##   instead of trick_counted and progress, and completed() when its total reaches 3 s.
 ##
 ## What counts (proposals for the playtest): a trick counts when it pays, the moment the combo
 ## hears it (RunState.combo_trick), so it is exactly what the player sees pop up:
-## - drift: LONG DRIFT! ("extended_drift"), which the trick detector pays for one unbroken drift of
-##   combo.json's drift_pay.min_seconds (1 s) or more, when the drift ends;
+## - drift (T-565; HUD and menus, Decisions, "The drift slide counts drift seconds"): not a trick
+##   but time: every physics step the car drifts (its model's is_drifting, the same flag the run's
+##   drift counter reads) adds its seconds to one total over all drifts, which the notebook shows
+##   live (RunMissions.add_seconds: no name box for each fraction of a second, a proposal), and
+##   the goal is done when the total reaches DRIFT_SECONDS. A drift too short to pay counts too;
 ## - alt drift: ALT DRIFT! ("alternate_drift");
 ## - air spin: AIR 180! or AIR 360! ("air_one_eighty", "air_three_sixty"); one landing counts
 ##   once, also a 540 that pays both;
 ## - grind: GRIND! ("rail_grind"), a grind long enough to pay (combo.json rail_grind.min_seconds).
-## Nothing else counts. After the third success the count stays at 3 and the car can go on driving.
+## Nothing else counts. After the third success the count stays at 3 (the drift's total at 3 s) and
+## the car can go on driving.
 ##
 ## The car resets to its start point when it leaves the playground (the map's rectangle and
 ## AREA_MARGIN; the map's hard edges normally keep it in) or on R.
@@ -71,14 +77,14 @@ const TEXTS_PATH := "res://data/tutorial_text.json"
 const TRICKS := ["drift", "alt_drift", "air_spin", "grind"]
 ## The car's trick ids (RunState.combo_trick) that count for each.
 const COUNTED := {
-	"drift": ["extended_drift"],
+	"drift": [],  # T-565: the drift counts seconds of drifting (_on_car_stepped), not tricks
 	"alt_drift": ["alternate_drift"],
 	"air_spin": ["air_one_eighty", "air_three_sixty"],
 	"grind": ["rail_grind"],
 }
 ## The notebook goal's trick id for each (RunMissions; the trick's own id where there is one).
 const GOAL_TRICK := {
-	"drift": "extended_drift",
+	"drift": "drift_seconds",  # T-565: a practice goal of seconds added up, not the unbroken drift
 	"alt_drift": "alternate_drift",
 	"air_spin": "air_spin",
 	"grind": "rail_grind",
@@ -91,8 +97,15 @@ const GOAL_TEXT_KEYS := {
 	"air_spin": ["tutorial", "goal", "airspin"],
 	"grind": ["tutorial", "goal", "grind"],
 }
+## The drift slide's goal line (T-564's text, HUD and menus, Decisions, "The drift slide counts
+## drift seconds"): a template with {done} and {total}, both seconds with one decimal. T-564 wrote
+## it in place of T-559's drift line, so it is the same key as GOAL_TEXT_KEYS' drift.
+const DRIFT_SECONDS_TEXT_KEYS := ["tutorial", "goal", "drift"]
 ## How many successes the goal asks (HUD and menus, Decisions, "Interactive tutorial slides").
 const GOAL := 3
+## The drift slide's goal: seconds of drifting in total (HUD and menus, Decisions, "The drift slide
+## counts drift seconds", T-565).
+const DRIFT_SECONDS := 3.0
 ## The power-up gift a practice opens with (the grind's Jump).
 const GIFT := {"grind": "jump"}
 ## The key that puts the car back at its start point while the window has focus (a proposal).
@@ -114,6 +127,8 @@ const PX := 16.0
 
 signal trick_counted(trick_id: String, done: int)
 signal progress(done: int, goal: int)
+## The drift's total grew (T-565): `done` seconds of drifting so far out of `goal`.
+signal seconds_progress(done: float, goal: float)
 signal completed
 signal car_reset
 signal gift_opened
@@ -123,8 +138,10 @@ signal gift_taken(id: String)
 var trick := "drift"
 ## The level file; set before the session enters the tree to use another.
 var layout_path := PLAYGROUND_PATH
-## Successes so far (0 to GOAL).
+## Successes so far (0 to GOAL); the drift's stays 0 (it counts drift_seconds).
 var successes := 0
+## The drift's seconds of drifting so far, over all drifts (0 to DRIFT_SECONDS, T-565).
+var drift_seconds := 0.0
 ## Whether the window has focus (the car reads the keyboard).
 var focused := false
 
@@ -185,20 +202,27 @@ func setup(trick_name: String) -> void:
 ## point, the gift ready to open again (the grind). Keeps the session paused or running.
 func restart() -> void:
 	successes = 0
+	drift_seconds = 0.0
 	_air_counted_step = -1
 	if offers.is_showing():
 		offers.current_offers = []
 		gift_screen.close()
 		_set_gift_paused(false)
 	state.start_run()
-	missions.start_with([[{"trick": GOAL_TRICK[trick], "kind": RunMissions.KIND_COUNT, "amount": GOAL}]])
+	if trick == "drift":
+		missions.start_with([[{"trick": GOAL_TRICK[trick], "kind": RunMissions.KIND_SECONDS, "amount": DRIFT_SECONDS}]])
+	else:
+		missions.start_with([[{"trick": GOAL_TRICK[trick], "kind": RunMissions.KIND_COUNT, "amount": GOAL}]])
 	notebook.goal_templates = {GOAL_TRICK[trick]: goal_template(trick)}
 	notebook.show_current()
 	reset_car(false)
 	_gift_pending = GIFT.has(trick)
 	if not _paused:
 		_open_gift_if_pending()
-	progress.emit(successes, GOAL)
+	if trick == "drift":
+		seconds_progress.emit(drift_seconds, DRIFT_SECONDS)
+	else:
+		progress.emit(successes, GOAL)
 
 
 ## Runs the practice (and opens the grind's gift the first time).
@@ -220,6 +244,8 @@ func is_running() -> bool:
 
 
 func is_completed() -> bool:
+	if trick == "drift":
+		return drift_seconds >= DRIFT_SECONDS - RunMissions.EPSILON
 	return successes >= GOAL
 
 
@@ -251,16 +277,26 @@ func start_point(trick_name: String = "") -> Dictionary:
 	return {"position": LevelSpawn.position_of(map.layout), "rotation": LevelSpawn.rotation_of(map.layout)}
 
 
-## The notebook's goal line for `trick_name`: T-559's text in tutorial_text.json (an error and ""
-## when it is missing).
+## The notebook's goal line for `trick_name`: T-559's text in tutorial_text.json, for the drift
+## T-564's (DRIFT_SECONDS_TEXT_KEYS) when it is there (an error and "" when it is missing).
 static func goal_template(trick_name: String) -> String:
-	var node: Variant = _texts()
-	for part in GOAL_TEXT_KEYS.get(trick_name, []):
-		node = node.get(part) if node is Dictionary else null
-	if node is String and node != "":
-		return node
+	var texts := _texts()
+	if trick_name == "drift":
+		var seconds_line := _text_at(texts, DRIFT_SECONDS_TEXT_KEYS)
+		if seconds_line != "":
+			return seconds_line
+	var line := _text_at(texts, GOAL_TEXT_KEYS.get(trick_name, []))
+	if line != "":
+		return line
 	push_error("PracticeSession: no goal line for '%s' in %s" % [trick_name, TEXTS_PATH])
 	return ""
+
+
+static func _text_at(texts: Dictionary, keys: Array) -> String:
+	var node: Variant = texts
+	for part in keys:
+		node = node.get(part) if node is Dictionary else null
+	return node if node is String else ""
 
 
 static func _texts() -> Dictionary:
@@ -475,6 +511,18 @@ func _on_combo_trick(trick_id: String, _added: float, _multiplier: float) -> voi
 		completed.emit()
 
 
+## The drift slide (T-565): `seconds` more of drifting, added to the total; the notebook follows it
+## and the goal is done at DRIFT_SECONDS. Nothing after that, or on another slide.
+func add_drift_seconds(seconds: float) -> void:
+	if trick != "drift" or is_completed() or seconds <= 0.0:
+		return
+	drift_seconds = minf(drift_seconds + seconds, DRIFT_SECONDS)
+	missions.add_seconds(GOAL_TRICK[trick], seconds)
+	seconds_progress.emit(drift_seconds, DRIFT_SECONDS)
+	if is_completed():
+		completed.emit()
+
+
 ## After each of the car's physics steps: the drawing, the combo's hype speed, the rails and
 ## the playground's edge.
 func _on_car_stepped() -> void:
@@ -482,6 +530,8 @@ func _on_car_stepped() -> void:
 	var dt: float = car.model.dt
 	map.update_car_obstacles(car, car.height, car.vertical_speed)
 	state.drift_step(car.model.is_drifting, dt)
+	if trick == "drift" and car.model.is_drifting:
+		add_drift_seconds(dt)
 	car.tuning.hype_speed_bonus = state.eased_hype_speed(car.tuning.hype_speed_bonus, dt)
 	rail_sparks.step(car, dt)
 	if rail_drawing != null:

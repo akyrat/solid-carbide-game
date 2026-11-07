@@ -115,6 +115,18 @@ func test_every_trick_slide_counts_to_three_and_shows_the_success_message() -> v
 			session.take_gift()
 			assert_eq(session.car.jump.tier, 1, "Jump taken")
 		var msg: Label = slides.success_messages[i]
+		if i == 0:
+			# T-565: the drift slide counts 3 s of drifting in total, over several drifts.
+			for n in range(3):
+				_do(session, tricks[i])
+				assert_eq(session.successes, 0, "a LONG DRIFT! is no success on the drift slide")
+				assert_false(msg.visible, "slide 2: no message before 3 s")
+				session.add_drift_seconds(0.9)
+			assert_false(msg.visible, "slide 2: no message at 2.7 s")
+			session.add_drift_seconds(0.3)
+			assert_true(session.notebook.rows[0].label.text.contains("3.0/3"), "the notebook shows 3.0/3")
+			assert_true(msg.visible, "slide 2: the message at 3 s in total")
+			continue
 		for n in range(3):
 			assert_false(msg.visible, "slide %d: no message after %d" % [i + 2, n])
 			_do(session, tricks[i])
