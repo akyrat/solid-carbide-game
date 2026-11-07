@@ -1,7 +1,7 @@
 ---
 id: T-565
 title: The drift slide counts 3 s of drifting in total; total-time mission goals show their running total
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Rails
@@ -43,12 +43,12 @@ A tweak to the interactive tutorial build after the board played it (branch play
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] On the drift slide, drifting adds up across drifts, the notebook shows the running total, and the success fires at 3 s in total (tests). (QA: pass / fail)
-- [ ] The other three trick slides still count 3 tricks (the existing tests pass). (QA: pass / fail)
-- [ ] In a run, the airtime goal shows its running total in the notebook, updating as airtime adds up (test); the unbroken drift goal is unchanged (test). (QA: pass / fail)
-- [ ] docs/game-loop-architecture.md and docs/hud-and-menus.md Content describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-565/screenshots/ shows the drift slide's total growing to 3 s and the run's airtime total growing. (QA: pass / fail)
+- [ ] On the drift slide, drifting adds up across drifts, the notebook shows the running total, and the success fires at 3 s in total (tests). (QA: pass)
+- [ ] The other three trick slides still count 3 tricks (the existing tests pass). (QA: pass)
+- [ ] In a run, the airtime goal shows its running total in the notebook, updating as airtime adds up (test); the unbroken drift goal is unchanged (test). (QA: pass)
+- [ ] docs/game-loop-architecture.md and docs/hud-and-menus.md Content describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-565/screenshots/ shows the drift slide's total growing to 3 s and the run's airtime total growing. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: the drift slide counts 3 s of drifting in total; airtime goals show their running total.
+
+### 2026-11-07, In progress → In QA
+
+Built: the drift slide counts 3 s in total; airtime shows its running total (e.g. 2.7/3.0). QA now.
 
 ## Style review
 
