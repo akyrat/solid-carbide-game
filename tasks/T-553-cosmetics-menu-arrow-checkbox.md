@@ -1,7 +1,7 @@
 ---
 id: T-553
 title: The Cosmetics submenu from the main menu, and the jump arrow checkbox
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md, docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/garage-design.md, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [game/scripts/ui/, game/scenes/, game/tests/, docs/hud-and-menus.md, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Started: Cosmetics button and submenu, the Facing arrow checkbox, and wiring the
 
 Built: Cosmetics button and submenu, Facing arrow checkbox, picked effect wired to the car. QA now.
 
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (7/7). Waits for you in the combined build.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -79,3 +83,4 @@ Tests: new game/tests/unit/test_cosmetics_screen.gd (8: button opens/Back return
 Screenshots in art-archive/T-553/screenshots/: main_menu.png, cosmetics_locked.png (300 coins), cosmetics_bought.png, cosmetics_picked.png, cosmetics_pause.png (checkbox in the pause settings). Fixture: game/tests/fixtures/cosmetics_shot.tscn (env COSMETICS_SHOT=locked|bought|picked|pause).
 Docs: docs/hud-and-menus.md and docs/garage-design.md (new Content sections).
 Proposals for the playtest: preview loop 1.0 s + 0.4 s hold, the previews are the code placeholder (small; T-556's art replaces them in draw_placeholder).
+- 2026-11-07, needs-playtest → done: Board: grind overhaul build played, lgtm
