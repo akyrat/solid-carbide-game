@@ -1,7 +1,7 @@
 ---
 id: T-562
 title: The interactive tutorial slides
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/menu/tutorial_slides.gd]
 files_expected_to_change: [game/scripts/menu/, game/scenes/menu/, game/tests/, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: the six interactive slides, with practice windows; A, D and Space drive
 ### 2026-11-07, In progress → In QA
 
 Built: the six interactive slides on the real practice scene. QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (7/7). Waits for you in the combined build.
 
 ## Style review
 
@@ -150,3 +154,4 @@ All texts are T-559's keys. No placeholder text.
 - **The notebook covers part of the window** at the top left.
 - **The gift overlay's title** in the grind window reads "MISSION DONE: PIMP YOUR RIDE", the run's power-up overlay text that T-561 reuses.
 - **The kickers of slides 1 to 5** show only "n / 6" (the Project Lead says this is fine).
+- 2026-11-07, needs-playtest → done: Board: interactive tutorial build played, lgtm

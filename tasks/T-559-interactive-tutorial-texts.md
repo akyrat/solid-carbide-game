@@ -1,7 +1,7 @@
 ---
 id: T-559
 title: Texts for the interactive tutorial slides
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/extended-narrative.md, game/data/tutorial_text.json, game/data/mission_text.json]
 files_expected_to_change: [game/data/tutorial_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started: texts for the loop slide, the four trick slides, their notebook goals a
 ### 2026-11-07, In progress → In QA
 
 Texts written (scored 8 to 9). QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (4/4). Waits for you in the combined build.
 
 ## Style review
 
@@ -135,3 +139,4 @@ Keys for T-562 (text, then where):
 Reused: trick.* names, trick_rule.*, slide4.title/kaiju, kicker.goal, kicker.pattern, button.start/skip, checkbox.dont_show, arrow.*.
 
 Tests: game/tools/test_text_inventory.py + test_style_rules.py 35 passed; GUT test_tutorial_slides all passed (306 asserts), test_trick_list 18/18. Full GUT run left to QA/merge.
+- 2026-11-07, needs-playtest → done: Board: interactive tutorial build played, lgtm

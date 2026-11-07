@@ -1,7 +1,7 @@
 ---
 id: T-560
 title: The practice playground level
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/drifting.md, game/scripts/driving/ground_grid.gd, game/docs/level/game-map.md]
 files_expected_to_change: [game/data/level/, game/scenes/, game/scripts/level/, game/tests/, game/docs/level/, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started: a small practice playground on the dark purple grid, with a ramp and ra
 
 Built: the practice playground (ground lightened a little so the tyre marks show). QA now.
 
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6). The car, tyre marks and smoke read on the purple grid. Waits for you in the combined build.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -90,3 +94,4 @@ T-560 done by level-challenge.
 Notes: new .gd.uid files for my two scripts were left untracked like the repo's other uid files; I did not touch game/data/levels/.
 
 Follow-up (the board: contrast of the car and its effects): the tyre marks were nearly invisible on the prototype ground (1.06). Chose the smallest change: the playground level lightens its own ground_style colours (ground 59/54/94, lines 76/71/122 and 115/105/173), nothing else changes (marks, main map untouched). The marks now read clearly (about 1.7; screenshot art-archive/T-560/screenshots/drift.png); smoke edges and ramp lose some contrast (about 1.3 and 2.1), smoke core, rails and notebook stay about 8 to 9. Screenshots retaken; docs/level-design.md (Content, open question) and game/docs/level/practice-playground.md updated; test_practice_playground 9/9, check_level OK.
+- 2026-11-07, needs-playtest → done: Board: interactive tutorial build played, lgtm

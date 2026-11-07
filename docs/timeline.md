@@ -3875,3 +3875,38 @@ Entry format:
 - Decision or change: Holding Space in the air, the car snaps to a rail when its sprite crosses the rail's, whatever its height.
 - Documents touched: docs/drifting.md
 - Tasks: T-566
+
+## 2026-11-07: Texts for the interactive tutorial
+- Decision or change: Texts for the loop slide, the four trick slides, their notebook goals and the success message.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-559
+
+## 2026-11-07: The practice playground
+- Decision or change: A small practice level on the dark purple grid (lightened slightly so tyre marks show) with a ramp and rails.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-560
+
+## 2026-11-07: The practice session
+- Decision or change: A live practice run in a window that counts one trick, with the Jump gift on the grind slide.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-561
+
+## 2026-11-07: The interactive tutorial slides
+- Decision or change: Six tutorial slides: the loop, drift, alt drift, air spins, grind (each with a practice window), and the kaiju timeline; A, D and Space drive on the trick slides.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-562
+
+## 2026-11-07: Tricks fall into the mission notebook
+- Decision or change: A counting trick falls into the mission notebook as a name box with a splash, in runs and practice windows.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-563
+
+## 2026-11-07: Texts for drift seconds and running totals
+- Decision or change: Goal lines for the drift slide's seconds and total-time mission goals.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-564
+
+## 2026-11-07: Drift seconds and running totals
+- Decision or change: The drift slide counts 3 s of drifting in total; total-time mission goals show their running total live.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-565

@@ -1,7 +1,7 @@
 ---
 id: T-564
 title: Texts: drift seconds goal and running totals in the notebook
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, game/data/tutorial_text.json, tasks/T-559-interactive-tutorial-texts.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started: goal lines for the drift slide's 3 s total and the notebook's running t
 ### 2026-11-07, In progress → In QA
 
 Texts written (9/10). QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (4/4). Waits for you in the combined build.
 
 ## Style review
 
@@ -104,3 +108,4 @@ Optional polish, not a rule break: the lines don't show a unit symbol such as "s
 ## Result notes
 
 Texts (all in the style loop, kept at 9/10 in round 2; one batch run, see Style review). (1) game/data/tutorial_text.json tutorial.goal.drift = 'Drift seconds {done}/{total}' (seconds, one decimal, code fills; replaces 'Drifts {done}/{total}'), with _comment. (2) tutorial.trick.drift.instruction = 'Hold W and A or D to drift. Drift seconds add up, so short drifts count.' (was the 'cash it in' line), with _comment. (3) game/data/screen_texts.json missions.total_seconds = '{name} seconds {done}/{total}' (seconds, one decimal; e.g. 'Airtime seconds 1.4/3.0'), missions.total_seconds_names.airtime = 'Airtime', each with _comment. Slots are {done} and {total} (not {goal}); {name} is the goal's word from total_seconds_names. missions.goals.airtime ('Rack up {seconds} seconds of airtime') is kept unchanged for T-565 to stop using while the total shows. docs/hud-and-menus.md Content lists all three. Tests: game/tools/test_text_inventory.py 8 passed. Godot GUT runs (mission_texts, tutorial_slides) hung over 3 min in headless and were stopped; one earlier --import was refused once by the guard because of a '2>&1' (rerun plain). Data-only change, JSON parses.
+- 2026-11-07, needs-playtest → done: Board: interactive tutorial build played, lgtm
