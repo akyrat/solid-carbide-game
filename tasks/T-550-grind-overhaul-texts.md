@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md, docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, docs/garage-design.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -47,7 +47,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] Every existing text about grinding, Jump off a rail or the Jump cooldown that the overhaul makes wrong is changed, each listed with its file and key, and a search of game/data for "cooldown" near Jump shows none left. (QA: pass; only Jump's numeric cooldown_seconds in power_ups.json remains, T-551 removes it)
 - [ ] Each text has a style loop score of 8 or more in the Style review, or is noted for the playtest. (QA: pass; Premium Shockwave Ring 7 is noted for the playtest)
 - [ ] docs/hud-and-menus.md and docs/garage-design.md Content list the new texts. (QA: pass)
-- [ ] The tests for the changed data pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - game/tools test_text_inventory fails: 'data/cosmetics_text.json' is not listed in game/tools/text_inventory.py; also the result notes give no full-run counts)
+- [ ] The tests for the changed data pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass; round 2: all test sets pass)
 
 ## Updates
 
@@ -60,6 +60,14 @@ Started: texts for Cosmetics, the jump effects, the arrow checkbox, and fixing t
 ### 2026-11-07, In progress → In QA
 
 Texts written; one effect name scored 7 (Premium Shockwave Ring), noted for your playtest. QA now.
+
+### 2026-11-07, In QA → In progress
+
+QA round 1: a text inventory test fails (the new cosmetics text file isn't listed) and screenshots are missing. Back to the agent.
+
+### 2026-11-07, In progress → In QA
+
+Fixed: the text list test and screenshots. QA round 2.
 
 ## Style review
 
@@ -527,3 +535,5 @@ FOR T-552: game/data/power_ups.json still has cooldown_seconds on Jump tiers 1 a
 Docs: docs/hud-and-menus.md (new Content section, GRIND! lines fixed), docs/garage-design.md (new Content section).
 Tests: new game/tests/unit/test_cosmetics_text.gd (3 tests) plus test_trick_list_recipes, test_trick_list, test_tutorial_clips pass; full run left to QA.
 - 2026-11-07, flagged-for-review → in-progress: Project Lead: the one text below 8 (Premium Shockwave Ring, 7) is noted for the board's playtest, as the criteria allow.
+
+QA round 1 fixes: (1) game/tools/text_inventory.py now lists cosmetics_text.json ('Cosmetics menu (not in the game yet)'). (2) Full runs on the branch: GUT 255 scripts, 2920 tests, 2919 passing, 0 failing, 1 risky/pending; python game/tools 1020 tests OK (4 skipped); python tools 639 tests OK. (3) Screenshots in art-archive/T-550/screenshots/: trick_list.png (the pause trick list) and trick_list_grind.png (GRIND! selected: the new rule text, badge HOLD SPACE and the note; the note wraps to two lines at 'mid-air' in the current layout, a UI matter). The tutorial slides do not show the grind rule (slide 2 shows no trick list), so the trick list is the only place it appears today. The new menu texts (Cosmetics button, submenu labels, effect names, Facing arrow checkbox) are shown by T-553, so no screenshots of them here.

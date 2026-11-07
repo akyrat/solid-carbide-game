@@ -59,6 +59,7 @@ SCREEN_BY_PREFIX = {
     "recap_text:weapon": "End-of-run recap (weapons section)",
     "recap_text:trick": "End-of-run recap (tricks section)",
     "runs_list_text:": "Runs list (not in the game yet)",
+    "cosmetics_text:": "Cosmetics menu (not in the game yet)",
     "screen_texts:time_up": "Time's up screen",
     "screen_texts:heal": "HUD, popup when a full sub goal heals the car (all 3 weapons maxed)",
     "screen_texts:missions": "HUD, mission notebook page",
