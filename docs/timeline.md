@@ -3805,3 +3805,8 @@ Entry format:
 - Decision or change: Hold Space in the air to tilt and grind; release to launch where the car faces at 6 u/s; +4 u/s on each rail landing; no Jump cooldown; jump effect and Facing arrow. Includes T-548.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-551
+
+## 2026-11-07: The Cosmetics submenu and the Facing arrow checkbox
+- Decision or change: A Cosmetics submenu on the main menu to buy and pick jump effects; a Facing arrow checkbox in the pause settings.
+- Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
+- Tasks: T-553

@@ -85,3 +85,7 @@ The whole list (heading, coins, the five rows and Back) is one column, measured 
 ## References
 
 - The upgrade prices and effects: `game/data/garage.json` (task T-056).
+
+### The Cosmetics screen (T-553; proposals for the playtest)
+
+Built as described in HUD and menus, Content, "The Cosmetics submenu and the Facing arrow checkbox": a list in the garage's look, one row per jump effect (preview, name, description, price or state, an Unlock or Flex it button), the coin count and Back. Buying and picking go through the `PlayerProgress` API above; the screen holds no rule.

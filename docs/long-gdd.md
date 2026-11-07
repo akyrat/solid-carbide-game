@@ -1827,6 +1827,10 @@ The whole list (heading, coins, the five rows and Back) is one column, measured 
 
 - The upgrade prices and effects: `game/data/garage.json` (task T-056).
 
+#### The Cosmetics screen (T-553; proposals for the playtest)
+
+Built as described in HUD and menus, Content, "The Cosmetics submenu and the Facing arrow checkbox": a list in the garage's look, one row per jump effect (preview, name, description, price or state, an Unlock or Flex it button), the coin count and Back. Buying and picking go through the `PlayerProgress` API above; the screen holds no rule.
+
 
 ## 7. Visual style
 
@@ -2451,6 +2455,14 @@ Decisions, "The tutorial slides are redrawn, with clips of the real car". Four l
 - The screens and how they connect (main menu, run, garage): Game loop architecture, Decisions.
 - The garage screen: Garage design, Decisions.
 
+#### The Cosmetics submenu and the Facing arrow checkbox (T-553; proposals for the playtest)
+
+- **Main menu**: the Cosmetics button sits between Garage and Exit, in the shared button style, in the keyboard chain (W, A, S, D and the arrows like the other buttons). It opens the Cosmetics submenu; Back returns to the main menu.
+- **Cosmetics submenu** (`game/scripts/menu/cosmetics_screen.gd`, `game/scenes/menu/cosmetics_screen.tscn`; same look as the garage: dark background, title, coin count, one row per effect, a column scaled to fit the window). Each row: a preview square that loops the effect's animation (today the code-drawn placeholder of T-551; T-556's art replaces it in the same function), the name and description, then the state: a locked effect shows "Unlock for {price} coins" and an Unlock button; an unlocked one shows a "Flex it" button; the picked one shows "Equipped" and no button. Unlock spends the coins and does not pick (T-552); a purchase without enough coins stays refused and shows "Not enough coins: style isn't free." under the list. The coin count and Back reuse the garage's texts ("Coins: {n}", "Back"). The keyboard selection starts on the first button, walks down the buttons that are shown and ends on Back; when the picked button hides, the selection moves to Back. All texts are read from `game/data/cosmetics_text.json`.
+- **Facing arrow checkbox**: in the pause screen's settings row after Drift Guide, label `jump_arrow_label` ("Facing arrow"). It shows the saved `jump_arrow_enabled` (on by default), saves through `GameSettings.save_jump_arrow_enabled` and switches the arrow at once through the settings notifier. It fits the row, which still ends left of the button column at 1152 x 648.
+- **The picked effect on the car**: the screen flow sets `JumpEffectChoice.provider` to the save's `equipped_jump_effect`, so the car plays the picked effect (a run started outside the flow, such as the level creator's, plays the dash cloud).
+- Screenshots: `art-archive/T-553/screenshots/`.
+
 ## Source fingerprints
 
 Used by `python tools/generate_long_gdd.py --check` to tell which game area docs changed since this file was generated.
@@ -2462,7 +2474,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `a87d0690160711832d9f428b95edfb529a8556f008f84f5005899a9a4abb94ac` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
-| `garage-design.md` | `de6284d890fb72f16ac7ddaf52af72731514ef55f9ae676751322b43a4b2ed5b` |
+| `garage-design.md` | `aecd7f696197b5bf8d4d075d9c86d661d8e07309a0a672eb6b43c319c1400622` |
 | `visual-style.md` | `33f6e1e3da4e5f96dae886d8f875a0896c7c08a013e2608364b6f621d99c8b3d` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `a51d34f9e1ad6eefd7be10d27c1cd4fbe3e984465fd43711f44dc771d20d5115` |
+| `hud-and-menus.md` | `ae27cbc619eda5aa86ce1ef7b1aca9bbf3db3b74b429160337e9b61421c90277` |

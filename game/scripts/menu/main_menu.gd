@@ -6,6 +6,7 @@ extends Control
 
 signal start_pressed
 signal garage_pressed
+signal cosmetics_pressed  # T-553: the Cosmetics submenu
 signal exit_pressed
 
 const TITLE := "SOLID CARBIDE"
@@ -42,6 +43,7 @@ var _letter_originals: Dictionary = {}
 
 var start_button: Button
 var garage_button: Button
+var cosmetics_button: Button  # T-553, text from data/cosmetics_text.json (menu_button)
 var exit_button: Button
 var title_label: Label
 var subtitle_label: Label
@@ -106,11 +108,13 @@ func _ready() -> void:
 
 	start_button = _make_button("StartButton", START_TEXT, column)
 	garage_button = _make_button("GarageButton", GARAGE_TEXT, column)
+	cosmetics_button = _make_button("CosmeticsButton", str(CosmeticsScreen.load_texts().get("menu_button", "")), column)
 	exit_button = _make_button("ExitButton", EXIT_TEXT, column)
 	start_button.pressed.connect(func(): start_pressed.emit())
 	garage_button.pressed.connect(func(): garage_pressed.emit())
+	cosmetics_button.pressed.connect(func(): cosmetics_pressed.emit())
 	exit_button.pressed.connect(func(): exit_pressed.emit())
-	KeyNav.chain_column([start_button, garage_button, exit_button])  # T-492
+	KeyNav.chain_column([start_button, garage_button, cosmetics_button, exit_button])  # T-492
 	start_button.grab_focus()
 	refresh_garage_pulse()
 
