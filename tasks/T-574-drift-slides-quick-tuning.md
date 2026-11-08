@@ -71,6 +71,10 @@ Tweak 11 is in: charged jump and all of master; takes save a charged jump proper
 
 Tweak 12 is in: recording tools and F-keys gone; your recordings play on first visit; Replay and Skip demo under the window; Your turn for 2 s, then fades. Driving keys also skip. Play it from C:\solid-carbide-worktrees\T-574.
 
+### 2026-11-08, In QA
+
+Board: lgtm, merge. Final QA round, then merge with T-594.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
