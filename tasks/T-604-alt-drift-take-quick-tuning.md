@@ -1,7 +1,7 @@
 ---
 id: T-604
 title: Quick tuning: a new practice playground and alt drift take, with the board
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -54,10 +54,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: the playground editable in the creator and the recording controls back, in this folder only.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Steps 1 and 2 (UI Agent, 2026-11-08): ready for the board's edits and recording, in this folder only.
+
+Step 1, the playground in the level creator: the creator's level list shows only data/levels/, and a file opened from elsewhere was saved as a new file there. New launch argument: `-- --open=<path>` opens that level file straight in the editor, and Save writes back to that same file (LevelCreator.open_arg, open_editor_in_place; LevelCreatorEditor.save_in_place, save_path returns the opened file). Nothing is written in data/levels/. Back to list shows the level list as before; levels opened from the list behave as before. Launch: "C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" --path C:\solid-carbide-worktrees\T-604\game res://scenes/level_creator/level_creator.tscn -- --open=res://data/level/practice_playground.json . Saved with no edit, the file is written back unchanged (ground_style grid, spawn, rails, ramps, pairs, every key kept; test). Keep the Level name "Practice playground". build_practice_playground.py was already retired by T-574 (it refuses to run and writes nothing), so it cannot overwrite the board's playground. Tests: new test_creator_open_in_place.gd 5/5 (the arg, editor on that file, save back unchanged with nothing in the levels folder, still a grid level with a spawn, the old behaviour without the arg). Fixture: tests/fixtures/creator_practice_playground_demo.tscn.
+
+Step 2, the take tools back (TEMPORARY, T-574 tweak 8 as it was): on each trick slide, in a dev build (run from the project folder or editor, never an export), the row above the practice window: the take state label and F5 Reset (reset the stage), F6 Record (reset and record), F7 Stop + save (saves data/tutorial_takes/<trick>.json, the previous one kept as <trick>.prev.json), F9 Play take; same keys on the keyboard. The alt drift take is recorded on slide 3/6 (ALT DRIFT): F6 to start, F7 to stop and save into data/tutorial_takes/alt_drift.json. The demo, Replay and Skip demo stay as T-574 left them. Code: tutorial_slides.gd (TAKE_KEYS, TAKE_BUTTONS, TAKE_STATE_TEXT, dev_tools_enabled, take_action, set_dev_tools, _process, _update_take_label, _build_take_panel), each marked T-604 TEMPORARY. Tests: T-574's dev-build take tools test is back in test_tutorial_slides.gd; test_the_take_tools_and_f_keys_are_gone is pending while the tools are back (it runs again when they go); test_shared_button counts the take buttons in a dev build. test_tutorial* 86 passed + 1 pending of 87, test_shared_button 12/12, test_practice* 45/45, test_standin_takes 4/4, test_creator* 292/292, test_level_list 6/6, test_editor* 37/37, test_play_level 15/15, all passing.
+
+Screenshots: art-archive/T-604/screenshots/step1_creator_playground.png (the creator open on the playground, name Practice playground), step2_take_tools_alt_drift.png (the alt drift slide with the take tools row above the window).

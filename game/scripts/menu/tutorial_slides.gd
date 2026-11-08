@@ -67,6 +67,19 @@ const WINDOW_BORDER := 4
 ## the window's bottom edge on a dark band, clear of the notebook (top left). Its side padding and the band's opacity (proposals for the playtest).
 const CAPTION_PAD := 16.0
 const CAPTION_BAND_ALPHA := 0.6
+## T-604 (quick tuning, TEMPORARY: removed again when the board has re-recorded its take): T-574
+## tweak 8's take tools are back so the board can record a take on the new practice playground.
+## Their keys (none of the car's: W, A, S, D, Space and R) and their actions on the practice
+## session. F8 is left out: it stops a game run from the editor.
+const TAKE_KEYS := {KEY_F5: "reset_stage", KEY_F6: "start_recording", KEY_F7: "stop_and_save",
+	KEY_F9: "play_take"}
+## The take tools' button labels: a temporary DEV tool the players never see (dev builds only), so
+## these few words are not player text and are not in the texts file (the board's request, T-574).
+const TAKE_BUTTONS := [["F5 Reset", "reset_stage"], ["F6 Record", "start_recording"],
+	["F7 Stop + save", "stop_and_save"], ["F9 Play take", "play_take"]]
+const TAKE_STATE_TEXT := {"ready": "TAKE: ready", "recording": "TAKE: REC %.1f s", "saved": "TAKE: saved (%.1f s)",
+	"playing": "TAKE: playing %.1f / %.1f s", "played": "TAKE: played, off by %.2f units at most",
+	"no_take": "TAKE: no take saved", "error": "TAKE: could not save"}
 ## T-574 tweak 10, step 2 (the recorded demos): the demo's settings file (demo_enabled,
 ## demo_minimise_seconds, demo_minimise_corner, demo_minimise_scale) and the driving keys that skip a
 ## demo (the car's W, A, S, D, Space and R).
@@ -128,6 +141,12 @@ var practice_scene_path := PRACTICE_SCENE
 var practice_frames: Array[Control] = []
 var practice_containers: Array[SubViewportContainer] = []
 var practices: Array = [null, null, null, null]
+## T-604 (TEMPORARY, T-574 tweak 8's take tools brought back): dev builds only (run from the editor
+## or the project folder, never in an exported game). Their keys (TAKE_KEYS) and buttons act on the
+## showing slide's practice; the label shows its take state.
+var dev_tools_enabled := OS.has_feature("editor")
+var take_panels: Array[Control] = []
+var take_labels: Array[Label] = []
 ## T-574 tweak 10, step 2, the demo: each trick slide with a saved take plays it in its window first
 ## (the real car replaying the keys), then the window minimises like a video (it shrinks toward a
 ## corner and fades), the stage resets and the player drives. The values are the settings file's.
@@ -274,6 +293,10 @@ func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree() or not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	var code := (event as InputEventKey).keycode
+	if dev_tools_enabled and is_trick_slide() and TAKE_KEYS.has(code):
+		take_action(String(TAKE_KEYS[code]))
+		get_viewport().set_input_as_handled()
+		return
 	if is_trick_slide() and is_demo_showing() and _is_driving_key(event as InputEventKey):
 		skip_demo()  # the key goes on to the car, which now reads the keyboard
 	var letters := not is_trick_slide()
@@ -571,6 +594,78 @@ func _demo_button(node_name: String, key: String) -> Button:
 	return b
 
 
+# --- The take tools (T-574 tweak 8, brought back TEMPORARILY by T-604; dev builds only) ---------
+
+## Runs a take tool (`action`: one of TAKE_KEYS' values) on the showing slide's practice.
+func take_action(action: String) -> void:
+	if not dev_tools_enabled or not is_trick_slide():
+		return
+	var session = practices[current - FIRST_TRICK_SLIDE]
+	if session != null and is_instance_valid(session) and session.has_method(action):
+		session.call(action)
+	_update_take_label()
+
+
+func set_dev_tools(on: bool) -> void:
+	dev_tools_enabled = on
+	for p in take_panels:
+		p.visible = on
+
+
+func _process(_delta: float) -> void:
+	if dev_tools_enabled and is_trick_slide() and is_visible_in_tree():
+		_update_take_label()
+
+
+## The showing slide's take label: its practice's state (and seconds).
+func _update_take_label() -> void:
+	if not is_trick_slide():
+		return
+	var i := current - FIRST_TRICK_SLIDE
+	var session = practices[i]
+	var label := take_labels[i]
+	if session == null or not is_instance_valid(session) or not ("take_state" in session):
+		label.text = ""
+		return
+	var st := String(session.take_state)
+	var fmt := String(TAKE_STATE_TEXT.get(st, st))
+	match st:
+		"recording", "saved":
+			label.text = fmt % (session.take.seconds() if session.take != null else 0.0)
+		"playing":
+			label.text = fmt % [float(session.replay_step) / float(session.take.physics_fps), session.take.seconds()]
+		"played":
+			label.text = fmt % maxf(float(session.replay_drift), 0.0)
+		_:
+			label.text = fmt
+
+
+func _build_take_panel(s: Control, i: int) -> void:
+	var row := HBoxContainer.new()
+	row.name = "TakeTools"
+	row.alignment = BoxContainer.ALIGNMENT_END
+	row.add_theme_constant_override("separation", 8)
+	row.position = Vector2(WINDOW_POS.x, WINDOW_POS.y - 44)
+	row.size = Vector2(WINDOW_SIZE.x, 36)
+	row.visible = dev_tools_enabled
+	s.add_child(row)
+	var label := _label("", true, 12, GOLD, false)
+	label.name = "TakeState"
+	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(label)
+	for b in TAKE_BUTTONS:
+		var btn := Button.new()
+		btn.name = String(b[1])
+		btn.text = String(b[0])
+		btn.focus_mode = Control.FOCUS_NONE  # clicked only: no key presses it
+		btn.custom_minimum_size = Vector2(0, 32)
+		HudStyle.style_button(btn, true)
+		btn.pressed.connect(take_action.bind(String(b[1])))
+		row.add_child(btn)
+	take_panels.append(row)
+	take_labels.append(label)
+
+
 # --- The arrows, Skip and the dots (on every slide) ---------------------------------------------
 
 func _build_chrome() -> void:
@@ -798,6 +893,7 @@ func _build_trick(i: int) -> Control:
 	container.add_child(viewport)
 	practice_containers.append(container)
 	_build_demo_controls(s, i)
+	_build_take_panel(s, i)  # T-604, TEMPORARY
 
 	# T-574: the tutorial text in the game: a dark band along the window's bottom edge, the
 	# instruction (and the grind's hint) on it, outlined so it reads over the playground.

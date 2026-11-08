@@ -512,7 +512,35 @@ func test_the_stage_and_the_windows_scale_with_the_window() -> void:
 	assert_almost_eq(slides.stage.scale.x, 1000.0 / 1280.0, 0.001)
 
 
+func test_the_take_tools_show_on_each_trick_slide_only_in_a_dev_build() -> void:
+	# T-604 (TEMPORARY; T-574 tweak 8's test brought back with the take tools): recording controls,
+	# dev builds only (never in an exported game). Delete this test when the tools go again.
+	assert_eq(slides.take_panels.size(), 4, "one per trick slide")
+	slides.set_dev_tools(false)
+	slides.show_slide(1)
+	assert_false(slides.take_panels[0].is_visible_in_tree(), "hidden when not a dev build")
+	_push(KEY_F6)
+	assert_eq(slides.current, 1)
+	slides.set_dev_tools(true)
+	assert_true(slides.take_panels[0].is_visible_in_tree())
+	for i in range(4):
+		assert_true(slides.slides[1 + i].is_ancestor_of(slides.take_panels[i]))
+		for b in slides.take_panels[i].get_children():
+			if b is Button:
+				assert_eq((b as Button).focus_mode, Control.FOCUS_NONE, "clicked only")
+	for code in [KEY_F5, KEY_F6, KEY_F7, KEY_F9]:
+		_push(code)
+		assert_eq(slides.current, 1, "a take key changes no slide")
+	assert_false(slides.TAKE_KEYS.has(KEY_W) or slides.TAKE_KEYS.has(KEY_SPACE) or slides.TAKE_KEYS.has(KEY_R),
+		"no clash with driving")
+
+
 func test_the_take_tools_and_f_keys_are_gone() -> void:
+	# T-604: the take tools are back TEMPORARILY for the board's re-recording; this test runs again
+	# once they are removed (delete this pending branch then).
+	if "dev_tools_enabled" in slides:
+		pending("T-604: take tools temporarily back for the board's re-recording")
+		return
 	# T-574 tweak 12 (the board: "remove some of the buttons that I used to record it", "drop the F
 	# keys entirely"): no take tools row, and F5, F6, F7, F9 do nothing on a trick slide.
 	slides.show_slide(1)

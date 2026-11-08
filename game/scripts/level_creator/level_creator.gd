@@ -8,6 +8,12 @@ extends Control
 ## upgrades, pause screen, zoom and camera options, coins banked). When the run ends, win or loss,
 ## the creator shows its level list again (a proposal for the board).
 ##
+## T-604: launched with the user argument --open=<path> (after "--"), the creator opens that level
+## file straight in the editor, and Save writes back to that same file (editor.save_in_place). It is
+## how the tutorial's practice playground (res://data/level/practice_playground.json) is edited:
+##   Godot --path game res://scenes/level_creator/level_creator.tscn -- --open=res://data/level/practice_playground.json
+## Back from it shows the level list as usual.
+##
 ## Only one screen exists at a time, as a child of this node: `list_screen`, `editor` or `run`.
 
 ## Emitted when Play is pressed on a listed level, just before its run starts.
@@ -32,7 +38,27 @@ var progress: PlayerProgress
 
 func _ready() -> void:
 	progress = PlayerProgress.new()
-	show_list()
+	var path := open_arg(OS.get_cmdline_user_args())
+	if path != "" and FileAccess.file_exists(path):
+		open_editor_in_place(path)
+	else:
+		if path != "":
+			push_warning("Level creator: --open file not found: " + path)
+		show_list()
+
+
+## The level file named by a --open=<path> user argument, or "" (T-604).
+static func open_arg(args: PackedStringArray) -> String:
+	for a in args:
+		if a.begins_with("--open="):
+			return a.trim_prefix("--open=").strip_edges().trim_prefix("\"").trim_suffix("\"")
+	return ""
+
+
+## Opens the level file at `path` in the editor; Save writes back to that file (T-604).
+func open_editor_in_place(path: String) -> void:
+	_open_editor(path)
+	editor.save_in_place = true
 
 
 func show_list() -> void:
