@@ -1,7 +1,7 @@
 ---
 id: T-573
 title: No button looks selected when a menu opens
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -79,3 +79,4 @@ Tests: new game/tests/unit/test_no_preselected_button.gd (21 tests: every screen
 Docs: docs/hud-and-menus.md (Content, "Nothing is selected when a screen opens"; Settings keyboard line), new game/docs/hud-and-menus/keyboard-selection.md.
 Screenshots (art-archive/T-573/screenshots/): t573_garage.png, t573_garage_key.png, t573_cosmetics.png, t573_cosmetics_key.png (just opened, then after one Down press). Fixtures game/tests/fixtures/t573_*.
 Documents affected: docs/hud-and-menus.md, game/docs/hud-and-menus/keyboard-selection.md. Long GDD not regenerated (Project Lead's merge step).
+- 2026-11-08, needs-playtest → done: Board: menu fixes build played, merge (2026-11-08)
