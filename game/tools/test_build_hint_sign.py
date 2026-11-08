@@ -97,9 +97,56 @@ class TestSign(unittest.TestCase):
         self.assertEqual(kept.load()[7, 30], (200, 40, 40, 255))
 
     def test_roles_cover_every_opaque_pixel(self):
-        r = s.roles()
-        self.assertNotIn("other", r)
-        self.assertEqual(sum(r.values()), sum(1 for p in s.sign().getdata() if p[3] == 255))
+        for strong in (False, True):
+            r = s.roles(strong)
+            self.assertNotIn("other", r)
+            im = s.sign_strong() if strong else s.sign()
+            self.assertEqual(sum(r.values()), sum(1 for p in im.getdata() if p[3] == 255))
+
+    def test_strong_sign_keeps_the_brief_and_adds_what_the_reason_named(self):
+        im = s.sign_strong()
+        px = im.load()
+        self.assertEqual(failed_checks(im), [])
+        self.assertLessEqual(len(colours(im)), 30)
+        self.assertEqual(px[s.FOOT], s.INK)
+        for p in ((0, 0), (63, 0), (0, 95), (63, 95), (3, 70), (62, 30)):
+            self.assertEqual(px[p][3], 0, p)
+        for p in ((8, 8), (55, 8), (8, 55), (55, 55)):         # the board still fills face_px
+            self.assertEqual(px[p][3], 255, p)
+            self.assertNotEqual(px[p], s.INK, p)
+        for y in range(11, 53):                                # the face is still blank slate
+            for x in range(11, 53):
+                self.assertEqual(px[x, y], s.FACE, (x, y))
+        self.assertEqual(px[57, 30], s.EDGE)                   # the shadow column on the board's right
+        self.assertEqual(px[58, 30], s.INK)
+        self.assertEqual(px[35, 75], s.EDGE_DEEP)              # and on the post
+        self.assertEqual(px[27, 75], s.INK)                    # the thicker post's outline columns
+        self.assertEqual(px[36, 75], s.INK)
+        self.assertEqual(px[27, 67], s.GLINT)                  # glints breaking the post's outline
+        self.assertEqual(px[12, 7], s.GLINT)                   # and the board's
+        self.assertEqual(px[7, 31], s.GLINT)
+        self.assertEqual(px[8, 8], s.GLINT_BRIGHT)
+        self.assertEqual(px[8, 30], s.FRAME_HI)                # the two-step bevel
+        self.assertEqual(px[9, 30], s.FRAME_LIT)
+        self.assertEqual(px[54, 54], s.STEEL_LIT)              # a rivet
+        self.assertEqual(px[30, 76], s.AMBER)
+        self.assertEqual(px[33, 76], s.AMBER_DARK)
+        self.assertEqual(px[19, 90][3], 255)                   # the wider base plate
+
+    def test_polish_strong_keeps_pixellab_body_pixels_and_repaints_the_roles(self):
+        v1 = s.finish(Image.new("RGBA", (64, 96), (70, 80, 100, 255)))   # a PixelLab-like render, finished
+        out = s.polish_strong(v1)
+        px = out.load()
+        self.assertEqual(px[31, 80], (70, 80, 100, 255))       # the post's body keeps PixelLab's pixel
+        self.assertEqual(px[35, 80], s.EDGE_DEEP)              # the roles are the script's
+        self.assertEqual(px[27, 67], s.GLINT)
+        self.assertEqual(px[30, 30], s.FACE)
+        self.assertEqual(px[57, 30], s.EDGE)
+        self.assertEqual(px[0, 0][3], 0)
+        self.assertEqual(failed_checks(out), [])
+        # Where v1 had a script role (the old outline at column 28) the new body takes the script's steel.
+        self.assertEqual(px[28, 80], s.GLINT)
+        self.assertNotEqual(px[29, 75], s.INK)
 
 
 if __name__ == "__main__":

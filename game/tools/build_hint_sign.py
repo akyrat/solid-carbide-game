@@ -16,7 +16,11 @@ script does the free parts of the style loop around one PixelLab call per versio
         pixels PixelLab lost refilled from the script, the board's face blanked again (PixelLab likes to draw
         on it; --keep-face leaves its paint), the script's outline, glint and frame roles repainted over
         PixelLab's render (--no-polish keeps its pixels), and the palette cut to at most 30 colours.
-    python game/tools/build_hint_sign.py roles
+    python game/tools/build_hint_sign.py polish IN.png OUT.png --strong
+        The style loop's free fixes for rule 2 (T-577 v2): longer glint runs breaking the outline on the board
+        and the post, a shadow column on the right of the board, post and base, a two-step frame bevel with
+        rivets, and a thicker post and base with six shading steps; PixelLab's post and base pixels stay.
+    python game/tools/build_hint_sign.py roles [--strong]
         Prints how many pixels each drawing role has, for the result notes.
     python game/tools/build_hint_sign.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
@@ -131,15 +135,137 @@ def sign() -> Image.Image:
     return im
 
 
-def roles() -> dict[str, int]:
+# The strong pass (T-577 v2, the Style Evaluator's rule 2 fixes): more steps and a shadow column.
+FRAME_HI = (0x7C, 0x84, 0xAE, 255)    # the frame's outermost lit step
+GLINT_BRIGHT = (0xB4, 0xBC, 0xE0, 255)  # the brightest glint, at the corner nearest the light
+FACE_LIT = (0x3A, 0x3F, 0x5A, 255)    # the recessed face's lit inner edge, bottom and right
+EDGE = (0x1F, 0x23, 0x36, 255)        # the board's thickness, right and bottom (the keycap's edge)
+EDGE_DEEP = (0x16, 0x19, 0x28, 255)   # the shadow column on the post and base, against the outline
+STRONG_BRACKET = (25, 59, 38, 62)
+STRONG_POST_X = (27, 36)              # outline columns; steel on 28..35
+STRONG_POST_ROWS = (63, 88)
+STRONG_BAND_ROWS = (75, 78)
+STRONG_BASE_OUTLINE = (18, 85, 46, 95)
+
+
+def sign_strong() -> Image.Image:
+    """The v2 sign: the v1 shapes with a thicker post and base, stepped shading across them, a shadow column
+    on the right of the board, post and base, a bevelled frame with rivets, and longer glint runs breaking
+    the outline on the board's top-left and the post's lit edge. The face stays blank slate."""
+    im = Image.new("RGBA", SIZE, (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    px = im.load()
+
+    # The base plate: outline, a two-row side with its right in deep shadow, a top lit towards the light.
+    d.ellipse(STRONG_BASE_OUTLINE, fill=INK)
+    d.ellipse((19, 86, 45, 94), fill=STEEL_DEEP)        # the side
+    d.ellipse((19, 86, 45, 92), fill=STEEL_DARK)        # the top
+    d.ellipse((20, 86, 37, 90), fill=STEEL)             # the lit part of the top
+    for y in range(90, 95):                             # the shadow column on the plate's right side
+        for x in range(39, 46):
+            if px[x, y] == STEEL_DEEP:
+                px[x, y] = EDGE_DEEP
+    for p in ((21, 88), (22, 87), (23, 87)):            # rim light on the plate's lit edge
+        px[p] = GLINT
+    for p in ((24, 91), (40, 91)):                      # two bolts
+        px[p] = STEEL_LIT
+
+    # The post: outline, six steps across the steel from the lit edge to the shadow column.
+    x0, x1 = STRONG_POST_X
+    y0, y1 = STRONG_POST_ROWS
+    d.rectangle((x0, y0, x1, y1), fill=INK)
+    steps = (GLINT, STEEL_LIT, STEEL, STEEL, STEEL_DARK, STEEL_DARK, STEEL_DEEP, EDGE_DEEP)
+    for i, c in enumerate(steps):
+        d.rectangle((x0 + 1 + i, y0, x0 + 1 + i, y1), fill=c)
+    d.rectangle((x0 + 1, 70, x1 - 1, 70), fill=STEEL_DEEP)   # a joint ring
+    d.rectangle((x0 + 1, 71, x1 - 1, 71), fill=INK)
+    d.rectangle((x0 + 1, STRONG_BAND_ROWS[0], x1 - 2, STRONG_BAND_ROWS[1]), fill=AMBER)   # the shadow column stays
+    d.rectangle((x1 - 4, STRONG_BAND_ROWS[0], x1 - 2, STRONG_BAND_ROWS[1]), fill=AMBER_DARK)
+    for y in range(66, 70):                             # glints breaking the post's outline
+        px[x0, y] = GLINT
+    for y in range(81, 84):
+        px[x0, y] = GLINT
+    for p in ((30, 73), (31, 82), (29, 86)):            # scuffs
+        px[p] = STEEL_LIT
+    # The collar at the foot.
+    d.rectangle((25, 84, 38, 88), fill=INK)
+    d.rectangle((26, 85, 37, 88), fill=STEEL_DARK)
+    d.rectangle((26, 85, 26, 88), fill=STEEL_LIT)
+    d.rectangle((36, 85, 36, 88), fill=STEEL_DEEP)
+    d.rectangle((37, 85, 37, 88), fill=EDGE_DEEP)
+
+    # The bracket under the board.
+    b = STRONG_BRACKET
+    d.rectangle(b, fill=INK)
+    d.rectangle((b[0] + 1, b[1], b[2] - 1, b[3] - 1), fill=STEEL_DARK)
+    d.rectangle((b[0] + 1, b[1], b[0] + 1, b[3] - 1), fill=STEEL_LIT)
+    d.rectangle((b[2] - 2, b[1], b[2] - 1, b[3] - 1), fill=STEEL_DEEP)
+    d.rectangle((b[2] - 1, b[1], b[2] - 1, b[3] - 1), fill=EDGE_DEEP)
+    for p in ((28, 60), (35, 60)):                      # two rivets
+        px[p] = GLINT
+
+    # The board: its thickness on the right and bottom, then the outline, the bevelled frame, the face.
+    d.rectangle((9, 9, 58, 58), fill=INK)               # the outline round the thickness
+    d.rectangle((9, 9, 57, 57), fill=EDGE)              # the thickness, 1 px right and below
+    d.rounded_rectangle(BOARD_OUTLINE, radius=2, fill=INK)
+    d.rounded_rectangle(FACE_PX, radius=1, fill=FRAME)
+    d.rectangle((8, 8, 55, 8), fill=FRAME_HI)           # the frame's top, two lit steps
+    d.rectangle((8, 9, 54, 9), fill=FRAME_LIT)
+    d.rectangle((8, 8, 8, 55), fill=FRAME_HI)           # and its left
+    d.rectangle((9, 9, 9, 54), fill=FRAME_LIT)
+    d.rectangle((9, 55, 55, 55), fill=FACE_LOW)         # the bottom, two shaded steps
+    d.rectangle((10, 54, 55, 54), fill=FRAME_DARK)
+    d.rectangle((55, 9, 55, 55), fill=FACE_LOW)         # and the right
+    d.rectangle((54, 10, 54, 54), fill=FRAME_DARK)
+    px[8, 55] = FRAME
+    px[55, 8] = FRAME
+    px[8, 8] = GLINT_BRIGHT                             # the corner nearest the light
+    d.rectangle(FACE_INNER, fill=FACE)
+    d.rectangle((10, 10, 53, 10), fill=FACE_LOW)        # the frame's shadow on the recessed face
+    d.rectangle((10, 10, 10, 53), fill=FACE_LOW)
+    d.rectangle((11, 53, 53, 53), fill=FACE_LIT)        # and its lit inner edge
+    d.rectangle((53, 11, 53, 53), fill=FACE_LIT)
+    for p in ((9, 9), (54, 9), (9, 54), (54, 54)):      # rivets at the frame's corners
+        px[p] = GLINT if p == (9, 9) else STEEL_LIT
+    # Glint runs breaking the outline on the board's top and left (rule 2).
+    for x in list(range(10, 18)) + list(range(30, 34)) + list(range(44, 47)):
+        px[x, 7] = GLINT
+    for y in list(range(10, 18)) + list(range(30, 34)):
+        px[7, y] = GLINT
+    return im
+
+
+BODY_ROLES = (STEEL, STEEL_LIT, STEEL_DARK, STEEL_DEEP)
+V1_ROLES = (INK, GLINT, GLINT_BRIGHT, FRAME, FRAME_LIT, FRAME_HI, FRAME_DARK, AMBER, AMBER_DARK, FACE, FACE_LOW,
+            FACE_LIT, EDGE, EDGE_DEEP)
+
+
+def polish_strong(im: Image.Image) -> Image.Image:
+    """The strong pass over a finished sign: the strong sign's outline, glints, frame, face, band, thickness
+    and shadow columns replace the source; where the strong sign has plain steel (the post's and base's
+    body), PixelLab's own render stays if the source has an opaque pixel there that is not a script role."""
+    src = im.convert("RGBA")
+    spx = src.load()
+    out = sign_strong()
+    opx = out.load()
+    for y in range(HEIGHT):
+        for x in range(WIDTH):
+            if opx[x, y] in BODY_ROLES and spx[x, y][3] == 255 and spx[x, y] not in V1_ROLES:
+                opx[x, y] = spx[x, y]
+    return out
+
+
+def roles(strong: bool = False) -> dict[str, int]:
     """How many pixels each colour role has in the script sign."""
     names = {
         INK: "ink", FACE: "face", FACE_LOW: "face_low", FRAME: "frame", FRAME_LIT: "frame_lit",
         FRAME_DARK: "frame_dark", GLINT: "glint", STEEL: "steel", STEEL_LIT: "steel_lit",
         STEEL_DARK: "steel_dark", STEEL_DEEP: "steel_deep", AMBER: "amber", AMBER_DARK: "amber_dark",
+        FRAME_HI: "frame_hi", GLINT_BRIGHT: "glint_bright", FACE_LIT: "face_lit", EDGE: "edge",
+        EDGE_DEEP: "edge_deep",
     }
     counts: dict[str, int] = {}
-    for p in sign().getdata():
+    for p in (sign_strong() if strong else sign()).getdata():
         if p[3] == 255:
             counts[names.get(p, "other")] = counts.get(names.get(p, "other"), 0) + 1
     return counts
@@ -263,7 +389,12 @@ def main(argv=None) -> int:
     f.add_argument("--no-polish", action="store_true", help="keep PixelLab's outline, frame and band pixels")
     f.add_argument("--keep-face", action="store_true", help="keep PixelLab's paint on the face")
     f.add_argument("--no-reduce", action="store_true")
-    sub.add_parser("roles", help="print the script sign's pixel counts per role")
+    q = sub.add_parser("polish", help="the strong rule 2 pass over a finished sign (T-577 v2)")
+    q.add_argument("src")
+    q.add_argument("out")
+    q.add_argument("--strong", action="store_true", help="the only pass so far; required")
+    ro = sub.add_parser("roles", help="print the script sign's pixel counts per role")
+    ro.add_argument("--strong", action="store_true")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -280,8 +411,14 @@ def main(argv=None) -> int:
         with Image.open(args.raw) as raw:
             im = finish(raw, not args.no_polish, args.keep_face, not args.no_reduce)
         save_png(im, Path(args.out))
+    elif args.cmd == "polish":
+        if not args.strong:
+            p.error("polish needs --strong")
+        with Image.open(args.src) as src:
+            im = reduce_image(polish_strong(src), 30)
+        save_png(im, Path(args.out))
     elif args.cmd == "roles":
-        for name, n in sorted(roles().items()):
+        for name, n in sorted(roles(args.strong).items()):
             print(f"{name}: {n}")
         return 0
     else:
