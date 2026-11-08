@@ -1,7 +1,7 @@
 ---
 id: T-586
 title: Grinding Wheels: a power-up that heats the grind sparks and boosts the launch
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -66,6 +66,10 @@ Grinding Wheels built: sparks yellow, orange, red over 3 s; launch up to 2x. QA 
 
 QA passed. Grinding Wheels is ready to play: C:\solid-carbide-worktrees\T-586 (in a run press N, then + on Grinding Wheels).
 
+### 2026-11-08, Needs playtest
+
+Board: lgtm. Merging.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -99,3 +103,4 @@ Docs: docs/drifting.md, Content, new "Grinding Wheels (task T-586)"; game/docs/d
 Documents affected: docs/drifting.md (updated).
 
 QA fix (round 1): test_four_minute_run_texts wanted a descriptions_last_tier entry for every power-up. Grinding Wheels has one tier, so tier 1 is its last tier; no other one-tier power-up exists, so game/data/screen_texts.json descriptions_last_tier.grinding_wheels is T-585's approved tier-1 text word for word, with the reason in descriptions_last_tier_comment. No new text. Python set (game/tools test_*.py): 1066 tests OK (4 skipped). Godot: test_grinding_wheels 12/12, test_power_up_screen 22/22, test_four_minute_run* 24/24, test_mission_texts 4/4, test_power_up_offers 16/16.
+- 2026-11-08, needs-playtest → done: Board: lgtm (2026-11-08)
