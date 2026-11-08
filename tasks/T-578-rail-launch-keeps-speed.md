@@ -1,7 +1,7 @@
 ---
 id: T-578
 title: The launch off a rail keeps the grind's speed
-status: in-progress
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/rail-grind.md, game/data/rail_grind.json, tasks/T-551-grind-overhaul-driving.md, tasks/T-566-rail-snap-sprite-overlap.md]
 files_expected_to_change: [game/scripts/driving/, game/data/rail_grind.json, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Letting go of Space launches the car where it faces at its grinding speed at that moment, tested at a slow, a middle and a fast grind speed (tests). (QA: pass / fail)
-- [ ] The takeoff height and the rest of the grind (snap, landing boost, rail ends) work as before (the existing tests pass, updated where they assumed 6). (QA: pass / fail)
-- [ ] The tutorial's grind slide and the practice playground's rail drives still pass (tests). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/rail-grind.md describe it with reasons. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-578/screenshots/ shows a slow and a fast launch. (QA: pass / fail)
+- [ ] Letting go of Space launches the car where it faces at its grinding speed at that moment, tested at a slow, a middle and a fast grind speed (tests). (QA: pass)
+- [ ] The takeoff height and the rest of the grind (snap, landing boost, rail ends) work as before (the existing tests pass, updated where they assumed 6). (QA: pass)
+- [ ] The tutorial's grind slide and the practice playground's rail drives still pass (tests). (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/rail-grind.md describe it with reasons. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-578/screenshots/ shows a slow and a fast launch. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Driving & Drift makes the launch keep the grind's speed.
+
+### 2026-11-08, In progress → In QA
+
+Built: the launch keeps the grind's speed (floor 6). QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed (6/6). Play it: C:\solid-carbide-worktrees\T-578\game\project.godot
 
 ## Style review
 
@@ -81,3 +89,4 @@ Docs: docs/drifting.md, Content, new section "The launch keeps the grind's speed
 Refused action: an rm -rf of my own scratch frame folders (shell-variable path) was refused by the safety check; I did not retry it, recorded into new folders instead. Nothing to clean in the repo; only scratchpad frame folders remain.
 
 Documents affected: docs/drifting.md (updated).
+- 2026-11-08, needs-playtest → done: Board: grind launch lgtm, merge
