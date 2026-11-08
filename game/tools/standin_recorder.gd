@@ -6,7 +6,7 @@ extends RefCounted
 ## the air, which catches the rail.
 
 const SessionScene := preload("res://scenes/run/practice_session.tscn")
-const STANDIN_COMMENT := "STAND-IN take (T-574 tweak 10, step 2): recorded by game/tools/make_standin_takes.gd from the practice tests' scripted drive, not by the board. Record your own with F6 and F7 on this slide to replace it."
+const STANDIN_COMMENT := "STAND-IN take (T-574 tweak 10, step 2): recorded by game/tools/make_standin_takes.gd from the practice tests' scripted drive, not by the board. Replace it with the board's own recording."
 const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-28, 19), Vector2(-26, 22.5),
 	Vector2(-12, 22.5), Vector2(4, 22.5)]
 const GRIND_ROUTE := [Vector2(0, 6), Vector2(-8, 6), Vector2(-14, 2), Vector2(-30, 2)]

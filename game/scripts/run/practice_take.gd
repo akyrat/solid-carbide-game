@@ -34,7 +34,7 @@ var resets: Array = []
 var checkpoints: Array = []
 var result := {}
 ## A note kept with the take ("" for none): the stand-in takes say they are stand-ins (T-574 tweak 10,
-## step 2), so the board's own recordings (F6, F7) replace them; a take recorded in the slides has none.
+## step 2), so the board's own recordings replace them; a take the board recorded has none.
 var comment := ""
 
 

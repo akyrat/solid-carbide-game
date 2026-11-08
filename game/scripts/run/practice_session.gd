@@ -198,8 +198,8 @@ var gift_screen: PowerUpScreen
 ## It counts toward no slide's goal (COUNTED).
 var needle: ThreadTheNeedle
 var needle_flash: NeedleFlash
-## T-574 tweak 8, the take tools (step 1 of the recorded demos; dev builds only, the slides show
-## the controls): where the takes are saved, the take being recorded or played, and its state.
+## T-574 tweak 8, the takes (the slides' recording controls were removed in tweak 12; the demos
+## replay the takes): where the takes are saved, the take being recorded or played, and its state.
 var takes_dir := PracticeTake.TAKES_DIR
 var take: PracticeTake
 var take_state := "ready"
@@ -626,7 +626,9 @@ func _place_keys() -> void:
 	keys_pad.position = Vector2(vs.x - keys_pad.size.x - KEYS_MARGIN, KEYS_MARGIN)
 
 
-# ---- The take tools (T-574 tweak 8; dev builds only) -------------------------------------------
+# ---- The takes (T-574 tweak 8). Since tweak 12 no player can record: start_recording(),
+# stop_and_save() and reset_stage() are called only by tools/standin_recorder.gd and the tests;
+# the slides' demos use play_take(). ---------------------------------------------------------------
 
 ## True in a dev build (run from the editor or the project folder), never in an exported game.
 static func dev_tools() -> bool:

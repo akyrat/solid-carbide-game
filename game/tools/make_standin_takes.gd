@@ -3,7 +3,7 @@ extends SceneTree
 ## driving the practice tests' scripted routes (test_practice_session.gd's AIR_ROUTE and GRIND_ROUTE,
 ## the alt drift's legs, a W + A drift) through the practice session's own recorder (PracticeTake),
 ## so each is a real take that replays on the real car. Each is marked as a stand-in in its
-## "_comment"; the board's own recordings (F6, F7 in the slides) replace them.
+## "_comment"; the board's own recordings replace them (the slides' F6/F7 take tools were removed in tweak 12).
 ##
 ## Run, from the repo root:
 ##   "<godot>" --headless --path game -s res://tools/make_standin_takes.gd -- [--tricks=alt_drift,grind] [--dir=res://...] [--force]
