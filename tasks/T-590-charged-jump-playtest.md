@@ -1,7 +1,7 @@
 ---
 id: T-590
 title: A charged jump, for a playtest
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/data/power_ups.json, game/data/rail_grind.json, game/scripts/driving/, tasks/T-578-rail-launch-keeps-speed.md]
 files_expected_to_change: [game/data/, game/scripts/driving/, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -45,10 +45,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 - [ ] With Jump owned, holding Space on the ground for 0, 1.5 and 3+ s gives takeoff x1, x1.25 and x1.5, jumping on release (tests). (QA: pass)
 - [ ] Space in the air still tilts and grinds as before, and without Jump the ground Space is unchanged (the existing tests pass). (QA: pass)
-- [ ] The charge cue shows while charging and is gone after the jump (a test or screenshot). (QA: pass)
+- [ ] The charge cue shows while charging and is gone after the jump (a test or screenshot). (QA: pass - met by Tweak 1 as the board asked: car tilts while charging, untilts on release; test_charging_tilts_the_car_and_the_release_untilts_it_in_the_air; screenshots tweak1_charging_tilted.png)
 - [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass)
 - [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
-- [ ] A GIF in art-archive/T-590/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass)
+- [ ] A GIF in art-archive/T-590/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass - tweak1_tap_then_full_charge.gif)
 
 ## Updates
 
