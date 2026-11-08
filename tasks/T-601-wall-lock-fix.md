@@ -1,7 +1,7 @@
 ---
 id: T-601
 title: Fix: the car locks against a wall with W held
-status: in-progress
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/scripts/driving/car.gd, game/scripts/driving/car_model.gd, game/docs/driving/]
 files_expected_to_change: [game/scripts/driving/, game/data/, game/tests/, game/docs/driving/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: reproduce the wall lock in a test, then fix it.
 
+### 2026-11-08, In progress → In QA
+
+Agent done: the lock came from the outline check against raised sides; fixed. QA's checks passed.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed all 7 criteria. It goes into playtest-b for the board.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -85,3 +93,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Documents affected.** docs/drifting.md, Content, new "The car never locks against a wall (task T-601)" (cause, fix, what it does; Decisions left as written for the Project Lead, whose cause line there is now corrected in Content). game/docs/driving/collisions.md, Bounce, new "Against a raised area's side (T-601)".
 
 **Files.** game/scripts/driving/car_height.gd, game/data/wall_contact.json (new), game/tests/unit/test_wall_lock.gd (new), game/tests/fixtures/t601_wall_lock_demo.gd and .tscn (new), docs/drifting.md, game/docs/driving/collisions.md, art-archive/T-601/screenshots/.
+- 2026-11-08, needs-playtest → done: The board played it: lgtm (2026-11-08).
