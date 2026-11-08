@@ -133,6 +133,55 @@ class TestSign(unittest.TestCase):
         self.assertEqual(px[33, 76], s.AMBER_DARK)
         self.assertEqual(px[19, 90][3], 255)                   # the wider base plate
 
+    def test_slim_sign_is_a_long_slim_pole_on_a_flat_base_with_a_clear_frame(self):
+        im = s.sign_slim()
+        px = im.load()
+        self.assertEqual(failed_checks(im), [])
+        self.assertLessEqual(len(colours(im)), 30)
+        self.assertEqual(px[s.FOOT], s.INK)
+        for p in ((0, 0), (63, 0), (0, 95), (63, 95), (3, 70), (62, 30), (20, 80), (44, 80)):
+            self.assertEqual(px[p][3], 0, p)
+        for p in ((8, 8), (55, 8), (8, 55), (55, 55)):         # the board still fills face_px
+            self.assertEqual(px[p][3], 255, p)
+            self.assertNotEqual(px[p], s.INK, p)
+        for y in range(11, 53):                                # the face is blank slate in three steps
+            for x in range(11, 53):
+                self.assertIn(px[x, y], (s.FACE, s.FACE_HI, s.FACE_DEEP), (x, y))
+        self.assertEqual(px[12, 12], s.FACE_HI)
+        self.assertEqual(px[32, 32], s.FACE)
+        self.assertEqual(px[50, 50], s.FACE_DEEP)
+        # The pole: 5 px of steel on columns 30..34, outlined at 29 and 35, from under the bracket to the base.
+        for y in range(61, 89):
+            self.assertEqual(px[35, y], s.INK, y)
+            self.assertIn(px[29, y], (s.INK, s.GLINT_BRIGHT), y)
+            self.assertEqual(px[28, y][3], 0, y)
+            self.assertEqual(px[36, y][3], 0, y)
+        self.assertEqual(px[34, 70], s.EDGE_DEEP)              # the shadow column
+        self.assertEqual(px[30, 70], s.STEEL_LIT)              # the lit step
+        self.assertEqual(px[29, 64], s.GLINT_BRIGHT)           # glints breaking the pole's outline
+        self.assertEqual(px[29, 80], s.GLINT_BRIGHT)
+        self.assertEqual(px[31, 75], s.AMBER)
+        # A flat base: 7 rows, and a wider frame highlight than the strong pass.
+        self.assertEqual(px[23, 88][3], 0)
+        self.assertEqual(px[23, 92][3], 255)
+        self.assertEqual(px[8, 30], s.GLINT)
+        self.assertEqual(px[9, 30], s.FRAME_HI)
+        self.assertEqual(px[55, 30], s.FRAME_DARK)
+        self.assertEqual(px[54, 30], s.FRAME)
+        self.assertEqual(px[12, 7], s.GLINT_BRIGHT)
+        self.assertEqual(px[57, 30], s.EDGE)                   # the thickness shadow stays
+
+    def test_polish_slim_keeps_pixellab_body_pixels(self):
+        v1 = s.finish(Image.new("RGBA", (64, 96), (70, 80, 100, 255)))
+        out = s.polish_slim(v1)
+        px = out.load()
+        self.assertEqual(px[32, 80], (70, 80, 100, 255))       # the pole's body keeps PixelLab's pixel
+        self.assertEqual(px[34, 80], s.EDGE_DEEP)
+        self.assertEqual(px[28, 80][3], 0)                     # v1's wider post is gone
+        self.assertEqual(px[32, 32], s.FACE)
+        self.assertEqual(failed_checks(out), [])
+        self.assertEqual(s.roles("slim").get("other"), None)
+
     def test_polish_strong_keeps_pixellab_body_pixels_and_repaints_the_roles(self):
         v1 = s.finish(Image.new("RGBA", (64, 96), (70, 80, 100, 255)))   # a PixelLab-like render, finished
         out = s.polish_strong(v1)

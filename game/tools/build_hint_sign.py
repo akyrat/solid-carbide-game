@@ -20,7 +20,9 @@ script does the free parts of the style loop around one PixelLab call per versio
         The style loop's free fixes for rule 2 (T-577 v2): longer glint runs breaking the outline on the board
         and the post, a shadow column on the right of the board, post and base, a two-step frame bevel with
         rivets, and a thicker post and base with six shading steps; PixelLab's post and base pixels stay.
-    python game/tools/build_hint_sign.py roles [--strong]
+        --slim (v3) is the pass that reads at native size: a slim, longer pole on a small flat base, a clearer
+        lighter frame with long bright glint runs, a stepped slate face (still blank), three steps on the pole.
+    python game/tools/build_hint_sign.py roles [--strong | --slim]
         Prints how many pixels each drawing role has, for the result notes.
     python game/tools/build_hint_sign.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
@@ -235,24 +237,137 @@ def sign_strong() -> Image.Image:
     return im
 
 
+# The slim pass (T-577 v3): a slim, longer pole on a flat base, a clearer lighter frame, a stepped face.
+FACE_HI = (0x38, 0x3D, 0x57, 255)     # the face's lit upper-left band
+FACE_DEEP = (0x2E, 0x33, 0x48, 255)   # its lower-right band, in shade
+SLIM_BRACKET = (27, 59, 37, 60)
+SLIM_POST_X = (29, 35)                # outline columns; steel on 30..34
+SLIM_POST_ROWS = (61, 92)
+SLIM_BAND_ROWS = (74, 76)
+SLIM_BASE_OUTLINE = (22, 89, 42, 95)
+
+
+def sign_slim() -> Image.Image:
+    """The v3 sign: the board with a clearer lighter frame, longer and brighter glint runs breaking its outline
+    and a stepped slate face (still blank); a slim pole, 5 px of steel on three shading steps plus a shadow
+    column, running most of the way down to a small flat base plate, so it reads as a sign on a pole, not a
+    bollard; three glint runs break the pole's outline. The thickness shadow of v2 stays."""
+    im = Image.new("RGBA", SIZE, (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    px = im.load()
+
+    # The flat base plate: outline, a one-row side with its right in deep shadow, a top lit on the left.
+    d.ellipse(SLIM_BASE_OUTLINE, fill=INK)
+    d.ellipse((23, 90, 41, 94), fill=STEEL_DEEP)        # the side
+    d.ellipse((23, 90, 41, 93), fill=STEEL_DARK)        # the top
+    d.ellipse((24, 90, 35, 92), fill=STEEL)             # the lit part of the top
+    for y in range(92, 95):                             # the shadow column on the plate's right
+        for x in range(36, 42):
+            if px[x, y] == STEEL_DEEP:
+                px[x, y] = EDGE_DEEP
+    for p in ((24, 91), (25, 90)):                      # rim light on the plate's lit edge
+        px[p] = GLINT
+    for p in ((26, 93), (38, 93)):                      # two bolts
+        px[p] = STEEL_LIT
+
+    # The pole: outline, then three steps and a shadow column across 5 px of steel.
+    x0, x1 = SLIM_POST_X
+    y0, y1 = SLIM_POST_ROWS
+    d.rectangle((x0, y0, x1, y1), fill=INK)
+    for i, c in enumerate((STEEL_LIT, STEEL, STEEL, STEEL_DARK, EDGE_DEEP)):
+        d.rectangle((x0 + 1 + i, y0, x0 + 1 + i, y1), fill=c)
+    d.rectangle((x0 + 1, 68, x1 - 1, 68), fill=STEEL_DEEP)   # a joint ring
+    d.rectangle((x0 + 1, SLIM_BAND_ROWS[0], x1 - 2, SLIM_BAND_ROWS[1]), fill=AMBER)
+    d.rectangle((x1 - 3, SLIM_BAND_ROWS[0], x1 - 2, SLIM_BAND_ROWS[1]), fill=AMBER_DARK)
+    for y in list(range(63, 67)) + list(range(79, 83)) + list(range(86, 88)):
+        px[x0, y] = GLINT_BRIGHT                        # glints breaking the pole's outline
+        px[x0 + 1, y] = GLINT
+    for p in ((31, 71), (32, 84)):                      # scuffs
+        px[p] = STEEL_LIT
+    # A small collar at the foot.
+    d.rectangle((28, 89, 36, 89), fill=INK)
+    d.rectangle((28, 90, 28, 91), fill=STEEL_LIT)
+    d.rectangle((36, 90, 36, 91), fill=EDGE_DEEP)
+    px[28, 90] = GLINT
+
+    # A shallow bracket under the board.
+    b = SLIM_BRACKET
+    d.rectangle(b, fill=INK)
+    d.rectangle((b[0] + 1, b[1], b[2] - 1, b[1]), fill=STEEL_DARK)
+    px[b[0] + 1, b[1]] = STEEL_LIT
+    px[b[2] - 1, b[1]] = EDGE_DEEP
+    for p in ((30, 59), (34, 59)):                      # two rivets
+        px[p] = GLINT
+
+    # The board: its thickness on the right and bottom, then the outline, the clearer frame, the stepped face.
+    d.rectangle((9, 9, 58, 58), fill=INK)
+    d.rectangle((9, 9, 57, 57), fill=EDGE)
+    d.rounded_rectangle(BOARD_OUTLINE, radius=2, fill=INK)
+    d.rounded_rectangle(FACE_PX, radius=1, fill=FRAME)
+    d.rectangle((8, 8, 55, 8), fill=GLINT)              # the frame's top: two bright lit steps
+    d.rectangle((8, 9, 54, 9), fill=FRAME_HI)
+    d.rectangle((8, 8, 8, 55), fill=GLINT)              # and its left
+    d.rectangle((9, 9, 9, 54), fill=FRAME_HI)
+    d.rectangle((9, 55, 55, 55), fill=FRAME_DARK)       # the bottom: two steps, both lighter than the face
+    d.rectangle((10, 54, 55, 54), fill=FRAME)
+    d.rectangle((55, 9, 55, 55), fill=FRAME_DARK)       # and the right
+    d.rectangle((54, 10, 54, 54), fill=FRAME)
+    px[8, 55] = FRAME_LIT
+    px[55, 8] = FRAME_LIT
+    px[8, 8] = GLINT_BRIGHT
+    # The face: blank slate in three stepped bands lit from the top-left (no icon, no marks).
+    d.rectangle(FACE_INNER, fill=FACE)
+    for y in range(FACE_INNER[1], FACE_INNER[3] + 1):
+        for x in range(FACE_INNER[0], FACE_INNER[2] + 1):
+            if x + y <= 44:
+                px[x, y] = FACE_HI
+            elif x + y >= 90:
+                px[x, y] = FACE_DEEP
+    d.rectangle((10, 10, 53, 10), fill=FACE_LOW)        # the frame's shadow on the recessed face
+    d.rectangle((10, 10, 10, 53), fill=FACE_LOW)
+    d.rectangle((11, 53, 53, 53), fill=FACE_LIT)        # and its lit inner edge
+    d.rectangle((53, 11, 53, 53), fill=FACE_LIT)
+    for p in ((9, 9), (54, 9), (9, 54), (54, 54)):      # rivets at the frame's corners
+        px[p] = GLINT_BRIGHT if p == (9, 9) else STEEL_LIT
+    # Long bright glint runs breaking the outline on the board's top and left (rule 2).
+    for x in list(range(10, 20)) + list(range(28, 34)) + list(range(42, 46)):
+        px[x, 7] = GLINT_BRIGHT
+    for y in list(range(10, 20)) + list(range(28, 34)):
+        px[7, y] = GLINT_BRIGHT
+    for x in range(20, 24):
+        px[x, 7] = GLINT
+    for y in range(20, 24):
+        px[7, y] = GLINT
+    return im
+
+
 BODY_ROLES = (STEEL, STEEL_LIT, STEEL_DARK, STEEL_DEEP)
 V1_ROLES = (INK, GLINT, GLINT_BRIGHT, FRAME, FRAME_LIT, FRAME_HI, FRAME_DARK, AMBER, AMBER_DARK, FACE, FACE_LOW,
-            FACE_LIT, EDGE, EDGE_DEEP)
+            FACE_LIT, FACE_HI, FACE_DEEP, EDGE, EDGE_DEEP)
+PASSES = {"strong": sign_strong, "slim": sign_slim}
 
 
-def polish_strong(im: Image.Image) -> Image.Image:
-    """The strong pass over a finished sign: the strong sign's outline, glints, frame, face, band, thickness
-    and shadow columns replace the source; where the strong sign has plain steel (the post's and base's
-    body), PixelLab's own render stays if the source has an opaque pixel there that is not a script role."""
+def polish_pass(im: Image.Image, name: str) -> Image.Image:
+    """A pass over a finished sign: the pass's sign (outline, glints, frame, face, band, thickness, shadow
+    columns) replaces the source; where it has plain steel (the post's and base's body), PixelLab's own
+    render stays if the source has an opaque pixel there that is not a script role."""
     src = im.convert("RGBA")
     spx = src.load()
-    out = sign_strong()
+    out = PASSES[name]()
     opx = out.load()
     for y in range(HEIGHT):
         for x in range(WIDTH):
             if opx[x, y] in BODY_ROLES and spx[x, y][3] == 255 and spx[x, y] not in V1_ROLES:
                 opx[x, y] = spx[x, y]
     return out
+
+
+def polish_strong(im: Image.Image) -> Image.Image:
+    return polish_pass(im, "strong")
+
+
+def polish_slim(im: Image.Image) -> Image.Image:
+    return polish_pass(im, "slim")
 
 
 def roles(strong: bool = False) -> dict[str, int]:
@@ -262,10 +377,11 @@ def roles(strong: bool = False) -> dict[str, int]:
         FRAME_DARK: "frame_dark", GLINT: "glint", STEEL: "steel", STEEL_LIT: "steel_lit",
         STEEL_DARK: "steel_dark", STEEL_DEEP: "steel_deep", AMBER: "amber", AMBER_DARK: "amber_dark",
         FRAME_HI: "frame_hi", GLINT_BRIGHT: "glint_bright", FACE_LIT: "face_lit", EDGE: "edge",
-        EDGE_DEEP: "edge_deep",
+        EDGE_DEEP: "edge_deep", FACE_HI: "face_hi", FACE_DEEP: "face_deep",
     }
     counts: dict[str, int] = {}
-    for p in (sign_strong() if strong else sign()).getdata():
+    shape = PASSES[strong]() if isinstance(strong, str) else (sign_strong() if strong else sign())
+    for p in shape.getdata():
         if p[3] == 255:
             counts[names.get(p, "other")] = counts.get(names.get(p, "other"), 0) + 1
     return counts
@@ -392,9 +508,11 @@ def main(argv=None) -> int:
     q = sub.add_parser("polish", help="the strong rule 2 pass over a finished sign (T-577 v2)")
     q.add_argument("src")
     q.add_argument("out")
-    q.add_argument("--strong", action="store_true", help="the only pass so far; required")
+    q.add_argument("--strong", action="store_true", help="the v2 pass")
+    q.add_argument("--slim", action="store_true", help="the v3 pass: a slim long pole, a clearer frame, a stepped face")
     ro = sub.add_parser("roles", help="print the script sign's pixel counts per role")
     ro.add_argument("--strong", action="store_true")
+    ro.add_argument("--slim", action="store_true")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -412,13 +530,13 @@ def main(argv=None) -> int:
             im = finish(raw, not args.no_polish, args.keep_face, not args.no_reduce)
         save_png(im, Path(args.out))
     elif args.cmd == "polish":
-        if not args.strong:
-            p.error("polish needs --strong")
+        if not (args.strong or args.slim):
+            p.error("polish needs --strong or --slim")
         with Image.open(args.src) as src:
-            im = reduce_image(polish_strong(src), 30)
+            im = reduce_image(polish_pass(src, "slim" if args.slim else "strong"), 30)
         save_png(im, Path(args.out))
     elif args.cmd == "roles":
-        for name, n in sorted(roles(args.strong).items()):
+        for name, n in sorted(roles("slim" if args.slim else args.strong).items()):
             print(f"{name}: {n}")
         return 0
     else:
