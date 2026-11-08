@@ -57,6 +57,11 @@ RAW_DIR = gen.OUT_DIR
 ASSIGN: dict[int, int] = {}
 
 
+REDRAWN_JSON = Path(__file__).resolve().parent.parent / "art" / "car" / "car_iso_redrawn.json"
+# T-584: frames redrawn or re-measured after T-102 (game/art/car/car_iso_redrawn.json).
+REDRAWN: dict = json.loads(REDRAWN_JSON.read_text(encoding="utf-8"))["frames"] if REDRAWN_JSON.exists() else {}
+
+
 def frame_of(rows, i: int):
     return [r[i * FRAME:(i + 1) * FRAME] for r in rows]
 
@@ -174,6 +179,11 @@ def build(repo: Path = REPO):
                 "seen_nose_screen_angle_deg_approx": round(seen_estimate(k, pos)),
                 "placed_by": "override (ASSIGN)" if i in ASSIGN else "measured position",
             })
+        redrawn = REDRAWN.get(str(i))
+        if redrawn:
+            entry = {k: v for k, v in redrawn.items() if k != "_png"}
+            if redrawn.get("_png"):
+                rows = cs.read_rows(repo / redrawn["_png"])
         for y in range(FRAME):
             sheet[y].extend(rows[y])
         frames.append(entry)

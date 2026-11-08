@@ -62,7 +62,8 @@
       "made_by": "/rotate of frame 0 by 22",
       "nose_screen_angle_deg": 50.36,
       "note": "T-101's frame, copied unchanged",
-      "seen_nose_screen_angle_deg_approx": 70,
+      "seen_nose_screen_angle_deg_approx": 55.5,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "shift_px": {
         "x": -1,
         "y": 4
@@ -81,7 +82,8 @@
       "placed_by": "measured position",
       "position_between_neighbours": 0.58,
       "rotated_from_t101_frame": 1,
-      "seen_nose_screen_angle_deg_approx": 82,
+      "seen_nose_screen_angle_deg_approx": 75.6,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "shift_px": {
         "x": 4,
         "y": 1
@@ -342,7 +344,7 @@
       "nose_screen_angle_deg": 248.31,
       "redrawn_by": "T-584",
       "seen_nose_screen_angle_deg_approx": 225.3,
-      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "source": "art-archive/T-584/frames/frame19.png"
     },
     {
@@ -353,7 +355,7 @@
       "nose_screen_angle_deg": 270.0,
       "redrawn_by": "T-584",
       "seen_nose_screen_angle_deg_approx": 244.8,
-      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "source": "art-archive/T-584/old/frame_20.png"
     },
     {
@@ -367,7 +369,8 @@
       "placed_by": "measured position",
       "position_between_neighbours": 0.56,
       "rotated_from_t101_frame": 10,
-      "seen_nose_screen_angle_deg_approx": 266,
+      "seen_nose_screen_angle_deg_approx": 263.2,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "shift_px": {
         "x": 2,
         "y": 7
@@ -382,7 +385,7 @@
       "nose_screen_angle_deg": 309.64,
       "redrawn_by": "T-584",
       "seen_nose_screen_angle_deg_approx": 289.5,
-      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "source": "art-archive/T-584/frames/frame22.png"
     },
     {
@@ -393,7 +396,7 @@
       "nose_screen_angle_deg": 323.19,
       "redrawn_by": "T-584",
       "seen_nose_screen_angle_deg_approx": 305.9,
-      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "source": "art-archive/T-584/frames/frame23.png"
     },
     {

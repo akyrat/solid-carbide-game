@@ -26,8 +26,8 @@ class FrameArrowsTest(unittest.TestCase):
             by_index = {g[0]: g for g in gaps}
             self.assertLess(abs(by_index[4][4]), 1.0)
             self.assertLess(abs(by_index[28][4]), 1.0)
-            # Frame 22 (world 247.5, screen up-right) is drawn about 40 degrees off.
-            self.assertGreater(abs(by_index[22][4]), 30.0)
+            # Frame 22 (world 247.5, screen up-right) was drawn about 40 degrees off; T-584 redrew it (measured 289.5 against 270 on screen), so the gap is now about 20.
+            self.assertLess(abs(by_index[22][4]), 25.0)
 
 
 if __name__ == "__main__":
