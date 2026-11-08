@@ -204,6 +204,9 @@ var boulder_sprites: Array = []
 var prop_bodies: Array[StaticBody2D] = []
 var prop_sprites: Array = []
 var prop_sprites_root: Node2D
+## T-576 (level_hints.gd): the node drawing the level's ground hints, right over the ground (null without
+## any). The hint signs join prop_bodies and prop_sprites.
+var hint_decals: Node2D
 ## Boulder key (boulder_key) -> its sprite, so each boulder gets one sprite.
 var _boulder_sprite_by_key: Dictionary = {}
 ## The ground height of the layout's rooftops and ramps (ground_height.gd), read once for the
@@ -313,6 +316,7 @@ func _build() -> void:
 	_build_boulders()
 	_sync_boulder_sprites()
 	LevelProps.build(self)
+	LevelHints.build(self)  # T-576: the hint pieces (ground decals; signs as props)
 	if alert_signs_enabled:
 		alert_signs = KaijuSigns.build(self)
 	if challenges_enabled:

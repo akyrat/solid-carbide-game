@@ -78,6 +78,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **The practice playground** (board, 2026-11-07): a small level for the tutorial's practice windows (HUD and menus, Decisions, "Interactive tutorial slides"), on the dark purple grid ground of the drift prototype (`ground_grid.gd`), with room to drift and alt drift, a ramp to launch from for air spins, and rails to grind. The car, its effects and the HUD must stand out clearly against its colours. Its layout is the Level/Challenge Design Agent's proposal; the board may edit it in the level creator. (T-560)
 - **Hint pieces in the level creator** (board, 2026-11-08): a new kind of piece the board places to hint the player what to do: **gas** and **brake** as the W and S keycaps (the tutorial's keycap look, no words), a **straight arrow**, a **curved arrow** for a turn (left or right) and a **circular arrow** for steering round (either direction). Each can be placed **painted on the ground** (a flat decal under the car and buildings, no collision, in any of the 8 directions) or as a **standing sign** at the roadside (a small upright sign with collision, like a prop). They show in runs and in the tutorial's practice playground. The art comes from PixelLab (the board's go: up to 30 generations, one sample first); the icons are made flat and laid on the ground by the engine, and the sign is one piece the icons are put on by script. Sizes and looks are proposals for the playtest. (T-575 to T-577)
 - **Free placement in the level creator** (board, 2026-11-08; the creator felt clunky and grid-like): every piece (props and boulders, buildings, rooftops and ramps, rails, the hint pieces) follows the mouse freely, placed where it is dropped instead of on the 2 x 2 unit tile grid. Holding a key (Shift, a proposal) snaps it to the grid and to other pieces' edges as today. Rotation is unchanged: pieces keep the views their art has. Ground and road tiles stay painted on their tiles. A ramp still has to reach its rooftop to link to it, and the game (collision, the enemies' paths, the height checks) must work with pieces off the grid. (T-581)
+- **Needle routes** (board, 2026-11-08): in the level creator the board can group thread-the-needle pairs into a **route**, by clicking each pair's dashed line in turn. A route plays its pairs **in order**, cycling back to the first after the last, or in a **random** order, the board's choice per route. In a run only the route's **active pair** pays thread the needle: it shows bright, and the route's waiting pairs show faint; threading the active pair makes the next one active. Pairs in no route work as today. The editor texts come first (T-591); the build sits on the free placement work (T-592, on T-581). How bright and how faint, and what happens when the player threads a waiting pair, are proposals for the playtest.
 
 ## Content
 
@@ -565,6 +566,23 @@ Task T-441 (Decisions, "Kaiju alert signs are level creator pieces"; the labels 
 ![A run on that level: the signs and banners where the editor shows them](../art-archive/T-441/screenshots/run.png)
 
 ![A run: the car behind the skyscraper, which fades with its two banners](../art-archive/T-441/screenshots/run_behind_skyscraper.png)
+
+### Level creator: hint pieces
+
+Task T-576 (Decisions, "Hint pieces in the level creator"; the labels are T-575's, "Level creator text" above; T-577 swaps in the PixelLab art). How it works, and the art's file names and sizes: `game/docs/level/hint-pieces.md`. The art is a placeholder drawn by script. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
+
+- **Five pieces in a "Driver hints" group:** Gas hint (W) and Brake hint (S), the W and S keycaps in the tutorial's keycap look; Straight arrow; Turn arrow (a right turn, M makes it a left turn); Circular arrow (clockwise, M makes it anticlockwise).
+- **On the ground or a roadside sign:** with a hint picked, the top bar's "On the ground" and "Roadside sign" choose how it is placed (on the ground first). The heading and mirror stay when it changes. R turns either kind through the 8 directions, clockwise on screen, starting with the run's own start direction (up the screen's right).
+- **On the ground:** painted flat on the street, 4 x 4 units (a road's width), turned to its direction. It lies under the buildings, rooftops, props, the car and the minions. The car drives over it with no crash, and the run's tyre marks go under it. Proposal: only on the street, not on a building, rooftop or ramp (like a meteor crater).
+- **A roadside sign:** a small sign on a post standing on one 2 x 2 unit cell (2 units wide, 3 tall), the icon on its board. On the board the icon points the way its direction shows on screen, so on a sign the keycaps are turned too (a proposal). It is sorted with the props in depth, and it blocks the car like a prop: the car crashes into its post (a circle of 0.5 units) and the combo is cut. The enemies go round it. Like a prop, it stands on the street or wholly on a rooftop, never in a building and never on the start.
+- **Placing, selecting, deleting:** like any other piece, through the same placement path (so T-581's free placement applies to them too). The preview under the mouse shows the piece as it will be drawn. A click selects one and Del deletes it.
+- **Saved levels:** a new `hints` list in the level file (each hint's icon, ground or sign, direction, mirror and footprint). `check_level.py` checks it. Levels saved before have none and open and play unchanged. In the practice playground, which uses the same map code, hints are drawn the same way.
+
+![The level creator: the five hints painted on a road and standing as roadside signs, the Driver hints group, a Turn arrow sign picked with its preview](../art-archive/T-576/screenshots/creator_hints.png)
+
+![A straight arrow picked to paint on the ground, its preview on the road](../art-archive/T-576/screenshots/creator_ground_preview.png)
+
+![A run on that level: the car over the painted gas hint, signs standing at the roadside](../art-archive/T-576/screenshots/run_hints.png)
 
 ### Short buildings as platforms
 

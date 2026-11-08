@@ -49,6 +49,10 @@ Godot's user folder (`AppData/Roaming/Godot/app_userdata/Solid Carbide/`) is sha
 
 `user://progress.json` and `user://settings.cfg` are the player's real save, and tests never read, write or depend on them. Before the first test, `tests/helpers/pre_run.gd` (`pre_run_script` in `.gutconfig.json`) points `PlayerProgress.path` and `GameSettings.path` at empty test files in the run's `RunPaths` folder (`tests/helpers/test_save.gd`, `TestSave`). A test that changes those paths puts them back with `TestSave.restore()` (or `restore_progress()` / `restore_settings()`), never with `DEFAULT_PATH`. If a run ends with either path still on the real save, `post_run.gd` logs an error and fails the run.
 
+### Every test ends with the tree unpaused (T-589)
+
+GUT's timed waits (`wait_seconds`, and the time limits of `wait_for_signal` and `wait_until`) count in a node (`addons/gut/awaiter.gd`, its `_physics_process`) that stops while `get_tree().paused` is true; frame waits keep going. A test that ends with the tree paused (it opened a level-up screen, a gift's overlay or the pause screen and freed the run without closing it) leaves it paused for every later script of the same process, and the next test that waits never returns: the shard prints that test's name and nothing more until the time limit stops it. Whether a later script waits at all depends on which scripts the parallel run deals into the same shard, so the hang showed only in some full runs (T-589: `tests/unit/run/test_level_up_prewarm.gd` left the level-up pause on, and `test_garage_button_pulse.gd`'s `wait_seconds` hung). A test that can pause the tree sets `get_tree().paused = false` in `after_each`. `tests/helpers/pause_guard.gd` (`PauseGuard`, started by `pre_run.gd`) checks after every test: it unpauses a paused tree so nothing later hangs, logs `T-589: <script>:<test> left the tree paused`, and `post_run.gd` fails the run.
+
 ### Python tool tests
 
 Some tools in `game/tools/` are Python scripts (standard library only, Python 3.9+). Their tests are `game/tools/test_*.py` and run with Python's own test runner, not GUT:

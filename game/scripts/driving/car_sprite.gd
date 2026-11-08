@@ -9,6 +9,8 @@ extends Sprite2D
 ## placeholder (Visual style, Decisions: the final car is drawn for the
 ## isometric view only).
 
+const CarFacing := preload("res://scripts/driving/car_facing.gd")
+
 const SHEETS := {
 	"flat": "res://art/placeholders/car/car_flat",
 	"iso": "res://art/car/car_iso",
@@ -41,6 +43,8 @@ const TILT_PLACEHOLDER_SKEW := 0.5
 const TILT_PLACEHOLDER_SQUASH := 0.12
 
 var layout := {}
+## Each frame's drawn screen angle (T-583, fix A; car_facing.gd), [] when the sheet has none.
+var drawn_angles: Array = []
 var sheet := ""
 var in_air := false
 ## The tilt frame shown (0 normal, 1 to 3; set_tilt_step).
@@ -85,6 +89,7 @@ func use_sheet(view: String) -> void:
 		push_error("car_sprite.gd: could not read %s.json" % base)
 		return
 	layout = parsed
+	drawn_angles = CarFacing.drawn_angles(layout)
 	sheet = view
 	_ground_texture = load(base + ".png")
 	_air_texture = load(AIR_SHEETS[view] + ".png") if AIR_SHEETS.has(view) else null
@@ -211,12 +216,16 @@ func _load_tilt_sheet(view: String) -> void:
 	has_tilt_art = _tilt_texture != null
 
 
-## Frame index for a car rotation (radians, nose along +x at 0, clockwise).
+## Frame index for a car rotation (radians, nose along +x at 0, clockwise). With the frame remap on
+## (T-583, fix A; data/car_facing.json) the frame whose drawing points closest on screen to the
+## heading; off, round(heading / step_deg) as before (car_facing.gd).
 func frame_for_rotation(rot: float) -> int:
-	var step := deg_to_rad(float(layout.get("step_deg", 22.5)))
-	var count := int(layout.get("frame_count", 16))
-	var start := deg_to_rad(float(layout.get("frame0_heading_deg", 0.0)))
-	return posmod(roundi((rot - start) / step), count)
+	return CarFacing.frame_for(rot, layout, drawn_angles)
+
+
+## The frame by index alone, whatever the remap switch says.
+func index_frame_for_rotation(rot: float) -> int:
+	return CarFacing.index_frame(rot, layout)
 
 
 func set_heading(rot: float) -> void:

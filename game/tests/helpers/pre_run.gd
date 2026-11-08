@@ -8,3 +8,6 @@ func run() -> void:
 	# The main menu's Start goes straight into the run in tests that only need a run; the
 	# tutorial's own tests (tests/unit/game/test_tutorial_flow.gd, T-387) turn the slides on.
 	GameFlow.tutorial_enabled = false
+	# T-589: a test that ends with the tree paused is named and the tree unpaused, so no later
+	# test waits for ever (tests/helpers/pause_guard.gd; game/docs/setup/tests.md).
+	PauseGuard.watch(gut)

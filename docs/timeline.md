@@ -4060,3 +4060,53 @@ Entry format:
 - Decision or change: A killed minion drops a health pickup 5% of the time.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-579
+
+## 2026-11-08: The launch keeps the grind's speed
+- Decision or change: A rail launch keeps the grind's speed (floor 6); merged after the board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-578
+
+## 2026-11-08: The test runner records the real run time, and the PowerShell runner runs in parallel
+- Decision or change: Board, 2026-11-08: agents kept answering the single-process test time (about 51 minutes summed from test_times.json) when the real parallel run takes about 275 s, because the per-script table is the only record and run_tests.ps1 still ran one process. The runner now writes a record of every full run (wall time, processes, counts) and prints it on its last line; run_tests.ps1 runs the same split as run_tests.sh. Tooling, merged after QA.
+- Documents touched: tasks/README.md, game/docs/setup/tests.md
+- Tasks: T-588
+
+## 2026-11-08: Hint pieces in the level creator and the run
+- Decision or change: Hint pieces (gas, brake/reverse, arrows, cyclical arrows) placeable in the level creator and shown in the run, with placeholder art; the board played it.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-576
+
+## 2026-11-08: The car points where it goes: frame remap and straight grip
+- Decision or change: Car frames picked by where their drawing points (A) and straight-line grip 0.9 while only W is held (C); the board played A+C.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-583
+
+## 2026-11-08: The full Godot test run hangs before the bricks benchmark starts
+- Decision or change: 2026-11-08: the parallel Godot run hung four times in one day in the shard that ends with test_garage_button_pulse.gd then test_bricks_widest_perf.gd (once in a merge on master, three times in T-588's folder); the benchmark passes alone, so the hang depends on the state left by the 21 scripts before it. Ticketed to find and fix the cause; T-588 waits on it.
+- Documents touched: game/docs/setup/tests.md
+- Tasks: T-589
+
+## 2026-11-08: A charged jump, for a playtest
+- Decision or change: Hold Space on the ground with Jump to charge up to +50% over 3 s, jump on release; its own playtest.
+- Documents touched: docs/drifting.md
+- Tasks: T-590
+
+## 2026-11-08: Texts for needle routes
+- Decision or change: The level creator's texts for grouping thread-the-needle pairs into routes.
+- Documents touched: docs/level-design.md
+- Tasks: T-591
+
+## 2026-11-08: Needle routes
+- Decision or change: Thread-the-needle pairs grouped into routes, played in order or at random; only the active pair pays.
+- Documents touched: docs/level-design.md
+- Tasks: T-592
+
+## 2026-11-08: The full Godot test run no longer hangs: a test left the scene tree paused
+- Decision or change: A test (test_level_up_prewarm.gd) left the scene tree paused, so GUT's timed waits in every later script of the same Godot process never returned; that is what hung the shard ending in test_garage_button_pulse.gd and cost a 3600 s time-out in a merge run on 2026-11-08. The test now unpauses after each test, and a PauseGuard names and fails any test that ends with the tree paused (game/docs/setup/tests.md). Tooling, merged after QA.
+- Documents touched: game/docs/setup/tests.md
+- Tasks: T-589
+
+## 2026-11-08: Texts for Grinding Wheels
+- Decision or change: The Grinding Wheels power-up's name and description; the board approved the text.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-585

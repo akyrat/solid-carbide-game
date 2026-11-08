@@ -1,0 +1,26 @@
+{
+ "about": "T-576: the level creator's hint pieces (Level design, Decisions, \"Hint pieces in the level creator\"; how it works and the art's names and sizes: game/docs/level/hint-pieces.md). Read by scripts/level/level_hints.gd (the run and the creator), game/tools/build_creator_assets.py (the creator's catalogue) and game/tools/check_level.py. T-577 swaps the art by dropping its PNGs over the placeholders of game/tools/build_hint_placeholders.py at the same paths; the numbers here are proposals for the board's playtest.",
+ "icons": [
+  {"id": "gas", "label": "piece_hint_gas", "texture": "res://art/hints/hint_gas.png", "mirror": false},
+  {"id": "brake", "label": "piece_hint_brake", "texture": "res://art/hints/hint_brake.png", "mirror": false},
+  {"id": "arrow-straight", "label": "piece_hint_arrow_straight", "texture": "res://art/hints/hint_arrow_straight.png", "mirror": false},
+  {"id": "arrow-curved", "label": "piece_hint_arrow_curved", "texture": "res://art/hints/hint_arrow_curved.png", "mirror": true},
+  {"id": "arrow-circular", "label": "piece_hint_arrow_circular", "texture": "res://art/hints/hint_arrow_circular.png", "mirror": true}
+ ],
+ "icon_px": [64, 64],
+ "headings": [270, 315, 0, 45, 90, 135, 180, 225],
+ "ground": {
+  "footprint_units": [4.0, 4.0],
+  "size_units": 4.0
+ },
+ "sign": {
+  "footprint_units": [2.0, 2.0],
+  "texture": "res://art/hints/hint_sign.png",
+  "size_px": [64, 96],
+  "draw_scale": 0.5,
+  "anchor_px": [32, 95],
+  "face_px": [8, 8, 48, 48],
+  "collision_radius": 0.5,
+  "height_units": 3.0
+ }
+}

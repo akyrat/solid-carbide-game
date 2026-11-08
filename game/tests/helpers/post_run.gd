@@ -6,4 +6,7 @@ func run() -> void:
 	if TestSave.touches_real_save():
 		gut.logger.error("A test left PlayerProgress.path or GameSettings.path on the real save (task T-148). Use TestSave.restore().")
 		set_exit_code(1)
+	if not PauseGuard.leaks.is_empty():
+		gut.logger.error("T-589: %d test(s) left the tree paused: %s" % [PauseGuard.leaks.size(), ", ".join(PauseGuard.leaks)])
+		set_exit_code(1)
 	RunPaths.cleanup()

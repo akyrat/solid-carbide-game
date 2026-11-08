@@ -54,6 +54,9 @@ extends RefCounted
 ## - rail (T-542; scripts/level/rails.gd, the format): {id: "rail-N", x1, y1, z1, x2, y2, z2} in rails, a
 ##   straight bar between two points of the map at a height at each end (units above the street). Laid with
 ##   place_rail (no catalogue pose), changed with set_rail. Not a body: nothing blocks it being laid.
+## - hint (T-576; scripts/level/level_hints.gd, the format): {id: "hint-N", icon, mode, heading, mirror, x, y,
+##   w, h} in hints: the catalogue entry "hint-<icon>-<mode>" placed in a view (its heading, degrees) and a
+##   mirror; x, y, w, h = the mode's footprint. Not placed when it would reach out of the map.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -70,7 +73,7 @@ const CELL := 2
 const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
-const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail"]
+const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail", "hint"]
 ## T-441: the kaiju alert signs' geometry (one place, shared with the run).
 const KaijuSignsScript := preload("res://scripts/level/kaiju_signs.gd")
 ## T-542: the rails' format and check (one place, shared with the run).
@@ -429,7 +432,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	mirror = valid_mirror(asset_id, mirror)
 	var foot := piece_size(asset_id, view, size, map_rect().size, mirror)
 	var resizable := is_resizable(asset_id)
-	if (resizable or kind in ["prop", "crater"]) and not _holds(map_rect(), Rect2(corner, foot)):
+	if (resizable or kind in ["prop", "crater", "hint"]) and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
 	var tex := texture_of(asset_id, view, mirror, variant)
 	match kind:
@@ -470,6 +473,12 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
 			_list("props").append(pr)
 			return {"kind": kind, "item": pr}
+		"hint":
+			var hi := {"id": _next_id("hints", "hint-"), "icon": str(e.hint), "mode": str(e.mode),
+				"heading": int(view) if view.is_valid_int() else 270, "mirror": mirror,
+				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
+			_list("hints").append(hi)
+			return {"kind": kind, "item": hi}
 		"rooftop":
 			var p := {"id": _next_id("platforms", "roof-"), "x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y,
 				"height": int(e.height)}
@@ -796,6 +805,10 @@ func piece_at(units: Vector2) -> Dictionary:
 	for pr in data.get("props", []):
 		if _rect(pr).has_point(units):
 			return {"kind": "prop", "item": pr}
+	var hints: Array = data.get("hints", []) if data.get("hints") is Array else []
+	for hs in hints:  # T-576: a hint sign stands like a prop
+		if LevelHints.is_sign(hs) and _rect(hs).has_point(units):
+			return {"kind": "hint", "item": hs}
 	for r in _list("ramps"):
 		if _rect(r).has_point(units):
 			return {"kind": "ramp", "item": r}
@@ -811,6 +824,9 @@ func piece_at(units: Vector2) -> Dictionary:
 	for cr in data.get("craters", []):
 		if _rect(cr).has_point(units):
 			return {"kind": "crater", "item": cr}
+	for hg in hints:  # T-576: a ground hint, painted on the street
+		if not LevelHints.is_sign(hg) and _rect(hg).has_point(units):
+			return {"kind": "hint", "item": hg}
 	var c := cell_at(units)
 	if c.x < 0:
 		return {}
@@ -940,6 +956,9 @@ func _delete(piece: Dictionary) -> bool:
 				return true
 		"rail":
 			if _erase_same(_list("rails"), piece.item):
+				return true
+		"hint":
+			if _erase_same(_list("hints"), piece.item):
 				return true
 	return false
 
@@ -1270,4 +1289,6 @@ func placed_pieces() -> Array:
 		out.append({"kind": "alert", "item": al})
 	for ra in data.get("rails", []):
 		out.append({"kind": "rail", "item": ra})
+	for hi in data.get("hints", []):
+		out.append({"kind": "hint", "item": hi})
 	return out
