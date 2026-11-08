@@ -37,7 +37,7 @@ const CONTROL_FRAME := HudStyle.PAUSE_CONTROL_FRAME
 const CONTROL_FILL := HudStyle.PAUSE_CONTROL_FILL
 const CONTROL_FILL_HOVER := HudStyle.PAUSE_CONTROL_FILL_HOVER
 const CONTROL_FILL_PRESSED := HudStyle.PAUSE_CONTROL_FILL_PRESSED
-const CHECK_ICON_SIZE := 16
+const CHECK_ICON_SIZE := SettingsRows.CHECK_ICON_SIZE
 ## The pause screen's slider labels written as data (T-426): the HUD size slider's label.
 const PAUSE_TEXT_FILE := "pause_text"
 const HUD_SIZE_LABEL_KEY := "hud_size_label"
@@ -56,7 +56,7 @@ const BUTTON_COLUMN_WIDTH := 200.0
 const COLUMN_GAP := 32
 const HUD_SIZE_STEP := 5.0
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
-const LABEL_WIDTH := 170.0
+const LABEL_WIDTH := SettingsRows.LABEL_WIDTH  # the shared rows (T-571)
 
 ## Restart was pressed: the owner banks the run's coins and starts a fresh run (T-327).
 signal restart_pressed
@@ -116,8 +116,9 @@ var _root: Control
 var _dim: ColorRect
 var strip: PanelContainer
 var _saved_cam: Array = []
-## Sliders changed since their last save (T-427): "zoom", "sfx", "music".
-var _dirty: Array = []
+## The sliders' save rule (T-427), shared with the main menu's Settings screen (T-571):
+## keys "zoom", "sfx", "music", "hud_size".
+var _saves := SettingsRows.SaveOnRelease.new()
 
 
 func setup(t: Node) -> void:
@@ -167,28 +168,13 @@ func setup(t: Node) -> void:
 	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	HudStyle.apply(hint_label, "pause_text")
 	box.add_child(hint_label)
-	zoom_label = Label.new()
-	zoom_label.text = TEXT_ZOOM_LABEL
-	HudStyle.apply(zoom_label, "pause_text")
-	zoom_label.custom_minimum_size.x = LABEL_WIDTH  # the SFX row uses the same, so the sliders line up
-	var row := HBoxContainer.new()
-	box.add_child(row)
-	row.add_child(zoom_label)
-	zoom_slider = HSlider.new()
-	zoom_slider.name = "ZoomSlider"
-	zoom_slider.min_value = GameSettingsScript.MIN_ZOOM
-	zoom_slider.max_value = GameSettingsScript.MAX_ZOOM
-	zoom_slider.step = 0.1
-	zoom_slider.value = target.zoom
-	zoom_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	zoom_slider.focus_mode = Control.FOCUS_NONE
-	zoom_slider.value_changed.connect(_on_zoom_changed)
+	# The slider rows are SettingsRows' (T-571), shared with the main menu's Settings screen.
+	var zr := SettingsRows.slider_row(box, "ZoomRow", TEXT_ZOOM_LABEL, "ZoomSlider",
+		GameSettingsScript.MIN_ZOOM, GameSettingsScript.MAX_ZOOM, 0.1, target.zoom, _on_zoom_changed)
+	zoom_label = zr.label
+	zoom_slider = zr.slider
+	_value_label = zr.value
 	_wire_save_on_release(zoom_slider, "zoom")
-	row.add_child(zoom_slider)
-	_value_label = Label.new()
-	_value_label.custom_minimum_size.x = 50.0
-	_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	row.add_child(_value_label)
 	_update_value_label()
 	_build_sfx_slider(box)
 	_build_music_slider(box)
@@ -301,32 +287,15 @@ func _link_button_focus() -> void:
 ## The "SFX volume" slider (T-077): 0 to 100, saved, applied to the SFX bus at once.
 ## Its own row under the zoom row, laid out like it: label, slider, value number.
 func _build_sfx_slider(box: VBoxContainer) -> void:
-	var row := HBoxContainer.new()
-	row.name = "SfxRow"
+	var r := SettingsRows.slider_row(box, "SfxRow", TEXT_SFX_LABEL, "SfxSlider", 0.0, 100.0, 1.0,
+		GameSettingsScript.load_sfx_volume(), _on_sfx_changed)
 	# Hidden, not deleted, while the SFX switch is off (T-389, MVP); a hidden row takes no
 	# room in the strip, so the rows below move up.
-	row.visible = GameSettingsScript.sfx_enabled()
-	box.add_child(row)
-	sfx_label = Label.new()
-	sfx_label.text = TEXT_SFX_LABEL
-	HudStyle.apply(sfx_label, "pause_text")
-	sfx_label.custom_minimum_size.x = LABEL_WIDTH
-	row.add_child(sfx_label)
-	sfx_slider = HSlider.new()
-	sfx_slider.name = "SfxSlider"
-	sfx_slider.min_value = 0.0
-	sfx_slider.max_value = 100.0
-	sfx_slider.step = 1.0
-	sfx_slider.value = GameSettingsScript.load_sfx_volume()
-	sfx_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	sfx_slider.focus_mode = Control.FOCUS_NONE
-	sfx_slider.value_changed.connect(_on_sfx_changed)
+	r.row.visible = GameSettingsScript.sfx_enabled()
+	sfx_label = r.label
+	sfx_slider = r.slider
+	_sfx_value_label = r.value
 	_wire_save_on_release(sfx_slider, "sfx")
-	row.add_child(sfx_slider)
-	_sfx_value_label = Label.new()
-	_sfx_value_label.custom_minimum_size.x = 50.0
-	_sfx_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	row.add_child(_sfx_value_label)
 	_sfx_value_label.text = "%d" % int(sfx_slider.value)
 	GameSettingsScript.apply_sfx_volume(sfx_slider.value)
 
@@ -340,29 +309,12 @@ func _on_sfx_changed(v: float) -> void:
 ## The "Music volume" slider (T-210): 0 to 100, saved, applied to the Music bus at once. Its own
 ## row directly under the SFX row, laid out like it. The music keeps playing while paused.
 func _build_music_slider(box: VBoxContainer) -> void:
-	var row := HBoxContainer.new()
-	row.name = "MusicRow"
-	box.add_child(row)
-	music_label = Label.new()
-	music_label.text = TEXT_MUSIC_LABEL
-	HudStyle.apply(music_label, "pause_text")
-	music_label.custom_minimum_size.x = LABEL_WIDTH
-	row.add_child(music_label)
-	music_slider = HSlider.new()
-	music_slider.name = "MusicSlider"
-	music_slider.min_value = 0.0
-	music_slider.max_value = 100.0
-	music_slider.step = 1.0
-	music_slider.value = GameSettingsScript.load_music_volume()
-	music_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	music_slider.focus_mode = Control.FOCUS_NONE
-	music_slider.value_changed.connect(_on_music_changed)
+	var r := SettingsRows.slider_row(box, "MusicRow", TEXT_MUSIC_LABEL, "MusicSlider", 0.0, 100.0, 1.0,
+		GameSettingsScript.load_music_volume(), _on_music_changed)
+	music_label = r.label
+	music_slider = r.slider
+	_music_value_label = r.value
 	_wire_save_on_release(music_slider, "music")
-	row.add_child(music_slider)
-	_music_value_label = Label.new()
-	_music_value_label.custom_minimum_size.x = 50.0
-	_music_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	row.add_child(_music_value_label)
 	_music_value_label.text = "%d" % int(music_slider.value)
 	GameSettingsScript.apply_music_volume(music_slider.value)
 
@@ -485,30 +437,14 @@ func _hud():
 ## right end. Its own row directly under the music row, laid out like it. Moving it scales the
 ## HUD at once while paused; it saves on release and on close (T-427's rule).
 func _build_hud_size_slider(box: VBoxContainer) -> void:
-	var row := HBoxContainer.new()
-	row.name = "HudSizeRow"
-	box.add_child(row)
-	hud_size_label = Label.new()
-	hud_size_label.text = hud_size_text()
-	HudStyle.apply(hud_size_label, "pause_text")
-	hud_size_label.custom_minimum_size.x = LABEL_WIDTH
-	row.add_child(hud_size_label)
-	hud_size_slider = HSlider.new()
-	hud_size_slider.name = "HudSizeSlider"
-	hud_size_slider.min_value = GameSettingsScript.MIN_HUD_SIZE
-	hud_size_slider.max_value = GameSettingsScript.MAX_HUD_SIZE
-	hud_size_slider.step = HUD_SIZE_STEP
 	var h = _hud()
-	hud_size_slider.value = h.hud_size if h != null else GameSettingsScript.load_hud_size()
-	hud_size_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hud_size_slider.focus_mode = Control.FOCUS_NONE
-	hud_size_slider.value_changed.connect(_on_hud_size_changed)
+	var r := SettingsRows.slider_row(box, "HudSizeRow", hud_size_text(), "HudSizeSlider",
+		GameSettingsScript.MIN_HUD_SIZE, GameSettingsScript.MAX_HUD_SIZE, HUD_SIZE_STEP,
+		h.hud_size if h != null else GameSettingsScript.load_hud_size(), _on_hud_size_changed)
+	hud_size_label = r.label
+	hud_size_slider = r.slider
+	_hud_size_value_label = r.value
 	_wire_save_on_release(hud_size_slider, "hud_size")
-	row.add_child(hud_size_slider)
-	_hud_size_value_label = Label.new()
-	_hud_size_value_label.custom_minimum_size.x = 50.0
-	_hud_size_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	row.add_child(_hud_size_value_label)
 	_hud_size_value_label.text = "%d" % int(hud_size_slider.value)
 
 
@@ -567,11 +503,7 @@ func _build_camera_controls(box: VBoxContainer) -> void:
 
 
 func _make_check(node_name: String, text: String) -> CheckBox:
-	var c := CheckBox.new()
-	c.name = node_name
-	c.text = text
-	HudStyle.style_checkbox(c, CHECK_ICON_SIZE, true)  # the shared checkbox (T-446)
-	return c
+	return SettingsRows.check(node_name, text)  # the shared checkbox (T-446), shared rows (T-571)
 
 
 ## The checkbox square (T-446: the shared one, HudStyle.check_icon).
@@ -766,19 +698,16 @@ func _camera_follows_while_paused(on: bool) -> void:
 ## The slider rule (T-427): a slider applies its value live on value_changed and saves only
 ## when the drag ends (drag_ended with value_changed true) and once more when the screen closes,
 ## so a drag writes the settings file once, not once per value. The HUD size slider follows it.
+## The rule itself is SettingsRows.SaveOnRelease (T-571), which the Settings screen uses too.
 func _wire_save_on_release(slider: HSlider, key: String) -> void:
-	slider.drag_ended.connect(func(value_changed: bool):
-		if value_changed:
-			_save_slider(key))
+	_saves.wire(slider, key, _save_slider.bind(key))
 
 
 func _mark_dirty(key: String) -> void:
-	if not _dirty.has(key):
-		_dirty.append(key)
+	_saves.mark(key)
 
 
 func _save_slider(key: String) -> void:
-	_dirty.erase(key)
 	match key:
 		"zoom": GameSettingsScript.save_zoom(zoom_slider.value)
 		"sfx": GameSettingsScript.save_sfx_volume(sfx_slider.value)
@@ -789,8 +718,7 @@ func _save_slider(key: String) -> void:
 ## Saves every slider that changed since its last save: the screen closing (Escape, Restart,
 ## Exit) calls it, so a keyboard or click change is not lost.
 func save_pending() -> void:
-	for key in _dirty.duplicate():
-		_save_slider(key)
+	_saves.save_pending()
 
 
 func _on_zoom_changed(v: float) -> void:
