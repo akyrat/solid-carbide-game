@@ -1,7 +1,7 @@
 ---
 id: T-581
 title: Free placement in the level creator, Shift to snap
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -116,3 +116,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Documents affected:** docs/level-design.md (Content: "Level creator: free placement (task T-581)", with moving; the rail and spawn lines), game/docs/level/level-creator.md ("Free placement (T-581)", "Moving a placed piece (T-581, added scope)", Validator, Controls, Snapping).
 
 **For the board's playtest (proposals):** the quarter-unit step; Shift as the snap key; the 1-unit ramp reach without Shift; a rooftop carrying what stands on it.
+- 2026-11-08, needs-playtest → done: Board: played T-592's build (which holds T-581), lgtm (2026-11-08)
