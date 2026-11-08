@@ -4070,3 +4070,8 @@ Entry format:
 - Decision or change: Hint pieces (gas, brake/reverse, arrows, cyclical arrows) placeable in the level creator and shown in the run, with placeholder art; the board played it.
 - Documents touched: `docs/level-design.md`
 - Tasks: T-576
+
+## 2026-11-08: The car points where it goes: frame remap and straight grip
+- Decision or change: Car frames picked by where their drawing points (A) and straight-line grip 0.9 while only W is held (C); the board played A+C.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-583
