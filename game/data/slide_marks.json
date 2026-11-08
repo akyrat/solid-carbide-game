@@ -1,0 +1,9 @@
+{
+  "_comment": "Slide marks (T-600; Visual style, Decisions, 'Slide marks, and tire marks that fade faster'; game/docs/driving/effects.md). All proposals for the board's playtest. alpha 0.6: the whole mark piece is drawn at 60% over the ground (the same whole-piece mechanism as the fade, never per pixel), so it reads as a lighter version of the drift mark on dark and light ground without a second texture. start_speed 2.0 and stop_speed 1.0 (units a second of sideways speed; the car cruises at 11): a 2 units/s slide is about 10 degrees off the nose at cruise, clearly a slide, while a straight coast has 0; stopping at 1.0 (hysteresis) keeps a fading slide from flickering on and off. every_steps 2 and min_segment_units 0.2: a slide mark lays a point every second physics step and at least 0.2 units apart, so four tyres cost the same segments a second as a drift's two (about 100 at most). joins_drift true: where a drift turns into a slide or back, the rear marks carry on joined (the same mark, a lighter piece), because a seamless trail reads as one skid.",
+  "alpha": 0.6,
+  "start_speed": 2.0,
+  "stop_speed": 1.0,
+  "every_steps": 2,
+  "min_segment_units": 0.2,
+  "joins_drift": true
+}

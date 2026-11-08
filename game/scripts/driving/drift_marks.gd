@@ -41,6 +41,18 @@ extends Node2D
 ## under everything. A piece closes when its depth changes. Without the three
 ## (the drift prototype) nothing is lifted and every piece stays at z 0.
 ##
+## Slide marks (task T-600; Visual style, Decisions, "Slide marks, and tire marks
+## that fade faster"): when the car has sideways speed but is not accelerating (W
+## not held) and is not drifting, all four tyres leave marks slightly lighter than
+## the drift marks. Their numbers are in data/slide_marks.json (see load_slide_data).
+## A slide mark starts when the sideways speed reaches slide_start_speed and ends when
+## it falls under slide_stop_speed, so a straight coast leaves none. To cost no more
+## than a drift per second of marking, it lays a point every slide_every_steps steps
+## and at least slide_min_segment_units apart (four tyres at half the rate = two
+## tyres at the full rate). Where a drift turns into a slide or back, the rear
+## tyres' marks carry on joined (slide_joins_drift). Every mark, of either kind,
+## lasts `lifetime` + `fade_time` (half what drift marks lasted before this task).
+##
 ## Use: instantiate the scene, add it under the view, call bind(car). Or call
 ## lay(drifting, position_units, rotation) yourself after each physics step.
 ## It ages in _process (the default, pausable process mode), so marks do not
@@ -50,6 +62,10 @@ extends Node2D
 const PX_PER_UNIT := 16.0
 const HeatSparks := preload("res://scripts/driving/drift_heat_sparks.gd")
 const CarHeight := preload("res://scripts/driving/car_height.gd")
+const SLIDE_DATA := "res://data/slide_marks.json"
+const MODE_NONE := 0
+const MODE_DRIFT := 1
+const MODE_SLIDE := 2
 
 ## The mark's texture, drawn along each line (Line2D texture). Opaque pixels
 ## only; the whole piece fades through modulate.
@@ -61,9 +77,9 @@ const CarHeight := preload("res://scripts/driving/car_height.gd")
 ## The mark's width, in units (1 unit = the car's width).
 @export var width_units: float = 0.25
 ## Seconds a piece stays fully visible after it was laid.
-@export var lifetime: float = 6.0
+@export var lifetime: float = 3.0
 ## Seconds a piece then takes to fade out as a whole before it is removed.
-@export var fade_time: float = 1.0
+@export var fade_time: float = 0.5
 ## The most segments kept at once, both tyres together.
 @export var max_segments: int = 800
 ## A piece of a mark closes (starts its lifetime) after this many segments.
@@ -74,6 +90,21 @@ const CarHeight := preload("res://scripts/driving/car_height.gd")
 @export var rear_axle_units: float = 0.9
 ## How far each rear tyre is from the car's centre line, in units (the car is 1 wide).
 @export var half_track_units: float = 0.375
+## How far in front of the car's centre the front tyres are, in units (slide marks only).
+@export var front_axle_units: float = 0.9
+
+## Slide marks (T-600), loaded from SLIDE_DATA in _ready; these are the defaults.
+## Alpha of a whole slide mark piece (1 = as dark as a drift mark); lower is lighter.
+var slide_alpha := 0.6
+## Sideways speed (units/s) that starts a slide mark, and the lower one that ends it.
+var slide_start_speed := 2.0
+var slide_stop_speed := 1.0
+## A slide mark lays a point every this many physics steps...
+var slide_every_steps := 2
+## ...and only once the tyre has moved this far (units).
+var slide_min_segment_units := 0.2
+## Whether a slide mark carries on from a drift mark's end (and back) without a gap.
+var slide_joins_drift := true
 
 ## The look of each heat step, index 0 = step 1 (x2), 1 = step 2 (x3), 2 = step 3
 ## (x4 and up). Keys: glow_color, glow_width_units (behind the mark, wider than
@@ -107,9 +138,12 @@ var marks_started := 0
 ## (-1 while still being laid), segments: int}.
 var _pieces: Array = []
 ## The piece each tyre is laying now (0 = left, 1 = right), or null.
-var _open: Array = [null, null]
+## Tyres 0 and 1 are the rear ones, 2 and 3 the front ones (slide marks only).
+var _open: Array = [null, null, null, null]
 var _segments := 0
 var _was_drifting := false
+var _mode := MODE_NONE
+var _slide_phase := 0
 var _sparks: Node2D
 var _spark_carry := [0.0, 0.0]
 var _flame_carry := [0.0, 0.0]
@@ -117,6 +151,7 @@ var _flicker_seed := -1
 
 
 func _ready() -> void:
+	load_slide_data()
 	_sparks = HeatSparks.new()
 	_sparks.name = "HeatSparks"
 	add_child(_sparks)
@@ -126,6 +161,21 @@ func _process(delta: float) -> void:
 	Perf.begin(&"effects.drift_marks")
 	advance(delta)
 	Perf.end(&"effects.drift_marks")
+
+
+## Reads the slide marks' numbers from SLIDE_DATA (missing keys keep the defaults).
+func load_slide_data(path: String = SLIDE_DATA) -> void:
+	if not FileAccess.file_exists(path):
+		return
+	var d = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if not d is Dictionary:
+		return
+	slide_alpha = float(d.get("alpha", slide_alpha))
+	slide_start_speed = float(d.get("start_speed", slide_start_speed))
+	slide_stop_speed = float(d.get("stop_speed", slide_stop_speed))
+	slide_every_steps = maxi(1, int(d.get("every_steps", slide_every_steps)))
+	slide_min_segment_units = float(d.get("min_segment_units", slide_min_segment_units))
+	slide_joins_drift = bool(d.get("joins_drift", slide_joins_drift))
 
 
 ## The combo multiplier now (from RunState.combo_changed): picks the heat step
@@ -157,7 +207,8 @@ func bind(car: Node) -> void:
 	car.stepped.connect(func() -> void:
 		Perf.begin(&"effects.drift_marks_lay")
 		var h = car.get("height")
-		lay(lays(car), car.model.get_position(), car.model.rotation, float(h) if h != null else NAN)
+		lay(lays(car), car.model.get_position(), car.model.rotation, float(h) if h != null else NAN,
+			slides(car))
 		Perf.end(&"effects.drift_marks_lay"))
 
 
@@ -165,6 +216,18 @@ func bind(car: Node) -> void:
 ## without a height, `airborne` missing, is always on the ground).
 static func lays(car: Node) -> bool:
 	return car.model.is_drifting and car.get("airborne") != true
+
+
+## Whether `car` leaves slide marks this step (T-600): on the ground, not drifting, W not
+## held, and sideways fast enough (slide_start_speed, or slide_stop_speed once sliding).
+func slides(car: Node) -> bool:
+	if car.model.is_drifting or car.get("airborne") == true:
+		return false
+	var last = car.get("last_input")
+	if last is Array and not last.is_empty() and last[0]:
+		return false
+	var limit := slide_stop_speed if _mode == MODE_SLIDE else slide_start_speed
+	return absf(car.model.sideways_speed()) >= limit
 
 
 ## The two rear tyres' places on the ground, in units: [left, right].
@@ -176,33 +239,71 @@ func rear_tyres(position_units: Vector2, rotation_rad: float) -> Array:
 	return [axle - side * half_track_units, axle + side * half_track_units]
 
 
+## The four tyres' places: rear left, rear right, front left, front right (T-600).
+func all_tyres(position_units: Vector2, rotation_rad: float) -> Array:
+	var forward := Vector2(cos(rotation_rad), sin(rotation_rad))
+	var side := Vector2(-forward.y, forward.x)
+	var axle := position_units + forward * front_axle_units
+	return rear_tyres(position_units, rotation_rad) + [axle - side * half_track_units, axle + side * half_track_units]
+
+
 ## One physics step of the car: lays marks while drifting, ends them when not.
 ## car_height (units, task T-411): the car's height, when it has one. A rear tyre
 ## whose ground is more than CarHeight.STEP_CLIMB_MAX below it hangs over an edge
 ## (a rooftop's or a ramp's side): it lays nothing there and its mark ends, and a
 ## new one starts when it is back on the ground, as in the air (T-206).
-func lay(drifting: bool, position_units: Vector2, rotation_rad: float, car_height: float = NAN) -> void:
-	if not drifting:
-		if _was_drifting:
+func lay(drifting: bool, position_units: Vector2, rotation_rad: float, car_height: float = NAN,
+		sliding: bool = false) -> void:
+	var mode := MODE_DRIFT if drifting else (MODE_SLIDE if sliding else MODE_NONE)
+	if mode == MODE_NONE:
+		if _mode != MODE_NONE:
 			_close_open()
+		_mode = MODE_NONE
 		_was_drifting = false
 		return
-	var tyres := rear_tyres(position_units, rotation_rad)
+	if mode != _mode:
+		_switch_mode(mode)
+		_slide_phase = 0
+	if mode == MODE_SLIDE:
+		var skip := _slide_phase % slide_every_steps != 0
+		_slide_phase += 1
+		if skip:
+			_mode = mode
+			return
+	var tyres := rear_tyres(position_units, rotation_rad) if mode == MODE_DRIFT \
+		else all_tyres(position_units, rotation_rad)
 	var z := depth_at(position_units, rotation_rad)
 	if _sparks != null:
 		_sparks.z_index = z
-	if not _was_drifting:
-		_close_open()
-	for t in 2:
+	for t in tyres.size():
 		if overhangs(tyres[t], car_height):
 			_close_tyre(t)
 		elif _open[t] == null:
 			marks_started += 1
-			_open[t] = _new_piece(marks_started, t, point_px(tyres[t]), z)
+			_open[t] = _new_piece(marks_started, t, point_px(tyres[t]), z, mode)
 		else:
 			_extend(t, point_px(tyres[t]), z)
-	_was_drifting = true
+	_was_drifting = mode == MODE_DRIFT
+	_mode = mode
 	_enforce_cap()
+
+
+## A drift turns into a slide or back (or either starts): the front tyres' marks end;
+## the rear ones carry on joined from their last point when slide_joins_drift, else end.
+func _switch_mode(mode: int) -> void:
+	if _mode == MODE_NONE or not slide_joins_drift:
+		_close_open()
+		return
+	for t in 2:
+		var p = _open[t]
+		if p == null:
+			continue
+		var last: Vector2 = p.line.get_point_position(p.line.get_point_count() - 1)
+		var mark: int = p.mark
+		_close_tyre(t)
+		_open[t] = _new_piece(mark, t, last, p.z, mode)
+	_close_tyre(2)
+	_close_tyre(3)
 
 
 ## True when the tyre at tyre_units hangs over an edge (task T-411): its ground
@@ -251,9 +352,9 @@ func advance(delta: float) -> void:
 			continue
 		var line: Line2D = p.line
 		if age > lifetime:
-			line.modulate.a = clampf(1.0 - (age - lifetime) / maxf(fade_time, 0.0001), 0.0, 1.0)
+			line.modulate.a = p.alpha * clampf(1.0 - (age - lifetime) / maxf(fade_time, 0.0001), 0.0, 1.0)
 		else:
-			line.modulate.a = 1.0
+			line.modulate.a = p.alpha
 		keep.append(p)
 	_pieces = keep
 	_flicker()
@@ -278,14 +379,19 @@ func marks() -> Dictionary:
 	var out := {}
 	for p in _pieces:
 		if not out.has(p.mark):
-			out[p.mark] = {"tyre": p.tyre, "lines": []}
+			out[p.mark] = {"tyre": p.tyre, "lines": [], "slide": p.slide}
 		out[p.mark].lines.append(p.line)
 	return out
 
 
 ## True while a drift is laying marks.
 func is_laying() -> bool:
-	return _open[0] != null or _open[1] != null
+	return _open.any(func(o) -> bool: return o != null)
+
+
+## Whether the marks being laid now are slide marks (T-600).
+func is_sliding() -> bool:
+	return _mode == MODE_SLIDE
 
 
 ## Removes every mark (not needed by the run, which builds a new map per run).
@@ -293,14 +399,16 @@ func clear() -> void:
 	for p in _pieces:
 		p.line.queue_free()
 	_pieces.clear()
-	_open = [null, null]
+	_open = [null, null, null, null]
 	_segments = 0
 	_was_drifting = false
+	_mode = MODE_NONE
 	if _sparks != null:
 		_sparks.clear()
 
 
-func _new_piece(mark: int, tyre: int, start_px: Vector2, z: int = 0) -> Dictionary:
+func _new_piece(mark: int, tyre: int, start_px: Vector2, z: int = 0, mode: int = MODE_DRIFT) -> Dictionary:
+	var slide := mode == MODE_SLIDE
 	var line := Line2D.new()
 	line.name = "Mark%d_%s" % [mark, "L" if tyre == 0 else "R"]
 	line.width = width_units * PX_PER_UNIT
@@ -313,10 +421,13 @@ func _new_piece(mark: int, tyre: int, start_px: Vector2, z: int = 0) -> Dictiona
 	line.joint_mode = Line2D.LINE_JOINT_SHARP
 	line.add_point(start_px)
 	line.z_index = z
+	line.modulate.a = slide_alpha if slide else 1.0
 	add_child(line)
+	var step := 0 if slide else heat_step
 	var p := {"line": line, "mark": mark, "tyre": tyre, "closed_at": -1.0, "segments": 0,
-		"step": heat_step, "glow": null, "core": null, "z": z}
-	var look := look_for(heat_step)
+		"step": step, "glow": null, "core": null, "z": z, "slide": slide,
+		"alpha": slide_alpha if slide else 1.0}
+	var look := look_for(step)
 	if not look.is_empty():
 		p.glow = _heat_line("Glow", look.glow_width_units, look.glow_color, start_px, line)
 		p.glow.show_behind_parent = true
@@ -382,7 +493,8 @@ func _extend(tyre: int, new_px: Vector2, z: int = 0) -> void:
 		return
 	var line: Line2D = p.line
 	var last := line.get_point_position(line.get_point_count() - 1)
-	if last.distance_to(new_px) < min_segment_units * PX_PER_UNIT:
+	var min_units := slide_min_segment_units if p.slide else min_segment_units
+	if last.distance_to(new_px) < min_units * PX_PER_UNIT:
 		return
 	line.add_point(new_px)
 	for extra in [p.glow, p.core]:
@@ -394,11 +506,11 @@ func _extend(tyre: int, new_px: Vector2, z: int = 0) -> void:
 		# Close this piece (full, or the depth changed) and carry on from its last
 		# point, so the mark stays joined.
 		p.closed_at = time
-		_open[tyre] = _new_piece(p.mark, tyre, new_px, z)
+		_open[tyre] = _new_piece(p.mark, tyre, new_px, z, MODE_SLIDE if p.slide else MODE_DRIFT)
 
 
 func _close_open() -> void:
-	for t in 2:
+	for t in 4:
 		_close_tyre(t)
 
 
