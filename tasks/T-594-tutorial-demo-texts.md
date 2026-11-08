@@ -1,7 +1,7 @@
 ---
 id: T-594
 title: Texts: Replay, Skip and "your turn" for the tutorial's demos
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/data/tutorial_text.json, game/docs/hud-and-menus/tutorial-slides.md]
 files_expected_to_change: [game/data/tutorial_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,13 +43,21 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The three texts exist in tutorial_text.json with keys and _comment, listed in the result notes with where each shows. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists them. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] The three texts exist in tutorial_text.json with keys and _comment, listed in the result notes with where each shows. (QA: pass)
+- [ ] docs/hud-and-menus.md Content lists them. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: Replay, Skip and your turn texts for the tutorial demos.
+
+### 2026-11-08, In progress → In QA
+
+Texts in: Replay, Skip demo, Your turn. They show in T-574's build; checked together with it.
 
 ## Style review
 
@@ -57,4 +65,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Narrative Theme Agent (relayed by the Project Lead): three texts in game/data/tutorial_text.json block demo, each with _comment: demo.replay 'Replay' (trick slide button, replays the recording); demo.skip 'Skip demo' (button while the recording plays; 'demo' added so it does not clash with button.skip 'Skip', the slides' top-right control); demo.your_turn 'Your turn' (label over the practice window for 2 s when the recording ends or is skipped, then fades). Listed in docs/hud-and-menus.md Content. Commit 5989696b. The agent ran no tests: a hook refused its raw Godot --import, and it stopped. Project Lead: qa_check's one Python failure (test_text_inventory, tutorial_text.json) already fails on T-574's branch, not from these texts; T-574 tweak 12 fixes it. Screenshots come with T-574's build, where the texts first show.
+- 2026-11-08, needs-playtest → done: Board: T-574 lgtm, merge (2026-11-08); texts seen in its build

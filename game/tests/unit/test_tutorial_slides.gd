@@ -130,17 +130,34 @@ func test_each_trick_slide_has_its_instruction_and_window() -> void:
 		assert_true(s.is_ancestor_of(l), TRICK_KEYS[i])
 		assert_eq(l.text, _at("tutorial.trick.%s.instruction" % TRICK_KEYS[i]))
 		assert_true(s.is_ancestor_of(slides.practice_frames[i]), "window on slide %d" % (i + 2))
-		assert_true(s.is_ancestor_of(slides.success_messages[i]))
 	assert_true(slides.slides[4].is_ancestor_of(slides.text_labels["tutorial.grind_hint"]), "the Jump hint on the grind slide")
 	assert_eq(slides.text_labels["tutorial.grind_hint"].text, _at("tutorial.grind_hint"))
 
 
-func test_the_window_is_a_bit_bigger_than_the_old_clips() -> void:
-	var frame: Control = slides.practice_frames[0]
-	assert_gt(frame.size.x, 546.0, "wider than the redrawn slide 1's 546 x 364 clip box")
-	assert_gt(frame.size.y, 364.0)
-	assert_lt(frame.size.x, 700.0, "only a bit")
-	assert_lte(frame.position.x + frame.size.x, TutorialSlides.STAGE.x - TutorialSlides.SIDE + 0.5, "inside the padding")
+func test_the_window_spans_the_slide_at_the_same_height() -> void:
+	# T-574 (the board): side to side (the content width, between the arrows), still 400 high.
+	for i in range(4):
+		var frame: Control = slides.practice_frames[i]
+		assert_almost_eq(frame.position.x, TutorialSlides.SIDE, 0.5, "from the left padding")
+		assert_almost_eq(frame.position.x + frame.size.x, TutorialSlides.STAGE.x - TutorialSlides.SIDE, 0.5, "to the right padding")
+		assert_almost_eq(frame.size.y, 400.0, 0.5, "the same height")
+		assert_gt(frame.position.x, slides.left_arrow.position.x + slides.left_arrow.size.x, "clear of the left arrow")
+		assert_lt(frame.position.x + frame.size.x, slides.right_arrow.position.x, "clear of the right arrow")
+
+
+func test_the_tutorial_text_is_in_the_game_window() -> void:
+	# T-574 (the board): the instruction (and the grind's hint) on a band along the window's bottom.
+	await get_tree().process_frame
+	for i in range(4):
+		var frame: Control = slides.practice_frames[i]
+		var l: Label = slides.text_labels["tutorial.trick.%s.instruction" % TRICK_KEYS[i]]
+		assert_true(frame.is_ancestor_of(l), "%s: inside the window" % TRICK_KEYS[i])
+		var band: Control = frame.get_node("Instructions")
+		var r := band.get_rect()
+		assert_almost_eq(r.end.y, frame.size.y - TutorialSlides.WINDOW_BORDER, 1.0, "on the bottom edge")
+		assert_gt(r.position.y, frame.size.y / 2.0, "below the centre (clear of the success message)")
+		assert_eq(band.mouse_filter, Control.MOUSE_FILTER_IGNORE, "clicks reach the game")
+	assert_true(slides.practice_frames[3].is_ancestor_of(slides.text_labels["tutorial.grind_hint"]))
 
 
 func test_the_dots_show_six_and_follow_the_slide() -> void:
@@ -165,13 +182,13 @@ func test_texts_match_the_file() -> void:
 		var expected := _at(key)
 		var node: Control = slides.text_labels[key]
 		var shown: String = node.tooltip_text if key.begins_with("arrow.") else node.text
-		if key == "button.skip":
+		if key == "button.skip" or (key.begins_with("demo.") and node is Button):  # buttons in capitals (T-574 tweak 12)
 			assert_eq(shown, expected.to_upper(), key)
 		else:
 			assert_eq(shown, expected, key)
 	for key in ["tutorial.loop.title", "tutorial.loop.step1", "tutorial.loop.step4", "tutorial.loop.point",
 			"tutorial.trick.drift.title", "tutorial.trick.drift.instruction", "tutorial.trick.altdrift.instruction",
-			"tutorial.trick.airspin.instruction", "tutorial.trick.grind.instruction", "tutorial.success",
+			"tutorial.trick.airspin.instruction", "tutorial.trick.grind.instruction",
 			"tutorial.grind_hint", "slide4.title", "slide4.kaiju", "button.start", "checkbox.dont_show",
 			"button.skip", "arrow.left", "arrow.right"]:
 		assert_true(slides.text_labels.has(key), "uses " + key)
@@ -457,22 +474,14 @@ func test_a_practice_keeps_its_count_when_its_slide_hides() -> void:
 	assert_eq(session.setup_calls.size(), 1, "not set up again")
 
 
-func test_the_success_message_shows_over_the_window_only_after_the_third_success() -> void:
+func test_no_success_message_over_the_window_when_the_goal_is_done() -> void:
+	# T-574 (the board): the big centred message is gone; the practice session stamps its notebook.
 	slides.show_slide(3)
 	var session = slides.practices[2]
-	var msg: Label = slides.success_messages[2]
-	assert_false(msg.visible)
-	session.succeed()
-	assert_false(msg.visible, "after one")
-	session.succeed()
-	assert_false(msg.visible, "after two")
-	session.succeed()
-	assert_true(msg.visible, "after the third")
-	assert_eq(msg.text, _at("tutorial.success"))
-	assert_eq(Rect2(msg.position, msg.size), Rect2(slides.practice_frames[2].position, slides.practice_frames[2].size),
-		"over the practice window, not the whole slide")
-	for i in [0, 1, 3]:
-		assert_false(slides.success_messages[i].visible, "the other windows are untouched")
+	for n in 3:
+		session.succeed()
+	assert_false(slides.text_labels.has("tutorial.success"), "the success text is no longer shown")
+	assert_null(slides.find_child("Success", true, false))
 
 
 func test_a_missing_practice_scene_leaves_an_empty_window() -> void:
@@ -501,3 +510,15 @@ func test_the_stage_and_the_windows_scale_with_the_window() -> void:
 	slides.size = Vector2(1000, 720)
 	slides._fit()
 	assert_almost_eq(slides.stage.scale.x, 1000.0 / 1280.0, 0.001)
+
+
+func test_the_take_tools_and_f_keys_are_gone() -> void:
+	# T-574 tweak 12 (the board: "remove some of the buttons that I used to record it", "drop the F
+	# keys entirely"): no take tools row, and F5, F6, F7, F9 do nothing on a trick slide.
+	slides.show_slide(1)
+	for i in range(4):
+		assert_null(slides.slides[1 + i].find_child("TakeTools", true, false))
+	for code in [KEY_F5, KEY_F6, KEY_F7, KEY_F9]:
+		_push(code)
+		assert_eq(slides.current, 1, "an F key changes no slide")
+	assert_false("dev_tools_enabled" in slides)

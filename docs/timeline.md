@@ -4180,3 +4180,8 @@ Entry format:
 - Decision or change: Replay, Skip and "your turn" for the tutorial's recorded demos.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-594
+
+## 2026-11-08: Texts for the tutorial demos
+- Decision or change: Replay, Skip demo and Your turn for the tutorial's recorded demos.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-594

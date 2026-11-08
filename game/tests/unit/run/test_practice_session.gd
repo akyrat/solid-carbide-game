@@ -72,19 +72,14 @@ func test_it_loads_the_playground_with_the_real_car_and_no_enemies_clock_or_dama
 	assert_eq(session.state.health, session.state.max_health)
 
 
-func test_the_car_starts_on_the_tricks_start_point() -> void:
+func test_every_slide_starts_on_the_levels_spawn() -> void:
+	# T-574 (the board: "the spawnpoint is different for each slide please fix it"): one start for all.
+	var layout: Dictionary = session.map.layout
 	for t in PracticeSession.TRICKS:
 		session.setup(t)
-		var s: Dictionary = LevelStartPoints.of(session.map.layout, t)
-		assert_false(s.is_empty(), "%s has a start point" % t)
-		assert_almost_eq(session.car.model.get_position(), Vector2(s.x, s.y), Vector2(0.001, 0.001), t)
-		assert_almost_eq(session.car.model.rotation, deg_to_rad(float(s.heading)), 0.001, t)
-
-
-func test_a_level_without_start_points_starts_every_trick_on_its_spawn() -> void:
-	session.map.layout.erase("start_points")
-	var p: Dictionary = session.start_point("grind")
-	assert_eq(p.position, LevelSpawn.position_of(session.map.layout))
+		assert_almost_eq(session.car.model.get_position(), LevelSpawn.position_of(layout), Vector2(0.001, 0.001), t)
+		assert_almost_eq(session.car.model.rotation, LevelSpawn.rotation_of(layout), 0.001, t)
+	assert_false(layout.has("start_points"), "the playground keeps no per-slide start points")
 
 
 # ---- Counting ---------------------------------------------------------------------------------
@@ -101,9 +96,12 @@ func _check_counts(trick: String, counts: Array, others: Array) -> void:
 		assert_eq(session.successes, i + 1, "%s: success %d" % [trick, i + 1])
 		assert_eq(completions, 1 if i == 2 else 0, "%s: completed only on the third" % trick)
 	_do(counts[0])
-	assert_eq(session.successes, 3, "%s: the count stays at 3" % trick)
-	assert_eq(completions, 1)
-	assert_eq(counted.size(), 3)
+	_do(counts[0])
+	assert_eq(session.successes, 5, "%s: the count overfills past 3 (T-574)" % trick)
+	assert_eq(completions, 1, "completed once")
+	assert_eq(counted.size(), 5)
+	session.notebook.finish_falls()
+	assert_true(session.notebook.rows[0].label.text.contains("5/3"), "%s: the notebook shows 5/3: %s" % [trick, session.notebook.rows[0].label.text])
 
 
 ## T-565: the drift slide counts seconds of drifting, not tricks: no trick counts, LONG DRIFT! either.
@@ -130,13 +128,15 @@ func test_the_drift_practice_adds_drift_seconds_up_and_completes_at_3_s() -> voi
 	session.add_drift_seconds(1.3)
 	assert_eq(completions, 0, "2.9 s is not 3 s")
 	session.add_drift_seconds(0.5)
-	assert_eq(session.drift_seconds, 3.0, "the total stops at 3 s")
+	assert_almost_eq(session.drift_seconds, 3.4, 0.0001, "the total runs on past 3 s (T-574)")
 	assert_eq(completions, 1, "completed when the total reaches 3 s")
 	assert_true(session.is_completed())
 	session.add_drift_seconds(1.0)
 	assert_eq(completions, 1, "completed once")
-	assert_eq(totals.size(), 4)
-	assert_eq(totals[3], [3.0, 3.0])
+	assert_eq(totals.size(), 5)
+	assert_almost_eq(float(totals[4][0]), 4.4, 0.0001)
+	session.notebook.finish_falls()
+	assert_true(session.notebook.rows[0].label.text.contains("4.4/3"), "the notebook overfills: %s" % session.notebook.rows[0].label.text)
 
 
 func test_the_other_slides_still_count_3_tricks() -> void:
@@ -216,7 +216,7 @@ func test_real_drifts_add_up_live_and_complete_at_3_s_in_total() -> void:
 		car.physics_step()
 		guard += 1
 	assert_eq(completions, 1, "the second drift tops the total up to 3 s")
-	assert_eq(session.drift_seconds, 3.0)
+	assert_gte(session.drift_seconds, 3.0 - RunMissions.EPSILON)
 	assert_eq(counted.size(), 0, "no trick counted")
 	session.notebook.finish_falls()
 	assert_true(session.notebook.rows[0].ticked)
@@ -263,7 +263,8 @@ func test_the_drift_notebook_line_shows_the_running_total_live() -> void:
 	session.add_drift_seconds(1.0)
 	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "1.4").replace("{total}", "3.0"))
 	session.add_drift_seconds(2.0)
-	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "3.0").replace("{total}", "3.0"))
+	# T-574: the total overfills past 3 s (3.46 shows 3.4, cut to one decimal as before).
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "3.4").replace("{total}", "3.0"))
 	assert_true(session.notebook.rows[0].ticked, "ticked at 3 s")
 
 
@@ -342,8 +343,8 @@ func test_on_the_real_playground_a_grind_from_the_grind_start_counts() -> void:
 	session.gift_screen.skip_animation()
 	session.take_gift()
 	assert_eq(session.car.jump.tier, 1)
-	var r := _drive_east(false, true)
-	assert_ne(r.caught, "", "a rail is caught from the ramp")
+	var r := _route(GRIND_ROUTE, 99, false, 2, 6.0)
+	assert_ne(r.caught, "", "a rail is caught with a hop from the grind start")
 	assert_eq(session.successes, 1, "the grind counts when it ends: %s" % [r])
 	assert_eq(counted[0][0], "rail_grind")
 
@@ -408,36 +409,58 @@ func test_the_count_survives_a_car_reset() -> void:
 	assert_eq(session.successes, 2)
 
 
-## Drives east from the trick's start point with W held (scripted), the car stepped by the test
-## (T-560's test_practice_playground.gd drive): A in the air when `spin`, Space held in the air when
-## `hold_space`, both only past the ramp (x > 11). Stops after the landing, or once a grind ended.
-func _drive_east(spin: bool, hold_space: bool) -> Dictionary:
+## T-574: drives from the spawn along `pts` (units) with W held, steering toward each point in turn
+## (the car stepped by the test; A, steer +1, turns the nose to a smaller rotation). Below
+## `slow_until` (a point index) W is let go above `slow_speed` units/s, so the turns stay tight. `spin`: A held
+## in the air. `hop_at`: Space pressed on reaching that point (the grind's Jump) and held in the air
+## and on the rail. Stops after the first landing, or once a grind ended.
+func _route(pts: Array, slow_until: int, spin: bool, hop_at := -1, slow_speed := 8.0) -> Dictionary:
 	session.set_focused(true)
 	var car = session.car
 	car.use_keyboard = false
-	var out := {"caught": "", "flew": false}
-	for i in 900:
-		var in_air: bool = car.airborne
-		var past: bool = car.model.get_position().x > 11.0
-		car.scripted_input = [true, false, 1.0 if (spin and in_air and past) else 0.0]
-		car.scripted_jump_held = hold_space and (in_air or car.grind.active) and past
+	var out := {"caught": "", "flew": false, "reached": 0}
+	var wi := 0
+	var pressed := false
+	for i in 1500:
+		var pos: Vector2 = car.model.get_position()
+		if wi < pts.size() and pos.distance_to(pts[wi]) < 3.5:
+			if wi == hop_at and not pressed and not car.airborne:
+				car.press_jump()
+				pressed = true
+			wi += 1
+		var steer := 0.0
+		if car.airborne:
+			steer = 1.0 if spin else 0.0
+		elif wi < pts.size():
+			var diff := wrapf((pts[wi] - pos).angle() - car.model.rotation, -PI, PI)
+			steer = -clampf(diff * 3.0, -1.0, 1.0)
+		var slow: bool = wi < slow_until and car.model.get_velocity().length() > slow_speed
+		car.scripted_input = [not slow, false, steer]
+		car.scripted_jump_held = pressed and (car.airborne or car.grind.active)
 		car.physics_step()
 		if car.grind.active:
 			out.caught = car.grind.rail.id
-		if car.airborne and past:
+		if car.airborne:
 			out.flew = true
-		if out.caught != "" and not car.grind.active and not car.airborne:
+		if out.flew and not car.airborne and not car.grind.active:
 			break
-		if out.caught == "" and out.flew and not car.airborne and car.model.get_position().x > 12.0:
-			break
+	out.reached = wi
 	out["end"] = car.model.get_position()
 	return out
+
+
+## From the spawn (-7, -1) to the jump ramp ramp-7 (x -2 to 2, y 20 to 28): south-west round the
+## ramp, then east along y 22.5 at full speed.
+const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-28, 19), Vector2(-26, 22.5),
+	Vector2(-12, 22.5), Vector2(4, 22.5)]
+## From the spawn to the grind corridor: round to the west, a hop at (-14, 2) onto rail-40.
+const GRIND_ROUTE := [Vector2(0, 6), Vector2(-8, 6), Vector2(-14, 2), Vector2(-30, 2)]
 
 
 func test_on_the_real_playground_an_air_spin_from_the_air_spin_start_counts() -> void:
 	session.setup("air_spin")
 	session.start()
-	var r := _drive_east(true, false)
+	var r := _route(AIR_ROUTE, 3, true)
 	assert_true(r.flew, "flew off the jump ramp")
 	assert_eq(session.successes, 1, "one landing, one success: %s %s" % [r, counted])
 	assert_true(["air_one_eighty", "air_three_sixty"].has(counted[0][0]))
@@ -455,3 +478,99 @@ func test_on_the_real_playground_an_alt_drift_from_the_alt_drift_start_counts() 
 			car.physics_step()
 	assert_eq(session.successes, 1, "%s" % [counted])
 	assert_eq(counted[0][0], "alternate_drift")
+
+
+func test_the_goal_done_stamps_a_green_check_on_the_notebook_and_restart_clears_it() -> void:
+	# T-574 (the board): a green check stamp on the notebook page when the goal is done, no text.
+	session.setup("alt_drift")
+	assert_false(session.is_stamped(), "no stamp at first")
+	assert_true(session.notebook.is_ancestor_of(session.stamp), "the stamp lives on the notebook page")
+	_do("alternate_drift")
+	_do("alternate_drift")
+	assert_false(session.is_stamped(), "no stamp before the goal")
+	_do("alternate_drift")
+	assert_true(session.is_stamped(), "stamped on the third")
+	assert_eq(session.stamp.get_child_count(), 0, "drawn in code: no label, no text")
+	assert_lt(session.stamp.position.x + session.stamp.size.x, session.notebook.size.x + 20.0, "on the page")
+	session.restart()
+	assert_false(session.is_stamped(), "a restart clears it")
+	session.setup("drift")
+	session.add_drift_seconds(3.0)
+	assert_true(session.is_stamped(), "the drift slide too, at 3 s")
+
+
+func test_tricks_past_the_goal_drop_their_name_box_onto_the_notebook() -> void:
+	# T-574: the falling name boxes go on landing for tricks past the goal.
+	session.setup("grind")
+	for i in 3:
+		_do("rail_grind")
+	session.notebook.finish_falls()
+	assert_false(session.notebook.is_falling())
+	_do("rail_grind")
+	assert_true(session.notebook.is_falling(), "the fourth grind's box falls")
+	assert_true(session.notebook.rows[0].label.text.contains("3/3"), "its count arrives when the box lands")
+	session.notebook.finish_falls()
+	assert_true(session.notebook.rows[0].label.text.contains("4/3"))
+	assert_true(session.is_stamped(), "the stamp stays")
+
+
+func test_the_board_s_pairs_are_live_and_threading_one_pays_the_trick_as_in_a_run() -> void:
+	# T-574 tweak 6 (the board): the pairs made in the level creator work in the practice windows.
+	var layout: Dictionary = session.map.layout
+	assert_false(layout.get("pairs", []).is_empty(), "the board's playground has pairs")
+	var ids: Array = session.needle.gates.map(func(g): return g.id)
+	for p in layout.pairs:
+		assert_true(ids.has(p.id), "%s is a live gate" % p.id)
+	assert_not_null(session.map.view_root.find_child("NeedleMarkers", true, false), "the markers are drawn")
+	assert_not_null(session.needle_flash, "the flash, as in the run")
+	# pair-1: prop-2 (centre 15, -2.5) and prop-1 (centre 7, 5); drive south across its gap at x 11.
+	session.setup("alt_drift")
+	session.start()
+	session.set_focused(true)
+	var car = session.car
+	car.use_keyboard = false
+	car.model.set_position(Vector2(11.0, -6.0))
+	car.model.rotation = PI / 2.0
+	var paid: Array = []
+	session.state.combo_trick.connect(func(id: String, _a: float, _m: float) -> void: paid.append(id))
+	car.scripted_input = [true, false, 0.0]
+	for i in 60:
+		car.physics_step()
+	assert_true(paid.has(RunState.TRICK_THREAD_THE_NEEDLE), "THREAD THE NEEDLE! paid: %s" % [paid])
+	assert_eq(session.successes, 0, "it counts toward no slide's goal")
+
+
+## Steps the car `seconds` standing still (no keys), as the window does each physics frame.
+func _idle(seconds: float) -> void:
+	var car = session.car
+	car.use_keyboard = false
+	car.scripted_input = [false, false, 0.0]
+	for i in roundi(seconds * 50.0):
+		car.physics_step()
+
+
+func test_the_combo_breaks_again_and_drains_as_in_a_run_with_no_damage() -> void:
+	# T-574 tweak 7 (the board: "in the practice, the combo can't be broken, and I want it to be able
+	# to be broken"): the frozen run clock kept the collision window shut after the first cut, and the
+	# drain never ran. Now each car step moves the combo's clock.
+	session.setup("alt_drift")
+	session.start()
+	var broken: Array = []  # a lambda captures an int by value: count in an array
+	session.state.combo_broken.connect(func() -> void: broken.append(1))
+	var start_combo: float = session.state.combo
+	for n in 3:
+		session.state.add_trick("alternate_drift")
+		assert_gt(session.state.combo, start_combo, "a combo going")
+		session.state.collision()
+		assert_eq(broken.size(), n + 1, "hit %d breaks it" % (n + 1))
+		_idle(1.0)  # past combo.json's collision window
+	assert_eq(session.state.health, session.state.max_health, "no damage, no hearts lost")
+	assert_eq(session.state.time_left, session.state.RUN_SECONDS, "the run's clock still never runs")
+	# The drain: a combo left alone drops after the wait.
+	session.state.add_trick("alternate_drift")
+	session.state.add_trick("alternate_drift")
+	var high: float = session.state.combo
+	_idle(ComboData.new().drain_wait_seconds() + 1.0)
+	assert_lt(session.state.combo, high, "the combo drains when left idle")
+	# The popup: COMBO BROKEN! as in the run (the trick popups hear combo_broken).
+	assert_true(session.state.combo_broken.is_connected(session.trick_popups._on_combo_broken))

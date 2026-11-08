@@ -33,16 +33,31 @@ session.pause()                  # when the slide is left
 - **Counting:** `RunState.combo_trick` (what pays) is matched against `COUNTED[trick]`. Air spins count once per car step, so a landing that pays both an AIR 360! and an AIR 180! counts once. Each success calls the notebook tracker's `on_trick(GOAL_TRICK[trick])`.
 - **The notebook:** the real `MissionPage`, on its own `CanvasLayer` (layer 10), bound to a `RunMissions` started with `start_with([[{"trick": GOAL_TRICK[trick], "kind": "count", "amount": 3}]])`. Its goal line comes from the page's `goal_templates` (T-561), so the run's own mission texts are untouched. Scaled with `UiScale.keep(root, NOTEBOOK_BASE)`, 70% of the HUD's layout page, at `NOTEBOOK_POS`.
 - **The gift:** `PracticeOffers` (`scripts/run/practice_offers.gd`) is the real `PowerUpOffers` with two changes: it opens only through `offer_only(id)` (never from a mission) and pauses only the session (`pause_with`). The real `PowerUpScreen` shows it. `GIFT` says which practice opens with which power-up (the grind with Jump); it opens on the first `start()` after `setup`/`restart`.
-- **The car** is rebuilt by `reset_car()` (no drift, grind or jump left over) at `start_point()`: the level's start point with the trick's id (`LevelStartPoints.of(layout, trick)`: `drift`, `alt_drift`, `air_spin`, `grind`, T-560), else the level's spawn. Leaving the map's rectangle (plus `AREA_MARGIN`) resets it on the next frame.
+- **The car** is rebuilt by `reset_car()` (no drift, grind or jump left over) at `start_point()`: the level's spawn for every trick (T-574, the board: one start for all slides; the per-trick start points of T-560 are no longer read). Leaving the map's rectangle (plus `AREA_MARGIN`) resets it on the next frame.
 
 ## The level and the texts (T-560 and T-559, both wired)
 
-- **The playground (T-560, wired):** `PLAYGROUND_PATH` is `data/level/practice_playground.json` ([../level/practice-playground.md](../level/practice-playground.md)); each trick starts on its start point of the same id. The stand-in this ticket used before (`practice_stand_in.json`) is removed.
+- **The playground (T-560, wired):** `PLAYGROUND_PATH` is `data/level/practice_playground.json` ([../level/practice-playground.md](../level/practice-playground.md)); every trick starts on the level's spawn (T-574). The stand-in this ticket used before (`practice_stand_in.json`) is removed.
 - **The drift's seconds line (T-564):** `goal_template("drift")` reads `DRIFT_SECONDS_TEXT_KEYS`, `tutorial.goal.drift`, which T-564 rewrote in place ("Drift seconds {done}/{total}"); both numbers show with one decimal.
 - **The goal lines (T-559, wired):** `GOAL_TEXT_KEYS` reads each goal line from `data/tutorial_text.json`, `tutorial.goal.drift`, `.altdrift`, `.airspin` and `.grind` (T-559's keys), each a template with `{done}` and `{total}`, word for word. No player text is in the code: a missing key logs an error and gives an empty line.
 - **The falling box (T-563)** uses the same notebook: the goal's trick id is the car's own trick id (`extended_drift`, `alternate_drift`, `rail_grind`), except air spins, whose goal id is `air_spin` (two tricks); `trick_counted` gives the actual one.
 
 ## Tests and pictures
 
-- `tests/unit/run/test_practice_session.gd`: the scene (no enemies, clock or damage), the start points, counting for each trick and no other (and the third), on the real playground a drift, an alt drift, an air spin and a grind each driven from its own start point and counted, the notebook's line and count, the Jump gift, pause, focus, R and leaving the playground.
+- `tests/unit/run/test_practice_session.gd`: the scene (no enemies, clock or damage), every slide on the spawn, counting for each trick and no other (and the third), on the real playground a drift, an alt drift, an air spin and a grind each driven from the spawn (the air spin and grind along scripted routes, T-574) and counted, the notebook's line and count, the Jump gift, pause, focus, R and leaving the playground.
 - `tests/fixtures/practice_session_demo.tscn`: the session in a 704 x 440 window on a dark page; `PRACTICE_SHOT` = `drift`, `alt_drift`, `air_spin`, `grind_gift`, `grind` or `done`. `PRACTICE_SHOT=grind_gift bash game/tools/screenshot.sh res://tests/fixtures/practice_session_demo.tscn out.png 60`.
+
+## The count overfills (T-574; the board, 2026-11-08: "i want the counter to be able to overfill (i.e. 5/3 alt drifts)")
+
+- Past the goal the count goes on: `successes` and `drift_seconds` have no cap, and the notebook's line follows (5/3, 4.7/3.0). `completed()` is still sent once, at the goal, and the green check stamp stays.
+- The tracker (`RunMissions`) stops at the goal and completes the mission, so past it the session tells the notebook itself, in the tracker's order: `MissionPage.drop_trick(goal, trick_id)` drops the trick's name box (it still falls and lands), then `MissionPage.show_progress(goal, done)` updates the line once the boxes in flight have landed. The run's notebook doesn't use them.
+
+## Thread the needle in the practice windows (T-574 tweak 6; the board: "I had paired some of the obstacles. I want those pairings to be preserved in the tutorial as well.")
+
+- The session builds the level's pairs as `run.gd` does: `needle` (`ThreadTheNeedle`, from the layout and `ComboData.needle_rules()`), its faint markers (`build_markers`, lifted and depth-sorted by the elevation layer) and `needle_flash` (`NeedleFlash`, under the paused World). After every car step it calls `touching(car.held_contacts())` and `observe(...)`; every `hit_obstacle` calls `touched(...)`; `threaded` pays `state.add_needle_trick()`, so the popup shows THREAD THE NEEDLE! with its amount and the combo goes up, on every slide. It counts toward no slide's goal (`COUNTED`).
+
+## The combo breaks as in a run (T-574 tweak 7; the board: "in the practice, the combo can't be broken, and I want it to be able to be broken.")
+
+- What blocked it: the practice's `RunState` clock never runs (its process is off, so no time, boss, end or likes drain), and the combo used the run's clock. The collision window (`combo.json` `collision_window_seconds`, 0.5 s) measured from the first cut never ran out, so only the very first hit ever broke the combo, and the drain after the idle wait never ran.
+- Now `RunState` has the combo's own clock (`_combo_clock`): in a run it moves with the run's clock (`advance`), and the practice moves it alone after every car step (`RunState.advance_combo_only(dt)`): the drain after `drain_wait_seconds`, and every hit past the window cuts it again with `combo_broken`, so the trick popups show COMBO BROKEN! as in a run. Still no damage and no hearts lost in the practice; there is no HUD combo meter in the window, only the popups.
+

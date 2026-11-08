@@ -1,0 +1,12 @@
+{
+  "_comment": "T-574 tweak 9 (the board, 2026-11-08: 'make it also record my keystrokes and display them on the top right of the window'): the practice windows' live keys (W, A, S, D, R and Space as keycaps lighting up, top right of the window). show_keys_to_player: true shows them while the player drives the practice too (it helps them learn; the board can turn it off here); false shows them only while a take is recorded or played (dev builds).",
+  "show_keys_to_player": true,
+  "_comment_demo": "T-574 tweak 10, step 2 (the board: 'minimize window effect of the video, and then have the player do it'): on each trick slide with a saved take (data/tutorial_takes/<trick>.json), the take plays in the practice window first; when it ends the window shrinks toward demo_minimise_corner (top_left, top_right, bottom_left or bottom_right) to demo_minimise_scale of its size and fades out in demo_minimise_seconds, then the stage resets and the player drives, the window back at full size. Any driving key (W, A, S, D, Space, R) skips the demo. demo_enabled false: no demo, the slide as before. The demo plays once per slide each time the tutorial opens (a proposal).",
+  "demo_enabled": true,
+  "demo_minimise_seconds": 0.4,
+  "demo_minimise_corner": "bottom_right",
+  "demo_minimise_scale": 0.1,
+  "_comment_your_turn": "T-574 tweak 12 (the board: 'when the recording finishes I want to have like a kind of your turn label ... for 2 seconds, and then fade away'): when a demo ends or is skipped, 'Your turn' (tutorial_text.json demo.your_turn) shows over the practice window for your_turn_seconds, then fades out in your_turn_fade_seconds (a proposal).",
+  "your_turn_seconds": 2.0,
+  "your_turn_fade_seconds": 0.5
+}

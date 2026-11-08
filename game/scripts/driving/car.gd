@@ -118,6 +118,9 @@ var tilt = CarTilt.new()
 var jump_held := false
 ## [T-551] Space held, used when use_keyboard is false (tests, scripted driving).
 var scripted_jump_held := false
+## T-574 tweak 11: true when Space was pressed for the last physics step (a press, not a hop: since
+## T-590 a held press charges and hops on release). The tutorial's take recorder keeps it.
+var last_jump_press := false
 ## Bouncy Bumpers (task T-462): the owned tier (0 = not owned) and its
 ## bounce_distance_multiplier from power_ups.json (1.0 when not owned). A wall
 ## bounce carries the car that many times further: the bounce speed (and its
@@ -271,6 +274,7 @@ func physics_step() -> void:
 		_jump_pressed = false
 	last_input = [w, s, steer]
 	jump_held = held
+	last_jump_press = _jump_pressed
 	# T-541: on a rail the grind moves the car; when it ends this step, the car carries on below
 	# from the rail (in the air: off the end, too slow, or launched by letting go of Space, T-551).
 	if grind.active and _grind_step(steer, held):

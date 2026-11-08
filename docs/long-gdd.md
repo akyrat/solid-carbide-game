@@ -2678,6 +2678,9 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 | Slide 4, headline | `slide4.title` | Survive the stream |
 | Slide 4, last-minute zone label | `slide4.kaiju` | The kaiju! |
 | Skip control, top right | `button.skip` | Skip |
+| (T-594, the tutorial's recorded demos) Replay button, plays the recording again | `demo.replay` | Replay |
+| Skip button while the recording plays; goes to the player's turn (not the slides' Skip above) | `demo.skip` | Skip demo |
+| Label over the practice window for 2 seconds when the recording ends or is skipped | `demo.your_turn` | Your turn |
 | (T-489, the trick list's rules and key recipes; keys W, A, S, D, drawn as keycaps, are not text) | | |
 | Trick list, one-line rule beside each clip | `trick_rule.<id>` | LONG DRIFT!: Hold gas and a turn key to drift, then let go to cash it in. / FULL 360!: Drift and hold the turn key one way until the car spins all the way round. / ALT DRIFT!: Drift forward, then swap gas for brake while holding the same turn key. / HANG TIME!: Hold gas off a ramp or a rooftop edge and fly. / AIR 180!: In the air, hold a turn key to spin the car half a turn before it lands. / AIR 360!: Hit a ramp at full gas and hold a turn key: one full spin before you land. / THREAD THE NEEDLE!: Drive between two paired obstacles without touching either. |
 | Trick list, recipe notes (20 characters at most, under a keycap) and badges (capitals, no keys) | `trick_recipe.<id>.stepN_note`, `stepN_badge` | LONG DRIFT!: Hold 1 s or more, [Let go] Cash in. FULL 360!: Keep holding, [Full circle] Same way round. ALT DRIFT!: 0.3 s or more, Swap fast, hold turn. HANG TIME!: Hold off a ramp, [Airborne] 0.3 s or more, [Land] Cash in. AIR 180!: Full send at a ramp, Half a turn, midair, [Land] Cash in. AIR 360!: At a ramp, Full turn in the air, [Land] Cash in. THREAD THE NEEDLE! has no recipe. Longest note: 20 characters. |
@@ -2764,4 +2767,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `8b3f404884a4123b7deb1b52e130db179df65cca7349e3a9cb052ecdd79c2aef` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `ae171ee05eab47c26df6adb380b1dbe9884706c000e334b59947f6080970fa64` |
+| `hud-and-menus.md` | `fb8da631c2c6b25a35622ed61c44aba2b821c4c787e4989e21766ebb9dbe92d9` |

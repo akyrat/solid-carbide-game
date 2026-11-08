@@ -56,24 +56,28 @@ func _ready() -> void:
 			session.state.add_trick("alternate_drift")
 		"air_spin":
 			session.state.add_trick("air_one_eighty")
-			_drive_east(true, false, func() -> bool: return car.airborne and car.model.get_position().x > 14.0, 25)
+			_drive_east(true, false, func() -> bool: return car.airborne and car.height > 2.0, 25)
 		"grind":
 			session.gift_screen.skip_animation()
 			session.take_gift()
 			_drive_east(false, true, func() -> bool: return car.grind.active, 25)
 
 
-## T-560's drive from the start point, stepped here (the screenshot tool's physics runs slowly):
-## W held, A in the air when `spin`, Space held in the air when `hold_space`, both past the ramp
-## (x > 11); `extra` steps after `reached` is first true, then the car stops (frozen for the shot).
+## The drive from the start point, stepped here (the screenshot tool's physics runs slowly):
+## W held, A in the air when `spin`; when `hold_space` (T-574, the board's playground), Space is
+## pressed once on the ground (the Jump hop) and held in the air; `extra` steps after `reached` is
+## first true, then the car stops (frozen for the shot).
 func _drive_east(spin: bool, hold_space: bool, reached: Callable, extra: int) -> void:
 	var car = session.car
 	var left := -1
+	var pressed := false
 	for i in 900:
 		var in_air: bool = car.airborne
-		var past: bool = car.model.get_position().x > 11.0
-		car.scripted_input = [true, false, 1.0 if (spin and in_air and past) else 0.0]
-		car.scripted_jump_held = hold_space and (in_air or car.grind.active) and past
+		if hold_space and not pressed and not in_air and i >= 10:
+			car.press_jump()
+			pressed = true
+		car.scripted_input = [true, false, 1.0 if (spin and in_air) else 0.0]
+		car.scripted_jump_held = pressed and (in_air or car.grind.active)
 		car.physics_step()
 		if left < 0 and reached.call():
 			left = extra

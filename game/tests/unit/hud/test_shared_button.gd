@@ -74,7 +74,9 @@ func test_garage_buttons_are_shared() -> void:
 func test_tutorial_slide_buttons_are_shared() -> void:
 	var slides: TutorialSlides = load("res://scenes/menu/tutorial_slides.tscn").instantiate()
 	add_child_autofree(slides)
-	assert_eq(_all_shared(slides, "tutorial slides"), 5, "two arrows, Skip, Go live and the checkbox")
+	# T-574 tweak 12: plus Replay and Skip demo on each trick slide.
+	var demo := 2 * TutorialSlides.TRICK_SLIDES.size()
+	assert_eq(_all_shared(slides, "tutorial slides"), 5 + demo, "two arrows, Skip, Go live, the checkbox, and each trick slide's Replay and Skip demo")
 	assert_eq(slides.dont_show_checkbox.get_meta("hud_button"), "checkbox")
 
 

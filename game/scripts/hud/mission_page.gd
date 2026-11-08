@@ -344,6 +344,18 @@ func _defer(what: Callable, replaces_page := false) -> void:
 	_deferred.append({"after": _fall_seq, "call": what, "page": replaces_page})
 
 
+## T-574 (the tutorial's practice, the board: "i want the counter to be able to overfill"): the
+## practice session shows counts past a done goal itself, since the tracker stops at the goal. These
+## do what the tracker's signals do: a trick's name box falls onto goal `goal`, and its line shows
+## `done` (after the boxes in flight have landed, in order).
+func drop_trick(goal: int, trick_id: String) -> void:
+	_on_trick_counted(0, goal, trick_id)
+
+
+func show_progress(goal: int, done: float) -> void:
+	_on_goal_progress(0, goal, done, 0.0)
+
+
 ## A trick counts toward goal `goal`: its name falls into the page.
 func _on_trick_counted(_mission: int, goal: int, trick_id: String) -> void:
 	if goal >= rows.size() or not TrickPopups.TEXTS.has(trick_id):
