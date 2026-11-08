@@ -4105,3 +4105,8 @@ Entry format:
 - Decision or change: A test (test_level_up_prewarm.gd) left the scene tree paused, so GUT's timed waits in every later script of the same Godot process never returned; that is what hung the shard ending in test_garage_button_pulse.gd and cost a 3600 s time-out in a merge run on 2026-11-08. The test now unpauses after each test, and a PauseGuard names and fails any test that ends with the tree paused (game/docs/setup/tests.md). Tooling, merged after QA.
 - Documents touched: game/docs/setup/tests.md
 - Tasks: T-589
+
+## 2026-11-08: Texts for Grinding Wheels
+- Decision or change: The Grinding Wheels power-up's name and description; the board approved the text.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-585

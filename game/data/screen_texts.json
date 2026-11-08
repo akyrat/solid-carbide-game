@@ -43,7 +43,8 @@
       "jump": "Jump",
       "bouncy_bumpers": "Bouncy Bumpers",
       "rusty_overcoat": "Rusty Paintjob",
-      "polarized_steering_wheel": "Polarized Steering Wheel"
+      "polarized_steering_wheel": "Polarized Steering Wheel",
+      "grinding_wheels": "Grinding Wheels"
     },
     "names_comment": "Each power-up's name on its overlay card (the board's names, kept as the style loop scored them 9).",
     "descriptions": {
@@ -51,7 +52,8 @@
       "jump": "Press Space to Jump.",
       "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles.",
       "rusty_overcoat": "The car deals damage to minions it touches. Rust: now a feature.",
-      "polarized_steering_wheel": "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst."
+      "polarized_steering_wheel": "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst.",
+      "grinding_wheels": "Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered."
     },
     "descriptions_last_tier": {
       "rev_charge": "Faster charge, bigger boost.",

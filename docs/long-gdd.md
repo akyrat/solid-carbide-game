@@ -2479,6 +2479,7 @@ Task T-456 (goal G-009; Game loop architecture, Decisions, "Mission packs"; Drif
 - **Take button** (`power_ups.take_button`): "Take power-up". Not shown since T-475 (the cards have no button); the text stays in the data.
 - **Power-up names** (`power_ups.names.<id>`), on each card, the board's names unchanged (the style loop scored them 9): Rev Charge, Jump, Bouncy Bumpers, Rusty Paintjob (Rusty Overcoat until the board renamed it, 2026-11-02, T-501), Polarized Steering Wheel (T-501).
 - **Power-up descriptions** (`power_ups.descriptions.<id>`, tier 1; `descriptions_last_tier.<id>`, tier 2), the board's own words (T-526, 2026-11-03). A text keeps a `{slot}` only where the board left one, filled from `game/data/power_ups.json`; a text without slots shows as written. Tier 1: Rev Charge "Hold Gas+Brake then release the Brake: speed boost."; Jump "Press Space to Jump."; Bouncy Bumpers "Bounce {bounce_multiplier}x farther off walls and obstacles." (`bounce_distance_multiplier`); Rusty Paintjob "The car deals damage to minions it touches. Rust: now a feature."; Polarized Steering Wheel "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst." Tier 2: Rev Charge "Faster charge, bigger boost."; Jump "Press Space to Jump higher."; Bouncy Bumpers "Bounce {bounce_multiplier}x farther off walls and obstacles."; Rusty Paintjob "Deals {contact_damage} damage to kaijus now too. Tetanus is content."; Polarized Steering Wheel "+{burst_percent}% speed, shock hits and shoves minions." None uses "Greenbull says ...".
+- **Grinding Wheels** (T-585, board's name, 2026-11-08; Drifting, Decisions, "Grinding Wheels, a driving power-up"): `power_ups.names.grinding_wheels` "Grinding Wheels"; `power_ups.descriptions.grinding_wheels` (tier 1, its only tier, so no `descriptions_last_tier` entry) "Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered." (style loop score 8). No slots.
 
 #### Power-up overlay
 
@@ -2685,4 +2686,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `f9b0ff71e34322027f5a837ec8f0a84c51f58773f6fb5169314826de74482b2e` |
 | `visual-style.md` | `45b49849b67177ea2ea24d16a7e20dd4c8742657ba6255ca7b99105fec248177` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `f4783615097626dd50635161586f1baaa448e1e7e6b1c99f0f308b88ee8050c3` |
+| `hud-and-menus.md` | `806db1aa0745f137214125c1a94d8dce3ce169e921ca4b1164d419cf1fb1cd15` |
