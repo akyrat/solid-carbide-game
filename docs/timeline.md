@@ -4110,3 +4110,8 @@ Entry format:
 - Decision or change: The Grinding Wheels power-up's name and description; the board approved the text.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-585
+
+## 2026-11-08: "Equip" instead of "Flex it"
+- Decision or change: The cosmetics pick button says Equip; the board asked to merge it.
+- Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
+- Tasks: T-582

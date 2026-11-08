@@ -1,7 +1,7 @@
 ---
 id: T-582
 title: Equip instead of Flex it on the Cosmetics screen
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/data/cosmetics_text.json]
 files_expected_to_change: [game/data/cosmetics_text.json, game/tests/, docs/hud-and-menus.md, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,15 +43,23 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] cosmetics_text.json's pick reads "Equip", and no "Flex it" is left in the game's data, scripts or tests (grep). (QA: pass / fail)
-- [ ] The cosmetics tests pass (tests). (QA: pass / fail)
-- [ ] The docs quote "Equip". (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-582/screenshots/ shows the Cosmetics screen with Equip. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] cosmetics_text.json's pick reads "Equip", and no "Flex it" is left in the game's data, scripts or tests (grep). (QA: pass)
+- [ ] The cosmetics tests pass (tests). (QA: pass)
+- [ ] The docs quote "Equip". (QA: pass)
+- [ ] A screenshot in art-archive/T-582/screenshots/ shows the Cosmetics screen with Equip. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass; qa_check all checks pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: Flex it becomes Equip.
+
+### 2026-11-08, In progress → In QA
+
+Equip is in; quick QA, then merge.
 
 ## Style review
 
@@ -59,4 +67,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+pick is now Equip in cosmetics_text.json (with _comment), test_cosmetics_screen.gd, hud-and-menus.md (Item labels, Cosmetics submenu) and garage-design.md. No Flex it left in game/. Cosmetics tests: 20/20 pass. Equip and Equipped fit the button and sit well together. Screenshot: art-archive/T-582/screenshots/cosmetics_equip.png (spring unlocked). long-gdd not regenerated (merge step).
+- 2026-11-08, in-progress → in-qa: Equip rename done; cosmetics tests 20/20. QA next (board asked to merge it).
+- 2026-11-08, needs-playtest → done: Board: Equip, merge (2026-11-08)
