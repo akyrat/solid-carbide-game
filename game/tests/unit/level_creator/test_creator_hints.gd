@@ -25,6 +25,7 @@ func _editor() -> LevelCreatorEditor:
 	e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}
 	e.levels_dir = RunPaths.file("t576_levels")
 	add_child_autofree(e)
+	e.snap_held = true  # T-581 met T-576 on this branch: these tests place on the grid, as with Shift held (T-592)
 	return e
 
 

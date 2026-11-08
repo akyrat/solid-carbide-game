@@ -4125,3 +4125,8 @@ Entry format:
 - Decision or change: The creator texts for needle routes; the route tool is on N.
 - Documents touched: `docs/level-design.md`
 - Tasks: T-591
+
+## 2026-11-08: Needle routes
+- Decision or change: Thread-the-needle pairs grouped into routes, in order or at random; only the active pair pays; the board played it.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-592

@@ -9,8 +9,11 @@ extends RefCounted
 ## (3 or 6 units) and the high part of a ramp's sides are never linked, so the
 ## only ways between the street and a rooftop are the ramps. Why AStar2D on a
 ## grid: the map's heights are rectangles in the map file (ground_height.gd),
-## so a grid built from them is exact at CELL = 2 (every edge in the map file
-## lies on even units; T-405's short-building platforms do not, see rough), it needs no baking or navigation regions, and a link that
+## so a grid built from them is exact at CELL = 2 where the edges lie on even units (the maps
+## made before T-581); T-405's short-building platforms and, since T-581, the level creator's
+## pieces placed off the grid (quarter units) do not: a cell such an edge passes through is rough
+## and is checked on the true ground, and a building closes every cell whose centre is within the
+## body's radius of it (see rough, build), it needs no baking or navigation regions, and a link that
 ## exists only where the height allows is what an edge that blocks "like a
 ## wall" means. AStarGrid2D cannot leave out a link between two open cells,
 ## which is why it is AStar2D.
@@ -52,7 +55,8 @@ extends RefCounted
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 const GroundIndexScript := preload("res://scripts/enemies/enemy_ground_index.gd")
 
-## Cell size, units. Every edge in the map file lies on even units.
+## Cell size, units. The edges in a map file lay on even units before T-581; since then they may
+## lie on any quarter unit (the level creator's free placement), which the rough cells handle.
 const CELL := 2.0
 ## A building blocks the cells within this many units of it (the minion's radius).
 const BASE_MARGIN := 0.5

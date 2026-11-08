@@ -19,6 +19,9 @@ extends RefCounted
 ## T-394: an obstacle can be in several pairs (a row paired as a chain): each pair is its own gate,
 ## with its own cool-down, so a row threaded gap after gap pays each gap; a touch of an obstacle
 ## voids every gate it is part of.
+## T-592 (needle routes, needle_routes.gd): pairs the board grouped into a route pay only while they
+## are their route's active pair; paying moves the route on to its next pair, and the markers show
+## the active pair bright and the waiting ones faint (data/level/needle_routes.json).
 
 ## Emitted once per paid pass, with the pair's id.
 signal threaded(pair_id: String)
@@ -32,6 +35,8 @@ var time := 0.0
 var last_position = null
 ## The markers build_markers made, by pair id (NeedleFlash flashes them).
 var markers: Dictionary = {}
+## T-592: the level's needle routes (which pair of each route pays now).
+var routes: NeedleRoutes
 var _layout: Dictionary = {}
 
 
@@ -52,6 +57,11 @@ func setup(layout: Dictionary, needle_rules: Dictionary = {}) -> void:
 			continue
 		gates.append({"id": str(p.get("id", "")), "refs": [str(p.a), str(p.b)], "a": line.a, "b": line.b,
 			"gap_a": line.gap_a, "gap_b": line.gap_b, "last_touch": -INF, "last_paid": -INF, "pending": -1.0})
+	var ids: Array = []
+	for g in gates:
+		ids.append(str(g.id))
+	routes = NeedleRoutes.new(layout, ids)
+	routes.active_changed.connect(func(_r, _p) -> void: refresh_markers())
 
 
 ## The car's centre is at `position` (units) after a step of `dt` seconds, `airborne` whether that
@@ -66,6 +76,7 @@ func observe(position: Vector2, airborne: bool, dt: float) -> Array:
 			g.pending = -1.0
 			g.last_paid = time
 			paid.append(str(g.id))
+			routes.threaded(str(g.id))  # T-592: the route's next pair is active now
 		if from == null or float(g.pending) >= 0.0:
 			continue
 		if not ObstaclePairs.crosses(from, position, g.a, g.b):
@@ -76,11 +87,14 @@ func observe(position: Vector2, airborne: bool, dt: float) -> Array:
 			continue
 		if time - float(g.last_touch) <= float(rules.touch_window_seconds) + 0.000001:
 			continue
+		if not routes.is_paying(str(g.id)):
+			continue  # T-592: a waiting pair of a route (the proposal: threading it does nothing)
 		g.pending = time
 		if float(rules.clear_seconds) <= 0.0:
 			g.pending = -1.0
 			g.last_paid = time
 			paid.append(str(g.id))
+			routes.threaded(str(g.id))
 	for id in paid:
 		threaded.emit(id)
 	return paid
@@ -159,7 +173,18 @@ func build_markers(map: Node2D, height_at := Callable(), depth_for := Callable()
 		if h > 0.0 and depth_for.is_valid():
 			m.z_index = int(depth_for.call(mid, 0.0, h)) - 1
 		root.add_child(m)
+	refresh_markers()
 	return root
+
+
+## T-592: each marker's look for its pair's state in its route (bright active, faint waiting, as
+## before for a pair in no route; data/level/needle_routes.json).
+func refresh_markers() -> void:
+	for id in markers:
+		var m = markers[id]
+		if m != null and is_instance_valid(m):
+			var look := routes.look_of(str(id))
+			m.set_look(float(look.alpha), float(look.width))
 
 
 class _Marker extends Node2D:
@@ -169,6 +194,15 @@ class _Marker extends Node2D:
 	var dash := 12.0
 	## T-451: 0 at rest, up to 1 at the brightest of the flash (NeedleFlash).
 	var flash := 0.0
+	## T-592: the line's alpha and width factor at rest (its pair's state in a route).
+	var alpha := MARKER_COLOR.a
+	var width_factor := 1.0
+
+	func set_look(a: float, wf: float) -> void:
+		if not is_equal_approx(a, alpha) or not is_equal_approx(wf, width_factor):
+			alpha = a
+			width_factor = wf
+			queue_redraw()
 
 	func set_flash(v: float) -> void:
 		if not is_equal_approx(v, flash):
@@ -177,6 +211,6 @@ class _Marker extends Node2D:
 
 	func _draw() -> void:
 		if Perf.on: Perf.each_begin(&"draw.needle")
-		var col := MARKER_COLOR.lerp(FLASH_MARKER_COLOR, flash)
-		draw_dashed_line(from, to, col, width * (1.0 + flash), dash)
+		var col := Color(MARKER_COLOR, alpha).lerp(FLASH_MARKER_COLOR, flash)
+		draw_dashed_line(from, to, col, width * width_factor * (1.0 + flash), dash)
 		if Perf.on: Perf.each_end(&"draw.needle")

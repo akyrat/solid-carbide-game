@@ -53,7 +53,7 @@ func test_the_labels_are_t271s() -> void:
 	assert_eq(e.pair_button.text, CreatorTexts.get_text("pair_tool"))
 	assert_eq(e.pair_button.text, "Pair obstacles")
 	assert_eq(e.unpair_button.text, CreatorTexts.get_text("unpair_label"))
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"), "the hint line with P: pair.")
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_routes"), "the hint line with P: pair. (T-592: and N: route.)")
 	assert_string_contains(e.hint_label.text, "P: pair.")
 
 
