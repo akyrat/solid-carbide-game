@@ -512,3 +512,29 @@ func test_tricks_past_the_goal_drop_their_name_box_onto_the_notebook() -> void:
 	session.notebook.finish_falls()
 	assert_true(session.notebook.rows[0].label.text.contains("4/3"))
 	assert_true(session.is_stamped(), "the stamp stays")
+
+
+func test_the_board_s_pairs_are_live_and_threading_one_pays_the_trick_as_in_a_run() -> void:
+	# T-574 tweak 6 (the board): the pairs made in the level creator work in the practice windows.
+	var layout: Dictionary = session.map.layout
+	assert_false(layout.get("pairs", []).is_empty(), "the board's playground has pairs")
+	var ids: Array = session.needle.gates.map(func(g): return g.id)
+	for p in layout.pairs:
+		assert_true(ids.has(p.id), "%s is a live gate" % p.id)
+	assert_not_null(session.map.view_root.find_child("NeedleMarkers", true, false), "the markers are drawn")
+	assert_not_null(session.needle_flash, "the flash, as in the run")
+	# pair-1: prop-2 (centre 15, -2.5) and prop-1 (centre 7, 5); drive south across its gap at x 11.
+	session.setup("alt_drift")
+	session.start()
+	session.set_focused(true)
+	var car = session.car
+	car.use_keyboard = false
+	car.model.set_position(Vector2(11.0, -6.0))
+	car.model.rotation = PI / 2.0
+	var paid: Array = []
+	session.state.combo_trick.connect(func(id: String, _a: float, _m: float) -> void: paid.append(id))
+	car.scripted_input = [true, false, 0.0]
+	for i in 60:
+		car.physics_step()
+	assert_true(paid.has(RunState.TRICK_THREAD_THE_NEEDLE), "THREAD THE NEEDLE! paid: %s" % [paid])
+	assert_eq(session.successes, 0, "it counts toward no slide's goal")

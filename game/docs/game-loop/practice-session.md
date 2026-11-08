@@ -51,3 +51,8 @@ session.pause()                  # when the slide is left
 
 - Past the goal the count goes on: `successes` and `drift_seconds` have no cap, and the notebook's line follows (5/3, 4.7/3.0). `completed()` is still sent once, at the goal, and the green check stamp stays.
 - The tracker (`RunMissions`) stops at the goal and completes the mission, so past it the session tells the notebook itself, in the tracker's order: `MissionPage.drop_trick(goal, trick_id)` drops the trick's name box (it still falls and lands), then `MissionPage.show_progress(goal, done)` updates the line once the boxes in flight have landed. The run's notebook doesn't use them.
+
+## Thread the needle in the practice windows (T-574 tweak 6; the board: "I had paired some of the obstacles. I want those pairings to be preserved in the tutorial as well.")
+
+- The session builds the level's pairs as `run.gd` does: `needle` (`ThreadTheNeedle`, from the layout and `ComboData.needle_rules()`), its faint markers (`build_markers`, lifted and depth-sorted by the elevation layer) and `needle_flash` (`NeedleFlash`, under the paused World). After every car step it calls `touching(car.held_contacts())` and `observe(...)`; every `hit_obstacle` calls `touched(...)`; `threaded` pays `state.add_needle_trick()`, so the popup shows THREAD THE NEEDLE! with its amount and the combo goes up, on every slide. It counts toward no slide's goal (`COUNTED`).
+

@@ -183,6 +183,11 @@ var notebook_layer: CanvasLayer
 var notebook: MissionPage
 var offers: PracticeOffers
 var gift_screen: PowerUpScreen
+## Thread the needle (T-574 tweak 6; T-272, as in the run): the level's pairs of obstacles, their
+## faint markers and the flash; threading a pair pays THREAD THE NEEDLE! into the combo, as in a run.
+## It counts toward no slide's goal (COUNTED).
+var needle: ThreadTheNeedle
+var needle_flash: NeedleFlash
 ## The green check stamp on the notebook page (T-574), shown once the goal is done.
 var stamp: Control
 
@@ -366,6 +371,17 @@ func _build() -> void:
 			func(units: Vector2) -> float: return layer.ground_height.height_at(units),
 			func(units: Vector2, rot: float, h: float) -> int: return layer.z_for(units, rot, h))
 
+	# Thread the needle (T-574 tweak 6), as run.gd builds it: the gates, the markers, the flash.
+	needle = ThreadTheNeedle.new(map.layout, ComboData.new().needle_rules())
+	if not needle.gates.is_empty():
+		needle.build_markers(map,
+			func(units: Vector2) -> float: return layer.ground_height.height_at(units),
+			func(units: Vector2, rot: float, h: float) -> int: return layer.z_for(units, rot, h))
+		needle_flash = NeedleFlash.new()
+		needle_flash.name = "NeedleFlash"
+		world.add_child(needle_flash)
+		needle_flash.bind(needle, map)
+
 	physics_world = Node2D.new()
 	physics_world.name = "PhysicsWorld"
 	physics_world.visible = false
@@ -426,6 +442,7 @@ func _build() -> void:
 		if car != null and is_instance_valid(car):
 			car.settle_tricks())
 	state.combo_trick.connect(_on_combo_trick)
+	needle.threaded.connect(func(_pair_id: String) -> void: state.add_needle_trick())
 	state.power_ups_changed.connect(_apply_power_ups)
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -493,7 +510,9 @@ func _build_car() -> void:
 		state.add_grind_trick(seconds))
 	car.trick.connect(func(trick_id: String) -> void: state.add_trick(trick_id, car.tricks.last_trick_seconds))
 	car.airtime_trick.connect(state.add_airtime_trick)
-	car.hit_obstacle.connect(func(_c: Object, _s: int, _n: Vector2, _v: float) -> void: state.collision())
+	car.hit_obstacle.connect(func(c: Object, s: int, _n: Vector2, _v: float) -> void:
+		needle.touched(c, s)  # T-574 tweak 6: a touch voids a pass through a pair, as in the run
+		state.collision())
 	car.stepped.connect(_on_car_stepped)
 	var the_map: Node2D = map
 	var the_car = car
@@ -595,6 +614,9 @@ func add_drift_seconds(seconds: float) -> void:
 func _on_car_stepped() -> void:
 	_steps += 1
 	var dt: float = car.model.dt
+	if not needle.gates.is_empty():  # T-574 tweak 6: thread the needle, as run.gd's _on_car_needle_step
+		needle.touching(car.held_contacts())
+		needle.observe(car.model.get_position(), car.airborne, dt)
 	map.update_car_obstacles(car, car.height, car.vertical_speed)
 	state.drift_step(car.model.is_drifting, dt)
 	if trick == "drift" and car.model.is_drifting:
