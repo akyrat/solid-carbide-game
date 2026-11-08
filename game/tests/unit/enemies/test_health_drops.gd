@@ -30,9 +30,8 @@ func _car_units() -> Vector2:
 
 func test_data_has_the_numbers() -> void:
 	var d := data.health_drops()
-	assert_eq(d["drop_chance"], 0.225, "T-371: 1.5 times the old 0.15")
+	assert_eq(d["drop_chance"], 0.05, "T-579: the board set it to 5%")
 	assert_eq(data.coins()["drop_chance"], 0.6, "the coins' rate is unchanged")
-	assert_almost_eq(float(d["drop_chance"]) / 0.15, 1.5, 0.0001, "1.5 times the old 0.15")
 	assert_eq(d["restore_hearts"], 1)
 	assert_false(d.has("restore_fraction"), "the 30% heal is gone")
 
@@ -55,7 +54,7 @@ func test_drops_at_about_the_data_chance_where_it_died() -> void:
 		assert_lt(off.length(), 0.001, "dropped where the minion died")
 
 
-func test_health_drops_are_about_three_eighths_of_the_coins_over_many_kills() -> void:
+func test_health_drops_are_about_a_twelfth_of_the_coins_over_many_kills() -> void:
 	var kills := 1000
 	var coin_drops := 0
 	var health_drops := 0
@@ -68,7 +67,7 @@ func test_health_drops_are_about_three_eighths_of_the_coins_over_many_kills() ->
 		coin_drops += 1 if spawner.coins.size() > c0 else 0
 		health_drops += 1 if spawner.health_pickups.size() > h0 else 0
 	gut.p("coin drops %d, health drops %d of %d" % [coin_drops, health_drops, kills])
-	assert_almost_eq(float(health_drops) / maxf(1.0, float(coin_drops)), 0.375, 0.08)
+	assert_almost_eq(float(health_drops) / maxf(1.0, float(coin_drops)), 0.0833, 0.05)
 
 
 func test_the_chance_is_read_from_the_data() -> void:

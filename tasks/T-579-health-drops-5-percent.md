@@ -1,7 +1,7 @@
 ---
 id: T-579
 title: Health drops at 5%
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 lead: Rails
@@ -50,10 +50,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: Game Data sets health drops to 5%.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. enemies.json health_drops.drop_chance 0.225 -> 0.05, _comment has the history (0.6, 0.3, 0.15, 0.225, now 0.05; board 2026-11-08). Tests updated: test_health_drops.gd (rate; the coins-ratio test is now about a twelfth, 0.0833 +/- 0.05, renamed), test_run_hearts.gd, test_run_data.gd. Docs: docs/enemies.md Content (5%, 1/12 of the coins' rate; Decisions entry already there), game/docs/enemies/minions.md. Ran via run_tests.sh -gselect: test_health_drops 11/11 (284 asserts), test_run_hearts 16/16, test_run_data 12/12, test_enemy_data 10/10, test_minions 44/44. Full sets left to QA. Godot --import made untracked .uid files and .import noise; not committed.
