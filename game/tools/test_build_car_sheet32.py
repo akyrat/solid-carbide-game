@@ -69,6 +69,8 @@ class CommittedSheetTests(unittest.TestCase):
 
     def test_t101_frames_are_identical_in_the_even_places(self):
         for k in range(16):
+            if str(2 * k) in b.REDRAWN and b.REDRAWN[str(2 * k)].get("_png"):
+                continue  # T-584 redrew this even frame (22); it is pinned by car_iso_redrawn.json
             self.assertEqual(b.frame_of(self.sheet, 2 * k), b.frame_of(self.t101, k), f"T-101 frame {k}")
 
     def test_layout_is_32_frames_of_11_25_degrees(self):
@@ -84,6 +86,8 @@ class CommittedSheetTests(unittest.TestCase):
 
     def test_every_new_frame_has_a_pixellab_record(self):
         for f in self.layout["frames"][1::2]:
+            if f.get("redrawn_by") == "T-584":
+                continue  # redrawn: its calls are in the generation log and art-archive/T-584/raw
             rec = json.loads((b.REPO / f["source"]).with_suffix(".json").read_text(encoding="utf-8"))
             self.assertEqual(rec["endpoint"], "/rotate")
             self.assertEqual(rec["task"], "T-102")
