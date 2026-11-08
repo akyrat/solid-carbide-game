@@ -1,7 +1,7 @@
 ---
 id: T-588
 title: The test runner records each full run's wall-clock time, and run_tests.ps1 runs the same parallel split
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Tests
@@ -16,7 +16,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, game/docs/setup/tests.md, game/tools/run_tests_parallel.py, game/tools/run_tests.sh, game/tools/run_tests.ps1, game/tools/test_run_tests_parallel.py, game/tools/test_times.json, tools/merge_batch.py, tools/qa_check.py]
 files_expected_to_change: [game/tools/run_tests_parallel.py, game/tools/run_tests.ps1, game/tools/test_run_tests_parallel.py, game/tools/, game/docs/setup/tests.md, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -80,3 +80,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 BUILT (commits 20b05e9c, eb8d7b10 on task/T-588): run_tests_parallel.py writes game/tools/test_run_record.json after every full parallel run (git-ignored, latest run only; keys time, wall_seconds, processes, scripts, tests, passing, failing, risky_pending, passed). Final line is now 'TESTS PASSED (N s on P processes)' / 'TESTS FAILED (exit C, N s on P processes)', printed last. test_times.json has a '_note' key (single-process seconds); load_times() skips '_' keys; --measure says its times are single-process. run_tests.sh leaves the final line to the runner on the parallel path. merge_batch.py and qa_check.py go by exit code, unchanged (their 33 tests OK). run_tests.ps1 imports once, then runs run_tests_parallel.py with GUT_JOBS (default 12, 1 = single), limit 1500 (GUT_TIME_LIMIT), same exit codes; extra GUT args keep one process. Docs updated: game/docs/setup/tests.md, tasks/README.md. Proposal: record is git-ignored (tracked would dirty the tree and conflict on merges). CHECKED: unittest test_run_tests_parallel 9 OK; --list identical before/after (12 shards); ps1 -gselect=test_sample: one process, TESTS PASSED, exit 0; ps1 GUT_TIME_LIMIT=40: 12 parallel processes, exit 124, 'TESTS FAILED (exit 124, 41 s on 12 processes)'. BLOCKED: two full run_tests.sh runs (25m23s, 25m09s) both hit the 1500 s limit, record passed=false, though all reported tests passed (2887/2887): shard 6 hangs after tests/unit/test_garage_button_pulse.gd (T-573 test, added 2026-11-08 01:08) with 'Unreferenced static string to 0: Physics2DConstraintSolveIslands' and prints no GUT summary; reproduced running shard 6 alone. Not caused by T-588 (no game or test code touched). Full ps1 run not done (same hang). Green-run record and line wording unverified in a full pass.
 
 QA round 1: all 7 criteria pass. qa_check full run green (wall 293 s record); ps1 full parallel run 268 s TESTS PASSED exit 0; -gselect single process; --list identical; unittests OK.
+- 2026-11-08, in-qa → done: QA round 1: 7 of 7 pass; run_tests.ps1 full run 268 s. Tooling, merged after QA.
