@@ -386,37 +386,26 @@
       "source": "art-archive/T-102/car_rot16_from_f10_north_raw.png"
     },
     {
-      "colours_after": 32,
+      "colours_after": 31,
       "heading_deg": 247.5,
       "index": 22,
-      "made_by": "/rotate of frame 10 by 22",
+      "made_by": "T-584: PixelLab /rotate of frame 24 by -27 (and a first try from frame 23), free outline/speck/shadow fixes; style loop best 5/10, noted for the playtest",
       "nose_screen_angle_deg": 309.64,
-      "note": "T-101's frame, copied unchanged",
-      "seen_nose_screen_angle_deg_approx": 270,
-      "shift_px": {
-        "x": 2,
-        "y": -2
-      },
-      "source": "art-archive/T-101/frames/car_rot22_from_f10_north.png",
-      "t101_frame": 11
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 289.5,
+      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "source": "art-archive/T-584/frames/frame22.png"
     },
     {
-      "body_axis_deg": 96.0,
-      "colours_after": 29,
-      "colours_before": 230,
+      "colours_after": 32,
       "heading_deg": 258.75,
       "index": 23,
-      "made_by": "/rotate of T-101 frame 11 by 16 (T-102)",
+      "made_by": "T-584: PixelLab /rotate of frame 24 by -14 (1 generation), edge cleaned by a free script, style loop score 8",
       "nose_screen_angle_deg": 323.19,
-      "placed_by": "measured position",
-      "position_between_neighbours": 0.07,
-      "rotated_from_t101_frame": 11,
-      "seen_nose_screen_angle_deg_approx": 273,
-      "shift_px": {
-        "x": 2,
-        "y": 1
-      },
-      "source": "art-archive/T-102/car_rot16_from_f11_north_raw.png"
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 305.9,
+      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "source": "art-archive/T-584/frames/frame23.png"
     },
     {
       "colours_after": 31,
@@ -552,7 +541,7 @@
     }
   ],
   "noshadow_note": "made by game/tools/build_car_noshadow.py (task T-204) from car_iso.png: only drop-shadow pixels outside the car's silhouette are made transparent; used only while the car is in the air",
-  "noshadow_pixels_removed": 6817,
+  "noshadow_pixels_removed": 6792,
   "order": "clockwise on screen: frame i shows world heading i * 11.25 degrees, Godot axes (y down), the same direction Godot's rotation grows",
   "palette": [
     "#03151b",
