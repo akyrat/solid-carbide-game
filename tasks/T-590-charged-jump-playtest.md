@@ -35,7 +35,7 @@ A task is not done until every document listed in documents_affected has been up
 
 Build Drifting, Decisions, "A charged jump, for a playtest": with the Jump power-up owned and the car on the ground, holding Space charges the jump, linearly up to +50% takeoff (the jump's speed/height, as the grind launch's boost is applied) over 3 seconds, and the car jumps on release with the charge it reached. Space in the air is unchanged (tilt and grind). A tap jumps as today (no charge). Without Jump, Space on the ground does what it does today. A small script-drawn cue near the car shows the charge filling (a proposal; no text). Numbers in data with reasons. This is its own playtest: it stays on its own branch and nothing else is merged into it.
 
-The board's review: play it from C:\solid-carbide-worktrees\T-589\game\project.godot: god mode (N in a run) or the result notes' way to get Jump, then tap, half-charge and full-charge jumps, and a grind to compare with the launch.
+The board's review: play it from C:\solid-carbide-worktrees\T-590\game\project.godot: god mode (N in a run) or the result notes' way to get Jump, then tap, half-charge and full-charge jumps, and a grind to compare with the launch.
 
 Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` and hand back in one short line (tasks/README.md, "Handing back"). Never write, move or change anything in game/data/levels/. Run tests in the foreground only, one command at a time, and leave no background job running. If a hook or the permission system refuses an action, stop and tell the Project Lead; never get around it.
 
@@ -48,7 +48,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] The charge cue shows while charging and is gone after the jump (a test or screenshot). (QA: pass / fail)
 - [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass / fail)
 - [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-589/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass / fail)
+- [ ] A GIF in art-archive/T-590/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass / fail)
 
 ## Updates
 
