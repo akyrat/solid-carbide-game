@@ -4005,3 +4005,13 @@ Entry format:
 - Decision or change: The Cosmetics screen's pick button reads Equip.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-582
+
+## 2026-11-08: The car points where it goes (code)
+- Decision or change: Frames picked by where they really point, and more grip outside a drift, measured and compared.
+- Documents touched: docs/drifting.md
+- Tasks: T-583
+
+## 2026-11-08: Redrawn car frames
+- Decision or change: PixelLab redraw of the car frames that pointed the wrong way (up to 28 generations).
+- Documents touched: docs/visual-style.md, docs/drifting.md
+- Tasks: T-584
