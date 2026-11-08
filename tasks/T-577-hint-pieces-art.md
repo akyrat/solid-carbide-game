@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the W keycap sample first, then the board's review.
 
+### 2026-11-08, In progress
+
+Resuming: W keycap sample, then the full set within the 30-generation cap (board's goodnight approval).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -68,3 +72,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 PLAN (sample, W keycap): style loop art run, at most 4 PixelLab generations (create-image-pixflux 64x64, 600 s timeout, one per version; free script fixes (clean W letter, colour remap) before any refine). 30-generation cap for the ticket; this sample uses at most 4 of them. Brief: art-archive/T-577/brief_gas.md.
 
 BLOCKED before any generation: the style loop's generator stopped with 'You've hit your 5-hour limit, resets 6am (Europe/London)'. 0 PixelLab generations used, no art changed (placeholders intact). The generator had written game/tools/build_hint_keycap.py and test_build_hint_keycap.py (untracked, unreviewed). Rerun after 6am: python tools/style_loop/run.py art --task T-577 --brief art-archive/T-577/brief_gas.md --out game/art/hints/hint_gas.png --size 64x64
+
+RESUMED 2026-11-08 (board asleep; explicit approval for the whole set tonight, no sample stop, within 30 generations). Reviewed game/tools/build_hint_keycap.py + test: sound; fixed unclosed image handles (tests 7/7 pass). PLAN: style loop art per asset, W keycap first (max 4 gens), then S keycap, straight arrow, curved arrow, circular arrow, sign (each max 4; total cap 30). PixelLab create-image-pixflux/related, 600 s timeout, 1 gen per version, free script fixes before refines. Generations used so far: 0.
