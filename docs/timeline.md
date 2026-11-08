@@ -4025,3 +4025,8 @@ Entry format:
 - Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side.
 - Documents touched: docs/visual-style.md
 - Tasks: T-587
+
+## 2026-11-08: Texts for the hint pieces
+- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-575
