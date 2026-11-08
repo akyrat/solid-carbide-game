@@ -82,6 +82,30 @@ func test_every_slide_starts_on_the_levels_spawn() -> void:
 	assert_false(layout.has("start_points"), "the playground keeps no per-slide start points")
 
 
+# ---- Trick popups setting (T-599) ----
+
+func test_the_trick_popups_setting_off_shows_no_popup_in_practice_but_the_trick_counts() -> void:
+	var saved := GameSettings.path
+	GameSettings.path = RunPaths.file("test_settings_t599_practice.cfg")
+	DirAccess.remove_absolute(GameSettings.path)
+	session.setup("alt_drift")
+	session.trick_popups.show_popup("probe", Vector2.ZERO)
+	assert_eq(session.trick_popups.popups().size(), 1, "popups work while on")
+	for p in session.trick_popups.popups():
+		p.queue_free()
+	await wait_process_frames(2)
+	GameSettings.save_trick_popups_enabled(false)
+	_do("alternate_drift")
+	assert_eq(session.successes, 1, "the trick still counted")
+	assert_eq(session.trick_popups.popups().size(), 0, "off: no trick popup in the practice window")
+	GameSettings.save_trick_popups_enabled(true)
+	_do("alternate_drift")
+	assert_eq(session.successes, 2)
+	assert_eq(session.trick_popups.popups().size(), 1, "on again: the next trick pops")
+	DirAccess.remove_absolute(GameSettings.path)
+	GameSettings.path = saved
+
+
 # ---- Counting ---------------------------------------------------------------------------------
 
 func _check_counts(trick: String, counts: Array, others: Array) -> void:
