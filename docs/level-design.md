@@ -78,6 +78,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **The practice playground** (board, 2026-11-07): a small level for the tutorial's practice windows (HUD and menus, Decisions, "Interactive tutorial slides"), on the dark purple grid ground of the drift prototype (`ground_grid.gd`), with room to drift and alt drift, a ramp to launch from for air spins, and rails to grind. The car, its effects and the HUD must stand out clearly against its colours. Its layout is the Level/Challenge Design Agent's proposal; the board may edit it in the level creator. (T-560)
 - **Hint pieces in the level creator** (board, 2026-11-08): a new kind of piece the board places to hint the player what to do: **gas** and **brake** as the W and S keycaps (the tutorial's keycap look, no words), a **straight arrow**, a **curved arrow** for a turn (left or right) and a **circular arrow** for steering round (either direction). Each can be placed **painted on the ground** (a flat decal under the car and buildings, no collision, in any of the 8 directions) or as a **standing sign** at the roadside (a small upright sign with collision, like a prop). They show in runs and in the tutorial's practice playground. The art comes from PixelLab (the board's go: up to 30 generations, one sample first); the icons are made flat and laid on the ground by the engine, and the sign is one piece the icons are put on by script. Sizes and looks are proposals for the playtest. (T-575 to T-577)
 - **Free placement in the level creator** (board, 2026-11-08; the creator felt clunky and grid-like): every piece (props and boulders, buildings, rooftops and ramps, rails, the hint pieces) follows the mouse freely, placed where it is dropped instead of on the 2 x 2 unit tile grid. Holding a key (Shift, a proposal) snaps it to the grid and to other pieces' edges as today. Rotation is unchanged: pieces keep the views their art has. Ground and road tiles stay painted on their tiles. A ramp still has to reach its rooftop to link to it, and the game (collision, the enemies' paths, the height checks) must work with pieces off the grid. (T-581)
+- **Needle routes** (board, 2026-11-08): in the level creator the board can group thread-the-needle pairs into a **route**, by clicking each pair's dashed line in turn. A route plays its pairs **in order**, cycling back to the first after the last, or in a **random** order, the board's choice per route. In a run only the route's **active pair** pays thread the needle: it shows bright, and the route's waiting pairs show faint; threading the active pair makes the next one active. Pairs in no route work as today. The editor texts come first (T-591); the build sits on the free placement work (T-592, on T-581). How bright and how faint, and what happens when the player threads a waiting pair, are proposals for the playtest.
 
 ## Content
 
@@ -352,6 +353,13 @@ Added for the kaiju alert sign and banner pieces (task T-440; same file, every e
 - **Banner hints in the strip:** "R: next wall." (`banner_wall_hint`) and "H: next height." (`banner_height_hint`); the keys are the existing turn and height keys, a proposal the creator must follow.
 - Style loop: score 8/10 in round 1 (Style review, T-440). The script's complaints about one line and sentence case came from checking the six labels as one block.
 
+Added for the hint pieces (task T-575; same file, every earlier key unchanged; Decisions, "Hint pieces in the level creator"; the pieces' tickets are T-576 and T-577). These are the board's tool labels; the pieces show no words in the game. Each label scored 8 or more in the style loop (9 for all but the two strip hints, 8; Style review, T-575). The keys are the existing turn and mirror keys, a proposal the creator must follow:
+
+- **Side panel group:** "Driver hints" (`group_hints`, fits 12 characters).
+- **Side panel buttons:** "Gas hint (W)" (`piece_hint_gas`), "Brake hint (S)" (`piece_hint_brake`), "Straight arrow" (`piece_hint_arrow_straight`), "Turn arrow" (`piece_hint_arrow_curved`, left or right) and "Circular arrow" (`piece_hint_arrow_circular`, either direction).
+- **Top bar, painted or standing:** "On the ground" (`hint_mode_ground`) and "Roadside sign" (`hint_mode_sign`).
+- **Strip hints while a hint piece is picked:** "Click: paint. R: turn." (`hint_ground_hint`), "Click: stand the sign at the roadside. R: turn." (`hint_sign_hint`) and, for the curved and circular arrows, "M: mirror." (`hint_mirror_hint`).
+
 ### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
@@ -431,6 +439,14 @@ Added for the car's spawn point (task T-279; same file, every earlier key unchan
 - **Message when it can't go where dropped (top bar):** "Can't start here: it's blocked." (`spawn_blocked`; inside a building, on an obstacle or off the map).
 - **Message when the board tries to delete it (top bar):** "The start can't be deleted." (`spawn_no_delete`).
 - **Controls hint:** the pairs hint with "move the start" added: "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_spawn`; the older hints stay; the creator should show this one).
+
+Added for needle routes (task T-591; same file, every earlier key unchanged; Decisions, "Needle routes"; the build is T-592). Plain and short, like the pair tool's texts; not run through the style loop, as the creator's other texts were not:
+- **Route tool (top bar or Obstacles panel):** button "Route" (`route_tool`), key **N** (free: the creator uses R, V, M, H, A, B, P, T, [ ], Del, Esc and the arrows); hint while on "Route: click pair lines in order" (`route_hint`).
+- **Messages (top bar):** when a pair joins the route "Pair added to the route (%d)." (`route_pair_added`, %d the pairs so far); when the route is finished "Route finished." (`route_finished`).
+- **Order switch (top bar, route tool):** "In order" (`route_order_in_order`) and "Random" (`route_order_random`).
+- **Route label (beside its pairs):** "Route: %d pairs" (`route_label`).
+- **Taking a pair out of its route:** button "Remove from route" (`route_remove_pair`).
+- **Controls hint:** the spawn hint with "N: route." added after "P: pair." (`controls_hint_routes`; the older hints stay; the creator should show this one).
 
 ### Level creator: thread the needle
 
@@ -569,6 +585,23 @@ Task T-581 (Decisions, "Free placement in the level creator"). How it works in t
 - **Moving a placed piece** (the board, 2026-11-08, added to T-581: "I want to be able to move things on the map, like obstacles that I place, and the decoration as well"): with nothing picked, press on any placed piece (an obstacle, a decoration, a building, a rooftop, a ramp, a crater, an alert sign) and drag it, as a rail: it follows the mouse on quarter units, or snaps with Shift as when placed (a ramp onto its rooftop's side too), and a blue outline shows where it lands. A move a placement would refuse (into a building, across a rooftop's edge, onto another rooftop, over the start, off the map) shows a grey outline, and on release the piece stays where it was, with the same message. A click without a drag only selects; Esc during a drag puts it back. The piece keeps its id, so a paired obstacle keeps its pairs (their line follows it) and a ramp's link follows its rooftop: a ramp dragged off its rooftop leads nowhere, dragged back within 1 unit of the side it links again. **Proposal:** a rooftop (or a low-rise, small or long building, which are platforms) takes along what stands on it: the rooftops on it, the ramps on it or climbing it, and the objects wholly on it, so a garage moves as one; a skyscraper takes its banner. The creator has no undo, so there is no undo step. A banner is not dragged on its own (it stays on its skyscraper's wall); ground and road tiles are painted, not moved. The hint pieces (T-576) will move the same way, since any piece with a footprint does.
 - **Unchanged:** rotation and the views (pieces keep the views their art has); ground, road and sidewalk tiles are still painted on their tiles; a banner still goes on its skyscraper's wall.
 - **The game with pieces off the grid:** buildings, rooftops and ramps may now lie anywhere on quarter units. The car's walls and the heights already follow each piece's own rectangle; the minions' paths keep their 2 by 2 cells and treat a cell an edge passes through by the true ground, as they did for the short buildings' platforms (T-405), so they walk round off-grid buildings and rooftops and up off-grid ramps. `check_level.py` now checks that every edge lies on a quarter unit (it checked even units before), and `check_height_data.py` needed no change. Levels saved before, all on the grid, load, pass the checks and play as before.
+
+### Level creator: hint pieces
+
+Task T-576 (Decisions, "Hint pieces in the level creator"; the labels are T-575's, "Level creator text" above; T-577 swaps in the PixelLab art). How it works, and the art's file names and sizes: `game/docs/level/hint-pieces.md`. The art is a placeholder drawn by script. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
+
+- **Five pieces in a "Driver hints" group:** Gas hint (W) and Brake hint (S), the W and S keycaps in the tutorial's keycap look; Straight arrow; Turn arrow (a right turn, M makes it a left turn); Circular arrow (clockwise, M makes it anticlockwise).
+- **On the ground or a roadside sign:** with a hint picked, the top bar's "On the ground" and "Roadside sign" choose how it is placed (on the ground first). The heading and mirror stay when it changes. R turns either kind through the 8 directions, clockwise on screen, starting with the run's own start direction (up the screen's right).
+- **On the ground:** painted flat on the street, 4 x 4 units (a road's width), turned to its direction. It lies under the buildings, rooftops, props, the car and the minions. The car drives over it with no crash, and the run's tyre marks go under it. Proposal: only on the street, not on a building, rooftop or ramp (like a meteor crater).
+- **A roadside sign:** a small sign on a post standing on one 2 x 2 unit cell (2 units wide, 3 tall), the icon on its board. On the board the icon points the way its direction shows on screen, so on a sign the keycaps are turned too (a proposal). It is sorted with the props in depth, and it blocks the car like a prop: the car crashes into its post (a circle of 0.5 units) and the combo is cut. The enemies go round it. Like a prop, it stands on the street or wholly on a rooftop, never in a building and never on the start.
+- **Placing, selecting, deleting:** like any other piece, through the same placement path (so T-581's free placement applies to them too). The preview under the mouse shows the piece as it will be drawn. A click selects one and Del deletes it.
+- **Saved levels:** a new `hints` list in the level file (each hint's icon, ground or sign, direction, mirror and footprint). `check_level.py` checks it. Levels saved before have none and open and play unchanged. In the practice playground, which uses the same map code, hints are drawn the same way.
+
+![The level creator: the five hints painted on a road and standing as roadside signs, the Driver hints group, a Turn arrow sign picked with its preview](../art-archive/T-576/screenshots/creator_hints.png)
+
+![A straight arrow picked to paint on the ground, its preview on the road](../art-archive/T-576/screenshots/creator_ground_preview.png)
+
+![A run on that level: the car over the painted gas hint, signs standing at the roadside](../art-archive/T-576/screenshots/run_hints.png)
 
 ### Short buildings as platforms
 

@@ -284,13 +284,17 @@ func test_sprite_frame_follows_heading() -> void:
 	var sp = p.car_sprite
 	# The isometric sheet has 32 directions since T-102 (11.25 degrees apart).
 	assert_eq(sp.hframes, 32)
-	assert_eq(sp.frame, 24, "starts nose up: heading 270 degrees, frame 24")
-	assert_eq(sp.frame_for_rotation(0.0), 0)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(11.25)), 1)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(-11.25)), 31)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(5.0)), 0)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(6.0)), 1)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(360.0 + 90.0)), 8)
+	# T-583: the frame remap (data/car_facing.json frame_remap) may draw a heading with a
+	# neighbouring frame whose drawing points closer (tests/unit/test_t583_facing_fixes.gd), so the
+	# sprite shows frame_for_rotation; the index rule itself is index_frame_for_rotation.
+	assert_eq(sp.frame, sp.frame_for_rotation(-PI / 2.0), "starts nose up: heading 270 degrees")
+	assert_eq(sp.index_frame_for_rotation(-PI / 2.0), 24, "heading 270 degrees is index frame 24")
+	assert_eq(sp.index_frame_for_rotation(0.0), 0)
+	assert_eq(sp.index_frame_for_rotation(deg_to_rad(11.25)), 1)
+	assert_eq(sp.index_frame_for_rotation(deg_to_rad(-11.25)), 31)
+	assert_eq(sp.index_frame_for_rotation(deg_to_rad(5.0)), 0)
+	assert_eq(sp.index_frame_for_rotation(deg_to_rad(6.0)), 1)
+	assert_eq(sp.index_frame_for_rotation(deg_to_rad(360.0 + 90.0)), 8)
 	_drive(p, 30, false, false, -1.0)
 	assert_eq(sp.frame, sp.frame_for_rotation(p.car.rotation), "frame updated after steering")
 	# Isometric view (the start): the final car, 32 px per unit, in a 16 px per unit world.

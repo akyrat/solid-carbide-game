@@ -1,12 +1,13 @@
 class_name MainMenu
 extends Control
-## The main menu (task T-054): the title, a "(work in progress)" line and three
-## buttons. It only shows the screen and sends signals; what happens next is
+## The main menu (task T-054): the title, a "(work in progress)" line and its
+## buttons (Start, Garage, Cosmetics T-553, Settings T-571, Exit). It only shows the screen and sends signals; what happens next is
 ## the screen flow (T-055).
 
 signal start_pressed
 signal garage_pressed
 signal cosmetics_pressed  # T-553: the Cosmetics submenu
+signal settings_pressed  # T-571: the Settings screen
 signal exit_pressed
 
 const TITLE := "SOLID CARBIDE"
@@ -44,6 +45,7 @@ var _letter_originals: Dictionary = {}
 var start_button: Button
 var garage_button: Button
 var cosmetics_button: Button  # T-553, text from data/cosmetics_text.json (menu_button)
+var settings_button: Button  # T-571, text from data/pause_text.json (settings_button)
 var exit_button: Button
 var title_label: Label
 var subtitle_label: Label
@@ -109,13 +111,15 @@ func _ready() -> void:
 	start_button = _make_button("StartButton", START_TEXT, column)
 	garage_button = _make_button("GarageButton", GARAGE_TEXT, column)
 	cosmetics_button = _make_button("CosmeticsButton", str(CosmeticsScreen.load_texts().get("menu_button", "")), column)
+	# T-571: Settings after Cosmetics, before Exit (proposal for the playtest).
+	settings_button = _make_button("SettingsButton", SettingsScreen.text("settings_button"), column)
 	exit_button = _make_button("ExitButton", EXIT_TEXT, column)
 	start_button.pressed.connect(func(): start_pressed.emit())
 	garage_button.pressed.connect(func(): garage_pressed.emit())
 	cosmetics_button.pressed.connect(func(): cosmetics_pressed.emit())
+	settings_button.pressed.connect(func(): settings_pressed.emit())
 	exit_button.pressed.connect(func(): exit_pressed.emit())
-	KeyNav.chain_column([start_button, garage_button, cosmetics_button, exit_button])  # T-492
-	start_button.grab_focus()
+	KeyNav.chain_column([start_button, garage_button, cosmetics_button, settings_button, exit_button])  # T-492, T-571
 	refresh_garage_pulse()
 
 
@@ -190,6 +194,7 @@ func _make_button(node_name: String, text: String, parent: Node) -> Button:
 	return button
 
 
-## W, A, S, D move the selection like the arrow keys (T-492).
+## W, A, S, D move the selection like the arrow keys (T-492). T-573: nothing is selected on opening;
+## the first arrow or Tab selects Start, and Enter or Space with nothing selected starts the run (as before).
 func _unhandled_key_input(event: InputEvent) -> void:
-	KeyNav.handle_wasd(event, self)
+	KeyNav.handle_keys(event, self, start_button, true)

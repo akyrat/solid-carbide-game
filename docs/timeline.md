@@ -3995,3 +3995,108 @@ Entry format:
 - Decision or change: Pieces follow the mouse freely in the creator; Shift snaps to the grid as before.
 - Documents touched: docs/level-design.md
 - Tasks: T-581
+
+## 2026-11-08: Equip instead of Flex it
+- Decision or change: The Cosmetics screen's pick button reads Equip.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-582
+
+## 2026-11-08: The car points where it goes (code)
+- Decision or change: Frames picked by where they really point, and more grip outside a drift, measured and compared.
+- Documents touched: docs/drifting.md
+- Tasks: T-583
+
+## 2026-11-08: Redrawn car frames
+- Decision or change: PixelLab redraw of the car frames that pointed the wrong way (up to 28 generations).
+- Documents touched: docs/visual-style.md, docs/drifting.md
+- Tasks: T-584
+
+## 2026-11-08: Texts for Grinding Wheels
+- Decision or change: The name and description of the Grinding Wheels power-up.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-585
+
+## 2026-11-08: Grinding Wheels
+- Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x.
+- Documents touched: docs/drifting.md
+- Tasks: T-586
+
+## 2026-11-08: Grinding Wheels icon
+- Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side.
+- Documents touched: docs/visual-style.md
+- Tasks: T-587
+
+## 2026-11-08: Texts for the hint pieces
+- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-575
+
+## 2026-11-08: No Skip on the last tutorial slide
+- Decision or change: The last tutorial slide has no Skip button.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-568
+
+## 2026-11-08: Unaffordable cosmetics are disabled
+- Decision or change: Unlock buttons are disabled while the player can't afford them.
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-569
+
+## 2026-11-08: A Settings screen from the main menu
+- Decision or change: The main menu opens a Settings screen with the settings that make sense outside a run.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-571
+
+## 2026-11-08: The tutorial comes back with each new build
+- Decision or change: Each itch.io build carries its id; the tutorial shows again on a new build.
+- Documents touched: `docs/hud-and-menus.md`, `docs/working-with-the-board.md`
+- Tasks: T-572
+
+## 2026-11-08: No button looks selected when a menu opens
+- Decision or change: Menus open with no button selected; the first arrow or Tab press shows it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-573
+
+## 2026-11-08: Health drops at 5%
+- Decision or change: A killed minion drops a health pickup 5% of the time.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-579
+
+## 2026-11-08: The launch keeps the grind's speed
+- Decision or change: A rail launch keeps the grind's speed (floor 6); merged after the board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-578
+
+## 2026-11-08: The test runner records the real run time, and the PowerShell runner runs in parallel
+- Decision or change: Board, 2026-11-08: agents kept answering the single-process test time (about 51 minutes summed from test_times.json) when the real parallel run takes about 275 s, because the per-script table is the only record and run_tests.ps1 still ran one process. The runner now writes a record of every full run (wall time, processes, counts) and prints it on its last line; run_tests.ps1 runs the same split as run_tests.sh. Tooling, merged after QA.
+- Documents touched: tasks/README.md, game/docs/setup/tests.md
+- Tasks: T-588
+
+## 2026-11-08: Hint pieces in the level creator and the run
+- Decision or change: Hint pieces (gas, brake/reverse, arrows, cyclical arrows) placeable in the level creator and shown in the run, with placeholder art; the board played it.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-576
+
+## 2026-11-08: The car points where it goes: frame remap and straight grip
+- Decision or change: Car frames picked by where their drawing points (A) and straight-line grip 0.9 while only W is held (C); the board played A+C.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-583
+
+## 2026-11-08: The full Godot test run hangs before the bricks benchmark starts
+- Decision or change: 2026-11-08: the parallel Godot run hung four times in one day in the shard that ends with test_garage_button_pulse.gd then test_bricks_widest_perf.gd (once in a merge on master, three times in T-588's folder); the benchmark passes alone, so the hang depends on the state left by the 21 scripts before it. Ticketed to find and fix the cause; T-588 waits on it.
+- Documents touched: game/docs/setup/tests.md
+- Tasks: T-589
+
+## 2026-11-08: A charged jump, for a playtest
+- Decision or change: Hold Space on the ground with Jump to charge up to +50% over 3 s, jump on release; its own playtest.
+- Documents touched: docs/drifting.md
+- Tasks: T-590
+
+## 2026-11-08: Texts for needle routes
+- Decision or change: The level creator's texts for grouping thread-the-needle pairs into routes.
+- Documents touched: docs/level-design.md
+- Tasks: T-591
+
+## 2026-11-08: Needle routes
+- Decision or change: Thread-the-needle pairs grouped into routes, played in order or at random; only the active pair pays.
+- Documents touched: docs/level-design.md
+- Tasks: T-592

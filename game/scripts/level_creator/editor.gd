@@ -108,6 +108,8 @@ var size_buttons: Dictionary = {}
 var arrows_buttons: Dictionary = {}
 ## T-265: the top bar's Banner on and Banner off (by id, "on" and "off"), shown with a skyscraper picked or selected.
 var banner_buttons: Dictionary = {}
+## T-576: the top bar's On the ground and Roadside sign (ground, sign), shown with a hint piece picked.
+var hint_mode_buttons: Dictionary = {}
 ## T-265: whether the next skyscraper placed shows its banner (key B): off by default.
 var pick_banner: bool = false
 ## The picked asset's height label (creator_texts.json; empty for a piece without a height).
@@ -314,6 +316,14 @@ func _ready() -> void:
 		b.pressed.connect(set_banner.bind(id == "on"))
 		bar.add_child(b)
 		banner_buttons[id] = b
+	for id in LevelHints.MODES:
+		var b := Button.new()
+		b.name = "HintMode_" + id
+		b.text = CreatorTexts.get_text("hint_mode_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_hint_mode.bind(id))
+		bar.add_child(b)
+		hint_mode_buttons[id] = b
 	pair_button = Button.new()
 	pair_button.name = "PairButton"
 	pair_button.text = CreatorTexts.get_text("pair_tool")
@@ -540,6 +550,10 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 		why = LevelSnapping.object_problem(document, document.piece_rect(piece))
 	elif str(piece.kind) == "crater":
 		why = LevelSnapping.crater_problem(document, document.piece_rect(piece))  # T-398: on the street
+	elif str(piece.kind) == "hint":
+		# T-576 (proposals): a sign stands like a prop; a ground hint is painted on the street, like a crater.
+		why = LevelSnapping.object_problem(document, document.piece_rect(piece)) if LevelHints.is_sign(piece.item) \
+			else LevelSnapping.crater_problem(document, document.piece_rect(piece))
 	elif str(piece.kind) in ["building", "rooftop", "ramp"]:
 		why = LevelSnapping.cuts_object_problem(document, str(piece.kind), piece.item)
 	if why != "":
@@ -547,7 +561,8 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 		document.delete(piece)
 		_show_message(CreatorTexts.get_text("overlap_message"))
 		return {}
-	if str(piece.kind) in ["building", "boulder", "prop"] and document.spawn_problem(LevelSpawn.position_of(level_data)) != "":
+	if (str(piece.kind) in ["building", "boulder", "prop"] or (str(piece.kind) == "hint" and LevelHints.is_sign(piece.item))) \
+			and document.spawn_problem(LevelSpawn.position_of(level_data)) != "":
 		# T-280: a piece never goes over the start: the car must always be able to stand there.
 		document.delete(piece)
 		_show_message(CreatorTexts.get_text("spawn_blocked"))
@@ -690,6 +705,30 @@ func banner_pick() -> bool:
 	var now: bool = pick_banner if t.has("picked") else LevelDocument.banner_of(t.building)
 	set_banner(not now)
 	return not now
+
+
+## T-576: the top bar's On the ground and Roadside sign: the picked hint piece is painted on the ground
+## ("ground") or stands as a sign ("sign"), keeping its icon, heading and mirror (the family's members of
+## that mode; creator_families.gd with_value on the "height" axis, which holds the mode). Nothing happens
+## without a hint piece picked. Returns the mode now ("" for none).
+func set_hint_mode(mode: String) -> String:
+	if panel == null or not is_hint_family(panel.picked_family) or not (mode in LevelHints.MODES):
+		_update_pose_controls()
+		return ""
+	apply_member(CreatorFamilies.with_value(panel.picked_family, panel.member, "height", mode))
+	return hint_mode()
+
+
+## The picked hint piece's mode ("ground" or "sign"), "" with no hint piece picked.
+func hint_mode() -> String:
+	if panel == null or not is_hint_family(panel.picked_family):
+		return ""
+	return str(LevelDocument.entry(_picked()).get("mode", ""))
+
+
+## True for a hint piece's family (T-576: its modes in "mode_hints").
+static func is_hint_family(fid: String) -> bool:
+	return fid != "" and CreatorFamilies.family(fid).has("mode_hints")
 
 
 ## A: the other way round for the arrows. Returns the arrows now.
@@ -1204,6 +1243,8 @@ func step_pick(axis: String) -> Dictionary:
 		return {}
 	if panel == null or panel.picked_family == "":
 		return {}
+	if axis == "height" and is_hint_family(panel.picked_family):
+		return panel.member  # T-576: a hint piece's mode is chosen on the top bar only
 	apply_member(CreatorFamilies.step(panel.picked_family, panel.member, axis))
 	return panel.member
 
@@ -1324,6 +1365,11 @@ func _update_pose_controls() -> void:
 	for b_id in banner_buttons:
 		banner_buttons[b_id].visible = not bt.is_empty()
 		banner_buttons[b_id].button_pressed = (b_id == "on") == banner_now
+	# T-576: On the ground and Roadside sign show with a hint piece picked.
+	var mode := hint_mode()
+	for b_id in hint_mode_buttons:
+		hint_mode_buttons[b_id].visible = mode != ""
+		hint_mode_buttons[b_id].button_pressed = b_id == mode
 	# T-272: Pair obstacles pressed while the tool is on; Unpair shows with a paired obstacle selected.
 	if pair_button != null:
 		pair_button.set_pressed_no_signal(pair_mode)
@@ -2017,6 +2063,8 @@ func preview_of(corner: Vector2) -> Dictionary:
 		return {}  # a piece of any size: preview_block, drawn in the engine (T-251)
 	if str(e.kind) == "prop":
 		return _prop_preview(id, corner)
+	if str(e.kind) == "hint":
+		return hint_preview(corner)
 	if str(e.kind) in ["rooftop", "ramp"]:
 		var art := str(t.variant)
 		var record_path: String = ElevationDrawingScript.SAMPLE_ART_DIR + art + ".json"
@@ -2053,6 +2101,18 @@ func preview_of(corner: Vector2) -> Dictionary:
 	if str(e.kind) == "boulder":
 		bottom -= document.height_at(corner + foot / 2.0) * PX_PER_UNIT
 	return {"texture": icon, "rect": Rect2(Vector2((min_x + max_x - size.x) / 2.0, bottom - size.y), size)}
+
+
+## A hint piece's preview (T-576) with its footprint's corner at `corner` (units): {hint: the item it
+## would place (level_hints.gd's format), height: what it stands on}; the overlay draws it as the map does.
+func hint_preview(corner: Vector2) -> Dictionary:
+	var e := LevelDocument.entry(_picked())
+	if str(e.get("kind", "")) != "hint":
+		return {}
+	var foot := LevelDocument.footprint_of(_picked(), pick_view, pick_mirror)
+	var item := {"icon": str(e.hint), "mode": str(e.mode), "heading": int(pick_view) if pick_view.is_valid_int() else 270,
+		"mirror": pick_mirror, "x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
+	return {"hint": item, "height": document.height_at(corner + foot / 2.0)}
 
 
 ## A prop's preview (T-253): its sprite in the picked rotation, standing where it would, at the
@@ -2106,7 +2166,14 @@ class _Overlay extends Node2D:
 				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
 			elif not at.is_empty():
 				var pv: Dictionary = editor.preview_of(at.corner)
-				if not pv.is_empty():
+				if pv.has("hint"):
+					# T-576: a hint piece, drawn as the map draws it (level_hints.gd).
+					var tint := Color(1, 1, 1, editor.PREVIEW_ALPHA)
+					if LevelHints.is_sign(pv.hint):
+						LevelHints.draw_sign(self, pv.hint, float(pv.height), tint)
+					else:
+						LevelHints.draw_ground(self, pv.hint, editor.ISO_TRANSFORM, tint)
+				elif not pv.is_empty():
 					draw_texture_rect(pv.texture, pv.rect, false, Color(1, 1, 1, editor.PREVIEW_ALPHA))
 				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
 		if not editor.selected.is_empty() and str(editor.selected.get("kind", "")) == "alert":

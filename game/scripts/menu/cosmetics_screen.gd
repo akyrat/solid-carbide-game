@@ -76,7 +76,6 @@ func _ready() -> void:
 	resized.connect(func(): fit())
 	refresh()
 	fit()
-	_first_focus()
 
 
 ## The texts file (data/cosmetics_text.json) as a Dictionary.
@@ -176,8 +175,9 @@ func _on_action(id: String) -> void:
 	refresh()
 
 
-func _first_focus() -> void:
-	focus_order()[0].grab_focus()
+## T-573: nothing is selected on opening; the first arrow or Tab selects this button (the first one shown).
+func start_button() -> Control:
+	return focus_order()[0]
 
 
 ## The buttons the arrow keys walk, top to bottom: every action button that is shown, then Back.
@@ -209,10 +209,13 @@ func refresh() -> void:
 			b.visible = false
 		elif e.unlocked:
 			b.visible = true
+			b.disabled = false  # an unlocked one can always be picked
 			b.text = text("pick")
 		else:
 			row.price.text = text("locked").replace("{price}", str(e.price))
 			b.visible = true
+			# disabled (HudStyle's disabled look) while the coins are below the price (T-569)
+			b.disabled = progress.get_coins() < int(e.price)
 			b.text = text("buy")
 		b.focus_mode = Control.FOCUS_ALL if b.visible else Control.FOCUS_NONE
 	KeyNav.chain_column(focus_order())
@@ -223,7 +226,7 @@ func refresh() -> void:
 
 ## W, A, S, D move the selection like the arrow keys (T-492).
 func _unhandled_key_input(event: InputEvent) -> void:
-	KeyNav.handle_wasd(event, self)
+	KeyNav.handle_keys(event, self, start_button())
 
 
 ## The animated preview of one effect: the jump effect's own placeholder drawing (T-551; T-556's art

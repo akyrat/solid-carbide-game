@@ -14,6 +14,10 @@ also checks that:
   one of its rotations, has the footprint of that prop turned to that rotation, and lies inside the map;
 - every meteor crater (craters: {id, asset, x, y, w, h}, T-398) names a crater of data/level/craters.json,
   has its footprint and lies inside the map (a sidewalk is ground tiles, like the roads: nothing to check);
+- every hint piece (hints: {id, icon, mode, heading, mirror, x, y, w, h}, T-576) has a unique id, names an
+  icon of data/level/hints.json, a mode (ground or sign) and one of its headings, is mirrored only when its
+  icon can be (the curved and circular arrows), has its mode's footprint and lies inside the map (the
+  same format as scripts/level/level_hints.gd); a level without hints is fine;
 - every pair (pairs: {id, a, b}, T-272, thread the needle) names two different obstacles that exist:
   a boulder by its pattern copy's id (a copy of one boulder) or "<copy id>/<index>", or a prop of the
   Obstacles group (data/level/creator_assets.json's families in group "obstacles") by its id; an
@@ -147,6 +151,66 @@ def check_craters(data, map_rect):
     return problems
 
 
+HINTS_JSON = Path(__file__).resolve().parent.parent / "data" / "level" / "hints.json"
+HINT_MODES = ("ground", "sign")
+
+
+def check_hints(data, map_rect):
+    """Problems with the level's hint pieces (T-576): see the module's docstring."""
+    hints = data.get("hints")
+    if hints is None:
+        return []
+    if not isinstance(hints, list):
+        return ["hints: must be a list"]
+    try:
+        spec = json.loads(HINTS_JSON.read_text(encoding="utf-8"))
+        icons = {i["id"]: i for i in spec["icons"]}
+        headings = [int(h) for h in spec["headings"]]
+    except (OSError, ValueError, KeyError):
+        return ["hints: can't read %s" % HINTS_JSON.name]
+    problems, seen = [], set()
+    for i, it in enumerate(hints):
+        if not isinstance(it, dict):
+            problems.append("hint #%d: must be an object {id, icon, mode, heading, mirror, x, y, w, h}" % i)
+            continue
+        hid = it.get("id")
+        name = "hint %r" % hid if isinstance(hid, str) and hid else "hint #%d" % i
+        if not isinstance(hid, str) or not hid:
+            problems.append("%s: needs an id" % name)
+        elif hid in seen:
+            problems.append("%s: the id is used twice" % name)
+        else:
+            seen.add(hid)
+        icon = icons.get(it.get("icon"))
+        if icon is None:
+            problems.append("%s: unknown icon %r" % (name, it.get("icon")))
+        mode = it.get("mode")
+        if mode not in HINT_MODES:
+            problems.append("%s: unknown mode %r (ground or sign)" % (name, mode))
+        heading = it.get("heading")
+        if isinstance(heading, bool) or not isinstance(heading, (int, float)) or int(heading) != heading \
+                or int(heading) not in headings:
+            problems.append("%s: heading must be one of %s" % (name, ", ".join(str(h) for h in sorted(headings))))
+        mirror = it.get("mirror", False)
+        if not isinstance(mirror, bool):
+            problems.append("%s: mirror must be true or false" % name)
+        elif mirror and icon is not None and not icon.get("mirror"):
+            problems.append("%s: a %s can't be mirrored" % (name, it.get("icon")))
+        try:
+            r = _rect(it)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            problems.append("%s: needs numbers x, y, w, h" % name)
+            continue
+        if mode in HINT_MODES:
+            fw, fh = (float(v) for v in spec[mode]["footprint_units"])
+            if abs((r[2] - r[0]) - fw) > EPS or abs((r[3] - r[1]) - fh) > EPS:
+                problems.append("%s: its footprint is %g x %g, a %s hint is %g x %g"
+                                % (name, r[2] - r[0], r[3] - r[1], mode, fw, fh))
+        if map_rect is not None and not _inside(r, map_rect):
+            problems.append("%s: lies outside the map" % name)
+    return problems
+
+
 CATALOGUE_JSON = Path(__file__).resolve().parent.parent / "data" / "level" / "creator_assets.json"
 
 
@@ -257,6 +321,17 @@ def check_spawn(data, map_rect, require=True):
             if (r[0] - SPAWN_CLEARANCE + EPS < x < r[2] + SPAWN_CLEARANCE - EPS
                     and r[1] - SPAWN_CLEARANCE + EPS < y < r[3] + SPAWN_CLEARANCE - EPS):
                 return ["spawn: a car can't stand there, it is on %s %r" % (key[:-1], it.get("id", i))]
+    for it in data.get("hints", []) if isinstance(data.get("hints"), list) else []:
+        # T-576: a hint sign stands like a prop (a ground hint is painted on the street).
+        if not isinstance(it, dict) or it.get("mode") != "sign":
+            continue
+        try:
+            r = _rect(it)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            continue
+        if (r[0] - SPAWN_CLEARANCE + EPS < x < r[2] + SPAWN_CLEARANCE - EPS
+                and r[1] - SPAWN_CLEARANCE + EPS < y < r[3] + SPAWN_CLEARANCE - EPS):
+            return ["spawn: a car can't stand there, it is on hint sign %r" % it.get("id", "?")]
     for copy in data.get("pattern_copies", []) or []:
         for b in (copy.get("boulders", []) if isinstance(copy, dict) else []):
             try:
@@ -329,6 +404,7 @@ def check_level(data, require_spawn=True):
 
     problems.extend(check_props(data, map_rect))
     problems.extend(check_craters(data, map_rect))
+    problems.extend(check_hints(data, map_rect))
     problems.extend(check_pairs(data))
     problems.extend(check_spawn(data, map_rect, require_spawn))
     problems.extend(check_start_points(data, map_rect))

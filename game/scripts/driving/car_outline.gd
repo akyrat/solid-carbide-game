@@ -15,6 +15,9 @@ extends RefCounted
 ## (car_sprite.gd). Node-free and static: the file is read once.
 
 const OUTLINE_FILE := "res://art/car/car_iso_outline.json"
+## The normal sheet's layout, for its frames' drawn angles (T-583, the frame remap).
+const SHEET_FILE := "res://art/car/car_iso.json"
+const CarFacing := preload("res://scripts/driving/car_facing.gd")
 ## The map view's projection and scale (mvp_map.gd ISO_TRANSFORM and PX_PER_UNIT; a test checks
 ## they match rail_drawing.gd's screen_of).
 const ISO := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -22,6 +25,7 @@ const PX_PER_UNIT := 16.0
 const KEYS := ["air", "tilt1", "tilt2", "tilt3"]
 
 static var _data := {}
+static var _sheet_layout := {}
 
 
 ## The screen pixel of map point `u` (units) at height `h` (units).
@@ -38,12 +42,17 @@ static func data() -> Dictionary:
 	return _data
 
 
-## The direction frame for a car heading (radians), as car_sprite.gd frame_for_rotation.
+## The direction frame for a car heading (radians), as car_sprite.gd frame_for_rotation (the frame
+## remap included, T-583: the drawing the player sees is the one the rail catches).
 static func frame_for(rotation: float) -> int:
-	var d := data()
-	var count := int(d.get("frame_count", 32))
-	var start := deg_to_rad(float(d.get("frame0_heading_deg", 0.0)))
-	return posmod(roundi((rotation - start) / (TAU / float(count))), count)
+	if _sheet_layout.is_empty():
+		var d := data()
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(SHEET_FILE))
+		var count := int(d.get("frame_count", 32))
+		_sheet_layout = {"frame_count": count, "step_deg": 360.0 / float(count),
+			"frame0_heading_deg": float(d.get("frame0_heading_deg", 0.0)),
+			"angles": CarFacing.drawn_angles(parsed) if typeof(parsed) == TYPE_DICTIONARY else []}
+	return CarFacing.frame_for(rotation, _sheet_layout, _sheet_layout.angles)
 
 
 ## The frame's spans [row, left, right, ...] (frame pixels) at tilt step 0 to 3.

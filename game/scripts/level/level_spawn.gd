@@ -68,7 +68,7 @@ static func turned(heading: int) -> int:
 	return posmod(heading + HEADING_STEP, 360)
 
 
-## "" when a car can stand at `units` (inside the map, clear of every building, prop and boulder),
+## "" when a car can stand at `units` (inside the map, clear of every building, prop, hint sign and boulder),
 ## else OFF_MAP or BLOCKED. Rooftops and ramps are fine: the car stands at their height (and since
 ## T-405 the short buildings, which are platforms).
 static func problem(data: Dictionary, units: Vector2) -> String:
@@ -84,6 +84,13 @@ static func problem(data: Dictionary, units: Vector2) -> String:
 				if b is Dictionary and _rect(b).grow(CLEARANCE).has_point(units) \
 						and not _on_edge(_rect(b).grow(CLEARANCE), units):
 					return BLOCKED
+	# T-576: a hint sign stands like a prop (a ground hint is painted on the street: a car may start on it).
+	var hints = data.get("hints", [])
+	if hints is Array:
+		for b in hints:
+			if b is Dictionary and str(b.get("mode", "")) == "sign" and _rect(b).grow(CLEARANCE).has_point(units) \
+					and not _on_edge(_rect(b).grow(CLEARANCE), units):
+				return BLOCKED
 	var copies = data.get("pattern_copies", [])
 	if copies is Array:
 		for copy in copies:

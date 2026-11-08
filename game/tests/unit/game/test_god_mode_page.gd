@@ -66,14 +66,14 @@ func test_entry_opens_the_page_and_back_closes_it() -> void:
 	var page := _open()
 	assert_true(page.is_open())
 	assert_false(game.pause_screen.strip.visible)
-	assert_true(page.back_button.has_focus())
+	assert_null(page.get_viewport().gui_get_focus_owner(), "T-573: nothing selected at open")
 	assert_eq(page.find_child("Title", true, false).text, "God mode")
 	assert_eq(page.find_child("Subtitle", true, false).text, "Set each weapon's and power-up's tier for this run.")
 	assert_eq(page.back_button.text, "Back")
 	page.back_button.pressed.emit()
 	assert_false(page.is_open())
 	assert_true(game.pause_screen.strip.visible)
-	assert_true(game.pause_screen.god_mode_button.has_focus())
+	assert_false(game.pause_screen.god_mode_button.has_focus())  # T-573
 
 
 func test_rows_come_from_the_entries_all_six_weapons_and_the_power_ups() -> void:

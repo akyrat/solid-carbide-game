@@ -353,7 +353,7 @@ static func crater_problem(doc: LevelDocument, rect: Rect2) -> String:
 static func cuts_object_problem(doc: LevelDocument, kind: String, item: Dictionary) -> String:
 	var r := _rect(item)
 	for piece in doc.placed_pieces():
-		if not str(piece.kind) in ["boulder", "prop"]:
+		if not str(piece.kind) in ["boulder", "prop", "hint"]:  # T-576: the hint pieces too
 			continue
 		var o := doc.piece_rect(piece)
 		if not _overlap(r, o):

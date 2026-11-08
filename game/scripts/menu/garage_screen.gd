@@ -99,7 +99,6 @@ func _ready() -> void:
 	resized.connect(func(): fit())
 	refresh()
 	fit()
-	_first_focus()
 
 
 ## T-470: scales and centres the column so all of it (every Buy button, Back, coins) is on screen at any
@@ -214,11 +213,10 @@ func _on_buy(id: String) -> void:
 	refresh()  # also when refused, so the message is up to date
 
 
-## T-492: the keyboard selection starts on the first upgrade's Buy (or Back when every upgrade is maxed).
-func _first_focus() -> void:
-	var order := focus_order()
-	if not order.is_empty():
-		order[0].grab_focus()
+## T-492, T-573: nothing is selected on opening; the first arrow or Tab selects the first upgrade's
+## Buy (or Back when every upgrade is maxed).
+func start_button() -> Control:
+	return focus_order()[0]
 
 
 ## The buttons the arrow keys walk, top to bottom: every Buy that is not hidden (a disabled
@@ -280,4 +278,4 @@ func refresh() -> void:
 
 ## W, A, S, D move the selection like the arrow keys (T-492).
 func _unhandled_key_input(event: InputEvent) -> void:
-	KeyNav.handle_wasd(event, self)
+	KeyNav.handle_keys(event, self, start_button())

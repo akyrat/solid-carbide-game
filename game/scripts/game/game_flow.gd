@@ -18,6 +18,7 @@ const MainMenuScene := preload("res://scenes/menu/main_menu.tscn")
 const TutorialScene := preload("res://scenes/menu/tutorial_slides.tscn")
 const GarageScene := preload("res://scenes/menu/garage_screen.tscn")
 const CosmeticsScene := preload("res://scenes/menu/cosmetics_screen.tscn")
+const SettingsScene := preload("res://scenes/menu/settings_screen.tscn")
 const JumpEffectChoiceScript := preload("res://scripts/driving/jump_effect_choice.gd")
 const RunScene := preload("res://scenes/run/run.tscn")
 const RecapScene := preload("res://scenes/menu/recap_screen.tscn")
@@ -53,6 +54,8 @@ var tutorial: TutorialSlides
 var garage: Control
 ## The Cosmetics submenu while it is on screen, otherwise null (T-553).
 var cosmetics: Control
+## The Settings screen while it is on screen, otherwise null (T-571).
+var settings: Control
 ## The run while one is on screen, otherwise null.
 var run: Node2D
 ## The recap screen while it is on screen, otherwise null (T-320).
@@ -91,6 +94,7 @@ func show_menu() -> void:
 	menu.exit_pressed.connect(_on_exit_pressed)
 	menu.garage_pressed.connect(show_garage)
 	menu.cosmetics_pressed.connect(show_cosmetics)
+	menu.settings_pressed.connect(show_settings)
 	menu_shown.emit()
 
 
@@ -137,6 +141,15 @@ func show_cosmetics() -> void:
 	cosmetics.progress = progress
 	add_child(cosmetics)
 	cosmetics.back_pressed.connect(show_menu)
+
+
+## Replaces the main menu with the Settings screen (T-571); Back and Escape return to the menu.
+func show_settings() -> void:
+	_clear_screens()
+	settings = SettingsScene.instantiate()
+	settings.name = "Settings"
+	add_child(settings)
+	settings.back_pressed.connect(show_menu)
 
 
 ## Replaces the screen on show with a fresh run, without the tutorial slides (the slides'
@@ -247,6 +260,10 @@ func _clear_screens() -> void:
 		remove_child(cosmetics)
 		cosmetics.queue_free()
 		cosmetics = null
+	if settings != null:
+		remove_child(settings)
+		settings.queue_free()
+		settings = null
 	if tutorial != null:
 		remove_child(tutorial)
 		tutorial.queue_free()

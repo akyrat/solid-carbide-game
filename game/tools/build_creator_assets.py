@@ -223,6 +223,48 @@ def rail_entries():
              "textures": [{"view": "iso", "mirror": False, "variant": h, "texture": RAIL_ICON} for h in RAIL_HEIGHTS]}]
 
 
+# T-576 (Level design, Decisions, "Hint pieces in the level creator"): the hint pieces of
+# data/level/hints.json, one entry per icon and mode ("hint-<icon>-ground", "hint-<icon>-sign", kind "hint";
+# "hint": the icon, "mode": ground or sign). The 8 headings are the views (R), the mirror M for the curved
+# and circular arrows. Each family (one per icon, group "hints") holds both modes as its "height" values,
+# which the top bar's On the ground and Roadside sign pick (editor.gd set_hint_mode). Geometry and drawing:
+# scripts/level/level_hints.gd.
+HINT_MODES = ["ground", "sign"]
+HINT_MODE_HINTS = {"ground": "hint_ground_hint", "sign": "hint_sign_hint"}
+HINT_MIRROR_HINTS = ["hint_mirror_hint"]
+
+
+def hint_entries(hints):
+    out = []
+    for icon in hints["icons"]:
+        mirrors = [False, True] if icon.get("mirror") else [False]
+        for mode in HINT_MODES:
+            out.append({"id": "hint-%s-%s" % (icon["id"], mode), "kind": "hint", "hint": icon["id"], "mode": mode,
+                        "label": icon["label"],
+                        "footprint_units": [float(v) for v in hints[mode]["footprint_units"]],
+                        "views": [str(h) for h in hints["headings"]], "mirrors": mirrors,
+                        "textures": [{"view": str(h), "mirror": m, "variant": "", "texture": icon["texture"]}
+                                     for h in hints["headings"] for m in mirrors]})
+    return out
+
+
+def hint_families(by_id, hints):
+    fams = []
+    for icon in hints["icons"]:
+        ms = []
+        for mode in HINT_MODES:
+            e = by_id.get("hint-%s-%s" % (icon["id"], mode))
+            if e is not None:
+                ms += entry_members(e, 0, mode)
+        if ms:
+            f = summarise("hint-" + icon["id"], "hints", icon["label"], ms)
+            f["mode_hints"] = dict(HINT_MODE_HINTS)
+            if icon.get("mirror"):
+                f["hints"] = list(HINT_MIRROR_HINTS)
+            fams.append(f)
+    return fams
+
+
 PIECE_DIR = "art/creator_pieces/"
 PIECE_STYLE = "res://" + PIECE_DIR + "piece_style.tres"
 # T-251 (proposals for the board's playtest): a rooftop is dragged to any even size from
@@ -307,7 +349,7 @@ def prop_entries(props):
 # the keys V, R, M and H (editor.gd KEY_ACTIONS; creator_families.gd). A member places exactly what
 # the old panel's button placed, so saved levels are unchanged. New art adds members (looks) here,
 # not buttons. This is the one place that says which entry belongs where.
-GROUPS = ["roads", "ground", "levels", "buildings", "obstacles", "decoration"]
+GROUPS = ["roads", "ground", "levels", "buildings", "obstacles", "decoration", "hints"]
 
 # The road families are brushes (T-263; scripts/level_creator/road_brush.gd): Road, Centre line and
 # Cracked road paint whole two-tile-wide roads along a drag ("brush": "paint"), and the brush
@@ -364,7 +406,8 @@ HEIGHT_FAMILIES = [
 FAMILY_ORDER = ["road", "centre-line", "zebra-crossing", "cracked-road", "gravel", "sidewalk", "meteor-crater",
                 "platform", "ramp", "rail", "building-small", "building-long", "lowrise", "skyscraper", "boulder", "barrier",
                 "cones", "crates", "parked-car", "broken-car", "street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign",
-                "alert-sign", "alert-banner"]
+                "alert-sign", "alert-banner",
+                "hint-gas", "hint-brake", "hint-arrow-straight", "hint-arrow-curved", "hint-arrow-circular"]
 # T-441: the alert families' looks strip names each design (creator_texts.json, T-440); the banner's strip
 # also shows the hints for its wall (R) and height (H).
 ALERT_LOOK_LABELS = ["alert_design_head", "alert_design_body"]
@@ -423,7 +466,7 @@ def brush_family(fid, label, brush, members):
     return f
 
 
-def family_entries(entries):
+def family_entries(entries, hints=None):
     by_id = {e["id"]: e for e in entries}
     fams = []
     for fid, label, tile_kind, asphalts in ROAD_BRUSHES:
@@ -470,6 +513,9 @@ def family_entries(entries):
     if "rail" in by_id:
         fams.append(summarise("rail", "levels", "piece_rail",
                               [member("rail", "iso", False, 0, 0, height=h, variant=h) for h in RAIL_HEIGHTS]))
+    # T-576: the hint pieces, one family per icon.
+    if hints is not None:
+        fams += hint_families(by_id, hints)
     for f in fams:
         if f["id"] == "rail":
             f["hints"] = list(RAIL_HINTS)
@@ -500,13 +546,15 @@ def build():
     entries += crater_entries(load("data/level/craters.json"))
     entries += alert_entries()
     entries += rail_entries()
+    hints = load("data/level/hints.json")
+    entries += hint_entries(hints)
     return {
         "about": "T-232: every placeable asset already in the game, built by game/tools/build_creator_assets.py "
                  "from the art data. Do not edit by hand; rebuild with the script.",
         "building_pavements": list(sky["pavements"]),
         "entries": entries,
         "groups": list(GROUPS),
-        "families": family_entries(entries),
+        "families": family_entries(entries, hints),
     }
 
 

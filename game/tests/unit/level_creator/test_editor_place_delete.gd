@@ -64,7 +64,7 @@ func test_the_panel_lists_one_button_per_family_in_six_groups() -> void:
 	var e := _editor()
 	var expected := {}
 	var order: Array = []
-	for g in ["roads", "ground", "levels", "buildings", "obstacles", "decoration"]:
+	for g in ["roads", "ground", "levels", "buildings", "obstacles", "decoration", "hints"]:
 		var label := CreatorTexts.get_text("group_" + g)
 		assert_ne(label, "")
 		expected[label] = []
