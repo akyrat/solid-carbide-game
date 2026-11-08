@@ -3985,3 +3985,8 @@ Entry format:
 - Decision or change: A killed minion drops a health pickup 5% of the time (was 22.5%).
 - Documents touched: docs/enemies.md
 - Tasks: T-579
+
+## 2026-11-08: Investigating facing versus travel
+- Decision or change: Why the car can point one way and move another, measured and shown, with options to fix.
+- Documents touched: docs/drifting.md
+- Tasks: T-580
