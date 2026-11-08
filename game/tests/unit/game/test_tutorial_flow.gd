@@ -116,6 +116,43 @@ func test_ticked_saves_hidden_and_the_next_start_skips_the_slides() -> void:
 	assert_eq(game.run.state.time_left_text(), "4:00")
 
 
+## T-572: ticked on build A, a new game on build B shows the slides; ticked again on B, a new
+## game on B goes straight into the run.
+func test_a_new_build_shows_the_slides_again_until_ticked_on_it() -> void:
+	var id_path := RunPaths.file("test_build_id_t387.txt")
+	GameSettings.build_id_path = id_path
+	_write_build_id(id_path, "aaaaaaa")
+	game.menu.start_button.pressed.emit()
+	_finish_slides(true)
+	await _restart_on(id_path, "aaaaaaa")
+	assert_null(game.tutorial, "build A: hidden")
+	assert_not_null(game.run, "build A: straight into the run")
+	await _restart_on(id_path, "bbbbbbb")
+	assert_not_null(game.tutorial, "build B: the slides show again")
+	assert_null(game.run, "build B: no run yet")
+	_finish_slides(true)  # ticked again on B
+	await _restart_on(id_path, "bbbbbbb")
+	assert_null(game.tutorial, "build B, ticked again: hidden")
+	assert_not_null(game.run, "build B, ticked again: straight into the run")
+	DirAccess.remove_absolute(id_path)
+
+
+## As after restarting the game on the build `id`.
+func _restart_on(id_path: String, id: String) -> void:
+	_write_build_id(id_path, id)
+	game.queue_free()
+	await wait_process_frames(1)
+	game = _new_game()
+	game.menu.start_button.pressed.emit()
+	await wait_process_frames(1)
+
+
+func _write_build_id(p: String, id: String) -> void:
+	var f := FileAccess.open(p, FileAccess.WRITE)
+	f.store_string(id)
+	f.close()
+
+
 func test_hidden_also_skips_after_returning_to_the_menu() -> void:
 	game.menu.start_button.pressed.emit()
 	_finish_slides(true)

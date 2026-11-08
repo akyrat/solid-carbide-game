@@ -18,10 +18,17 @@ static func settings_path() -> String:
 	return RunPaths.file("test_save_settings.cfg")
 
 
+## The build id file tests read instead of res://build_id.txt (T-572), so a faked id in the
+## board's checkout never reaches a test. Missing by default: no build id, T-382's behaviour.
+static func build_id_path() -> String:
+	return RunPaths.file("test_save_build_id.txt")
+
+
 ## Points both saves at fresh, empty test files.
 static func isolate() -> void:
 	SafeSave.remove_all(progress_path())
 	DirAccess.remove_absolute(settings_path())
+	DirAccess.remove_absolute(build_id_path())
 	SafeSave.remove_all(history_path())
 	restore()
 
@@ -39,6 +46,7 @@ static func restore_progress() -> void:
 
 static func restore_settings() -> void:
 	GameSettings.path = settings_path()
+	GameSettings.build_id_path = build_id_path()
 
 
 ## True when either save path is the real player save.
