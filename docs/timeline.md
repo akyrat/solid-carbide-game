@@ -4225,3 +4225,13 @@ Entry format:
 - Decision or change: Fix: W with A or D turns the car off a wall, and S reverses promptly.
 - Documents touched: docs/drifting.md
 - Tasks: T-601
+
+## 2026-11-08: Text for the wheel's new trigger
+- Decision or change: The Polarized Steering Wheel's descriptions say it bursts after an alternate drift.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-602
+
+## 2026-11-08: The Polarized Steering Wheel bursts after an alternate drift
+- Decision or change: The wheel's burst comes after an alternate drift, half as strong, fading after 0.5 s, with 2 arrows on the ground.
+- Documents touched: docs/drifting.md
+- Tasks: T-603
