@@ -1,7 +1,7 @@
 ---
 id: T-592
 title: Needle routes: thread-the-needle pairs played in order or at random
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -67,6 +67,10 @@ Needle routes built: N in the creator, click pair lines in order, In order or Ra
 
 QA passed 7/7. Needle routes ready to play (includes T-581).
 
+### 2026-11-08, Needs playtest
+
+Board: lgtm. Merging T-581, T-591 and T-592 together after the current merge.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -83,3 +87,4 @@ Tests: new tests/unit/level_creator/test_creator_routes.gd (13 pass), tests/unit
 Screenshots: art-archive/T-592/screenshots/route_in_editor.png (a 3-pair random route being edited and a 1-pair route), run_before.png (first pair bright, other two faint), run_after.png (after threading it: second bright, first faint). Fixtures: tests/fixtures/t592_routes_demo.tscn, t592_routes_run_demo.tscn.
 Documents affected: docs/level-design.md (Content), game/docs/level/level-creator-pieces.md, game/docs/level/level-creator.md.
 - 2026-11-08, in-progress → in-qa: Text nit for the playtest: the route label says '1 pairs' for one pair (T-591's route_label).
+- 2026-11-08, needs-playtest → done: Board: played T-592's build (which holds T-581 and T-591), lgtm (2026-11-08)
