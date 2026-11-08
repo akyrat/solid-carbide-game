@@ -1,0 +1,9 @@
+Brief for T-577, sample: the W keycap icon (hint_gas.png), 64 x 64 px.
+
+Read first: game/docs/level/hint-pieces.md ("The art"), docs/visual-style.md (Content, "Rules" 1 to 10), tasks/T-577-hint-pieces-art.md.
+
+What to make: one flat TOP-DOWN picture of a keyboard key with the letter W on it, 64 x 64 px, transparent background. The level creator lays it flat on the isometric ground like a road marking (4 x 4 units, a road's width), so draw it straight from above, the letter upright in the picture (up = the way the car drives). It tells a new player "press W to accelerate". Keep it bold and readable at a glance: a rounded square keycap filling most of the canvas (about 56 x 56, a few transparent pixels around), a thicker darker bottom/right edge for the key's side, a dark near-black selective outline, and a big clear W (about 5 to 7 px strokes' worth of weight, pixel-letter style).
+
+Keycap look (the tutorial's, scripts/menu/key_pad.gd): face RGB 51,56,79 (#33384f), edge RGB 31,35,54 (#1f2336), letter in blush RGB 246,201,222 (#f6c9de). Highlight pixels lighter than the face to break the outline. No Greenbull colours (rule 6). No other letters or words (rule 9). Hard pixel edges, every pixel opaque or transparent, at most 30 colours (rule 1). Night and retro mood.
+
+How: PixelLab through game/tools/pixellab_client.py (create-image-pixflux at 64 x 64, no_background true, or a script-drawn keycap as init_image), 600 s HTTP timeout, 1 generation per call. PixelLab draws letters badly: if the keycap is good but the W is not, fix the W by a free script (draw a clean pixel W in the blush colour) before a paid regeneration. Go for this asset: at most 4 generations (one per version). Save each version as the loop asks, and write the planned calls and cost in the result notes first.

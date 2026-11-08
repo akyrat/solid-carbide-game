@@ -1377,7 +1377,7 @@ Task T-581 (Decisions, "Free placement in the level creator"). How it works in t
 
 #### Level creator: hint pieces
 
-Task T-576 (Decisions, "Hint pieces in the level creator"; the labels are T-575's, "Level creator text" above; T-577 swaps in the PixelLab art). How it works, and the art's file names and sizes: `game/docs/level/hint-pieces.md`. The art is a placeholder drawn by script. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
+Task T-576 (Decisions, "Hint pieces in the level creator"; the labels are T-575's, "Level creator text" above; T-577 swaps in the PixelLab art). How it works, and the art's file names and sizes: `game/docs/level/hint-pieces.md`. The art is PixelLab art (T-577; Visual style, "The hint pieces' art"), which replaced the placeholders drawn by script. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
 
 - **Five pieces in a "Driver hints" group:** Gas hint (W) and Brake hint (S), the W and S keycaps in the tutorial's keycap look; Straight arrow; Turn arrow (a right turn, M makes it a left turn); Circular arrow (clockwise, M makes it anticlockwise).
 - **On the ground or a roadside sign:** with a hint picked, the top bar's "On the ground" and "Roadside sign" choose how it is placed (on the ground first). The heading and mirror stay when it changes. R turns either kind through the 8 directions, clockwise on screen, starting with the run's own start direction (up the screen's right).
@@ -2127,6 +2127,10 @@ Task T-405 (Level design, Decisions, "Short buildings become platforms": the sam
 
 Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
 
+#### The hint pieces' art (T-577)
+
+PixelLab art for Level design, Decisions, "Hint pieces in the level creator", in `game/art/hints/` (sizes and places from `game/docs/level/hint-pieces.md`): the W keycap `hint_gas.png` and the S keycap `hint_brake.png` (64 x 64, the tutorial's keycap look: face #33384f, edge #1f2336, letter blush #f6c9de; style loop 8/10 each), the straight arrow `hint_arrow_straight.png` (7/10), the right-turning curved arrow `hint_arrow_curved.png` (8/10), the clockwise circular arrow `hint_arrow_circular.png` (7/10) and the blank roadside sign `hint_sign.png` (64 x 96, 7/10). The arrows are flat top-down road markings in blush with a near-black outline, no green or yellow. The three at 7 stayed below 8 after their refines and are kept for the board's playtest. Every version is in `art-archive/T-577/style-loop/`; screenshots in `art-archive/T-577/screenshots/`.
+
 #### Cruise boost motion lines
 
 Task T-009 made the cruise boost's motion lines (Decisions, "The cruise boost") with PixelLab: three thin pale-cyan and white lines that streak backwards and vanish in five frames (about a third of a second), right behind the car, following it. The first frame was drawn by a script after PixelLab's first call came back empty; PixelLab animated it. The game sheet (`game/art/effects/boost_lines.png`, with its record) holds the five frames turned by a script to 16 screen directions, so the lines always trail the car without the engine rotating pixel art. Every generation and its record is in `art-archive/T-009/`.
@@ -2727,10 +2731,10 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `68ba1d160eb126651540ff80b5ee2a51a9ee4b25b56bd0a4daf26d7926547731` |
-| `level-design.md` | `e9c50ed4f18a4a8295971d40ef6ec98d1abf6ef20f903477c3c7af98694d7e2c` |
+| `level-design.md` | `8e377a9b6f9369c8cbb087ce08cdaaccc79f5959dc1696ff407832eb06797c30` |
 | `enemies.md` | `391da72f65c1ee86b14bee9fc4e5eed842d02d5f4ffed3b32d4e927782e5a149` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
-| `visual-style.md` | `e3e6d1f3526e9f1ac1c82156b039d66c8b86d1204bc166ccb11bf2e3c8fe6b46` |
+| `visual-style.md` | `2c4d65ddb6b57b117600919ea5605cf33261ad9c3e0448af272f865d0788508d` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
 | `hud-and-menus.md` | `16e31f4f6f08abcf6914c5e3bcdf56444f72937e5bf13723a6749b64a9f9ec1b` |

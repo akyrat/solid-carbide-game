@@ -4150,3 +4150,8 @@ Entry format:
 - Decision or change: Every text that explains jumping now describes hold to charge, release to jump, and tap then hold to catch a rail.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-593
+
+## 2026-11-08: Art for the hint pieces
+- Decision or change: PixelLab art for the hint pieces: W and S keycaps, straight, turn and circular arrows, and the roadside sign (6 of 30 generations); the board played it.
+- Documents touched: `docs/level-design.md`, `docs/visual-style.md`
+- Tasks: T-577

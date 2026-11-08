@@ -143,6 +143,10 @@ Task T-405 (Level design, Decisions, "Short buildings become platforms": the sam
 
 Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
 
+### The hint pieces' art (T-577)
+
+PixelLab art for Level design, Decisions, "Hint pieces in the level creator", in `game/art/hints/` (sizes and places from `game/docs/level/hint-pieces.md`): the W keycap `hint_gas.png` and the S keycap `hint_brake.png` (64 x 64, the tutorial's keycap look: face #33384f, edge #1f2336, letter blush #f6c9de; style loop 8/10 each), the straight arrow `hint_arrow_straight.png` (7/10), the right-turning curved arrow `hint_arrow_curved.png` (8/10), the clockwise circular arrow `hint_arrow_circular.png` (7/10) and the blank roadside sign `hint_sign.png` (64 x 96, 7/10). The arrows are flat top-down road markings in blush with a near-black outline, no green or yellow. The three at 7 stayed below 8 after their refines and are kept for the board's playtest. Every version is in `art-archive/T-577/style-loop/`; screenshots in `art-archive/T-577/screenshots/`.
+
 ### Cruise boost motion lines
 
 Task T-009 made the cruise boost's motion lines (Decisions, "The cruise boost") with PixelLab: three thin pale-cyan and white lines that streak backwards and vanish in five frames (about a third of a second), right behind the car, following it. The first frame was drawn by a script after PixelLab's first call came back empty; PixelLab animated it. The game sheet (`game/art/effects/boost_lines.png`, with its record) holds the five frames turned by a script to 16 screen directions, so the lines always trail the car without the engine rotating pixel art. Every generation and its record is in `art-archive/T-009/`.
