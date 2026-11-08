@@ -208,6 +208,61 @@ class TestBold(unittest.TestCase):
         self.assertLessEqual(len(opaque_colours(out)), 30)
 
 
+class TestFlat(unittest.TestCase):
+    """The v3 pass: the bold stroke with a flat two-tone shade, no edge line and full-depth runs."""
+
+    def setUp(self):
+        self.im = ring.arrow("flat")
+        self.px = self.im.load()
+        self.cells = ring.arrow_cells("flat")
+        self.lay = ring.layers("flat")
+        self.outer = {p for p in self.cells if any(q not in self.cells for q in ring.nbrs8(p))}
+        self.inner = {p for p in self.cells - self.outer if any(q in self.outer for q in ring.nbrs8(p))}
+
+    def test_keeps_the_bold_stroke_with_fewer_tones(self):
+        self.assertEqual(self.cells, ring.arrow_cells("bold"))
+        colours = opaque_colours(self.im)
+        self.assertEqual(colours, {c[:3] for c in (ring.INK, ring.GLINT, ring.BLUSH_LIGHT, ring.BLUSH,
+                                                    ring.BLUSH_SHADE, ring.BLUSH_DEEP)})
+        self.assertFalse(self.lay.get("cool"))
+        self.assertFalse(self.lay.get("mid"))
+        self.assertFalse(self.lay.get("edge") - {p for p in self.lay["edge"] if any(q in self.lay["glint"] for q in ring.nbrs8(p))})
+        # Across the ring's left side: two rim-light pixels, plain body, two shade, one deep, the outline.
+        row = [self.px[x, 34] for x in range(5, 21)]
+        self.assertEqual(row, [ring.INK, ring.INK, ring.BLUSH_LIGHT, ring.BLUSH_LIGHT] + [ring.BLUSH] * 7
+                         + [ring.BLUSH_SHADE, ring.BLUSH_SHADE, ring.BLUSH_DEEP, ring.INK, ring.INK])
+        self.assertTrue(all(p[3] in (0, 255) for p in self.im.getdata()))
+
+    def test_runs_break_both_rings_fully_and_the_near_white_is_only_there(self):
+        glint = self.lay["glint"]
+        near_white = {p for p in self.cells if self.px[p] == ring.GLINT}
+        self.assertTrue(near_white <= glint | {p for p in self.lay["edge"]})
+        self.assertTrue(all(any(q in glint for q in ring.nbrs8(p)) for p in self.lay["edge"]))
+        # Three runs on the upper-left outer edge, each breaking the inner ring too.
+        runs = {p for p in glint if p[0] < 32 and p[1] < 34}
+        self.assertTrue(runs & self.inner)
+        rows = sorted({p[1] for p in runs})
+        self.assertGreaterEqual(len(rows), 12)
+        gaps = sum(1 for a, b in zip(rows, rows[1:]) if b - a > 2)
+        self.assertEqual(gaps, 2)                                              # three separate short notches
+        self.assertLessEqual(len(glint), int(0.25 * len(self.outer)))
+        self.assertTrue({p for p in glint if 35 <= p[0] <= 41 and p[1] < 13})   # the head's upper slope
+        self.assertFalse({p for p in glint if p[0] >= 42 or p[1] > 34})
+        self.assertEqual(self.outer | self.inner, self.lay["outline"] | glint)
+        # Dark outline stays between the runs.
+        self.assertTrue({p for p in self.lay["outline"] if p[0] < 12 and 14 < p[1] < 34})
+
+    def test_polish_flat_grows_v1_and_keeps_pixellabs_body(self):
+        v1 = ring.arrow()
+        px = v1.load()
+        for x, y in ring.layers()["body"]:
+            px[x, y] = (243, 193, 222, 255)
+        out = ring.polish(v1, "flat")
+        opx = out.load()
+        self.assertTrue(all(opx[x, y] == (243, 193, 222, 255) for x, y in self.lay["body"]))
+        self.assertLessEqual(len(opaque_colours(out)), 7)
+
+
 class TestRequest(unittest.TestCase):
     def test_body_carries_the_init_image_and_the_sprite_size(self):
         png = ring._png_bytes(ring.arrow())

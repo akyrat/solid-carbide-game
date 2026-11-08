@@ -24,7 +24,9 @@ rule 2). This script does the free parts of the style loop around one PixelLab c
         fixes at native 64 px) is the bolder pass: a 16 px stroke (the hole 22 px across), a three-step rim
         light, two-pixel deep and shade steps, and longer highlight runs that break both rings of the outline
         over their middle; the stroke's new pixels take PixelLab's blush. `init`, `finish` and `roles` take
-        --bold too.
+        --bold too. --flat (T-577 v3) is the bold stroke with the straight arrow's flat two-tone look: no
+        near-white edge line, a two-step rim light, one deep and two shade pixels of stepped shade with no cool
+        or mid tones, and three short runs breaking both rings of the outline fully on the upper-left.
     python game/tools/build_hint_arrow_circular.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -85,11 +87,20 @@ EDGE_LINE_FROM_DEGREES = 10.0   # the outer edge line starts this far past the t
 GEOM = {
     False: {"r_in": R_IN, "light_steps": LIGHT_STEPS, "hole_light_steps": LIGHT_STEPS, "shade_steps": SHADE_STEPS,
             "arc_glint_degrees": ARC_GLINT_DEGREES, "head_glint_cols": HEAD_GLINT_COLS, "head_run_rows": 3,
-            "inner_ring_runs": 0.0, "taper": 0.0},
+            "inner_ring_runs": 0.0, "taper": 0.0, "edge_line": True, "flat_role": "mid"},
     "bold": {"r_in": 11.0, "light_steps": 3, "hole_light_steps": 1,
              "shade_steps": (("cool", 1), ("deep", 2), ("shade", 2), ("mid", 1)),
              "arc_glint_degrees": [(-174.0, -152.0), (-130.0, -110.0)], "head_glint_cols": range(35, 42),
-             "head_run_rows": 3, "inner_ring_runs": 0.4, "taper": 0.3},
+             "head_run_rows": 3, "inner_ring_runs": 0.4, "taper": 0.3, "edge_line": True, "flat_role": "mid"},
+    # "flat" (T-577 v3): the bold stroke with the straight arrow's flat two-tone look: no near-white edge line
+    # (the near-white is only in the runs, so the breaks read), a two-step rim light, a stepped shade of one
+    # deep and two shade pixels with no cool or mid tones, and three short runs that break both rings of the
+    # outline fully on the ring's upper-left outer edge.
+    "flat": {"r_in": 11.0, "light_steps": 2, "hole_light_steps": 1,
+             "shade_steps": (("deep", 1), ("shade", 2)),
+             "arc_glint_degrees": [(-173.0, -163.0), (-147.0, -137.0), (-121.0, -111.0)],
+             "head_glint_cols": range(36, 41), "head_run_rows": 3, "inner_ring_runs": 1.0, "taper": 0.3,
+             "edge_line": False, "flat_role": "body"},   # the turn is plain paint: no mid tone
 }
 
 
@@ -154,6 +165,8 @@ def layers(bold=False) -> dict[str, set[tuple[int, int]]]:
     def edge_line_ok(p) -> bool:
         # The near-white edge line runs along the ring's outer edge and the head only; the hole's rim and the
         # tail's cut get the plain rim light, so no near-white specks sit inside the ring.
+        if not g["edge_line"]:
+            return False
         x, y = p[0] + 0.5, p[1] + 0.5
         if p[0] >= head_x0 and p[1] <= HEAD_ROW1 + HEAD_COLS:
             return True
@@ -212,7 +225,7 @@ def layers(bold=False) -> dict[str, set[tuple[int, int]]]:
             # The lighter steps appear first: the stack is shifted, never cut, so no lone dark pixel.
             index = depth + len(shade_bands) - visible_of(len(shade_bands), score)
             return shade_bands[index] if index < len(shade_bands) else None
-        return "mid" if depth == 0 else None   # the turn between the lit and the shaded stretch
+        return g["flat_role"] if depth == 0 else None   # the turn between the lit and the shaded stretch
 
     for p in ring_body:
         d, a = polar(p)
@@ -261,7 +274,7 @@ def layers(bold=False) -> dict[str, set[tuple[int, int]]]:
         elif dl < g["light_steps"] and p not in flat_edge:
             roles["light"].add(p)
         elif p in flat_edge:
-            roles["mid"].add(p)
+            roles[g["flat_role"]].add(p)
         elif ds < len(shade_bands):
             roles[shade_bands[ds]].add(p)
         else:
@@ -447,8 +460,10 @@ def main(argv=None) -> int:
     for sp in (a, f, q, m):
         sp.add_argument("--bold", action="store_true",
                         help="the v2 pass: a 16 px stroke, wider rim light and shade steps, runs breaking both rings")
+        sp.add_argument("--flat", action="store_true",
+                        help="the v3 pass: the bold stroke with a flat two-tone shade, no edge line, full-depth runs")
     args = p.parse_args(argv)
-    bold = "bold" if getattr(args, "bold", False) else False
+    bold = "flat" if getattr(args, "flat", False) else ("bold" if getattr(args, "bold", False) else False)
 
     if args.cmd == "init":
         save_png(arrow(bold), Path(args.out))
