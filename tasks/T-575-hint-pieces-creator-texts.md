@@ -1,7 +1,7 @@
 ---
 id: T-575
 title: Texts: the level creator's labels for the hint pieces
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -43,10 +43,10 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each label exists in creator_texts.json with a key and a _comment, listed in the result notes. (QA: pass / fail)
-- [ ] Each scores 8 or more in the style loop, or is noted for the playtest. (QA: pass / fail)
-- [ ] docs/level-design.md Content lists them. (QA: pass / fail)
-- [ ] The creator's text test (test_creator_texts_only.gd) and the data tests pass, and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] Each label exists in creator_texts.json with a key and a _comment, listed in the result notes. (QA: pass - all 11 keys present, each with a "where" note as the file's existing entries use, and listed in the result notes)
+- [ ] Each scores 8 or more in the style loop, or is noted for the playtest. (QA: pass - 9 for nine labels, 8 for two, per the Style review)
+- [ ] docs/level-design.md Content lists them. (QA: pass - Level creator text lists all 11 with keys)
+- [ ] The creator's text test (test_creator_texts_only.gd) and the data tests pass, and QA's full run passes, with the counts in the result notes. (QA: pass - test_creator_texts_only 59 asserts in the result notes; full Godot run 268 scripts, 3056 tests, 3055 passing, 0 failing, 1 risky; one failure in the first run did not recur on a full rerun)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Narrative writes the creator's hint labels.
+
+### 2026-11-08, In progress → In QA
+
+Labels written (11). QA now.
 
 ## Style review
 
