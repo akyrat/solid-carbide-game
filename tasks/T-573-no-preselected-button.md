@@ -1,7 +1,7 @@
 ---
 id: T-573
 title: No button looks selected when a menu opens
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/ui/key_nav.gd, game/scripts/menu/garage_screen.gd, game/scripts/menu/cosmetics_screen.gd, game/scripts/menu/main_menu.gd, game/scripts/menu/settings_screen.gd, game/scripts/menu/tutorial_slides.gd, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/menu/, game/scripts/ui/, game/tests/, game/docs/hud-and-menus/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: UI fixes the preselected buttons in every menu.
 ### 2026-11-08, In progress → In QA
 
 Built: no menu preselects a button (shared KeyNav helper). QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed (6/6). In the menu fixes build for your playtest.
 
 ## Style review
 
