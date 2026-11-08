@@ -4190,3 +4190,18 @@ Entry format:
 - Decision or change: Twelve tweaks with the board: a side-to-side practice window with the text in the game, one spawn for every slide, a stamp on the notebook, an overfilling counter, the board's pairs kept, a breakable combo, live keycaps, the board's recorded demos with Replay and Skip demo and a Your turn label, and the charged jump. The board played it.
 - Documents touched: none
 - Tasks: T-574
+
+## 2026-11-08: The jump effect behind the car
+- Decision or change: Jump effects draw behind the car, never over it.
+- Documents touched: docs/visual-style.md
+- Tasks: T-595
+
+## 2026-11-08: No popup for thread the needle
+- Decision or change: Thread the needle no longer shows its popup; the trick still counts.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-596
+
+## 2026-11-08: No R on the tutorial keycaps
+- Decision or change: The practice window's keycaps show W, A, S, D and Space only.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-597
