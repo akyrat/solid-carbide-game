@@ -64,11 +64,12 @@ class TestKeycap(unittest.TestCase):
         # Every row that has ink has a run of at least 3 cells (6 px), like the W's strokes.
         for row in rows:
             self.assertIn("111", row)
-        # Every column that has ink has a run of at least 3 cells, so the diagonal never thins to 2.
+        # The S glyph was rebuilt in T-577 (its curves round the key's corners): a column's ink may now be two
+        # cells (4 px) thick where a stroke turns, so every column that has ink has a run of at least 2 cells.
         for i in range(len(rows[0])):
             col = "".join(row[i] for row in rows)
             if "1" in col:
-                self.assertIn("111", col, f"column {i}: {col}")
+                self.assertIn("11", col, f"column {i}: {col}")
         self.assertEqual(k.letter_box("S")[1], k.letter_box("W")[1])
 
     def test_polish_adds_bevel_and_outline_glints_and_keeps_the_letter(self):
@@ -96,7 +97,8 @@ class TestKeycap(unittest.TestCase):
         self.assertEqual(px[20, 6], k.RIM_BRIGHT)
         self.assertEqual(px[k.FACE_BOX[2], 20], k.EDGE)
         self.assertEqual(px[k.FACE_BOX[2] - 1, 20], k.HALO)
-        self.assertEqual(px[6, 6], k.GLINT_BRIGHT)
+        # The brightest glint on the outline itself (the old corner pixel (6, 6) lies outside the rounder key).
+        self.assertEqual(px[12, k.OUTLINE_BOX[1]], k.GLINT_BRIGHT)
         cells = k.letter_mask("S")
         for x, y in cells:
             self.assertEqual(px[x, y], bpx[x, y])
