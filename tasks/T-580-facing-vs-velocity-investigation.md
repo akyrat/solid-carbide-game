@@ -1,7 +1,7 @@
 ---
 id: T-580
 title: Investigate: the car points one way but moves another at some angles
-status: in-progress
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/, game/scripts/driving/car.gd, game/scripts/driving/car_tuning.gd, game/scripts/driving/car_sprite.gd]
 files_expected_to_change: [game/tests/, game/tools/, art-archive/T-580/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,11 +46,11 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The result notes explain from the code every way the drawn direction and the travel direction can differ, with sizes, and say which match the board's description. (QA: pass / fail)
-- [ ] A test or scripted drive measures the angle between facing and travel for the listed cases, and its numbers are in the result notes (it passes). (QA: pass / fail)
-- [ ] Screenshots or a GIF with facing and travel arrows are in art-archive/T-580/screenshots/. (QA: pass / fail)
-- [ ] No gameplay code is changed (diff). (QA: pass / fail)
-- [ ] docs/drifting.md Content has the findings. (QA: pass / fail)
+- [ ] The result notes explain from the code every way the drawn direction and the travel direction can differ, with sizes, and say which match the board's description. (QA: pass: result notes (1) lists causes a-e with sizes and which match the board)
+- [ ] A test or scripted drive measures the angle between facing and travel for the listed cases, and its numbers are in the result notes (it passes). (QA: pass: test_t580_facing_vs_travel 4/4 passes, numbers in notes (2))
+- [ ] Screenshots or a GIF with facing and travel arrows are in art-archive/T-580/screenshots/. (QA: pass: 21 files incl. frames_vs_ideal_arrow.png and case PNG/GIFs in art-archive/T-580/screenshots/)
+- [ ] No gameplay code is changed (diff). (QA: pass: diff touches only game/tests, game/tools, art-archive, docs, tasks)
+- [ ] docs/drifting.md Content has the findings. (QA: pass: Facing versus travel section in docs/drifting.md (already on master via T-583; the docs check's fail is only because the branch no longer differs from master))
 
 ## Updates
 
@@ -107,3 +107,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Tests run: `bash game/tools/run_tests.sh -gselect=test_t580_facing_vs_travel` 4/4 passed; `python -m unittest game/tools/test_t580_frame_arrows.py` 2 OK; `python -m unittest game/tools/test_t580_pick_stills.py` 2 OK.
 
 Documents affected: docs/drifting.md (Content, "Facing versus travel (task T-580, investigation)").
+- 2026-11-08, in-progress → in-qa: Investigation finished; its findings were built as T-583 (merged).
+- 2026-11-08, in-qa → done: Board: close it (2026-11-08); the fix shipped as T-583

@@ -4155,3 +4155,8 @@ Entry format:
 - Decision or change: PixelLab art for the hint pieces: W and S keycaps, straight, turn and circular arrows, and the roadside sign (6 of 30 generations); the board played it.
 - Documents touched: `docs/level-design.md`, `docs/visual-style.md`
 - Tasks: T-577
+
+## 2026-11-08: Investigation closed: facing versus travel
+- Decision or change: The investigation behind T-583 closed; its findings are in Drifting.
+- Documents touched: none
+- Tasks: T-580
