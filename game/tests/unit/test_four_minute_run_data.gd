@@ -114,8 +114,11 @@ func test_every_power_up_has_two_tiers_and_tier_2_is_the_old_tier_4() -> void:
 		"rusty_overcoat": {"contact_damage": 5.0, "repeat_cooldown_seconds": 0.3, "hits_kaiju": true},
 		"polarized_steering_wheel": {"burst_speed_multiplier": 1.45, "shock_bricks_tier": 1},
 	}
-	assert_eq(d.ids().size(), 5)
+	assert_eq(d.ids().size(), 6)
 	for id in d.ids():
+		if id == "grinding_wheels":  # T-586: one tier for now (the board); test_grinding_wheels.gd
+			assert_eq(d.max_tier(id), 1, id)
+			continue
 		assert_eq(d.max_tier(id), 2, id)
 		assert_eq(d.tiers(id).size(), 2, id)
 		var t2 := d.at(id, 2)
@@ -157,5 +160,7 @@ func test_playtest_tier_switch_and_god_mode_cap_at_5_and_2() -> void:
 	var god: Node = run.god_mode
 	for e in god.entries():
 		var want := 2 if e.kind == "power_up" else 5
+		if e.kind == "power_up" and e.id == "grinding_wheels":
+			want = 1  # T-586: one tier for now (the board)
 		assert_eq(e.last_tier, want, "%s %s" % [e.kind, e.id])
 		assert_eq(god.set_tier(e.kind, e.id, 99), want)

@@ -739,6 +739,17 @@ The playing side of Decisions, "The launch off a rail keeps the grind's speed". 
 - **A very slow grind launches at 6 units/s** (`launch_min_speed`, the proposal; it replaces `jump_speed`, which nothing else used): never slower than T-548's old set speed, so a slow grind launches exactly as every launch did before. The reason: below 6 a first-tier launch (about 0.83 s in the air) carries the car under 5 units, and facing 45 degrees toward the jump pair's second rail (3.5 units away) it would no longer get across, so a slow grind would lose the rail-to-rail jump the practice playground and the tutorial teach. A grind never goes under 2 (it drops off there), so the floor only matters between 2 and 6.
 - **Checked with it:** the square-on start speed stays 6 (`square_start_speed`): a launch crossing the next rail square-on brings no speed along it, so it starts at 6, now the slowest launch's speed (its reason in `rail_grind.json` is updated); a launch at an angle keeps its speed along the new rail, so a fast launch onto the next rail rides it faster than before. The practice playground's jump pair and its rail drives, and the tutorial's grind slide clip and its tests, pass unchanged: every launch is at 6 or more, so every gap that was crossed is still crossed. The jump arrow is unchanged (it shows where the car faces, not how far it goes).
 
+#### Grinding Wheels (task T-586)
+
+The playing side of Decisions, "Grinding Wheels, a driving power-up". The numbers are proposals for the board's playtest, in `game/data/power_ups.json` (`grinding_wheels`, with their reasons). Code: `grinding_wheels.gd`, read by `rail_grind.gd` (`launch_speed()`) and `rail_sparks.gd`; how it is built: `game/docs/driving/rail-grind.md`, "Grinding Wheels (T-586)". GIF: `art-archive/T-586/screenshots/grinding_wheels_3s_grind_and_launch.gif`.
+
+- **A driving power-up like the others:** in the mission gifts' pool, taken at tier 1, one tier only (so it is never offered again once owned), filling one of the 3 driving power-up slots. Its card shows T-585's name and text. Its icon is a script-drawn placeholder (a wheel on a rail with sparks off one side) until T-587's art.
+- **Stacks:** one for each full second of the grind, 3 at most. They count the grind's own seconds (joints included: a grind across connected pieces is one grind) and start again at 0 on every new grind.
+- **The sparks heat with the stacks:** yellow for the first second, orange from 1 s, red from 2 s. Each colour fades into the next over the first quarter second of the new stack (`colour_fade_seconds` 0.25, a proposal), so the colour changes when the stack is earned. Four shades per colour, none of them Greenbull's yellow. A spark keeps the colour it was made with.
+- **The launch** (Space let go) leaves at the T-578 launch speed times 1, 1.33, 1.67 or 2 for 0, 1, 2 or 3 stacks (`max_launch_boost` 1.0, +100% at 3 stacks, spread evenly over the stacks: the board's +33% a stack, written so 3 stacks are exactly 2x).
+- **The floor and the boost:** the floor comes first, then the boost: `max(grind speed, 6) x multiplier`. A slow grind (3 units/s) held 3 s launches at 12; with 0 stacks the launch is exactly the plain one. No cap on top: a fast grind can launch past the car's top speed (33) and slows back on the ground like any boost. Off a rail's end or a slow drop gets no boost (only the launch).
+- **Without the power-up** the sparks keep their plain colours and the launch is T-578's, unchanged.
+
 #### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.
@@ -2715,7 +2726,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
-| `drifting.md` | `a430191ef0eb87595acae36e9f930c410a6dcfcc107f51e2395db51dc9d32f84` |
+| `drifting.md` | `68ba1d160eb126651540ff80b5ee2a51a9ee4b25b56bd0a4daf26d7926547731` |
 | `level-design.md` | `e9c50ed4f18a4a8295971d40ef6ec98d1abf6ef20f903477c3c7af98694d7e2c` |
 | `enemies.md` | `391da72f65c1ee86b14bee9fc4e5eed842d02d5f4ffed3b32d4e927782e5a149` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |

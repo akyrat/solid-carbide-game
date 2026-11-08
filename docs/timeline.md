@@ -4135,3 +4135,8 @@ Entry format:
 - Decision or change: Pieces follow the mouse freely (Shift snaps to the grid) and placed pieces can be moved; its code came in with T-592.
 - Documents touched: none
 - Tasks: T-581
+
+## 2026-11-08: Grinding Wheels
+- Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x; the board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-586

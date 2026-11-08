@@ -785,6 +785,7 @@ func _apply_rev_charge_tier() -> void:
 		car.set_bouncy_bumpers_tier(state.power_up_tier("bouncy_bumpers"))
 		# T-502: the Polarized Steering Wheel, and its tier 4 shock bound to this car.
 		car.polarized.set_tier(state.power_up_tier("polarized_steering_wheel"))
+		car.grinding_wheels.set_tier(state.power_up_tier("grinding_wheels"))  # T-586
 		if polarized_shock != null and weapons != null:
 			polarized_shock.bind(weapons, car)
 

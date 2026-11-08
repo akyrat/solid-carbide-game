@@ -25,6 +25,7 @@ const RevCharge := preload("res://scripts/driving/rev_charge.gd")
 const JumpPowerUp := preload("res://scripts/driving/jump_power_up.gd")
 const PolarizedWheel := preload("res://scripts/driving/polarized_steering_wheel.gd")
 const RailGrind := preload("res://scripts/driving/rail_grind.gd")
+const GrindingWheels := preload("res://scripts/driving/grinding_wheels.gd")
 const CarTilt := preload("res://scripts/driving/car_tilt.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
@@ -106,6 +107,10 @@ var polarized = PolarizedWheel.new()
 ## air that catches a rail locks on and slides along it (_grind_step); grind.grind_ended is the
 ## GRIND! trick's signal.
 var grind = RailGrind.new()
+## Grinding Wheels (task T-586, grinding_wheels.gd): stacks over a grind heat the sparks and boost
+## the launch (grind.wheels points at it, set in _init). Does nothing until
+## grinding_wheels.set_tier() gives it a tier > 0 (the run sets it from RunState).
+var grinding_wheels = GrindingWheels.new()
 ## The tilt (task T-551, car_tilt.gd): Space held in the air (or on a rail) tilts the car through 3
 ## frames; let go, or landed, it plays them back. The drawing reads tilt.step (car_sprite.gd).
 var tilt = CarTilt.new()
@@ -194,6 +199,7 @@ var _bounce_point := Vector2.ZERO
 
 
 func _init() -> void:
+	grind.wheels = grinding_wheels  # T-586: the launch boost reads the wheels' stacks
 	jump.jumped.connect(func(_vz: float) -> void:
 		jump_started.emit("hop", model.get_position(), height_model.height))
 	tricks.trick.connect(func(trick_id: String) -> void: trick.emit(trick_id))
