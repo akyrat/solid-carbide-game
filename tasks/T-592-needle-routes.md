@@ -1,7 +1,7 @@
 ---
 id: T-592
 title: Needle routes: thread-the-needle pairs played in order or at random
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-581-creator-free-placement.md, game/scenes/level_creator/, game/scripts/level_creator/, game/scripts/run/]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/run/, game/scripts/level/, game/data/, game/tests/, game/docs/level/, docs/level-design.md, game/tools/check_level.py]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,13 +43,13 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] In the creator, clicking pair lines with the route tool makes a route in click order, the order switch and taking a pair out work, and routes save and load (tests). (QA: pass / fail)
-- [ ] Levels without routes load and play as before (the existing tests pass) and check_level.py accepts a level with routes. (QA: pass / fail)
-- [ ] In a run, only the active pair pays; in order cycles back after the last; random never repeats the same pair twice in a row when the route has more than one (tests). (QA: pass / fail)
-- [ ] Active pairs draw bright and waiting ones faint (a test or screenshot). (QA: pass / fail)
-- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-592/screenshots/ show a route in the creator and its active and waiting pairs in a run. (QA: pass / fail)
+- [ ] In the creator, clicking pair lines with the route tool makes a route in click order, the order switch and taking a pair out work, and routes save and load (tests). (QA: pass)
+- [ ] Levels without routes load and play as before (the existing tests pass) and check_level.py accepts a level with routes. (QA: pass)
+- [ ] In a run, only the active pair pays; in order cycles back after the last; random never repeats the same pair twice in a row when the route has more than one (tests). (QA: pass)
+- [ ] Active pairs draw bright and waiting ones faint (a test or screenshot). (QA: pass)
+- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-592/screenshots/ show a route in the creator and its active and waiting pairs in a run. (QA: pass)
 
 ## Updates
 
@@ -62,6 +62,10 @@ Started: needle routes, on top of free placement and the route texts.
 ### 2026-11-08, In progress → In QA
 
 Needle routes built: N in the creator, click pair lines in order, In order or Random; in a run only the active pair pays, waiting pairs faint. QA next.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed 7/7. Needle routes ready to play (includes T-581).
 
 ## Style review
 
