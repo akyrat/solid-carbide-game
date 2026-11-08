@@ -1,7 +1,7 @@
 ---
 id: T-598
 title: Text: the trick popups setting's label
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: the label for the trick popups setting.
+
+### 2026-11-08, In progress → In QA
+
+Label: Trick popups. You'll see it in T-599's build.
 
 ## Style review
 
