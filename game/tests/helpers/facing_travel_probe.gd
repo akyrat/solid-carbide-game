@@ -21,17 +21,33 @@ extends RefCounted
 ## - drawn_gap: art_screen - screen_travel (what the player sees: drawn nose versus travel).
 
 const CarModel := preload("res://scripts/driving/car_model.gd")
+const CarFacing := preload("res://scripts/driving/car_facing.gd")
 const SHEET_JSON := "res://art/car/car_iso.json"
 const ISO := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 
 var frames: Array = []
 var step_deg := 11.25
+## Task T-583: the combination measured. remap = fix A (the frame whose drawing points closest,
+## car_facing.gd); grip = fix C (straight_grip outside a drift). Both off = T-580's "none", the
+## state it investigated, whatever data/car_facing.json says.
+var remap := false
+var grip := false
+var _angles: Array = []
+var _layout := {}
 
 
 func _init() -> void:
 	var parsed = JSON.parse_string(FileAccess.get_file_as_string(SHEET_JSON))
 	frames = parsed.frames
 	step_deg = float(parsed.step_deg)
+	_layout = parsed
+	_angles = CarFacing.drawn_angles(parsed)
+
+
+## Sets the combination: "none", "A", "C" or "AC".
+func set_combo(name: String) -> void:
+	remap = name.contains("A")
+	grip = name.contains("C")
 
 
 static func wrap180(a: float) -> float:
@@ -51,7 +67,16 @@ static func world_heading_for_screen(screen_deg: float) -> float:
 
 
 func frame_for_heading(heading_deg: float) -> int:
+	if remap:
+		return CarFacing.remapped_frame(deg_to_rad(heading_deg), _angles, _layout)
 	return posmod(roundi(heading_deg / step_deg), frames.size())
+
+
+## A fresh car for this probe's combination (grip on or off), nose at `heading_deg`.
+func car(heading_deg: float):
+	var m = new_car(heading_deg)
+	m.tuning.straight_grip_on = grip
+	return m
 
 
 ## One record for the model's state now.
@@ -75,9 +100,11 @@ func sample(m, t: float) -> Dictionary:
 	}
 
 
-## A fresh car at the default tuning, standing, nose at world heading `heading_deg`.
+## A fresh car at the default tuning, standing, nose at world heading `heading_deg`, with the grip
+## outside a drift off (T-580's state; car() sets it for the probe's combination).
 static func new_car(heading_deg: float):
 	var m = CarModel.new()
+	m.tuning.straight_grip_on = false
 	m.dt = 0.02
 	m.rotation = deg_to_rad(heading_deg)
 	return m

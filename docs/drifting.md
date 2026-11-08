@@ -438,6 +438,24 @@ The board reported (2026-11-08) that at some angles, diagonals especially, the c
 - **Small, not what the board sees:** the snap to 32 frames (at most 5.6 degrees in the world, 10.9 on screen, where the projection stretches angles), the velocity lagging the body by one physics step while steering (3.8 degrees, Unity's order), and the side slip out of a drift (about 14 degrees, intended, T-278). The isometric projection itself adds no error (heading and travel are projected alike) but stretches or squeezes every gap: up to 2 times near world 45 and 225, down to half near 135 and 315.
 - **Fix options (for the board; none built):** for the art, either pick each heading's frame by where its drawing actually points (code only, free: the worst gap falls from 55 to 23 degrees, the mean from 10.5 to 4.3, but frames 21 to 23 go unused, so turning looks steppier there) or redraw frames 19 to 23 (and 2, 3) through the style loop (paid generations). For the grip, raise the grip outside a drift (`drift_factor`, a slider already) so a turn's slide fades faster, or let W also bleed the sideways speed, or (drawing only) turn the sprite part way toward the travel; each changes the Unity feel, so it is for a playtest.
 
+### The car points where it goes (task T-583)
+
+The board's decision is in Decisions ("The car points where it goes"); fixes A and C are built, each switchable in `game/data/car_facing.json` (how it is built: `game/docs/driving/facing.md`). B, the redraw, is T-584.
+
+- **A, the frame remap (`frame_remap`):** each heading is drawn with the frame whose drawing points closest, on screen, to where the heading points (each frame's measured angle, kept in `car_iso.json`); the shadowless and tilt sheets and the rail snap's outline follow the same frame. Off, frame = heading / 11.25 as before. A redrawn frame is re-measured with `game/tools/measure_car_facing.py`.
+- **C, the straight grip (`straight_grip_on`, `straight_grip` 0.9):** while W is held without A or D the car keeps 0.9 of its sideways speed per physics step instead of 0.98, so a slide halves in 0.13 s instead of 0.7 s. A held drift (its start included) and a coast (no W) keep the Unity grip exactly, so drifts, the alternate drift and the Polarized Steering Wheel's lift and steer (which needs the nose 60 degrees off the travel while coasting) are unchanged. Out of a drift with W held, the grip comes in as the drift amount falls (0.33 s). The proposal's reason: 0.95 or 0.93 still leave 0.7 to 1 s of slide after a drift; 0.85 or lower gain only about 0.1 s more and start to make W feel like rails. (A first version applied C whenever the car was not drifting, coasting included; it broke the Polarized Steering Wheel, which could no longer reach 60 degrees, so C applies only with W held.)
+- **Measured** with T-580's cases (`game/tests/unit/test_t583_facing_fixes.gd`; drawn gap = where the drawing's nose points minus where the car moves, on screen, in degrees):
+
+| | straight line, worst / mean | straight along the screen's up-right diagonal | coasting turn onto the up-right diagonal: drawn gap at W / 1 s later; under 5 in the world after | short drift onto a diagonal: under 5 in the world after |
+|---|---|---|---|---|
+| none | 55.5 / 10.5 | -45 | -81 / -59; not within 2 s | not within 2 s |
+| A | 23.5 / 4.3 | +5 | -31 / -9; not within 2 s | not within 2 s |
+| C | 55.5 / 10.5 | -45 | -79 / -43; 0.42 s | 0.54 s |
+| A+C | 23.5 / 4.3 | +5 | -29 / +7; 0.42 s | 0.54 s |
+
+- **Set to A+C** (both on), the Driving & Drift Agent's recommendation for the board's playtest: they fix independent causes, A most of the straight-line gap (the screen's up-right diagonal from 45 to 5 degrees), C the slide after a turn. What is left is the art itself: around world heading 239 (just left of the up-right diagonal) the nearest drawings are 23 degrees away, until T-584 redraws frames 19 to 23.
+- Before and after: `art-archive/T-583/screenshots/` (`straight_screen_315.gif`, `coast_turn_onto_screen_up_right.gif` and others; left no fix, right A+C).
+
 ### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.

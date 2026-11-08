@@ -12,9 +12,12 @@ extends Node2D
 ## coast_turn_onto_screen_up_right). Record it, one physics step per frame:
 ##   T580_CASE=<name> "$GODOT_BIN" --path game --fixed-fps 50 --write-movie C:/abs/dir/f.png res://tests/fixtures/t580_facing_demo.tscn
 ## then assemble with game/tools/frames_to_gif.py. The scene quits when the case ends.
+## Task T-583: T583_COMBO picks the fixes measured, "none" (default, T-580's state), "A" (the frame
+## remap), "C" (the grip outside a drift) or "AC" (game/tools/record_t583_facing.sh).
 
 const Probe := preload("res://tests/helpers/facing_travel_probe.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
+const CarFacing := preload("res://scripts/driving/car_facing.gd")
 const PX := 16.0
 const ISO := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 const GREEN := Color(0.24, 0.9, 0.35)
@@ -36,6 +39,7 @@ var label: Label
 var done := false
 ## The keys of the step just taken (for the label).
 var keys_text := "-"
+var combo := "none"
 
 
 func _ready() -> void:
@@ -43,6 +47,11 @@ func _ready() -> void:
 	# The fixture places everything itself each frame: no smoothing between physics steps.
 	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	probe = Probe.new()
+	combo = OS.get_environment("T583_COMBO")
+	if combo == "":
+		combo = "none"
+	probe.set_combo(combo)
+	CarFacing.remap_override = probe.remap
 	var want := OS.get_environment("T580_CASE")
 	if want == "":
 		want = "coast_turn_onto_screen_up_right"
@@ -59,7 +68,7 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	phases = case_data.phases
-	model = Probe.new_car(float(case_data.start))
+	model = probe.car(float(case_data.start))
 	record = probe.sample(model, 0.0)
 	sprite = CarSpriteScript.new()
 	sprite.world_px_per_unit = PX
@@ -100,6 +109,14 @@ func _process(_delta: float) -> void:
 	_sync()
 
 
+func _combo_text() -> String:
+	return {"none": "NONE (before)", "A": "A (frame remap)", "C": "C (grip)", "AC": "A+C (after)"}.get(combo, combo)
+
+
+func _exit_tree() -> void:
+	CarFacing.remap_override = null
+
+
 func _keys_text() -> String:
 	if phase >= phases.size():
 		return "-"
@@ -124,8 +141,8 @@ func _sync() -> void:
 	trail.append(p)
 	if trail.size() > 400:
 		trail.pop_front()
-	label.text = "T-580 fixture  case %s  t=%.2f s  keys held: %s\nspeed %.1f   world: nose %.0f, travel %.0f, gap %+.0f\nscreen: nose %.0f, travel %.0f, gap %+.0f\nsprite frame %d, its drawing points at %.0f: %+.0f from the travel\nGREEN = where the body points   ORANGE = where it moves   WHITE = where the drawing's nose points" % [
-		case_data.name, record.t, keys_text, record.speed, record.heading, record.travel,
+	label.text = "fixes: %s   case %s  t=%.2f s  keys held: %s\nspeed %.1f   world: nose %.0f, travel %.0f, gap %+.0f\nscreen: nose %.0f, travel %.0f, gap %+.0f\nsprite frame %d, its drawing points at %.0f: %+.0f from the travel\nGREEN = where the body points   ORANGE = where it moves   WHITE = where the drawing's nose points" % [
+		_combo_text(), case_data.name, record.t, keys_text, record.speed, record.heading, record.travel,
 		record.world_gap, record.screen_heading, record.screen_travel, record.screen_gap,
 		record.frame, record.art_screen, record.drawn_gap]
 	overlay.queue_redraw()
