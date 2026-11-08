@@ -1,7 +1,7 @@
 ---
 id: T-597
 title: No R on the tutorial's keycaps
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -60,4 +60,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Removed R from the practice window's keycaps: KeyPad.full() now draws W, A, S, D and Space (KEYS_WITH_R deleted); PracticeSession.held_keys() no longer reports R (R still resets the stage; _r_lit kept, harmless). Trick list key pad untouched (KeyPad.attach). Test updated in test_practice_take.gd (no R key, Space bar, reset lights no R). Docs: game/docs/hud-and-menus/tutorial-slides.md updated; docs/hud-and-menus.md already had the decision line. Tests: full Godot set 3250 tests, 3249 pass, 0 fail, 1 risky/pending, 284 scripts. Screenshot: art-archive/T-597/screenshots/keycaps_no_r.png (new tools/shots/keypad_shots.tscn).
