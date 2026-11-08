@@ -4030,3 +4030,8 @@ Entry format:
 - Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-575
+
+## 2026-11-08: No Skip on the last tutorial slide
+- Decision or change: The last tutorial slide has no Skip button.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-568

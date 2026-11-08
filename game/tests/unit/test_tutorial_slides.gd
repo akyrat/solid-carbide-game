@@ -260,13 +260,25 @@ func test_the_arrows_and_skip_work_by_mouse_on_a_trick_slide() -> void:
 
 
 func test_skip_jumps_to_the_last_slide_from_every_slide() -> void:
-	for i in range(6):
+	for i in range(5):
 		slides.show_slide(i)
 		assert_true(slides.skip_button.is_visible_in_tree(), "Skip on slide %d" % (i + 1))
 		slides.skip_button.pressed.emit()
 		assert_eq(_visible_slide(), 5)
 		assert_true(slides.start_button.has_focus())
 	assert_eq(slides.skip_button.text, _at("button.skip").to_upper())
+
+
+func test_the_last_slide_has_no_skip_and_going_back_brings_it_back() -> void:
+	slides.show_slide(5)
+	assert_false(slides.skip_button.is_visible_in_tree(), "no Skip on the last slide")
+	assert_true(slides.start_button.is_visible_in_tree(), "Go live stays")
+	slides.previous_slide()
+	assert_true(slides.skip_button.is_visible_in_tree(), "Skip is back on slide 5")
+	slides.show_slide(0)
+	slides.next_slide()
+	slides.skip_to_last()
+	assert_false(slides.skip_button.is_visible_in_tree(), "none after Skip either")
 
 
 func test_go_live_and_the_checkbox_only_on_the_last_slide() -> void:
