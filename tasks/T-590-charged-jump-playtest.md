@@ -1,7 +1,7 @@
 ---
 id: T-590
 title: A charged jump, for a playtest
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -70,6 +70,10 @@ QA passed 6/6. Ready to play on its own: C:\solid-carbide-worktrees\T-590.
 
 Tweak sent to the agent: no bar; the car tilts while charging; the jump effect scales with the jump height.
 
+### 2026-11-08, In progress → In QA
+
+Tweak 1 is in: no bar; the car tilts while you charge and untilts as it jumps; the jump effect grows up to x1.5 at a full charge. Play it from C:\solid-carbide-worktrees\T-590.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -98,3 +102,4 @@ Tweak 1 (the board, 2026-11-08, quick tuning: 'I don't want to have a loading ba
 - Tests: test_jump_charge.gd now 15 tests (the cue tests replaced by: tilt while charging and untilt after release, a tap does not tilt, no tilt without Jump, the effect's size at 0/1.5/3 s, the clamp, the rail launch at x1), all pass; related sets pass (test_jump_power_up 12, test_grind_overhaul 16, test_jump_effect_art 3, test_cosmetics_screen 10, test_run_rails 5, test_practice_session 28, test_rail_grind 38). Full run (GUT_TIME_LIMIT=2400, 298 s): 275 scripts, 3149 tests, 3148 passing, 0 failing, 1 risky/pending.
 - Docs: docs/drifting.md Content 'The charged jump (task T-590)' (the bar replaced by the tilt and the effect's scale), game/docs/driving/tricks.md. For the Project Lead: Drifting, Decisions, 'A charged jump, for a playtest' still says a small script-drawn cue shows the charge; that line is yours to update.
 - GIF: art-archive/T-590/screenshots/tweak1_tap_then_full_charge.gif (a tap with the normal cloud, then a 3 s charge with the car tilted and the x1.5 hop with a bigger cloud); stills tweak1_charging_tilted.png, tweak1_full_charge_effect.png, tweak1_tap_vs_charge_closeup.png (enlarged: tap cloud, tilted while charging, full-charge cloud). The first build's GIF and stills are kept, renamed v1_bar_*.
+- 2026-11-08, in-progress → in-qa: Tweak 1 in; ready for the board to play (quick tuning, no QA agent).
