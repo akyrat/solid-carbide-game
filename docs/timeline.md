@@ -3950,3 +3950,13 @@ Entry format:
 - Decision or change: The main menu's Settings button and the Settings screen's title (Settings) and Back.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`
 - Tasks: T-570
+
+## 2026-11-08: No button looks selected when a menu opens
+- Decision or change: Menus open with no button selected; the keyboard selection shows on the first arrow or Tab press.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-573
+
+## 2026-11-08: Quick tuning of the drift slides
+- Decision or change: The board tunes the drift tutorial slides' layout and play directly, with no QA round.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-574
