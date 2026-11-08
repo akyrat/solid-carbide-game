@@ -64,12 +64,9 @@ const WINDOW_POS := Vector2(SIDE, 214)
 const WINDOW_SIZE := Vector2(CONTENT_W, 400)
 const WINDOW_BORDER := 4
 ## T-574: the tutorial text (the instruction, and the grind's hint) is drawn in the game, along
-## the window's bottom edge on a dark band, clear of the notebook (top left) and the success
-## message (centre). Its side padding and the band's opacity (proposals for the playtest).
+## the window's bottom edge on a dark band, clear of the notebook (top left). Its side padding and the band's opacity (proposals for the playtest).
 const CAPTION_PAD := 16.0
 const CAPTION_BAND_ALPHA := 0.6
-## The success message's pop when it appears (seconds; a proposal).
-const SUCCESS_POP := 0.25
 ## Art the slides draw (all the game's own files).
 const ART_SUBS := "res://art/hud/subs_icon.png"
 const ART_PACKAGE := "res://art/gift_pack/package.png"
@@ -108,11 +105,12 @@ var picture_paths: Array[String] = []
 ## The practice scene to embed; tests point it at a stand-in before a trick slide first shows.
 var practice_scene_path := PRACTICE_SCENE
 ## Per trick slide (index 0 to 3): the window's frame, its SubViewportContainer, the session
-## (null until its slide first shows, and when the scene is missing) and the success message.
+## (null until its slide first shows, and when the scene is missing). T-574 (the board): no
+## success message over the window any more; the goal done, the practice session stamps a green
+## check on its own notebook page (PracticeSession._show_stamp).
 var practice_frames: Array[Control] = []
 var practice_containers: Array[SubViewportContainer] = []
 var practices: Array = [null, null, null, null]
-var success_messages: Array[Label] = []
 var _dots: Array[ColorRect] = []
 var _pixel_font: FontFile
 var _missing_warned := false
@@ -252,10 +250,6 @@ func _ensure_practice(i: int) -> void:
 	practices[i] = session
 	if session.has_method("setup"):
 		session.setup(String(TRICK_SLIDES[i][1]))
-	if session.has_signal("completed"):
-		session.completed.connect(_on_practice_completed.bind(i))
-	if session.has_method("is_completed") and session.is_completed():
-		_show_success(i, false)
 
 
 ## Runs the showing slide's practice with the keyboard, and pauses every other one (and all of them
@@ -272,22 +266,6 @@ func _apply_practice_state() -> void:
 			session.start()
 		elif not on and session.has_method("pause"):
 			session.pause()
-
-
-func _on_practice_completed(i: int) -> void:
-	_show_success(i, true)
-
-
-## The success message over practice window `i` only (after the third success), with a small pop.
-func _show_success(i: int, pop: bool) -> void:
-	var msg := success_messages[i]
-	if msg.visible:
-		return
-	msg.visible = true
-	if pop and is_inside_tree():
-		msg.scale = Vector2(0.6, 0.6)
-		create_tween().tween_property(msg, "scale", Vector2.ONE, SUCCESS_POP) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 # --- The arrows, Skip and the dots (on every slide) ---------------------------------------------
@@ -549,19 +527,6 @@ func _build_trick(i: int) -> Control:
 	band.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	frame.add_child(band)
 
-	# Over the window only: the success message, after the third success.
-	var msg := _text_label("tutorial.success", false, 64, GOLD, true)
-	msg.name = "Success"
-	msg.add_theme_color_override("font_outline_color", HudStyle.DARK)
-	msg.add_theme_constant_override("outline_size", 12)
-	msg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	msg.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	msg.position = WINDOW_POS
-	msg.size = WINDOW_SIZE
-	msg.pivot_offset = WINDOW_SIZE / 2.0
-	msg.visible = false
-	s.add_child(msg)
-	success_messages.append(msg)
 	return s
 
 

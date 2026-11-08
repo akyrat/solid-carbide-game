@@ -130,7 +130,6 @@ func test_each_trick_slide_has_its_instruction_and_window() -> void:
 		assert_true(s.is_ancestor_of(l), TRICK_KEYS[i])
 		assert_eq(l.text, _at("tutorial.trick.%s.instruction" % TRICK_KEYS[i]))
 		assert_true(s.is_ancestor_of(slides.practice_frames[i]), "window on slide %d" % (i + 2))
-		assert_true(s.is_ancestor_of(slides.success_messages[i]))
 	assert_true(slides.slides[4].is_ancestor_of(slides.text_labels["tutorial.grind_hint"]), "the Jump hint on the grind slide")
 	assert_eq(slides.text_labels["tutorial.grind_hint"].text, _at("tutorial.grind_hint"))
 
@@ -189,7 +188,7 @@ func test_texts_match_the_file() -> void:
 			assert_eq(shown, expected, key)
 	for key in ["tutorial.loop.title", "tutorial.loop.step1", "tutorial.loop.step4", "tutorial.loop.point",
 			"tutorial.trick.drift.title", "tutorial.trick.drift.instruction", "tutorial.trick.altdrift.instruction",
-			"tutorial.trick.airspin.instruction", "tutorial.trick.grind.instruction", "tutorial.success",
+			"tutorial.trick.airspin.instruction", "tutorial.trick.grind.instruction",
 			"tutorial.grind_hint", "slide4.title", "slide4.kaiju", "button.start", "checkbox.dont_show",
 			"button.skip", "arrow.left", "arrow.right"]:
 		assert_true(slides.text_labels.has(key), "uses " + key)
@@ -474,22 +473,14 @@ func test_a_practice_keeps_its_count_when_its_slide_hides() -> void:
 	assert_eq(session.setup_calls.size(), 1, "not set up again")
 
 
-func test_the_success_message_shows_over_the_window_only_after_the_third_success() -> void:
+func test_no_success_message_over_the_window_when_the_goal_is_done() -> void:
+	# T-574 (the board): the big centred message is gone; the practice session stamps its notebook.
 	slides.show_slide(3)
 	var session = slides.practices[2]
-	var msg: Label = slides.success_messages[2]
-	assert_false(msg.visible)
-	session.succeed()
-	assert_false(msg.visible, "after one")
-	session.succeed()
-	assert_false(msg.visible, "after two")
-	session.succeed()
-	assert_true(msg.visible, "after the third")
-	assert_eq(msg.text, _at("tutorial.success"))
-	assert_eq(Rect2(msg.position, msg.size), Rect2(slides.practice_frames[2].position, slides.practice_frames[2].size),
-		"over the practice window, not the whole slide")
-	for i in [0, 1, 3]:
-		assert_false(slides.success_messages[i].visible, "the other windows are untouched")
+	for n in 3:
+		session.succeed()
+	assert_false(slides.text_labels.has("tutorial.success"), "the success text is no longer shown")
+	assert_null(slides.find_child("Success", true, false))
 
 
 func test_a_missing_practice_scene_leaves_an_empty_window() -> void:

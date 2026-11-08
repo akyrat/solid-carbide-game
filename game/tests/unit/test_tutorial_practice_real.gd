@@ -75,14 +75,17 @@ func test_the_grind_window_opens_with_its_gift() -> void:
 	assert_true(slides.practices[3].is_gift_open(), "the Jump gift is offered")
 
 
-func test_the_real_completed_signal_shows_the_success_message() -> void:
+func test_the_real_completed_signal_stamps_the_notebook_and_shows_no_message() -> void:
+	# T-574 (the board): a green check stamp on the notebook page, no big message over the window.
 	if not _ready_or_pending():
 		return
 	slides.show_slide(2)
 	await wait_process_frames(2)
-	assert_false(slides.success_messages[1].visible)
+	assert_false(slides.practices[1].is_stamped())
 	slides.practices[1].completed.emit()
-	assert_true(slides.success_messages[1].visible)
+	assert_true(slides.practices[1].is_stamped())
+	assert_true(slides.practices[1].notebook.is_ancestor_of(slides.practices[1].stamp), "on the notebook page")
+	assert_null(slides.find_child("Success", true, false), "no success message on the slides")
 	slides.show_slide(0)
 	assert_false(slides.practices[1].is_running(), "paused when its slide hides")
 
@@ -101,7 +104,7 @@ func _do(session, trick_id: String) -> void:
 	car.stepped.emit()
 
 
-func test_every_trick_slide_counts_to_three_and_shows_the_success_message() -> void:
+func test_every_trick_slide_counts_to_three_and_stamps_its_notebook() -> void:
 	if not _ready_or_pending():
 		return
 	var tricks := ["extended_drift", "alternate_drift", "air_three_sixty", "rail_grind"]
@@ -114,26 +117,25 @@ func test_every_trick_slide_counts_to_three_and_shows_the_success_message() -> v
 			session.gift_screen.skip_animation()
 			session.take_gift()
 			assert_eq(session.car.jump.tier, 1, "Jump taken")
-		var msg: Label = slides.success_messages[i]
 		if i == 0:
 			# T-565: the drift slide counts 3 s of drifting in total, over several drifts.
 			for n in range(3):
 				_do(session, tricks[i])
 				assert_eq(session.successes, 0, "a LONG DRIFT! is no success on the drift slide")
-				assert_false(msg.visible, "slide 2: no message before 3 s")
+				assert_false(session.is_stamped(), "slide 2: no stamp before 3 s")
 				session.add_drift_seconds(0.9)
-			assert_false(msg.visible, "slide 2: no message at 2.7 s")
+			assert_false(session.is_stamped(), "slide 2: no stamp at 2.7 s")
 			session.add_drift_seconds(0.3)
 			assert_true(session.notebook.rows[0].label.text.contains("3.0/3"), "the notebook shows 3.0/3")
-			assert_true(msg.visible, "slide 2: the message at 3 s in total")
+			assert_true(session.is_stamped(), "slide 2: the stamp at 3 s in total")
 			continue
 		for n in range(3):
-			assert_false(msg.visible, "slide %d: no message after %d" % [i + 2, n])
+			assert_false(session.is_stamped(), "slide %d: no stamp after %d" % [i + 2, n])
 			_do(session, tricks[i])
 			assert_eq(session.successes, n + 1)
 		session.notebook.finish_falls()  # T-563: the count arrives when the name box has landed
 		assert_true(session.notebook.rows[0].label.text.contains("3/3"), "the notebook shows 3/3")
-		assert_true(msg.visible, "slide %d: the message after the third" % (i + 2))
+		assert_true(session.is_stamped(), "slide %d: the stamp after the third" % (i + 2))
 
 
 func _hold(code: Key, on: bool) -> void:

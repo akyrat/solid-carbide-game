@@ -472,3 +472,22 @@ func test_on_the_real_playground_an_alt_drift_from_the_alt_drift_start_counts() 
 			car.physics_step()
 	assert_eq(session.successes, 1, "%s" % [counted])
 	assert_eq(counted[0][0], "alternate_drift")
+
+
+func test_the_goal_done_stamps_a_green_check_on_the_notebook_and_restart_clears_it() -> void:
+	# T-574 (the board): a green check stamp on the notebook page when the goal is done, no text.
+	session.setup("alt_drift")
+	assert_false(session.is_stamped(), "no stamp at first")
+	assert_true(session.notebook.is_ancestor_of(session.stamp), "the stamp lives on the notebook page")
+	_do("alternate_drift")
+	_do("alternate_drift")
+	assert_false(session.is_stamped(), "no stamp before the goal")
+	_do("alternate_drift")
+	assert_true(session.is_stamped(), "stamped on the third")
+	assert_eq(session.stamp.get_child_count(), 0, "drawn in code: no label, no text")
+	assert_lt(session.stamp.position.x + session.stamp.size.x, session.notebook.size.x + 20.0, "on the page")
+	session.restart()
+	assert_false(session.is_stamped(), "a restart clears it")
+	session.setup("drift")
+	session.add_drift_seconds(3.0)
+	assert_true(session.is_stamped(), "the drift slide too, at 3 s")

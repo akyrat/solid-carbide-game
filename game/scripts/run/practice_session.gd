@@ -122,6 +122,15 @@ const NOTEBOOK_BASE := Vector2(806.4, 453.6)
 ## Where the notebook page sits on that layout page: the top left corner (a proposal; the run's
 ## HUD has it lower, under the weapon icons).
 const NOTEBOOK_POS := Vector2(12, 12)
+## T-574 (the board, 2026-11-08: "stop putting the message on the big label on the center of the
+## screen when the objective is done. Just put a green checkmark stamp on the objective notepad"):
+## the goal done, a green check stamp lands on the notebook page, drawn in code (no text). Its
+## centre on the page, size, tilt and ink, and the stamp's landing time (proposals for the playtest).
+const STAMP_CENTRE := Vector2(118, 112)
+const STAMP_SIZE := 92.0
+const STAMP_TILT_DEG := -12.0
+const STAMP_INK := Color(0.16, 0.66, 0.3, 0.9)
+const STAMP_TIME := 0.18
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 const PX := 16.0
 
@@ -173,6 +182,8 @@ var notebook_layer: CanvasLayer
 var notebook: MissionPage
 var offers: PracticeOffers
 var gift_screen: PowerUpScreen
+## The green check stamp on the notebook page (T-574), shown once the goal is done.
+var stamp: Control
 
 var _paused := true
 var _gift_paused := false
@@ -215,6 +226,8 @@ func restart() -> void:
 		missions.start_with([[{"trick": GOAL_TRICK[trick], "kind": RunMissions.KIND_COUNT, "amount": GOAL}]])
 	notebook.goal_templates = {GOAL_TRICK[trick]: goal_template(trick)}
 	notebook.show_current()
+	if stamp != null:
+		stamp.visible = false
 	reset_car(false)
 	_gift_pending = GIFT.has(trick)
 	if not _paused:
@@ -431,6 +444,17 @@ func _build() -> void:
 	root.add_child(notebook)
 	notebook.position = NOTEBOOK_POS
 	notebook.bind(missions)
+	stamp = Control.new()
+	stamp.name = "DoneStamp"
+	stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stamp.size = Vector2(STAMP_SIZE, STAMP_SIZE)
+	stamp.pivot_offset = stamp.size / 2.0
+	stamp.position = STAMP_CENTRE - stamp.pivot_offset
+	stamp.rotation = deg_to_rad(STAMP_TILT_DEG)
+	stamp.visible = false
+	stamp.draw.connect(_draw_stamp)
+	notebook.add_child(stamp)
+	completed.connect(_show_stamp.bind(true))
 	state.combo_changed.connect(drift_marks.set_multiplier)  # hype marks (T-249), as in the run
 
 	# The gift: the real overlay, pausing only this session.
@@ -488,6 +512,41 @@ func _build_car() -> void:
 	car_sprite.reset_physics_interpolation()
 	shadow.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
+
+
+## The green check stamp (T-574): shown on the notebook once the goal is done; `land` plays the
+## stamp's landing (it drops from a bit bigger and fades in), else it just shows.
+func _show_stamp(land: bool) -> void:
+	if stamp == null or stamp.visible:
+		return
+	notebook.move_child(stamp, notebook.get_child_count() - 1)
+	stamp.visible = true
+	if land and is_inside_tree():
+		stamp.scale = Vector2(1.8, 1.8)
+		stamp.modulate.a = 0.0
+		var t := create_tween().set_parallel(true)
+		t.tween_property(stamp, "scale", Vector2.ONE, STAMP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		t.tween_property(stamp, "modulate:a", 1.0, STAMP_TIME * 0.6)
+	else:
+		stamp.scale = Vector2.ONE
+		stamp.modulate.a = 1.0
+
+
+func is_stamped() -> bool:
+	return stamp != null and stamp.visible
+
+
+## A rubber stamp's look in code: a ring with a thick check inside, in green ink.
+func _draw_stamp() -> void:
+	var c := stamp.size / 2.0
+	var r := STAMP_SIZE / 2.0 - 4.0
+	stamp.draw_arc(c, r, 0.0, TAU, 40, STAMP_INK, 5.0, false)
+	stamp.draw_arc(c, r - 7.0, 0.0, TAU, 40, STAMP_INK, 2.0, false)
+	var pts := PackedVector2Array([c + Vector2(-r * 0.5, 0.0), c + Vector2(-r * 0.12, r * 0.4),
+		c + Vector2(r * 0.55, -r * 0.42)])
+	stamp.draw_polyline(pts, STAMP_INK, 11.0, false)
+	for p in pts:
+		stamp.draw_circle(p, 5.5, STAMP_INK)
 
 
 # ---- Running ---------------------------------------------------------------------------------
