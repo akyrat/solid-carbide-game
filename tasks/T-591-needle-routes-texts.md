@@ -1,7 +1,7 @@
 ---
 id: T-591
 title: Texts: needle routes in the level creator
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: the needle route texts.
+
+### 2026-11-08, In progress → In QA
+
+Texts written (route tool on N). QA now; you'll see them in T-592's build.
 
 ## Style review
 
