@@ -22,7 +22,9 @@ script does the free parts of the style loop around one PixelLab call per versio
         rivets, and a thicker post and base with six shading steps; PixelLab's post and base pixels stay.
         --slim (v3) is the pass that reads at native size: a slim, longer pole on a small flat base, a clearer
         lighter frame with long bright glint runs, a stepped slate face (still blank), three steps on the pole.
-    python game/tools/build_hint_sign.py roles [--strong | --slim]
+        --bold (v4) is the slim pass with highlights that read at thumbnail size: near-white runs two pixels
+        wide breaking the outline on the frame, the pole and the base, five face bands, rivets and scuffs.
+    python game/tools/build_hint_sign.py roles [--strong | --slim | --bold]
         Prints how many pixels each drawing role has, for the result notes.
     python game/tools/build_hint_sign.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
@@ -341,10 +343,81 @@ def sign_slim() -> Image.Image:
     return im
 
 
+# The bold pass (T-577 v4): the slim sign pushed to read at thumbnail size.
+WHITE = (0xEE, 0xF0, 0xFA, 255)       # the near-white highlight that breaks the outline, 2 px wide
+FACE_HI_2 = (0x41, 0x47, 0x6B, 255)   # the face's brightest band, nearest the light
+FACE_DEEP_2 = (0x27, 0x2A, 0x3C, 255)  # its darkest band, furthest from it
+BOLD_POST_RUNS = (range(62, 67), range(77, 83), range(86, 89))
+
+
+def sign_bold() -> Image.Image:
+    """The v4 sign: the slim sign with highlights that read at native size (near-white runs two pixels wide,
+    on the outline and the pixel inside it, on the frame's top and left, the pole's lit edge and the base's
+    rim), five stepped bands across the blank face, a two-column dark right side on the pole and the base's
+    right in deep shadow, and rivets and scuffs along the frame."""
+    im = sign_slim()
+    px = im.load()
+    # The face: five stepped bands lit from the top-left, still blank slate.
+    for y in range(11, 53):
+        for x in range(11, 53):
+            s = x + y
+            if s <= 34:
+                px[x, y] = FACE_HI_2
+            elif s <= 46:
+                px[x, y] = FACE_HI
+            elif s >= 98:
+                px[x, y] = FACE_DEEP_2
+            elif s >= 88:
+                px[x, y] = FACE_DEEP
+            else:
+                px[x, y] = FACE
+    # The frame: the glint runs on the outline become near-white and two pixels wide.
+    for x in range(8, 56):
+        if px[x, 7] == GLINT_BRIGHT:
+            px[x, 7] = WHITE
+            px[x, 8] = WHITE
+    for y in range(8, 56):
+        if px[7, y] == GLINT_BRIGHT:
+            px[7, y] = WHITE
+            px[8, y] = WHITE
+    px[8, 8] = WHITE
+    # Rivets along the frame (bright on the lit sides, steel on the shaded ones) and a few scuffs.
+    for t in (14, 32, 50):
+        px[t, 9] = WHITE
+        px[9, t] = WHITE
+        px[t, 54] = GLINT
+        px[54, t] = GLINT
+    for p in ((24, 8), (38, 9), (8, 40), (9, 46)):
+        px[p] = FRAME_DARK
+    for p in ((20, 55), (46, 54), (55, 20)):
+        px[p] = STEEL_LIT
+    # The pole: a two-column dark right side, and longer near-white runs two pixels wide on its lit edge.
+    x0, x1 = SLIM_POST_X
+    for y in range(SLIM_POST_ROWS[0], SLIM_POST_ROWS[1] + 1):
+        if px[x1 - 2, y] == STEEL_DARK:
+            px[x1 - 2, y] = STEEL_DEEP
+    for run in BOLD_POST_RUNS:
+        for y in run:
+            px[x0, y] = WHITE
+            px[x0 + 1, y] = GLINT_BRIGHT
+    # The base: a near-white run breaking the plate's left rim, and its right side in deep shadow.
+    for p in ((22, 92), (23, 91), (24, 90), (23, 92)):
+        px[p] = WHITE
+    px[25, 90] = GLINT_BRIGHT
+    for y in range(90, 95):
+        for x in range(37, 43):
+            if px[x, y] in (STEEL_DARK, STEEL_DEEP):
+                px[x, y] = EDGE_DEEP
+    # The bracket's rivets, bright.
+    for p in ((30, 59), (34, 59)):
+        px[p] = WHITE
+    return im
+
+
 BODY_ROLES = (STEEL, STEEL_LIT, STEEL_DARK, STEEL_DEEP)
-V1_ROLES = (INK, GLINT, GLINT_BRIGHT, FRAME, FRAME_LIT, FRAME_HI, FRAME_DARK, AMBER, AMBER_DARK, FACE, FACE_LOW,
-            FACE_LIT, FACE_HI, FACE_DEEP, EDGE, EDGE_DEEP)
-PASSES = {"strong": sign_strong, "slim": sign_slim}
+V1_ROLES = (INK, GLINT, GLINT_BRIGHT, WHITE, FRAME, FRAME_LIT, FRAME_HI, FRAME_DARK, AMBER, AMBER_DARK, FACE,
+            FACE_LOW, FACE_LIT, FACE_HI, FACE_HI_2, FACE_DEEP, FACE_DEEP_2, EDGE, EDGE_DEEP)
+PASSES = {"strong": sign_strong, "slim": sign_slim, "bold": sign_bold}
 
 
 def polish_pass(im: Image.Image, name: str) -> Image.Image:
@@ -377,7 +450,8 @@ def roles(strong: bool = False) -> dict[str, int]:
         FRAME_DARK: "frame_dark", GLINT: "glint", STEEL: "steel", STEEL_LIT: "steel_lit",
         STEEL_DARK: "steel_dark", STEEL_DEEP: "steel_deep", AMBER: "amber", AMBER_DARK: "amber_dark",
         FRAME_HI: "frame_hi", GLINT_BRIGHT: "glint_bright", FACE_LIT: "face_lit", EDGE: "edge",
-        EDGE_DEEP: "edge_deep", FACE_HI: "face_hi", FACE_DEEP: "face_deep",
+        EDGE_DEEP: "edge_deep", FACE_HI: "face_hi", FACE_DEEP: "face_deep", WHITE: "white",
+        FACE_HI_2: "face_hi_2", FACE_DEEP_2: "face_deep_2",
     }
     counts: dict[str, int] = {}
     shape = PASSES[strong]() if isinstance(strong, str) else (sign_strong() if strong else sign())
@@ -510,9 +584,11 @@ def main(argv=None) -> int:
     q.add_argument("out")
     q.add_argument("--strong", action="store_true", help="the v2 pass")
     q.add_argument("--slim", action="store_true", help="the v3 pass: a slim long pole, a clearer frame, a stepped face")
+    q.add_argument("--bold", action="store_true", help="the v4 pass: slim, with highlights that read at native size")
     ro = sub.add_parser("roles", help="print the script sign's pixel counts per role")
     ro.add_argument("--strong", action="store_true")
     ro.add_argument("--slim", action="store_true")
+    ro.add_argument("--bold", action="store_true")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -530,13 +606,13 @@ def main(argv=None) -> int:
             im = finish(raw, not args.no_polish, args.keep_face, not args.no_reduce)
         save_png(im, Path(args.out))
     elif args.cmd == "polish":
-        if not (args.strong or args.slim):
-            p.error("polish needs --strong or --slim")
+        if not (args.strong or args.slim or args.bold):
+            p.error("polish needs --strong, --slim or --bold")
         with Image.open(args.src) as src:
-            im = reduce_image(polish_pass(src, "slim" if args.slim else "strong"), 30)
+            im = reduce_image(polish_pass(src, "bold" if args.bold else "slim" if args.slim else "strong"), 30)
         save_png(im, Path(args.out))
     elif args.cmd == "roles":
-        for name, n in sorted(roles("slim" if args.slim else args.strong).items()):
+        for name, n in sorted(roles("bold" if args.bold else "slim" if args.slim else args.strong).items()):
             print(f"{name}: {n}")
         return 0
     else:

@@ -171,6 +171,40 @@ class TestSign(unittest.TestCase):
         self.assertEqual(px[12, 7], s.GLINT_BRIGHT)
         self.assertEqual(px[57, 30], s.EDGE)                   # the thickness shadow stays
 
+    def test_bold_sign_has_highlights_that_read_at_native_size_and_a_blank_face(self):
+        im = s.sign_bold()
+        px = im.load()
+        self.assertEqual(failed_checks(im), [])
+        self.assertLessEqual(len(colours(im)), 30)
+        self.assertEqual(px[s.FOOT], s.INK)
+        for p in ((8, 8), (55, 8), (8, 55), (55, 55)):         # the board still fills face_px
+            self.assertEqual(px[p][3], 255, p)
+            self.assertNotEqual(px[p], s.INK, p)
+        for y in range(11, 53):                                # the face: five stepped slate bands, no marks
+            for x in range(11, 53):
+                self.assertIn(px[x, y], (s.FACE, s.FACE_HI, s.FACE_HI_2, s.FACE_DEEP, s.FACE_DEEP_2), (x, y))
+        self.assertEqual(px[11, 11], s.FACE_HI_2)
+        self.assertEqual(px[32, 32], s.FACE)
+        self.assertEqual(px[52, 52], s.FACE_DEEP_2)
+        # Near-white runs two pixels wide break the outline on the frame, the pole and the base.
+        for p in ((12, 7), (12, 8), (7, 12), (8, 12), (29, 64), (29, 80), (22, 92), (23, 91)):
+            self.assertEqual(px[p], s.WHITE, p)
+        self.assertEqual(px[30, 64], s.GLINT_BRIGHT)
+        self.assertEqual(px[29, 70], s.INK)                    # the outline is still there between runs
+        self.assertEqual(px[7, 25], s.INK)
+        # Rivets and scuffs on the frame; a two-column dark right side on the pole; the base's right in shadow.
+        self.assertEqual(px[32, 9], s.WHITE)
+        self.assertEqual(px[32, 54], s.GLINT)
+        self.assertEqual(px[24, 8], s.FRAME_DARK)
+        self.assertEqual(px[33, 70], s.STEEL_DEEP)
+        self.assertEqual(px[34, 70], s.EDGE_DEEP)
+        self.assertEqual(px[40, 93], s.EDGE_DEEP)
+        self.assertEqual(px[31, 75], s.AMBER)
+        self.assertEqual(s.roles("bold").get("other"), None)
+        out = s.polish_pass(s.finish(Image.new("RGBA", (64, 96), (70, 80, 100, 255))), "bold")
+        self.assertEqual(out.load()[32, 80], (70, 80, 100, 255))
+        self.assertEqual(out.load()[29, 80], s.WHITE)
+
     def test_polish_slim_keeps_pixellab_body_pixels(self):
         v1 = s.finish(Image.new("RGBA", (64, 96), (70, 80, 100, 255)))
         out = s.polish_slim(v1)
