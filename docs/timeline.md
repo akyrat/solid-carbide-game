@@ -4015,3 +4015,8 @@ Entry format:
 - Decision or change: PixelLab redraw of the car frames that pointed the wrong way (up to 28 generations).
 - Documents touched: docs/visual-style.md, docs/drifting.md
 - Tasks: T-584
+
+## 2026-11-08: No Skip on the last tutorial slide
+- Decision or change: The last tutorial slide has no Skip button.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-568
