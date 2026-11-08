@@ -328,13 +328,14 @@ func test_hover_brightens_the_frame_and_press_drops_the_card() -> void:
 ## percent from the tier's numbers, and (T-519) the last tier's line (the shock).
 func test_the_polarized_steering_wheel_card_texts() -> void:
 	assert_eq(PowerUpScreen.name_of("polarized_steering_wheel"), "Polarized Steering Wheel")
+	# T-602: the burst now follows an alternate drift; the percent comes from the data (T-603 halves it).
 	var pct := roundi((float(data.at("polarized_steering_wheel", 1)["burst_speed_multiplier"]) - 1.0) * 100.0)
-	assert_eq(pct, 20, "tier 1 is the proposal")
 	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", 1),
-			"(while coasting) Steer, then Accelerate: +20% speed burst.")
+			"Pull an ALT DRIFT: +%d%% speed burst." % pct)
 	var last := data.max_tier("polarized_steering_wheel")
+	var pct_last := roundi((float(data.at("polarized_steering_wheel", last)["burst_speed_multiplier"]) - 1.0) * 100.0)
 	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", last),
-			"+45% speed, shock hits and shoves minions.")
+			"+%d%% burst after each ALT DRIFT!, and a shock shoves minions. Brand safety." % pct_last)
 	for tier in range(1, last + 1):
 		var text := PowerUpScreen.describe(data, "polarized_steering_wheel", tier)
 		assert_false(text.contains("{"), "no slot left unfilled at tier %d" % tier)

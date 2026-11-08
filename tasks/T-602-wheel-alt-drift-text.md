@@ -1,7 +1,7 @@
 ---
 id: T-602
 title: Text: the Polarized Steering Wheel's new descriptions
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -53,10 +53,40 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: the wheel's two descriptions for the new trigger, through the style loop.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+### Run 1
+
+Run by `tools/style_loop/run.py` on 2026-11-08: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/b1.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Pull an ALT DRIFT: +{burst_percent}% speed burst."
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rules broken. Rules 2, 3 and 4 pass by script (no banned words, no "Greenbull says", 49 of 90 characters). It says first what the card does and names the trigger exactly as the popup does (ALT DRIFT). It keeps the {burst_percent} slot. It is plain and short like the other power-up descriptions. Rule 1 allows at most one satirical aside and the brief asked for none, so the missing aside is fine. The only small nit is that "Pull an ALT DRIFT" is a slightly unusual verb, but it is clear and needs no fix.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Pull an ALT DRIFT: +{burst_percent}% speed burst.", copied to `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/o1.txt`): it reached 8 or more.
+
+### Run 2
+
+Run by `tools/style_loop/run.py` on 2026-11-08: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/b2.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "+{burst_percent}% burst after each ALT DRIFT!, and a shock shoves minions. Brand safety."
+- Script checks: 3 of 3 pass
+- Score: 8/10
+- Reason: No rule is broken. The script checks pass (88 characters, no banned words, no "Greenbull says"). The text states what the card does first (burst after each ALT DRIFT!, shock shoves minions) and then adds one short aside, as rule 4 asks. The deadpan corporate aside "Brand safety." fits the tone of rule 1. It uses no real brand, and the slot {burst_percent} is kept. Two small things the author could polish: "% burst" doesn't say what is bursting (the brief says speed), and the aside doesn't tie closely to the effect. Something like "+{burst_percent}% speed burst after each ALT DRIFT!, and a shock shoves minions. Brand safety." would be clearer, but it would pass 90 characters only if trimmed elsewhere.
+- Rules broken: none
+
+**Kept:** version 1, score 8/10 ("+{burst_percent}% burst after each ALT DRIFT!, and a shock shoves minions. Brand safety.", copied to `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/o2.txt`): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Texts (game/data/screen_texts.json): tier 1 power_ups.descriptions.polarized_steering_wheel = 'Pull an ALT DRIFT: +{burst_percent}% speed burst.' (style 9); tier 2 power_ups.descriptions_last_tier.polarized_steering_wheel = '+{burst_percent}% burst after each ALT DRIFT!, and a shock shoves minions. Brand safety.' (style 8). Both show on the Polarized Steering Wheel's gift/level-up card (tier 1 when offered, tier 2 as the next-tier offer). 22.5: power_up_screen.gd rounds with roundi, so tier 2 reads 23% (tier 1 reads 10%); recommend leaving the data as is (a 23% label for a 22.5% burst is fine), or set 1.225 -> 1.23 in T-603 if exact wanted. In this branch the data is still 1.2/1.45 (20/45) until T-603 halves it. Other texts: checked tutorial_text.json, screen_texts.json, garage.json, missions.json, recap_text.json; no other text describes the lift-steer-gas trigger (only the tutorial's generic 'Gas' labels and the alt drift slide, which describe the trick, not the wheel). Test updated: game/tests/unit/test_power_up_screen.gd now expects the new texts with the percent read from data. docs/hud-and-menus.md Content updated. Tests: Godot 3250 run, 3249 pass, 0 fail, 1 risky (pre-existing); Python tools 643 OK, game/tools 1193 OK (4 skipped).
