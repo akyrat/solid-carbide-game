@@ -1,7 +1,7 @@
 ---
 id: T-582
 title: Equip instead of Flex it on the Cosmetics screen
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/data/cosmetics_text.json]
 files_expected_to_change: [game/data/cosmetics_text.json, game/tests/, docs/hud-and-menus.md, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,11 +43,11 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] cosmetics_text.json's pick reads "Equip", and no "Flex it" is left in the game's data, scripts or tests (grep). (QA: pass / fail)
-- [ ] The cosmetics tests pass (tests). (QA: pass / fail)
-- [ ] The docs quote "Equip". (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-582/screenshots/ shows the Cosmetics screen with Equip. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] cosmetics_text.json's pick reads "Equip", and no "Flex it" is left in the game's data, scripts or tests (grep). (QA: pass)
+- [ ] The cosmetics tests pass (tests). (QA: pass)
+- [ ] The docs quote "Equip". (QA: pass)
+- [ ] A screenshot in art-archive/T-582/screenshots/ shows the Cosmetics screen with Equip. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass; qa_check all checks pass)
 
 ## Updates
 
