@@ -3995,3 +3995,8 @@ Entry format:
 - Decision or change: Pieces follow the mouse freely in the creator; Shift snaps to the grid as before.
 - Documents touched: docs/level-design.md
 - Tasks: T-581
+
+## 2026-11-08: Equip instead of Flex it
+- Decision or change: The Cosmetics screen's pick button reads Equip.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-582
