@@ -4010,3 +4010,18 @@ Entry format:
 - Decision or change: PixelLab redraw of the car frames that pointed the wrong way (up to 28 generations).
 - Documents touched: docs/visual-style.md, docs/drifting.md
 - Tasks: T-584
+
+## 2026-11-08: Texts for Grinding Wheels
+- Decision or change: The name and description of the Grinding Wheels power-up.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-585
+
+## 2026-11-08: Grinding Wheels
+- Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x.
+- Documents touched: docs/drifting.md
+- Tasks: T-586
+
+## 2026-11-08: Grinding Wheels icon
+- Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side.
+- Documents touched: docs/visual-style.md
+- Tasks: T-587
