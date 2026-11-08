@@ -43,13 +43,13 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Sliding sideways without W (not drifting) leaves lighter marks from the front and back wheels; a straight coast leaves none (tests). (QA: pass / fail)
-- [ ] Drift marks are unchanged in look (the existing tests pass). (QA: pass / fail)
-- [ ] Every tire mark lasts half as long as drift marks did before (a test with the numbers). (QA: pass / fail)
-- [ ] The marks' per-second cost is no higher than before, with how it was checked in the result notes. (QA: pass / fail)
-- [ ] docs/visual-style.md Content and game/docs/driving/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots or a GIF in art-archive/T-600/screenshots/ show a drift into a slide with both kinds of marks, taken with bash game/tools/screenshot.sh. (QA: pass / fail)
+- [ ] Sliding sideways without W (not drifting) leaves lighter marks from the front and back wheels; a straight coast leaves none (tests). (QA: pass)
+- [ ] Drift marks are unchanged in look (the existing tests pass). (QA: pass)
+- [ ] Every tire mark lasts half as long as drift marks did before (a test with the numbers). (QA: pass)
+- [ ] The marks' per-second cost is no higher than before, with how it was checked in the result notes. (QA: pass)
+- [ ] docs/visual-style.md Content and game/docs/driving/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots or a GIF in art-archive/T-600/screenshots/ show a drift into a slide with both kinds of marks, taken with bash game/tools/screenshot.sh. (QA: pass)
 
 ## Updates
 
