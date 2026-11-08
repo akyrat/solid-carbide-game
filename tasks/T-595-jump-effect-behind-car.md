@@ -1,7 +1,7 @@
 ---
 id: T-595
 title: Fix: the jump effect draws over the car
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/scripts/driving/jump_effect.gd, art-archive/T-590/screenshots/tweak1_tap_vs_charge_closeup.png]
 files_expected_to_change: [game/scripts/driving/, game/tests/, game/docs/driving/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,10 +43,10 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every jump effect draws behind the car (a test on draw order or z, for each effect). (QA: pass / fail)
-- [ ] Its position and look are otherwise unchanged (the existing jump effect tests pass). (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-595/screenshots/ show a tap and a full charge with the cloud behind the car, before and after. (QA: pass / fail)
+- [ ] Every jump effect draws behind the car (a test on draw order or z, for each effect). (QA: pass)
+- [ ] Its position and look are otherwise unchanged (the existing jump effect tests pass). (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-595/screenshots/ show a tap and a full charge with the cloud behind the car, before and after. (QA: pass)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, In progress → In QA
 
 The jump effect now draws behind the car (the bumper and wheels are no longer covered). QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. Play it from C:\solid-carbide-worktrees\T-595: tap and charge jumps, the cloud stays behind the car.
 
 ## Style review
 
