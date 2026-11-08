@@ -1,7 +1,7 @@
 ---
 id: T-574
 title: Quick tuning: the drift tutorial slides, with the board
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -51,10 +51,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Quick tuning folder ready; waiting for the board's first tweak.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Tweak 1 (board: "make the practice window span from side to side keeping the same height, and put the totiral text in the game"): on all four trick slides (they share one layout: drift, alt drift, air spins, grind) the practice window now spans the content width, 1050 x 400 at (115, 214), between the arrows (tutorial_slides.gd WINDOW_POS, WINDOW_SIZE). The tutorial text, meaning the instruction (and the grind's Jump hint), is no longer beside the window: it sits in the game, centred on a dark band (60% opacity, CAPTION_BAND_ALPHA) along the window's bottom edge, size 30 with a dark outline. The band ignores the mouse and stays clear of the notebook (top left) and the success message (centre). The headline stays above the window. A wider window shows more of the playground, because the camera zoom follows the height. Tests: test_tutorial_slides.gd now checks the side-to-side span at the same height and the text inside the window (the 'only a bit bigger' test was replaced); test_tutorial* 69/69 pass. Screenshots: art-archive/T-574/screenshots/tweak1_slide2.png and tweak1_slide3.png. Commit 10705308.
