@@ -1,7 +1,7 @@
 ---
 id: T-585
 title: Texts: the Grinding Wheels power-up
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, game/data/screen_texts.json]
 files_expected_to_change: [game/data/screen_texts.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,11 +43,11 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The name and description exist in screen_texts.json in the same places as the other power-ups', listed in the result notes. (QA: pass / fail)
-- [ ] The description scores 8 or more in the style loop, or is noted for the playtest. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists them. (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-585/screenshots/ shows them as on a gift card. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] The name and description exist in screen_texts.json in the same places as the other power-ups', listed in the result notes. (QA: pass)
+- [ ] The description scores 8 or more in the style loop, or is noted for the playtest. (QA: pass - 8/10 in round 1)
+- [ ] docs/hud-and-menus.md Content lists them. (QA: pass)
+- [ ] A screenshot in art-archive/T-585/screenshots/ shows them as on a gift card. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass; Godot 3133 of 3134 passing, 0 failing on rerun)
 
 ## Updates
 
