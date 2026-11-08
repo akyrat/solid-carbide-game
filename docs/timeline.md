@@ -4030,3 +4030,8 @@ Entry format:
 - Decision or change: The main menu opens a Settings screen with the settings that make sense outside a run.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-571
+
+## 2026-11-08: The tutorial comes back with each new build
+- Decision or change: Each itch.io build carries its id; the tutorial shows again on a new build.
+- Documents touched: `docs/hud-and-menus.md`, `docs/working-with-the-board.md`
+- Tasks: T-572
