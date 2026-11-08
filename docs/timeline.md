@@ -4025,3 +4025,8 @@ Entry format:
 - Decision or change: Unlock buttons are disabled while the player can't afford them.
 - Documents touched: `docs/garage-design.md`
 - Tasks: T-569
+
+## 2026-11-08: A Settings screen from the main menu
+- Decision or change: The main menu opens a Settings screen with the settings that make sense outside a run.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-571
