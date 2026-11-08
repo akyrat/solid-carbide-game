@@ -127,8 +127,8 @@ func test_the_game_map_has_the_boards_72_rails() -> void:
 
 func test_two_parallel_rails_can_be_a_first_tier_jump_apart() -> void:
 	# Two parallel rails at the same height, no further apart than a Jump tier 1 hop carries
-	# the car sideways (T-548: jump_speed with the car facing 45 degrees off the rail, over the
-	# hop's airtime) plus the reach. The test layout's pair (3.5 apart) is the example.
+	# the car sideways (T-578: the slowest launch, launch_min_speed, with the car facing 45 degrees off the
+	# rail, over the hop's airtime) plus the reach. The test layout's pair (3.5 apart) is the example.
 	var rails := Rails.from_layout(LAYOUT)
 	var j = preload("res://scripts/driving/jump_power_up.gd").new()
 	j.set_tier(1)
@@ -139,7 +139,7 @@ func test_two_parallel_rails_can_be_a_first_tier_jump_apart() -> void:
 	var across := 0.0
 	while not g.find(Vector2(10, across + 0.05), Vector2(10, 0), 1.0).is_empty():
 		across += 0.05
-	var carry: float = g.jump_speed * sin(deg_to_rad(45.0)) * j.airtime_for(j.takeoff_speed, 12.0) + across
+	var carry: float = g.launch_min_speed * sin(deg_to_rad(45.0)) * j.airtime_for(j.takeoff_speed, 12.0) + across
 	var found := false
 	for a in rails:
 		for b in rails:
@@ -266,6 +266,7 @@ func test_letting_go_of_space_while_grinding_launches_and_lands_on_the_second_ra
 	# lies south of rail-a, the right of a car going east.
 	_face(car, 40.0)
 	var facing: float = car.model.rotation
+	var grinding_at: float = car.grind.speed
 	_launch(car)
 	assert_false(car.grind.active, "launched off")
 	assert_eq(ended, ["jump"])
@@ -274,7 +275,7 @@ func test_letting_go_of_space_while_grinding_launches_and_lands_on_the_second_ra
 	assert_gt(car.model.get_velocity().y, 0.0, "toward the right")
 	var v: Vector2 = car.model.get_velocity()
 	assert_almost_eq(v.angle(), wrapf(facing, -PI, PI), 1e-3, "where the car faces (T-548)")
-	assert_almost_eq(v.length(), car.grind.jump_speed, 1e-3, "at jump_speed")
+	assert_almost_eq(v.length(), maxf(grinding_at, car.grind.launch_min_speed), 1e-3, "at the grind's speed (T-578)")
 	assert_eq(car.jump.hops, 0, "no power-up hop: any car launches")
 	_step_until(car, func() -> bool: return car.grind.active or not car.airborne, 200)
 	assert_true(car.grind.active, "landed on the second rail, Space held again")
@@ -484,22 +485,63 @@ func test_a_and_d_spin_the_car_on_the_rail_at_the_air_turn_rate() -> void:
 	assert_almost_eq(car.model.rotation - h0, -want, 1e-6, "D the other way")
 
 
-func test_the_jump_goes_where_the_car_faces_at_jump_speed() -> void:
-	# T-548 (the board, 2026-11-06): where the nose points, at jump_speed, whatever the travel.
+func test_the_jump_goes_where_the_car_faces_at_the_grinds_speed() -> void:
+	# T-548 (the board, 2026-11-06): where the nose points, whatever the travel; T-578 (the
+	# board, 2026-11-08): at the speed it was grinding at.
 	var g = RailGrind.new()
 	g.rails = Rails.from_layout(LAYOUT)
 	g.start({"index": 0, "s": 5.0, "speed_along": 10.0}, 0.0)
-	assert_almost_eq(g.leave_velocity("jump").x, g.jump_speed, 1e-6, "straight on: jump_speed, not the rail speed")
+	var sp: float = g.speed  # 10 and the landing boost
+	assert_almost_eq(sp, 10.0 + g.land_boost, 1e-9)
+	assert_almost_eq(g.leave_velocity("jump").x, sp, 1e-6, "straight on: the grind's speed")
 	assert_almost_eq(g.leave_velocity("jump").y, 0.0, 1e-6)
 	g.body_heading = deg_to_rad(-20.0)  # the nose a little to the north
 	var v: Vector2 = g.leave_velocity("jump")
 	assert_almost_eq(v.angle(), deg_to_rad(-20.0), 1e-6, "along the nose")
-	assert_almost_eq(v.length(), g.jump_speed, 1e-6)
+	assert_almost_eq(v.length(), sp, 1e-6)
 	g.body_heading = deg_to_rad(110.0)  # sideways and back
 	assert_almost_eq(g.leave_velocity("jump").angle(), deg_to_rad(110.0), 1e-6)
 	g.body_heading = PI  # facing backwards: it jumps backwards (west), the rail's east travel lost
-	assert_almost_eq(g.leave_velocity("jump").x, -g.jump_speed, 1e-6, "backwards")
+	assert_almost_eq(g.leave_velocity("jump").x, -sp, 1e-6, "backwards, the rail speed turned round")
 	assert_almost_eq(g.leave_velocity("jump").y, 0.0, 1e-6)
+
+
+func test_the_launch_keeps_a_slow_a_middle_and_a_fast_grinds_speed() -> void:
+	# T-578: letting go of Space launches at the speed grinding at that moment, through the car.
+	# Slow 7 (just over the floor), middle 15 (a cruise landing with the boost), fast 30.
+	var long_rail := {"rails": [{"id": "long", "x1": 0.0, "y1": 0.0, "x2": 400.0, "y2": 0.0, "z1": 1.0, "z2": 1.0}]}
+	var launched := {}
+	for want in [7.0, 15.0, 30.0]:
+		var car := _car(Vector2(1, 0.2), Vector2(10, 0), 1.6, 0.0, 0, long_rail)
+		_step_until(car, func() -> bool: return car.grind.active, 100)
+		assert_true(car.grind.active, "grinding")
+		_face(car, 30.0)
+		car.grind.speed = want
+		car.grind.boost_left = 0.0
+		var facing: float = car.model.rotation
+		_launch(car)
+		assert_false(car.grind.active, "launched")
+		var v: Vector2 = car.model.get_velocity()
+		assert_almost_eq(v.length(), want, 1e-3, "launched at the grind's %s units/s" % want)
+		assert_almost_eq(v.angle(), wrapf(facing, -PI, PI), 1e-3, "where the car faces")
+		assert_almost_eq(car.vertical_speed, car.launch_takeoff_speed() - 12.0 * car.model.dt, 1e-6,
+			"the same takeoff at any speed")
+		launched[want] = v.length()
+	assert_lt(launched[7.0], launched[15.0])
+	assert_lt(launched[15.0], launched[30.0], "a fast grind gives a fast launch")
+
+
+func test_a_very_slow_grind_launches_at_the_floor() -> void:
+	# T-578's proposal: a grind under launch_min_speed (6) launches at 6, as every launch did before.
+	var g = RailGrind.new()
+	g.rails = Rails.from_layout(LAYOUT)
+	g.start({"index": 0, "s": 5.0, "speed_along": 10.0}, 0.0)
+	g.speed = 3.0
+	assert_almost_eq(g.launch_speed(), g.launch_min_speed, 1e-9)
+	assert_almost_eq(g.leave_velocity("jump").length(), g.launch_min_speed, 1e-6, "never slower than the floor")
+	g.speed = g.launch_min_speed + 0.5
+	assert_almost_eq(g.leave_velocity("jump").length(), g.launch_min_speed + 0.5, 1e-6, "over it: its own speed")
+	assert_almost_eq(g.leave_velocity("end").length(), g.launch_min_speed + 0.5, 1e-6, "off the end: unchanged")
 
 
 func test_a_car_turned_180_degrees_jumps_off_backwards() -> void:
@@ -511,15 +553,16 @@ func test_a_car_turned_180_degrees_jumps_off_backwards() -> void:
 	var facing: float = car.model.rotation
 	assert_gt(absf(rad_to_deg(angle_difference(0.0, facing))), 170.0, "turned round")
 	assert_gt(car.grind.velocity().x, 0.0, "still sliding east")
+	var grinding_at: float = car.grind.launch_speed()
 	car.scripted_jump_held = false  # T-551: let go of Space
 	car.physics_step()
 	assert_false(car.grind.active)
 	var v: Vector2 = car.model.get_velocity()
 	assert_lt(v.x, 0.0, "flying west, against its travel on the rail")
 	assert_almost_eq(v.angle(), wrapf(facing, -PI, PI), 1e-3, "along the nose")
-	assert_almost_eq(v.length(), car.grind.jump_speed, 1e-3, "at jump_speed")
+	assert_almost_eq(v.length(), grinding_at, 1e-3, "at the grind's speed, turned backwards (T-578)")
 	assert_gt(car.vertical_speed, 0.0, "a hop")
-	assert_almost_eq(car.model.get_velocity().length(), car.grind.jump_speed, 1e-3, "the old momentum gone")
+	assert_almost_eq(v.dot(Vector2.RIGHT), -grinding_at, 0.05 * grinding_at, "none of it left going east")
 
 
 # --- T-548: the landing boost -----------------------------------------------------------------
@@ -546,7 +589,8 @@ func test_the_boost_and_jump_numbers_are_in_the_data() -> void:
 	var json: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/rail_grind.json"))
 	assert_gt(float(json.land_boost), 0.0)
 	assert_gt(float(json.boost_decline), 0.0)
-	assert_gt(float(json.jump_speed), 0.0)
+	assert_gt(float(json.launch_min_speed), 0.0)
+	assert_false(json.has("jump_speed"), "T-578: the set launch speed is gone, launch_min_speed is the floor")
 	assert_false(json.has("jump_angle_deg"), "the diagonal hop is replaced")
 
 
@@ -565,7 +609,7 @@ func test_every_landing_boosts_again() -> void:
 	assert_true(car.grind.active, "on rail-b")
 	assert_eq(car.grind.grinds, 2)
 	assert_almost_eq(car.grind.speed, along + car.grind.land_boost, 0.05, "its speed along rail-b plus the boost")
-	assert_gt(car.grind.speed, car.grind.jump_speed, "faster than the jump left it")
+	assert_gt(car.grind.speed, car.grind.launch_min_speed, "faster than the slowest launch")
 
 
 func test_a_joint_is_not_a_new_landing() -> void:
