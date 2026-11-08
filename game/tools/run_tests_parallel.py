@@ -245,11 +245,13 @@ def main():
     print("Risky/Pending    %d" % totals["Risky/Pending"])
     final = 124 if timed_out else code
     write_record(total, len(shards), totals, final == 0)
-    print(final_line(final == 0, final, total, len(shards)), file=sys.stderr if final else sys.stdout)
+    sys.stdout.flush()  # keep the final line last when stdout and stderr share one pipe
     if timed_out:
         print("TIME LIMIT: the test run went past %d seconds and was stopped (set GUT_TIME_LIMIT to change the limit). Treating the run as failed." % a.limit, file=sys.stderr)
-        return 124
-    return code
+    print(final_line(final == 0, final, total, len(shards)), file=sys.stderr if final else sys.stdout)
+    sys.stderr.flush()
+    sys.stdout.flush()
+    return final
 
 
 if __name__ == "__main__":
