@@ -144,6 +144,39 @@ class TestPolish(unittest.TestCase):
         self.assertFalse(opaque_colours(self.out) & GREENBULL)
 
 
+class TestBoldPolish(unittest.TestCase):
+    def setUp(self):
+        src = arrow.polish(arrow.arrow())          # a v2-style input, halo included: the bold pass removes it
+        self.out = arrow.polish(src, bold=True)
+        self.px = self.out.load()
+        self.lay = arrow.strong_layers(bold=True)
+
+    def test_two_pixel_near_black_outline_and_no_halo(self):
+        self.assertEqual(self.out.getbbox(), (12, 4, 52, 60))
+        self.assertEqual({(x, y) for y in range(64) for x in range(64) if self.px[x, y][3] == 255}, arrow.arrow_cells())
+        self.assertEqual([self.px[x, 45] for x in (38, 39)], [arrow.INK, arrow.INK])
+        self.assertEqual([self.px[x, 45] for x in (24, 25)], [arrow.INK, arrow.INK])
+        self.assertTrue(all(self.px[p] == arrow.INK for p in self.lay["outline"]))
+        self.assertFalse(self.lay["glow1"] or self.lay["glow2"])
+
+    def test_near_white_runs_break_the_outline_on_the_lit_edges(self):
+        self.assertGreater(len(self.lay["glint"]), 24)
+        self.assertEqual([self.px[x, 16] for x in (19, 20, 21)], [arrow.GLINT] * 3)   # the head's left slope, k=12
+        self.assertEqual(self.px[22, 16], arrow.GLINT)                                  # the lit edge just inside
+        self.assertEqual([self.px[x, 30] for x in (24, 25)], [arrow.BLUSH_LIGHT] * 2)  # the shaft's left outline
+        self.assertTrue(all(self.px[p] == arrow.GLINT for p in self.lay["glint"]))
+
+    def test_three_stepped_shade_colours_on_the_lower_right(self):
+        self.assertEqual([self.px[x, 45] for x in (37, 36, 35, 34)],
+                         [arrow.BLUSH_DEEP, arrow.BLUSH_SHADE, arrow.BLUSH_MID, arrow.BLUSH_MID])
+        self.assertEqual([self.px[31, y] for y in (57, 56, 55, 54)],
+                         [arrow.BLUSH_DEEP, arrow.BLUSH_SHADE, arrow.BLUSH_MID, arrow.BLUSH_MID])
+        self.assertEqual(self.px[30, 45], arrow.BLUSH)
+        self.assertLessEqual(len(opaque_colours(self.out)), 30)
+        self.assertTrue(all(p[3] in (0, 255) for p in self.out.getdata()))
+        self.assertFalse(opaque_colours(self.out) & GREENBULL)
+
+
 class TestCli(unittest.TestCase):
     def test_init_request_finish_and_preview_write_files(self):
         import tempfile

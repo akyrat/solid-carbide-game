@@ -15,11 +15,12 @@ parts of the style loop around one PixelLab call per version, like build_hint_ke
         The free fixes on PixelLab's output: alpha snapped to 0 or 255, the canvas outside the arrow cleared,
         arrow pixels PixelLab lost filled from the script's own, the palette cut to at most 30 colours
         (reduce_palette.py), or with --snap every pixel mapped to the script's six colours. 8-bit RGBA PNG.
-    python game/tools/build_hint_arrow.py polish IN.png OUT.png
+    python game/tools/build_hint_arrow.py polish IN.png OUT.png [--bold]
         The style loop's free fixes for rule 2 and rule 4 (T-577 v2) on a finished arrow: the outline snapped to
         exact near-black with longer highlight runs breaking it, a two-pixel rim light with a near-white edge on
         the upper-left, two-step shade bands on the lower-right, worn-paint specks, and a two-ring stepped glow
-        halo outside the outline (rule 5). PixelLab's plain body pixels stay.
+        halo outside the outline (rule 5). PixelLab's plain body pixels stay. --bold (v3) reads at native 64 px:
+        a two-pixel near-black outline with no halo, longer near-white runs breaking it, three shade steps.
     python game/tools/build_hint_arrow.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -128,10 +129,19 @@ STRONG_GLINT_ROWS = range(HEAD_TOP + 3, HEAD_TOP + 11)
 STRONG_SHAFT_GLINT_ROWS = range(HEAD_TOP + HEAD_ROWS + 2, HEAD_TOP + HEAD_ROWS + 12)
 
 
-def strong_layers() -> dict[str, set[tuple[int, int]]]:
+BLUSH_DEEP = (0x96, 0x58, 0x7A, 255)   # the bold pass's deepest shade step, right against the outline
+BOLD_GLINT_ROWS = range(HEAD_TOP + 3, HEAD_TOP + 13)
+BOLD_SHAFT_GLINT_ROWS = range(HEAD_TOP + HEAD_ROWS + 2, HEAD_TOP + HEAD_ROWS + 14)
+
+
+def strong_layers(bold: bool = False) -> dict[str, set[tuple[int, int]]]:
     """The polished arrow's pixels by role (T-577 v2, the style loop's rule 2 fixes): the outline with longer
     glint runs breaking it, a two-pixel rim light with a near-white edge on the upper-left, two-step shade bands
-    on the lower-right, and a two-ring glow halo outside the outline."""
+    on the lower-right, and a two-ring glow halo outside the outline.
+
+    `bold` (v3) is the pass that reads at native 64 px: a two-pixel exact near-black outline and no outer halo
+    (at 64 px the halo read as a purple-tinted outline), longer near-white runs breaking the outline on the head's
+    left slope and the shaft's left, and three stepped shade colours (deep, shade, mid) on the lower-right."""
     cells = arrow_cells()
 
     def nbrs8(p):
@@ -140,49 +150,68 @@ def strong_layers() -> dict[str, set[tuple[int, int]]]:
 
     outline = {p for p in cells if any(q not in cells for q in nbrs8(p))}
     body = cells - outline
+    if bold:
+        inner = {p for p in body if any(q in outline for q in nbrs8(p))}
+        outline |= inner
+        body -= inner
     light1 = {(x, y) for x, y in body
               if (x - 1, y) in outline or ((x, y - 1) in outline and (x + 1, y) not in outline)}
     light2 = {(x, y) for x, y in body - light1
               if ((x - 1, y) in light1 or (x, y - 1) in light1) and (x + 1, y) not in outline}
     rest = body - light1 - light2
-    shade1 = {(x, y) for x, y in rest if (x + 1, y) in outline or (x, y + 1) in outline}
-    shade2 = {(x, y) for x, y in rest - shade1 if (x + 1, y) in shade1 or (x, y + 1) in shade1}
-    rest -= shade1 | shade2
-    mid1 = {(x, y) for x, y in rest if (x + 1, y) in shade2 or (x, y + 1) in shade2}
-    mid2 = {(x, y) for x, y in rest - mid1 if (x + 1, y) in mid1 or (x, y + 1) in mid1}
-    rest -= mid1 | mid2
+    steps = []
+    frontier = outline
+    for _ in range(4):
+        step = {(x, y) for x, y in rest if (x + 1, y) in frontier or (x, y + 1) in frontier}
+        rest -= step
+        steps.append(step)
+        frontier = step
+    if bold:
+        deep, shade, mid = steps[0], steps[1], steps[2] | steps[3]
+    else:
+        deep, shade, mid = set(), steps[0] | steps[1], steps[2] | steps[3]
     # The near-white edge: the first lit pixel along the head's left slope.
     edge = {(x, y) for x, y in light1 if y < HEAD_TOP + HEAD_ROWS and (x - 1, y) in outline}
     glint = set()
-    for y in STRONG_GLINT_ROWS:
+    for y in (BOLD_GLINT_ROWS if bold else STRONG_GLINT_ROWS):
         k = y - HEAD_TOP
-        glint.update({(31 - k, y), (32 - k, y)} & outline)
-    shaft_glint = {(SHAFT_X0, y) for y in STRONG_SHAFT_GLINT_ROWS} & outline
-    ring1 = {q for p in cells for q in nbrs8(p) if q not in cells and 0 <= q[0] < SIZE and 0 <= q[1] < SIZE}
-    ring2 = {q for p in ring1 for q in nbrs8(p)
-             if q not in cells and q not in ring1 and 0 <= q[0] < SIZE and 0 <= q[1] < SIZE}
+        glint.update({(31 - k, y), (32 - k, y), (33 - k, y), (34 - k, y)} & outline)
+    shaft_cols = (SHAFT_X0, SHAFT_X0 + 1) if bold else (SHAFT_X0,)
+    shaft_glint = {(x, y) for y in (BOLD_SHAFT_GLINT_ROWS if bold else STRONG_SHAFT_GLINT_ROWS) for x in shaft_cols} & outline
+    if bold:
+        ring1, ring2 = set(), set()
+    else:
+        ring1 = {q for p in cells for q in nbrs8(p) if q not in cells and 0 <= q[0] < SIZE and 0 <= q[1] < SIZE}
+        ring2 = {q for p in ring1 for q in nbrs8(p)
+                 if q not in cells and q not in ring1 and 0 <= q[0] < SIZE and 0 <= q[1] < SIZE}
     wear = {p for p in WEAR if p in rest}
     return {
         "outline": outline - glint - shaft_glint, "glint": glint, "shaft_glint": shaft_glint,
-        "edge": edge, "light": (light1 | light2) - edge, "mid": mid1 | mid2, "shade": shade1 | shade2,
+        "edge": edge, "light": (light1 | light2) - edge, "mid": mid, "shade": shade, "deep": deep,
         "wear": wear, "body": rest - wear, "glow1": ring1, "glow2": ring2,
     }
 
 
 STRONG_COLOURS = {
     "outline": INK, "glint": GLINT, "shaft_glint": BLUSH_LIGHT, "edge": GLINT, "light": BLUSH_LIGHT,
-    "mid": BLUSH_MID, "shade": BLUSH_SHADE, "wear": BLUSH_MID, "glow1": GLOW_1, "glow2": GLOW_2,
+    "mid": BLUSH_MID, "shade": BLUSH_SHADE, "deep": BLUSH_DEEP, "wear": BLUSH_MID, "glow1": GLOW_1, "glow2": GLOW_2,
 }
 
 
-def polish(im: Image.Image) -> Image.Image:
-    """The free fixes on a finished arrow (T-577 v2): every role but the plain body is repainted from
+def polish(im: Image.Image, bold: bool = False) -> Image.Image:
+    """The free fixes on a finished arrow (T-577 v2, `bold` v3): every role but the plain body is repainted from
     strong_layers(), so PixelLab's body pixels stay where they can and the outline is exactly near-black."""
     im = im.convert("RGBA")
     if im.size != (SIZE, SIZE):
         im = im.resize((SIZE, SIZE), Image.NEAREST)
     px = im.load()
-    for role, cells in strong_layers().items():
+    if bold:
+        shape = arrow_cells()
+        for y in range(SIZE):
+            for x in range(SIZE):
+                if (x, y) not in shape:
+                    px[x, y] = (0, 0, 0, 0)   # no halo: anything outside the silhouette goes
+    for role, cells in strong_layers(bold).items():
         if role == "body":
             for x, y in cells:
                 if px[x, y][3] != 255:
@@ -287,6 +316,7 @@ def main(argv=None) -> int:
     q = sub.add_parser("polish", help="rule 2 fixes: stepped shade, rim light, glints breaking the outline, glow halo")
     q.add_argument("src")
     q.add_argument("out")
+    q.add_argument("--bold", action="store_true", help="the pass that reads at native 64 px (T-577 v3)")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -305,7 +335,7 @@ def main(argv=None) -> int:
         save_png(im, Path(args.out))
     elif args.cmd == "polish":
         with Image.open(args.src) as src:
-            im = reduce_image(polish(src), 30)
+            im = reduce_image(polish(src, args.bold), 30)
         save_png(im, Path(args.out))
     else:
         with Image.open(args.src) as src:
