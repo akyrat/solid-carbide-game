@@ -15,11 +15,47 @@ const INK := Color("0d0d1b")
 const FONT_PATH := "res://fonts/press_start_2p/PressStart2P-Regular.ttf"
 ## The pad's keys: the letter and its cell (column, row) in the 3 x 2 grid.
 const KEYS := {"W": Vector2i(1, 0), "A": Vector2i(0, 1), "S": Vector2i(1, 1), "D": Vector2i(2, 1)}
+## T-574 tweak 9 (the practice windows' live keys): the same pad with R beside W and a Space bar
+## under the three, as on a keyboard. "R" and SPACE ("_") in `held` light them.
+const KEYS_WITH_R := {"W": Vector2i(1, 0), "R": Vector2i(2, 0), "A": Vector2i(0, 1), "S": Vector2i(1, 1),
+	"D": Vector2i(2, 1)}
+const SPACE := "_"
 
 var key_size := 24.0
 var margin := 8.0
 var player: ClipPlayer
 var held := ""
+## The keys drawn (KEYS, or KEYS_WITH_R) and whether a Space bar is drawn under them (T-574).
+var keys: Dictionary = KEYS
+var space_bar := false
+## A font to draw the letters in instead of the pixel font (the practice pad uses the HUD's comic
+## font: in the practice window's viewport the pixel font drew its glyphs as solid boxes, T-574).
+var font_override: Font
+
+
+## A pad that is not tied to a clip (T-574): W, R, A, S, D and Space, lit by set_held().
+static func full(key_px := 24.0) -> KeyPad:
+	var pad := KeyPad.new()
+	pad.name = "KeyPad"
+	pad.key_size = key_px
+	pad.keys = KEYS_WITH_R
+	pad.space_bar = true
+	pad.font_override = HudStyle.comic_font()
+	pad.size = pad.pad_size()
+	return pad
+
+
+## Lights the keys in `now` ("WA", "_" for Space), for a pad with no clip.
+func set_held(now: String) -> void:
+	if now != held:
+		held = now
+		queue_redraw()
+
+
+func set_key_size(px: float) -> void:
+	key_size = px
+	size = pad_size()
+	queue_redraw()
 
 
 ## Adds a pad to the bottom-right corner of `clip_player` and returns it.
@@ -48,7 +84,7 @@ func bind(clip_player: ClipPlayer) -> void:
 ## The keys lit now, as a sorted string ("AS").
 func lit_keys() -> String:
 	var letters: Array = []
-	for k in KEYS:
+	for k in keys:
 		if held.contains(k):
 			letters.append(k)
 	letters.sort()
@@ -68,7 +104,8 @@ func refresh() -> void:
 
 func pad_size() -> Vector2:
 	var gap := maxf(2.0, key_size / 8.0)
-	return Vector2(key_size * 3 + gap * 2, key_size * 2 + gap)
+	var rows := 3 if space_bar else 2
+	return Vector2(key_size * 3 + gap * 2, key_size * rows + gap * (rows - 1))
 
 
 func _place() -> void:
@@ -81,18 +118,26 @@ func _place() -> void:
 func _draw() -> void:
 	var gap := maxf(2.0, key_size / 8.0)
 	var depth := maxf(2.0, key_size / 8.0)
-	var font: Font = load(FONT_PATH)
-	var fs := int(key_size * 0.45)
-	for letter in KEYS:
-		var cell: Vector2i = KEYS[letter]
+	var font: Font = font_override if font_override != null else load(FONT_PATH)
+	var fs := int(key_size * (0.62 if font_override != null else 0.45))
+	var caps: Array = []
+	for letter in keys:
+		var cell: Vector2i = keys[letter]
+		caps.append([letter, Vector2(cell.x * (key_size + gap), cell.y * (key_size + gap)), key_size, letter])
+	if space_bar:  # T-574: the Space bar, the pad's width, on a third row
+		caps.append([SPACE, Vector2(0, 2 * (key_size + gap)), key_size * 3 + gap * 2, "SPACE"])
+	for cap in caps:
+		var letter: String = cap[0]
+		var origin: Vector2 = cap[1]
+		var w: float = cap[2]
 		var lit := held.contains(letter)
-		var origin := Vector2(cell.x * (key_size + gap), cell.y * (key_size + gap))
-		var rect := Rect2(origin, Vector2(key_size, key_size))
+		var rect := Rect2(origin, Vector2(w, key_size))
 		# The key's solid edge (its drop), then the face; a lit key sits down onto its edge.
 		draw_rect(rect, LIT_EDGE if lit else EDGE)
 		var down := 2.0 if lit else 0.0
-		var face := Rect2(origin + Vector2(0, down), Vector2(key_size, key_size - depth))
+		var face := Rect2(origin + Vector2(0, down), Vector2(w, key_size - depth))
 		draw_rect(face, LIT_FACE if lit else FACE)
-		var ts := font.get_string_size(letter, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
-		draw_string(font, face.position + Vector2((key_size - ts.x) / 2.0, (face.size.y + ts.y * 0.7) / 2.0),
-			letter, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, INK if lit else DIM_INK)
+		var shown: String = cap[3]
+		var ts := font.get_string_size(shown, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+		draw_string(font, face.position + Vector2((w - ts.x) / 2.0, (face.size.y + ts.y * 0.7) / 2.0),
+			shown, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, INK if lit else DIM_INK)

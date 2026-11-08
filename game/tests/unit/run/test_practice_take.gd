@@ -163,3 +163,65 @@ func test_play_with_no_take_says_so() -> void:
 	assert_false(session.play_take())
 	assert_eq(session.take_state, "no_take")
 	assert_false(session.is_replaying())
+
+
+# ---- T-574 tweak 9: the live keys -----------------------------------------------------------------
+
+func test_the_live_keys_show_top_right_and_light_what_the_car_used() -> void:
+	# In a viewport the size of the slide's window (1042 x 392), as the tutorial embeds it.
+	var vp := SubViewport.new()
+	vp.size = Vector2i(1042, 392)
+	add_child_autofree(vp)
+	session.get_parent().remove_child(session)
+	vp.add_child(session)
+	await get_tree().process_frame
+	session._place_keys()  # (the slide puts the session in its viewport before it is ready)
+	_go("grind")
+	session._take_gift_now()
+	var pad: KeyPad = session.keys_pad
+	assert_not_null(pad)
+	assert_true(pad.visible, "the player sees them too (data/tutorial_practice.json)")
+	var vs := session.get_viewport().get_visible_rect().size
+	assert_almost_eq(pad.position.x + pad.size.x, vs.x - PracticeSession.KEYS_MARGIN, 1.0, "top right")
+	assert_lt(pad.position.y, vs.y / 3.0, "at the top, clear of the text band")
+	assert_false(pad.get_global_rect().intersects(session.notebook.get_global_rect()), "clear of the notebook")
+	_drive([true, false, 1.0], 0.1)
+	assert_eq(pad.held, "WA")
+	_drive([false, true, -1.0], 0.1)
+	assert_eq(pad.held, "SD")
+	session.car.press_jump()
+	_drive([false, false, 0.0], 0.02, true)
+	assert_true(pad.held.contains(KeyPad.SPACE), "Space on the hop")
+	var r := InputEventKey.new()
+	r.physical_keycode = KEY_R
+	r.pressed = true
+	session._unhandled_input(r)
+	_drive([false, false, 0.0], 0.02)
+	assert_true(pad.held.contains("R"), "R lit after a reset")
+
+
+func test_a_replay_lights_the_takes_keys_step_for_step() -> void:
+	_go("alt_drift")
+	session.start_recording()
+	var seen: Array = []
+	for keys in [[true, false, 1.0], [false, false, 1.0], [false, true, 1.0]]:
+		_drive(keys, 0.2)
+		seen.append(session.keys_pad.held)
+	session.stop_and_save()
+	session.play_take()
+	var replayed: Array = []
+	for i in 30:
+		session.car.physics_step()
+		if (i + 1) % 10 == 0:
+			replayed.append(session.keys_pad.held)
+	assert_eq(replayed, seen, "the same keys at the same steps")
+
+
+func test_with_the_switch_off_the_player_sees_no_keys_but_a_take_shows_them() -> void:
+	_go("alt_drift")
+	session.show_keys_to_player = false
+	_drive([true, false, 0.0], 0.04)
+	assert_false(session.keys_pad.visible)
+	session.start_recording()
+	_drive([true, false, 0.0], 0.04)
+	assert_true(session.keys_pad.visible, "shown while recording")

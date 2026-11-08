@@ -73,6 +73,13 @@ const PracticeOffersScript := preload("res://scripts/run/practice_offers.gd")
 ## The practice playground (T-560; Level design, Content, "The practice playground").
 const PLAYGROUND_PATH := "res://data/level/practice_playground.json"
 const TEXTS_PATH := "res://data/tutorial_text.json"
+## T-574 tweak 9: the practice's settings (show_keys_to_player: the live keys while the player drives).
+const SETTINGS_PATH := "res://data/tutorial_practice.json"
+## The live keys' keycap size, a share of the window's height, and their margin from its corner.
+const KEYS_SIZE_SHARE := 0.065
+const KEYS_MARGIN := 10.0
+## How many steps R stays lit after the board's R (or its replay).
+const R_LIT_STEPS := 12
 
 ## The tricks a practice can count, as the slides name them.
 const TRICKS := ["drift", "alt_drift", "air_spin", "grind"]
@@ -202,6 +209,11 @@ var replay_step := 0
 var replay_drift := -1.0
 var _recording := false
 var _replaying := false
+## T-574 tweak 9: the live keys pad (KeyPad, top right of the window) and whether the player sees it.
+var keys_pad: KeyPad
+var keys_layer: CanvasLayer
+var show_keys_to_player := true
+var _r_lit := 0
 var _hops_before := 0
 ## The green check stamp on the notebook page (T-574), shown once the goal is done.
 var stamp: Control
@@ -348,6 +360,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			and event.physical_keycode == RESET_KEY:
 		if _recording:
 			take.resets.append(take.steps())  # a take replays the board's R too
+		_r_lit = R_LIT_STEPS
 		reset_car()
 		get_viewport().set_input_as_handled()
 
@@ -504,6 +517,20 @@ func _build() -> void:
 	add_child(gift_screen)
 	gift_screen.setup(offers)
 
+	# T-574 tweak 9: the live keys, top right of the window, over the game.
+	var settings = JSON.parse_string(FileAccess.get_file_as_string(SETTINGS_PATH)) if FileAccess.file_exists(SETTINGS_PATH) else null
+	if settings is Dictionary:
+		show_keys_to_player = bool(settings.get("show_keys_to_player", true))
+	keys_layer = CanvasLayer.new()
+	keys_layer.name = "Keys"
+	keys_layer.layer = 11
+	add_child(keys_layer)
+	keys_pad = KeyPad.full()
+	keys_layer.add_child(keys_pad)
+	get_viewport().size_changed.connect(_place_keys)
+	_place_keys()
+	_update_keys()
+
 	_built = true
 	_apply_pause()
 
@@ -521,6 +548,7 @@ func _build_car() -> void:
 	car.model.rotation = start.rotation
 	physics_world.add_child(car)
 	car.ground = elevation.ground_height
+	_keys_hops = car.jump.hops  # T-574 tweak 9: a new car's hops start again
 	car.input_enabled = focused or _replaying
 	if _replaying:
 		car.use_keyboard = false
@@ -551,6 +579,51 @@ func _build_car() -> void:
 	car_sprite.reset_physics_interpolation()
 	shadow.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
+
+
+# ---- The live keys (T-574 tweak 9) --------------------------------------------------------------
+
+## The keys the car used on its last step, as the pad lights them: W, S, A (steer left), D (steer
+## right), "_" Space (held, or the press that hopped), R for a moment after a reset by R.
+func held_keys() -> String:
+	var out := ""
+	if car == null:
+		return out
+	var li: Array = car.last_input
+	if li[0]:
+		out += "W"
+	if li[1]:
+		out += "S"
+	if float(li[2]) > 0.0:
+		out += "A"
+	elif float(li[2]) < 0.0:
+		out += "D"
+	if car.jump_held or (car.jump.hops != _keys_hops):
+		out += KeyPad.SPACE
+	if _r_lit > 0:
+		out += "R"
+	return out
+
+
+var _keys_hops := 0
+
+
+func _update_keys() -> void:
+	if keys_pad == null:
+		return
+	keys_pad.visible = show_keys_to_player or _recording or _replaying
+	keys_pad.set_held(held_keys())
+	if car != null:
+		_keys_hops = car.jump.hops
+	_r_lit = maxi(_r_lit - 1, 0)
+
+
+func _place_keys() -> void:
+	if keys_pad == null or not is_inside_tree():
+		return
+	var vs := get_viewport().get_visible_rect().size
+	keys_pad.set_key_size(maxf(12.0, roundf(vs.y * KEYS_SIZE_SHARE)))
+	keys_pad.position = Vector2(vs.x - keys_pad.size.x - KEYS_MARGIN, KEYS_MARGIN)
 
 
 # ---- The take tools (T-574 tweak 8; dev builds only) -------------------------------------------
@@ -662,6 +735,7 @@ func _take_step() -> void:
 			_set_take_state("played")
 			return
 		if take.resets.has(replay_step):
+			_r_lit = R_LIT_STEPS
 			reset_car()  # the board's R, before this step as when it was recorded
 		_apply_replay_frame()
 
@@ -789,6 +863,7 @@ func _on_car_stepped() -> void:
 	if not in_area(car.model.get_position()):
 		reset_car.call_deferred()
 	_take_step()  # T-574 tweak 8: last, after the step's own work
+	_update_keys()
 
 
 ## True when `units` is on the playground (its map rectangle grown by AREA_MARGIN).

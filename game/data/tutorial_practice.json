@@ -1,0 +1,4 @@
+{
+  "_comment": "T-574 tweak 9 (the board, 2026-11-08: 'make it also record my keystrokes and display them on the top right of the window'): the practice windows' live keys (W, A, S, D, R and Space as keycaps lighting up, top right of the window). show_keys_to_player: true shows them while the player drives the practice too (it helps them learn; the board can turn it off here); false shows them only while a take is recorded or played (dev builds).",
+  "show_keys_to_player": true
+}
