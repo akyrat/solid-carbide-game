@@ -1,7 +1,7 @@
 ---
 id: T-586
 title: Grinding Wheels: a power-up that heats the grind sparks and boosts the launch
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, game/data/power_ups.json, game/data/rail_grind.json, game/scripts/driving/rail_grind.gd, game/scripts/driving/rail_sparks.gd, tasks/T-578-rail-launch-keeps-speed.md]
 files_expected_to_change: [game/data/power_ups.json, game/data/, game/scripts/driving/, game/scripts/run/, game/art/power_ups/, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Grinding Wheels is in power_ups.json and can be offered and taken like the other driving power-ups (tests). (QA: pass / fail)
-- [ ] With it, stacks build one per second up to 3, the sparks go yellow, orange, red, and the launch speed is the grind speed times 1, 1.33, 1.67, 2 by stacks (tests); stacks reset on a new grind. (QA: pass / fail)
-- [ ] Without it, sparks and launch are unchanged (the existing tests pass). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-586/screenshots/ shows the sparks changing colour over a 3-second grind and the launch. (QA: pass / fail)
+- [ ] Grinding Wheels is in power_ups.json and can be offered and taken like the other driving power-ups (tests). (QA: pass)
+- [ ] With it, stacks build one per second up to 3, the sparks go yellow, orange, red, and the launch speed is the grind speed times 1, 1.33, 1.67, 2 by stacks (tests); stacks reset on a new grind. (QA: pass)
+- [ ] Without it, sparks and launch are unchanged (the existing tests pass). (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-586/screenshots/ shows the sparks changing colour over a 3-second grind and the launch. (QA: pass)
 
 ## Updates
 
@@ -61,6 +61,10 @@ Started: Grinding Wheels behaviour (sparks heat over 3 s, launch up to 2x).
 ### 2026-11-08, In progress → In QA
 
 Grinding Wheels built: sparks yellow, orange, red over 3 s; launch up to 2x. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. Grinding Wheels is ready to play: C:\solid-carbide-worktrees\T-586 (in a run press N, then + on Grinding Wheels).
 
 ## Style review
 
