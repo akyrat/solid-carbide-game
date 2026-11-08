@@ -4185,3 +4185,8 @@ Entry format:
 - Decision or change: Replay, Skip demo and Your turn for the tutorial's recorded demos.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-594
+
+## 2026-11-08: The drift tutorial slides, tuned with the board
+- Decision or change: Twelve tweaks with the board: a side-to-side practice window with the text in the game, one spawn for every slide, a stamp on the notebook, an overfilling counter, the board's pairs kept, a breakable combo, live keycaps, the board's recorded demos with Replay and Skip demo and a Your turn label, and the charged jump. The board played it.
+- Documents touched: none
+- Tasks: T-574
