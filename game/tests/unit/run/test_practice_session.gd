@@ -343,7 +343,7 @@ func test_on_the_real_playground_a_grind_from_the_grind_start_counts() -> void:
 	session.take_gift()
 	assert_eq(session.car.jump.tier, 1)
 	var r := _drive_east(false, true)
-	assert_ne(r.caught, "", "a rail is caught from the ramp")
+	assert_ne(r.caught, "", "a rail is caught with a hop from the grind start")
 	assert_eq(session.successes, 1, "the grind counts when it ends: %s" % [r])
 	assert_eq(counted[0][0], "rail_grind")
 
@@ -408,27 +408,31 @@ func test_the_count_survives_a_car_reset() -> void:
 	assert_eq(session.successes, 2)
 
 
-## Drives east from the trick's start point with W held (scripted), the car stepped by the test
-## (T-560's test_practice_playground.gd drive): A in the air when `spin`, Space held in the air when
-## `hold_space`, both only past the ramp (x > 11). Stops after the landing, or once a grind ended.
-func _drive_east(spin: bool, hold_space: bool) -> Dictionary:
+## Drives from the trick's start point with W held (scripted), the car stepped by the test. T-574
+## (the board's playground): A in the air when `spin`; when `hop`, Space is pressed once on the
+## ground right away (the grind's Jump) and held in the air and on the rail. Stops after the
+## landing, or once a grind ended.
+func _drive_east(spin: bool, hop: bool) -> Dictionary:
 	session.set_focused(true)
 	var car = session.car
 	car.use_keyboard = false
 	var out := {"caught": "", "flew": false}
+	var pressed := false
 	for i in 900:
 		var in_air: bool = car.airborne
-		var past: bool = car.model.get_position().x > 11.0
-		car.scripted_input = [true, false, 1.0 if (spin and in_air and past) else 0.0]
-		car.scripted_jump_held = hold_space and (in_air or car.grind.active) and past
+		if hop and not pressed and not in_air and i >= 10:
+			car.press_jump()
+			pressed = true
+		car.scripted_input = [true, false, 1.0 if (spin and in_air) else 0.0]
+		car.scripted_jump_held = pressed and (in_air or car.grind.active)
 		car.physics_step()
 		if car.grind.active:
 			out.caught = car.grind.rail.id
-		if car.airborne and past:
+		if car.airborne:
 			out.flew = true
 		if out.caught != "" and not car.grind.active and not car.airborne:
 			break
-		if out.caught == "" and out.flew and not car.airborne and car.model.get_position().x > 12.0:
+		if out.caught == "" and out.flew and not car.airborne:
 			break
 	out["end"] = car.model.get_position()
 	return out

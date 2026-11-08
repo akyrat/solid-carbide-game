@@ -1,4 +1,11 @@
-"""Builds the practice playground level (task T-560) into game/data/level/practice_playground.json.
+"""RETIRED (T-574, 2026-11-08): this script refuses to run.
+
+The board redrew the practice playground in the level creator, and game/data/level/practice_playground.json
+is now the board's layout, kept by hand (Level design, Content, "The practice playground"). Running this
+script would overwrite it with T-560's old layout, so main() writes nothing and exits with an error.
+The old layout below is kept only as a record.
+
+Was: builds the practice playground level (task T-560) into game/data/level/practice_playground.json.
 
 Level design, Decisions, "The practice playground", and Content, "The practice playground".
 A small level the tutorial's practice windows load (T-561), in the format the game and the level
@@ -80,8 +87,9 @@ def build() -> dict:
 
 
 def main() -> None:
-    OUT.write_text(json.dumps(build(), indent=1) + "\n", encoding="utf-8")
-    print("Wrote %s" % OUT)
+    # T-574: retired. The file is the board's layout now; never overwrite it.
+    raise SystemExit("build_practice_playground.py is retired (T-574): %s is the board's own layout "
+                     "from the level creator now. Edit it in the level creator; this script writes nothing." % OUT)
 
 
 if __name__ == "__main__":
