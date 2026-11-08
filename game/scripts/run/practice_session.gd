@@ -135,6 +135,9 @@ const STAMP_TIME := 0.18
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 const PX := 16.0
 
+## T-574 tweak 8 (dev builds only): the take tools' state changed ("ready", "recording",
+## "saved", "playing", "played", "no_take", "error").
+signal take_state_changed(state: String)
 signal trick_counted(trick_id: String, done: int)
 signal progress(done: int, goal: int)
 ## The drift's total grew (T-565): `done` seconds of drifting so far out of `goal`.
@@ -188,6 +191,18 @@ var gift_screen: PowerUpScreen
 ## It counts toward no slide's goal (COUNTED).
 var needle: ThreadTheNeedle
 var needle_flash: NeedleFlash
+## T-574 tweak 8, the take tools (step 1 of the recorded demos; dev builds only, the slides show
+## the controls): where the takes are saved, the take being recorded or played, and its state.
+var takes_dir := PracticeTake.TAKES_DIR
+var take: PracticeTake
+var take_state := "ready"
+## While a take plays: the step about to run; and how far the replay went from the take's
+## checkpoints (the largest distance in units, -1 before any checkpoint).
+var replay_step := 0
+var replay_drift := -1.0
+var _recording := false
+var _replaying := false
+var _hops_before := 0
 ## The green check stamp on the notebook page (T-574), shown once the goal is done.
 var stamp: Control
 
@@ -329,8 +344,10 @@ func reset_car(announce := true) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if focused and event is InputEventKey and event.pressed and not event.echo \
+	if focused and not _replaying and event is InputEventKey and event.pressed and not event.echo \
 			and event.physical_keycode == RESET_KEY:
+		if _recording:
+			take.resets.append(take.steps())  # a take replays the board's R too
 		reset_car()
 		get_viewport().set_input_as_handled()
 
@@ -504,7 +521,9 @@ func _build_car() -> void:
 	car.model.rotation = start.rotation
 	physics_world.add_child(car)
 	car.ground = elevation.ground_height
-	car.input_enabled = focused
+	car.input_enabled = focused or _replaying
+	if _replaying:
+		car.use_keyboard = false
 	car.grind.rails = rails
 	car.grind.grind_ended.connect(func(_reason: String, seconds: float, _length: float) -> void:
 		state.add_grind_trick(seconds))
@@ -532,6 +551,146 @@ func _build_car() -> void:
 	car_sprite.reset_physics_interpolation()
 	shadow.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
+
+
+# ---- The take tools (T-574 tweak 8; dev builds only) -------------------------------------------
+
+## True in a dev build (run from the editor or the project folder), never in an exported game.
+static func dev_tools() -> bool:
+	return OS.has_feature("editor")
+
+
+func is_recording() -> bool:
+	return _recording
+
+
+func is_replaying() -> bool:
+	return _replaying
+
+
+## Everything back as at the slide's start: the count, the stamp, the combo, the notebook and its
+## falling boxes, the gift, the car at the spawn standing still, its tyre marks and the popups, the
+## pairs' cool-downs. Stops a recording (unsaved) or a replay.
+func reset_stage() -> void:
+	_recording = false
+	_stop_replay()
+	restart()
+	drift_marks.clear()
+	for p in trick_popups.popups():
+		p.queue_free()
+	needle.setup(map.layout, ComboData.new().needle_rules())
+	_set_take_state("ready")
+
+
+## Resets the stage and records the driving from now on (the grind's Jump gift is taken first).
+func start_recording() -> void:
+	reset_stage()
+	var g := _take_gift_now()
+	take = PracticeTake.new()
+	take.trick = trick
+	take.physics_fps = Engine.physics_ticks_per_second
+	var sp := start_point()
+	take.start = {"x": sp.position.x, "y": sp.position.y, "heading": rad_to_deg(sp.rotation)}
+	take.gift = g
+	_hops_before = car.jump.hops
+	_recording = true
+	_set_take_state("recording")
+
+
+## Stops the recording and saves it as this trick's take (the last one kept as the backup).
+## Returns the error (OK when saved; ERR_UNAVAILABLE when nothing was being recorded).
+func stop_and_save() -> Error:
+	if not _recording:
+		return ERR_UNAVAILABLE
+	_recording = false
+	take.result = {"successes": successes, "drift_seconds": snappedf(drift_seconds, 0.01)}
+	var err := take.save(takes_dir)
+	_set_take_state("saved" if err == OK else "error")
+	return err
+
+
+## Resets the stage and plays this trick's saved take (or `the_take`) on the real car; the keyboard
+## is off while it plays. Returns false when there is no take.
+func play_take(the_take: PracticeTake = null) -> bool:
+	var t := the_take if the_take != null else PracticeTake.load_take(trick, takes_dir)
+	reset_stage()
+	if t == null or t.steps() == 0:
+		_set_take_state("no_take")
+		return false
+	take = t
+	if t.gift != "":
+		_take_gift_now()
+	_replaying = true
+	replay_step = 0
+	replay_drift = -1.0
+	_hops_before = car.jump.hops
+	car.input_enabled = true
+	_apply_replay_frame()
+	_set_take_state("playing")
+	return true
+
+
+func _take_gift_now() -> String:
+	if not GIFT.has(trick):
+		return ""
+	if not is_gift_open():
+		_open_gift_if_pending()
+	if is_gift_open():
+		gift_screen.skip_animation()
+		take_gift()
+	return String(GIFT[trick])
+
+
+## After each car step: a recording keeps the step's keys and a checkpoint every second; a replay
+## checks the checkpoint and sets the next step's keys.
+func _take_step() -> void:
+	if _recording:
+		var hop: bool = car.jump.hops != _hops_before
+		_hops_before = car.jump.hops
+		take.add_frame(car.last_input[0], car.last_input[1], car.last_input[2], car.jump_held, hop)
+		var n := take.steps()
+		if n % PracticeTake.CHECKPOINT_EVERY == 0:
+			take.add_checkpoint(n, car.model.get_position(), car.model.rotation, car.height)
+	elif _replaying:
+		replay_step += 1
+		var c := take.checkpoint_at(replay_step)
+		if not c.is_empty():
+			var d: float = car.model.get_position().distance_to(Vector2(float(c.x), float(c.y)))
+			replay_drift = maxf(replay_drift, d)
+		if replay_step >= take.steps():
+			_stop_replay()
+			_set_take_state("played")
+			return
+		if take.resets.has(replay_step):
+			reset_car()  # the board's R, before this step as when it was recorded
+		_apply_replay_frame()
+
+
+func _apply_replay_frame() -> void:
+	if not _replaying or car == null:
+		return
+	var f: Array = take.frames[replay_step]
+	car.use_keyboard = false
+	car.scripted_input = [f[0], f[1], f[2]]
+	car.scripted_jump_held = f[3]
+	if f[4]:
+		car.press_jump()
+
+
+func _stop_replay() -> void:
+	if not _replaying:
+		return
+	_replaying = false
+	if car != null:
+		car.scripted_input = [false, false, 0.0]
+		car.scripted_jump_held = false
+		car.use_keyboard = true
+		car.input_enabled = focused
+
+
+func _set_take_state(state_name: String) -> void:
+	take_state = state_name
+	take_state_changed.emit(state_name)
 
 
 ## The green check stamp (T-574): shown on the notebook once the goal is done; `land` plays the
@@ -629,6 +788,7 @@ func _on_car_stepped() -> void:
 	_sync_view(false)
 	if not in_area(car.model.get_position()):
 		reset_car.call_deferred()
+	_take_step()  # T-574 tweak 8: last, after the step's own work
 
 
 ## True when `units` is on the playground (its map rectangle grown by AREA_MARGIN).
