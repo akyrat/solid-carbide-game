@@ -83,17 +83,35 @@ class TestCheckLevel(unittest.TestCase):
         self.data["pattern_copies"][0]["boulders"][0].update(x=9.0)  # 7.5..10.5
         self.assert_rejected("boulder", "outside the map")
 
-    def test_rejects_odd_building_edge(self):
-        self.data["buildings"][0]["x"] = -7.0
-        self.assert_rejected("building", "odd unit")
+    # T-581: edges off the grid are fine on the quarter-unit step, refused off it.
+    def test_accepts_odd_and_quarter_unit_edges(self):
+        self.data["buildings"][0].update(x=-7.0, y=-7.75, w=3.5, h=4.25)
+        self.data["platforms"][0].update(x=0.25, w=5.5)
+        self.data["ramps"][0].update(x=2.75, w=2.5)
+        self.assertEqual(c.check_level(self.data), [])
+        res = run_tool(self.write(self.data))
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"))
 
-    def test_rejects_odd_rooftop_edge(self):
-        self.data["platforms"][0]["w"] = 5.0
-        self.assert_rejected("rooftop", "odd unit")
+    def test_rejects_building_edge_off_the_step(self):
+        self.data["buildings"][0]["x"] = -7.1
+        self.assert_rejected("building", "quarter-unit step")
 
-    def test_rejects_odd_ramp_edge(self):
-        self.data["ramps"][0].update(x=3.0, w=1.0)
-        self.assert_rejected("ramp", "odd unit")
+    def test_rejects_rooftop_edge_off_the_step(self):
+        self.data["platforms"][0]["w"] = 5.3
+        self.assert_rejected("rooftop", "quarter-unit step")
+
+    def test_rejects_ramp_edge_off_the_step(self):
+        self.data["ramps"][0].update(x=3.1, w=1.0)
+        self.assert_rejected("ramp", "quarter-unit step")
+
+    def test_rejects_an_off_grid_ramp_that_misses_its_rooftops_side(self):
+        # The rooftop moved a quarter unit up: its south side (y -2.25) no longer meets the ramp's top (y -2).
+        self.data["platforms"][0].update(y=-8.25)
+        self.assert_rejected("ramp")
+
+    def test_rejects_an_off_grid_ramp_wider_than_its_rooftops_side(self):
+        self.data["platforms"][0].update(x=0.25, w=3.5)  # 0.25..3.75; the ramp is 2..4
+        self.assert_rejected("ramp")
 
     def test_rejects_too_few_rows(self):
         self.data["ground_rows"].pop()

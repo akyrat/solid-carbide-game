@@ -8,7 +8,8 @@ extends RefCounted
 ##
 ## Pieces go at the clicked tile here: the piece's top-left corner on the corner of the 2 x 2 unit
 ## cell under the cursor. The editor snaps first (snapping.gd, T-237) and passes a point in the
-## snapped corner's cell.
+## snapped corner's cell. T-581 (free placement): the editor passes the corner itself (place's
+## `exact`), on FREE_STEP, whether it was snapped (Shift) or not.
 ##
 ## Rotate and mirror (T-236; Level design, Decisions, "Level creator"): a piece is placed in one of
 ## the views its catalogue entry lists ("views") and one of its mirrors ("mirrors"), and only
@@ -66,6 +67,12 @@ const GAME_GROUND_PATH := "res://data/level/mvp_ground.json"
 ## A new level is today's map's size (elevation_sample_map.json: 240 x 240 units, centred).
 const MAP_SIZE := 240
 const CELL := 2
+## T-581 (Level design, Decisions, "Free placement in the level creator"; a proposal): without Shift a
+## piece goes where the mouse drops it, its corner (and a dragged size) rounded to this step, units. A
+## quarter unit is finer than the eye sees at the creator's zoom, puts every corner on whole art pixels
+## (4 px across, 2 down at PX_PER_UNIT 16), is exact in binary (so the checks' "this edge lies on that
+## side" tests stay exact) and keeps the saved numbers short (at most two decimals: 13.75).
+const FREE_STEP := 0.25
 ## T-405: the short buildings are platforms (short_platforms.gd).
 const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
@@ -190,7 +197,7 @@ static func ramp_width_axis(view: String) -> int:
 ## side from `size` on that axis (at least min_width_units), its length fixed (length_units),
 ## turned for its view.
 static func piece_size(asset_id: String, view: String = "", size: Vector2 = Vector2.ZERO,
-		limit: Vector2 = Vector2(MAP_SIZE, MAP_SIZE), mirror: bool = false) -> Vector2:
+		limit: Vector2 = Vector2(MAP_SIZE, MAP_SIZE), mirror: bool = false, step: float = CELL) -> Vector2:
 	var e := entry(asset_id)
 	if e.is_empty():
 		return Vector2.ZERO
@@ -203,20 +210,26 @@ static func piece_size(asset_id: String, view: String = "", size: Vector2 = Vect
 		var axis := ramp_width_axis(valid_view(asset_id, view))
 		var width := float(e.get("width_units", foot.x))
 		if size != Vector2.ZERO:
-			width = _even_at_least(size[axis], float(e.get("min_width_units", CELL)))
+			width = _even_at_least(size[axis], float(e.get("min_width_units", CELL)), step)
 		width = minf(width, limit[axis])
 		var length := float(e.get("length_units", foot.y))
 		return Vector2(width, length) if axis == 0 else Vector2(length, width)
 	if size == Vector2.ZERO:
 		return foot
 	var lo: Array = e.get("min_size_units", [CELL, CELL])
-	return Vector2(minf(_even_at_least(size.x, float(lo[0])), limit.x),
-		minf(_even_at_least(size.y, float(lo[1])), limit.y))
+	return Vector2(minf(_even_at_least(size.x, float(lo[0]), step), limit.x),
+		minf(_even_at_least(size.y, float(lo[1]), step), limit.y))
 
 
-## `v` rounded up to whole cells (even units), and at least `lo`.
-static func _even_at_least(v: float, lo: float) -> float:
-	return maxf(ceilf(v / CELL - 0.001) * CELL, lo)
+## `v` rounded up to whole cells (even units; T-581: to whole `step`s, FREE_STEP without Shift), and
+## at least `lo`.
+static func _even_at_least(v: float, lo: float, step: float = CELL) -> float:
+	return maxf(ceilf(v / step - 0.001) * step, lo)
+
+
+## T-581: a point rounded to FREE_STEP (each axis to the nearest step).
+static func on_step(v: Vector2) -> Vector2:
+	return Vector2(snappedf(v.x, FREE_STEP), snappedf(v.y, FREE_STEP))
 
 
 static func game_ground() -> Dictionary:
@@ -373,11 +386,12 @@ func refresh_ground_rows() -> void:
 		out.append(s)
 	for b in data.get("buildings", []):
 		var r := Rect2(float(b.x), float(b.y), float(b.w), float(b.h)).intersection(m)
-		var x0 := int(r.position.x - m.position.x)
-		var w := int(r.size.x)
-		if w <= 0:
+		# T-581: a building off the grid marks every unit it covers part of.
+		var x0 := floori(r.position.x - m.position.x + 0.001)
+		var w := ceili(r.end.x - m.position.x - 0.001) - x0
+		if w <= 0 or r.size.y <= 0.0:
 			continue
-		for y in range(int(r.position.y - m.position.y), int(r.end.y - m.position.y)):
+		for y in range(floori(r.position.y - m.position.y + 0.001), ceili(r.end.y - m.position.y - 0.001)):
 			var row: String = out[y]
 			out[y] = row.substr(0, x0) + "B".repeat(w) + row.substr(x0 + w)
 	data["ground_rows"] = out
@@ -412,22 +426,31 @@ static func _kind_of_tile(id: String) -> String:
 ##
 ## `banner` (T-265): a skyscraper's banner (the vertical sign on its face), written as the building's
 ## "banner" (true or false; off by default). Other buildings never get the key.
+##
+## `exact` (T-581, free placement): `units` is the piece's top-left corner itself (rounded to
+## FREE_STEP, on the map), not a point naming a cell, and a size is rounded to FREE_STEP instead of
+## whole cells. Ground and road tiles always go on their cell.
 func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
 		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "", arrows: String = "up",
-		banner: bool = false) -> Dictionary:
+		banner: bool = false, exact: bool = false) -> Dictionary:
 	var e := entry(asset_id)
-	var c := cell_at(units)
-	if e.is_empty() or c.x < 0:
+	if e.is_empty():
 		return {}
 	var kind := str(e.kind)
+	if exact and kind in ["ground", "road"]:
+		exact = false
+		units += Vector2(CELL, CELL) / 2.0
+	var c := cell_at(units)
+	if c.x < 0:
+		return {}
 	if kind == "alert":
-		return place_alert(asset_id, units, view, mirror)
+		return place_alert(asset_id, units, view, mirror, -1.0, exact)
 	if kind == "rail":
 		return {}  # T-542: a rail has two ends: place_rail
-	var corner := cell_corner(c)
+	var corner := on_step(units) if exact else cell_corner(c)
 	view = valid_view(asset_id, view)
 	mirror = valid_mirror(asset_id, mirror)
-	var foot := piece_size(asset_id, view, size, map_rect().size, mirror)
+	var foot := piece_size(asset_id, view, size, map_rect().size, mirror, FREE_STEP if exact else float(CELL))
 	var resizable := is_resizable(asset_id)
 	if (resizable or kind in ["prop", "crater"]) and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
@@ -544,7 +567,11 @@ func rails() -> Array:
 ## centred on the point along the wall, its bottom `height` units up (-1: the entry's first height); {}
 ## when no skyscraper is drawn there (a platform, a short or small building is never one). Returns
 ## {kind: "alert", item}.
-func place_alert(asset_id: String, units: Vector2, view: String = "", mirror: bool = false, height: float = -1.0) -> Dictionary:
+##
+## `exact` (T-581): a standing sign's top-left corner is `units` itself (rounded to FREE_STEP), not the
+## corner of the cell under it.
+func place_alert(asset_id: String, units: Vector2, view: String = "", mirror: bool = false, height: float = -1.0,
+		exact: bool = false) -> Dictionary:
 	var e := entry(asset_id)
 	if e.is_empty() or str(e.kind) != "alert":
 		return {}
@@ -559,7 +586,7 @@ func place_alert(asset_id: String, units: Vector2, view: String = "", mirror: bo
 	var c := cell_at(units)
 	if c.x < 0:
 		return {}
-	var corner := cell_corner(c)
+	var corner := on_step(units) if exact else cell_corner(c)
 	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
 	if not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
@@ -987,8 +1014,9 @@ func spawn_problem(units: Vector2) -> String:
 
 ## Moves the spawn point to the middle of the cell holding `units`. Returns "" when moved, else the
 ## problem (the spawn point stays where it was).
-func move_spawn(units: Vector2) -> String:
-	var at := LevelSpawn.snap(data, units)
+## T-581: `snap` false puts it at `units` itself, rounded to FREE_STEP (free placement, no Shift).
+func move_spawn(units: Vector2, snap: bool = true) -> String:
+	var at := LevelSpawn.snap(data, units) if snap else on_step(units)
 	var why := LevelSpawn.problem(data, at)
 	if why == "":
 		var s := spawn()

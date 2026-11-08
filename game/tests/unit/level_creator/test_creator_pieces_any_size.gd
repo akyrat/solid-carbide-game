@@ -16,6 +16,7 @@ func _editor() -> LevelCreatorEditor:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_new()
 	add_child_autofree(e)
+	e.snap_held = true  # T-581: these tests place on the grid, as with Shift held (free placement: test_creator_free_placement.gd)
 	return e
 
 
@@ -128,12 +129,14 @@ func _press(e: LevelCreatorEditor, units: Vector2, pressed: bool) -> void:
 	mb.button_index = MOUSE_BUTTON_LEFT
 	mb.pressed = pressed
 	mb.position = e.units_to_screen(units)
+	mb.shift_pressed = e.snap_held  # T-581: Shift held as the test's editor is (_editor: on the grid)
 	e._on_map_input(mb)
 
 
 func _move(e: LevelCreatorEditor, units: Vector2) -> void:
 	var mm := InputEventMouseMotion.new()
 	mm.position = e.units_to_screen(units)
+	mm.shift_pressed = e.snap_held  # T-581
 	e._on_map_input(mm)
 
 

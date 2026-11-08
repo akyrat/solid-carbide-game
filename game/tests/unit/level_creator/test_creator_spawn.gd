@@ -29,6 +29,7 @@ func _editor() -> LevelCreatorEditor:
 	e.open_new()
 	e.levels_dir = dir
 	add_child_autofree(e)
+	e.snap_held = true  # T-581: these tests place on the grid, as with Shift held (free placement: test_creator_free_placement.gd)
 	return e
 
 

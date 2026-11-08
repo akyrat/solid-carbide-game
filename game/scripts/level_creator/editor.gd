@@ -162,11 +162,19 @@ const CELL_MIDDLE := LevelDocument.CELL / 2.0
 var _overlay: Node2D
 var _dragging := false
 
+## T-581 (Level design, Decisions, "Free placement in the level creator"): true while Shift is held. Without
+## it every piece follows the mouse (LevelSnapping.free_placement, on LevelDocument.FREE_STEP); with it the
+## pieces snap as before T-581 (the 2 x 2 tile grid, the neighbour and ramp-to-rooftop snaps), rail ends go
+## on the rails' half-unit step and the spawn point on its cell's middle. Set from every mouse and key event.
+var snap_held := false
+
 ## Sizing (T-251): with a rooftop or ramp of any size picked, pressing the left button on the map
 ## starts a drag at that cell and releasing it places the piece over the cells dragged across (a
 ## ramp: its width along the rooftop's side; its length is fixed). A press and release on one cell
 ## places the default size. (-1, -1) while no drag is on.
 var size_drag_start := Vector2i(-1, -1)
+## T-581: the point (units) the size drag started at, for a free drag (no Shift).
+var size_drag_from := Vector2.ZERO
 ## The top bar's sizing line: size_hint while a resizable piece is picked, size_readout during a
 ## drag; and a picked ramp's direction (ramp_dir_*).
 var size_label: Label
@@ -511,12 +519,12 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 	var mirror := pick_mirror if picked_now else false
 	var variant := pick_variant if picked_now else ""
 	size = default_size_for(asset_id, size)
-	var at := LevelSnapping.placement(document, asset_id, units, view, mirror, size)
+	var at := LevelSnapping.placement(document, asset_id, units, view, mirror, size, snap_held)
 	if at.is_empty():
 		return {}
-	# The snapped corner is a cell corner: the middle of its cell names that cell.
+	# T-581: the corner itself (snapped with Shift, free without), placed exactly there.
 	var corner: Vector2 = at.corner
-	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style, variant, pick_arrows, pick_banner)
+	var piece := document.place(asset_id, corner, view, mirror, at.rect.size, pick_style, variant, pick_arrows, pick_banner, true)
 	if piece.is_empty():
 		return {}
 	if str(piece.kind) in ["rooftop", "ramp"]:
@@ -560,7 +568,10 @@ func place_alert(asset_id: String, units: Vector2) -> Dictionary:
 	var picked_now := panel != null and asset_id == panel.picked
 	var view := pick_view if picked_now else ""
 	var mirror := pick_mirror if picked_now else false
-	var piece := document.place_alert(asset_id, units, view, mirror, alert_height() if picked_now else -1.0)
+	# T-581: a standing sign's corner goes where the mouse is without Shift, as the other pieces', on the
+	# cell under it with Shift; a banner always goes on its skyscraper's wall.
+	var free := not snap_held and KaijuSigns.kind_of_asset(asset_id) == "sign"
+	var piece := document.place_alert(asset_id, units, view, mirror, alert_height() if picked_now else -1.0, free)
 	if piece.is_empty():
 		return {}
 	if KaijuSigns.kind_of(piece.item) == "sign":
@@ -605,7 +616,8 @@ func alert_preview() -> Dictionary:
 		var pos := KaijuSigns.banner_sprite_position(foot, t.wall, t.along, t.bottom_units, tex)
 		return {"texture": tex, "rect": Rect2(pos, size), "flip": t.wall == "east",
 			"quad": KaijuSigns.banner_quad(foot, t.wall, t.along, t.bottom_units, tex)}
-	var corner := document.cell_corner(hover_cell)
+	var corner := document.cell_corner(hover_cell) if snap_held \
+		else LevelDocument.on_step(hover_point())  # T-581
 	var g := corner + Vector2(KaijuSigns.SIGN_CELL, KaijuSigns.SIGN_CELL) / 2.0
 	var h := document.height_at(g)
 	return {"texture": tex, "rect": Rect2(KaijuSigns.sign_sprite_position(g, h, tex), size), "flip": pick_mirror,
@@ -616,7 +628,7 @@ func alert_preview() -> Dictionary:
 func placement_at(units: Vector2, size: Vector2 = Vector2.ZERO) -> Dictionary:
 	if _picked() == "" or document == null:
 		return {}
-	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror, default_size_for(_picked(), size))
+	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror, default_size_for(_picked(), size), snap_held)
 
 
 ## The size a plain click gives `asset_id` (T-264): a rooftop's S, M or L square (M for "any"); a
@@ -848,33 +860,65 @@ func drag_area(from: Vector2i, to: Vector2i) -> Dictionary:
 	return {"corner": document.cell_corner(lo) + Vector2(CELL_MIDDLE, CELL_MIDDLE), "size": size}
 
 
+## T-581: a free size drag (no Shift) from the point `from` to `to` (units): the piece covers the
+## rectangle between them, to the step, as {corner: its top-left corner, size}. A drag shorter than half
+## a cell both ways is a click: size ZERO (the default size, its corner at `from`). A ramp's drag only
+## sets its width, as on cells (its corner stays at `from` the other way).
+func drag_area_free(from: Vector2, to: Vector2) -> Dictionary:
+	var lo := Vector2(minf(from.x, to.x), minf(from.y, to.y))
+	var hi := Vector2(maxf(from.x, to.x), maxf(from.y, to.y))
+	var ramp: bool = LevelDocument.entry(_picked()).get("kind", "") == "ramp"
+	var axis := LevelDocument.ramp_width_axis(pick_view)
+	if ramp:
+		lo[1 - axis] = from[1 - axis]
+		hi[1 - axis] = from[1 - axis]
+	var d := hi - lo
+	if (ramp and d[axis] < CELL_MIDDLE) or (d.x < CELL_MIDDLE and d.y < CELL_MIDDLE):
+		return {"corner": from, "size": Vector2.ZERO}
+	return {"corner": lo, "size": LevelDocument.on_step(hi) - LevelDocument.on_step(lo)}
+
+
+## T-581: the point under the mouse (units): hover_units, or the middle of hover_cell when hover_units
+## is not in it (the cell was set without a mouse move).
+func hover_point() -> Vector2:
+	if document == null or document.cell_at(hover_units) == hover_cell:
+		return hover_units
+	return document.cell_corner(hover_cell) + Vector2(CELL_MIDDLE, CELL_MIDDLE)
+
+
 ## Where the picked piece goes now: during a size drag over the cells dragged across, otherwise at
-## the cell under the mouse in its default size. {} for none.
+## the cell under the mouse in its default size. {} for none. T-581: without Shift, at the point
+## under the mouse and over the stretch dragged (drag_area_free).
 func current_placement() -> Dictionary:
 	if _picked() == "" or document == null or hover_cell.x < 0:
 		return {}
 	if size_drag_start.x >= 0:
-		var a := drag_area(size_drag_start, hover_cell)
+		var a := drag_area(size_drag_start, hover_cell) if snap_held else drag_area_free(size_drag_from, hover_point())
 		return placement_at(a.corner, a.size)
+	if not snap_held:
+		return placement_at(hover_point())
 	return placement_at(document.cell_corner(hover_cell) + Vector2(CELL_MIDDLE, CELL_MIDDLE))
 
 
 ## Starts a size drag at the cell under `units` (the left button pressed with a resizable piece).
 func begin_size_drag(units: Vector2) -> void:
 	size_drag_start = document.cell_at(units)
+	size_drag_from = units
 	hover_cell = size_drag_start
+	hover_units = units
 	_update_pose_controls()
 
 
 ## Ends the size drag with the mouse at `units`: places the picked piece over the dragged cells.
-## Returns the placed piece, or {}.
+## Returns the placed piece, or {}. T-581: without Shift, over the stretch dragged (drag_area_free).
 func end_size_drag(units: Vector2) -> Dictionary:
 	if size_drag_start.x < 0:
 		return {}
 	var to := document.cell_at(units)
 	if to.x < 0:
 		to = hover_cell if hover_cell.x >= 0 else size_drag_start
-	var a := drag_area(size_drag_start, to)
+		units = hover_point() if hover_cell.x >= 0 else size_drag_from
+	var a := drag_area(size_drag_start, to) if snap_held else drag_area_free(size_drag_from, units)
 	size_drag_start = Vector2i(-1, -1)
 	var piece := place_asset(_picked(), a.corner, a.size)
 	_update_pose_controls()
@@ -1000,7 +1044,12 @@ func _update_size_label() -> void:
 		size_label.text = CreatorTexts.get_text("size_hint")
 		return
 	var s: Vector2 = at.rect.size
-	size_label.text = CreatorTexts.get_text("size_readout").format({"w": int(s.x), "d": int(s.y)})
+	# T-581: a free size may be a quarter unit off whole units: shown as it is (12.25), whole sizes as before (12).
+	size_label.text = CreatorTexts.get_text("size_readout").format({"w": _size_text(s.x), "d": _size_text(s.y)})
+
+
+static func _size_text(v: float) -> String:
+	return str(int(round(v))) if is_equal_approx(v, round(v)) else str(snappedf(v, LevelDocument.FREE_STEP))
 
 
 ## The piece of any size the preview shows, in GroundHeight's format ({id, rect, height | side,
@@ -1338,12 +1387,18 @@ func local_px(local: Vector2) -> Vector2:
 	return viewport.get_canvas_transform().affine_inverse() * local
 
 
+## T-581: a rail end's point rounded to the rails' own step (RailPiece.SNAP, half a unit) with Shift held,
+## and to the free placement's finer step (LevelDocument.FREE_STEP) without.
+func rail_snap(v: Vector2) -> Vector2:
+	return RailPiece.snap(v, RailPiece.SNAP if snap_held else LevelDocument.FREE_STEP)
+
+
 ## The map point (units, snapped) a rail end at map pixel `px` is on, for the picked height: with auto the
 ## surface under the end sets the height the end is drawn at, so it settles in a few steps.
 func rail_point_at(px: Vector2) -> Vector2:
 	var fz := rail_fixed_height()
 	if fz >= 0.0:
-		return RailPiece.snap(RailPiece.ground_for(px, fz))
+		return rail_snap(RailPiece.ground_for(px, fz))
 	# Auto (T-542 round 2): the pixel is the end drawn at 1 over the ground under it, so the ground under it
 	# and the drawn height depend on each other. Settle from three starting heights (7, 4, 1 units) and take
 	# the highest height that settles on itself: a rail on a rooftop can be reached where the street would be
@@ -1362,17 +1417,17 @@ func rail_point_at(px: Vector2) -> Vector2:
 		if absf(z - document.auto_rail_height(u)) < 0.05 and z > best_z:
 			best_z = z
 			best_u = u
-	return RailPiece.snap(best_u if best_z >= 0.0 else fallback)
+	return rail_snap(best_u if best_z >= 0.0 else fallback)
 
 
 ## Lays a rail from `a` to `b` (map points, units) at the picked height. A rail shorter than the game takes
 ## is laid RailPiece.DEFAULT_LENGTH long from `a` in the picked direction (a click). Returns the piece, or {}
 ## (with the rail_refused message) when it can't be laid.
 func lay_rail(a: Vector2, b: Vector2) -> Dictionary:
-	a = RailPiece.snap(a)
-	b = RailPiece.snap(b)
+	a = rail_snap(a)
+	b = rail_snap(b)
 	if a.distance_to(b) < RailsScript.MIN_LENGTH:
-		b = RailPiece.snap(a + RailPiece.direction_of(rail_turn) * RailPiece.DEFAULT_LENGTH)
+		b = rail_snap(a + RailPiece.direction_of(rail_turn) * RailPiece.DEFAULT_LENGTH)
 	var piece := document.place_rail(a, b, rail_height_at(a), rail_height_at(b))
 	if piece.is_empty():
 		last_problem = "rail"
@@ -1408,14 +1463,14 @@ func update_rail_drag(local: Vector2) -> void:
 	var o: Dictionary = rail_drag.orig
 	var changed := false
 	if mode == "a":
-		changed = document.set_rail(it, RailPiece.snap(RailPiece.ground_for(px, RailPiece.height_a(o))), RailPiece.end_b(o),
+		changed = document.set_rail(it, rail_snap(RailPiece.ground_for(px, RailPiece.height_a(o))), RailPiece.end_b(o),
 			RailPiece.height_a(o), RailPiece.height_b(o))
 	elif mode == "b":
-		changed = document.set_rail(it, RailPiece.end_a(o), RailPiece.snap(RailPiece.ground_for(px, RailPiece.height_b(o))),
+		changed = document.set_rail(it, RailPiece.end_a(o), rail_snap(RailPiece.ground_for(px, RailPiece.height_b(o))),
 			RailPiece.height_a(o), RailPiece.height_b(o))
 	elif mode == "body":
 		var h := (RailPiece.height_a(o) + RailPiece.height_b(o)) / 2.0
-		var d := RailPiece.snap(RailPiece.ground_for(px, h) - RailPiece.ground_for(rail_drag.grab_px, h))
+		var d := rail_snap(RailPiece.ground_for(px, h) - RailPiece.ground_for(rail_drag.grab_px, h))
 		changed = document.set_rail(it, RailPiece.end_a(o) + d, RailPiece.end_b(o) + d, RailPiece.height_a(o), RailPiece.height_b(o))
 	if changed:
 		_rail_changed()
@@ -1519,7 +1574,7 @@ func move_rail(delta: Vector2) -> bool:
 	var it := selected_rail()
 	if it.is_empty():
 		return false
-	var d := RailPiece.snap(delta)
+	var d := rail_snap(delta)
 	return _set_selected_rail(RailPiece.end_a(it) + d, RailPiece.end_b(it) + d, RailPiece.height_a(it), RailPiece.height_b(it))
 
 
@@ -1562,7 +1617,7 @@ func rail_ghost() -> Dictionary:
 	if not rail_picked() or hover_cell.x < 0 or not rail_drag.is_empty():
 		return {}
 	var a := rail_point_at(ISO_TRANSFORM * (hover_units * PX_PER_UNIT))
-	var b := RailPiece.snap(a + RailPiece.direction_of(rail_turn) * RailPiece.DEFAULT_LENGTH)
+	var b := rail_snap(a + RailPiece.direction_of(rail_turn) * RailPiece.DEFAULT_LENGTH)
 	return {"a": a, "b": b, "za": rail_height_at(a), "zb": rail_height_at(b)}
 
 
@@ -1617,7 +1672,7 @@ func _clear_spawn_hint() -> void:
 ## stand in (a building, an obstacle, off the map) is refused with spawn_blocked and the point
 ## stays. Returns true when it moved.
 func move_spawn(units: Vector2) -> bool:
-	var why := document.move_spawn(units)
+	var why := document.move_spawn(units, snap_held)  # T-581: free without Shift
 	if why != "":
 		_show_message(CreatorTexts.get_text("spawn_blocked"))
 		_overlay.queue_redraw()
@@ -1642,7 +1697,7 @@ func begin_spawn_drag() -> void:
 
 
 func update_spawn_drag(units: Vector2) -> void:
-	spawn_drop = LevelSpawn.snap(level_data, units)
+	spawn_drop = LevelSpawn.snap(level_data, units) if snap_held else LevelDocument.on_step(units)  # T-581
 	spawn_drop_problem = document.spawn_problem(spawn_drop)
 	_overlay.queue_redraw()
 
@@ -1704,6 +1759,8 @@ func zoom_by(factor: float, local_pos: Vector2) -> void:
 
 
 func _on_map_input(event: InputEvent) -> void:
+	if event is InputEventMouse:
+		set_snap_held((event as InputEventMouse).shift_pressed)  # T-581: Shift snaps
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
 		if mb.button_index == MOUSE_BUTTON_WHEEL_UP and mb.pressed:
@@ -1765,15 +1822,30 @@ func _on_map_input(event: InputEvent) -> void:
 		elif rail_picked():
 			_overlay.queue_redraw()  # T-542: the rail ghost follows the mouse
 		var c :=document.cell_at(hover_units)
-		if c != hover_cell:
+		if c != hover_cell or not snap_held:
+			# T-581: without Shift the preview follows the mouse within a cell too.
 			hover_cell = c
 			_overlay.queue_redraw()
 			if size_drag_start.x >= 0:
 				_update_size_label()
 
 
+## T-581: Shift held or let go: the preview under the mouse shows the snapped or free place at once.
+func set_snap_held(on: bool) -> void:
+	if on == snap_held:
+		return
+	snap_held = on
+	if _overlay != null:
+		_overlay.queue_redraw()
+	if size_drag_start.x >= 0:
+		_update_size_label()
+
+
 func _unhandled_key_input(event: InputEvent) -> void:
 	var k := event as InputEventKey
+	if k != null and k.keycode == KEY_SHIFT:
+		set_snap_held(k.pressed)  # T-581; not handled, so Shift+click still reaches the map
+		return
 	if k == null or not k.pressed:
 		return
 	if KEY_ACTIONS.has(k.keycode):

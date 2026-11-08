@@ -6,7 +6,10 @@ also checks that:
 
 - every building, rooftop (platform), ramp and boulder (pattern_copies[].boulders, a centre and a
   diameter) lies inside the map's rect (map.rect);
-- the edges of buildings, rooftops and ramps lie on even units (enemy_navigation.gd's CELL = 2);
+- the edges of buildings, rooftops and ramps lie on whole quarter units (STEP, the level creator's free
+  placement step, LevelDocument.FREE_STEP; T-581). Before T-581 they had to lie on even units
+  (enemy_navigation.gd's CELL = 2); the game now works with pieces off that grid, so a level saved on the
+  grid passes as before;
 - every prop (props: {id, asset, rotation, x, y, w, h}, T-253) names a prop of data/level/props.json and
   one of its rotations, has the footprint of that prop turned to that rotation, and lies inside the map;
 - every meteor crater (craters: {id, asset, x, y, w, h}, T-398) names a crater of data/level/craters.json,
@@ -37,7 +40,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_height_data  # noqa: E402
 
-CELL = 2.0  # enemy_navigation.gd's CELL (units)
+STEP = 0.25  # T-581: the level creator's free placement step (level_document.gd FREE_STEP), units
 EPS = 1e-6
 
 
@@ -51,8 +54,8 @@ def _inside(inner, outer):
             and inner[2] <= outer[2] + EPS and inner[3] <= outer[3] + EPS)
 
 
-def _on_cell(v):
-    q = v / CELL
+def _on_step(v):
+    q = v / STEP
     return abs(q - round(q)) <= EPS
 
 
@@ -309,8 +312,8 @@ def check_level(data, require_spawn=True):
             label = name.replace(key[:-1], kind, 1)
             if map_rect is not None and not _inside(r, map_rect):
                 problems.append("%s: lies outside the map" % label)
-            if not all(_on_cell(v) for v in r):
-                problems.append("%s: an edge is on an odd unit (edges lie on multiples of %g)" % (label, CELL))
+            if not all(_on_step(v) for v in r):
+                problems.append("%s: an edge is off the quarter-unit step (edges lie on multiples of %g)" % (label, STEP))
 
     if map_rect is not None:
         for copy in data.get("pattern_copies", []) or []:
