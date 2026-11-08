@@ -1,7 +1,7 @@
 ---
 id: T-579
 title: Health drops at 5%
-status: open
+status: done
 from: project-lead
 to: game-data
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/data/enemies.json]
 files_expected_to_change: [game/data/enemies.json, game/tests/, docs/enemies.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,14 +41,22 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] enemies.json has drop_chance 0.05 with the history in its _comment. (QA: pass / fail)
-- [ ] Tests that read the rate pass with the new number (tests). (QA: pass / fail)
-- [ ] docs/enemies.md Content says 5%. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] enemies.json has drop_chance 0.05 with the history in its _comment. (QA: pass)
+- [ ] Tests that read the rate pass with the new number (tests). (QA: pass)
+- [ ] docs/enemies.md Content says 5%. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass; the three sets passed in the mechanical check, counts are in the QA run's output)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: Game Data sets health drops to 5%.
+
+### 2026-11-08, In progress → In QA
+
+Done: drop_chance 0.05. QA now, then straight to master.
 
 ## Style review
 
@@ -56,4 +64,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. enemies.json health_drops.drop_chance 0.225 -> 0.05, _comment has the history (0.6, 0.3, 0.15, 0.225, now 0.05; board 2026-11-08). Tests updated: test_health_drops.gd (rate; the coins-ratio test is now about a twelfth, 0.0833 +/- 0.05, renamed), test_run_hearts.gd, test_run_data.gd. Docs: docs/enemies.md Content (5%, 1/12 of the coins' rate; Decisions entry already there), game/docs/enemies/minions.md. Ran via run_tests.sh -gselect: test_health_drops 11/11 (284 asserts), test_run_hearts 16/16, test_run_data 12/12, test_enemy_data 10/10, test_minions 44/44. Full sets left to QA. Godot --import made untracked .uid files and .import noise; not committed.
+- 2026-11-08, in-qa → done: Board: merge straight away (2026-11-08)

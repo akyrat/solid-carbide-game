@@ -4055,3 +4055,8 @@ Entry format:
 - Decision or change: Menus open with no button selected; the first arrow or Tab press shows it.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-573
+
+## 2026-11-08: Health drops at 5%
+- Decision or change: A killed minion drops a health pickup 5% of the time.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-579
