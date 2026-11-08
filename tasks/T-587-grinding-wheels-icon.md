@@ -1,7 +1,7 @@
 ---
 id: T-587
 title: Art: the Grinding Wheels icon (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -64,6 +64,10 @@ Icon made: a wheel on a rail with sparks; 6/10, kept for your playtest; 2 of 4 g
 ### 2026-11-08, In QA → Needs playtest
 
 QA passed. The icon (6/10) is ready to see: C:\solid-carbide-worktrees\T-587 (in a run press N, then + on Grinding Wheels).
+
+### 2026-11-08, Needs playtest
+
+Board: lgtm. Merging.
 
 ## Style review
 
@@ -130,3 +134,4 @@ Done. 2 PixelLab generations used of 4 (v1, v2), then free script redraws v3 and
 
 Godot test set: 3204 of 3205 passing, 0 failing, 1 risky/pending (280 scripts).
 - 2026-11-08, flagged-for-review → in-progress: Loop flag at 6/10; kept for the playtest (2 of 4 generations).
+- 2026-11-08, needs-playtest → done: Board: lgtm (2026-11-08)
