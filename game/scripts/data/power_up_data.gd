@@ -48,6 +48,18 @@ func at(id: String, tier: int) -> Dictionary:
 	return t
 
 
+## T-590: the charged jump's numbers (power_ups.json, jump.charge: charge_seconds,
+## max_multiplier; the same at every tier), without the notes. {} when missing.
+func jump_charge() -> Dictionary:
+	var c = _data.get("power_ups", {}).get("jump", {}).get("charge", {})
+	if not c is Dictionary:
+		return {}
+	var out: Dictionary = c.duplicate()
+	out.erase("proposal")
+	out.erase("reason")
+	return out
+
+
 ## What the overlay does when every power-up is at its last tier ("skip_gift").
 func offer_when_exhausted() -> String:
 	return String(_data["offer_when_exhausted"]["action"])

@@ -61,6 +61,8 @@ const DriftGuideScript := preload("res://scripts/driving/drift_guide.gd")
 ## The jump arrow and the jump effect (task T-551, facing_arrow.gd and jump_effect.gd).
 const FacingArrowScript := preload("res://scripts/driving/facing_arrow.gd")
 const JumpEffectScript := preload("res://scripts/driving/jump_effect.gd")
+## The charged jump's cue (task T-590, jump_charge_cue.gd).
+const JumpChargeCueScript := preload("res://scripts/driving/jump_charge_cue.gd")
 ## The Rev Charge placeholder effect (task T-460).
 const RevChargeEffectScript := preload("res://scripts/driving/rev_charge_effect.gd")
 ## The wreck's smoke and flames (task T-360, wreck_effect.gd; placeholders in code).
@@ -156,6 +158,8 @@ var jump_effect: Node2D
 ## the rear while charging, speed lines while boosting. Child "RevChargeEffect" of
 ## the View, drawn over the car.
 var rev_charge_effect: Node2D
+## T-590: the charged jump's cue (a bar above the car while Space charges the Jump).
+var jump_charge_cue: Node2D
 ## The wreck's smoke and flames (task T-360): on the drawn car, above it, from
 ## the last heart to the run's end. Child "WreckEffect" of the View.
 var wreck_effect: Node2D
@@ -297,6 +301,10 @@ func _ready() -> void:
 	view_root.add_child(rev_charge_effect)
 	# Over the car: under it, the car's own sprite hides most of the rear glow.
 	view_root.move_child(rev_charge_effect, car_sprite.get_index() + 1)
+
+	jump_charge_cue = JumpChargeCueScript.new()
+	jump_charge_cue.view_transform = ISO_TRANSFORM
+	view_root.add_child(jump_charge_cue)  # over the car (T-590)
 
 	level_up_burst = LevelUpBurstScene.instantiate()
 	level_up_burst.name = "LevelUpBurst"
@@ -528,6 +536,7 @@ func _build_world() -> void:
 	# T-551: the jump effect and the jump arrow.
 	jump_effect.bind(car)
 	facing_arrow.bind(car)
+	jump_charge_cue.bind(car)  # T-590
 	# Drift Guide (T-517): the path ends where the car would hit a wall (test_move, no side effects).
 	drift_guide.bind(car)
 	drift_guide.blocked = func(from_units: Vector2, to_units: Vector2) -> bool:

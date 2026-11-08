@@ -61,6 +61,7 @@ const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
 const FacingArrowScript := preload("res://scripts/driving/facing_arrow.gd")
 const JumpEffectScript := preload("res://scripts/driving/jump_effect.gd")
+const JumpChargeCueScript := preload("res://scripts/driving/jump_charge_cue.gd")  # T-590
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 const RailsScript := preload("res://scripts/level/rails.gd")
@@ -158,6 +159,8 @@ var drift_marks: Node2D
 var drift_smoke: Node2D
 var boost_effect: Node2D
 var jump_effect: Node2D
+## T-590: the charged jump's cue.
+var jump_charge_cue: Node2D
 var facing_arrow: Node2D
 var rail_sparks: Node2D
 var rail_drawing: Node2D
@@ -392,6 +395,9 @@ func _build() -> void:
 	facing_arrow = FacingArrowScript.new()
 	facing_arrow.view_transform = ISO_TRANSFORM
 	view_root.add_child(facing_arrow)
+	jump_charge_cue = JumpChargeCueScript.new()
+	jump_charge_cue.view_transform = ISO_TRANSFORM
+	view_root.add_child(jump_charge_cue)
 	trick_popups = TrickPopupsScript.new()
 	trick_popups.name = "TrickPopups"
 	view_root.add_child(trick_popups)
@@ -485,6 +491,7 @@ func _build_car() -> void:
 	boost_effect.bind(car)
 	jump_effect.bind(car)
 	facing_arrow.bind(car)
+	jump_charge_cue.bind(car)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	_apply_power_ups()
 	_sync_view(true)
