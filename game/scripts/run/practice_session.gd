@@ -618,6 +618,7 @@ func _on_car_stepped() -> void:
 		needle.touching(car.held_contacts())
 		needle.observe(car.model.get_position(), car.airborne, dt)
 	map.update_car_obstacles(car, car.height, car.vertical_speed)
+	state.advance_combo_only(dt)  # T-574 tweak 7: the combo drains and breaks as in a run
 	state.drift_step(car.model.is_drifting, dt)
 	if trick == "drift" and car.model.is_drifting:
 		add_drift_seconds(dt)

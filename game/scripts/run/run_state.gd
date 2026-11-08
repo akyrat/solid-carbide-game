@@ -223,6 +223,9 @@ var _weapon_kills := {}  # weapon id -> kills
 var _highest_combo := 1.0
 ## When the combo was last cut by a collision, in seconds into the run (T-415).
 var _last_cut_at := -1000.0
+## The combo's own clock (T-574): seconds the combo has run, for the collision window. In a run it
+## moves with the run's clock (advance); the tutorial's practice moves it alone (advance_combo_only).
+var _combo_clock := 0.0
 var _likes_total := 0.0
 ## Set by the weapon rack (weapons.gd bind): returns {weapon id: tier} for the
 ## weapons the car owns now. Empty Callable when no rack is bound.
@@ -261,6 +264,7 @@ func start_run() -> void:
 		pickup_magnet_radius_units += g.bonus("pickup_magnet", progress.level("pickup_magnet"))  # garage upgrade (T-224)
 	health = max_health
 	_last_cut_at = -1000.0
+	_combo_clock = 0.0
 	invulnerable_left = 0.0
 	invulnerable_total = 0.0
 	time_left = RUN_SECONDS
@@ -336,6 +340,7 @@ func advance(seconds: float) -> void:
 		time_left = 0.0
 	if shown_seconds() != shown_before:
 		time_left_changed.emit(time_left)
+	_combo_clock += seconds
 	_drain_combo(seconds)
 	_drain_likes(seconds)
 	if not boss_time_sent and time_left <= BOSS_TIME_LEFT + EPSILON:
@@ -656,12 +661,12 @@ func collision() -> void:
 ## combo.json's collision_window_seconds of the one that cut the combo does not cut it again
 ## (the crash still pays its trick). The window runs on the run's clock.
 func _cut_combo() -> void:
-	if time_elapsed() - _last_cut_at < _combo_data.collision_window_seconds():
+	if _combo_clock - _last_cut_at < _combo_data.collision_window_seconds():
 		return
 	var before := combo
 	_set_combo(_combo_data.after_collision(combo))
 	if before - combo > EPSILON:
-		_last_cut_at = time_elapsed()
+		_last_cut_at = _combo_clock
 		combo_broken.emit()
 
 
@@ -669,6 +674,17 @@ func _cut_combo() -> void:
 ## (combo.json's spawning; 1.0 with no combo). For enemy spawning (T-085).
 func combo_spawn_multiplier() -> float:
 	return _combo_data.spawn_multiplier(combo) if _combo_data != null else 1.0
+
+
+## The tutorial's practice (T-574; the board: "in the practice, the combo can't be broken, and I want
+## it to be able to be broken"): its run state's clock never runs (no time, boss, end or likes
+## drain), so the practice moves only the combo's clock here, every car step: the drain after the
+## idle wait, and the collision window, so a later hit cuts the combo again as in a run.
+func advance_combo_only(seconds: float) -> void:
+	if not running or seconds <= 0.0:
+		return
+	_combo_clock += seconds
+	_drain_combo(seconds)
 
 
 func _drain_combo(seconds: float) -> void:

@@ -538,3 +538,39 @@ func test_the_board_s_pairs_are_live_and_threading_one_pays_the_trick_as_in_a_ru
 		car.physics_step()
 	assert_true(paid.has(RunState.TRICK_THREAD_THE_NEEDLE), "THREAD THE NEEDLE! paid: %s" % [paid])
 	assert_eq(session.successes, 0, "it counts toward no slide's goal")
+
+
+## Steps the car `seconds` standing still (no keys), as the window does each physics frame.
+func _idle(seconds: float) -> void:
+	var car = session.car
+	car.use_keyboard = false
+	car.scripted_input = [false, false, 0.0]
+	for i in roundi(seconds * 50.0):
+		car.physics_step()
+
+
+func test_the_combo_breaks_again_and_drains_as_in_a_run_with_no_damage() -> void:
+	# T-574 tweak 7 (the board: "in the practice, the combo can't be broken, and I want it to be able
+	# to be broken"): the frozen run clock kept the collision window shut after the first cut, and the
+	# drain never ran. Now each car step moves the combo's clock.
+	session.setup("alt_drift")
+	session.start()
+	var broken: Array = []  # a lambda captures an int by value: count in an array
+	session.state.combo_broken.connect(func() -> void: broken.append(1))
+	var start_combo: float = session.state.combo
+	for n in 3:
+		session.state.add_trick("alternate_drift")
+		assert_gt(session.state.combo, start_combo, "a combo going")
+		session.state.collision()
+		assert_eq(broken.size(), n + 1, "hit %d breaks it" % (n + 1))
+		_idle(1.0)  # past combo.json's collision window
+	assert_eq(session.state.health, session.state.max_health, "no damage, no hearts lost")
+	assert_eq(session.state.time_left, session.state.RUN_SECONDS, "the run's clock still never runs")
+	# The drain: a combo left alone drops after the wait.
+	session.state.add_trick("alternate_drift")
+	session.state.add_trick("alternate_drift")
+	var high: float = session.state.combo
+	_idle(ComboData.new().drain_wait_seconds() + 1.0)
+	assert_lt(session.state.combo, high, "the combo drains when left idle")
+	# The popup: COMBO BROKEN! as in the run (the trick popups hear combo_broken).
+	assert_true(session.state.combo_broken.is_connected(session.trick_popups._on_combo_broken))

@@ -56,3 +56,8 @@ session.pause()                  # when the slide is left
 
 - The session builds the level's pairs as `run.gd` does: `needle` (`ThreadTheNeedle`, from the layout and `ComboData.needle_rules()`), its faint markers (`build_markers`, lifted and depth-sorted by the elevation layer) and `needle_flash` (`NeedleFlash`, under the paused World). After every car step it calls `touching(car.held_contacts())` and `observe(...)`; every `hit_obstacle` calls `touched(...)`; `threaded` pays `state.add_needle_trick()`, so the popup shows THREAD THE NEEDLE! with its amount and the combo goes up, on every slide. It counts toward no slide's goal (`COUNTED`).
 
+## The combo breaks as in a run (T-574 tweak 7; the board: "in the practice, the combo can't be broken, and I want it to be able to be broken.")
+
+- What blocked it: the practice's `RunState` clock never runs (its process is off, so no time, boss, end or likes drain), and the combo used the run's clock. The collision window (`combo.json` `collision_window_seconds`, 0.5 s) measured from the first cut never ran out, so only the very first hit ever broke the combo, and the drain after the idle wait never ran.
+- Now `RunState` has the combo's own clock (`_combo_clock`): in a run it moves with the run's clock (`advance`), and the practice moves it alone after every car step (`RunState.advance_combo_only(dt)`): the drain after `drain_wait_seconds`, and every hit past the window cuts it again with `combo_broken`, so the trick popups show COMBO BROKEN! as in a run. Still no damage and no hearts lost in the practice; there is no HUD combo meter in the window, only the popups.
+
