@@ -1,7 +1,7 @@
 ---
 id: T-574
 title: Quick tuning: the drift tutorial slides, with the board
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/docs/hud-and-menus/tutorial-slides.md, game/scripts/menu/tutorial_slides.gd, tasks/T-561-practice-session.md, tasks/T-562-interactive-tutorial-slides.md, tasks/T-565-drift-seconds-running-totals.md]
 files_expected_to_change: [game/scripts/menu/, game/scripts/run/, game/scripts/hud/, game/scenes/, game/data/, game/tests/, game/docs/, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,9 +43,9 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each of the board's tweaks is in and written in the result notes. (QA: pass / fail)
-- [ ] The test sets pass at the merge. (QA: pass / fail)
-- [ ] The docs describe the settled result. (QA: pass / fail)
+- [ ] Each of the board's tweaks is in and written in the result notes. (QA: pass)
+- [ ] The test sets pass at the merge. (QA: pass)
+- [ ] The docs describe the settled result. (QA: pass)
 
 ## Updates
 
