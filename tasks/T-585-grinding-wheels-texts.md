@@ -1,7 +1,7 @@
 ---
 id: T-585
 title: Texts: the Grinding Wheels power-up
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Narrative writes the Grinding Wheels texts.
+
+### 2026-11-08, In progress → In QA
+
+Text written; the board approved it. QA now.
 
 ## Style review
 
