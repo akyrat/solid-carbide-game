@@ -1,7 +1,7 @@
 ---
 id: T-577
 title: Art: the hint pieces' icons and sign (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md, docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/level-design.md, docs/working-with-the-board.md, game/docs/level/]
 files_expected_to_change: [game/art/, art-archive/T-577/, docs/visual-style.md, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,13 +43,13 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The sample was shown to the board before the rest (result notes). (QA: pass / fail)
-- [ ] The five icons and the sign are in the places T-576 defined and show in the creator and in a run (screenshots). (QA: pass / fail)
-- [ ] Each asset scores 8 or more in the style loop, or is noted for the playtest. (QA: pass / fail)
-- [ ] No more than 30 generations were used, counted in the result notes. (QA: pass / fail)
-- [ ] docs/visual-style.md records the assets. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-577/screenshots/ show every icon on the ground and the sign in a run. (QA: pass / fail)
+- [ ] The sample was shown to the board before the rest (result notes). (QA: pass - the board's goodnight approval replaced the sample stop, recorded in the result notes)
+- [ ] The five icons and the sign are in the places T-576 defined and show in the creator and in a run (screenshots). (QA: pass - six files in game/art/hints/ and the three screenshots show them)
+- [ ] Each asset scores 8 or more in the style loop, or is noted for the playtest. (QA: pass - W, S and curved 8/10; straight, circular and sign 7/10 noted for the playtest)
+- [ ] No more than 30 generations were used, counted in the result notes. (QA: pass - 6 of 30 generations, counted in the result notes)
+- [ ] docs/visual-style.md records the assets. (QA: pass - visual-style.md has the T-577 section)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass - qa_check tests pass; the result notes give 3070/3071, 0 failing)
+- [ ] Screenshots in art-archive/T-577/screenshots/ show every icon on the ground and the sign in a run. (QA: pass - creator_hints, creator_ground_preview and run_hints exist)
 
 ## Updates
 
@@ -66,6 +66,10 @@ Resuming: W keycap sample, then the full set within the 30-generation cap (board
 ### 2026-11-08, In progress → In QA
 
 Hint art done: 6 of 30 generations. Keycaps and curved arrow 8/10; straight arrow, circular arrow and sign 7/10, kept for your playtest. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. Hint art ready to play: C:\solid-carbide-worktrees\T-577 (level creator: Driver hints).
 
 ## Style review
 
