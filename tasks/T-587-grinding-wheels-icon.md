@@ -1,7 +1,7 @@
 ---
 id: T-587
 title: Art: the Grinding Wheels icon (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/working-with-the-board.md, game/art/power_ups/]
 files_expected_to_change: [game/art/power_ups/, art-archive/T-587/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,11 +43,11 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/art/power_ups/grinding_wheels.png is the PixelLab icon, matching the others' size; the generations are in art-archive/T-587/. (QA: pass / fail)
-- [ ] It scores 8 or more in the style loop, or is noted for the playtest; no more than 4 generations, counted in the result notes. (QA: pass / fail)
-- [ ] docs/visual-style.md records it. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-587/screenshots/ shows it beside the other power-up icons and on a gift card. (QA: pass / fail)
+- [ ] game/art/power_ups/grinding_wheels.png is the PixelLab icon, matching the others' size; the generations are in art-archive/T-587/. (QA: pass)
+- [ ] It scores 8 or more in the style loop, or is noted for the playtest; no more than 4 generations, counted in the result notes. (QA: pass)
+- [ ] docs/visual-style.md records it. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A screenshot in art-archive/T-587/screenshots/ shows it beside the other power-up icons and on a gift card. (QA: pass)
 
 ## Updates
 
@@ -60,6 +60,10 @@ Started: the Grinding Wheels icon (PixelLab, up to 4 generations).
 ### 2026-11-08, In progress → In QA
 
 Icon made: a wheel on a rail with sparks; 6/10, kept for your playtest; 2 of 4 generations. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. The icon (6/10) is ready to see: C:\solid-carbide-worktrees\T-587 (in a run press N, then + on Grinding Wheels).
 
 ## Style review
 
