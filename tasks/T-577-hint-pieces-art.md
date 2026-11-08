@@ -1,7 +1,7 @@
 ---
 id: T-577
 title: Art: the hint pieces' icons and sign (PixelLab)
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -55,10 +55,16 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: the W keycap sample first, then the board's review.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+PLAN (sample, W keycap): style loop art run, at most 4 PixelLab generations (create-image-pixflux 64x64, 600 s timeout, one per version; free script fixes (clean W letter, colour remap) before any refine). 30-generation cap for the ticket; this sample uses at most 4 of them. Brief: art-archive/T-577/brief_gas.md.
+
+BLOCKED before any generation: the style loop's generator stopped with 'You've hit your 5-hour limit, resets 6am (Europe/London)'. 0 PixelLab generations used, no art changed (placeholders intact). The generator had written game/tools/build_hint_keycap.py and test_build_hint_keycap.py (untracked, unreviewed). Rerun after 6am: python tools/style_loop/run.py art --task T-577 --brief art-archive/T-577/brief_gas.md --out game/art/hints/hint_gas.png --size 64x64
