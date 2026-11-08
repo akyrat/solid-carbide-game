@@ -2222,6 +2222,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **A Settings screen from the main menu** (board, 2026-11-07; replaces a music toggle on the main menu, T-567, cancelled before it merged): a **Settings** button on the main menu opens a Settings screen with the pause screen's settings that make sense outside a run: the music volume (and the SFX volume when the sound effects are switched on), the camera zoom, Camera smoothing, Dynamic camera, Rain, the drift guide and the jump arrow. Left out, since they need a run: the HUD size slider, the HUD layout editor, the trick list, Restart and Exit, the min and max zoom tools and god mode. They are the same saved settings as the pause screen's, so a change in one shows in the other, and they are kept between sessions. The screen's look and the button's place are proposals for the playtest. (T-570, T-571)
 - **The tutorial comes back with each new itch.io build** (board, 2026-11-07): every time the board pushes a new build to itch.io, the tutorial slides show again before the first run for every player, even if they ticked "Don't show again" for an earlier build; ticking it again hides them until the next new build. The desktop game, where nothing is pushed, keeps today's behaviour. (T-572)
 - **No Skip on the last tutorial slide** (board, 2026-11-07): the last slide (the kaiju timeline, with Go live and "Don't show again") has no Skip button, since Go live already starts the run. The other slides keep theirs. (T-568)
+- **No button looks selected when a menu opens** (board, 2026-11-08): opening the garage, the Cosmetics screen or any other menu or screen shows no button as selected or highlighted. A button shows as selected only once the player uses the keyboard to move between buttons (arrows, Tab), and the mouse hover works as before. Keyboard play keeps working: the first key press shows the selection where it starts. Where today a key like Enter acts on the first button straight away, the agent proposes whether it still does. (T-573)
 
 ### Content
 
@@ -2586,4 +2587,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `7ef3543e0889e93278ac8b56e1e557974ee4e84545b28ea7afba46e9ef7579d1` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `f27901749fd83f426dbe915031e0b9969aea1543783edc986a43e2a5e8432479` |
+| `hud-and-menus.md` | `afb92fc116ed4c83a181b3f61f64fb7277a1e17e05b66b1c13a9f6fa707aa237` |
