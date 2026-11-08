@@ -15,12 +15,14 @@ parts of the style loop around one PixelLab call per version, like build_hint_ke
         The free fixes on PixelLab's output: alpha snapped to 0 or 255, the canvas outside the arrow cleared,
         arrow pixels PixelLab lost filled from the script's own, the palette cut to at most 30 colours
         (reduce_palette.py), or with --snap every pixel mapped to the script's six colours. 8-bit RGBA PNG.
-    python game/tools/build_hint_arrow.py polish IN.png OUT.png [--bold]
+    python game/tools/build_hint_arrow.py polish IN.png OUT.png [--bold] [--wide]
         The style loop's free fixes for rule 2 and rule 4 (T-577 v2) on a finished arrow: the outline snapped to
         exact near-black with longer highlight runs breaking it, a two-pixel rim light with a near-white edge on
         the upper-left, two-step shade bands on the lower-right, worn-paint specks, and a two-ring stepped glow
         halo outside the outline (rule 5). PixelLab's plain body pixels stay. --bold (v3) reads at native 64 px:
         a two-pixel near-black outline with no halo, longer near-white runs breaking it, three shade steps.
+        --wide (v4) is bolder still: a 44 x 58 footprint, a three-pixel highlight band, three two-pixel shade
+        steps, near-white runs in more places and worn-paint scuff dashes, all visible at 64 px.
     python game/tools/build_hint_arrow.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -62,15 +64,23 @@ GLINT_ROWS = range(HEAD_TOP + 5, HEAD_TOP + 9)
 SHAFT_GLINT_ROWS = range(HEAD_TOP + HEAD_ROWS + 2, HEAD_TOP + HEAD_ROWS + 8)
 
 
-def arrow_cells() -> set[tuple[int, int]]:
+# The bolder footprint of the v4 pass (`wide`): 44 x 58 px, the head 44 px wide and 22 rows, the shaft 18 px.
+GEOM = {
+    False: {"head_top": HEAD_TOP, "head_rows": HEAD_ROWS, "shaft": (SHAFT_X0, SHAFT_X1), "bottom": BOTTOM},
+    True: {"head_top": 3, "head_rows": 22, "shaft": (23, 40), "bottom": 60},
+}
+
+
+def arrow_cells(wide: bool = False) -> set[tuple[int, int]]:
     """Every pixel of the arrow's silhouette, outline included."""
+    g = GEOM[wide]
     cells = set()
-    for k in range(HEAD_ROWS):
-        y = HEAD_TOP + k
+    for k in range(g["head_rows"]):
+        y = g["head_top"] + k
         for x in range(31 - k, 33 + k):
             cells.add((x, y))
-    for y in range(HEAD_TOP + HEAD_ROWS, BOTTOM + 1):
-        for x in range(SHAFT_X0, SHAFT_X1 + 1):
+    for y in range(g["head_top"] + g["head_rows"], g["bottom"] + 1):
+        for x in range(g["shaft"][0], g["shaft"][1] + 1):
             cells.add((x, y))
     return cells
 
@@ -134,15 +144,28 @@ BOLD_GLINT_ROWS = range(HEAD_TOP + 3, HEAD_TOP + 13)
 BOLD_SHAFT_GLINT_ROWS = range(HEAD_TOP + HEAD_ROWS + 2, HEAD_TOP + HEAD_ROWS + 14)
 
 
-def strong_layers(bold: bool = False) -> dict[str, set[tuple[int, int]]]:
+# Worn-paint scuff dashes of the v4 pass: (x, y, length, role), on the plain body only.
+SCUFFS = ((30, 12, 2, "mid"), (33, 15, 3, "mid"), (27, 19, 2, "shade"), (36, 19, 3, "mid"), (29, 30, 3, "mid"),
+          (30, 36, 2, "shade"), (28, 43, 3, "mid"), (31, 46, 2, "mid"), (29, 50, 3, "shade"))
+
+
+def strong_layers(bold: bool = False, wide: bool = False) -> dict[str, set[tuple[int, int]]]:
     """The polished arrow's pixels by role (T-577 v2, the style loop's rule 2 fixes): the outline with longer
     glint runs breaking it, a two-pixel rim light with a near-white edge on the upper-left, two-step shade bands
     on the lower-right, and a two-ring glow halo outside the outline.
 
     `bold` (v3) is the pass that reads at native 64 px: a two-pixel exact near-black outline and no outer halo
     (at 64 px the halo read as a purple-tinted outline), longer near-white runs breaking the outline on the head's
-    left slope and the shaft's left, and three stepped shade colours (deep, shade, mid) on the lower-right."""
-    cells = arrow_cells()
+    left slope and the shaft's left, and three stepped shade colours (deep, shade, mid) on the lower-right.
+
+    `wide` (v4, implies bold) is the pass that shows its shading at 64 px: the bolder 44 x 58 footprint, a
+    three-pixel highlight band on the left, three two-pixel shade steps on the right, near-white runs breaking
+    the outline on a longer stretch of the head's slope and in two places on the shaft, and scuff dashes."""
+    bold = bold or wide
+    g = GEOM[wide]
+    head_top, head_rows = g["head_top"], g["head_rows"]
+    shaft_x0 = g["shaft"][0]
+    cells = arrow_cells(wide)
 
     def nbrs8(p):
         x, y = p
@@ -158,26 +181,44 @@ def strong_layers(bold: bool = False) -> dict[str, set[tuple[int, int]]]:
               if (x - 1, y) in outline or ((x, y - 1) in outline and (x + 1, y) not in outline)}
     light2 = {(x, y) for x, y in body - light1
               if ((x - 1, y) in light1 or (x, y - 1) in light1) and (x + 1, y) not in outline}
-    rest = body - light1 - light2
+    light3 = set()
+    if wide:
+        light3 = {(x, y) for x, y in body - light1 - light2
+                  if ((x - 1, y) in light2 or (x, y - 1) in light2) and (x + 1, y) not in outline}
+    rest = body - light1 - light2 - light3
     steps = []
     frontier = outline
-    for _ in range(4):
+    for _ in range(6):
         step = {(x, y) for x, y in rest if (x + 1, y) in frontier or (x, y + 1) in frontier}
         rest -= step
         steps.append(step)
         frontier = step
-    if bold:
+    if wide:
+        deep, shade, mid = steps[0] | steps[1], steps[2] | steps[3], steps[4] | steps[5]
+    elif bold:
         deep, shade, mid = steps[0], steps[1], steps[2] | steps[3]
+        rest |= steps[4] | steps[5]
     else:
         deep, shade, mid = set(), steps[0] | steps[1], steps[2] | steps[3]
+        rest |= steps[4] | steps[5]
     # The near-white edge: the first lit pixel along the head's left slope.
-    edge = {(x, y) for x, y in light1 if y < HEAD_TOP + HEAD_ROWS and (x - 1, y) in outline}
+    edge = {(x, y) for x, y in light1 if y < head_top + head_rows and (x - 1, y) in outline}
+    if wide:
+        glint_rows = range(head_top + 3, head_top + 16)
+        shaft_glint_rows = list(range(head_top + head_rows + 2, head_top + head_rows + 14)) + \
+            list(range(head_top + head_rows + 18, head_top + head_rows + 26))
+    else:
+        glint_rows = BOLD_GLINT_ROWS if bold else STRONG_GLINT_ROWS
+        shaft_glint_rows = BOLD_SHAFT_GLINT_ROWS if bold else STRONG_SHAFT_GLINT_ROWS
     glint = set()
-    for y in (BOLD_GLINT_ROWS if bold else STRONG_GLINT_ROWS):
-        k = y - HEAD_TOP
+    for y in glint_rows:
+        k = y - head_top
         glint.update({(31 - k, y), (32 - k, y), (33 - k, y), (34 - k, y)} & outline)
-    shaft_cols = (SHAFT_X0, SHAFT_X0 + 1) if bold else (SHAFT_X0,)
-    shaft_glint = {(x, y) for y in (BOLD_SHAFT_GLINT_ROWS if bold else STRONG_SHAFT_GLINT_ROWS) for x in shaft_cols} & outline
+    shaft_cols = (shaft_x0, shaft_x0 + 1) if bold else (shaft_x0,)
+    shaft_glint = {(x, y) for y in shaft_glint_rows for x in shaft_cols} & outline
+    if wide:
+        glint |= shaft_glint      # on the shaft too the runs are near-white, so they show at 64 px
+        shaft_glint = set()
     if bold:
         ring1, ring2 = set(), set()
     else:
@@ -185,10 +226,16 @@ def strong_layers(bold: bool = False) -> dict[str, set[tuple[int, int]]]:
         ring2 = {q for p in ring1 for q in nbrs8(p)
                  if q not in cells and q not in ring1 and 0 <= q[0] < SIZE and 0 <= q[1] < SIZE}
     wear = {p for p in WEAR if p in rest}
+    scuff_mid, scuff_shade = set(), set()
+    if wide:
+        for x, y, n, role in SCUFFS:
+            dash = {(x + i, y) for i in range(n)} & rest
+            (scuff_mid if role == "mid" else scuff_shade).update(dash)
     return {
         "outline": outline - glint - shaft_glint, "glint": glint, "shaft_glint": shaft_glint,
-        "edge": edge, "light": (light1 | light2) - edge, "mid": mid, "shade": shade, "deep": deep,
-        "wear": wear, "body": rest - wear, "glow1": ring1, "glow2": ring2,
+        "edge": edge, "light": (light1 | light2 | light3) - edge, "mid": mid | scuff_mid,
+        "shade": shade | scuff_shade, "deep": deep, "wear": wear,
+        "body": rest - wear - scuff_mid - scuff_shade, "glow1": ring1, "glow2": ring2,
     }
 
 
@@ -198,20 +245,21 @@ STRONG_COLOURS = {
 }
 
 
-def polish(im: Image.Image, bold: bool = False) -> Image.Image:
-    """The free fixes on a finished arrow (T-577 v2, `bold` v3): every role but the plain body is repainted from
-    strong_layers(), so PixelLab's body pixels stay where they can and the outline is exactly near-black."""
+def polish(im: Image.Image, bold: bool = False, wide: bool = False) -> Image.Image:
+    """The free fixes on a finished arrow (T-577 v2, `bold` v3, `wide` v4): every role but the plain body is
+    repainted from strong_layers(), so PixelLab's body pixels stay where they can and the outline is exactly
+    near-black. The wide pass's new body pixels take the spec blush."""
     im = im.convert("RGBA")
     if im.size != (SIZE, SIZE):
         im = im.resize((SIZE, SIZE), Image.NEAREST)
     px = im.load()
-    if bold:
-        shape = arrow_cells()
+    if bold or wide:
+        shape = arrow_cells(wide)
         for y in range(SIZE):
             for x in range(SIZE):
                 if (x, y) not in shape:
                     px[x, y] = (0, 0, 0, 0)   # no halo: anything outside the silhouette goes
-    for role, cells in strong_layers(bold).items():
+    for role, cells in strong_layers(bold, wide).items():
         if role == "body":
             for x, y in cells:
                 if px[x, y][3] != 255:
@@ -317,6 +365,7 @@ def main(argv=None) -> int:
     q.add_argument("src")
     q.add_argument("out")
     q.add_argument("--bold", action="store_true", help="the pass that reads at native 64 px (T-577 v3)")
+    q.add_argument("--wide", action="store_true", help="the bolder 44 x 58 pass with wider shading bands (T-577 v4)")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -335,7 +384,7 @@ def main(argv=None) -> int:
         save_png(im, Path(args.out))
     elif args.cmd == "polish":
         with Image.open(args.src) as src:
-            im = reduce_image(polish(src, args.bold), 30)
+            im = reduce_image(polish(src, args.bold, args.wide), 30)
         save_png(im, Path(args.out))
     else:
         with Image.open(args.src) as src:

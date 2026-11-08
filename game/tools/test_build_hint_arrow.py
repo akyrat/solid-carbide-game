@@ -177,6 +177,44 @@ class TestBoldPolish(unittest.TestCase):
         self.assertFalse(opaque_colours(self.out) & GREENBULL)
 
 
+class TestWidePolish(unittest.TestCase):
+    def setUp(self):
+        self.out = arrow.polish(arrow.arrow(), wide=True)
+        self.px = self.out.load()
+        self.lay = arrow.strong_layers(wide=True)
+
+    def test_bolder_44_by_58_footprint_centred_and_pointing_up(self):
+        self.assertEqual(self.out.getbbox(), (10, 3, 54, 61))
+        self.assertEqual({x for x in range(64) if self.px[x, 3][3] == 255}, {31, 32})
+        self.assertEqual({x for x in range(64) if self.px[x, 60][3] == 255}, set(range(23, 41)))
+        cells = arrow.arrow_cells(wide=True)
+        self.assertEqual(cells, {(63 - x, y) for x, y in cells})
+        self.assertEqual({(x, y) for y in range(64) for x in range(64) if self.px[x, y][3] == 255}, cells)
+        self.assertTrue(all(p[3] in (0, 255) for p in self.out.getdata()))
+
+    def test_wide_highlight_band_and_three_two_pixel_shade_steps(self):
+        self.assertEqual([self.px[x, 41] for x in (23, 24)], [arrow.INK, arrow.INK])   # between the two runs
+        self.assertEqual([self.px[x, 45] for x in (25, 26, 27)], [arrow.BLUSH_LIGHT] * 3)
+        self.assertEqual([self.px[x, 45] for x in (38, 37, 36, 35, 34, 33)],
+                         [arrow.BLUSH_DEEP] * 2 + [arrow.BLUSH_SHADE] * 2 + [arrow.BLUSH_MID] * 2)
+        self.assertEqual(self.px[30, 45], arrow.BLUSH)
+        self.assertEqual([self.px[31, y] for y in (58, 57, 56, 55, 54, 53)],
+                         [arrow.BLUSH_DEEP] * 2 + [arrow.BLUSH_SHADE] * 2 + [arrow.BLUSH_MID] * 2)
+
+    def test_near_white_runs_break_the_outline_on_the_head_and_twice_on_the_shaft(self):
+        self.assertEqual([self.px[x, 30] for x in (23, 24)], [arrow.GLINT] * 2)
+        self.assertEqual([self.px[x, 46] for x in (23, 24)], [arrow.GLINT] * 2)
+        self.assertEqual([self.px[x, 40] for x in (23, 24)], [arrow.INK] * 2)    # the gap between the two runs
+        self.assertEqual([self.px[x, 17] for x in (17, 18, 19, 20)], [arrow.GLINT] * 4)   # the head's slope, k=14
+        self.assertGreater(len(self.lay["glint"]), 60)
+
+    def test_scuff_dashes_sit_on_the_plain_body_only(self):
+        self.assertEqual([self.px[x, 30] for x in (29, 30, 31)], [arrow.BLUSH_MID] * 3)
+        self.assertEqual([self.px[x, 36] for x in (30, 31)], [arrow.BLUSH_SHADE] * 2)
+        self.assertLessEqual(len(opaque_colours(self.out)), 30)
+        self.assertFalse(opaque_colours(self.out) & GREENBULL)
+
+
 class TestCli(unittest.TestCase):
     def test_init_request_finish_and_preview_write_files(self):
         import tempfile
