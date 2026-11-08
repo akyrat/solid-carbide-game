@@ -97,7 +97,6 @@ func _ready() -> void:
 	back_button.pressed.connect(go_back)
 	column.add_child(back_button)
 	_link_focus()
-	back_button.grab_focus()
 
 
 ## A text from data/pause_text.json by its key (T-570's settings_button, settings_title,
@@ -217,6 +216,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		go_back()
 
 
-## W, A, S, D move the selection like the arrow keys (T-492).
+## W, A, S, D move the selection like the arrow keys (T-492). T-573: nothing is selected on opening;
+## the first arrow or Tab selects Back.
 func _unhandled_key_input(event: InputEvent) -> void:
-	KeyNav.handle_wasd(event, self)
+	KeyNav.handle_keys(event, self, back_button)

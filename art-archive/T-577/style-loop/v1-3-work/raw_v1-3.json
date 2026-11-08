@@ -1,0 +1,47 @@
+{
+  "file": "raw_v1-3.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "one bold straight arrow road marking seen straight from above, flat top-down view, pointing straight up, a thick straight shaft and a wide triangular head, painted in pale pink, lighter highlight along the top-left edges, dusky darker pink shade along the lower-right edges, near-black outline, slightly worn paint texture, retro night arcade look, crisp pixel art, no gradients, transparent background",
+    "negative_description": "text, letters, words, road, asphalt, background, keycap, button, box, frame, several arrows, curved, bent, drop shadow, blur, gradient, photo, 3d render, tilted, perspective",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "text_guidance_scale": 8.0,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "view": "high top-down",
+    "init_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABgUlEQVR4nO3aMU7DQBQE0PEorVMiBA2IAgo4Ax0lJcfgBlScAO5AwwmouAMKBSmQaUAIuqQIEoWRiYIMBc7G2f0bzz4pTeT4e0ZrSxsZSJIkMZLnm2X1gSFaDa4HtyyBFkNngUePD7g+Pfv1XecLyGvhJ8U7dg/2TUugZfjK+vaGaQlZqEHl5HMabPzxE77utXjBcHCPk8vz6WHj56wzK6BsCG+5EhhDeMsSGEt4qxLo68TVhffXtpzCW5TAUE97V6FKYIzhQ5bAWMOHKoExhw9RAmMP77sErkJ4nyVwVcL7KiFbRvji9q7xohdR7Q/+s4y9Q9Y2/M3FVePxh8dHzjNmm6N5tCkhc/3BIkvO9Rb5uzN04VpCz/eAtveo720xIY6+B4zenhAzQhwhjhBHiCPE0feA77/FIkaII8QR4ghxhDhCHCGOEEeII8QR4ghxhDhCHCGOEEeII8QR4ghxhDhCHCGOENcLNajpfZ/OFzCc832fThbQ39kLMSZJkgSuvgChhOdGTq2uzwAAAABJRU5ErkJggg=="
+    },
+    "init_image_strength": 500
+  },
+  "prompt": "one bold straight arrow road marking seen straight from above, flat top-down view, pointing straight up, a thick straight shaft and a wide triangular head, painted in pale pink, lighter highlight along the top-left edges, dusky darker pink shade along the lower-right edges, near-black outline, slightly worn paint texture, retro night arcade look, crisp pixel art, no gradients, transparent background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-08T06:37:24+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "game/docs/level/hint-pieces.md",
+    "art-archive/T-577/brief_arrow_straight.md",
+    "game/art/hints/hint_gas.png"
+  ],
+  "task": "T-577",
+  "job_status": null,
+  "notes": "T-577 straight arrow v1: script init (build_hint_arrow.py) at strength 500",
+  "generator": "game/tools/pixellab_client.py"
+}

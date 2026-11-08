@@ -25,7 +25,8 @@ if [ $# -eq 0 ] && [ "$jobs" -gt 1 ] 2>/dev/null; then
   done
   timeout -k 5 "$((limit + 30))" "$PY" "$GAME_DIR/tools/run_tests_parallel.py" --jobs "$jobs" --limit "$limit"
   code=$?
-  if [ $code -eq 0 ]; then echo "TESTS PASSED"; else echo "TESTS FAILED (exit $code)" >&2; fi
+  # The runner prints the final TESTS PASSED / TESTS FAILED line itself (with wall time and process count); it is missing only if the runner could not start or was killed.
+  if [ $code -eq 2 ] || [ $code -eq 137 ]; then echo "TESTS FAILED (exit $code)" >&2; fi
   exit $code
 fi
 

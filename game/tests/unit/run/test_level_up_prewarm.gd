@@ -13,6 +13,12 @@ func before_each() -> void:
 	run.minions.enabled = false
 
 
+## T-589: the pickup test opens the level-up screen, which pauses the tree; a paused tree left
+## behind made a later script's wait_seconds wait for ever (the shard never ended).
+func after_each() -> void:
+	get_tree().paused = false
+
+
 func test_prewarmed_with_the_run_and_left_clean() -> void:
 	var s = run.level_up_screen
 	assert_true(s.prewarmed, "prewarm ran when the run was set up")

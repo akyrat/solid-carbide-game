@@ -224,14 +224,14 @@ func is_trick_list_open() -> bool:
 func open_trick_list() -> void:
 	strip.visible = false
 	trick_panel.visible = true
-	trick_back_button.grab_focus()
+	KeyNav.clear_selection(self)  # T-573
 
 
 ## Back to the pause screen; its controls were never touched.
 func close_trick_list() -> void:
 	trick_panel.visible = false
 	strip.visible = true
-	trick_list_button.grab_focus()
+	KeyNav.clear_selection(self)  # T-573: the arrows select Resume again
 
 
 ## The "Restart" and "Exit" buttons (T-327): a row at the bottom of the strip, in its look.
@@ -398,8 +398,7 @@ func open_god_mode() -> void:
 
 func _on_god_mode_closed() -> void:
 	strip.visible = true
-	if visible and god_mode_button != null:
-		god_mode_button.grab_focus()
+	KeyNav.clear_selection(self)  # T-573
 
 
 func is_hud_layout_open() -> bool:
@@ -423,8 +422,7 @@ func _on_hud_layout_done() -> void:
 		GameSettingsScript.save_hud_layout(h.layout)
 	_dim.visible = true
 	strip.visible = true
-	if visible:
-		hud_layout_button.grab_focus()
+	KeyNav.clear_selection(self)  # T-573
 
 
 ## The HUD the HUD size slider scales: the target's `hud` (a run has one, the drift prototype not).
@@ -617,6 +615,18 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## T-573: with nothing selected, the first arrow, Tab, W, A, S or D selects Resume (Back on the trick
+## list); Enter or Space does the same, so it never presses an unseen button. The god mode page and the
+## HUD layout editor handle their own keys.
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not visible or is_god_mode_open() or is_hud_layout_open():
+		return
+	if is_trick_list_open():
+		KeyNav.handle_keys(event, self, trick_back_button)
+	elif strip.visible:
+		KeyNav.handle_keys(event, self, resume_button)
+
+
 func is_paused() -> bool:
 	return get_tree().paused
 
@@ -659,7 +669,7 @@ func pause() -> void:
 	refresh_camera_controls()
 	get_tree().paused = true
 	visible = true
-	resume_button.grab_focus()  # keyboard: Up/Down move down the column, Enter presses
+	KeyNav.clear_selection(self)  # T-573: nothing selected; the first arrow or Tab selects Resume
 	_camera_follows_while_paused(true)
 
 

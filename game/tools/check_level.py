@@ -6,16 +6,27 @@ also checks that:
 
 - every building, rooftop (platform), ramp and boulder (pattern_copies[].boulders, a centre and a
   diameter) lies inside the map's rect (map.rect);
-- the edges of buildings, rooftops and ramps lie on even units (enemy_navigation.gd's CELL = 2);
+- the edges of buildings, rooftops and ramps lie on whole quarter units (STEP, the level creator's free
+  placement step, LevelDocument.FREE_STEP; T-581). Before T-581 they had to lie on even units
+  (enemy_navigation.gd's CELL = 2); the game now works with pieces off that grid, so a level saved on the
+  grid passes as before;
 - every prop (props: {id, asset, rotation, x, y, w, h}, T-253) names a prop of data/level/props.json and
   one of its rotations, has the footprint of that prop turned to that rotation, and lies inside the map;
 - every meteor crater (craters: {id, asset, x, y, w, h}, T-398) names a crater of data/level/craters.json,
   has its footprint and lies inside the map (a sidewalk is ground tiles, like the roads: nothing to check);
+- every hint piece (hints: {id, icon, mode, heading, mirror, x, y, w, h}, T-576) has a unique id, names an
+  icon of data/level/hints.json, a mode (ground or sign) and one of its headings, is mirrored only when its
+  icon can be (the curved and circular arrows), has its mode's footprint and lies inside the map (the
+  same format as scripts/level/level_hints.gd); a level without hints is fine;
 - every pair (pairs: {id, a, b}, T-272, thread the needle) names two different obstacles that exist:
   a boulder by its pattern copy's id (a copy of one boulder) or "<copy id>/<index>", or a prop of the
   Obstacles group (data/level/creator_assets.json's families in group "obstacles") by its id; an
   obstacle can be in several pairs (T-394, a row paired as a chain), but the same two obstacles make
   one pair at most (scripts/level/obstacle_pairs.gd, the same rules);
+- every needle route (routes: {id, order, pairs}, T-592) has a unique id, an order "in_order" or
+  "random", and a list of at least one pair id, each naming a pair of the level, with no pair twice in
+  a route or in two routes (scripts/level/needle_routes.gd, the same format); a level without routes
+  is fine;
 - the level has a spawn point (spawn: {x, y, heading}, T-280): a heading that is a multiple of 45
   degrees, inside the map and where a car can stand (clear of every building, prop and boulder; a
   rooftop or ramp is fine), the same rules as scripts/level/level_spawn.gd;
@@ -37,7 +48,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_height_data  # noqa: E402
 
-CELL = 2.0  # enemy_navigation.gd's CELL (units)
+STEP = 0.25  # T-581: the level creator's free placement step (level_document.gd FREE_STEP), units
 EPS = 1e-6
 
 
@@ -51,8 +62,8 @@ def _inside(inner, outer):
             and inner[2] <= outer[2] + EPS and inner[3] <= outer[3] + EPS)
 
 
-def _on_cell(v):
-    q = v / CELL
+def _on_step(v):
+    q = v / STEP
     return abs(q - round(q)) <= EPS
 
 
@@ -144,6 +155,66 @@ def check_craters(data, map_rect):
     return problems
 
 
+HINTS_JSON = Path(__file__).resolve().parent.parent / "data" / "level" / "hints.json"
+HINT_MODES = ("ground", "sign")
+
+
+def check_hints(data, map_rect):
+    """Problems with the level's hint pieces (T-576): see the module's docstring."""
+    hints = data.get("hints")
+    if hints is None:
+        return []
+    if not isinstance(hints, list):
+        return ["hints: must be a list"]
+    try:
+        spec = json.loads(HINTS_JSON.read_text(encoding="utf-8"))
+        icons = {i["id"]: i for i in spec["icons"]}
+        headings = [int(h) for h in spec["headings"]]
+    except (OSError, ValueError, KeyError):
+        return ["hints: can't read %s" % HINTS_JSON.name]
+    problems, seen = [], set()
+    for i, it in enumerate(hints):
+        if not isinstance(it, dict):
+            problems.append("hint #%d: must be an object {id, icon, mode, heading, mirror, x, y, w, h}" % i)
+            continue
+        hid = it.get("id")
+        name = "hint %r" % hid if isinstance(hid, str) and hid else "hint #%d" % i
+        if not isinstance(hid, str) or not hid:
+            problems.append("%s: needs an id" % name)
+        elif hid in seen:
+            problems.append("%s: the id is used twice" % name)
+        else:
+            seen.add(hid)
+        icon = icons.get(it.get("icon"))
+        if icon is None:
+            problems.append("%s: unknown icon %r" % (name, it.get("icon")))
+        mode = it.get("mode")
+        if mode not in HINT_MODES:
+            problems.append("%s: unknown mode %r (ground or sign)" % (name, mode))
+        heading = it.get("heading")
+        if isinstance(heading, bool) or not isinstance(heading, (int, float)) or int(heading) != heading \
+                or int(heading) not in headings:
+            problems.append("%s: heading must be one of %s" % (name, ", ".join(str(h) for h in sorted(headings))))
+        mirror = it.get("mirror", False)
+        if not isinstance(mirror, bool):
+            problems.append("%s: mirror must be true or false" % name)
+        elif mirror and icon is not None and not icon.get("mirror"):
+            problems.append("%s: a %s can't be mirrored" % (name, it.get("icon")))
+        try:
+            r = _rect(it)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            problems.append("%s: needs numbers x, y, w, h" % name)
+            continue
+        if mode in HINT_MODES:
+            fw, fh = (float(v) for v in spec[mode]["footprint_units"])
+            if abs((r[2] - r[0]) - fw) > EPS or abs((r[3] - r[1]) - fh) > EPS:
+                problems.append("%s: its footprint is %g x %g, a %s hint is %g x %g"
+                                % (name, r[2] - r[0], r[3] - r[1], mode, fw, fh))
+        if map_rect is not None and not _inside(r, map_rect):
+            problems.append("%s: lies outside the map" % name)
+    return problems
+
+
 CATALOGUE_JSON = Path(__file__).resolve().parent.parent / "data" / "level" / "creator_assets.json"
 
 
@@ -217,6 +288,49 @@ def check_pairs(data):
     return problems
 
 
+ROUTE_ORDERS = ("in_order", "random")  # needle_routes.gd's ORDERS
+
+
+def check_routes(data):
+    """Problems with the level's needle routes (T-592): each {id, order, pairs} has a unique id, an
+    order of ROUTE_ORDERS and at least one pair id naming a pair of the level; a pair is in one route
+    at most, once."""
+    routes = data.get("routes", [])
+    if not isinstance(routes, list):
+        return ["routes: must be a list"]
+    pairs = data.get("pairs", [])
+    pair_ids = {p.get("id") for p in pairs if isinstance(p, dict)} if isinstance(pairs, list) else set()
+    problems = []
+    ids = set()
+    in_route = {}
+    for i, r in enumerate(routes):
+        name = "route %r" % r.get("id") if isinstance(r, dict) and r.get("id") else "route #%d" % i
+        if not isinstance(r, dict):
+            problems.append("%s: must be an object {id, order, pairs}" % name)
+            continue
+        rid = r.get("id")
+        if not isinstance(rid, str) or rid == "":
+            problems.append("%s: needs an id" % name)
+        elif rid in ids:
+            problems.append("%s: the id is used twice" % name)
+        else:
+            ids.add(rid)
+        if r.get("order") not in ROUTE_ORDERS:
+            problems.append("%s: order must be one of %s" % (name, ", ".join(ROUTE_ORDERS)))
+        rp = r.get("pairs")
+        if not isinstance(rp, list) or not rp:
+            problems.append("%s: pairs must be a list of at least one pair id" % name)
+            continue
+        for pid in rp:
+            if not isinstance(pid, str) or pid not in pair_ids:
+                problems.append("%s: %r is not a pair of the level" % (name, pid))
+            elif pid in in_route:
+                problems.append("%s: %r is already in %s" % (name, pid, in_route[pid]))
+            else:
+                in_route[pid] = name
+    return problems
+
+
 GAME_MAPS_DIR = Path(__file__).resolve().parent.parent / "data" / "level"  # the game's own maps
 SPAWN_CLEARANCE = 1.0 # level_spawn.gd's CLEARANCE (units)
 SPAWN_HEADING_STEP = 45  # level_spawn.gd's HEADING_STEP (degrees)
@@ -254,6 +368,17 @@ def check_spawn(data, map_rect, require=True):
             if (r[0] - SPAWN_CLEARANCE + EPS < x < r[2] + SPAWN_CLEARANCE - EPS
                     and r[1] - SPAWN_CLEARANCE + EPS < y < r[3] + SPAWN_CLEARANCE - EPS):
                 return ["spawn: a car can't stand there, it is on %s %r" % (key[:-1], it.get("id", i))]
+    for it in data.get("hints", []) if isinstance(data.get("hints"), list) else []:
+        # T-576: a hint sign stands like a prop (a ground hint is painted on the street).
+        if not isinstance(it, dict) or it.get("mode") != "sign":
+            continue
+        try:
+            r = _rect(it)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            continue
+        if (r[0] - SPAWN_CLEARANCE + EPS < x < r[2] + SPAWN_CLEARANCE - EPS
+                and r[1] - SPAWN_CLEARANCE + EPS < y < r[3] + SPAWN_CLEARANCE - EPS):
+            return ["spawn: a car can't stand there, it is on hint sign %r" % it.get("id", "?")]
     for copy in data.get("pattern_copies", []) or []:
         for b in (copy.get("boulders", []) if isinstance(copy, dict) else []):
             try:
@@ -309,8 +434,8 @@ def check_level(data, require_spawn=True):
             label = name.replace(key[:-1], kind, 1)
             if map_rect is not None and not _inside(r, map_rect):
                 problems.append("%s: lies outside the map" % label)
-            if not all(_on_cell(v) for v in r):
-                problems.append("%s: an edge is on an odd unit (edges lie on multiples of %g)" % (label, CELL))
+            if not all(_on_step(v) for v in r):
+                problems.append("%s: an edge is off the quarter-unit step (edges lie on multiples of %g)" % (label, STEP))
 
     if map_rect is not None:
         for copy in data.get("pattern_copies", []) or []:
@@ -326,7 +451,9 @@ def check_level(data, require_spawn=True):
 
     problems.extend(check_props(data, map_rect))
     problems.extend(check_craters(data, map_rect))
+    problems.extend(check_hints(data, map_rect))
     problems.extend(check_pairs(data))
+    problems.extend(check_routes(data))
     problems.extend(check_spawn(data, map_rect, require_spawn))
     problems.extend(check_start_points(data, map_rect))
 

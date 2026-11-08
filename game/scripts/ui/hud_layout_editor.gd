@@ -78,7 +78,7 @@ func open() -> void:
 	dragging = ""
 	_hover = ""
 	visible = true
-	done_button.grab_focus()
+	KeyNav.clear_selection(self)  # T-573: nothing selected until a key moves
 	queue_redraw()
 
 
@@ -139,6 +139,12 @@ func drag_to(at: Vector2) -> void:
 func release() -> void:
 	dragging = ""
 	queue_redraw()
+
+
+## T-573: the first arrow or Tab selects Done; W, A, S, D move the selection after that.
+func _unhandled_key_input(event: InputEvent) -> void:
+	if visible:
+		KeyNav.handle_keys(event, self, done_button)
 
 
 func _gui_input(event: InputEvent) -> void:

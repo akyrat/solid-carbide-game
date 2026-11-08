@@ -8,7 +8,8 @@ extends RefCounted
 ##
 ## Pieces go at the clicked tile here: the piece's top-left corner on the corner of the 2 x 2 unit
 ## cell under the cursor. The editor snaps first (snapping.gd, T-237) and passes a point in the
-## snapped corner's cell.
+## snapped corner's cell. T-581 (free placement): the editor passes the corner itself (place's
+## `exact`), on FREE_STEP, whether it was snapped (Shift) or not.
 ##
 ## Rotate and mirror (T-236; Level design, Decisions, "Level creator"): a piece is placed in one of
 ## the views its catalogue entry lists ("views") and one of its mirrors ("mirrors"), and only
@@ -42,6 +43,10 @@ extends RefCounted
 ##   Obstacles group's props) named by their refs (ObstaclePairs); make_pair, unpair, pair_of.
 ##   Deleting either obstacle removes its pair. An obstacle can be in several pairs (T-394: a row
 ##   paired as a chain, make_chain); the same two obstacles make one pair at most (pair_between).
+## - route (T-592, needle routes; scripts/level/needle_routes.gd, the format): {id: "route-N", order:
+##   "in_order" | "random", pairs: [pair ids in click order]} in routes; a pair is in one route at most.
+##   add_to_route, set_route_order, remove_from_route. A pair that goes (Unpair, or an obstacle deleted)
+##   leaves its route, and a route left with no pairs goes too (_prune_routes).
 ## - sidewalk (T-398): ground tiles like the roads', painted with SidewalkBrush; every write of the
 ##   cells gives each sidewalk cell the tile of its curb piece (the roads next to it).
 ## - crater (T-398; data/level/craters.json): {id, asset, x, y, w, h} in craters, a meteor crater on
@@ -54,6 +59,9 @@ extends RefCounted
 ## - rail (T-542; scripts/level/rails.gd, the format): {id: "rail-N", x1, y1, z1, x2, y2, z2} in rails, a
 ##   straight bar between two points of the map at a height at each end (units above the street). Laid with
 ##   place_rail (no catalogue pose), changed with set_rail. Not a body: nothing blocks it being laid.
+## - hint (T-576; scripts/level/level_hints.gd, the format): {id: "hint-N", icon, mode, heading, mirror, x, y,
+##   w, h} in hints: the catalogue entry "hint-<icon>-<mode>" placed in a view (its heading, degrees) and a
+##   mirror; x, y, w, h = the mode's footprint. Not placed when it would reach out of the map.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -66,11 +74,17 @@ const GAME_GROUND_PATH := "res://data/level/mvp_ground.json"
 ## A new level is today's map's size (elevation_sample_map.json: 240 x 240 units, centred).
 const MAP_SIZE := 240
 const CELL := 2
+## T-581 (Level design, Decisions, "Free placement in the level creator"; a proposal): without Shift a
+## piece goes where the mouse drops it, its corner (and a dragged size) rounded to this step, units. A
+## quarter unit is finer than the eye sees at the creator's zoom, puts every corner on whole art pixels
+## (4 px across, 2 down at PX_PER_UNIT 16), is exact in binary (so the checks' "this edge lies on that
+## side" tests stay exact) and keeps the saved numbers short (at most two decimals: 13.75).
+const FREE_STEP := 0.25
 ## T-405: the short buildings are platforms (short_platforms.gd).
 const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
-const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail"]
+const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail", "hint"]
 ## T-441: the kaiju alert signs' geometry (one place, shared with the run).
 const KaijuSignsScript := preload("res://scripts/level/kaiju_signs.gd")
 ## T-542: the rails' format and check (one place, shared with the run).
@@ -190,7 +204,7 @@ static func ramp_width_axis(view: String) -> int:
 ## side from `size` on that axis (at least min_width_units), its length fixed (length_units),
 ## turned for its view.
 static func piece_size(asset_id: String, view: String = "", size: Vector2 = Vector2.ZERO,
-		limit: Vector2 = Vector2(MAP_SIZE, MAP_SIZE), mirror: bool = false) -> Vector2:
+		limit: Vector2 = Vector2(MAP_SIZE, MAP_SIZE), mirror: bool = false, step: float = CELL) -> Vector2:
 	var e := entry(asset_id)
 	if e.is_empty():
 		return Vector2.ZERO
@@ -203,20 +217,26 @@ static func piece_size(asset_id: String, view: String = "", size: Vector2 = Vect
 		var axis := ramp_width_axis(valid_view(asset_id, view))
 		var width := float(e.get("width_units", foot.x))
 		if size != Vector2.ZERO:
-			width = _even_at_least(size[axis], float(e.get("min_width_units", CELL)))
+			width = _even_at_least(size[axis], float(e.get("min_width_units", CELL)), step)
 		width = minf(width, limit[axis])
 		var length := float(e.get("length_units", foot.y))
 		return Vector2(width, length) if axis == 0 else Vector2(length, width)
 	if size == Vector2.ZERO:
 		return foot
 	var lo: Array = e.get("min_size_units", [CELL, CELL])
-	return Vector2(minf(_even_at_least(size.x, float(lo[0])), limit.x),
-		minf(_even_at_least(size.y, float(lo[1])), limit.y))
+	return Vector2(minf(_even_at_least(size.x, float(lo[0]), step), limit.x),
+		minf(_even_at_least(size.y, float(lo[1]), step), limit.y))
 
 
-## `v` rounded up to whole cells (even units), and at least `lo`.
-static func _even_at_least(v: float, lo: float) -> float:
-	return maxf(ceilf(v / CELL - 0.001) * CELL, lo)
+## `v` rounded up to whole cells (even units; T-581: to whole `step`s, FREE_STEP without Shift), and
+## at least `lo`.
+static func _even_at_least(v: float, lo: float, step: float = CELL) -> float:
+	return maxf(ceilf(v / step - 0.001) * step, lo)
+
+
+## T-581: a point rounded to FREE_STEP (each axis to the nearest step).
+static func on_step(v: Vector2) -> Vector2:
+	return Vector2(snappedf(v.x, FREE_STEP), snappedf(v.y, FREE_STEP))
 
 
 static func game_ground() -> Dictionary:
@@ -373,11 +393,12 @@ func refresh_ground_rows() -> void:
 		out.append(s)
 	for b in data.get("buildings", []):
 		var r := Rect2(float(b.x), float(b.y), float(b.w), float(b.h)).intersection(m)
-		var x0 := int(r.position.x - m.position.x)
-		var w := int(r.size.x)
-		if w <= 0:
+		# T-581: a building off the grid marks every unit it covers part of.
+		var x0 := floori(r.position.x - m.position.x + 0.001)
+		var w := ceili(r.end.x - m.position.x - 0.001) - x0
+		if w <= 0 or r.size.y <= 0.0:
 			continue
-		for y in range(int(r.position.y - m.position.y), int(r.end.y - m.position.y)):
+		for y in range(floori(r.position.y - m.position.y + 0.001), ceili(r.end.y - m.position.y - 0.001)):
 			var row: String = out[y]
 			out[y] = row.substr(0, x0) + "B".repeat(w) + row.substr(x0 + w)
 	data["ground_rows"] = out
@@ -412,24 +433,33 @@ static func _kind_of_tile(id: String) -> String:
 ##
 ## `banner` (T-265): a skyscraper's banner (the vertical sign on its face), written as the building's
 ## "banner" (true or false; off by default). Other buildings never get the key.
+##
+## `exact` (T-581, free placement): `units` is the piece's top-left corner itself (rounded to
+## FREE_STEP, on the map), not a point naming a cell, and a size is rounded to FREE_STEP instead of
+## whole cells. Ground and road tiles always go on their cell.
 func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
 		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "", arrows: String = "up",
-		banner: bool = false) -> Dictionary:
+		banner: bool = false, exact: bool = false) -> Dictionary:
 	var e := entry(asset_id)
-	var c := cell_at(units)
-	if e.is_empty() or c.x < 0:
+	if e.is_empty():
 		return {}
 	var kind := str(e.kind)
+	if exact and kind in ["ground", "road"]:
+		exact = false
+		units += Vector2(CELL, CELL) / 2.0
+	var c := cell_at(units)
+	if c.x < 0:
+		return {}
 	if kind == "alert":
-		return place_alert(asset_id, units, view, mirror)
+		return place_alert(asset_id, units, view, mirror, -1.0, exact)
 	if kind == "rail":
 		return {}  # T-542: a rail has two ends: place_rail
-	var corner := cell_corner(c)
+	var corner := on_step(units) if exact else cell_corner(c)
 	view = valid_view(asset_id, view)
 	mirror = valid_mirror(asset_id, mirror)
-	var foot := piece_size(asset_id, view, size, map_rect().size, mirror)
+	var foot := piece_size(asset_id, view, size, map_rect().size, mirror, FREE_STEP if exact else float(CELL))
 	var resizable := is_resizable(asset_id)
-	if (resizable or kind in ["prop", "crater"]) and not _holds(map_rect(), Rect2(corner, foot)):
+	if (resizable or kind in ["prop", "crater", "hint"]) and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
 	var tex := texture_of(asset_id, view, mirror, variant)
 	match kind:
@@ -470,6 +500,12 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
 			_list("props").append(pr)
 			return {"kind": kind, "item": pr}
+		"hint":
+			var hi := {"id": _next_id("hints", "hint-"), "icon": str(e.hint), "mode": str(e.mode),
+				"heading": int(view) if view.is_valid_int() else 270, "mirror": mirror,
+				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
+			_list("hints").append(hi)
+			return {"kind": kind, "item": hi}
 		"rooftop":
 			var p := {"id": _next_id("platforms", "roof-"), "x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y,
 				"height": int(e.height)}
@@ -544,7 +580,11 @@ func rails() -> Array:
 ## centred on the point along the wall, its bottom `height` units up (-1: the entry's first height); {}
 ## when no skyscraper is drawn there (a platform, a short or small building is never one). Returns
 ## {kind: "alert", item}.
-func place_alert(asset_id: String, units: Vector2, view: String = "", mirror: bool = false, height: float = -1.0) -> Dictionary:
+##
+## `exact` (T-581): a standing sign's top-left corner is `units` itself (rounded to FREE_STEP), not the
+## corner of the cell under it.
+func place_alert(asset_id: String, units: Vector2, view: String = "", mirror: bool = false, height: float = -1.0,
+		exact: bool = false) -> Dictionary:
 	var e := entry(asset_id)
 	if e.is_empty() or str(e.kind) != "alert":
 		return {}
@@ -559,7 +599,7 @@ func place_alert(asset_id: String, units: Vector2, view: String = "", mirror: bo
 	var c := cell_at(units)
 	if c.x < 0:
 		return {}
-	var corner := cell_corner(c)
+	var corner := on_step(units) if exact else cell_corner(c)
 	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
 	if not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
@@ -796,6 +836,10 @@ func piece_at(units: Vector2) -> Dictionary:
 	for pr in data.get("props", []):
 		if _rect(pr).has_point(units):
 			return {"kind": "prop", "item": pr}
+	var hints: Array = data.get("hints", []) if data.get("hints") is Array else []
+	for hs in hints:  # T-576: a hint sign stands like a prop
+		if LevelHints.is_sign(hs) and _rect(hs).has_point(units):
+			return {"kind": "hint", "item": hs}
 	for r in _list("ramps"):
 		if _rect(r).has_point(units):
 			return {"kind": "ramp", "item": r}
@@ -811,6 +855,9 @@ func piece_at(units: Vector2) -> Dictionary:
 	for cr in data.get("craters", []):
 		if _rect(cr).has_point(units):
 			return {"kind": "crater", "item": cr}
+	for hg in hints:  # T-576: a ground hint, painted on the street
+		if not LevelHints.is_sign(hg) and _rect(hg).has_point(units):
+			return {"kind": "hint", "item": hg}
 	var c := cell_at(units)
 	if c.x < 0:
 		return {}
@@ -941,6 +988,9 @@ func _delete(piece: Dictionary) -> bool:
 		"rail":
 			if _erase_same(_list("rails"), piece.item):
 				return true
+		"hint":
+			if _erase_same(_list("hints"), piece.item):
+				return true
 	return false
 
 
@@ -987,8 +1037,9 @@ func spawn_problem(units: Vector2) -> String:
 
 ## Moves the spawn point to the middle of the cell holding `units`. Returns "" when moved, else the
 ## problem (the spawn point stays where it was).
-func move_spawn(units: Vector2) -> String:
-	var at := LevelSpawn.snap(data, units)
+## T-581: `snap` false puts it at `units` itself, rounded to FREE_STEP (free placement, no Shift).
+func move_spawn(units: Vector2, snap: bool = true) -> String:
+	var at := LevelSpawn.snap(data, units) if snap else on_step(units)
 	var why := LevelSpawn.problem(data, at)
 	if why == "":
 		var s := spawn()
@@ -1112,6 +1163,7 @@ func unpair(piece: Dictionary) -> bool:
 	var l := pairs_with(piece)
 	for p in l:
 		_erase_same(_list("pairs"), p)
+	_prune_routes()
 	return not l.is_empty()
 
 
@@ -1121,6 +1173,7 @@ func unpair_between(a: Dictionary, b: Dictionary) -> bool:
 	if p.is_empty():
 		return false
 	_erase_same(_list("pairs"), p)
+	_prune_routes()
 	return true
 
 
@@ -1166,6 +1219,7 @@ func _repair_pairs(before: Array, removed: Dictionary) -> void:
 		p["b"] = refs[1]
 		keep.append(p)
 	data["pairs"] = keep
+	_prune_routes()
 
 
 ## The ref of an obstacle item still in the level (a boulder of a copy, or a prop), "" for none.
@@ -1179,6 +1233,111 @@ func _ref_of_item(item: Dictionary) -> String:
 		if is_same(pr, item):
 			return str(pr.get("id", ""))
 	return ""
+
+
+# ---- Needle routes (T-592) ---------------------------------------------------------------------
+
+## The level's routes ([{id, order, pairs}]), [] for none.
+func routes() -> Array:
+	return NeedleRoutes.routes_of(data)
+
+
+## The route with id `route_id`, {} for none.
+func route_by_id(route_id: String) -> Dictionary:
+	for r in routes():
+		if r is Dictionary and str(r.get("id", "")) == route_id:
+			return r
+	return {}
+
+
+## The route holding pair `pair_id`, {} for none.
+func route_of_pair(pair_id: String) -> Dictionary:
+	for r in routes():
+		if r is Dictionary and pair_id in _route_pairs(r):
+			return r
+	return {}
+
+
+## The pair with id `pair_id`, {} for none.
+func pair_by_id(pair_id: String) -> Dictionary:
+	for p in pairs():
+		if str(p.get("id", "")) == pair_id:
+			return p
+	return {}
+
+
+## Adds pair `pair_id` as the last of route `route_id`; with route_id "" (or a route that is gone) a
+## new route is made, in `order`. A pair already in another route leaves it (a pair is in one route
+## at most; the other route goes when it is left empty); one already in this route stays where it
+## is. Returns the route, {} when the pair does not exist.
+func add_to_route(route_id: String, pair_id: String, order: String = NeedleRoutes.ORDER_IN_ORDER) -> Dictionary:
+	if pair_by_id(pair_id).is_empty():
+		return {}
+	var r := route_by_id(route_id)
+	if r.is_empty():
+		r = {"id": _next_id("routes", "route-"), "order": order if order in NeedleRoutes.ORDERS else NeedleRoutes.ORDER_IN_ORDER, "pairs": []}
+		_list("routes").append(r)
+	var ids := _route_pairs(r)
+	if pair_id in ids:
+		return r
+	var old := route_of_pair(pair_id)
+	if not old.is_empty():
+		_route_pairs(old).erase(pair_id)
+	ids.append(pair_id)
+	_prune_routes()
+	return r
+
+
+## Sets route `route_id`'s order (NeedleRoutes.ORDERS). Returns true when it changed.
+func set_route_order(route_id: String, order: String) -> bool:
+	var r := route_by_id(route_id)
+	if r.is_empty() or not order in NeedleRoutes.ORDERS or str(r.get("order", "")) == order:
+		return false
+	r["order"] = order
+	return true
+
+
+## Takes pair `pair_id` out of its route (the pair stays, in no route); a route left empty goes.
+## Returns true when it was in one.
+func remove_from_route(pair_id: String) -> bool:
+	var r := route_of_pair(pair_id)
+	if r.is_empty():
+		return false
+	_route_pairs(r).erase(pair_id)
+	_prune_routes()
+	return true
+
+
+## A route's pairs list (made an Array of Strings in place).
+static func _route_pairs(r: Dictionary) -> Array:
+	if not (r.get("pairs") is Array):
+		r["pairs"] = []
+	return r["pairs"]
+
+
+## Drops from every route the pairs that no longer exist, and the routes left with none. With no
+## routes left the key goes, so a level that never had any keeps its file as before.
+func _prune_routes() -> void:
+	if not data.has("routes"):
+		return
+	var have := {}
+	for p in pairs():
+		have[str(p.get("id", ""))] = true
+	var keep: Array = []
+	for r in routes():
+		if not (r is Dictionary):
+			continue
+		var ids: Array = []
+		for pid in _route_pairs(r):
+			if have.has(str(pid)) and not str(pid) in ids:
+				ids.append(str(pid))
+		r["pairs"] = ids
+		if not ids.is_empty():
+			keep.append(r)
+	if keep.is_empty():
+		data.erase("routes")
+	else:
+		data["routes"] = keep
 
 
 ## Removes the very Dictionary `item` (not an equal one) from `list`.
@@ -1270,4 +1429,127 @@ func placed_pieces() -> Array:
 		out.append({"kind": "alert", "item": al})
 	for ra in data.get("rails", []):
 		out.append({"kind": "rail", "item": ra})
+	for hi in data.get("hints", []):
+		out.append({"kind": "hint", "item": hi})
 	return out
+
+
+# ---- Moving a placed piece (T-581) --------------------------------------------------------------
+# Level design, Decisions, "Free placement in the level creator" (the board, 2026-11-08: "I want to be able
+# to move things on the map"). A piece keeps its id (a prop's, a rooftop's, a ramp's; a boulder its copy and
+# index), so pairs and links stay valid; only its place changes. Generic: any piece whose item is a rectangle
+# {x, y, w, h} moves (the hint pieces of T-576 too), a boulder by its centre. Not moved: ground and road tiles
+# (painted), a banner (it goes on its skyscraper's wall, and moves with it), the spawn point and rails (their
+# own drags).
+
+## True when `piece` (as piece_at gives it) can be dragged to another place.
+static func is_movable(piece: Dictionary) -> bool:
+	var kind := str(piece.get("kind", ""))
+	if kind in ["", "ground", "road", "sidewalk", "rail", "spawn"] or piece.has("cell") or not (piece.get("item") is Dictionary):
+		return false
+	var it: Dictionary = piece.item
+	if kind == "boulder":
+		return it.has("x") and it.has("y")
+	if kind == "alert" and KaijuSignsScript.kind_of(it) == "banner":
+		return false
+	return it.has("x") and it.has("y") and it.has("w") and it.has("h")
+
+
+## Proposal (T-581): what moves along with `piece`. A rooftop, or a short building (a platform, T-405),
+## takes what stands on it with it: the rooftops standing on it ("on", through others), the ramps on it or
+## climbing it, and the objects (boulders, props, craters, alert signs, and any other piece) wholly on it, so
+## a garage keeps its ramps and its decoration. Nothing moves along with any other piece.
+func carried_with(piece: Dictionary) -> Array:
+	var kind := str(piece.get("kind", ""))
+	var platform_id := ""
+	if kind == "rooftop":
+		platform_id = str(piece.item.get("id", ""))
+	elif kind == "building" and ShortPlatformsScript.is_platform_entry(piece.item):
+		platform_id = ShortPlatformsScript.id_of(piece.item)
+	else:
+		return []
+	var base := piece_rect(piece)
+	var height := float(piece.item.get("height", ShortPlatformsScript.HEIGHT))
+	var out: Array = []
+	for other in placed_pieces():
+		if is_same(other.item, piece.item) or not is_movable(other):
+			continue
+		var r := piece_rect(other)
+		var on_it := _holds(base, r)
+		match str(other.kind):
+			"building":
+				continue  # a building stands on the street
+			"rooftop":
+				if not (on_it and float(other.item.get("height", 0)) > height):
+					continue
+			"ramp":
+				if not ((on_it and float(other.item.get("bottom_height", 0)) >= height - 0.001) \
+						or str(other.item.get("platform", "")) == platform_id):
+					continue
+			_:
+				if not on_it:
+					continue
+		out.append(other)
+	return out
+
+
+## Moves `piece` (and what it carries, carried_with) so its footprint's top-left corner is at `corner`
+## (units, used as given: the editor rounds it). Banners follow their skyscraper; the links ("on",
+## "platform") are filled in again. Returns the record restore_move takes to put everything back.
+func move_piece(piece: Dictionary, corner: Vector2) -> Dictionary:
+	var record := {"items": [], "banners": [], "links": _links()}
+	var delta := corner - piece_rect(piece).position
+	var moving: Array = [piece]
+	moving.append_array(carried_with(piece))
+	var buildings_moved := false
+	for p in moving:
+		var it: Dictionary = p.item
+		record.items.append([it, it.x, it.y])
+		if str(p.kind) == "building":
+			buildings_moved = true
+			for al in data.get("alert_signs", []):
+				if KaijuSignsScript.kind_of(al) == "banner" and is_same(KaijuSignsScript.building_of(data, al), it):
+					record.banners.append([al, (al.building as Array).duplicate()])
+					al["building"] = [float(it.x) + delta.x, float(it.y) + delta.y]
+		it["x"] = float(it.x) + delta.x
+		it["y"] = float(it.y) + delta.y
+	_relink()
+	if buildings_moved:
+		refresh_ground_rows()
+	return record
+
+
+## Puts back what move_piece moved, links included.
+func restore_move(record: Dictionary) -> void:
+	for e in record.get("items", []):
+		e[0]["x"] = e[1]
+		e[0]["y"] = e[2]
+	for e in record.get("banners", []):
+		e[0]["building"] = e[1]
+	_set_links(record.get("links", {}))
+	refresh_ground_rows()
+
+
+## The pieces a move_piece record moved ({kind, item} as placed_pieces gives them).
+func moved_pieces(record: Dictionary) -> Array:
+	var items: Array = record.get("items", []).map(func(e): return e[0])
+	return placed_pieces().filter(func(p): return items.any(func(i): return is_same(i, p.item)))
+
+
+func _links() -> Dictionary:
+	var out := {"on": [], "platform": []}
+	for p in _list("platforms"):
+		out.on.append([p, p.get("on", null)])
+	for r in _list("ramps"):
+		out.platform.append([r, r.get("platform", "")])
+	return out
+
+
+func _set_links(links: Dictionary) -> void:
+	for e in links.get("on", []):
+		if e[1] == null:
+			e[0].erase("on")
+		else:
+			e[0]["on"] = e[1]
+	for e in links.get("platform", []):
+		e[0]["platform"] = e[1]

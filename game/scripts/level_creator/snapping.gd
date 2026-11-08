@@ -15,8 +15,11 @@ extends RefCounted
 ##    rooftop at its top height, it goes onto that side, and within it (check_height_data.py's rule);
 ##    that wins over 2. T-549: the sides of rooftops of that height on the same line, end to end,
 ##    count as one side, so a ramp may go onto several rooftops side by side.
-## Every neighbour edge is on even units already, so a snapped piece stays on the grid. A move that
-## would take the piece out of the map is not made.
+## Before T-581 every neighbour edge was on even units, so a snapped piece stayed on the grid; since
+## free placement a neighbour may be off it, and a piece snapped to it lines up with it off the grid
+## too. A move that would take the piece out of the map is not made.
+## T-581 (free placement): all of the above happens only with Shift held (`snap`); without it a
+## piece goes where the mouse is, on LevelDocument.FREE_STEP (free_placement).
 ##
 ## Overlaps (overlap_problem): a rooftop or ramp that would overlap in a way check_height_data.py
 ## (run by check_level.py) refuses is not placed; the editor shows creator_texts.json's
@@ -25,6 +28,10 @@ extends RefCounted
 ## Proposal (game/docs/level/level-creator.md, "Level creator"): how close, in units, an edge must be to a neighbour's
 ## edge to snap onto it. Two cells: a near miss of one or two tiles lines up, a gap of three stays.
 const SNAP_DISTANCE := 4.0
+## T-581 (a proposal, game/docs/level/level-creator.md, "Free placement"): without Shift, how close (units)
+## a ramp's top end must come to the side of its rooftop to go onto it and link: half a cell, near enough
+## to need no exact aim, small enough that a ramp set down near a rooftop stays where it was put.
+const FREE_RAMP_REACH := 1.0
 const CELL := LevelDocument.CELL
 const E := 0.001
 ## The kinds that snap to neighbours, and the kinds they snap to. Ground, road tiles and boulders
@@ -36,13 +43,17 @@ const SNAPPING_KINDS := ["building", "rooftop", "ramp"]
 ## `mirror`: {corner: Vector2, rect: Rect2, snapped: "" | "neighbour" | "ramp"}; {} for an unknown
 ## asset or a cursor outside the map.
 ## `size`: a rooftop's or ramp's dragged size (T-251, LevelDocument.piece_size; ZERO: its default).
+## `snap` (T-581): true with Shift held, the grid and the neighbour snaps above; false (free
+## placement, the default in the editor) see free_placement.
 static func placement(doc: LevelDocument, asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
-		size: Vector2 = Vector2.ZERO) -> Dictionary:
+		size: Vector2 = Vector2.ZERO, snap: bool = true) -> Dictionary:
 	var e := LevelDocument.entry(asset_id)
 	var c := doc.cell_at(units)
 	if e.is_empty() or c.x < 0:
 		return {}
 	var kind := str(e.kind)
+	if not snap and not (kind in ["ground", "road"]):
+		return free_placement(doc, asset_id, units, view, mirror, size)
 	var corner := doc.cell_corner(c)
 	# A texture's own footprint wins (T-254); a rooftop or ramp of any size takes `size` (T-251);
 	# a road piece (T-252, "parts") keeps its 2 x 2 tile footprint.
@@ -75,6 +86,33 @@ static func placement(doc: LevelDocument, asset_id: String, units: Vector2, view
 			if s != Vector2.ZERO and _holds(map, moved):
 				return {"corner": moved.position, "rect": moved, "snapped": "neighbour"}
 	return out
+
+
+## Free placement (T-581; Level design, Decisions, "Free placement in the level creator"): the piece
+## follows the mouse. Its top-left corner is the point under the cursor, rounded to
+## LevelDocument.FREE_STEP, and moved in so the whole footprint is on the map; a dragged size is
+## rounded to FREE_STEP too. Nothing snaps to neighbours, except a ramp whose top end is within
+## FREE_RAMP_REACH of the side it climbs of a rooftop at its top height: it goes onto that side as with
+## Shift (ramp_snap), so it links to the rooftop and the car drives up it. Shift (placement's `snap`)
+## puts the corner on the 2 x 2 cell under the cursor instead, so it moves the piece by less than a cell
+## up and left. Same result format as placement.
+static func free_placement(doc: LevelDocument, asset_id: String, units: Vector2, view: String = "",
+		mirror: bool = false, size: Vector2 = Vector2.ZERO) -> Dictionary:
+	var e := LevelDocument.entry(asset_id)
+	var map := doc.map_rect()
+	if e.is_empty() or not map.has_point(units):
+		return {}
+	var foot := LevelDocument.piece_size(asset_id, view, size, map.size, mirror, LevelDocument.FREE_STEP)
+	var corner := LevelDocument.on_step(units)
+	corner = corner.clamp(map.position, Vector2(maxf(map.position.x, map.end.x - foot.x), maxf(map.position.y, map.end.y - foot.y)))
+	var rect := Rect2(corner, foot)
+	if str(e.kind) == "ramp":
+		var t := LevelDocument.texture_of(asset_id, LevelDocument.valid_view(asset_id, view),
+			LevelDocument.valid_mirror(asset_id, mirror))
+		var onto := ramp_snap(doc, rect, str(t.get("side", "east")), float(e.heights[1]), FREE_RAMP_REACH)
+		if not onto.is_empty() and _holds(map, onto.rect):
+			return {"corner": onto.rect.position, "rect": onto.rect, "snapped": "ramp"}
+	return {"corner": corner, "rect": rect, "snapped": ""}
 
 
 ## The neighbour rects (units) a piece of `kind` at `rect` can snap to: the placed buildings,
@@ -125,7 +163,8 @@ static func neighbour_shift(rect: Rect2, near: Array) -> Vector2:
 ## A ramp at `rect` climbing `side` to `top_height`: the closest rooftop at that height whose `side`
 ## its top end is within SNAP_DISTANCE of, and where the ramp goes on it: its top end on that side,
 ## moved along it (by at most SNAP_DISTANCE) to lie within it. {rect, platform} or {}.
-static func ramp_snap(doc: LevelDocument, rect: Rect2, side: String, top_height: float) -> Dictionary:
+## T-581: `reach` is SNAP_DISTANCE with Shift, FREE_RAMP_REACH without.
+static func ramp_snap(doc: LevelDocument, rect: Rect2, side: String, top_height: float, reach: float = SNAP_DISTANCE) -> Dictionary:
 	var best: Dictionary = {}
 	var best_d := INF
 	# T-405: a short building is a platform at 3 a ramp climbs to (LevelDocument.surfaces).
@@ -159,7 +198,7 @@ static func ramp_snap(doc: LevelDocument, rect: Rect2, side: String, top_height:
 			continue  # the side is shorter than the ramp
 		pos[along] = clampf(pos[along], lo, hi)
 		var d := (pos - rect.position).abs()
-		if d.x > SNAP_DISTANCE + E or d.y > SNAP_DISTANCE + E:
+		if d.x > reach + E or d.y > reach + E:
 			continue
 		if d.x + d.y < best_d:
 			best_d = d.x + d.y
@@ -314,7 +353,7 @@ static func crater_problem(doc: LevelDocument, rect: Rect2) -> String:
 static func cuts_object_problem(doc: LevelDocument, kind: String, item: Dictionary) -> String:
 	var r := _rect(item)
 	for piece in doc.placed_pieces():
-		if not str(piece.kind) in ["boulder", "prop"]:
+		if not str(piece.kind) in ["boulder", "prop", "hint"]:  # T-576: the hint pieces too
 			continue
 		var o := doc.piece_rect(piece)
 		if not _overlap(r, o):
@@ -323,4 +362,70 @@ static func cuts_object_problem(doc: LevelDocument, kind: String, item: Dictiona
 		var solid: bool = kind == "building" and not LevelDocument.ShortPlatformsScript.is_platform_entry(item)
 		if solid or not _holds(r, o):
 			return "the %s cuts through an object" % kind
+	return ""
+
+
+# ---- Moving a placed piece (T-581) ---------------------------------------------------------------
+
+## Where a dragged piece goes: its footprint's top-left corner for a wanted corner `raw` (the piece's
+## corner plus how far the mouse moved). Without `snap` (Shift): `raw` on LevelDocument.FREE_STEP, moved in
+## so the footprint is on the map; a ramp goes onto its rooftop's side within FREE_RAMP_REACH, as when
+## placed. With `snap`: the nearest grid corner, then for a building, rooftop or ramp the neighbour or ramp
+## snaps of placement, the piece itself (and what it carries) left out of the neighbours.
+static func move_corner(doc: LevelDocument, piece: Dictionary, raw: Vector2, snap: bool) -> Vector2:
+	var size := doc.piece_rect(piece).size
+	var map := doc.map_rect()
+	var corner := LevelDocument.on_step(raw)
+	if snap:
+		corner = map.position + ((raw - map.position) / CELL).round() * CELL
+	corner = corner.clamp(map.position, Vector2(maxf(map.position.x, map.end.x - size.x), maxf(map.position.y, map.end.y - size.y)))
+	var kind := str(piece.get("kind", ""))
+	var rect := Rect2(corner, size)
+	if kind == "ramp":
+		var onto := ramp_snap(doc, rect, str(piece.item.get("side", "east")), float(piece.item.get("top_height", 0)),
+			SNAP_DISTANCE if snap else FREE_RAMP_REACH)
+		if not onto.is_empty() and _holds(map, onto.rect):
+			return onto.rect.position
+		return corner
+	if not snap or not (kind in SNAPPING_KINDS):
+		return corner
+	var skip: Array = [piece.item]
+	for c in doc.carried_with(piece):
+		skip.append(c.item)
+	var near: Array = []
+	for n in neighbours(doc, kind, rect):
+		var own := false
+		for s in skip:
+			if Rect2(float(s.x), float(s.y), float(s.w), float(s.h)).is_equal_approx(n.rect) and n.flush_only == false:
+				own = true
+		if not own:
+			near.append(n)
+	var shift := neighbour_shift(rect, near)
+	for s in [shift, Vector2(shift.x, 0), Vector2(0, shift.y)]:
+		if s != Vector2.ZERO and _holds(map, Rect2(corner + s, size)):
+			return corner + s
+	return corner
+
+
+## Why the move `record` (LevelDocument.move_piece, already made) can't stay, as for placing: "" when
+## it may. Every moved piece stays on the map; a rooftop or ramp may not overlap in a way the level
+## check refuses; an object stands wholly on one surface and never in a building; a crater lies on the
+## street; a building, rooftop or ramp never cuts through an object.
+static func move_problem(doc: LevelDocument, record: Dictionary) -> String:
+	var map := doc.map_rect()
+	for p in doc.moved_pieces(record):
+		var kind := str(p.kind)
+		if not _holds(map, doc.piece_rect(p)):
+			return "the %s would leave the map" % kind
+		var why := ""
+		if kind in ["rooftop", "ramp"]:
+			why = overlap_problem(doc, kind, p.item)
+		if why == "" and (kind in ["boulder", "prop"] or (kind == "alert")):
+			why = object_problem(doc, doc.piece_rect(p))
+		elif why == "" and kind == "crater":
+			why = crater_problem(doc, doc.piece_rect(p))
+		if why == "" and kind in ["building", "rooftop", "ramp"]:
+			why = cuts_object_problem(doc, kind, p.item)
+		if why != "":
+			return why
 	return ""

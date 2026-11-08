@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import build_creator_assets as bc  # noqa: E402
 
-KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail"}  # crater: T-398; alert: T-441; rail: T-542
+KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop", "crater", "alert", "rail", "hint"}  # crater: T-398; alert: T-441; rail: T-542; hint: T-576
 
 
 class CatalogueTest(unittest.TestCase):
@@ -159,11 +159,11 @@ class FamilyTest(unittest.TestCase):
         cls.by_id = {e["id"]: e for e in cls.cat["entries"]}
 
     def test_groups_and_order(self):
-        self.assertEqual(self.cat["groups"], ["roads", "ground", "levels", "buildings", "obstacles", "decoration"])
+        self.assertEqual(self.cat["groups"], ["roads", "ground", "levels", "buildings", "obstacles", "decoration", "hints"])
         groups = [f["group"] for f in self.fams]
         self.assertEqual(groups, sorted(groups, key=self.cat["groups"].index))
         self.assertEqual([f["id"] for f in self.fams], bc.FAMILY_ORDER)
-        self.assertEqual(len(self.fams), 27)  # T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign and banner; T-542: rail
+        self.assertEqual(len(self.fams), 32)  # T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign and banner; T-542: rail; T-576: five hints
 
     def test_the_rail_is_a_levels_family_stepped_by_height(self):
         # T-542: one entry, four heights (auto first), a hint line for each key.
@@ -337,6 +337,47 @@ class AlertSignsTest(unittest.TestCase):
                 self.assertIn(k, texts)
         self.assertEqual(banner["hints"], ["banner_wall_hint", "banner_height_hint"])
         self.assertNotIn("hints", sign)
+
+
+class HintTest(unittest.TestCase):
+    """T-576: the hint pieces, one entry per icon and mode with the 8 headings as views, one family per icon
+    in the "hints" group holding both modes (its "height" axis), the labels from T-575."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cat = bc.build()
+        cls.by_id = {e["id"]: e for e in cls.cat["entries"]}
+        cls.fams = {f["id"]: f for f in cls.cat["families"]}
+        cls.hints = bc.load("data/level/hints.json")
+
+    def test_one_entry_per_icon_and_mode(self):
+        icons = [i["id"] for i in self.hints["icons"]]
+        self.assertEqual(icons, ["gas", "brake", "arrow-straight", "arrow-curved", "arrow-circular"])
+        for icon in self.hints["icons"]:
+            for mode, foot in (("ground", [4.0, 4.0]), ("sign", [2.0, 2.0])):
+                e = self.by_id["hint-%s-%s" % (icon["id"], mode)]
+                self.assertEqual((e["kind"], e["hint"], e["mode"], e["footprint_units"]), ("hint", icon["id"], mode, foot))
+                self.assertEqual(e["views"], ["270", "315", "0", "45", "90", "135", "180", "225"])
+                self.assertEqual(e["mirrors"], [False, True] if icon["mirror"] else [False])
+                self.assertTrue(bc.res_exists(icon["texture"]))
+        self.assertEqual([i["id"] for i in self.hints["icons"] if i["mirror"]], ["arrow-curved", "arrow-circular"])
+        self.assertTrue(bc.res_exists(self.hints["sign"]["texture"]))
+
+    def test_families_in_the_hints_group_with_the_text_tickets_labels(self):
+        texts = bc.load("data/level/creator_texts.json")
+        self.assertIn("group_hints", texts)
+        ids = [f["id"] for f in self.cat["families"] if f["group"] == "hints"]
+        self.assertEqual(ids, ["hint-gas", "hint-brake", "hint-arrow-straight", "hint-arrow-curved", "hint-arrow-circular"])
+        for fid in ids:
+            f = self.fams[fid]
+            self.assertIn(f["label"], texts)
+            self.assertEqual((f["looks"], f["turns"], f["heights"]), (1, 8, ["ground", "sign"]))
+            self.assertEqual(f["mode_hints"], {"ground": "hint_ground_hint", "sign": "hint_sign_hint"})
+            for k in list(f["mode_hints"].values()) + f.get("hints", []):
+                self.assertIn(k, texts)
+            mirrored = fid in ("hint-arrow-curved", "hint-arrow-circular")
+            self.assertEqual(f["mirrors"], [False, True] if mirrored else [False])
+            self.assertEqual(f.get("hints", []), ["hint_mirror_hint"] if mirrored else [])
 
 
 if __name__ == "__main__":

@@ -3,6 +3,10 @@ extends Node2D
 ## hold/trick-prototype): small pixel squares in yellows and oranges (never Greenbull's colours)
 ## fly back from where the car touches the bar, SPARK_RATE a second for each unit/s of speed.
 ## They are only made while grinding; those in the air finish their short life after it ends.
+## T-586 (Grinding Wheels): with the power-up owned (car.grinding_wheels), new sparks take the
+## wheels' heat shades for the grind's seconds instead (yellow, orange after 1 s, red after 2 s,
+## fading between; grinding_wheels.gd spark_colours()); a spark keeps the colour it was made with.
+## Without it (or a car with no wheels) the colours are SPARK_COLORS as before.
 ##
 ## The run puts it in its car view (beside the car's drawing, so it shares the car's depth) and
 ## calls step(car, dt) after each physics step. Positions are the view's screen pixels.
@@ -43,7 +47,8 @@ func step(car, dt: float) -> void:
 	var g = car.grind
 	if g.active:
 		_spawn(RailDrawing.screen_of(g.position_units(), g.height()),
-			RailDrawing.ISO_TRANSFORM.basis_xform(g.travel()), float(g.speed), dt)
+			RailDrawing.ISO_TRANSFORM.basis_xform(g.travel()), float(g.speed), dt,
+			colours_for(car))
 	else:
 		_carry = 0.0
 	var keep: Array = []
@@ -58,7 +63,19 @@ func step(car, dt: float) -> void:
 	queue_redraw()
 
 
-func _spawn(at: Vector2, travel_screen: Vector2, speed: float, dt: float) -> void:
+## T-586: the shades new sparks are drawn from now: the Grinding Wheels' heat for this grind when
+## `car` owns them, else SPARK_COLORS.
+static func colours_for(car) -> Array:
+	var w = car.get("grinding_wheels") if car is Object else null
+	if w != null and w.is_owned():
+		var c: Array = w.spark_colours(float(car.grind.seconds))
+		if not c.is_empty():
+			return c
+	return SPARK_COLORS
+
+
+func _spawn(at: Vector2, travel_screen: Vector2, speed: float, dt: float,
+		colours: Array = SPARK_COLORS) -> void:
 	_carry += SPARK_RATE * speed * dt
 	var back := -travel_screen.normalized() if travel_screen.length() > 0.0 else Vector2.LEFT
 	var side := Vector2(-back.y, back.x)
@@ -71,7 +88,7 @@ func _spawn(at: Vector2, travel_screen: Vector2, speed: float, dt: float) -> voi
 			"pos": at,
 			"vel": vel,
 			"age": 0.0,
-			"color": SPARK_COLORS[_rng.randi() % SPARK_COLORS.size()],
+			"color": colours[_rng.randi() % colours.size()],
 			"size": 1.0 if _rng.randf() < 0.5 else 2.0,
 		})
 		spawned += 1

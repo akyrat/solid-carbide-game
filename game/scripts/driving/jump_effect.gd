@@ -32,8 +32,13 @@ const SHEETS := {
 }
 const DATA_FILE := "rail_grind"
 const DEFAULT_SECONDS := 0.4
+const DEFAULT_HEIGHT_EXPONENT := 0.5
+const DEFAULT_MAX_SCALE := 2.0
 
 var seconds := DEFAULT_SECONDS
+## T-590 Tweak 1: the effect's size follows the jump's height (rail_grind.json).
+var height_exponent := DEFAULT_HEIGHT_EXPONENT
+var max_scale := DEFAULT_MAX_SCALE
 var view_transform := Transform2D.IDENTITY
 var car: Node = null
 ## The effects playing: {id, kind, units, height, heading, t (seconds)}.
@@ -48,6 +53,8 @@ func _init() -> void:
 	var r := GameData.load_file(DATA_FILE)
 	var d: Dictionary = r.data if r.ok and r.data is Dictionary else {}
 	seconds = maxf(float(d.get("jump_effect_seconds", DEFAULT_SECONDS)), 0.05)
+	height_exponent = maxf(float(d.get("jump_effect_height_exponent", DEFAULT_HEIGHT_EXPONENT)), 0.0)
+	max_scale = maxf(float(d.get("jump_effect_max_scale", DEFAULT_MAX_SCALE)), 1.0)
 
 
 func bind(c: Node) -> void:
@@ -64,12 +71,23 @@ func clear() -> void:
 
 
 func _on_jump_started(kind: String, at_units: Vector2, at_height: float) -> void:
-	play(JumpEffectChoice.equipped_id(), kind, at_units, at_height, float(car.model.rotation))
+	var s := 1.0
+	if kind == "hop":
+		s = scale_for_multiplier(float(car.jump.last_multiplier))
+	play(JumpEffectChoice.equipped_id(), kind, at_units, at_height, float(car.model.rotation), s)
 
 
-## Starts effect `id` at `units` (flat) and `height`, the car facing `heading` (radians).
-func play(id: String, kind: String, units: Vector2, height: float, heading: float) -> void:
-	playing.append({"id": id, "kind": kind, "units": units, "height": height, "heading": heading, "t": 0.0})
+## T-590 Tweak 1: the drawn size for a hop whose takeoff is `m` times the tier's tap takeoff: its
+## height is m^2 times the tap's, raised to height_exponent, clamped to 1..max_scale (x1 at a tap).
+func scale_for_multiplier(m: float) -> float:
+	return clampf(pow(maxf(m, 0.0) * maxf(m, 0.0), height_exponent), 1.0, max_scale)
+
+
+## Starts effect `id` at `units` (flat) and `height`, the car facing `heading` (radians), drawn at
+## `size` times its art (T-590 Tweak 1; 1 = the art's own size).
+func play(id: String, kind: String, units: Vector2, height: float, heading: float, size: float = 1.0) -> void:
+	playing.append({"id": id, "kind": kind, "units": units, "height": height, "heading": heading, "t": 0.0,
+			"scale": size})
 	started.append([id, kind])
 	queue_redraw()
 
@@ -96,7 +114,8 @@ func _draw() -> void:
 	for e in playing:
 		var origin: Vector2 = view_transform * (Vector2(e.units) * PX_PER_UNIT) \
 				+ Vector2(0.0, -float(e.height) * PX_PER_UNIT)
-		draw_placeholder(self, str(e.id), clampf(float(e.t) / seconds, 0.0, 1.0), origin, basis, float(e.heading))
+		draw_placeholder(self, str(e.id), clampf(float(e.t) / seconds, 0.0, 1.0), origin, basis, float(e.heading),
+				PX_PER_UNIT, float(e.get("scale", 1.0)))
 
 
 ## Draws effect `id` at progress t (0 start, 1 end) on `ci`, around `origin` (pixels: the ground
@@ -106,12 +125,12 @@ func _draw() -> void:
 ## sparks and ring are round, the spring and the jet thrust stand straight under the car), so
 ## `basis` and `heading` are unused. `height_px` is the pixels per unit (the game's PX_PER_UNIT; a
 ## scaled preview, the Cosmetics menu, passes its own, and the art scales with it). An unknown id
-## draws the dash cloud.
+## draws the dash cloud. `size` (T-590 Tweak 1) scales the drawing around the ground point (1: as is).
 static func draw_placeholder(ci: CanvasItem, id: String, t: float, origin: Vector2, _basis: Transform2D,
-		_heading: float, height_px: float = PX_PER_UNIT) -> void:
+		_heading: float, height_px: float = PX_PER_UNIT, size: float = 1.0) -> void:
 	var sheet: Texture2D = SHEETS.get(id, SHEETS["dash_cloud"])
 	var frame := clampi(int(t * FRAMES), 0, FRAMES - 1)
-	var k := ART_SCALE * height_px / PX_PER_UNIT
+	var k := ART_SCALE * height_px / PX_PER_UNIT * size
 	var src := Rect2(Vector2(frame * FRAME_PX.x, 0.0), FRAME_PX)
 	var dst := Rect2((origin - Vector2(ANCHOR_PX) * k).round(), FRAME_PX * k)
 	ci.draw_texture_rect_region(sheet, dst, src)

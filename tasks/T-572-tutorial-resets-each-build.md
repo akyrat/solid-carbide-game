@@ -1,7 +1,7 @@
 ---
 id: T-572
 title: The tutorial shows again after each new itch.io build
-status: in-progress
+status: done
 from: project-lead
 to: game-loop
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md, docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/working-with-the-board.md, tools/publish_itch.py, game/scripts/game/game_flow.gd, game/scripts/ui/game_settings.gd, game/scripts/menu/tutorial_slides.gd]
 files_expected_to_change: [tools/publish_itch.py, tools/, game/scripts/, game/tests/, game/export_presets.cfg, game/docs/, docs/hud-and-menus.md, docs/working-with-the-board.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With "Don't show again" ticked on build A, a run on build B shows the slides, and ticking it again on B hides them on B (tests). (QA: pass / fail)
-- [ ] With no build id, today's behaviour is unchanged (tests). (QA: pass / fail)
-- [ ] publish_itch.py puts the build id into the export and the main checkout is clean after a --dry-run (tests or a dry run, never a real push). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content and the Publishing section of docs/working-with-the-board.md describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-572/screenshots/ shows the slides coming back after the faked id changed. (QA: pass / fail)
+- [ ] With "Don't show again" ticked on build A, a run on build B shows the slides, and ticking it again on B hides them on B (tests). (QA: pass)
+- [ ] With no build id, today's behaviour is unchanged (tests). (QA: pass)
+- [ ] publish_itch.py puts the build id into the export and the main checkout is clean after a --dry-run (tests or a dry run, never a real push). (QA: pass)
+- [ ] docs/hud-and-menus.md Content and the Publishing section of docs/working-with-the-board.md describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A screenshot in art-archive/T-572/screenshots/ shows the slides coming back after the faked id changed. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: Game Loop builds the build-id reset.
+
+### 2026-11-07, In progress → In QA
+
+Built: each itch build carries its id; a tick hides the slides only on its own build. QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (6/6). Waiting for your playtest in the combined build.
 
 ## Style review
 
@@ -78,3 +86,4 @@ Screenshots (art-archive/T-572/screenshots/, fixture tests/fixtures/tutorial_new
 
 Files: tools/publish_itch.py, tools/test_publish_itch.py, .gitignore, game/export_presets.cfg, game/scripts/ui/game_settings.gd, game/tests/helpers/test_save.gd, game/tests/unit/test_tutorial_build_id.gd (new), game/tests/unit/game/test_tutorial_flow.gd, game/tests/fixtures/tutorial_new_build_demo.gd/.tscn/_same.tscn (new), game/docs/hud-and-menus/tutorial-slides.md, game/docs/game-loop/screen-flow.md.
 Documents affected: docs/hud-and-menus.md (Content, new section "The tutorial comes back with each new build"), docs/working-with-the-board.md (Publishing to itch.io, one line).
+- 2026-11-08, needs-playtest → done: Board: menu fixes build played, merge (2026-11-08)

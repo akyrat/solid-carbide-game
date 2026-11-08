@@ -240,6 +240,10 @@ func _update_strip() -> void:
 	var notes: Array = []
 	if at >= 0 and at < look_labels.size():
 		notes.append(CreatorTexts.get_text(str(look_labels[at])))
+	# T-576: a hint piece's strip hint for its mode (the member's "height" holds it), then its own hints.
+	var mode_hints: Dictionary = fam.get("mode_hints", {})
+	if mode_hints.has(str(member.get("height", ""))):
+		notes.append(CreatorTexts.get_text(str(mode_hints[str(member.height)])))
 	for k in fam.get("hints", []):
 		notes.append(CreatorTexts.get_text(str(k)))
 	var one_per_line := "\n"

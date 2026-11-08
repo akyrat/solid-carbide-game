@@ -26,6 +26,7 @@ func _press(code: Key) -> void:
 func _menu() -> MainMenu:
 	var m: MainMenu = load("res://scenes/menu/main_menu.tscn").instantiate()
 	add_child_autofree(m)
+	m.start_button.grab_focus()  # T-573: a screen opens with nothing selected; these tests start from the selection
 	return m
 
 
@@ -35,6 +36,7 @@ func _garage(coins: int) -> GarageScreen:
 	var g: GarageScreen = load("res://scenes/menu/garage_screen.tscn").instantiate()
 	g.progress = p
 	add_child_autofree(g)
+	g.start_button().grab_focus()  # T-573: as _menu(); test_no_preselected_button.gd covers the opening
 	return g
 
 
