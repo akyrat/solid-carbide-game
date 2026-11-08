@@ -1,7 +1,7 @@
 ---
 id: T-588
 title: The test runner records each full run's wall-clock time, and run_tests.ps1 runs the same parallel split
-status: in-progress
+status: blocked
 from: project-lead
 to: qa-integration
 lead: Tests
@@ -62,6 +62,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: the QA/Integration Agent builds the run record and the parallel run_tests.ps1 in C:\solid-carbide-worktrees\T-588.
+
+### 2026-11-08, In progress → Blocked
+
+Built and committed (run record, final line with wall time and process count, parallel run_tests.ps1, docs); master merged in. Blocked on T-589: the full Godot run hangs in the shard that ends with test_garage_button_pulse.gd then test_bricks_widest_perf.gd, a hang that also hit a merge run on master last night. T-588 goes to QA once T-589 is fixed.
 
 ## Style review
 
