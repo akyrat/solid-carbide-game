@@ -11,6 +11,8 @@ extends RefCounted
 ## Speeds are in units per second; one unit is the car's width (and the length of
 ## its 1 x 1 physics body).
 
+const CarFacing := preload("res://scripts/driving/car_facing.gd")
+
 ## Speed W snaps to instantly; base for top speed (units/s).
 var forward_speed := 11.0
 ## Body rotation rate before the sensitivity multiplier (degrees/s).
@@ -25,6 +27,14 @@ var coast_decel_multiplier := 0.3
 var steer_sensitivity := 0.95
 ## Sideways speed kept per physics step when not drifting.
 var drift_factor := 0.98
+## The straight grip (task T-583, fix C; Drifting, Decisions, "The car points where it goes"):
+## when on, while W is held without A or D (driving straight, not a drift) the car keeps
+## straight_grip of its sideways speed per step instead of drift_factor, so the slide left after a
+## turn fades fast once the player accelerates, and the car moves where it points. A held drift and
+## a coast (no W) are unchanged (car_model.gd sideways_grip). Both come from data/car_facing.json;
+## the Unity values (reset_to_unity) turn it off.
+var straight_grip_on: bool = bool(CarFacing.config().straight_grip_on)
+var straight_grip: float = float(CarFacing.config().straight_grip)
 ## Sideways speed kept per step while fully drifting, at low speed.
 var drift_grip_low_speed := 0.98
 ## Same, at or above drift_speed_reference.
@@ -135,6 +145,8 @@ const UNITY := {
 	"drift_exit_rate": 3.0,
 	# Task T-278: the Unity car has no side slip out of a drift.
 	"exit_slip_turn": 0.0,
+	# Task T-583: the Unity car has the same grip outside a drift as drift_factor.
+	"straight_grip_on": false,
 }
 
 ## One entry per slider. "key" is the property above. "label" is the
@@ -309,6 +321,9 @@ static func default_values() -> Dictionary:
 	var out := {}
 	for s in SETTINGS + SLIP_SETTINGS + COLLISION_SETTINGS + AIR_SETTINGS + TRICK_SETTINGS:
 		out[s.key] = fresh.get(s.key)
+	# Task T-583: the grip outside a drift (data/car_facing.json; no slider).
+	out["straight_grip_on"] = fresh.straight_grip_on
+	out["straight_grip"] = fresh.straight_grip
 	return out
 
 

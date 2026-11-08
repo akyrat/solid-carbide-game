@@ -303,12 +303,22 @@ static func _sign_of(steer: float) -> float:
 
 
 ## Share of sideways speed kept this step (report section 4, step 6). Unity
-## clamps the three grip values to 0..1.
+## clamps the three grip values to 0..1. The base (not drifting) grip is
+## drift_factor, or, with the straight grip on (task T-583, fix C;
+## data/car_facing.json), straight_grip on a step where W is held without A or
+## D (driving straight under power, not a drift): so the slide left after a turn
+## fades fast once the player accelerates, and the car goes where it points. A
+## held drift (its start included) and a coast (no W: the Polarized Steering
+## Wheel's lift and steer) keep the Unity grip exactly. Out of a drift, with W
+## still held, the grip slides from the drift grip to straight_grip as the drift
+## amount falls (drift_exit_rate, 0.33 s).
 func sideways_grip(fwd: float) -> float:
 	var t = tuning
 	var speed01 := clampf(absf(fwd) / maxf(0.01, t.drift_speed_reference), 0.0, 1.0)
 	var low := clampf(t.drift_grip_low_speed, 0.0, 1.0)
 	var high := clampf(t.drift_grip_high_speed, 0.0, 1.0)
 	var base := clampf(t.drift_factor, 0.0, 1.0)
+	if t.straight_grip_on and _w_was_held and not is_drifting:
+		base = clampf(t.straight_grip, 0.0, 1.0)
 	var grip_at_speed := lerpf(low, high, speed01)
 	return lerpf(base, grip_at_speed, clampf(drift_amount, 0.0, 1.0))
