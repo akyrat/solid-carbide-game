@@ -196,6 +196,53 @@ class TestRich(unittest.TestCase):
         self.assertEqual(len(opaque_colours(out)), 9)
 
 
+class TestClean(unittest.TestCase):
+    """The v4 pass: the rich look with a continuous outline and short, deliberate outer-ring runs."""
+
+    def setUp(self):
+        self.lay = curved.layers("clean")
+        self.cells = curved.arrow_cells("clean")
+        self.outer = {p for p in self.cells if any(q not in self.cells for q in curved.nbrs8(p))}
+        self.inner = {p for p in self.cells - self.outer if any(q in self.outer for q in curved.nbrs8(p))}
+
+    def test_keeps_the_rich_geometry_and_palette(self):
+        self.assertEqual(self.cells, curved.arrow_cells("rich"))
+        im = curved.arrow("clean")
+        self.assertEqual(im.getbbox(), (20, 3, 60, 60))
+        self.assertEqual(len(opaque_colours(im)), 9)
+        self.assertTrue(opaque_colours(im) <= {c[:3] for c in curved.PALETTE})
+        self.assertTrue(all(p[3] in (0, 255) for p in im.getdata()))
+
+    def test_outline_is_continuous_and_the_runs_sit_on_the_outer_ring_only(self):
+        self.assertTrue(self.inner <= self.lay["outline"])          # the inner ring is never broken
+        self.assertTrue(self.lay["glint"] <= self.outer)             # the glints are on the outer ring
+        self.assertTrue(self.lay["glint"])
+        self.assertLess(len(self.lay["glint"]), len(curved.layers("rich")["glint"]) // 2)
+        self.assertLessEqual(len(self.lay["glint"]), int(0.2 * len(self.outer)))   # short, deliberate runs
+        # No dark pixel outside the shape, and the whole outer ring is either near-black or a glint.
+        self.assertEqual(self.outer, (self.lay["outline"] & self.outer) | self.lay["glint"])
+        im = curved.arrow("clean")
+        px = im.load()
+        self.assertTrue(all(px[x, y][3] == 0 for x in range(64) for y in range(64) if (x, y) not in self.cells))
+        # Three runs: the shaft's left, the outer bend's upper-left, the head's upper slope.
+        cx, cy = curved.GEOM["clean"]["centre"]
+        self.assertTrue({p for p in self.lay["glint"] if p[0] == 20})
+        self.assertTrue({p for p in self.lay["glint"] if 21 < p[0] < cx and p[1] < cy})
+        self.assertTrue({p for p in self.lay["glint"] if p[0] >= 46})
+        self.assertFalse({p for p in self.lay["glint"] if p[0] >= 53})   # the tip's outline stays dark
+
+    def test_polish_clean_grows_v1_like_the_others(self):
+        v1 = curved.arrow()
+        px = v1.load()
+        for x, y in curved.layers()["body"]:
+            px[x, y] = (243, 198, 220, 255)
+        out = curved.polish(v1, wide="clean")
+        opx = out.load()
+        self.assertEqual(out.getbbox(), (20, 3, 60, 60))
+        self.assertTrue(all(opx[x, y] == (243, 198, 220, 255) for x, y in self.lay["body"]))
+        self.assertTrue(all(opx[x, y] == curved.INK for x, y in self.inner))
+
+
 class TestRequest(unittest.TestCase):
     def test_body_carries_the_init_image_and_the_sprite_size(self):
         png = curved._png_bytes(curved.arrow())

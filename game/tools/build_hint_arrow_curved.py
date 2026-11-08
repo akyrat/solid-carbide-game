@@ -25,8 +25,11 @@ This script does the free parts of the style loop around one PixelLab call per v
         PixelLab's blush. `init` and `finish` take --wide too. --rich (T-577 v3) is the wide pass with two more
         tones (a mid-tone #e9b8d1 and a cool plum deepest step #5e3d66 against the outline on the shade side,
         for the night mood), a near-white edge line along every lit edge, and longer, more numerous highlight
-        runs breaking the outline on the bend's and the head's top and left edges. The `wide` argument of
-        arrow_cells(), layers(), arrow(), polish() and finish() takes False, True or "rich".
+        runs breaking the outline on the bend's and the head's top and left edges. --clean (T-577 v4) is the rich
+        pass with a continuous outline: the inner ring of the two-pixel outline is never broken, and the
+        highlight pixels sit on the outer ring only, in three short runs, so the silhouette always reads at
+        64 px. The `wide` argument of arrow_cells(), layers(), arrow(), polish() and finish() takes False, True,
+        "rich" or "clean".
     python game/tools/build_hint_arrow_curved.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -75,6 +78,14 @@ GEOM = {
              "shaft_glint_rows": range(36, 53), "arc_glint_degrees": [(-174.0, -142.0), (-128.0, -96.0)],
              "head_glint_cols": range(44, 55), "light_steps": 3,
              "shade_steps": (("cool", 1), ("deep", 1), ("shade", 2), ("mid", 2), ("mid2", 2)), "edge_line": True},
+    # "clean" (v4): the rich pass with a continuous outline. The inner ring of the two-pixel outline is never
+    # broken, so the silhouette always reads at 64 px; the highlight pixels sit on the outer ring only, in three
+    # short deliberate runs (the shaft's left, the outer bend's upper-left, the head's upper slope).
+    "clean": {"shaft": (20, 37), "centre": (42.0, 34.0), "radii": (5.0, 22.0), "head_cols": 18, "tip_rows": (20, 21),
+              "shaft_glint_rows": range(39, 49), "arc_glint_degrees": [(-163.0, -145.0)],
+              "head_glint_cols": range(46, 53), "light_steps": 3,
+              "shade_steps": (("cool", 1), ("deep", 1), ("shade", 2), ("mid", 2), ("mid2", 2)), "edge_line": True,
+              "outer_ring_only": True},
 }
 SHAFT_X0, SHAFT_X1 = GEOM[False]["shaft"]
 BOTTOM = 59                        # the shaft's last row
@@ -209,6 +220,8 @@ def layers(wide: bool = False) -> dict[str, set[tuple[int, int]]]:
         k = HEAD_TIP_X - x
         top = row0 - k
         glint.update({(x, y) for y in range(top, top + 4)} & outline)
+    if g.get("outer_ring_only"):
+        glint &= outline1   # the inner ring stays near-black: the outline is continuous everywhere
     if wide:
         # The runs are three pixels wide: the lit pixel just inside a glint run is near-white too.
         lit_inside = {p for p in roles["light"] if any(q in glint for q in nbrs8(p))}
@@ -339,6 +352,7 @@ def main(argv=None) -> int:
     a.add_argument("out")
     a.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands")
     a.add_argument("--rich", action="store_true", help="the v3 pass: wide, with more tones, an edge line and more glint runs")
+    a.add_argument("--clean", action="store_true", help="the v4 pass: rich, with a continuous outline and short outer-ring runs")
     r = sub.add_parser("request", help="write the pixflux request body")
     r.add_argument("out")
     r.add_argument("--init", required=True)
@@ -351,11 +365,13 @@ def main(argv=None) -> int:
     f.add_argument("--no-reduce", action="store_true")
     f.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands")
     f.add_argument("--rich", action="store_true", help="the v3 pass: wide, with more tones, an edge line and more glint runs")
+    f.add_argument("--clean", action="store_true", help="the v4 pass: rich, with a continuous outline and short outer-ring runs")
     q = sub.add_parser("polish", help="repaint the outline, glints and shading roles from the script")
     q.add_argument("src")
     q.add_argument("out")
     q.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands (T-577 v2)")
     q.add_argument("--rich", action="store_true", help="the v3 pass: wide, with more tones, an edge line and more glint runs")
+    q.add_argument("--clean", action="store_true", help="the v4 pass: rich, with a continuous outline and short outer-ring runs")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -363,6 +379,8 @@ def main(argv=None) -> int:
     args = p.parse_args(argv)
     if getattr(args, "rich", False):
         args.wide = "rich"
+    if getattr(args, "clean", False):
+        args.wide = "clean"
 
     if args.cmd == "init":
         save_png(arrow(args.wide), Path(args.out))
