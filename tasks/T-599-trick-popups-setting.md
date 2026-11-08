@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The checkbox shows in the pause screen's settings and the main menu's Settings screen with T-598's label, on by default, and is saved (tests). (QA: pass / fail)
-- [ ] Off: no trick popups in a run or the practice window; tricks still count and raise the combo (tests). (QA: pass / fail)
-- [ ] On again: popups return from the next trick (a test). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-599/screenshots/ show the checkbox in both settings screens and a run with it off. (QA: pass / fail)
+- [ ] The checkbox shows in the pause screen's settings and the main menu's Settings screen with T-598's label, on by default, and is saved (tests). (QA: pass)
+- [ ] Off: no trick popups in a run or the practice window; tricks still count and raise the combo (tests). (QA: pass)
+- [ ] On again: popups return from the next trick (a test). (QA: pass)
+- [ ] docs/hud-and-menus.md Content describes it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-599/screenshots/ show the checkbox in both settings screens and a run with it off. (QA: pass)
 
 ## Updates
 
