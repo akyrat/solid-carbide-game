@@ -5,5 +5,8 @@
   "demo_enabled": true,
   "demo_minimise_seconds": 0.4,
   "demo_minimise_corner": "bottom_right",
-  "demo_minimise_scale": 0.1
+  "demo_minimise_scale": 0.1,
+  "_comment_your_turn": "T-574 tweak 12 (the board: 'when the recording finishes I want to have like a kind of your turn label ... for 2 seconds, and then fade away'): when a demo ends or is skipped, 'Your turn' (tutorial_text.json demo.your_turn) shows over the practice window for your_turn_seconds, then fades out in your_turn_fade_seconds (a proposal).",
+  "your_turn_seconds": 2.0,
+  "your_turn_fade_seconds": 0.5
 }

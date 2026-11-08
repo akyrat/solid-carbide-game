@@ -67,26 +67,23 @@ const WINDOW_BORDER := 4
 ## the window's bottom edge on a dark band, clear of the notebook (top left). Its side padding and the band's opacity (proposals for the playtest).
 const CAPTION_PAD := 16.0
 const CAPTION_BAND_ALPHA := 0.6
-## T-574 tweak 8, the take tools' keys (none of the car's: W, A, S, D, Space and R) and their actions
-## on the practice session. F8 is left out: it stops a game run from the editor.
-const TAKE_KEYS := {KEY_F5: "reset_stage", KEY_F6: "start_recording", KEY_F7: "stop_and_save",
-	KEY_F9: "play_take"}
 ## T-574 tweak 10, step 2 (the recorded demos): the demo's settings file (demo_enabled,
 ## demo_minimise_seconds, demo_minimise_corner, demo_minimise_scale) and the driving keys that skip a
 ## demo (the car's W, A, S, D, Space and R).
 const PRACTICE_SETTINGS_PATH := "res://data/tutorial_practice.json"
 const DEMO_SKIP_KEYS := [KEY_W, KEY_A, KEY_S, KEY_D, KEY_SPACE, KEY_R]
+## T-574 tweak 12: the demo buttons' row under the window (its gap and height) and the "Your turn"
+## label's font size.
+const DEMO_BUTTONS_GAP := 12.0
+const DEMO_BUTTON_H := 40.0
+const YOUR_TURN_SIZE := 64
+## The label's band over the window: its top from the window's top, and its height.
+const YOUR_TURN_TOP := 40.0
+const YOUR_TURN_H := 110.0
 ## Where the window shrinks to, as a share of its size (its pivot).
 const DEMO_CORNERS := {"top_left": Vector2(0, 0), "top_right": Vector2(1, 0), "bottom_left": Vector2(0, 1),
 	"bottom_right": Vector2(1, 1)}
 
-## The take tools' button labels: a temporary DEV tool the players never see (dev builds only), so
-## these few words are not player text and are not in the texts file (the board's request, T-574).
-const TAKE_BUTTONS := [["F5 Reset", "reset_stage"], ["F6 Record", "start_recording"],
-	["F7 Stop + save", "stop_and_save"], ["F9 Play take", "play_take"]]
-const TAKE_STATE_TEXT := {"ready": "TAKE: ready", "recording": "TAKE: REC %.1f s", "saved": "TAKE: saved (%.1f s)",
-	"playing": "TAKE: playing %.1f / %.1f s", "played": "TAKE: played, off by %.2f units at most",
-	"no_take": "TAKE: no take saved", "error": "TAKE: could not save"}
 ## Art the slides draw (all the game's own files).
 const ART_SUBS := "res://art/hud/subs_icon.png"
 const ART_PACKAGE := "res://art/gift_pack/package.png"
@@ -131,12 +128,6 @@ var practice_scene_path := PRACTICE_SCENE
 var practice_frames: Array[Control] = []
 var practice_containers: Array[SubViewportContainer] = []
 var practices: Array = [null, null, null, null]
-## T-574 tweak 8: the temporary take tools on each trick slide (dev builds only: run from the editor
-## or the project folder, never in an exported game, so players never see them). Their keys
-## (TAKE_KEYS) and buttons act on the showing slide's practice; the label shows its take state.
-var dev_tools_enabled := OS.has_feature("editor")
-var take_panels: Array[Control] = []
-var take_labels: Array[Label] = []
 ## T-574 tweak 10, step 2, the demo: each trick slide with a saved take plays it in its window first
 ## (the real car replaying the keys), then the window minimises like a video (it shrinks toward a
 ## corner and fades), the stage resets and the player drives. The values are the settings file's.
@@ -150,6 +141,17 @@ var demo_minimise_scale := 0.1
 var takes_dir_override := ""
 var demo_states: Array = ["", "", "", ""]
 var _demo_tween: Tween
+## T-574 tweak 12 (the board: "two buttons, one button to kind of replay the tutorial recording, and
+## then another button to skip it ... when the recording finishes ... a kind of your turn label ...
+## for 2 seconds, and then fade away"): per trick slide, the Replay and Skip demo buttons under the
+## window and the "Your turn" label over it (T-594's texts, demo.*). The label's time on screen and
+## its fade are the settings file's (your_turn_seconds, your_turn_fade_seconds).
+var replay_buttons: Array[Button] = []
+var skip_demo_buttons: Array[Button] = []
+var your_turn_labels: Array[Label] = []
+var your_turn_seconds := 2.0
+var your_turn_fade_seconds := 0.5
+var _turn_tween: Tween
 var _dots: Array[ColorRect] = []
 var _pixel_font: FontFile
 var _missing_warned := false
@@ -209,6 +211,8 @@ func show_slide(index: int) -> void:
 	for i in range(demo_states.size()):  # a window minimising on the slide we leave: done at once
 		if demo_states[i] == "minimising" and current != FIRST_TRICK_SLIDE + i:
 			_finish_demo(i, false)
+		if i < your_turn_labels.size() and current != FIRST_TRICK_SLIDE + i:
+			_hide_your_turn(i)
 	for i in range(slides.size()):
 		slides[i].visible = i == current
 	for i in range(_dots.size()):
@@ -270,10 +274,6 @@ func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree() or not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	var code := (event as InputEventKey).keycode
-	if dev_tools_enabled and is_trick_slide() and TAKE_KEYS.has(code):
-		take_action(String(TAKE_KEYS[code]))
-		get_viewport().set_input_as_handled()
-		return
 	if is_trick_slide() and is_demo_showing() and _is_driving_key(event as InputEventKey):
 		skip_demo()  # the key goes on to the car, which now reads the keyboard
 	var letters := not is_trick_slide()
@@ -347,6 +347,8 @@ func _load_demo_settings() -> void:
 	demo_minimise_seconds = maxf(0.0, float(d.get("demo_minimise_seconds", demo_minimise_seconds)))
 	demo_minimise_corner = String(d.get("demo_minimise_corner", demo_minimise_corner))
 	demo_minimise_scale = clampf(float(d.get("demo_minimise_scale", demo_minimise_scale)), 0.0, 1.0)
+	your_turn_seconds = maxf(0.0, float(d.get("your_turn_seconds", your_turn_seconds)))
+	your_turn_fade_seconds = maxf(0.0, float(d.get("your_turn_fade_seconds", your_turn_fade_seconds)))
 
 
 ## True while the showing trick slide's demo plays or its window minimises.
@@ -369,13 +371,51 @@ func _maybe_start_demo(i: int) -> void:
 	if session == null or not is_instance_valid(session):
 		return
 	demo_states[i] = "done"  # once per slide each time the tutorial opens
-	if not demo_enabled or not session.has_method("saved_take") or not session.has_method("play_take"):
-		return
+	_update_demo_buttons(i)
+	if demo_enabled:
+		_play_demo(i)
+
+
+## Plays trick slide `i`'s recording in its window (the first showing, and the Replay button).
+func _play_demo(i: int) -> bool:
+	var session = practices[i]
+	if session == null or not is_instance_valid(session) or not session.has_method("saved_take") \
+			or not session.has_method("play_take"):
+		return false
 	var t = session.saved_take()
 	if t == null or t.steps() == 0:
-		return
+		return false
+	_hide_your_turn(i)
 	if session.play_take(t):
 		demo_states[i] = "playing"
+	_update_demo_buttons(i)
+	return demo_states[i] == "playing"
+
+
+## True when trick slide `i`'s practice has a recording to show (the Replay button shows then).
+func has_demo(i: int) -> bool:
+	var session = practices[i]
+	if session == null or not is_instance_valid(session) or not session.has_method("saved_take"):
+		return false
+	var t = session.saved_take()
+	return t != null and t.steps() > 0
+
+
+## The Replay button: the showing slide's recording again from its start, at any time (over a demo
+## playing or minimising, or the player's own driving; the stage resets as the demo starts).
+func replay_demo() -> void:
+	if not is_trick_slide():
+		return
+	var i := current - FIRST_TRICK_SLIDE
+	if demo_states[i] == "playing" or demo_states[i] == "minimising":
+		if _demo_tween != null:
+			_demo_tween.kill()
+			_demo_tween = null
+		practice_frames[i].scale = Vector2.ONE
+		practice_frames[i].modulate.a = 1.0
+		demo_states[i] = "done"
+	_apply_practice_state()
+	_play_demo(i)
 
 
 ## The practice's take state: the demo's take played to its end starts the minimise; any other
@@ -387,6 +427,7 @@ func _on_take_state(state_name: String, i: int) -> void:
 		_begin_minimise.call_deferred(i)  # after the car's step that ended the take
 	elif state_name != "playing":
 		demo_states[i] = "done"
+		_update_demo_buttons(i)
 
 
 ## The window shrinks toward the corner and fades, the last picture frozen (the session paused).
@@ -394,6 +435,7 @@ func _begin_minimise(i: int) -> void:
 	if demo_states[i] != "playing":
 		return
 	demo_states[i] = "minimising"
+	_update_demo_buttons(i)
 	var session = practices[i]
 	if session != null and is_instance_valid(session) and session.has_method("pause"):
 		session.pause()
@@ -436,79 +478,97 @@ func _finish_demo(i: int, skipped: bool) -> void:
 	if session != null and is_instance_valid(session) and session.has_method("reset_stage"):
 		session.reset_stage()
 	_apply_practice_state()
+	_update_demo_buttons(i)
+	_show_your_turn(i)
 	demo_finished.emit(i, skipped)
 
 
-# --- The take tools (T-574 tweak 8; dev builds only) --------------------------------------------
-
-## Runs a take tool (`action`: one of TAKE_KEYS' values) on the showing slide's practice.
-func take_action(action: String) -> void:
-	if not dev_tools_enabled or not is_trick_slide():
+## Skip demo shows only while the recording plays; Replay whenever the slide has a recording.
+func _update_demo_buttons(i: int) -> void:
+	if i < 0 or i >= replay_buttons.size():
 		return
-	var session = practices[current - FIRST_TRICK_SLIDE]
-	if session != null and is_instance_valid(session) and session.has_method(action):
-		session.call(action)
-	_update_take_label()
+	skip_demo_buttons[i].visible = demo_states[i] == "playing"
+	replay_buttons[i].visible = has_demo(i)
 
 
-func set_dev_tools(on: bool) -> void:
-	dev_tools_enabled = on
-	for p in take_panels:
-		p.visible = on
-
-
-func _process(_delta: float) -> void:
-	if dev_tools_enabled and is_trick_slide() and is_visible_in_tree():
-		_update_take_label()
-
-
-## The showing slide's take label: its practice's state (and seconds).
-func _update_take_label() -> void:
-	if not is_trick_slide():
+## "Your turn" over the window: your_turn_seconds in full, then it fades in your_turn_fade_seconds.
+func _show_your_turn(i: int) -> void:
+	if _turn_tween != null:
+		_turn_tween.kill()
+		_turn_tween = null
+	var label := your_turn_labels[i]
+	label.visible = true
+	label.modulate.a = 1.0
+	if not is_inside_tree():
 		return
-	var i := current - FIRST_TRICK_SLIDE
-	var session = practices[i]
-	var label := take_labels[i]
-	if session == null or not is_instance_valid(session) or not ("take_state" in session):
-		label.text = ""
-		return
-	var st := String(session.take_state)
-	var fmt := String(TAKE_STATE_TEXT.get(st, st))
-	match st:
-		"recording", "saved":
-			label.text = fmt % (session.take.seconds() if session.take != null else 0.0)
-		"playing":
-			label.text = fmt % [float(session.replay_step) / float(session.take.physics_fps), session.take.seconds()]
-		"played":
-			label.text = fmt % maxf(float(session.replay_drift), 0.0)
-		_:
-			label.text = fmt
+	_turn_tween = create_tween()
+	_turn_tween.tween_interval(your_turn_seconds)
+	_turn_tween.tween_property(label, "modulate:a", 0.0, your_turn_fade_seconds)
+	_turn_tween.tween_callback(_hide_your_turn.bind(i))
 
 
-func _build_take_panel(s: Control, i: int) -> void:
+func _hide_your_turn(i: int) -> void:
+	var label := your_turn_labels[i]
+	if label.visible and _turn_tween != null:
+		_turn_tween.kill()
+		_turn_tween = null
+	label.visible = false
+	label.modulate.a = 1.0
+
+
+func is_your_turn_showing(i: int) -> bool:
+	return your_turn_labels[i].visible
+
+
+## Trick slide `i`'s demo controls: Replay and Skip demo in a row under the window's right end (the
+## tutorial's shared small buttons, clicked only: they never take the focus, so the driving keys stay
+## the car's), and the "Your turn" label centred over the window, hidden until a demo ends.
+func _build_demo_controls(s: Control, i: int) -> void:
 	var row := HBoxContainer.new()
-	row.name = "TakeTools"
+	row.name = "DemoButtons"
 	row.alignment = BoxContainer.ALIGNMENT_END
-	row.add_theme_constant_override("separation", 8)
-	row.position = Vector2(WINDOW_POS.x, WINDOW_POS.y - 44)
-	row.size = Vector2(WINDOW_SIZE.x, 36)
-	row.visible = dev_tools_enabled
+	row.add_theme_constant_override("separation", 10)
+	row.position = Vector2(WINDOW_POS.x, WINDOW_POS.y + WINDOW_SIZE.y + DEMO_BUTTONS_GAP)
+	row.size = Vector2(WINDOW_SIZE.x, DEMO_BUTTON_H)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	s.add_child(row)
-	var label := _label("", true, 12, GOLD, false)
-	label.name = "TakeState"
-	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(label)
-	for b in TAKE_BUTTONS:
-		var btn := Button.new()
-		btn.name = String(b[1])
-		btn.text = String(b[0])
-		btn.focus_mode = Control.FOCUS_NONE  # clicked only: no key presses it
-		btn.custom_minimum_size = Vector2(0, 32)
-		HudStyle.style_button(btn, true)
-		btn.pressed.connect(take_action.bind(String(b[1])))
-		row.add_child(btn)
-	take_panels.append(row)
-	take_labels.append(label)
+	var skip := _demo_button("SkipDemo", "demo.skip")
+	skip.pressed.connect(skip_demo)
+	skip.visible = false
+	row.add_child(skip)
+	var replay := _demo_button("Replay", "demo.replay")
+	replay.pressed.connect(replay_demo)
+	replay.visible = false
+	row.add_child(replay)
+	skip_demo_buttons.append(skip)
+	replay_buttons.append(replay)
+	var label := _label(TrickList.text("demo.your_turn"), true, YOUR_TURN_SIZE, GOLD, true)
+	label.name = "YourTurn"
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_outline_color", NIGHT)
+	label.add_theme_constant_override("outline_size", 12)
+	# Over the window's upper part, clear of the car on the spawn at the window's centre.
+	label.position = WINDOW_POS + Vector2(0, YOUR_TURN_TOP)
+	label.size = Vector2(WINDOW_SIZE.x, YOUR_TURN_H)
+	label.visible = false
+	s.add_child(label)
+	your_turn_labels.append(label)
+	# One text, four slides: text_labels keeps the last of each (the tests read the text through it).
+	text_labels["demo.your_turn"] = label
+	text_labels["demo.replay"] = replay
+	text_labels["demo.skip"] = skip
+
+
+func _demo_button(node_name: String, key: String) -> Button:
+	var b := Button.new()
+	b.name = node_name
+	b.text = TrickList.text(key).to_upper()
+	b.focus_mode = Control.FOCUS_NONE  # clicked only: Space and the other driving keys never press it
+	b.custom_minimum_size = Vector2(0, DEMO_BUTTON_H)
+	HudStyle.style_button(b, true)  # the shared button, the small size (as Skip)
+	return b
 
 
 # --- The arrows, Skip and the dots (on every slide) ---------------------------------------------
@@ -737,7 +797,7 @@ func _build_trick(i: int) -> Control:
 	viewport.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
 	container.add_child(viewport)
 	practice_containers.append(container)
-	_build_take_panel(s, i)
+	_build_demo_controls(s, i)
 
 	# T-574: the tutorial text in the game: a dark band along the window's bottom edge, the
 	# instruction (and the grind's hint) on it, outlined so it reads over the playground.

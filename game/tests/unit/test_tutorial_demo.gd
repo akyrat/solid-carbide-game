@@ -187,3 +187,110 @@ func test_a_take_tool_during_the_demo_ends_it() -> void:
 	slides.practices[0].reset_stage()  # F5
 	assert_eq(slides.demo_states[0], "done")
 	assert_false(slides.practices[0].is_replaying())
+
+
+# ---- T-574 tweak 12: Replay, Skip demo and "Your turn" -------------------------------------------
+
+func _text(key: String) -> String:
+	return TrickList.text(key)
+
+
+func test_the_buttons_and_label_use_t594s_texts_and_never_take_the_focus() -> void:
+	assert_eq(slides.replay_buttons.size(), 4)
+	assert_eq(slides.skip_demo_buttons.size(), 4)
+	assert_eq(slides.your_turn_labels.size(), 4)
+	for i in 4:
+		assert_eq(slides.replay_buttons[i].text, _text("demo.replay").to_upper())
+		assert_eq(slides.skip_demo_buttons[i].text, _text("demo.skip").to_upper())
+		assert_eq(slides.your_turn_labels[i].text, _text("demo.your_turn"))
+		assert_true(slides.your_turn_labels[i].uppercase)
+		for b in [slides.replay_buttons[i], slides.skip_demo_buttons[i]]:
+			assert_eq(b.focus_mode, Control.FOCUS_NONE, "clicked only")
+			assert_eq(b.get_meta("hud_button"), "button", "the tutorial's shared button")
+	assert_eq(_text("demo.replay"), "Replay")
+	assert_eq(_text("demo.skip"), "Skip demo")
+	assert_eq(_text("demo.your_turn"), "Your turn")
+
+
+func test_the_buttons_sit_under_the_window_and_above_the_dots() -> void:
+	_save_drift_take(3.0)
+	slides.show_slide(1)
+	await wait_process_frames(2)
+	var window: Rect2 = slides.practice_frames[0].get_global_rect()
+	for b in [slides.replay_buttons[0], slides.skip_demo_buttons[0]]:
+		var r: Rect2 = b.get_global_rect()
+		assert_gt(r.position.y, window.end.y, "under the window")
+		assert_lt(r.end.y, slides._dots[0].get_global_rect().position.y, "above the dots")
+		assert_true(r.position.x >= window.position.x and r.end.x <= window.end.x + 0.5, "within its width")
+
+
+func test_skip_demo_shows_while_the_recording_plays_and_ends_it() -> void:
+	_save_drift_take(3.0)
+	slides.show_slide(1)
+	var session = slides.practices[0]
+	assert_true(slides.skip_demo_buttons[0].visible, "while it plays")
+	assert_true(slides.replay_buttons[0].visible)
+	slides.skip_demo_buttons[0].pressed.emit()
+	assert_false(session.is_replaying())
+	assert_eq(finished, [[0, true]])
+	assert_false(slides.skip_demo_buttons[0].visible, "gone once the player drives")
+	assert_true(slides.replay_buttons[0].visible, "Replay stays")
+	assert_true(session.car.use_keyboard)
+	assert_true(slides.is_your_turn_showing(0), "Your turn after a skip")
+
+
+func test_replay_plays_the_recording_again_at_any_time() -> void:
+	_save_drift_take(0.4)
+	slides.demo_minimise_seconds = 0.0
+	slides.show_slide(1)
+	var session = slides.practices[0]
+	_play_out(session)
+	await wait_process_frames(2)
+	assert_eq(slides.demo_states[0], "done")
+	for i in 30:
+		session.car.physics_step()  # the player drives a bit
+	slides.replay_buttons[0].pressed.emit()
+	assert_true(session.is_replaying(), "the recording plays again")
+	assert_eq(slides.demo_states[0], "playing")
+	assert_true(slides.skip_demo_buttons[0].visible)
+	assert_false(slides.is_your_turn_showing(0))
+	for i in 5:
+		session.car.physics_step()
+	slides.replay_buttons[0].pressed.emit()  # mid-replay: from the start again
+	assert_eq(session.replay_step, 0)
+	assert_true(session.is_replaying())
+
+
+func test_your_turn_shows_2_s_after_the_recording_ends_then_fades() -> void:
+	_save_drift_take(0.2)
+	slides.demo_minimise_seconds = 0.0
+	slides.show_slide(1)
+	assert_false(slides.is_your_turn_showing(0), "not while it plays")
+	_play_out(slides.practices[0])
+	await wait_process_frames(2)
+	var label: Label = slides.your_turn_labels[0]
+	assert_true(label.visible)
+	assert_eq(label.modulate.a, 1.0)
+	assert_true(slides.practice_frames[0].get_global_rect().encloses(label.get_global_rect()), "over the window")
+	var tw: Tween = slides._turn_tween
+	tw.custom_step(slides.your_turn_seconds - tw.get_total_elapsed_time() - 0.05)
+	assert_eq(label.modulate.a, 1.0, "in full for 2 s")
+	tw.custom_step(0.05 + slides.your_turn_fade_seconds * 0.5)
+	assert_lt(label.modulate.a, 1.0, "then it fades")
+	assert_gt(label.modulate.a, 0.0)
+	tw.custom_step(slides.your_turn_fade_seconds)
+	assert_false(label.visible, "and is gone")
+
+
+func test_your_turn_numbers_come_from_the_settings_file() -> void:
+	var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TutorialSlides.PRACTICE_SETTINGS_PATH))
+	assert_almost_eq(slides.your_turn_seconds, float(d.your_turn_seconds), 0.0001)
+	assert_almost_eq(slides.your_turn_fade_seconds, float(d.your_turn_fade_seconds), 0.0001)
+	assert_almost_eq(float(d.your_turn_seconds), 2.0, 0.0001, "2 seconds, as asked")
+
+
+func test_without_a_recording_there_is_no_replay_or_skip_button() -> void:
+	slides.show_slide(1)
+	assert_false(slides.replay_buttons[0].visible)
+	assert_false(slides.skip_demo_buttons[0].visible)
+	assert_false(slides.is_your_turn_showing(0))
