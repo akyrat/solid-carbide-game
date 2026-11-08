@@ -96,7 +96,7 @@ func test_exactly_the_listed_settings_with_the_switch_off() -> void:
 	GameSettings.sfx_enabled_override = 0
 	var s := _screen()
 	assert_eq(_visible_controls(s), ["BackButton", "DriftGuideCheck", "DynamicCheck", "JumpArrowCheck",
-		"MusicSlider", "RainCheck", "SmoothingCheck", "ZoomSlider"])
+		"MusicSlider", "RainCheck", "SmoothingCheck", "TrickPopupsCheck", "ZoomSlider"])
 	assert_false(s.sfx_row.visible, "no SFX volume while the sound effects are off (T-389)")
 
 
@@ -104,7 +104,7 @@ func test_sfx_volume_shows_when_the_switch_is_on() -> void:
 	GameSettings.sfx_enabled_override = 1
 	var s := _screen()
 	assert_eq(_visible_controls(s), ["BackButton", "DriftGuideCheck", "DynamicCheck", "JumpArrowCheck",
-		"MusicSlider", "RainCheck", "SfxSlider", "SmoothingCheck", "ZoomSlider"])
+		"MusicSlider", "RainCheck", "SfxSlider", "SmoothingCheck", "TrickPopupsCheck", "ZoomSlider"])
 
 
 func test_labels_are_the_pause_screens() -> void:
@@ -116,6 +116,7 @@ func test_labels_are_the_pause_screens() -> void:
 	assert_eq(s.rain_check.text, SettingsScreen.text("rain_label"))
 	assert_eq(s.drift_guide_check.text, SettingsScreen.text("drift_guide_label"))
 	assert_eq(s.jump_arrow_check.text, SettingsScreen.text("jump_arrow_label"))
+	assert_eq(s.trick_popups_check.text, "Trick popups")  # T-599, T-598's text
 	for c in s.checkboxes():
 		assert_eq(c.get_meta("hud_button", ""), "checkbox", "the shared checkbox")
 	assert_true(HudStyle.is_shared_button(s.back_button))
@@ -238,5 +239,20 @@ func test_keyboard_reaches_every_checkbox_and_back() -> void:
 	var c: Control = first
 	for i in s.checkboxes().size() - 1:
 		c = c.get_node(c.focus_neighbor_right)
-	assert_eq(c, s.jump_arrow_check, "Right walks the five checkboxes")
+	assert_eq(c, s.trick_popups_check, "Right walks the six checkboxes")
 	assert_eq(c.get_node(c.focus_neighbor_bottom), s.back_button)
+
+
+func test_trick_popups_checkbox_on_by_default_in_both_screens_and_saved() -> void:
+	assert_true(GameSettings.load_trick_popups_enabled(), "on by default")
+	var s := _screen()
+	assert_true(s.trick_popups_check.button_pressed)
+	s.trick_popups_check.button_pressed = false
+	assert_false(GameSettings.load_trick_popups_enabled(), "saved at once")
+	var f := _flow()
+	f.start_run()
+	var ps = f.pause_screen
+	assert_eq(ps.trick_popups_check.text, "Trick popups")
+	assert_false(ps.trick_popups_check.button_pressed, "the pause screen reads the same setting")
+	ps.trick_popups_check.button_pressed = true
+	assert_true(GameSettings.load_trick_popups_enabled())

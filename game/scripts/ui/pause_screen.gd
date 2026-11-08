@@ -88,6 +88,8 @@ var rain_check: CheckBox
 var drift_guide_check: CheckBox
 ## The facing arrow checkbox (T-553): the saved setting jump_arrow_enabled, label from data/pause_text.json.
 var jump_arrow_check: CheckBox
+## The trick popups checkbox (T-599): the saved setting trick_popups_enabled.
+var trick_popups_check: CheckBox
 ## The temporary tuning row: shown only while the dynamic camera is on.
 var tuning_row: HBoxContainer
 var set_min_button: Button
@@ -459,8 +461,12 @@ func _cam():
 
 
 func _build_camera_controls(box: VBoxContainer) -> void:
-	var checks := HBoxContainer.new()
-	checks.add_theme_constant_override("separation", 14)  # was 24; T-553's fifth checkbox would reach the weapon icons
+	# A wrapping row (T-599): the sixth checkbox would make the strip wider than the space
+	# between the weapon icons and the right edge, so the row wraps at the strip's width.
+	var checks := HFlowContainer.new()
+	checks.alignment = FlowContainer.ALIGNMENT_CENTER
+	checks.add_theme_constant_override("h_separation", 14)
+	checks.add_theme_constant_override("v_separation", 4)
 	box.add_child(checks)
 	smoothing_check = _make_check("SmoothingCheck", TEXT_SMOOTHING)
 	smoothing_check.toggled.connect(_on_smoothing_toggled)
@@ -480,6 +486,10 @@ func _build_camera_controls(box: VBoxContainer) -> void:
 	jump_arrow_check.set_pressed_no_signal(GameSettingsScript.load_jump_arrow_enabled())
 	jump_arrow_check.toggled.connect(_on_jump_arrow_toggled)
 	checks.add_child(jump_arrow_check)
+	trick_popups_check = _make_check("TrickPopupsCheck", pause_text("trick_popups_label"))
+	trick_popups_check.set_pressed_no_signal(GameSettingsScript.load_trick_popups_enabled())
+	trick_popups_check.toggled.connect(_on_trick_popups_toggled)
+	checks.add_child(trick_popups_check)
 	tuning_row = HBoxContainer.new()
 	tuning_row.name = "TuningRow"
 	tuning_row.add_theme_constant_override("separation", 8)
@@ -580,6 +590,10 @@ func _on_drift_guide_toggled(on: bool) -> void:
 
 func _on_jump_arrow_toggled(on: bool) -> void:
 	GameSettingsScript.save_jump_arrow_enabled(on)  # the arrow follows the notifier at once
+
+
+func _on_trick_popups_toggled(on: bool) -> void:
+	GameSettingsScript.save_trick_popups_enabled(on)  # TrickPopups reads it at the next trick
 
 
 func _on_smoothing_toggled(on: bool) -> void:

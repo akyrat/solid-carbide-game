@@ -414,3 +414,25 @@ static func save_jump_arrow_enabled(on: bool) -> bool:
 	var ok := cfg.save(path) == OK
 	notifier.jump_arrow_enabled_changed.emit(on)
 	return ok
+
+
+## Whether the trick popups (the bubbles naming each trick) show (task T-599; HUD and menus,
+## Decisions, "A setting to turn off the trick popups"), in section "graphics", key
+## "trick_popups_enabled". On by default. Off: TrickPopups shows none; tricks still count.
+## Read at every trick, so no notifier is needed.
+const DEFAULT_TRICK_POPUPS_ENABLED := true
+
+
+static func load_trick_popups_enabled() -> bool:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_TRICK_POPUPS_ENABLED
+	var v = cfg.get_value("graphics", "trick_popups_enabled", DEFAULT_TRICK_POPUPS_ENABLED)
+	return v if v is bool else DEFAULT_TRICK_POPUPS_ENABLED
+
+
+static func save_trick_popups_enabled(on: bool) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("graphics", "trick_popups_enabled", on)
+	return cfg.save(path) == OK

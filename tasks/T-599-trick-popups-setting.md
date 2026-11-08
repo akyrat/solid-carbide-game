@@ -1,7 +1,7 @@
 ---
 id: T-599
 title: A setting to turn off the trick popups
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -54,10 +54,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: the Trick popups checkbox in both settings screens.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built on T-596/T-598. GameSettings.load/save_trick_popups_enabled (graphics.trick_popups_enabled, default on); TrickPopups.is_hidden() returns true when it is off (read at each trick, so on again shows from the next trick; covers run and practice window, same node; multiplier/broken/heal popups untouched). Checkbox 'Trick popups' (T-598 text) last in the pause screen's settings and the main menu Settings screen. Pause screen's checkbox row is now an HFlowContainer (6 boxes would reach the weapon icons), wraps to a second line. Tests: new in test_settings_screen.gd (both screens, default, saved) and test_thread_the_needle.gd (off hides every popup, combo still rises, on again shows); updated test_settings_screen, test_shared_button. Docs: docs/hud-and-menus.md Content 'The Trick popups checkbox', game/docs/hud-and-menus/main-menu.md. Full GUT run: 3253 tests, 3251 pass, 1 timing-only fail under load (test_bricks_perf, 7 ms vs 5 ms, passes solo 3/3; an earlier run had only the layout and count failures I then fixed). Python game/tools unittest: 1193 ok (4 skipped). Screenshots: art-archive/T-599/screenshots/ (t599_settings.png, t599_pause.png with it ticked off, t599_run.png run with it off at x1.66, no bubbles); fixture game/tests/fixtures/t599_demo.gd.

@@ -38,6 +38,7 @@ var dynamic_check: CheckBox
 var rain_check: CheckBox
 var drift_guide_check: CheckBox
 var jump_arrow_check: CheckBox
+var trick_popups_check: CheckBox
 var back_button: Button
 var _saves := SettingsRows.SaveOnRelease.new()
 
@@ -147,6 +148,8 @@ func _build_checks(box: VBoxContainer) -> void:
 		GameSettings.load_drift_guide_enabled(), GameSettings.save_drift_guide_enabled)
 	jump_arrow_check = _check(checks, "JumpArrowCheck", PauseScreenScript.pause_text("jump_arrow_label"),
 		GameSettings.load_jump_arrow_enabled(), GameSettings.save_jump_arrow_enabled)
+	trick_popups_check = _check(checks, "TrickPopupsCheck", PauseScreenScript.pause_text("trick_popups_label"),
+		GameSettings.load_trick_popups_enabled(), GameSettings.save_trick_popups_enabled)
 
 
 ## A checkbox showing the saved value; ticking it saves at once with `saver`.
@@ -177,9 +180,9 @@ func _link_focus() -> void:
 	back_button.focus_previous = back_button.get_path_to(checks[n - 1])
 
 
-## The five checkboxes, left to right.
+## The six checkboxes, left to right.
 func checkboxes() -> Array:
-	return [smoothing_check, dynamic_check, rain_check, drift_guide_check, jump_arrow_check]
+	return [smoothing_check, dynamic_check, rain_check, drift_guide_check, jump_arrow_check, trick_popups_check]
 
 
 func _on_zoom_changed(v: float) -> void:
