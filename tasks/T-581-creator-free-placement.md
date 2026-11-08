@@ -1,7 +1,7 @@
 ---
 id: T-581
 title: Free placement in the level creator, Shift to snap
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/scripts/level_creator/snapping.gd, game/scripts/level_creator/editor.gd, game/scripts/level_creator/level_document.gd, game/tools/check_level.py]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/scripts/enemies/, game/tools/check_level.py, game/tools/check_height_data.py, game/tools/, game/tests/, game/docs/level/, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,14 +43,14 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Without Shift, each kind of piece is placed where the mouse drops it, at the proposed step; with Shift it snaps as today (tests for each kind). (QA: pass / fail)
-- [ ] A ramp off the grid links to its rooftop when its top end reaches the side, and the car drives up it (tests). (QA: pass / fail)
-- [ ] Off-grid buildings and rooftops block the car and are walked round by minions; check_level.py and check_height_data.py accept a good off-grid level and still refuse bad ones (tests). (QA: pass / fail)
-- [ ] Levels saved before load, pass check_level.py and play as before, including the board's levels in game/data/levels/ (read only; listed in the result notes). (QA: pass / fail)
-- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots or a GIF in art-archive/T-581/screenshots/ show pieces placed off the grid, with and without Shift, and a run on that level. (QA: pass / fail)
-- [ ] Added by the board, 2026-11-08 ("I want to be able to move things on the map, like obstacles that I place, and the decoration as well"): every placed piece (obstacles, paired obstacles with their pairs following, props and decorations, buildings, rooftops and ramps with their links updated) can be selected and dragged to a new place, freely or with Shift to snap, refused like a placement where it can't go; the moved piece keeps its id; tests and a screenshot or GIF for each kind. (QA: pass / fail)
+- [ ] Without Shift, each kind of piece is placed where the mouse drops it, at the proposed step; with Shift it snaps as today (tests for each kind). (QA: pass)
+- [ ] A ramp off the grid links to its rooftop when its top end reaches the side, and the car drives up it (tests). (QA: pass)
+- [ ] Off-grid buildings and rooftops block the car and are walked round by minions; check_level.py and check_height_data.py accept a good off-grid level and still refuse bad ones (tests). (QA: pass)
+- [ ] Levels saved before load, pass check_level.py and play as before, including the board's levels in game/data/levels/ (read only; listed in the result notes). (QA: pass)
+- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots or a GIF in art-archive/T-581/screenshots/ show pieces placed off the grid, with and without Shift, and a run on that level. (QA: pass)
+- [ ] Added by the board, 2026-11-08 ("I want to be able to move things on the map, like obstacles that I place, and the decoration as well"): every placed piece (obstacles, paired obstacles with their pairs following, props and decorations, buildings, rooftops and ramps with their links updated) can be selected and dragged to a new place, freely or with Shift to snap, refused like a placement where it can't go; the moved piece keeps its id; tests and a screenshot or GIF for each kind. (QA: pass)
 
 ## Updates
 
@@ -59,6 +59,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Level Design builds free placement with Shift to snap.
+
+### 2026-11-08, In progress → In QA
+
+Built: free placement (0.25 steps), Shift to snap, every placed piece movable. QA after the current merge.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed 8/8: free placement (Shift snaps) and moving placed pieces. Ready to play.
 
 ## Style review
 
