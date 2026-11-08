@@ -1,7 +1,7 @@
 ---
 id: T-598
 title: Text: the trick popups setting's label
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -51,10 +51,24 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: the label for the trick popups setting.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Run by `tools/style_loop/run.py` on 2026-11-08: text, kind label, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+### Round 1
+
+- Version 1: "Trick popups"
+- Script checks: 4 of 4 pass
+- Score: 10/10
+- Reason: "Trick popups" is a short, plain, sentence-case noun phrase on one line, matching the settings label format in rule 4 and the sibling labels ("Drift Guide", "Rain"). It has no on/off words and no banned words. It uses no Greenbull voice, so rules 2 and 3 hold. No real brands. Rule 1 (tone) doesn't call for satire in a bare settings label. All script checks pass. Nothing to fix.
+- Rules broken: none
+
+**Kept:** version 1, score 10/10 ("Trick popups"): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Narrative Theme, 2026-11-08. Key trick_popups_label = "Trick popups" in game/data/pause_text.json (after jump_arrow_label, _comment extended). Style loop: 1 round, 10/10. Shows in the pause screen settings and the main menu Settings screen (both reuse the pause labels). Listed in docs/hud-and-menus.md Content (Trick popups checkbox). For T-599: read trick_popups_label. Tests: GUT 285 scripts, 3251 tests, 3250 pass, 0 fail, 1 risky; game/tools pytest 1232 passed, 4 skipped.
