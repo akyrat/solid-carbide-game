@@ -4115,3 +4115,8 @@ Entry format:
 - Decision or change: The cosmetics pick button says Equip; the board asked to merge it.
 - Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
 - Tasks: T-582
+
+## 2026-11-08: The test runner records the real run time, and the PowerShell runner runs in parallel
+- Decision or change: Every full Godot run now writes game/tools/test_run_record.json (time, wall seconds, processes, counts, passed) and ends with 'TESTS PASSED (N s on P processes)'; test_times.json is labelled as single-process seconds; run_tests.ps1 runs the same 12-process split as run_tests.sh (its full run took 268 s in QA, where the old single process took about 25 minutes). Board, 2026-11-08: agents had been quoting the single-process time. Tooling, merged after QA.
+- Documents touched: tasks/README.md,game/docs/setup/tests.md
+- Tasks: T-588
