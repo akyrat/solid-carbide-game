@@ -1,7 +1,7 @@
 ---
 id: T-577
 title: Art: the hint pieces' icons and sign (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -70,6 +70,10 @@ Hint art done: 6 of 30 generations. Keycaps and curved arrow 8/10; straight arro
 ### 2026-11-08, In QA → Needs playtest
 
 QA passed. Hint art ready to play: C:\solid-carbide-worktrees\T-577 (level creator: Driver hints).
+
+### 2026-11-08, Needs playtest
+
+Board: lgtm. Merging.
 
 ## Style review
 
@@ -368,3 +372,4 @@ V4 (roadside sign, 2026-11-08, the third and last refine): the Style Evaluator s
 
 FINISHED. Generations used: 6 of 30 (W 1, S 1, straight arrow 1, curved arrow 1, circular arrow 1, sign 1; every refine was a free script fix). Scores: W 8, S 8, curved 8 (v4-2, scored by style-evaluator), straight 7, circular 7, sign 7 (the three at 7 kept for the playtest). The loop flagged the ticket twice; I did not change status. No sample stop (board's goodnight approval). Screenshots: art-archive/T-577/screenshots/ (creator_hints, creator_ground_preview, run_hints). Tests: bash game/tools/run_tests.sh 3070/3071 pass, 0 failing, 1 risky; build_hint_keycap tests 7/7, arrow_curved tests 17/17. Docs: visual-style.md, level-design.md.
 - 2026-11-08, flagged-for-review → in-progress: Loop flags on the straight and circular arrows (7/10) kept for the playtest.
+- 2026-11-08, needs-playtest → done: Board: lgtm (2026-11-08)
