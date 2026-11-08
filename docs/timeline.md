@@ -3960,3 +3960,18 @@ Entry format:
 - Decision or change: The board tunes the drift tutorial slides' layout and play directly, with no QA round.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-574
+
+## 2026-11-08: Texts for the hint pieces
+- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces.
+- Documents touched: docs/level-design.md
+- Tasks: T-575
+
+## 2026-11-08: Hint pieces in the level creator
+- Decision or change: Gas, brake and arrow hints placed in the creator, painted on the ground or on signs, shown in runs.
+- Documents touched: docs/level-design.md
+- Tasks: T-576
+
+## 2026-11-08: Art for the hint pieces
+- Decision or change: PixelLab icons for gas, brake and the arrows, and a roadside sign (up to 30 generations).
+- Documents touched: docs/visual-style.md, docs/level-design.md
+- Tasks: T-577
