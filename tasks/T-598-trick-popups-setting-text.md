@@ -1,7 +1,7 @@
 ---
 id: T-598
 title: Text: the trick popups setting's label
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/data/pause_text.json]
 files_expected_to_change: [game/data/pause_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started: the label for the trick popups setting.
 
 Label: Trick popups. You'll see it in T-599's build.
 
+### 2026-11-08, In QA → Needs playtest
+
+QA passed all 3 criteria. The label shows in T-599's build (playtest-b).
+
 ## Style review
 
 Run by `tools/style_loop/run.py` on 2026-11-08: text, kind label, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
@@ -76,3 +80,4 @@ Run by `tools/style_loop/run.py` on 2026-11-08: text, kind label, brief `C:/User
 ## Result notes
 
 Narrative Theme, 2026-11-08. Key trick_popups_label = "Trick popups" in game/data/pause_text.json (after jump_arrow_label, _comment extended). Style loop: 1 round, 10/10. Shows in the pause screen settings and the main menu Settings screen (both reuse the pause labels). Listed in docs/hud-and-menus.md Content (Trick popups checkbox). For T-599: read trick_popups_label. Tests: GUT 285 scripts, 3251 tests, 3250 pass, 0 fail, 1 risky; game/tools pytest 1232 passed, 4 skipped.
+- 2026-11-08, needs-playtest → done: The board played it in playtest-b: lgtm (2026-11-08).
