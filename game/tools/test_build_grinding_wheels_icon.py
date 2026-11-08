@@ -39,16 +39,22 @@ class IconTests(unittest.TestCase):
 
     def test_composition(self):
         bbox = self.im.getbbox()
-        self.assertGreaterEqual(bbox[2] - bbox[0], 28)   # fills about 28 wide
-        self.assertGreaterEqual(bbox[3] - bbox[1], 24)
+        self.assertGreaterEqual(bbox[2] - bbox[0], 28)   # fills about 28 x 28
+        self.assertGreaterEqual(bbox[3] - bbox[1], 28)
         # The tyre's bottom touches the rail's top outline row.
         self.assertEqual(self.px[bg.CX, bg.RAIL_Y0][:3], bg.OUTLINE)        # the rail's top outline
         self.assertEqual(self.px[bg.CX, bg.RAIL_Y0 - 1][:3], bg.OUTLINE)    # the tyre's own outline, on it
         self.assertEqual(self.px[bg.CX, bg.RAIL_Y0 - 2][:3], bg.TYRE_DARK)
         # Hub centre is steel, lug nuts are dark, the rail's top-left is highlighted.
         self.assertEqual(self.px[bg.CX, bg.CY][:3], bg.HUB_LIT)
-        self.assertEqual(self.px[bg.CX, bg.CY - 3][:3], bg.LUG)
+        self.assertEqual(self.px[bg.CX, round(bg.CY - bg.LUG_RY)][:3], bg.LUG)
+        # The rail: a lit top face over a darker side face, highlighted top-left; the hub's rim is bevelled.
         self.assertEqual(self.px[bg.RAIL_X0 + 2, bg.RAIL_Y0 + 1][:3], bg.RAIL_HI)
+        self.assertEqual(self.px[15, bg.RAIL_Y0 + 2][:3], bg.RAIL_TOP)
+        self.assertEqual(self.px[15, bg.RAIL_Y0 + 3][:3], bg.RAIL_SIDE)
+        self.assertEqual(self.px[bg.CX - bg.HUB_RX, bg.CY][:3], bg.HUB_LIT)
+        self.assertEqual(self.px[bg.CX + bg.HUB_RX, bg.CY][:3], bg.HUB_DARK)
+        self.assertEqual(self.px[bg.CX - 3, bg.CY - 9][:3], bg.TYRE_HI)
 
     def test_sparks_only_on_the_right_with_halos(self):
         spark_cols = set(bg.SPARK) | {bg.CYAN, bg.MAGENTA}

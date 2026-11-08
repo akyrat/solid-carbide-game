@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draw the Grinding Wheels power-up icon by script (T-587, style loop version 3; 0 PixelLab generations).
+"""Draw the Grinding Wheels power-up icon by script (T-587, style loop versions 3 and 4; 0 PixelLab generations).
 
 A 32 x 32 icon (Visual style, Decisions, "Grinding Wheels icon"): a car wheel seen 3/4 from the side,
 its tyre a dark blue-grey ellipse with a tread band on the right, a steel hub with five lug nuts,
@@ -22,27 +22,32 @@ W = H = 32
 OUTLINE = (6, 5, 10)
 OUTLINE_HI = (112, 133, 189)
 
-TYRE_LIT, TYRE, TYRE_DARK = (62, 74, 108), (36, 44, 72), (22, 27, 46)
+TYRE_HI, TYRE_LIT, TYRE, TYRE_DARK = (96, 112, 156), (62, 74, 108), (36, 44, 72), (22, 27, 46)
 TREAD, TREAD_NOTCH = (16, 20, 34), (58, 68, 98)
-HUB_LIT, HUB, HUB_DARK, HUB_RING = (196, 226, 232), (130, 160, 190), (84, 100, 128), (46, 56, 84)
+HUB_LIT, HUB, HUB_DARK = (196, 226, 232), (130, 160, 190), (84, 100, 128)
 LUG = (28, 34, 56)
-RAIL_HI, RAIL_TOP, RAIL_MID, RAIL_DARK = (184, 222, 223), (122, 153, 184), (77, 93, 119), (49, 66, 91)
+RAIL_HI, RAIL_TOP, RAIL_SIDE, RAIL_DARK = (184, 222, 223), (122, 153, 184), (70, 86, 114), (44, 56, 80)
 SPARK = [(251, 238, 219), (255, 158, 46), (232, 112, 36), (150, 70, 26), (84, 40, 18)]
 CYAN, MAGENTA = (90, 220, 240), (235, 80, 200)
 
-CX, CY, RX, RY = 14, 14, 9, 9.6     # the tyre's face ellipse (9.6, not 10: a 10 would leave one lone pixel at the top)
+CX, CY, RX, RY = 14, 13, 10, 10.6   # the tyre's face ellipse (10.6, not 11: an 11 would leave one lone pixel at the top)
 SIDE = 4                            # the tread band's offset to the right (the 3/4 view)
-HUB_RX, HUB_RY = 5, 6
-RAIL_X0, RAIL_X1, RAIL_Y0 = 1, 30, 24   # the rail: 5 rows from RAIL_Y0, the tyre's bottom touches it
+HUB_RX, HUB_RY = 6, 7
+LUG_RX, LUG_RY = 3.0, 3.6
+RAIL_X0, RAIL_X1, RAIL_Y0 = 1, 30, 24   # the rail: 7 rows from RAIL_Y0 (outline, 2 top face, 3 side face, outline)
 
-# The spray: (x, y, tier) from the contact point at the tyre's rear bottom, fanning right and up.
+# The spray: (x, y, tier) from the contact point at the tyre's rear bottom, fanning right and up: a white-hot
+# core of four pixels, then five rays of bright and deeper orange, thinning out towards the top-right.
 SPARKS = [
-    (24, 23, 0), (25, 22, 0), (26, 23, 1), (25, 21, 1), (27, 21, 1), (26, 20, 1), (28, 22, 1),
-    (28, 19, 1), (27, 18, 2), (29, 20, 1), (30, 21, 2), (29, 17, 2), (30, 18, 1), (31, 19, 2),
-    (28, 16, 2), (30, 15, 2), (26, 17, 2), (31, 16, 2), (29, 23, 2), (31, 23, 2), (27, 24, 2),
-    (30, 13, 3), (27, 15, 3), (31, 12, 3), (24, 20, 1), (25, 19, 2),
+    (25, 22, 0), (26, 22, 0), (25, 21, 0), (26, 21, 0),
+    (27, 22, 1), (28, 22, 1), (29, 22, 2), (30, 22, 1), (31, 22, 2),              # shallow, right
+    (27, 20, 1), (28, 19, 1), (29, 18, 1), (30, 17, 2), (31, 16, 2),              # right and up
+    (27, 19, 1), (28, 17, 1), (28, 15, 2), (29, 13, 2), (28, 11, 3),              # steep
+    (28, 16, 1), (29, 14, 1), (30, 12, 2), (31, 10, 2), (31, 8, 3),               # steeper
+    (28, 23, 1), (30, 23, 2), (27, 24, 2), (31, 24, 2),                           # along the rail
+    (29, 20, 1), (30, 19, 1), (30, 15, 2), (29, 16, 3), (31, 19, 3), (30, 10, 3),
 ]
-ACCENTS = {(26, 20): CYAN, (30, 18): CYAN, (28, 22): MAGENTA, (29, 17): MAGENTA}
+ACCENTS = {(28, 19): CYAN, (29, 14): CYAN, (30, 19): MAGENTA, (28, 16): MAGENTA}
 
 
 def in_ellipse(x: int, y: int, cx: float, cy: float, rx: float, ry: float) -> bool:
@@ -66,15 +71,17 @@ def draw() -> Image.Image:
         if 0 <= x < W and 0 <= y < H:
             px[x, y] = c + (255,)
 
-    # The rail.
+    # The rail, in 3/4 view (rule 3): a lit top face of two rows, then a darker side face of three rows.
     y0 = RAIL_Y0
     for x in range(RAIL_X0, RAIL_X1 + 1):
         put(x, y0, OUTLINE)
-        put(x, y0 + 1, RAIL_HI if x <= RAIL_X0 + 8 or x in (RAIL_X1 - 6, RAIL_X1 - 5) else RAIL_TOP)
-        put(x, y0 + 2, RAIL_MID)
-        put(x, y0 + 3, RAIL_DARK)
-        put(x, y0 + 4, OUTLINE)
-    for y in range(y0, y0 + 5):
+        put(x, y0 + 1, RAIL_HI if x <= RAIL_X0 + 8 or x in (RAIL_X1 - 7, RAIL_X1 - 6) else RAIL_TOP)
+        put(x, y0 + 2, RAIL_TOP)
+        put(x, y0 + 3, RAIL_SIDE)
+        put(x, y0 + 4, RAIL_SIDE)
+        put(x, y0 + 5, RAIL_DARK)
+        put(x, y0 + 6, OUTLINE)
+    for y in range(y0, y0 + 7):
         put(RAIL_X0, y, OUTLINE)
         put(RAIL_X1, y, OUTLINE)
     put(RAIL_X0 + 1, y0, OUTLINE_HI)     # highlight breaks in the rail's top outline
@@ -89,24 +96,29 @@ def draw() -> Image.Image:
     for x, y in band:
         put(x, y, TREAD_NOTCH if (y - CY) % 3 == 0 and (x, y) not in edge else TREAD)
     for x, y in face:
-        put(x, y, shade(light(x, y, CX, CY, RX, RY), TYRE_LIT, TYRE, TYRE_DARK))
-    # The face's inner rim: a lit ring just inside the hub, so the tyre reads apart from the metal.
+        value = light(x, y, CX, CY, RX, RY)
+        put(x, y, TYRE_HI if value > 0.78 else shade(value, TYRE_LIT, TYRE, TYRE_DARK))
     for x, y in edge:
         put(x, y, OUTLINE)
     # Highlight breaks in the outline, top-left.
     for x, y in edge:
-        if light(x, y, CX, CY, RX, RY) > 0.82 and (x, y) in face:
+        if light(x, y, CX, CY, RX, RY) > 0.7 and (x, y) in face:
             put(x, y, OUTLINE_HI)
 
-    # The hub: steel, lit from the top-left, a dark ring round it and five lug nuts.
+    # The hub: steel, lit from the top-left, its rim bevelled (lit on the top-left, dark on the
+    # bottom-right, so it reads as metal against the tyre), five lug nuts and a lit centre cap.
     hub = {(x, y) for y in range(H) for x in range(W) if in_ellipse(x, y, CX, CY, HUB_RX, HUB_RY)}
     hub_edge = {(x, y) for (x, y) in hub
                 if any((x + dx, y + dy) not in hub for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
     for x, y in hub:
-        put(x, y, HUB_RING if (x, y) in hub_edge else shade(light(x, y, CX, CY, HUB_RX, HUB_RY), HUB_LIT, HUB, HUB_DARK))
+        value = light(x, y, CX, CY, HUB_RX, HUB_RY)
+        if (x, y) in hub_edge:
+            put(x, y, HUB_LIT if value > 0 else HUB_DARK)
+        else:
+            put(x, y, shade(value, HUB_LIT, HUB, HUB_DARK, hi=0.55, lo=-0.5))
     for i in range(5):
         a = math.radians(-90 + i * 72)
-        put(round(CX + 2.6 * math.cos(a)), round(CY + 3.2 * math.sin(a)), LUG)
+        put(round(CX + LUG_RX * math.cos(a)), round(CY + LUG_RY * math.sin(a)), LUG)
     put(CX, CY, HUB_LIT)
 
     # The sparks, then their stepped halos (rule 5): each transparent 4-neighbour of a white or bright
