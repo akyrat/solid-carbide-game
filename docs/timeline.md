@@ -4060,3 +4060,8 @@ Entry format:
 - Decision or change: A killed minion drops a health pickup 5% of the time.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-579
+
+## 2026-11-08: The launch keeps the grind's speed
+- Decision or change: Letting go of Space launches the car where it faces at its grinding speed (floor 6).
+- Documents touched: `docs/drifting.md`
+- Tasks: T-578
