@@ -263,6 +263,69 @@ class TestFlat(unittest.TestCase):
         self.assertLessEqual(len(opaque_colours(out)), 7)
 
 
+class TestCrisp(unittest.TestCase):
+    """The v4 pass: flat, a continuous outline with two notches, a darker shade, a bigger head."""
+
+    def setUp(self):
+        self.im = ring.arrow("crisp")
+        self.px = self.im.load()
+        self.cells = ring.arrow_cells("crisp")
+        self.lay = ring.layers("crisp")
+        self.outer = {p for p in self.cells if any(q not in self.cells for q in ring.nbrs8(p))}
+        self.inner = {p for p in self.cells - self.outer if any(q in self.outer for q in ring.nbrs8(p))}
+
+    def test_bigger_head_on_the_same_ring_with_the_gap_kept(self):
+        self.assertEqual({y for y in range(64) if self.px[45, y][3] == 255 and y < 30}, {14, 15})   # the tip
+        self.assertEqual({y for y in range(64) if self.px[32, y][3] == 255 and y < 31}, set(range(1, 29)))   # 28 px base
+        self.assertGreater(len(self.cells), len(ring.arrow_cells("flat")))
+        self.assertTrue(ring.arrow_cells("flat") <= self.cells)
+        self.assertEqual({x for x in range(32) if self.px[x, 34][3] == 255}, set(range(5, 21)))   # 16 px stroke
+        for radius in (12, 20, 26):
+            self.assertNotIn(at_angle(-40, radius), self.cells, radius)      # the gap stays clear
+        self.assertNotIn((48, 14), self.cells)
+        self.assertEqual(self.px[32, 0][3], 0)
+        self.assertTrue(all(p[3] in (0, 255) for p in self.im.getdata()))
+
+    def test_outline_is_continuous_with_two_notches_and_the_head_run(self):
+        glint = self.lay["glint"]
+        self.assertTrue(self.inner <= self.lay["outline"])                   # the inner ring never breaks
+        self.assertTrue(glint <= self.outer)
+        self.assertFalse(self.lay.get("edge"))                               # no near-white inside the outline
+        self.assertLessEqual(len(glint), int(0.12 * len(self.outer)))
+        rows = sorted({p[1] for p in glint if p[0] < 32 and p[1] < 34})
+        self.assertGreaterEqual(len(rows), 6)
+        self.assertEqual(sum(1 for a, b in zip(rows, rows[1:]) if b - a > 2), 1)   # two notches
+        self.assertTrue({p for p in glint if 37 <= p[0] <= 42 and p[1] < 14})       # the head's upper slope
+        self.assertFalse({p for p in glint if p[0] >= 43 or p[1] > 34})
+        self.assertEqual(self.outer | self.inner, self.lay["outline"] | glint)
+
+    def test_darker_three_step_shade_and_two_pixel_highlight(self):
+        colours = opaque_colours(self.im)
+        self.assertEqual(colours, {c[:3] for c in (ring.INK, ring.GLINT, ring.BLUSH_LIGHT, ring.BLUSH,
+                                                    ring.BLUSH_SHADE, ring.BLUSH_DEEP, ring.COOL_DEEP)})
+        row = [self.px[x, 34] for x in range(5, 21)]
+        self.assertEqual(row, [ring.INK, ring.INK, ring.BLUSH_LIGHT, ring.BLUSH_LIGHT] + [ring.BLUSH] * 7
+                         + [ring.BLUSH_SHADE, ring.BLUSH_DEEP, ring.COOL_DEEP, ring.INK, ring.INK])
+        # The lower-right outer edge: cool against the outline, then deep, then shade.
+        colours_in = []
+        for k in range(24):
+            c = self.px[at_angle(60, 27 - 0.5 * k)]
+            if c[3] == 255 and c != ring.INK and (not colours_in or colours_in[-1] != c):
+                colours_in.append(c)
+        self.assertEqual(colours_in[:3], [ring.COOL_DEEP, ring.BLUSH_DEEP, ring.BLUSH_SHADE])
+
+    def test_polish_crisp_grows_v1_and_fills_the_new_head_with_pixellabs_blush(self):
+        v1 = ring.arrow()
+        px = v1.load()
+        for x, y in ring.layers()["body"]:
+            px[x, y] = (243, 193, 222, 255)
+        out = ring.polish(v1, "crisp")
+        opx = out.load()
+        self.assertTrue(all(opx[x, y] == (243, 193, 222, 255) for x, y in self.lay["body"]))
+        self.assertTrue(all(opx[p] == ring.INK for p in self.inner))
+        self.assertEqual({y for y in range(64) if opx[45, y][3] == 255 and y < 30}, {14, 15})
+
+
 class TestRequest(unittest.TestCase):
     def test_body_carries_the_init_image_and_the_sprite_size(self):
         png = ring._png_bytes(ring.arrow())

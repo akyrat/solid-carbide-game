@@ -26,7 +26,10 @@ rule 2). This script does the free parts of the style loop around one PixelLab c
         over their middle; the stroke's new pixels take PixelLab's blush. `init`, `finish` and `roles` take
         --bold too. --flat (T-577 v3) is the bold stroke with the straight arrow's flat two-tone look: no
         near-white edge line, a two-step rim light, one deep and two shade pixels of stepped shade with no cool
-        or mid tones, and three short runs breaking both rings of the outline fully on the upper-left.
+        or mid tones, and three short runs breaking both rings of the outline fully on the upper-left. --crisp
+        (T-577 v4) is the flat look with a continuous outline broken only by two 5 px notches on the outer ring
+        and the head's slope, a darker three-step shade ending in the cool plum, and a bigger head (14 columns,
+        28 px tall at its base, its axis on the stroke's middle).
     python game/tools/build_hint_arrow_circular.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -101,7 +104,21 @@ GEOM = {
              "arc_glint_degrees": [(-173.0, -163.0), (-147.0, -137.0), (-121.0, -111.0)],
              "head_glint_cols": range(36, 41), "head_run_rows": 3, "inner_ring_runs": 1.0, "taper": 0.3,
              "edge_line": False, "flat_role": "body"},   # the turn is plain paint: no mid tone
+    # "crisp" (T-577 v4): the flat look with a continuous outline broken only by two 5 px notches on the outer
+    # ring and the head's slope (the inner ring never breaks, the near-white never widens inward), a darker
+    # three-step shade ending in the cool plum against the outline, and a bigger head: 14 columns, 28 px tall
+    # at its base, its axis on the stroke's middle.
+    "crisp": {"r_in": 11.0, "light_steps": 2, "hole_light_steps": 1,
+              "shade_steps": (("cool", 1), ("deep", 1), ("shade", 1)),
+              "arc_glint_degrees": [(-168.0, -158.0), (-128.0, -118.0)],
+              "head_glint_cols": range(37, 43), "head_run_rows": 2, "inner_ring_runs": 0.0, "taper": 0.3,
+              "edge_line": False, "flat_role": "body", "widen_runs": False, "head": (45, 14, 14, 15)},
 }
+HEAD_DEFAULT = (HEAD_TIP_X, HEAD_COLS, HEAD_ROW0, HEAD_ROW1)   # (tip column, columns, tip's first row, last row)
+
+
+def head_of(g: dict) -> tuple[int, int, int, int]:
+    return g.get("head", HEAD_DEFAULT)
 
 
 def angle_from_start(x: float, y: float) -> float:
@@ -121,16 +138,12 @@ def arrow_cells(bold=False) -> set[tuple[int, int]]:
             d = math.hypot(px_ - CENTRE[0], py_ - CENTRE[1])
             if r_in <= d <= R_OUT and angle_from_start(px_, py_) <= span:
                 cells.add((x, y))
-    for k in range(HEAD_COLS):
-        x = HEAD_TIP_X - k
-        for y in range(HEAD_ROW0 - k, HEAD_ROW1 + k + 1):
+    tip_x, cols, row0, row1 = head_of(GEOM[bold])
+    for k in range(cols):
+        x = tip_x - k
+        for y in range(row0 - k, row1 + k + 1):
             cells.add((x, y))
     return cells
-
-
-def head_upper_slope(cells: set[tuple[int, int]]) -> set[tuple[int, int]]:
-    """The head's pixels above its axis, in the columns of the head."""
-    return {(x, y) for x, y in cells if x >= HEAD_TIP_X - HEAD_COLS + 1 and y <= HEAD_ROW0}
 
 
 LAST_DEPTHS: dict[str, dict[tuple[int, int], int]] = {}   # the last layers() call's ring depths, for `roles --depths`
@@ -150,7 +163,8 @@ def layers(bold=False) -> dict[str, set[tuple[int, int]]]:
 
     r_in = g["r_in"]
     mid_radius = (r_in + R_OUT) / 2
-    head_x0 = HEAD_TIP_X - HEAD_COLS + 1
+    tip_x, head_cols, head_row0, head_row1 = head_of(g)
+    head_x0 = tip_x - head_cols + 1
     span = (ARC_END - ARC_START) % 360.0
     shade_bands = []
     for role, n in g["shade_steps"]:
@@ -168,7 +182,7 @@ def layers(bold=False) -> dict[str, set[tuple[int, int]]]:
         if not g["edge_line"]:
             return False
         x, y = p[0] + 0.5, p[1] + 0.5
-        if p[0] >= head_x0 and p[1] <= HEAD_ROW1 + HEAD_COLS:
+        if p[0] >= head_x0 and p[1] <= head_row1 + head_cols:
             return True
         return (math.hypot(x - CENTRE[0], y - CENTRE[1]) > mid_radius
                 and EDGE_LINE_FROM_DEGREES < angle_from_start(x, y) < span)
@@ -293,13 +307,14 @@ def layers(bold=False) -> dict[str, set[tuple[int, int]]]:
                     if lo + margin <= angle <= hi - margin:
                         glint.add((x, y))
     for x in g["head_glint_cols"]:
-        k = HEAD_TIP_X - x
-        top = HEAD_ROW0 - k
+        k = tip_x - x
+        top = head_row0 - k
         glint.update({(x, y) for y in range(top, top + g["head_run_rows"])} & (outline if shrink else outline1))
-    # The runs are wider than the outline pixel: the lit pixel just inside a run is near-white too.
-    lit_inside = {p for p in roles["light"] if any(q in glint for q in nbrs8(p))}
-    roles["light"] -= lit_inside
-    roles["edge"] |= lit_inside
+    if g.get("widen_runs", True):
+        # The runs are wider than the outline pixel: the lit pixel just inside a run is near-white too.
+        lit_inside = {p for p in roles["light"] if any(q in glint for q in nbrs8(p))}
+        roles["light"] -= lit_inside
+        roles["edge"] |= lit_inside
     roles["outline"] = outline - glint
     roles["glint"] = glint
     return {role: cells for role, cells in roles.items() if cells or role in ("outline", "glint", "body")}
@@ -462,8 +477,13 @@ def main(argv=None) -> int:
                         help="the v2 pass: a 16 px stroke, wider rim light and shade steps, runs breaking both rings")
         sp.add_argument("--flat", action="store_true",
                         help="the v3 pass: the bold stroke with a flat two-tone shade, no edge line, full-depth runs")
+        sp.add_argument("--crisp", action="store_true",
+                        help="the v4 pass: flat, with a continuous outline, two 5 px notches, a darker shade and a bigger head")
     args = p.parse_args(argv)
-    bold = "flat" if getattr(args, "flat", False) else ("bold" if getattr(args, "bold", False) else False)
+    bold = False
+    for name in ("bold", "flat", "crisp"):
+        if getattr(args, name, False):
+            bold = name
 
     if args.cmd == "init":
         save_png(arrow(bold), Path(args.out))
