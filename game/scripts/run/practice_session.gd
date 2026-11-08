@@ -724,7 +724,9 @@ func _take_gift_now() -> String:
 ## checks the checkpoint and sets the next step's keys.
 func _take_step() -> void:
 	if _recording:
-		var hop: bool = car.jump.hops != _hops_before
+		# T-574 tweak 11: the step's Space press (not its hop: since T-590's charged jump a held
+		# press charges and hops on release, so a replay presses where the board pressed).
+		var hop: bool = car.last_jump_press
 		_hops_before = car.jump.hops
 		take.add_frame(car.last_input[0], car.last_input[1], car.last_input[2], car.jump_held, hop)
 		var n := take.steps()

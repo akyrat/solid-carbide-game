@@ -107,7 +107,10 @@ func test_a_grind_take_keeps_the_gift_the_hop_and_the_rail() -> void:
 	# West into the barrier corridor (as test_practice_session's GRIND_ROUTE), a hop held onto the rail.
 	_drive([true, false, -1.0], 0.9)
 	_drive([true, false, 1.0], 0.9)
+	# T-590 (tweak 11): a tap hops, then Space held in the air catches the rail.
 	session.car.press_jump()
+	_drive([true, false, 0.0], 0.02, false)
+	assert_true(session.car.airborne, "the tap hopped at once")
 	_drive([true, false, 0.0], 1.5, true)
 	_drive([false, false, 0.0], 1.0)
 	assert_eq(session.stop_and_save(), OK)
@@ -120,6 +123,34 @@ func test_a_grind_take_keeps_the_gift_the_hop_and_the_rail() -> void:
 	_play_out()
 	assert_almost_eq(session.car.model.get_position(), recorded_end, Vector2(0.001, 0.001))
 	assert_eq(session.successes, recorded_successes)
+
+
+## T-574 tweak 11: since T-590 a held press charges and the car hops on release, so a take keeps the
+## press (not the hop) and a charged jump replays charged, at the same step and height.
+func test_a_charged_jump_replays_charged() -> void:
+	_go("grind")
+	session.start_recording()
+	_drive([true, false, 0.0], 0.5)
+	session.car.press_jump()
+	_drive([true, false, 0.0], 1.0, true)  # charging on the ground
+	assert_false(session.car.airborne, "no hop while Space is held on the ground")
+	var peak := 0.0
+	for i in 60:
+		_drive([true, false, 0.0], 0.02, false)
+		peak = maxf(peak, session.car.height)
+	assert_eq(session.stop_and_save(), OK)
+	var take := PracticeTake.load_take("grind", DIR)
+	assert_eq(take.frames.filter(func(f): return f[4]).size(), 1, "one press, kept at its step")
+	var end: Vector2 = session.car.model.get_position()
+	assert_true(session.play_take())
+	var replay_peak := 0.0
+	var guard := 0
+	while session.is_replaying() and guard < 5000:
+		session.car.physics_step()
+		replay_peak = maxf(replay_peak, session.car.height)
+		guard += 1
+	assert_almost_eq(session.car.model.get_position(), end, Vector2(0.001, 0.001))
+	assert_almost_eq(replay_peak, peak, 0.001, "as high as the charged jump")
 
 
 func test_r_in_a_take_is_replayed() -> void:

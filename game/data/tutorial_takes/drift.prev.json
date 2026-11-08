@@ -1,0 +1,89 @@
+{
+ "checkpoints": [
+  {
+   "height": 0.0,
+   "rotation": 2.9474,
+   "step": 50,
+   "x": 1.6288,
+   "y": 8.0277
+  },
+  {
+   "height": 0.0,
+   "rotation": 6.2967,
+   "step": 100,
+   "x": -14.339,
+   "y": 1.7427
+  },
+  {
+   "height": 0.0,
+   "rotation": 9.6459,
+   "step": 150,
+   "x": 2.9347,
+   "y": 10.2988
+  },
+  {
+   "height": 0.0,
+   "rotation": 12.9952,
+   "step": 200,
+   "x": -13.2009,
+   "y": -1.5506
+  },
+  {
+   "height": 0.0,
+   "rotation": 16.3445,
+   "step": 250,
+   "x": 0.4679,
+   "y": 13.4114
+  }
+ ],
+ "format": "solid-carbide-tutorial-take",
+ "gift": "",
+ "inputs": [
+  [
+   5,
+   0,
+   0,
+   0.0,
+   0,
+   0
+  ],
+  [
+   1,
+   1,
+   0,
+   0.0,
+   0,
+   0
+  ],
+  [
+   246,
+   1,
+   0,
+   -1.0,
+   0,
+   0
+  ],
+  [
+   7,
+   0,
+   0,
+   0.0,
+   0,
+   0
+  ]
+ ],
+ "physics_fps": 50,
+ "resets": [],
+ "result": {
+  "drift_seconds": 4.92,
+  "successes": 0
+ },
+ "start": {
+  "heading": 0.0,
+  "x": -7.0,
+  "y": -1.0
+ },
+ "steps": 259,
+ "trick": "drift",
+ "version": 1
+}
