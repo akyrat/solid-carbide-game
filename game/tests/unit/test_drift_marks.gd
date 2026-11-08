@@ -299,7 +299,7 @@ func test_settings_live_in_the_scene() -> void:
 			"fade_time", "max_segments", "piece_segments", "rear_axle_units", "half_track_units"]:
 		assert_true(names.has(setting), "%s is set in the scene" % setting)
 	var m := _marks()
-	assert_almost_eq(m.lifetime, 6.0, 0.0001, "about 6 seconds")
+	assert_almost_eq(m.lifetime, 3.0, 0.0001, "3 seconds (T-600: half of the 6 before)")
 	assert_gt(m.fade_time, 0.0)
 	assert_gt(m.max_segments, 2 * m.piece_segments, "room for both tyres' open pieces")
 

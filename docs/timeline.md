@@ -4255,3 +4255,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: the tutorial keycaps no longer show R.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-597
+
+## 2026-11-08: Slide marks, and faster fading tire marks
+- Decision or change: Merged after the board's playtest: lighter slide marks from all four wheels when sliding without W; all tire marks last half as long.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-600
