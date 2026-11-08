@@ -1,7 +1,7 @@
 ---
 id: T-593
 title: Texts: describe the charged jump wherever the game explains jumping
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: updating every text that explains the jump.
+
+### 2026-11-08, In progress → In QA
+
+Three texts updated (Jump card tiers 1 and 2, the tutorial's grind hint). QA, then merge with T-590.
 
 ## Style review
 
