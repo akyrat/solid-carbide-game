@@ -1,7 +1,7 @@
 ---
 id: T-596
 title: No popup for thread the needle (the trick still counts)
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -71,3 +71,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Added data switch data/hud.json trick_popups.hidden=[thread_the_needle]; TrickPopups.is_hidden() checked in _on_combo_trick and _on_trick (run, practice window, prototype). Trick still counts (combo, missions, flash, routes untouched). Test updated + new test (hidden by data, other tricks still pop). Ran test_thread_the_needle, test_trick_popups, _heat, _prebuild, test_recap_screen, test_practice_session, test_bricks_perf: all pass. Screenshots: art-archive/T-596/screenshots/ (flash_030.png shows x1.48 combo, pair flashing, no bubble). Docs: docs/hud-and-menus.md Content, game/docs/hud-and-menus/popups.md.
 
 Project Lead, 2026-11-08: full Godot set on the branch (bash game/tools/run_tests.sh, GUT_TIME_LIMIT=2400): 284 scripts, 3251 tests, 3250 passing, 0 failing, 1 risky/pending, TESTS PASSED (263 s). The Python sets passed in qa_check.
+- 2026-11-08, needs-playtest → done: The board played it in playtest-fixes: works (2026-11-08).
