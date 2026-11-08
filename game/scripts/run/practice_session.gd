@@ -44,9 +44,9 @@ extends Node2D
 ## AREA_MARGIN; the map's hard edges normally keep it in) or on R.
 ##
 ## The level and the texts (T-560 and T-559, both in):
-## - PLAYGROUND_PATH: the practice playground, data/level/practice_playground.json. Each trick
-##   starts on the level's start point with its id (LevelStartPoints: drift, alt_drift, air_spin,
-##   grind), else on the level's spawn. The level draws its own grid ground ("ground_style").
+## - PLAYGROUND_PATH: the practice playground, data/level/practice_playground.json (the board's
+##   layout since T-574). Every trick starts on the level's spawn (T-574, start_point()). The level
+##   draws its own grid ground ("ground_style").
 ## - The notebook's goal lines are T-559's (GOAL_TEXT_KEYS, data/tutorial_text.json tutorial.goal.*).
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
@@ -266,14 +266,11 @@ func take_gift() -> void:
 		gift_screen.take_highlighted()
 
 
-## The start point of `trick_name` on the level: {"position": units, "rotation": radians}. The
-## level's start point with the trick's id (T-560, LevelStartPoints: drift, alt_drift, air_spin,
-## grind), else its spawn.
-func start_point(trick_name: String = "") -> Dictionary:
-	var t := trick_name if trick_name != "" else trick
-	var s := LevelStartPoints.of(map.layout, t)
-	if not s.is_empty():
-		return {"position": Vector2(s.x, s.y), "rotation": deg_to_rad(float(s.heading))}
+## Where the car starts: {"position": units, "rotation": radians}. T-574 (the board, 2026-11-08:
+## "the spawnpoint is different for each slide please fix it"): every slide starts on the level's
+## own spawn, the one the board sets in the level creator, whatever the trick (`trick_name` is kept
+## for the callers; the level's per-trick start_points, T-560, are no longer read here).
+func start_point(_trick_name: String = "") -> Dictionary:
 	return {"position": LevelSpawn.position_of(map.layout), "rotation": LevelSpawn.rotation_of(map.layout)}
 
 

@@ -3,14 +3,11 @@ extends GutTest
 ## tutorial's practice windows load, data/level/practice_playground.json. It loads in a run, draws
 ## its grid ground, has a start point for each trick slide that the run starts the car on.
 ## T-574: the layout is the board's own, from the level creator (game/data/levels/ is the board's
-## folder; this file is the copy the tutorial loads, the old builder is retired): the air spin start
-## drives straight into a jump ramp for an air spin, and the grind start hops (Jump) onto its rails.
-## The drives use the real car (scripted inputs, stepped by the test), as test_run_rails.gd does.
+## folder; this file is the copy the tutorial loads, the old builder is retired). Every slide starts
+## on the spawn; the drives from it to the ramp and the rails are in test_practice_session.gd.
 
 const PATH := "res://data/level/practice_playground.json"
 const Rails := preload("res://scripts/level/rails.gd")
-const SLIDES := ["drift", "alt_drift", "air_spin", "grind"]
-const FULL_SPEED := 16.5
 
 var run: Node2D
 var data: Dictionary
@@ -57,26 +54,13 @@ func test_the_file_is_the_levels_format_with_a_small_map() -> void:
 	assert_gt(data.ramps.size(), 0)
 
 
-func test_it_has_a_start_point_for_each_trick_slide_on_open_ground() -> void:
-	assert_eq(LevelStartPoints.ids(data), SLIDES)
-	for id in SLIDES:
-		var p := LevelStartPoints.of(data, id)
-		assert_false(p.is_empty(), id)
-		assert_eq(LevelSpawn.problem(data, Vector2(p.x, p.y)), "", "%s: a car can stand there" % id)
-	assert_eq(LevelStartPoints.of(data, "nope"), {})
-	assert_eq(LevelStartPoints.with_spawn(data, "nope"), data)
-
-
-func test_each_start_point_starts_the_car_there_and_no_id_keeps_the_spawn() -> void:
-	for id in SLIDES:
-		_run(id)
-		var p := LevelStartPoints.of(data, id)
-		assert_eq(run.car.model.get_position(), Vector2(p.x, p.y), id)
-		assert_almost_eq(rad_to_deg(run.car.model.rotation), float(p.heading), 0.01, id)
-		run.queue_free()
-		await wait_process_frames(1)
+func test_every_slide_starts_on_the_spawn_a_car_can_stand_on() -> void:
+	# T-574 (the board): one start for every slide, the level's spawn; no per-slide start points.
+	assert_false(data.has("start_points"), "no per-slide start points")
+	var spawn := Vector2(data.spawn.x, data.spawn.y)
+	assert_eq(LevelSpawn.problem(data, spawn), "", "a car can stand on the spawn")
 	_run()
-	assert_eq(run.car.model.get_position(), Vector2(data.spawn.x, data.spawn.y), "no id: the level's spawn")
+	assert_eq(run.car.model.get_position(), spawn)
 
 
 func test_the_run_draws_the_grid_ground_not_the_tiles() -> void:
@@ -98,49 +82,3 @@ func test_the_old_builder_is_retired_and_writes_nothing() -> void:
 	assert_string_contains(src, "raise SystemExit")
 
 
-## Drives the car from start point `id` with W held (scripted). `spin`: A held in the air.
-## `hop_at_x`: Space pressed once at that x on the ground (Jump owned), then held in the air.
-## Stops after the first landing (or after a grind ended). Returns {tricks, caught, airtime, end}.
-func _drive_from(id: String, spin: bool, hop_at_x := INF) -> Dictionary:
-	var p := LevelStartPoints.of(data, id)
-	_run(id)
-	_place(Vector2(p.x, p.y), 0.0)
-	if hop_at_x < INF:
-		run.car.jump.set_tier(1)
-	var tricks: Array = []
-	run.car.trick.connect(func(t: String) -> void: tricks.append(t))
-	var out := {"caught": "", "airtime": 0.0}
-	var pressed := false
-	var flew := false
-	for i in 900:
-		var in_air: bool = run.car.airborne
-		if not pressed and hop_at_x < INF and not in_air and run.car.model.get_position().x >= hop_at_x:
-			run.car.press_jump()
-			pressed = true
-		run.car.scripted_input = [true, false, 1.0 if (spin and in_air) else 0.0]
-		run.car.scripted_jump_held = pressed and (in_air or run.car.grind.active)
-		run.car.physics_step()
-		if run.car.grind.active:
-			out.caught = run.car.grind.rail.id
-		if run.car.airborne:
-			flew = true
-			out.airtime += 0.02
-		if flew and not run.car.airborne and not run.car.grind.active:
-			break
-	out["tricks"] = tricks
-	out["end"] = run.car.model.get_position()
-	return out
-
-
-func test_the_air_spin_start_drives_straight_into_a_jump_ramp_for_an_air_spin() -> void:
-	var r := _drive_from("air_spin", true)
-	gut.p("air_spin drive: %s" % [r])
-	assert_gte(r.airtime, 1.2, "a real flight off the jump ramp")
-	assert_true(r.tricks.has("air_one_eighty") or r.tricks.has("air_three_sixty"), "an air spin: %s" % [r.tricks])
-
-
-func test_the_grind_start_hops_onto_a_rail() -> void:
-	var p := LevelStartPoints.of(data, "grind")
-	var r := _drive_from("grind", false, p.x + 1.0)
-	gut.p("grind drive: %s" % [r])
-	assert_ne(r.caught, "", "a rail is caught with a hop from the grind start")

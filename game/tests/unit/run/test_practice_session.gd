@@ -72,19 +72,14 @@ func test_it_loads_the_playground_with_the_real_car_and_no_enemies_clock_or_dama
 	assert_eq(session.state.health, session.state.max_health)
 
 
-func test_the_car_starts_on_the_tricks_start_point() -> void:
+func test_every_slide_starts_on_the_levels_spawn() -> void:
+	# T-574 (the board: "the spawnpoint is different for each slide please fix it"): one start for all.
+	var layout: Dictionary = session.map.layout
 	for t in PracticeSession.TRICKS:
 		session.setup(t)
-		var s: Dictionary = LevelStartPoints.of(session.map.layout, t)
-		assert_false(s.is_empty(), "%s has a start point" % t)
-		assert_almost_eq(session.car.model.get_position(), Vector2(s.x, s.y), Vector2(0.001, 0.001), t)
-		assert_almost_eq(session.car.model.rotation, deg_to_rad(float(s.heading)), 0.001, t)
-
-
-func test_a_level_without_start_points_starts_every_trick_on_its_spawn() -> void:
-	session.map.layout.erase("start_points")
-	var p: Dictionary = session.start_point("grind")
-	assert_eq(p.position, LevelSpawn.position_of(session.map.layout))
+		assert_almost_eq(session.car.model.get_position(), LevelSpawn.position_of(layout), Vector2(0.001, 0.001), t)
+		assert_almost_eq(session.car.model.rotation, LevelSpawn.rotation_of(layout), 0.001, t)
+	assert_false(layout.has("start_points"), "the playground keeps no per-slide start points")
 
 
 # ---- Counting ---------------------------------------------------------------------------------
@@ -342,7 +337,7 @@ func test_on_the_real_playground_a_grind_from_the_grind_start_counts() -> void:
 	session.gift_screen.skip_animation()
 	session.take_gift()
 	assert_eq(session.car.jump.tier, 1)
-	var r := _drive_east(false, true)
+	var r := _route(GRIND_ROUTE, 99, false, 2, 6.0)
 	assert_ne(r.caught, "", "a rail is caught with a hop from the grind start")
 	assert_eq(session.successes, 1, "the grind counts when it ends: %s" % [r])
 	assert_eq(counted[0][0], "rail_grind")
@@ -408,40 +403,58 @@ func test_the_count_survives_a_car_reset() -> void:
 	assert_eq(session.successes, 2)
 
 
-## Drives from the trick's start point with W held (scripted), the car stepped by the test. T-574
-## (the board's playground): A in the air when `spin`; when `hop`, Space is pressed once on the
-## ground right away (the grind's Jump) and held in the air and on the rail. Stops after the
-## landing, or once a grind ended.
-func _drive_east(spin: bool, hop: bool) -> Dictionary:
+## T-574: drives from the spawn along `pts` (units) with W held, steering toward each point in turn
+## (the car stepped by the test; A, steer +1, turns the nose to a smaller rotation). Below
+## `slow_until` (a point index) W is let go above `slow_speed` units/s, so the turns stay tight. `spin`: A held
+## in the air. `hop_at`: Space pressed on reaching that point (the grind's Jump) and held in the air
+## and on the rail. Stops after the first landing, or once a grind ended.
+func _route(pts: Array, slow_until: int, spin: bool, hop_at := -1, slow_speed := 8.0) -> Dictionary:
 	session.set_focused(true)
 	var car = session.car
 	car.use_keyboard = false
-	var out := {"caught": "", "flew": false}
+	var out := {"caught": "", "flew": false, "reached": 0}
+	var wi := 0
 	var pressed := false
-	for i in 900:
-		var in_air: bool = car.airborne
-		if hop and not pressed and not in_air and i >= 10:
-			car.press_jump()
-			pressed = true
-		car.scripted_input = [true, false, 1.0 if (spin and in_air) else 0.0]
-		car.scripted_jump_held = pressed and (in_air or car.grind.active)
+	for i in 1500:
+		var pos: Vector2 = car.model.get_position()
+		if wi < pts.size() and pos.distance_to(pts[wi]) < 3.5:
+			if wi == hop_at and not pressed and not car.airborne:
+				car.press_jump()
+				pressed = true
+			wi += 1
+		var steer := 0.0
+		if car.airborne:
+			steer = 1.0 if spin else 0.0
+		elif wi < pts.size():
+			var diff := wrapf((pts[wi] - pos).angle() - car.model.rotation, -PI, PI)
+			steer = -clampf(diff * 3.0, -1.0, 1.0)
+		var slow: bool = wi < slow_until and car.model.get_velocity().length() > slow_speed
+		car.scripted_input = [not slow, false, steer]
+		car.scripted_jump_held = pressed and (car.airborne or car.grind.active)
 		car.physics_step()
 		if car.grind.active:
 			out.caught = car.grind.rail.id
 		if car.airborne:
 			out.flew = true
-		if out.caught != "" and not car.grind.active and not car.airborne:
+		if out.flew and not car.airborne and not car.grind.active:
 			break
-		if out.caught == "" and out.flew and not car.airborne:
-			break
+	out.reached = wi
 	out["end"] = car.model.get_position()
 	return out
+
+
+## From the spawn (-7, -1) to the jump ramp ramp-7 (x -2 to 2, y 20 to 28): south-west round the
+## ramp, then east along y 22.5 at full speed.
+const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-28, 19), Vector2(-26, 22.5),
+	Vector2(-12, 22.5), Vector2(4, 22.5)]
+## From the spawn to the grind corridor: round to the west, a hop at (-14, 2) onto rail-40.
+const GRIND_ROUTE := [Vector2(0, 6), Vector2(-8, 6), Vector2(-14, 2), Vector2(-30, 2)]
 
 
 func test_on_the_real_playground_an_air_spin_from_the_air_spin_start_counts() -> void:
 	session.setup("air_spin")
 	session.start()
-	var r := _drive_east(true, false)
+	var r := _route(AIR_ROUTE, 3, true)
 	assert_true(r.flew, "flew off the jump ramp")
 	assert_eq(session.successes, 1, "one landing, one success: %s %s" % [r, counted])
 	assert_true(["air_one_eighty", "air_three_sixty"].has(counted[0][0]))

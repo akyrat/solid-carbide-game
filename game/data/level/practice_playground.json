@@ -3116,32 +3116,6 @@
   "x": -7.0,
   "y": -1.0
  },
- "start_points": [
-  {
-   "heading": 0.0,
-   "id": "drift",
-   "x": -45.0,
-   "y": -19.0
-  },
-  {
-   "heading": 0.0,
-   "id": "alt_drift",
-   "x": -45.0,
-   "y": 19.0
-  },
-  {
-   "id": "air_spin",
-   "x": -44.0,
-   "y": 22.0,
-   "heading": 0.0
-  },
-  {
-   "heading": 0.0,
-   "id": "grind",
-   "x": -29.0,
-   "y": 1.0
-  }
- ],
  "task": "T-574",
  "units": "1 unit = the car's width; the car is drawn 1 x 3 units"
 }
