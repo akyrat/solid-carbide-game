@@ -4175,3 +4175,8 @@ Entry format:
 - Decision or change: Car frames 19, 22 and 23 redrawn with PixelLab so the car points where it goes on the screen's up-right diagonal (13 of 28 generations); worst straight-line gap 13 degrees with A+C. The board played it.
 - Documents touched: `docs/drifting.md`, `docs/visual-style.md`
 - Tasks: T-584
+
+## 2026-11-08: Texts for the tutorial demos
+- Decision or change: Replay, Skip and "your turn" for the tutorial's recorded demos.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-594

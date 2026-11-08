@@ -2361,6 +2361,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **No Skip on the last tutorial slide** (board, 2026-11-07): the last slide (the kaiju timeline, with Go live and "Don't show again") has no Skip button, since Go live already starts the run. The other slides keep theirs. (T-568)
 - **No button looks selected when a menu opens** (board, 2026-11-08): opening the garage, the Cosmetics screen or any other menu or screen shows no button as selected or highlighted. A button shows as selected only once the player uses the keyboard to move between buttons (arrows, Tab), and the mouse hover works as before. Keyboard play keeps working: the first key press shows the selection where it starts. Where today a key like Enter acts on the first button straight away, the agent proposes whether it still does. (T-573)
 - **"Equip" instead of "Flex it"** (board, 2026-11-08): the Cosmetics screen's button that picks an unlocked cosmetic reads "Equip" (the board's own word), replacing "Flex it". (T-582)
+- **The tutorial's recorded demos** (board, 2026-11-08): each trick slide of the tutorial plays the board's own recording of the trick the first time the slide opens, then the practice window shrinks away and the player drives. Two buttons: **Replay** plays the recording again, **Skip** ends it and goes straight to the player's turn. When the recording ends or is skipped, a **"your turn"** label shows for 2 seconds and fades away. The recording controls the board used (F5 to F9 and their buttons) are removed entirely. The texts: T-594; the build: T-574 (quick tuning).
 
 ### Content
 
@@ -2763,4 +2764,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `8b3f404884a4123b7deb1b52e130db179df65cca7349e3a9cb052ecdd79c2aef` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `ce5868063114d3013596859fc072d8083b719375bdc7c5f61c10a453c313a71a` |
+| `hud-and-menus.md` | `ae171ee05eab47c26df6adb380b1dbe9884706c000e334b59947f6080970fa64` |
