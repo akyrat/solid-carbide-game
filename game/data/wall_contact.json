@@ -1,0 +1,6 @@
+{
+  "_comment": "T-601 (Drifting, Decisions, 'The car never locks against a wall'; game/docs/driving/collisions.md, 'Against a raised area's side (T-601)'). When the car's drawn outline meets the side of a raised area (a short building, a platform, a ramp's side) on the ground, the step no longer ends where it touched: from that point the rest of the move slides along the side (its part into the side is dropped) and the step's turn still happens, the car's centre pushed straight out from the side by as little as it needs, at most pivot_max_push units, tried in pivot_push_tries even steps. If no push clears it, the turn is dropped and only the slide is tried; if that also hits, the car stops where it touched, as before. pivot_max_push 0.15: the most a full-rate turn (about 3.8 degrees a step) swings the drawn nose corner, 1.58 units from the centre, into the side is about 0.11 units a step, so 0.15 always clears a turn off one flat side, and is under a sixth of the car's width, so it is never seen as a jump. slide_on false = the old stop (the lock), for comparing.",
+  "slide_on": true,
+  "pivot_max_push": 0.15,
+  "pivot_push_tries": 6
+}
