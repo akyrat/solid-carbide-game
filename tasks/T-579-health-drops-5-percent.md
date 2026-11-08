@@ -1,7 +1,7 @@
 ---
 id: T-579
 title: Health drops at 5%
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Rails
@@ -41,10 +41,10 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] enemies.json has drop_chance 0.05 with the history in its _comment. (QA: pass / fail)
-- [ ] Tests that read the rate pass with the new number (tests). (QA: pass / fail)
-- [ ] docs/enemies.md Content says 5%. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] enemies.json has drop_chance 0.05 with the history in its _comment. (QA: pass)
+- [ ] Tests that read the rate pass with the new number (tests). (QA: pass)
+- [ ] docs/enemies.md Content says 5%. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass; the three sets passed in the mechanical check, counts are in the QA run's output)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Game Data sets health drops to 5%.
+
+### 2026-11-08, In progress → In QA
+
+Done: drop_chance 0.05. QA now, then straight to master.
 
 ## Style review
 
