@@ -4000,3 +4000,8 @@ Entry format:
 - Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-575
+
+## 2026-11-08: Equip instead of Flex it
+- Decision or change: The Cosmetics screen's pick button reads Equip.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-582
