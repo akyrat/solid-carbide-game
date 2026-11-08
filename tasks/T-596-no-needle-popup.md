@@ -1,7 +1,7 @@
 ---
 id: T-596
 title: No popup for thread the needle (the trick still counts)
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -60,4 +60,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added data switch data/hud.json trick_popups.hidden=[thread_the_needle]; TrickPopups.is_hidden() checked in _on_combo_trick and _on_trick (run, practice window, prototype). Trick still counts (combo, missions, flash, routes untouched). Test updated + new test (hidden by data, other tricks still pop). Ran test_thread_the_needle, test_trick_popups, _heat, _prebuild, test_recap_screen, test_practice_session, test_bricks_perf: all pass. Screenshots: art-archive/T-596/screenshots/ (flash_030.png shows x1.48 combo, pair flashing, no bubble). Docs: docs/hud-and-menus.md Content, game/docs/hud-and-menus/popups.md.
