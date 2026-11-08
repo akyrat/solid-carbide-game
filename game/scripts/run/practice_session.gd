@@ -601,8 +601,6 @@ func held_keys() -> String:
 		out += "D"
 	if car.jump_held or (car.jump.hops != _keys_hops):
 		out += KeyPad.SPACE
-	if _r_lit > 0:
-		out += "R"
 	return out
 
 

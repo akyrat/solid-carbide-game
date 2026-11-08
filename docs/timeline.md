@@ -4250,3 +4250,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: thread the needle shows no popup and still counts.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-596
+
+## 2026-11-08: No R on the tutorial keycaps
+- Decision or change: Merged after the board's playtest: the tutorial keycaps no longer show R.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-597

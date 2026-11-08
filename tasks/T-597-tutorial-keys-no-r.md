@@ -1,7 +1,7 @@
 ---
 id: T-597
 title: No R on the tutorial's keycaps
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/run/practice_session.gd, game/docs/hud-and-menus/tutorial-slides.md]
 files_expected_to_change: [game/scripts/, game/tests/, game/docs/hud-and-menus/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,16 +43,24 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The practice window's keycaps show W, A, S, D and Space, and no R (a test and a screenshot). (QA: pass / fail)
-- [ ] R still resets the stage, and the demos still replay (the existing tests pass). (QA: pass / fail)
-- [ ] The trick list's key pad is unchanged (its tests pass). (QA: pass / fail)
-- [ ] game/docs/hud-and-menus/tutorial-slides.md and docs/hud-and-menus.md Content say so. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-597/screenshots/ shows the keycaps without R. (QA: pass / fail)
+- [ ] The practice window's keycaps show W, A, S, D and Space, and no R (a test and a screenshot). (QA: pass)
+- [ ] R still resets the stage, and the demos still replay (the existing tests pass). (QA: pass)
+- [ ] The trick list's key pad is unchanged (its tests pass). (QA: pass)
+- [ ] game/docs/hud-and-menus/tutorial-slides.md and docs/hud-and-menus.md Content say so. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A screenshot in art-archive/T-597/screenshots/ shows the keycaps without R. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, In progress → In QA
+
+R is gone from the tutorial keycaps (W, A, S, D, Space); R still resets. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. Play it from C:\solid-carbide-worktrees\T-597: the tutorial's trick slides show W, A, S, D and Space.
 
 ## Style review
 
@@ -60,4 +68,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Removed R from the practice window's keycaps: KeyPad.full() now draws W, A, S, D and Space (KEYS_WITH_R deleted); PracticeSession.held_keys() no longer reports R (R still resets the stage; _r_lit kept, harmless). Trick list key pad untouched (KeyPad.attach). Test updated in test_practice_take.gd (no R key, Space bar, reset lights no R). Docs: game/docs/hud-and-menus/tutorial-slides.md updated; docs/hud-and-menus.md already had the decision line. Tests: full Godot set 3250 tests, 3249 pass, 0 fail, 1 risky/pending, 284 scripts. Screenshot: art-archive/T-597/screenshots/keycaps_no_r.png (new tools/shots/keypad_shots.tscn).
+- 2026-11-08, needs-playtest → done: The board played it in playtest-fixes: works (2026-11-08).
