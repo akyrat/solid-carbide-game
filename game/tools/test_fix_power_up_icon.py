@@ -79,6 +79,24 @@ class FixTests(unittest.TestCase):
             self.assertEqual(out.getpixel((3, 3)), (4, 3, 2, 255))
             self.assertEqual(out.getpixel((2, 3)), (100, 120, 150, 255))  # interior untouched
 
+    def test_ops(self):
+        im = Image.new("RGBA", (5, 5), (0, 0, 0, 0))
+        im.putpixel((2, 2), (9, 9, 9, 255))
+        n = fpi.apply_ops(im, [
+            {"rect": [0, 4, 4, 4], "color": [1, 2, 3]},
+            {"rect": [2, 2, 2, 2], "color": [7, 7, 7]},                 # transparent only: left alone
+            {"rect": [2, 2, 2, 2], "color": [8, 8, 8], "over": True},
+            {"set": [0, 0], "color": [5, 5, 5]},
+            {"shift": [0, -1]},
+        ])
+        self.assertEqual(n, 5)
+        self.assertEqual(im.getpixel((0, 3)), (1, 2, 3, 255))
+        self.assertEqual(im.getpixel((0, 4)), (0, 0, 0, 0))
+        self.assertEqual(im.getpixel((2, 1)), (8, 8, 8, 255))
+        self.assertEqual(im.getpixel((0, 0)), (0, 0, 0, 0))   # the set pixel moved off the top
+        with self.assertRaises(ValueError):
+            fpi.apply_ops(im, [{"nope": 1}])
+
     def test_recolor_map_and_inspect(self):
         with tempfile.TemporaryDirectory() as d:
             src = Path(d) / "raw.png"

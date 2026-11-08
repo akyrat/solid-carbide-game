@@ -1,0 +1,9 @@
+{
+  "description": "pixel art game icon, one large car wheel in the centre of the frame seen from the side at a slight 3/4 angle, a mid blue-grey rubber tyre with a lighter blue-grey top-left rim highlight and visible tread, a distinct light steel grey hub with five dark bolts and spokes, the wheel resting on a flat horizontal light blue-grey steel rail across the bottom of the frame, a fan of separate bright white and orange spark dots flying out to the right from where the tyre meets the rail, each spark with a darker orange halo, small cyan glints on the hub, neon night colours, dark almost-black outline broken by light highlight pixels, light from top-left, centred, big and filling the frame, no text, no logo",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "outline": "single color black outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}

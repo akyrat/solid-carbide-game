@@ -21,6 +21,7 @@ Usage, from the repo root:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -170,6 +171,40 @@ def trim_margin(im: Image.Image, margin: int, outline: RGB) -> int:
     return len(cleared)
 
 
+def apply_ops(im: Image.Image, ops: list[dict]) -> int:
+    """Pixel edits from a JSON list, in order. Returns the count applied.
+
+    {"rect": [x0, y0, x1, y1], "color": [r, g, b]}   fill, x1 and y1 inclusive, only transparent
+                                                       pixels unless "over": true
+    {"set": [x, y], "color": [r, g, b]}                paint one pixel ([r, g, b, 0] clears it)
+    {"shift": [dx, dy]}                                move the whole image; pixels leaving the
+                                                       frame are lost
+    """
+    px = im.load()
+    w, h = im.size
+    for op in ops:
+        if "rect" in op:
+            x0, y0, x1, y1 = op["rect"]
+            c = tuple(op["color"]) + (255,)
+            for y in range(y0, y1 + 1):
+                for x in range(x0, x1 + 1):
+                    if 0 <= x < w and 0 <= y < h and (op.get("over") or px[x, y][3] == 0):
+                        px[x, y] = c
+        elif "set" in op:
+            x, y = op["set"]
+            c = list(op["color"])
+            px[x, y] = (0, 0, 0, 0) if len(c) == 4 and c[3] == 0 else (c[0], c[1], c[2], 255)
+        elif "shift" in op:
+            dx, dy = op["shift"]
+            moved = Image.new("RGBA", im.size, (0, 0, 0, 0))
+            moved.paste(im, (dx, dy))
+            im.paste(moved)
+            px = im.load()
+        else:
+            raise ValueError(f"unknown op {op}")
+    return len(ops)
+
+
 def palette(im: Image.Image) -> dict[RGB, int]:
     counts: dict[RGB, int] = {}
     for r, g, b, a in im.getdata():
@@ -226,7 +261,7 @@ def inspect(path: Path, previews: Path | None) -> dict:
 
 def fix(src: Path, dst: Path, *, max_colors: int = 30, keep_strays: bool = False,
         recolors: dict[RGB, RGB] | None = None, clears: list[tuple[int, int]] | None = None,
-        margin: int = 0, outline: RGB = (4, 3, 2)) -> dict:
+        margin: int = 0, outline: RGB = (4, 3, 2), ops: list[dict] | None = None) -> dict:
     if dst.exists():
         raise FileExistsError(f"{dst} exists: never overwrite an earlier version")
     with Image.open(src) as opened:
@@ -234,6 +269,8 @@ def fix(src: Path, dst: Path, *, max_colors: int = 30, keep_strays: bool = False
     report: dict = {}
     if recolors:
         report["recolored_pixels"] = recolor_map(im, recolors)
+    if ops:
+        report["ops"] = apply_ops(im, ops)
     report["greenbull_repainted"] = {str(k): v for k, v in recolor_greenbull(im).items()}
     if clears:
         report["cleared"] = clear_pixels(im, clears)
@@ -283,12 +320,14 @@ def main(argv: list[str] | None = None) -> int:
     f.add_argument("--margin", type=int, default=0,
                    help="clear the outer N pixels and close the cut with the outline colour")
     f.add_argument("--outline", type=parse_rgb, default=(4, 3, 2), metavar="R,G,B")
+    f.add_argument("--ops", type=Path, help="JSON file: a list of pixel edits (see apply_ops), applied after --recolor")
     args = p.parse_args(argv)
     if args.cmd == "inspect":
         print(inspect(args.png, args.previews))
         return 0
+    ops = json.loads(args.ops.read_text(encoding="utf-8")) if args.ops else None
     print(fix(args.src, args.dst, max_colors=args.max_colors, keep_strays=args.keep_strays,
-              recolors=dict(args.recolor), clears=args.clear, margin=args.margin, outline=args.outline))
+              recolors=dict(args.recolor), clears=args.clear, margin=args.margin, outline=args.outline, ops=ops))
     return 0
 
 
