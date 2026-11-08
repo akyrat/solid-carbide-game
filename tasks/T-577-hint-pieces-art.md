@@ -1,7 +1,7 @@
 ---
 id: T-577
 title: Art: the hint pieces' icons and sign (PixelLab)
-status: flagged-for-review
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -62,6 +62,10 @@ Started: the W keycap sample first, then the board's review.
 ### 2026-11-08, In progress
 
 Resuming: W keycap sample, then the full set within the 30-generation cap (board's goodnight approval).
+
+### 2026-11-08, In progress → In QA
+
+Hint art done: 6 of 30 generations. Keycaps and curved arrow 8/10; straight arrow, circular arrow and sign 7/10, kept for your playtest. QA now.
 
 ## Style review
 
@@ -359,3 +363,4 @@ V3 (roadside sign, 2026-11-08): the Style Evaluator scored v2 7/10 at native siz
 V4 (roadside sign, 2026-11-08, the third and last refine): the Style Evaluator scored v3 7/10 at thumbnail size (rule 2: the face near-uniform, the post and base sparsely shaded with few highlight pixels breaking the outline; asked for stepped highlight pixels on the frame's top and left and on the post and base, the outline broken in a few places with lighter pixels, a darker right side and a light edge on the post and base, rivets or scuffs on the frame, the face kept blank). Free script fix only, 0 generations: a new `polish --bold` pass in `game/tools/build_hint_sign.py` (`sign_bold`, built on the slim sign; 1 new test, 12 of 12 pass) on v1-6.png, everything sized to read at native 64 x 96, where 1 px glints on a 1 px outline vanish. What the reason named: (1) highlight pixels breaking the outline, now near-white #eef0fa and two pixels wide (the outline pixel and the pixel inside it): on the board's top (columns 10..19, 28..33, 42..45) and left (rows 10..19, 28..33) with #8c94c0 tails, on the pole's lit edge in three runs (rows 62..66, 77..82, 86..88) with #b4bce0 beside them, and on the base plate's left rim (4 pixels); 99 near-white pixels, the near-black outline continuous between the runs. (2) Rivets along the frame, three per side (near-white on the lit top and left, #8c94c0 on the shaded bottom and right, plus bright rivets on the bracket), and seven scuff pixels on the frame. (3) A darker right side: the pole's shadow is two columns (#2d3157 then #161928) and the base plate's right third, top and side, is in the deep #161928; the light edge is the pole's lit #5d6a82 column with the near-white runs. (4) The face stays blank with no icon or marks, in five stepped slate bands lit from the top-left on diagonal boundaries (#41476b, #383d57, #33384f, #2e3348, #272a3c), so it no longer reads as one flat area. Kept what worked: v3's slim pole on the flat base, the clearer lighter frame, the amber band (RGB 239,170,82, not Greenbull's yellow), v2's thickness shadow, the board on x 8..55, y 8..55 and the foot at (32, 95) (`hints.json` unchanged), PixelLab's own pole and base pixels wherever the pass has plain steel, transparent background, no words, no green or yellow. 343 pixels changed from v3, 3026 opaque, 26 colours, no half-alpha, no Greenbull colours; `png_rule_check.py` OK. Saved `art-archive/T-577/style-loop/v4-4.png` (8-bit RGBA, 64 x 96; preview `v4-4_preview.png`). If it stays below 8 the loop keeps the best version and notes it; the board judges it in the playtest. Generations used on this ticket: 6 of 30 (1 of this asset's 4).
 
 FINISHED. Generations used: 6 of 30 (W 1, S 1, straight arrow 1, curved arrow 1, circular arrow 1, sign 1; every refine was a free script fix). Scores: W 8, S 8, curved 8 (v4-2, scored by style-evaluator), straight 7, circular 7, sign 7 (the three at 7 kept for the playtest). The loop flagged the ticket twice; I did not change status. No sample stop (board's goodnight approval). Screenshots: art-archive/T-577/screenshots/ (creator_hints, creator_ground_preview, run_hints). Tests: bash game/tools/run_tests.sh 3070/3071 pass, 0 failing, 1 risky; build_hint_keycap tests 7/7, arrow_curved tests 17/17. Docs: visual-style.md, level-design.md.
+- 2026-11-08, flagged-for-review → in-progress: Loop flags on the straight and circular arrows (7/10) kept for the playtest.
