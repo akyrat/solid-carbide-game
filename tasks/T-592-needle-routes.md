@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-591]
+depends_on: []
 documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-581-creator-free-placement.md, game/scenes/level_creator/, game/scripts/level_creator/, game/scripts/run/]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/run/, game/scripts/level/, game/data/, game/tests/, game/docs/level/, docs/level-design.md, game/tools/check_level.py]
@@ -33,7 +33,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-Build Level design, Decisions, "Needle routes". This branch starts from T-581's (free placement and moving pieces), which waits for the board's playtest; build on it. In the creator: a route tool (T-591's texts and key) where clicking pairs' dashed lines adds them to a route in click order; each route has an order switch (in order, cycling; or random) and a way to take a pair out; routes save in the level file (keep old levels loading; check_level.py accepts them). In a run: only each route's active pair pays thread the needle; it is drawn bright and the route's other pairs faint; threading it makes the next active (in order, wrapping; or a random other pair). Pairs in no route work as today, and so does the flash of T-451. Proposals with reasons in data: brightness levels; whether threading a waiting pair does anything (proposal: nothing). Never touch game/data/levels/: make your own test levels in game/tests/fixtures/.
+Build Level design, Decisions, "Needle routes". This branch starts from T-581's (free placement and moving pieces) with T-591's texts merged in; both wait for the board's playtest, so build on them (Project Lead, 2026-11-08: the texts are only seen in this build, so it doesn't wait for T-591 to be done). In the creator: a route tool (T-591's texts and key) where clicking pairs' dashed lines adds them to a route in click order; each route has an order switch (in order, cycling; or random) and a way to take a pair out; routes save in the level file (keep old levels loading; check_level.py accepts them). In a run: only each route's active pair pays thread the needle; it is drawn bright and the route's other pairs faint; threading it makes the next active (in order, wrapping; or a random other pair). Pairs in no route work as today, and so does the flash of T-451. Proposals with reasons in data: brightness levels; whether threading a waiting pair does anything (proposal: nothing). Never touch game/data/levels/: make your own test levels in game/tests/fixtures/.
 
 The board's review: play it from C:\solid-carbide-worktrees\T-592: make a route in the level creator ("C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" --path C:\solid-carbide-worktrees\T-592\game res://scenes/level_creator/level_creator.tscn), test it, in order and random.
 
