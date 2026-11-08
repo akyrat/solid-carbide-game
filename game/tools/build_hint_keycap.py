@@ -13,6 +13,10 @@ Their look is the tutorial's keycap (scripts/menu/key_pad.gd): face #33384f, edg
         The free fixes on PixelLab's output: alpha snapped to 0 or 255, the canvas outside the keycap cleared,
         a clean pixel letter redrawn in blush (PixelLab draws letters badly; --keep-letter leaves its own),
         and the palette cut to at most 30 colours (reduce_palette.py). Saved as an 8-bit RGBA PNG.
+    python game/tools/build_hint_keycap.py polish IN.png OUT.png [--strong] [--letter S]
+        The style loop's free fixes for rule 2 (T-577 v2): a two-step bevel on the face's top and left, a shade
+        step on its bottom and right, and brighter highlight pixels breaking the outline at the top-left.
+        --strong (v3) is the bolder pass that reads at 64 px, with a stepped blush glow round --letter (rule 5).
     python game/tools/build_hint_keycap.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -72,24 +76,25 @@ LETTERS = {
         "...11111...11111...",
         "...1111.....1111...",
     ],
+    # The S keeps the W's 3-cell stroke everywhere (T-577: the first S thinned to 2 cells on the diagonal).
     "S": [
-        "....1111111111.....",
-        "..11111111111111...",
-        ".1111.........1111.",
+        "...1111111111111...",
+        "..111111111111111..",
+        ".1111..........111.",
         ".111...........111.",
         ".111...............",
+        ".111...............",
         ".1111..............",
-        "..11111............",
-        "...111111111.......",
-        ".....111111111.....",
-        "........1111111....",
-        "...........11111...",
-        "............1111...",
+        "..11111111111......",
+        "...11111111111111..",
+        ".......1111111111..",
+        "..............1111.",
+        "...............111.",
         "...............111.",
         ".111...........111.",
         ".1111.........1111.",
-        "..11111111111111...",
-        ".....1111111111....",
+        "..111111111111111..",
+        "...1111111111111...",
     ],
 }
 CELL = 2
@@ -239,6 +244,116 @@ def finish(raw: Image.Image, letter: str = "W", redraw_letter: bool = True, redu
     return im
 
 
+FACE_RIM_2 = (0x3C, 0x41, 0x5C, 255)   # the bevel's second step, between the rim and the face
+GLINT_BRIGHT = (0x8C, 0x94, 0xC0, 255)  # the brightest glint, on the outline itself
+
+
+RIM_BRIGHT = (0x5A, 0x62, 0x88, 255)   # the strong bevel's first step, brighter than FACE_RIM
+GLOW_1 = (0x6E, 0x55, 0x78, 255)       # the blush glow's first ring round the letter (rule 5, stepped)
+GLOW_2 = (0x4C, 0x45, 0x64, 255)       # its second ring, fading into the face
+
+
+def polish(im: Image.Image, letter: str | None = None, strong: bool = False) -> Image.Image:
+    """The free fixes the style loop asked for on the S keycap (rule 2): a stepped bevel along the face's top and
+    left, a shade step along its bottom and right, and brighter highlight pixels that break the near-black outline
+    at the top-left, where the light comes from. Letter pixels are never touched.
+
+    T-577 v2 was the plain pass; `strong` (v3) reads at 64 px: a brighter three-step bevel, a two-pixel dark
+    bottom/right edge, glints on the outline's corners too, and, with a `letter`, a two-ring blush glow round
+    the glyph (rule 5, stepped, inside the sprite) in place of the dark halo."""
+    im = im.convert("RGBA")
+    px = im.load()
+    x0, y0, x1, y1 = letter_box_any()
+    cells = letter_mask(letter) if letter else set()
+
+    def put(x: int, y: int, c: tuple[int, int, int, int]) -> None:
+        if 0 <= x < SIZE and 0 <= y < SIZE and px[x, y][3] == 255 and not (x0 - 1 <= x <= x1 + 1 and y0 - 1 <= y <= y1 + 1):
+            px[x, y] = c
+
+    if strong:
+        # The bevel: a bright rim on the face's first row and column, then two steps down to the face.
+        for x in range(9, 51):
+            put(x, 6, RIM_BRIGHT)
+        for x in range(10, 49):
+            put(x, 7, FACE_RIM)
+        for x in range(11, 47):
+            put(x, 8, FACE_RIM_2)
+        for y in range(9, 44):
+            put(6, y, RIM_BRIGHT)
+        for y in range(10, 42):
+            put(7, y, FACE_RIM)
+        for y in range(11, 40):
+            put(8, y, FACE_RIM_2)
+        for p in ((7, 8), (8, 7)):
+            put(*p, RIM_BRIGHT)
+        put(8, 8, FACE_RIM)
+        put(9, 9, FACE_RIM_2)
+        # The dark edge: two pixels along the face's bottom and right, the outer one as dark as the side.
+        for y in range(9, 53):
+            put(FACE_BOX[2], y, EDGE)
+            put(FACE_BOX[2] - 1, y, HALO)
+        for x in range(9, FACE_BOX[2]):
+            put(x, FACE_BOX[3], EDGE)
+            put(x, FACE_BOX[3] - 1, HALO)
+        # Highlights breaking the outline: a run on the top and left, and the rounded corners themselves.
+        for x in range(9, 18):
+            put(x, OUTLINE_BOX[1], GLINT_BRIGHT)
+        for y in range(9, 18):
+            put(OUTLINE_BOX[0], y, GLINT_BRIGHT)
+        for p in ((5, 7), (6, 6), (7, 5), (6, 5), (5, 6)):
+            put(*p, GLINT_BRIGHT)
+        for p in ((10, 5), (11, 5), (12, 5), (13, 5), (14, 5), (15, 5), (5, 10), (5, 11), (5, 12), (5, 13), (5, 14), (5, 15), (7, 7)):
+            put(*p, FACE_GLINT)
+        for p in ((51, 4), (52, 4), (53, 4), (4, 51), (4, 52), (4, 53), (57, 7), (7, 57)):
+            put(*p, FACE_GLINT)
+    else:
+        for x in range(9, 51):
+            put(x, 6, FACE_RIM)
+        for x in range(10, 49):
+            put(x, 7, FACE_RIM_2)
+        for y in range(9, 44):
+            put(6, y, FACE_RIM)
+        for y in range(10, 42):
+            put(7, y, FACE_RIM_2)
+        for p in ((7, 8), (8, 7)):
+            put(*p, FACE_RIM)
+        put(8, 8, FACE_RIM_2)
+        for y in range(9, 52):
+            put(FACE_BOX[2], y, HALO)
+        for x in range(9, FACE_BOX[2]):
+            put(x, FACE_BOX[3], HALO)
+        for x in range(10, 16):
+            put(x, OUTLINE_BOX[1], GLINT_BRIGHT)
+        for y in range(10, 16):
+            put(OUTLINE_BOX[0], y, GLINT_BRIGHT)
+        for p in ((11, 5), (12, 5), (13, 5), (14, 5), (5, 11), (5, 12), (5, 13), (5, 14)):
+            put(*p, FACE_GLINT)
+        for p in ((6, 5), (5, 6), (7, 7)):
+            put(*p, FACE_GLINT)
+
+    if strong and cells:
+        # The stepped blush glow round the letter: ring 1 touches the glyph, ring 2 is one pixel further out.
+        ring1 = {(x + dx, y + dy) for x, y in cells for dx in (-1, 0, 1) for dy in (-1, 0, 1)} - cells
+        ring2 = {(x + dx, y + dy) for x, y in ring1 for dx in (-1, 0, 1) for dy in (-1, 0, 1)} - cells - ring1
+        for ring, colour in ((ring1, GLOW_1), (ring2, GLOW_2)):
+            for x, y in ring:
+                if FACE_BOX[0] < x < FACE_BOX[2] - 1 and FACE_BOX[1] < y < FACE_BOX[3] - 1 and px[x, y][3] == 255 and not _is_blush(px[x, y]):
+                    px[x, y] = colour
+    return im
+
+
+def _is_blush(c: tuple[int, int, int, int]) -> bool:
+    """Whether a generated pixel is part of the letter (blush or its shade), so the glow never paints over it."""
+    r, g, b, _ = c
+    return r > 150 and r > b > g
+
+
+def letter_box_any() -> tuple[int, int, int, int]:
+    """The union of every letter's box: the area polish never touches."""
+    boxes = [letter_box(letter) for letter in LETTERS]
+    return (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+
+
 def _face_colour(im: Image.Image, letter: str) -> tuple[int, int, int, int]:
     """The most common opaque colour just outside the letter's box: the generated face."""
     px = im.load()
@@ -272,6 +387,11 @@ def main(argv=None) -> int:
     f.add_argument("--letter", default="W", choices=sorted(LETTERS))
     f.add_argument("--keep-letter", action="store_true")
     f.add_argument("--no-reduce", action="store_true")
+    q = sub.add_parser("polish", help="bevel, shade step and outline-breaking glints on a finished keycap")
+    q.add_argument("src")
+    q.add_argument("out")
+    q.add_argument("--letter", choices=sorted(LETTERS), help="the glyph, for the blush glow (with --strong)")
+    q.add_argument("--strong", action="store_true", help="the bolder pass that reads at 64 px (T-577 v3)")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -287,6 +407,10 @@ def main(argv=None) -> int:
     elif args.cmd == "finish":
         with Image.open(args.raw) as raw:
             im = finish(raw, args.letter, not args.keep_letter, not args.no_reduce)
+        save_png(im, Path(args.out))
+    elif args.cmd == "polish":
+        with Image.open(args.src) as src:
+            im = reduce_image(polish(src, args.letter, args.strong), 30)
         save_png(im, Path(args.out))
     else:
         with Image.open(args.src) as src:

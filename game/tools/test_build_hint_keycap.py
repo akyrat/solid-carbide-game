@@ -57,6 +57,56 @@ class TestKeycap(unittest.TestCase):
         # Strokes at least 3 cells (6 px) wide on the top rows.
         self.assertTrue(rows[0].startswith("111."))
 
+    def test_s_is_bold_and_centred_like_the_w(self):
+        rows = k.LETTERS["S"]
+        self.assertEqual(len(rows), len(k.LETTERS["W"]))
+        self.assertTrue(all(len(row) == len(rows[0]) for row in rows))
+        # Every row that has ink has a run of at least 3 cells (6 px), like the W's strokes.
+        for row in rows:
+            self.assertIn("111", row)
+        # Every column that has ink has a run of at least 3 cells, so the diagonal never thins to 2.
+        for i in range(len(rows[0])):
+            col = "".join(row[i] for row in rows)
+            if "1" in col:
+                self.assertIn("111", col, f"column {i}: {col}")
+        self.assertEqual(k.letter_box("S")[1], k.letter_box("W")[1])
+
+    def test_polish_adds_bevel_and_outline_glints_and_keeps_the_letter(self):
+        before = k.keycap("S")
+        after = k.polish(before.copy())
+        px = after.load()
+        # Glints sit on the outline row and column, breaking it.
+        self.assertEqual(px[12, k.OUTLINE_BOX[1]], k.GLINT_BRIGHT)
+        self.assertEqual(px[k.OUTLINE_BOX[0], 12], k.GLINT_BRIGHT)
+        # The bevel's second step and the shade step are there.
+        self.assertEqual(px[20, 7], k.FACE_RIM_2)
+        self.assertEqual(px[k.FACE_BOX[2], 20], k.HALO)
+        # Letter pixels are untouched, and nothing outside the keycap appears.
+        bpx = before.load()
+        for x, y in k.letter_mask("S"):
+            self.assertEqual(px[x, y], bpx[x, y])
+        for y in range(k.SIZE):
+            for x in range(k.SIZE):
+                self.assertEqual(px[x, y][3], bpx[x, y][3])
+
+    def test_strong_polish_adds_glow_and_dark_edge_and_keeps_the_letter(self):
+        before = k.keycap("S")
+        after = k.polish(before.copy(), "S", strong=True)
+        px, bpx = after.load(), before.load()
+        self.assertEqual(px[20, 6], k.RIM_BRIGHT)
+        self.assertEqual(px[k.FACE_BOX[2], 20], k.EDGE)
+        self.assertEqual(px[k.FACE_BOX[2] - 1, 20], k.HALO)
+        self.assertEqual(px[6, 6], k.GLINT_BRIGHT)
+        cells = k.letter_mask("S")
+        for x, y in cells:
+            self.assertEqual(px[x, y], bpx[x, y])
+        ring1 = {(x + dx, y + dy) for x, y in cells for dx in (-1, 0, 1) for dy in (-1, 0, 1)} - cells
+        self.assertTrue(any(px[p] == k.GLOW_1 for p in ring1))
+        self.assertTrue(any(px[x, y] == k.GLOW_2 for y in range(k.SIZE) for x in range(k.SIZE)))
+        for y in range(k.SIZE):
+            for x in range(k.SIZE):
+                self.assertEqual(px[x, y][3], bpx[x, y][3])
+
     def test_request_body(self):
         body = k.request(b"png-bytes", "W", strength=450, seed=7)
         self.assertEqual(body["image_size"], {"width": 64, "height": 64})
