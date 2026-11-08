@@ -456,6 +456,7 @@ The board's decision is in Decisions ("The car points where it goes"); fixes A a
 
 - **Set to A+C** (both on), the Driving & Drift Agent's recommendation for the board's playtest: they fix independent causes, A most of the straight-line gap (the screen's up-right diagonal from 45 to 5 degrees), C the slide after a turn. What is left is the art itself: around world heading 239 (just left of the up-right diagonal) the nearest drawings are 23 degrees away, until T-584 redraws frames 19 to 23.
 - Before and after: `art-archive/T-583/screenshots/` (`straight_screen_315.gif`, `coast_turn_onto_screen_up_right.gif` and others; left no fix, right A+C).
+
 ### The launch keeps the grind's speed (task T-578)
 
 The playing side of Decisions, "The launch off a rail keeps the grind's speed". The number is the Driving & Drift Agent's proposal for the board's playtest, in `game/data/rail_grind.json` with its reason. Code: `rail_grind.gd` (`launch_speed()`, `leave_velocity("jump")`); how it is built: `game/docs/driving/rail-grind.md`, "The launch keeps the grind's speed (T-578)". GIF: `art-archive/T-578/screenshots/rail_launch_slow_then_fast.gif`.
