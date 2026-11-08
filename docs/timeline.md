@@ -4066,6 +4066,11 @@ Entry format:
 - Documents touched: `docs/drifting.md`
 - Tasks: T-578
 
+## 2026-11-08: The test runner records the real run time, and the PowerShell runner runs in parallel
+- Decision or change: Board, 2026-11-08: agents kept answering the single-process test time (about 51 minutes summed from test_times.json) when the real parallel run takes about 275 s, because the per-script table is the only record and run_tests.ps1 still ran one process. The runner now writes a record of every full run (wall time, processes, counts) and prints it on its last line; run_tests.ps1 runs the same split as run_tests.sh. Tooling, merged after QA.
+- Documents touched: tasks/README.md, game/docs/setup/tests.md
+- Tasks: T-588
+
 ## 2026-11-08: Hint pieces in the level creator and the run
 - Decision or change: Hint pieces (gas, brake/reverse, arrows, cyclical arrows) placeable in the level creator and shown in the run, with placeholder art; the board played it.
 - Documents touched: `docs/level-design.md`
