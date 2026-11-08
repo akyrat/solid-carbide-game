@@ -1,7 +1,7 @@
 ---
 id: T-590
 title: A charged jump, for a playtest
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: the charged jump, its own playtest build.
+
+### 2026-11-08, In progress → In QA
+
+Charged jump built: hold Space on the ground up to x1.5 over 3 s, a small bar above the car. Note: catching a rail from a jump now takes a tap, then a hold in the air. QA now.
 
 ## Style review
 
