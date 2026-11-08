@@ -1,7 +1,7 @@
 ---
 id: T-590
 title: A charged jump, for a playtest
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -103,3 +103,4 @@ Tweak 1 (the board, 2026-11-08, quick tuning: 'I don't want to have a loading ba
 - Docs: docs/drifting.md Content 'The charged jump (task T-590)' (the bar replaced by the tilt and the effect's scale), game/docs/driving/tricks.md. For the Project Lead: Drifting, Decisions, 'A charged jump, for a playtest' still says a small script-drawn cue shows the charge; that line is yours to update.
 - GIF: art-archive/T-590/screenshots/tweak1_tap_then_full_charge.gif (a tap with the normal cloud, then a 3 s charge with the car tilted and the x1.5 hop with a bigger cloud); stills tweak1_charging_tilted.png, tweak1_full_charge_effect.png, tweak1_tap_vs_charge_closeup.png (enlarged: tap cloud, tilted while charging, full-charge cloud). The first build's GIF and stills are kept, renamed v1_bar_*.
 - 2026-11-08, in-progress → in-qa: Tweak 1 in; ready for the board to play (quick tuning, no QA agent).
+- 2026-11-08, needs-playtest → done: Board: happy with the charged jump; update the texts, then merge (2026-11-08)
