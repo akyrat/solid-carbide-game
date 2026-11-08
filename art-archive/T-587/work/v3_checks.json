@@ -1,0 +1,38 @@
+[
+ {
+  "rule": 3,
+  "check": "size 32x32",
+  "ok": true,
+  "detail": "32x32"
+ },
+ {
+  "rule": 1,
+  "check": "transparent background (corners)",
+  "ok": true,
+  "detail": "[(0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0)]"
+ },
+ {
+  "rule": 1,
+  "check": "no semi-transparent pixels",
+  "ok": true,
+  "detail": "0 semi-transparent"
+ },
+ {
+  "rule": 1,
+  "check": "about 30 colours or fewer",
+  "ok": true,
+  "detail": "22 colours"
+ },
+ {
+  "rule": 1,
+  "check": "has some opaque pixels",
+  "ok": true,
+  "detail": "536 opaque"
+ },
+ {
+  "rule": 6,
+  "check": "Greenbull's light green and yellow only on Greenbull's things",
+  "ok": true,
+  "detail": "none"
+ }
+]

@@ -4140,3 +4140,8 @@ Entry format:
 - Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x; the board played it.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-586
+
+## 2026-11-08: Grinding Wheels icon
+- Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side (6/10, 2 of 4 generations); the board approved it.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-587

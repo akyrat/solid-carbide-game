@@ -26,10 +26,12 @@ class TestDraw(unittest.TestCase):
         self.assertFalse(cols & FORBIDDEN)
         self.assertTrue(cols & set(gw.SPARKS), "has sparks")
 
-    def test_committed_icon_is_the_script_output(self):
+    def test_committed_icon_is_still_a_32x32_icon(self):
+        # T-587's PixelLab art replaced this placeholder in game/art/power_ups/, so the test no
+        # longer pins the committed pixels to the script's output.
         self.assertTrue(os.path.exists(ICON))
         a = Image.open(ICON).convert("RGBA")
-        self.assertEqual(list(a.getdata()), list(gw.draw().getdata()))
+        self.assertEqual(a.size, (32, 32))
 
 
 if __name__ == "__main__":
