@@ -351,6 +351,13 @@ Added for the kaiju alert sign and banner pieces (task T-440; same file, every e
 - **Banner hints in the strip:** "R: next wall." (`banner_wall_hint`) and "H: next height." (`banner_height_hint`); the keys are the existing turn and height keys, a proposal the creator must follow.
 - Style loop: score 8/10 in round 1 (Style review, T-440). The script's complaints about one line and sentence case came from checking the six labels as one block.
 
+Added for the hint pieces (task T-575; same file, every earlier key unchanged; Decisions, "Hint pieces in the level creator"; the pieces' tickets are T-576 and T-577). These are the board's tool labels; the pieces show no words in the game. Each label scored 8 or more in the style loop (9 for all but the two strip hints, 8; Style review, T-575). The keys are the existing turn and mirror keys, a proposal the creator must follow:
+
+- **Side panel group:** "Driver hints" (`group_hints`, fits 12 characters).
+- **Side panel buttons:** "Gas hint (W)" (`piece_hint_gas`), "Brake hint (S)" (`piece_hint_brake`), "Straight arrow" (`piece_hint_arrow_straight`), "Turn arrow" (`piece_hint_arrow_curved`, left or right) and "Circular arrow" (`piece_hint_arrow_circular`, either direction).
+- **Top bar, painted or standing:** "On the ground" (`hint_mode_ground`) and "Roadside sign" (`hint_mode_sign`).
+- **Strip hints while a hint piece is picked:** "Click: paint. R: turn." (`hint_ground_hint`), "Click: stand the sign at the roadside. R: turn." (`hint_sign_hint`) and, for the curved and circular arrows, "M: mirror." (`hint_mirror_hint`).
+
 ### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
