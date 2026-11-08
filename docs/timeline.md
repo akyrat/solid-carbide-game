@@ -4205,3 +4205,13 @@ Entry format:
 - Decision or change: The practice window's keycaps show W, A, S, D and Space only.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-597
+
+## 2026-11-08: Text for the trick popups setting
+- Decision or change: The settings checkbox label for turning trick popups off.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-598
+
+## 2026-11-08: A setting to turn off the trick popups
+- Decision or change: A settings checkbox turns trick popups off; tricks still count.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-599

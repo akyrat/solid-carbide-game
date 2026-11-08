@@ -2365,6 +2365,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **The tutorial's recorded demos** (board, 2026-11-08): each trick slide of the tutorial plays the board's own recording of the trick the first time the slide opens, then the practice window shrinks away and the player drives. Two buttons: **Replay** plays the recording again, **Skip demo** (the board's "skip"; "demo" keeps it apart from the slides' own Skip) ends it and goes straight to the player's turn. When the recording ends or is skipped, a **"your turn"** label shows for 2 seconds and fades away. The recording controls the board used (F5 to F9 and their buttons) are removed entirely. The texts: T-594; the build: T-574 (quick tuning).
 - **No popup for thread the needle** (board, 2026-11-08): threading the needle no longer shows its trick popup (the bubble); the trick still counts and still raises the combo as before, and the pair still flashes (Level design, Decisions, "Threading the needle flashes the pair"). (T-596)
 - **No R on the tutorial's keycaps** (board, 2026-11-08): the keycaps in the practice window's corner show W, A, S, D and Space only; R is gone from them. Pressing R does what it did before. (T-597)
+- **A setting to turn off the trick popups** (board, 2026-11-08): a checkbox in the settings (the pause screen's and the main menu's Settings screen) turns the trick popups (the bubbles that name each trick) on or off. On by default, saved like the other settings. Off: no trick popups show, but every trick still counts and still raises the combo, and pairs still flash. The Project Lead read the board's "combo popups" as the trick popups; anything else (the multiplier popup) stays as it is unless the board says so. The text: T-598; the build: T-599, on T-596.
 
 ### Content
 
@@ -2770,4 +2771,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `33bd478d772be9c766bc9b3ef815bbc4a98e51ba4db7a5a71e8d7c377602e848` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `4d61bb508c41860b63ae0964b33093a8fe80fa24ca627845bd7b8913b8907f2a` |
+| `hud-and-menus.md` | `3bf6d76014a80ca93ccc4d0809a81ac2148a2c04d6d5d7016a8d43eed3f8cc84` |
