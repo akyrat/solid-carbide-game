@@ -69,7 +69,7 @@ func test_keyboard_order_follows_the_column() -> void:
 	var ps = game.pause_screen
 	ps.pause()
 	var bs := _buttons(ps)
-	assert_true(bs[0].has_focus())
+	assert_null(ps.get_viewport().gui_get_focus_owner(), "T-573: nothing selected on opening")
 	for i in bs.size():
 		var down: Button = bs[i].get_node(bs[i].focus_neighbor_bottom)
 		assert_eq(down, bs[(i + 1) % bs.size()], "Down from %s" % bs[i].name)

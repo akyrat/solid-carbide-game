@@ -12,6 +12,8 @@ mono_crash.*.json
 # Exported builds
 game/build/
 web-build/
+# The build id publish_itch.py writes just before the Web export (T-572)
+game/build_id.txt
 tools/bin/
 
 # Test and screenshot output

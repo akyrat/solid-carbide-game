@@ -91,6 +91,15 @@ class RepoChecks(unittest.TestCase):
         self.assertIn("data/levels/*", line)
         self.assertNotIn("data/level/", line)
 
+    def test_web_preset_packs_the_build_id_file(self):
+        root = Path(__file__).resolve().parent.parent
+        web = (root / "game" / "export_presets.cfg").read_text().split("[preset.0.options]")[0]
+        line = [l for l in web.splitlines() if l.startswith("include_filter=")][0]
+        self.assertIn("build_id.txt", line)
+        self.assertEqual(p.BUILD_ID_FILE, "game/build_id.txt")
+        ignored = (root / ".gitignore").read_text().splitlines()
+        self.assertIn(p.BUILD_ID_FILE, ignored)
+
     def test_ignores_line_ending_only_noise(self):
         (self.repo / "a.txt").write_bytes(b"a\r\n")
         p.check_repo(self.repo)
@@ -245,6 +254,36 @@ class FullRun(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("BUTLER_API_KEY", "\n".join(lines))
         self.assertFalse(called)
+
+    def test_dry_run_packs_the_build_id_and_leaves_the_tree_clean(self):
+        seen = []
+
+        def exporter(repo, godot):
+            seen.append((Path(repo) / "game" / "build_id.txt").read_text())
+            return fake_exporter(repo, godot)
+
+        version = p.check_repo(self.repo)
+        lines = []
+        code = p.run(["--repo", str(self.repo), "--butler", str(self.bat), "--dry-run"],
+                     out=lines.append, exporter=exporter)
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(seen, [version + "\n"], "the export saw the build id")
+        self.assertFalse((self.repo / "game" / "build_id.txt").exists(), "removed after")
+        status = subprocess.run(["git", "status", "--porcelain", "-uall"], cwd=str(self.repo),
+                                capture_output=True, text=True).stdout
+        self.assertEqual(status.strip(), "")
+        self.assertEqual(p.check_repo(self.repo), version, "still clean for the next publish")
+
+    def test_build_id_removed_when_the_export_fails(self):
+        def exporter(repo, godot):
+            raise p.PublishError("Godot export failed")
+
+        lines = []
+        code = p.run(["--repo", str(self.repo), "--butler", str(self.bat), "--dry-run"],
+                     out=lines.append, exporter=exporter)
+        self.assertEqual(code, 1)
+        self.assertFalse((self.repo / "game" / "build_id.txt").exists())
+        self.assertFalse((self.repo / "game").exists() and any((self.repo / "game").iterdir()))
 
     def test_off_master_stops(self):
         git(self.repo, "checkout", "-q", "-b", "feature")

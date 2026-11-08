@@ -214,7 +214,7 @@ func is_open() -> bool:
 func open() -> void:
 	refresh()
 	visible = true
-	back_button.grab_focus()
+	KeyNav.clear_selection(self)  # T-573: nothing selected until a key moves
 
 
 func close() -> void:
@@ -225,5 +225,5 @@ func close() -> void:
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if visible and KeyNav.handle_wasd(event, self):
+	if visible and KeyNav.handle_keys(event, self, back_button):
 		return

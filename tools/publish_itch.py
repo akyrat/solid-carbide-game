@@ -13,7 +13,12 @@ What it does, in order:
      no merge in progress.
   2. Without --dry-run, checks .env has BUTLER_API_KEY and ITCH_TARGET (`<user>/<game>:html5`, here `jerry-of-rivia/solid-carbide:html5`)
      and that butler exists; if not, it stops and names what is missing. Nothing is exported.
-  3. Exports the "Web" preset of game/export_presets.cfg (release, thread support off, so
+  3. Writes the build id (the short master commit, the same as --userversion) into
+     game/build_id.txt (git-ignored; the Web preset's include_filter packs it), so the game
+     shows the tutorial slides again on each new build (T-572; HUD and menus, Decisions, "The
+     tutorial comes back with each new itch.io build"). It is removed again after the export,
+     whether the export worked or not, so the checkout is as clean after as before.
+     Then exports the "Web" preset of game/export_presets.cfg (release, thread support off, so
      itch.io needs no SharedArrayBuffer) into <repo>/web-build/ (git-ignored), and checks the
      export made index.html, a .wasm and a .pck.
   4. Runs `butler push <build folder> <ITCH_TARGET> --userversion <short master commit>`
@@ -38,6 +43,7 @@ from pathlib import Path
 DEFAULT_REPO = Path(__file__).resolve().parent.parent
 PRESET = "Web"
 BUILD_DIR = "web-build"
+BUILD_ID_FILE = "game/build_id.txt"  # read by the game as res://build_id.txt (T-572)
 BOARD_LEVELS = "game/data/levels/"  # the board's level files (T-471); the game's map is game/data/level/
 
 
@@ -129,6 +135,29 @@ def export_web(repo, godot):
     return out
 
 
+def write_build_id(repo, version):
+    """Writes the build id for the export (T-572) and returns its path."""
+    path = Path(repo) / BUILD_ID_FILE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(version + "\n", encoding="utf-8", newline="\n")
+    return path
+
+
+def remove_build_id(repo):
+    path = Path(repo) / BUILD_ID_FILE
+    if path.exists():
+        path.unlink()
+
+
+def export_with_build_id(repo, godot, version, exporter):
+    """Runs the export with the build id file in place, then removes the file (T-572)."""
+    write_build_id(repo, version)
+    try:
+        return exporter(repo, godot)
+    finally:
+        remove_build_id(repo)
+
+
 def check_build(folder):
     folder = Path(folder)
     names = [p.name for p in folder.iterdir()] if folder.is_dir() else []
@@ -191,7 +220,8 @@ def run(argv, out=safe_print, exporter=export_web):
         godot = args.godot or env.get("GODOT_BIN")
         if not godot or not Path(godot).is_file():
             raise PublishError("GODOT_BIN is not set in .env (or points to nothing)")
-        folder = exporter(repo, godot)
+        folder = export_with_build_id(repo, godot, version, exporter)
+        out(f"Build id {version} packed into the export ({BUILD_ID_FILE}, removed again)")
         names = check_build(folder)
         out(f"Build ready in {folder}: {', '.join(names)}")
         target = env.get("ITCH_TARGET") or "<user>/<game>:html5"

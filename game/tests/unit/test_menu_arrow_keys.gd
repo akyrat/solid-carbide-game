@@ -26,6 +26,7 @@ func _press(code: Key) -> void:
 func _menu() -> MainMenu:
 	var m: MainMenu = load("res://scenes/menu/main_menu.tscn").instantiate()
 	add_child_autofree(m)
+	m.start_button.grab_focus()  # T-573: a screen opens with nothing selected; these tests start from the selection
 	return m
 
 
@@ -35,6 +36,7 @@ func _garage(coins: int) -> GarageScreen:
 	var g: GarageScreen = load("res://scenes/menu/garage_screen.tscn").instantiate()
 	g.progress = p
 	add_child_autofree(g)
+	g.start_button().grab_focus()  # T-573: as _menu(); test_no_preselected_button.gd covers the opening
 	return g
 
 
@@ -50,11 +52,15 @@ func test_menu_opens_on_start_and_arrows_walk_every_button() -> void:
 	_press(KEY_DOWN)
 	assert_eq(_focus(), m.cosmetics_button)
 	_press(KEY_DOWN)
+	assert_eq(_focus(), m.settings_button)  # T-571
+	_press(KEY_DOWN)
 	assert_eq(_focus(), m.exit_button)
 	_press(KEY_DOWN)
 	assert_eq(_focus(), m.start_button, "down wraps round")
 	_press(KEY_UP)
 	assert_eq(_focus(), m.exit_button, "up wraps round")
+	_press(KEY_UP)
+	assert_eq(_focus(), m.settings_button)
 	_press(KEY_UP)
 	assert_eq(_focus(), m.cosmetics_button)
 
@@ -76,6 +82,9 @@ func test_menu_enter_and_space_press_the_selected_button() -> void:
 	_press(KEY_DOWN)
 	_press(KEY_SPACE)
 	assert_signal_emitted(m, "cosmetics_pressed")
+	_press(KEY_DOWN)
+	_press(KEY_SPACE)
+	assert_signal_emitted(m, "settings_pressed")  # T-571
 	_press(KEY_DOWN)
 	_press(KEY_ENTER)
 	assert_signal_emitted(m, "exit_pressed")
@@ -175,6 +184,8 @@ func test_wasd_menu_moves_like_the_arrows() -> void:
 	assert_eq(_focus(), m.garage_button)
 	_press(KEY_S)
 	assert_eq(_focus(), m.cosmetics_button)
+	_press(KEY_S)
+	assert_eq(_focus(), m.settings_button)  # T-571
 	_press(KEY_S)
 	assert_eq(_focus(), m.exit_button)
 	_press(KEY_S)

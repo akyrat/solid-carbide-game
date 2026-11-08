@@ -62,7 +62,7 @@ Labels written (11). QA now.
 
 ### 2026-11-08, In QA → Needs playtest
 
-QA passed (4/4); the board approved the labels.
+QA passed (4/4); the board approved the labels. Re-merging after a merge clash.
 
 ## Style review
 
