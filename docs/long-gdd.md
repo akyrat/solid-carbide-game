@@ -2377,8 +2377,20 @@ Decisions, "A Settings screen from the main menu".
 - **The screen**: the main menu's dark background, the title "Settings" in the menu title's pixel font and cyan, the settings on a panel in the pause strip's look (nearly opaque black), and the shared Back button under it. From top to bottom: Camera zoom level, SFX volume (only while the sound effects are switched on, like the pause screen's row), Music volume, then one row of five checkboxes: Camera smoothing, Dynamic camera, Rain, Drift Guide, Facing arrow. The labels are the pause screen's own. Nothing else: no HUD size, HUD layout editor, trick list, Restart, Exit, Set min/max zoom or God mode.
 - **Values**: the same saved settings as the pause screen's, read when the screen opens. A slider applies live and saves when it is let go and when the screen closes (the pause screen's rule); a checkbox saves at once. The music volume moves the music already playing in the menu at once; the other values take effect at the next run, where the pause screen shows them. They are kept after the game is closed.
 - **Leaving**: Back or Escape saves what is pending and returns to the main menu.
-- **Keyboard**: the selection starts on Back; Up or Down from Back goes to the checkboxes, Left and Right walk them, Down or Up from a checkbox goes back to Back, Enter or Space ticks; the sliders are for the mouse, like the pause screen's.
+- **Keyboard**: nothing is selected at open (T-573); the first arrow or Tab selects Back; Up or Down from Back goes to the checkboxes, Left and Right walk them, Down or Up from a checkbox goes back to Back, Enter or Space ticks; the sliders are for the mouse, like the pause screen's.
 - The pause screen and this screen build their rows from the same pieces (`SettingsRows`), so they look and save alike. How it is built: `game/docs/hud-and-menus/main-menu.md`, "Settings screen". Screenshots: `art-archive/T-571/screenshots/`.
+
+#### Nothing is selected when a screen opens (T-573; proposals for the playtest)
+
+Decisions, "No button looks selected when a menu opens". One shared way, `KeyNav` (`game/scripts/ui/key_nav.gd`): a screen no longer calls `grab_focus()` when it opens, and drops any selection it still holds. With nothing selected, the first fresh press of an arrow, Tab, W, A, S or D selects the screen's start button and moves nothing else (the selection shows where it starts); the next press moves as before. Mouse hover and clicks are untouched. What Enter or Space does with nothing selected (proposal):
+
+- **Main menu**: starts the run, as it did when Start was preselected. **Tutorial slides** (not on the trick slides, where the keys drive the practice car): presses the default button, Go live on the last slide and the right arrow before it, as before.
+- **Every other screen** (garage, Cosmetics, Settings, pause screen, trick list, god mode page, HUD layout editor): shows the selection on the start button and presses nothing, so no unseen button is ever pressed (the garage never buys, the pause screen never resumes by accident).
+- **Start buttons**: garage and Cosmetics the first Buy or action shown (Back when none), Settings Back, pause screen Resume, trick list and god mode Back, HUD layout editor Done, tutorial as above.
+- **Coming back** from the trick list, the god mode page, or the HUD layout editor: nothing is selected either; the arrows select the start button again. On the tutorial, once a key has selected a button, the selection follows the slides (Go live on the last one); a trick slide clears it.
+- **The level-up, power-up and recap screens** never selected a button (cards and Enter are handled by the screen itself), so they are unchanged.
+
+How it is built and tested: `game/docs/hud-and-menus/keyboard-selection.md`.
 
 #### Combo broken popup
 
@@ -2618,4 +2630,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `f9b0ff71e34322027f5a837ec8f0a84c51f58773f6fb5169314826de74482b2e` |
 | `visual-style.md` | `45b49849b67177ea2ea24d16a7e20dd4c8742657ba6255ca7b99105fec248177` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `9d0e5bb59b1099e29434c6c9d5c89c28599f89406d3f6d9a1d85c86871bd60b8` |
+| `hud-and-menus.md` | `f4783615097626dd50635161586f1baaa448e1e7e6b1c99f0f308b88ee8050c3` |
