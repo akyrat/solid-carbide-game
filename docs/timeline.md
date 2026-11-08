@@ -3996,12 +3996,67 @@ Entry format:
 - Documents touched: docs/level-design.md
 - Tasks: T-581
 
+## 2026-11-08: Equip instead of Flex it
+- Decision or change: The Cosmetics screen's pick button reads Equip.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-582
+
+## 2026-11-08: The car points where it goes (code)
+- Decision or change: Frames picked by where they really point, and more grip outside a drift, measured and compared.
+- Documents touched: docs/drifting.md
+- Tasks: T-583
+
+## 2026-11-08: Redrawn car frames
+- Decision or change: PixelLab redraw of the car frames that pointed the wrong way (up to 28 generations).
+- Documents touched: docs/visual-style.md, docs/drifting.md
+- Tasks: T-584
+
+## 2026-11-08: Texts for Grinding Wheels
+- Decision or change: The name and description of the Grinding Wheels power-up.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-585
+
+## 2026-11-08: Grinding Wheels
+- Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x.
+- Documents touched: docs/drifting.md
+- Tasks: T-586
+
+## 2026-11-08: Grinding Wheels icon
+- Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side.
+- Documents touched: docs/visual-style.md
+- Tasks: T-587
+
 ## 2026-11-08: Texts for the hint pieces
 - Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-575
 
-## 2026-11-08: Equip instead of Flex it
-- Decision or change: The Cosmetics screen's pick button reads Equip.
-- Documents touched: docs/hud-and-menus.md
-- Tasks: T-582
+## 2026-11-08: No Skip on the last tutorial slide
+- Decision or change: The last tutorial slide has no Skip button.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-568
+
+## 2026-11-08: Unaffordable cosmetics are disabled
+- Decision or change: Unlock buttons are disabled while the player can't afford them.
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-569
+
+## 2026-11-08: A Settings screen from the main menu
+- Decision or change: The main menu opens a Settings screen with the settings that make sense outside a run.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-571
+
+## 2026-11-08: The tutorial comes back with each new build
+- Decision or change: Each itch.io build carries its id; the tutorial shows again on a new build.
+- Documents touched: `docs/hud-and-menus.md`, `docs/working-with-the-board.md`
+- Tasks: T-572
+
+## 2026-11-08: No button looks selected when a menu opens
+- Decision or change: Menus open with no button selected; the first arrow or Tab press shows it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-573
+
+## 2026-11-08: Health drops at 5%
+- Decision or change: A killed minion drops a health pickup 5% of the time.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-579

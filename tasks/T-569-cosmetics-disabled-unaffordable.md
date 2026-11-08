@@ -1,7 +1,7 @@
 ---
 id: T-569
 title: Cosmetics the player can't afford are disabled
-status: in-progress
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, tasks/T-553-cosmetics-menu-arrow-checkbox.md, game/scripts/menu/cosmetics_screen.gd]
 files_expected_to_change: [game/scripts/menu/, game/tests/, game/docs/, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,11 +43,11 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A locked cosmetic's unlock button is disabled when coins are below its price and enabled when they reach it (tests). (QA: pass / fail)
-- [ ] Unlocked cosmetics can always be picked (tests). (QA: pass / fail)
-- [ ] docs/garage-design.md Content describes it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-569/screenshots/ show the screen with an affordable and an unaffordable cosmetic. (QA: pass / fail)
+- [ ] A locked cosmetic's unlock button is disabled when coins are below its price and enabled when they reach it (tests). (QA: pass)
+- [ ] Unlocked cosmetics can always be picked (tests). (QA: pass)
+- [ ] docs/garage-design.md Content describes it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-569/screenshots/ show the screen with an affordable and an unaffordable cosmetic. (QA: pass)
 
 ## Updates
 
@@ -56,6 +56,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-07, Open → In progress
 
 Started: UI agent at work in its folder.
+
+### 2026-11-07, In progress → In QA
+
+Built: unaffordable Unlock buttons are disabled. QA now.
+
+### 2026-11-07, In QA → Needs playtest
+
+QA passed (5/5). Waiting for your playtest.
 
 ## Style review
 
@@ -66,3 +74,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Done. Cosmetics screen: the Unlock button is disabled (HudStyle disabled look, same as the garage Buy) while coins < price, enabled when they reach it, refreshed on every coin change; unlocked ones are never disabled. 2 new tests in game/tests/unit/test_cosmetics_screen.gd (10/10 pass); full run 3057 tests, 3056 pass, 0 fail, 1 risky. Doc: docs/garage-design.md Decisions line updated. To test by hand: set coins in the save (progress.json in the game's user folder, field coins; e.g. 350 gives two affordable, two not) and open Cosmetics. Screenshots: art-archive/T-569/screenshots/cosmetics_no_coins.png and cosmetics_350_coins_mixed.png (fixture game/tests/fixtures/cosmetics_shot.tscn, coins from env SHOT_COINS).
 
 Correction: the screenshot fixture is game/tests/fixtures/t569_coins_shot.tscn (coins from env SHOT_COINS); T-553's cosmetics_shot fixture is untouched.
+- 2026-11-08, needs-playtest → done: Board: menu fixes build played, merge (2026-11-08)
