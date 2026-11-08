@@ -1,7 +1,7 @@
 ---
 id: T-576
 title: Hint pieces in the level creator and in runs (placeholder art)
-status: in-progress
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/docs/level/practice-playground.md, game/scripts/level_creator/editor.gd, game/scripts/level_creator/level_document.gd, game/scripts/level/mvp_map.gd]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/data/level/, game/tools/check_level.py, game/tools/, game/tests/, game/docs/level/, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,13 +43,13 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The creator offers the five hints, each as a ground decal or a sign, with Mirror for the arrows and R through 8 directions (tests). (QA: pass / fail)
-- [ ] Hints are saved, load again, and check_level.py accepts a level with them and refuses a bad one (tests). (QA: pass / fail)
-- [ ] In a run, ground hints draw flat under the car with no collision, and signs stand and block the car (tests). (QA: pass / fail)
-- [ ] Levels saved before load and play as before (tests). (QA: pass / fail)
-- [ ] The art's file names and sizes are in game/docs/level/ for T-577, and docs/level-design.md Content describes the pieces. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-576/screenshots/ show the creator with hints of both kinds and a run with them. (QA: pass / fail)
+- [ ] The creator offers the five hints, each as a ground decal or a sign, with Mirror for the arrows and R through 8 directions (tests). (QA: pass)
+- [ ] Hints are saved, load again, and check_level.py accepts a level with them and refuses a bad one (tests). (QA: pass)
+- [ ] In a run, ground hints draw flat under the car with no collision, and signs stand and block the car (tests). (QA: pass)
+- [ ] Levels saved before load and play as before (tests). (QA: pass)
+- [ ] The art's file names and sizes are in game/docs/level/ for T-577, and docs/level-design.md Content describes the pieces. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-576/screenshots/ show the creator with hints of both kinds and a run with them. (QA: pass)
 
 ## Updates
 
@@ -58,6 +58,18 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Level Design builds the hint pieces with placeholder art.
+
+### 2026-11-08, In progress → In QA
+
+Built: the 5 hints, on the ground or as signs, in the creator and in runs (placeholder art). QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed (7/7). Play it in the level creator from T-576's folder.
+
+### 2026-11-08, Needs playtest → Done
+
+Approved by the board; merges after the current batch. The W keycap sample (T-577) starts now.
 
 ## Style review
 
@@ -83,3 +95,4 @@ Screenshots: art-archive/T-576/screenshots/creator_hints.png (Driver hints group
 Tests: new game/tests/unit/level_creator/test_creator_hints.gd (15 pass), TestCheckHints in game/tools/test_check_level.py and HintTest in game/tools/test_build_creator_assets.py. Updated counts and groups in test_creator_families.gd, test_editor_place_delete.gd, test_creator_assets.gd, test_build_creator_assets.py. Full Godot set: 3071 tests, 3070 passing, 0 failing, TESTS PASSED. Game tools set: 1054 tests, OK (4 skipped). (The Godot run was moved to the background by the harness after 180 s; I waited for it to finish and nothing is left running.)
 
 Documents affected: docs/level-design.md (Content, "Level creator: hint pieces"), game/docs/level/hint-pieces.md (new).
+- 2026-11-08, needs-playtest → done: Board: hint pieces lgtm
