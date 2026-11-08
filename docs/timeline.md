@@ -4085,3 +4085,18 @@ Entry format:
 - Decision or change: 2026-11-08: the parallel Godot run hung four times in one day in the shard that ends with test_garage_button_pulse.gd then test_bricks_widest_perf.gd (once in a merge on master, three times in T-588's folder); the benchmark passes alone, so the hang depends on the state left by the 21 scripts before it. Ticketed to find and fix the cause; T-588 waits on it.
 - Documents touched: game/docs/setup/tests.md
 - Tasks: T-589
+
+## 2026-11-08: A charged jump, for a playtest
+- Decision or change: Hold Space on the ground with Jump to charge up to +50% over 3 s, jump on release; its own playtest.
+- Documents touched: docs/drifting.md
+- Tasks: T-590
+
+## 2026-11-08: Texts for needle routes
+- Decision or change: The level creator's texts for grouping thread-the-needle pairs into routes.
+- Documents touched: docs/level-design.md
+- Tasks: T-591
+
+## 2026-11-08: Needle routes
+- Decision or change: Thread-the-needle pairs grouped into routes, played in order or at random; only the active pair pays.
+- Documents touched: docs/level-design.md
+- Tasks: T-592
