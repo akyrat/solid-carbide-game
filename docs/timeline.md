@@ -4060,3 +4060,8 @@ Entry format:
 - Decision or change: A killed minion drops a health pickup 5% of the time.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-579
+
+## 2026-11-08: The launch keeps the grind's speed
+- Decision or change: A rail launch keeps the grind's speed (floor 6); merged after the board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-578
