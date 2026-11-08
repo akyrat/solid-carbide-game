@@ -10,6 +10,11 @@ extends Control
 ##   holds W up the off-grid ramp and brakes on the off-grid rooftop.
 ## T581_SHOT=free bash game/tools/screenshot.sh res://tests/fixtures/t581_free_placement_demo.tscn art-archive/T-581/screenshots/free.png 30
 ## T581_SHOT=shift bash game/tools/screenshot.sh res://tests/fixtures/t581_free_placement_demo.tscn art-archive/T-581/screenshots/shift.png 30
+## - "move_before", "move_drag", "move_after", "move_refused" (the added scope: moving placed pieces): a garage
+##   (a rooftop with its ramp, a 6 and a roof vent on it), a skyscraper, a boulder and a barrier paired, a
+##   street lamp, a crater and an alert sign; then the garage dragged (the outline shows it and what it carries),
+##   every kind moved, and a skyscraper dragged onto the garage (refused: a grey outline).
+## T581_SHOT=move_after bash game/tools/screenshot.sh res://tests/fixtures/t581_free_placement_demo.tscn art-archive/T-581/screenshots/move_after.png 30
 ## T581_SHOT=run bash game/tools/screenshot.sh res://tests/fixtures/t581_free_placement_demo.tscn art-archive/T-581/screenshots/run_on_free_level.png 500
 
 const EDITOR_SCENE := preload("res://scenes/level_creator/editor.tscn")
@@ -53,6 +58,9 @@ func _ready() -> void:
 	editor = EDITOR_SCENE.instantiate()
 	editor.open_new()
 	add_child(editor)
+	if stage.begins_with("move"):
+		await _move_stage(stage)
+		return
 	build(editor, stage == "shift")
 	for k in ["platforms", "ramps", "buildings", "props", "rails"]:
 		print("t581 %s %s: %s" % [stage, k, JSON.stringify(editor.level_data.get(k, []))])
@@ -95,3 +103,48 @@ func _on_stepped() -> void:
 	if run.car.model.get_position().y < 40.0 and run.car.scripted_input[0]:
 		run.car.scripted_input = [false, true, 0.0]
 		print("t581 run: braking on the rooftop at ", run.car.model.get_position(), " height ", run.car.height)
+
+
+## The moving stages (T-581, added scope).
+func _move_stage(stage: String) -> void:
+	var e := editor
+	e.level_data["spawn"] = {"x": 28.5, "y": 70.25, "heading": 270}
+	for c in [["rooftop-3", Vector2(10, 30), "", "m"], ["ramp-0-3", Vector2(13, 46), "north", "m"],
+			["rooftop-6", Vector2(12, 32), "", "s"], ["prop-roof-vent", Vector2(22, 42), "north", "m"],
+			["skyscraper-1", Vector2(44, 26), "", "m"], ["boulder-a", Vector2(34, 50), "", "m"],
+			["prop-barrier", Vector2(42, 50.5), "north", "m"], ["prop-street-lamp", Vector2(6, 52), "north", "m"],
+			["crater-1", Vector2(36, 62), "", "m"], ["alert-sign-head", Vector2(50, 44), "", "m"]]:
+		e.set_platform_size(c[3])
+		e.panel.pick(c[0])
+		for i in 4:
+			if c[2] == "" or e.pick_view == c[2]:
+				break
+			e.rotate_pick()
+		e.place_asset(c[0], c[1])
+	e.panel.pick("")
+	var rock := e.document.piece_at(Vector2(35.5, 51.5))
+	var bar := e.document.piece_at(Vector2(44, 51))
+	e.document.make_pair(rock, bar)
+	e._rebuild_map()
+	match stage:
+		"move_drag":
+			e.press_piece(Vector2(24, 34))
+			e.update_piece_drag(Vector2(24, 34) + Vector2(-8.75, -12.5))
+		"move_after":
+			for m in [[Vector2(24, 34), Vector2(-8.75, -12.5)], [Vector2(50, 32), Vector2(4.25, -6.5)],
+					[Vector2(35.5, 51.5), Vector2(-3.25, 4.75)], [Vector2(44, 51), Vector2(2.5, 3.25)],
+					[Vector2(7, 53), Vector2(1.75, -9.5)], [Vector2(37, 63), Vector2(-6.5, 1.25)],
+					[Vector2(51, 45), Vector2(5.25, 6.75)]]:
+				e.press_piece(m[0])
+				e.end_piece_drag(m[0] + m[1])
+		"move_refused":
+			e.press_piece(Vector2(50, 32))
+			e.update_piece_drag(Vector2(50, 32) + Vector2(-26, 8))
+	for k in ["platforms", "ramps", "buildings", "props", "pattern_copies", "craters", "alert_signs", "pairs"]:
+		print("t581 %s %s: %s" % [stage, k, JSON.stringify(e.level_data.get(k, []))])
+	if not e.piece_drag.is_empty():
+		print("t581 %s drag problem: '%s'" % [stage, e.piece_drag.problem])
+	await get_tree().process_frame
+	e.zoom_by(zoom_factor, e.map_view.size / 2.0)
+	e.pan_by(e.map_view.size / 2.0 - e.units_to_screen(Vector2(30, 44)))
+	e._overlay.queue_redraw()

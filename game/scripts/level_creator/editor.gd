@@ -1710,6 +1710,94 @@ func end_spawn_drag(units: Vector2) -> bool:
 	return moved
 
 
+# ---- Moving a placed piece (T-581) --------------------------------------------------------------
+# Level design, Decisions, "Free placement in the level creator": with nothing picked, press on a placed
+# piece to select it and drag it (as a rail): it follows the mouse on LevelDocument.FREE_STEP, or snaps with
+# Shift (LevelSnapping.move_corner); an outline shows where it (and what it carries,
+# LevelDocument.carried_with) would land, grey when the move is refused for the reasons a placement is
+# (LevelSnapping.move_problem). On release it moves there, or stays where it was with the overlap message
+# (spawn_blocked over the start). A press without a move only selects. Esc puts it back. The creator has
+# no undo. It keeps its id, so pairs and links stay valid.
+
+## The drag in progress ({} for none): {piece, grab (units under the press), start (its corner), corner (where
+## it would go), problem ("" or why not), ghost (the rects it and what it carries would take)}.
+var piece_drag: Dictionary = {}
+
+
+## The press with nothing picked at `units`: a movable piece there is selected and a drag starts. True when
+## there was one.
+func press_piece(units: Vector2) -> bool:
+	var piece := document.piece_at(units)
+	if not LevelDocument.is_movable(piece):
+		return false
+	select_at(units)
+	var start := document.piece_rect(piece).position
+	piece_drag = {"piece": piece, "grab": units, "start": start, "corner": start, "problem": "", "ghost": []}
+	return true
+
+
+## Where the dragged piece would go with the mouse at `units`, and whether it may: a trial move, put back.
+func update_piece_drag(units: Vector2) -> void:
+	if piece_drag.is_empty():
+		return
+	var piece: Dictionary = piece_drag.piece
+	var corner := LevelSnapping.move_corner(document, piece, piece_drag.start + (units - piece_drag.grab), snap_held)
+	piece_drag.corner = corner
+	var record := document.move_piece(piece, corner)
+	piece_drag.problem = _move_problem(piece, record)
+	piece_drag.ghost = document.moved_pieces(record).map(func(p): return document.piece_rect(p))
+	document.restore_move(record)
+	if _overlay != null:
+		_overlay.queue_redraw()
+
+
+## Drops the dragged piece with the mouse at `units`. Returns true when it moved.
+func end_piece_drag(units: Vector2) -> bool:
+	if piece_drag.is_empty():
+		return false
+	update_piece_drag(units)
+	var piece: Dictionary = piece_drag.piece
+	var corner: Vector2 = piece_drag.corner
+	var start: Vector2 = piece_drag.start
+	piece_drag = {}
+	if corner.is_equal_approx(start):
+		_overlay.queue_redraw()
+		return false
+	return move_piece_to(piece, corner)
+
+
+## Esc during a drag: the piece stays where it was.
+func cancel_piece_drag() -> void:
+	piece_drag = {}
+	if _overlay != null:
+		_overlay.queue_redraw()
+
+
+## Moves `piece` (and what it carries) so its corner is at `corner`, unless the move is refused, as a
+## placement would be (the message shows, the piece stays). True when it moved.
+func move_piece_to(piece: Dictionary, corner: Vector2) -> bool:
+	var record := document.move_piece(piece, corner)
+	var why := _move_problem(piece, record)
+	if why != "":
+		document.restore_move(record)
+		last_problem = why
+		_show_message(CreatorTexts.get_text("spawn_blocked" if why == "spawn" else "overlap_message"))
+		_overlay.queue_redraw()
+		return false
+	last_problem = ""
+	_show_message("")
+	_refresh_after(str(piece.kind))
+	return true
+
+
+func _move_problem(piece: Dictionary, record: Dictionary) -> String:
+	var why := LevelSnapping.move_problem(document, record)
+	if why == "" and str(piece.kind) in ["building", "boulder", "prop"] \
+			and document.spawn_problem(LevelSpawn.position_of(level_data)) != "":
+		why = "spawn"  # T-280: a piece never goes over the start
+	return why
+
+
 # ---- Camera and input ---------------------------------------------------------------------------
 
 ## A point in the map view (its local pixels) -> map units.
@@ -1794,10 +1882,14 @@ func _on_map_input(event: InputEvent) -> void:
 				pair_click(units, mb.shift_pressed)  # T-272; Shift+click: a row (T-394)
 			elif mb.shift_pressed and shift_pick_obstacle(units):
 				pass  # T-394: Shift+click on an obstacle starts a row with the pair tool
+			elif press_piece(units):
+				pass  # T-581: a placed piece: select it and drag it
 			else:
 				select_at(units)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and not rail_drag.is_empty():
 			end_rail_drag(mb.position)
+		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and not piece_drag.is_empty():
+			end_piece_drag(screen_to_units(mb.position))  # T-581
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and spawn_dragging:
 			end_spawn_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and size_drag_start.x >= 0:
@@ -1817,6 +1909,8 @@ func _on_map_input(event: InputEvent) -> void:
 			continue_road_stroke(hover_units)
 		if spawn_dragging:
 			update_spawn_drag(hover_units)
+		if not piece_drag.is_empty():
+			update_piece_drag(hover_units)  # T-581
 		if not rail_drag.is_empty():
 			update_rail_drag(mm.position)
 		elif rail_picked():
@@ -1835,6 +1929,8 @@ func set_snap_held(on: bool) -> void:
 	if on == snap_held:
 		return
 	snap_held = on
+	if not piece_drag.is_empty():
+		update_piece_drag(hover_units)
 	if _overlay != null:
 		_overlay.queue_redraw()
 	if size_drag_start.x >= 0:
@@ -1880,6 +1976,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			resize_rail(RailPiece.LENGTH_STEP)  # T-542: a selected rail longer
 		KEY_ESCAPE:
 			cancel_rail_drag()
+			cancel_piece_drag()  # T-581
 			size_drag_start = Vector2i(-1, -1)
 			end_road_stroke()
 			panel.pick("")
@@ -2019,6 +2116,11 @@ class _Overlay extends Node2D:
 			_quad(KaijuSigns.screen_quad(doc.data, editor.selected.item, g), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
 		elif not editor.selected.is_empty() and str(editor.selected.get("kind", "")) != "spawn":
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
+		if not editor.piece_drag.is_empty():
+			# T-581: where the dragged piece (and what it carries) would land: blue, or grey when refused.
+			var col: Color = editor.SPAWN_REFUSED_COLOR if str(editor.piece_drag.problem) != "" else Color(0.55, 0.85, 1.0, 0.9)
+			for r in editor.piece_drag.ghost:
+				_outline(r, col, w * 2.0)
 		_draw_pairs(doc, w)
 		_draw_rails(w)
 		_draw_spawn(doc, w)

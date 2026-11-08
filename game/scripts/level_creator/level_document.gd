@@ -1299,3 +1299,124 @@ func placed_pieces() -> Array:
 	for ra in data.get("rails", []):
 		out.append({"kind": "rail", "item": ra})
 	return out
+
+
+# ---- Moving a placed piece (T-581) --------------------------------------------------------------
+# Level design, Decisions, "Free placement in the level creator" (the board, 2026-11-08: "I want to be able
+# to move things on the map"). A piece keeps its id (a prop's, a rooftop's, a ramp's; a boulder its copy and
+# index), so pairs and links stay valid; only its place changes. Generic: any piece whose item is a rectangle
+# {x, y, w, h} moves (the hint pieces of T-576 too), a boulder by its centre. Not moved: ground and road tiles
+# (painted), a banner (it goes on its skyscraper's wall, and moves with it), the spawn point and rails (their
+# own drags).
+
+## True when `piece` (as piece_at gives it) can be dragged to another place.
+static func is_movable(piece: Dictionary) -> bool:
+	var kind := str(piece.get("kind", ""))
+	if kind in ["", "ground", "road", "sidewalk", "rail", "spawn"] or piece.has("cell") or not (piece.get("item") is Dictionary):
+		return false
+	var it: Dictionary = piece.item
+	if kind == "boulder":
+		return it.has("x") and it.has("y")
+	if kind == "alert" and KaijuSignsScript.kind_of(it) == "banner":
+		return false
+	return it.has("x") and it.has("y") and it.has("w") and it.has("h")
+
+
+## Proposal (T-581): what moves along with `piece`. A rooftop, or a short building (a platform, T-405),
+## takes what stands on it with it: the rooftops standing on it ("on", through others), the ramps on it or
+## climbing it, and the objects (boulders, props, craters, alert signs, and any other piece) wholly on it, so
+## a garage keeps its ramps and its decoration. Nothing moves along with any other piece.
+func carried_with(piece: Dictionary) -> Array:
+	var kind := str(piece.get("kind", ""))
+	var platform_id := ""
+	if kind == "rooftop":
+		platform_id = str(piece.item.get("id", ""))
+	elif kind == "building" and ShortPlatformsScript.is_platform_entry(piece.item):
+		platform_id = ShortPlatformsScript.id_of(piece.item)
+	else:
+		return []
+	var base := piece_rect(piece)
+	var height := float(piece.item.get("height", ShortPlatformsScript.HEIGHT))
+	var out: Array = []
+	for other in placed_pieces():
+		if is_same(other.item, piece.item) or not is_movable(other):
+			continue
+		var r := piece_rect(other)
+		var on_it := _holds(base, r)
+		match str(other.kind):
+			"building":
+				continue  # a building stands on the street
+			"rooftop":
+				if not (on_it and float(other.item.get("height", 0)) > height):
+					continue
+			"ramp":
+				if not ((on_it and float(other.item.get("bottom_height", 0)) >= height - 0.001) \
+						or str(other.item.get("platform", "")) == platform_id):
+					continue
+			_:
+				if not on_it:
+					continue
+		out.append(other)
+	return out
+
+
+## Moves `piece` (and what it carries, carried_with) so its footprint's top-left corner is at `corner`
+## (units, used as given: the editor rounds it). Banners follow their skyscraper; the links ("on",
+## "platform") are filled in again. Returns the record restore_move takes to put everything back.
+func move_piece(piece: Dictionary, corner: Vector2) -> Dictionary:
+	var record := {"items": [], "banners": [], "links": _links()}
+	var delta := corner - piece_rect(piece).position
+	var moving: Array = [piece]
+	moving.append_array(carried_with(piece))
+	var buildings_moved := false
+	for p in moving:
+		var it: Dictionary = p.item
+		record.items.append([it, it.x, it.y])
+		if str(p.kind) == "building":
+			buildings_moved = true
+			for al in data.get("alert_signs", []):
+				if KaijuSignsScript.kind_of(al) == "banner" and is_same(KaijuSignsScript.building_of(data, al), it):
+					record.banners.append([al, (al.building as Array).duplicate()])
+					al["building"] = [float(it.x) + delta.x, float(it.y) + delta.y]
+		it["x"] = float(it.x) + delta.x
+		it["y"] = float(it.y) + delta.y
+	_relink()
+	if buildings_moved:
+		refresh_ground_rows()
+	return record
+
+
+## Puts back what move_piece moved, links included.
+func restore_move(record: Dictionary) -> void:
+	for e in record.get("items", []):
+		e[0]["x"] = e[1]
+		e[0]["y"] = e[2]
+	for e in record.get("banners", []):
+		e[0]["building"] = e[1]
+	_set_links(record.get("links", {}))
+	refresh_ground_rows()
+
+
+## The pieces a move_piece record moved ({kind, item} as placed_pieces gives them).
+func moved_pieces(record: Dictionary) -> Array:
+	var items: Array = record.get("items", []).map(func(e): return e[0])
+	return placed_pieces().filter(func(p): return items.any(func(i): return is_same(i, p.item)))
+
+
+func _links() -> Dictionary:
+	var out := {"on": [], "platform": []}
+	for p in _list("platforms"):
+		out.on.append([p, p.get("on", null)])
+	for r in _list("ramps"):
+		out.platform.append([r, r.get("platform", "")])
+	return out
+
+
+func _set_links(links: Dictionary) -> void:
+	for e in links.get("on", []):
+		if e[1] == null:
+			e[0].erase("on")
+		else:
+			e[0]["on"] = e[1]
+	for e in links.get("platform", []):
+		e[0]["platform"] = e[1]

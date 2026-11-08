@@ -363,3 +363,69 @@ static func cuts_object_problem(doc: LevelDocument, kind: String, item: Dictiona
 		if solid or not _holds(r, o):
 			return "the %s cuts through an object" % kind
 	return ""
+
+
+# ---- Moving a placed piece (T-581) ---------------------------------------------------------------
+
+## Where a dragged piece goes: its footprint's top-left corner for a wanted corner `raw` (the piece's
+## corner plus how far the mouse moved). Without `snap` (Shift): `raw` on LevelDocument.FREE_STEP, moved in
+## so the footprint is on the map; a ramp goes onto its rooftop's side within FREE_RAMP_REACH, as when
+## placed. With `snap`: the nearest grid corner, then for a building, rooftop or ramp the neighbour or ramp
+## snaps of placement, the piece itself (and what it carries) left out of the neighbours.
+static func move_corner(doc: LevelDocument, piece: Dictionary, raw: Vector2, snap: bool) -> Vector2:
+	var size := doc.piece_rect(piece).size
+	var map := doc.map_rect()
+	var corner := LevelDocument.on_step(raw)
+	if snap:
+		corner = map.position + ((raw - map.position) / CELL).round() * CELL
+	corner = corner.clamp(map.position, Vector2(maxf(map.position.x, map.end.x - size.x), maxf(map.position.y, map.end.y - size.y)))
+	var kind := str(piece.get("kind", ""))
+	var rect := Rect2(corner, size)
+	if kind == "ramp":
+		var onto := ramp_snap(doc, rect, str(piece.item.get("side", "east")), float(piece.item.get("top_height", 0)),
+			SNAP_DISTANCE if snap else FREE_RAMP_REACH)
+		if not onto.is_empty() and _holds(map, onto.rect):
+			return onto.rect.position
+		return corner
+	if not snap or not (kind in SNAPPING_KINDS):
+		return corner
+	var skip: Array = [piece.item]
+	for c in doc.carried_with(piece):
+		skip.append(c.item)
+	var near: Array = []
+	for n in neighbours(doc, kind, rect):
+		var own := false
+		for s in skip:
+			if Rect2(float(s.x), float(s.y), float(s.w), float(s.h)).is_equal_approx(n.rect) and n.flush_only == false:
+				own = true
+		if not own:
+			near.append(n)
+	var shift := neighbour_shift(rect, near)
+	for s in [shift, Vector2(shift.x, 0), Vector2(0, shift.y)]:
+		if s != Vector2.ZERO and _holds(map, Rect2(corner + s, size)):
+			return corner + s
+	return corner
+
+
+## Why the move `record` (LevelDocument.move_piece, already made) can't stay, as for placing: "" when
+## it may. Every moved piece stays on the map; a rooftop or ramp may not overlap in a way the level
+## check refuses; an object stands wholly on one surface and never in a building; a crater lies on the
+## street; a building, rooftop or ramp never cuts through an object.
+static func move_problem(doc: LevelDocument, record: Dictionary) -> String:
+	var map := doc.map_rect()
+	for p in doc.moved_pieces(record):
+		var kind := str(p.kind)
+		if not _holds(map, doc.piece_rect(p)):
+			return "the %s would leave the map" % kind
+		var why := ""
+		if kind in ["rooftop", "ramp"]:
+			why = overlap_problem(doc, kind, p.item)
+		if why == "" and (kind in ["boulder", "prop"] or (kind == "alert")):
+			why = object_problem(doc, doc.piece_rect(p))
+		elif why == "" and kind == "crater":
+			why = crater_problem(doc, doc.piece_rect(p))
+		if why == "" and kind in ["building", "rooftop", "ramp"]:
+			why = cuts_object_problem(doc, kind, p.item)
+		if why != "":
+			return why
+	return ""
