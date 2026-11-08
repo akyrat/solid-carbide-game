@@ -4075,3 +4075,8 @@ Entry format:
 - Decision or change: Car frames picked by where their drawing points (A) and straight-line grip 0.9 while only W is held (C); the board played A+C.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-583
+
+## 2026-11-08: The full Godot test run hangs before the bricks benchmark starts
+- Decision or change: 2026-11-08: the parallel Godot run hung four times in one day in the shard that ends with test_garage_button_pulse.gd then test_bricks_widest_perf.gd (once in a merge on master, three times in T-588's folder); the benchmark passes alone, so the hang depends on the state left by the 21 scripts before it. Ticketed to find and fix the cause; T-588 waits on it.
+- Documents touched: game/docs/setup/tests.md
+- Tasks: T-589
