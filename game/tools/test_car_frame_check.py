@@ -104,5 +104,104 @@ class PolishTest(unittest.TestCase):
         self.assertEqual(cfc.smooth_shadow(rows, (10, 4, 31), passes=1), (0, 0))
 
 
+class ColourFixTest(unittest.TestCase):
+    def test_colour_specks_replaces_lone_pixels_and_keeps_runs(self):
+        pink = (246, 221, 248)
+        im = square_frame()
+        px = im.load()
+        px[60, 60] = pink + (255,)                        # a lone pink speck inside the green
+        for x in range(52, 56):
+            for y in range(52, 56):
+                px[x, y] = pink + (255,)                  # a 4 x 4 pink window: kept
+        rows = cfc.rows_of(im)
+        self.assertEqual(cfc.colour_specks(rows, [pink]), 1)
+        self.assertEqual(rows[60][60], (40, 120, 60, 255))
+        self.assertEqual(rows[53][53], pink + (255,))
+        self.assertEqual(cfc.colour_specks(rows, [pink]), 0)
+
+    def test_colour_specks_min_run_two_replaces_a_pair(self):
+        pink = (246, 221, 248)
+        im = square_frame()
+        px = im.load()
+        px[60, 60] = px[61, 60] = pink + (255,)
+        rows = cfc.rows_of(im)
+        self.assertEqual(cfc.colour_specks(rows, [pink], min_run=2), 2)
+        self.assertEqual(rows[60][61], (40, 120, 60, 255))
+
+    def test_recolour_all_and_shadow_only(self):
+        src, dst = (12, 10, 33), (10, 4, 31)
+        rows = cfc.rows_of(square_frame(colour=src + (255,)))
+        rows[60][60] = (40, 120, 60, 255)
+        self.assertEqual(cfc.recolour(rows, src, dst, only={(50, 50), (51, 50)}), 2)
+        self.assertEqual(rows[50][50], dst + (255,))
+        self.assertEqual(rows[50][52], src + (255,))
+        self.assertEqual(cfc.recolour(rows, src, dst), 397)
+        self.assertEqual(rows[60][60], (40, 120, 60, 255))
+        self.assertEqual(cfc.colour_counts(rows), {dst: 399, (40, 120, 60): 1})
+
+    def test_recolour_box_and_next_to(self):
+        src, dst, white = (12, 10, 33), (10, 4, 31), (237, 251, 251)
+        rows = cfc.rows_of(square_frame(colour=src + (255,)))
+        self.assertEqual(cfc.recolour(rows, src, dst, box=(50, 50, 52, 52)), 4)
+        self.assertEqual(rows[51][51], dst + (255,))
+        self.assertEqual(rows[52][52], src + (255,))
+        rows[60][60] = white + (255,)
+        self.assertEqual(cfc.recolour(rows, src, dst, next_to=white), 8)   # the 8 neighbours of the white pixel
+        self.assertEqual(rows[59][59], dst + (255,))
+        self.assertEqual(rows[58][58], src + (255,))
+        self.assertEqual(rows[60][60], white + (255,))
+        rows = cfc.rows_of(square_frame(colour=src + (255,)))
+        self.assertEqual(cfc.recolour(rows, src, dst, diag=(100, 101)), 3)   # (50,50), (50,51), (51,50)
+        self.assertEqual(rows[50][50], dst + (255,))
+        self.assertEqual(rows[51][51], src + (255,))
+
+    def test_smooth_edge_removes_a_spike_and_fills_a_notch(self):
+        green, outline = (40, 120, 60, 255), (6, 2, 27)
+        im = square_frame()
+        px = im.load()
+        px[72, 60] = green                                # a spike two columns right of the square
+        px[69, 60] = (0, 0, 0, 0)                         # a notch in the right edge
+        rows = cfc.rows_of(im)
+        self.assertEqual(cfc.smooth_edge(rows, outline), (1, 1))
+        self.assertEqual(rows[60][72][3], 0)
+        self.assertEqual(rows[60][69], outline + (255,))
+        self.assertEqual(rows[60][60], green)
+
+    def test_cast_shadow_paints_only_transparent_pixels(self):
+        shadow = (10, 4, 31)
+        rows = cfc.rows_of(square_frame())
+        self.assertEqual(cfc.cast_shadow(rows, -1, 4, shadow), 400 - 19 * 16)  # the shifted square minus the overlap
+        self.assertEqual(rows[72][60], shadow + (255,))
+        self.assertEqual(rows[60][49], shadow + (255,))
+        self.assertEqual(rows[60][60], (40, 120, 60, 255))
+        self.assertEqual(rows[75][60][3], 0)
+        rows2 = cfc.rows_of(square_frame())
+        self.assertGreater(cfc.cast_shadow(rows2, 0, 2, shadow, grow=1), 40)
+        self.assertEqual(rows2[52][49], shadow + (255,))  # the grown ring, shifted down 2, shows beside the square
+        before = sum(1 for r in rows2 for p in r if p[3])
+        stripped = cfc.strip_shadow(rows2)                # the shadow that touches the background goes
+        self.assertGreater(stripped, 0)
+        self.assertEqual(sum(1 for r in rows2 for p in r if p[3]), before - stripped)
+        self.assertEqual(rows2[60][60], (40, 120, 60, 255))
+
+    def test_cmd_specks_and_recolour_write_new_files_only(self):
+        pink = (246, 221, 248)
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "in.png"
+            out = Path(d) / "out.png"
+            im = square_frame()
+            im.load()[60, 60] = pink + (255,)
+            im.save(src)
+            cfc.cmd_specks(Namespace(candidate=str(src), colour=["246,221,248"], min_run=1, out=str(out)))
+            self.assertEqual(Image.open(out).convert("RGBA").getpixel((60, 60)), (40, 120, 60, 255))
+            with self.assertRaises(SystemExit):
+                cfc.cmd_recolour(Namespace(candidate=str(src), src="40,120,60", dst="10,4,31", shadow_only=False,
+                                           out=str(out)))
+            out2 = Path(d) / "out2.png"
+            cfc.cmd_recolour(Namespace(candidate=str(src), src="40,120,60", dst="10,4,31", shadow_only=False,
+                                       out=str(out2)))
+            self.assertEqual(Image.open(out2).convert("RGBA").getpixel((55, 55)), (10, 4, 31, 255))
+
+
 if __name__ == "__main__":
     unittest.main()

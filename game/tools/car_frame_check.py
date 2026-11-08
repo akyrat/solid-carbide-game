@@ -361,6 +361,198 @@ def cmd_edges(a):
         print(p, edge_report(rows), "islands:", [len(c) for c in islands(rows)][:8])
 
 
+def colour_counts(rows) -> dict:
+    counts: dict = {}
+    for r in rows:
+        for p in r:
+            if p[3]:
+                c = tuple(p[:3])
+                counts[c] = counts.get(c, 0) + 1
+    return counts
+
+
+def cmd_colours(a):
+    """Free: every opaque colour of each PNG with its pixel count, most used first (to spot stray shades)."""
+    for p in a.pngs:
+        counts = colour_counts(rows_of(Image.open(p).convert("RGBA")))
+        print(p, f"{len(counts)} colours")
+        for c, n in sorted(counts.items(), key=lambda kv: -kv[1]):
+            print(f"  {c}: {n}")
+
+
+def parse_colour(s: str) -> tuple:
+    return tuple(int(v) for v in s.split(","))
+
+
+def colour_specks(rows, colours, min_run: int = 1) -> int:
+    """Replaces lone pixels of the given colours: an opaque pixel of one of them with at most `min_run - 1`
+    8-neighbours of its own colour takes the majority colour of its other opaque 8-neighbours. Larger runs of
+    the colour (a window, a stripe) are never touched."""
+    want = {tuple(c[:3]) for c in colours}
+    fixes = []
+    for y in range(F):
+        for x in range(F):
+            p = rows[y][x]
+            if p[3] != 255 or tuple(p[:3]) not in want:
+                continue
+            nb = [rows[y + dy][x + dx] for dx, dy in N8 if 0 <= x + dx < F and 0 <= y + dy < F
+                  and rows[y + dy][x + dx][3] == 255]
+            same = [q for q in nb if q[:3] == p[:3]]
+            others = [tuple(q[:3]) for q in nb if q[:3] != p[:3]]
+            if len(same) >= min_run or not others:
+                continue
+            fixes.append((x, y, majority(others) + (255,)))
+    for x, y, c in fixes:
+        rows[y][x] = c
+    return len(fixes)
+
+
+def cmd_specks(a):
+    """Free: lone pixels of --colour (repeatable) take their neighbours' majority colour; writes --out."""
+    im = Image.open(a.candidate).convert("RGBA")
+    rows = [list(r) for r in rows_of(im)]
+    n = colour_specks(rows, [parse_colour(c) for c in a.colour], a.min_run)
+    print("colour specks replaced:", n)
+    out = Image.new("RGBA", (F, F))
+    out.putdata([tuple(p) for r in rows for p in r])
+    refuse_existing(Path(a.out))
+    out.save(a.out)
+    print("specks ->", a.out)
+
+
+def recolour(rows, src, dst, only: set | None = None, box=None, next_to=None, diag=None) -> int:
+    """Every opaque pixel of colour src becomes dst (alpha kept); with `only`, just the pixels at those (x, y);
+    with `box` (x0, y0, x1, y1, exclusive), just the pixels inside it; with `next_to`, just the pixels with an
+    opaque 8-neighbour of that colour; with `diag` (lo, hi), just the pixels whose x + y is in lo..hi (a band
+    along the isometric diagonal, for gradients)."""
+    want = set()
+    for y in range(F):
+        for x in range(F):
+            p = rows[y][x]
+            if not p[3] or tuple(p[:3]) != tuple(src[:3]):
+                continue
+            if only is not None and (x, y) not in only:
+                continue
+            if box is not None and not (box[0] <= x < box[2] and box[1] <= y < box[3]):
+                continue
+            if diag is not None and not (diag[0] <= x + y <= diag[1]):
+                continue
+            if next_to is not None and not any(
+                    0 <= x + dx < F and 0 <= y + dy < F and rows[y + dy][x + dx][3]
+                    and tuple(rows[y + dy][x + dx][:3]) == tuple(next_to[:3]) for dx, dy in N8):
+                continue
+            want.add((x, y))
+    for (x, y) in want:
+        rows[y][x] = tuple(dst[:3]) + (rows[y][x][3],)
+    return len(want)
+
+
+def strip_shadow(rows) -> int:
+    """Makes the drop-shadow pixels (build_car_noshadow's rule) transparent. Returns how many."""
+    import build_car_noshadow as ns
+    sh = ns.shadow_pixels(rows, 0, F)
+    for (x, y) in sh:
+        rows[y][x] = (0, 0, 0, 0)
+    return len(sh)
+
+
+def smooth_edge(rows, outline, passes: int = 1):
+    """Tidies the car's silhouette: an opaque pixel with at most one opaque 4-neighbour goes transparent (a spike);
+    a transparent pixel with three or more opaque 4-neighbours takes the outline colour (a notch).
+    Returns (spikes removed, notches filled)."""
+    removed = added = 0
+    for _ in range(passes):
+        changes = []
+        for y in range(F):
+            for x in range(F):
+                p = rows[y][x]
+                nb = [rows[y + dy][x + dx] for dx, dy in N4 if 0 <= x + dx < F and 0 <= y + dy < F]
+                opaque = sum(1 for q in nb if q[3])
+                if p[3] and opaque <= 1:
+                    changes.append((x, y, (0, 0, 0, 0)))
+                elif p[3] == 0 and opaque >= 3:
+                    changes.append((x, y, tuple(outline[:3]) + (255,)))
+        for x, y, c in changes:
+            rows[y][x] = c
+            if c[3]:
+                added += 1
+            else:
+                removed += 1
+    return removed, added
+
+
+def cast_shadow(rows, dx: int, dy: int, colour, grow: int = 0) -> int:
+    """Paints the car's silhouette shifted by (dx, dy), grown by `grow` pixels (4-neighbours), in the shadow colour
+    where the frame is transparent. The car's own pixels are never changed. Returns how many were painted."""
+    body = {(x, y) for y in range(F) for x in range(F) if rows[y][x][3]}
+    shape = set(body)
+    for _ in range(grow):
+        shape |= {(x + ex, y + ey) for (x, y) in shape for ex, ey in N4}
+    n = 0
+    for (x, y) in shape:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < F and 0 <= ny < F and rows[ny][nx][3] == 0:
+            rows[ny][nx] = tuple(colour[:3]) + (255,)
+            n += 1
+    return n
+
+
+def cmd_reshadow(a):
+    """Free: strips the candidate's drop shadow, smooths the car's silhouette (--smooth-edge passes), casts a new
+    shadow from the silhouette shifted by (--dx, --dy) and grown by --grow, then rounds its edge (--smooth-shadow
+    passes). Writes --out."""
+    im = Image.open(a.candidate).convert("RGBA")
+    rows = [list(r) for r in rows_of(im)]
+    shadow = parse_colour(a.shadow_colour)
+    outline = parse_colour(a.outline_colour)
+    print("shadow pixels stripped:", strip_shadow(rows))
+    if a.smooth_edge:
+        print("silhouette spikes removed, notches filled:", smooth_edge(rows, outline, a.smooth_edge))
+    print("shadow pixels cast:", cast_shadow(rows, a.dx, a.dy, shadow, a.grow))
+    if a.smooth_shadow:
+        print("shadow spikes removed, notches filled:", smooth_shadow(rows, shadow, a.smooth_shadow))
+    print("after:", edge_report(rows))
+    out = Image.new("RGBA", (F, F))
+    out.putdata([tuple(p) for r in rows for p in r])
+    refuse_existing(Path(a.out))
+    out.save(a.out)
+    print("reshadowed ->", a.out)
+
+
+def cmd_find(a):
+    """Free: prints the (x, y) of every opaque pixel of --colour, optionally inside --box x0,y0,x1,y1."""
+    rows = rows_of(Image.open(a.candidate).convert("RGBA"))
+    c = parse_colour(a.colour)
+    box = parse_colour(a.box) if a.box else (0, 0, F, F)
+    pts = [(x, y) for y in range(box[1], box[3]) for x in range(box[0], box[2])
+           if rows[y][x][3] and tuple(rows[y][x][:3]) == c]
+    print(len(pts), "pixels of", c, "in", box)
+    for y in sorted({p[1] for p in pts}):
+        print(f"  y={y}: x=" + ",".join(str(x) for x, yy in pts if yy == y))
+
+
+def cmd_recolour(a):
+    """Free: pixels of --from take the colour --to; with --shadow-only just the drop-shadow pixels
+    (build_car_noshadow's rule), so the car's own pixels keep their shade; with --box just those inside it;
+    with --next-to just those touching that colour. Writes --out."""
+    im = Image.open(a.candidate).convert("RGBA")
+    rows = [list(r) for r in rows_of(im)]
+    only = None
+    if a.shadow_only:
+        import build_car_noshadow as ns
+        only = set(ns.shadow_pixels(rows, 0, F))
+    box, next_to, diag = (getattr(a, k, None) for k in ("box", "next_to", "diag"))
+    n = recolour(rows, parse_colour(a.src), parse_colour(a.dst), only,
+                 parse_colour(box) if box else None, parse_colour(next_to) if next_to else None,
+                 parse_colour(diag) if diag else None)
+    print("pixels recoloured:", n)
+    out = Image.new("RGBA", (F, F))
+    out.putdata([tuple(p) for r in rows for p in r])
+    refuse_existing(Path(a.out))
+    out.save(a.out)
+    print("recoloured ->", a.out)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -385,6 +577,41 @@ def main():
     p = sub.add_parser("edges")
     p.add_argument("pngs", nargs="+")
     p.set_defaults(fn=cmd_edges)
+    p = sub.add_parser("colours")
+    p.add_argument("pngs", nargs="+")
+    p.set_defaults(fn=cmd_colours)
+    p = sub.add_parser("specks")
+    p.add_argument("candidate")
+    p.add_argument("--colour", action="append", required=True, help="R,G,B of a colour whose lone pixels are specks")
+    p.add_argument("--min-run", type=int, default=1, help="a pixel with fewer same-coloured 8-neighbours is a speck")
+    p.add_argument("--out", required=True)
+    p.set_defaults(fn=cmd_specks)
+    p = sub.add_parser("recolour")
+    p.add_argument("candidate")
+    p.add_argument("--from", dest="src", required=True, help="R,G,B")
+    p.add_argument("--to", dest="dst", required=True, help="R,G,B")
+    p.add_argument("--shadow-only", action="store_true")
+    p.add_argument("--box", help="x0,y0,x1,y1 (exclusive): only pixels inside")
+    p.add_argument("--next-to", dest="next_to", help="R,G,B: only pixels with an opaque 8-neighbour of this colour")
+    p.add_argument("--diag", help="lo,hi: only pixels whose x + y is in lo..hi (a band along the iso diagonal)")
+    p.add_argument("--out", required=True)
+    p.set_defaults(fn=cmd_recolour)
+    p = sub.add_parser("reshadow")
+    p.add_argument("candidate")
+    p.add_argument("--dx", type=int, default=-1)
+    p.add_argument("--dy", type=int, default=4)
+    p.add_argument("--grow", type=int, default=0)
+    p.add_argument("--smooth-edge", type=int, default=1)
+    p.add_argument("--smooth-shadow", type=int, default=2)
+    p.add_argument("--shadow-colour", default="10,4,31")
+    p.add_argument("--outline-colour", default="6,2,27")
+    p.add_argument("--out", required=True)
+    p.set_defaults(fn=cmd_reshadow)
+    p = sub.add_parser("find")
+    p.add_argument("candidate")
+    p.add_argument("--colour", required=True, help="R,G,B")
+    p.add_argument("--box", help="x0,y0,x1,y1 (exclusive)")
+    p.set_defaults(fn=cmd_find)
     p = sub.add_parser("fix")
     p.add_argument("candidate")
     p.add_argument("--out", required=True)

@@ -335,22 +335,15 @@
       "t101_frame": 9
     },
     {
-      "body_axis_deg": 26.5,
-      "colours_after": 32,
-      "colours_before": 264,
+      "colours_after": 30,
       "heading_deg": 213.75,
       "index": 19,
-      "made_by": "/rotate of T-101 frame 9 by 16 (T-102)",
+      "made_by": "PixelLab /rotate of old frame 20 by -20 plus free fixes, style loop 7/10",
       "nose_screen_angle_deg": 248.31,
-      "placed_by": "measured position",
-      "position_between_neighbours": 0.22,
-      "rotated_from_t101_frame": 9,
-      "seen_nose_screen_angle_deg_approx": 227,
-      "shift_px": {
-        "x": -1,
-        "y": 4
-      },
-      "source": "art-archive/T-102/car_rot16_from_f09_north-west_raw.png"
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 225.3,
+      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "source": "art-archive/T-584/frames/frame19.png"
     },
     {
       "colours_after": 30,
@@ -541,7 +534,7 @@
     }
   ],
   "noshadow_note": "made by game/tools/build_car_noshadow.py (task T-204) from car_iso.png: only drop-shadow pixels outside the car's silhouette are made transparent; used only while the car is in the air",
-  "noshadow_pixels_removed": 6792,
+  "noshadow_pixels_removed": 7154,
   "order": "clockwise on screen: frame i shows world heading i * 11.25 degrees, Godot axes (y down), the same direction Godot's rotation grows",
   "palette": [
     "#03151b",
