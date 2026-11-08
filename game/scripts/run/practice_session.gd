@@ -443,6 +443,7 @@ func _build() -> void:
 	jump_effect = JumpEffectScript.new()
 	jump_effect.view_transform = ISO_TRANSFORM
 	view_root.add_child(jump_effect)
+	view_root.move_child(jump_effect, car_sprite.get_index())  # behind the car (T-595)
 	rail_sparks = RailSparksScript.new()
 	rail_sparks.name = "RailSparks"
 	view_root.add_child(rail_sparks)

@@ -288,8 +288,8 @@ func _ready() -> void:
 	jump_effect = JumpEffectScript.new()
 	jump_effect.view_transform = ISO_TRANSFORM
 	view_root.add_child(jump_effect)
-	# Over the car: under it, the car's sprite hides the spring and the jet (T-551's placeholders).
-	view_root.move_child(jump_effect, car_sprite.get_index() + 1)
+	# Behind the car (T-595): every jump effect draws under the car's sprite.
+	view_root.move_child(jump_effect, car_sprite.get_index())
 
 	rev_charge_effect = RevChargeEffectScript.new()
 	rev_charge_effect.name = "RevChargeEffect"

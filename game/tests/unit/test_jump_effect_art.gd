@@ -44,3 +44,31 @@ func test_every_effect_plays_and_draws_through_its_frames() -> void:
 		await get_tree().process_frame
 		e.advance(e.seconds / 8.0)
 	assert_false(e.is_playing(), "all over after their seconds")
+
+
+## T-595: the jump effect (every id, charged or not) draws behind the car: its node sits before the
+## car sprite in the View, in a run and in the tutorial's practice session.
+func _assert_behind_car(view: Node, effect: Node, label: String) -> void:
+	var sprite: Node = view.get_node("CarSprite")
+	assert_lt(effect.get_index(), sprite.get_index(), "%s: the jump effect is before the car sprite" % label)
+	assert_eq(effect.z_index, 0, "%s: no z of its own over the car" % label)
+	assert_false(effect.top_level, "%s: drawn with the View, not on top" % label)
+
+
+func test_the_jump_effect_is_behind_the_car_in_a_run() -> void:
+	var run: Node2D = load("res://scenes/run/run.tscn").instantiate()
+	add_child_autofree(run)
+	_assert_behind_car(run.view_root, run.jump_effect, "run")
+	for id in JumpEffectChoice.IDS:
+		run.jump_effect.play(id, "hop", Vector2.ZERO, 0.0, 0.0, 2.0)
+		_assert_behind_car(run.view_root, run.jump_effect, "run " + id)
+
+
+func test_the_jump_effect_is_behind_the_car_in_the_practice_session() -> void:
+	var path := "res://scenes/run/practice_session.tscn"
+	if not ResourceLoader.exists(path):
+		pending("no practice scene")
+		return
+	var s: Node = load(path).instantiate()
+	add_child_autofree(s)
+	_assert_behind_car(s.view_root, s.jump_effect, "practice")
