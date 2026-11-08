@@ -1423,6 +1423,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Minion deaths: an animation, a green spill, corpses that can be knocked about** (board, 2026-11-03): a minion that dies plays a **death animation** instead of vanishing, and **spills a pixelated green liquid** that is **physics simulated** (it splashes out and spreads on the ground). Its **corpse stays** and can be **knocked back by the player**: by the car driving into it and by the weapons' hits (the knockback weapons: the bricks wave, the wiper, the Polarized Steering Wheel's shock; whether others push corpses is a proposal). A corpse **fades out about 2 seconds after it was last hit**; every hit restarts the 2 seconds. A corpse no longer hurts the car and is no longer a target. The death animation's art is made through PixelLab (Visual style, Decisions, "The minion's death animation and green spill"); until then a placeholder drawn in code. Proposals for the playtest, the Enemy Behavior Agent's: how far hits throw a corpse, how the liquid moves and how long it stays, and the most corpses and liquid on screen at once so big crowds don't slow the game (Decisions, "Minions spawn on a timer, and 30% slower"). (T-531, T-532)
 - **No slowdown from many minions** (board, 2026-11-05): since minions spawn on a timer however many are alive ("Minions spawn on a timer" above), a player who doesn't kill them gets frame drops. Many minions alive must not drop the frame rate: the Enemy Behavior Agent finds the cost and makes it cheaper. A cap on the number alive, if one is still needed, is a proposal for the playtest.
 - **Paired meteors hurt the kaiju** (board, 2026-11-05): the kaiju's meteors come in pairs. When the car drifts between the two meteors of a pair (through the line joining them), the kaiju is hurt, with an animation that shows the link between the drift through the meteors and the kaiju getting hit, and both meteors of that pair are destroyed at once. The damage, the pairing distance and the animation (placeholder, no generated art) are proposals for the playtest.
+- **Health drops at 5%** (board, 2026-11-08): a killed minion drops a health pickup with a chance of 5% instead of 22.5%. The coins, the heal (1 heart) and the kaiju (none) are unchanged. (T-579)
 
 ### Content
 
@@ -2584,7 +2585,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `c4ae7879e7f412eea035048dc168200012452af1d55a6df7fca9a9379d6930fe` |
 | `level-design.md` | `e1a7d459ae34830313f735f49e79a3d0fea4fe141260d3387daa8c0670acf5c3` |
-| `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
+| `enemies.md` | `10e63fd5e6d5466ceb2c552536166353cd8b1f63f3c078540f271c2c8cfff990` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `7ef3543e0889e93278ac8b56e1e557974ee4e84545b28ea7afba46e9ef7579d1` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |

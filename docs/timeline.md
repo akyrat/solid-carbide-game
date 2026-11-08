@@ -3980,3 +3980,8 @@ Entry format:
 - Decision or change: Letting go of Space launches the car where it faces at the speed it was grinding.
 - Documents touched: docs/drifting.md
 - Tasks: T-578
+
+## 2026-11-08: Health drops at 5%
+- Decision or change: A killed minion drops a health pickup 5% of the time (was 22.5%).
+- Documents touched: docs/enemies.md
+- Tasks: T-579
