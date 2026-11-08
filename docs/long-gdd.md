@@ -1298,6 +1298,23 @@ Task T-441 (Decisions, "Kaiju alert signs are level creator pieces"; the labels 
 
 ![A run: the car behind the skyscraper, which fades with its two banners](../art-archive/T-441/screenshots/run_behind_skyscraper.png)
 
+#### Level creator: hint pieces
+
+Task T-576 (Decisions, "Hint pieces in the level creator"; the labels are T-575's, "Level creator text" above; T-577 swaps in the PixelLab art). How it works, and the art's file names and sizes: `game/docs/level/hint-pieces.md`. The art is a placeholder drawn by script. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
+
+- **Five pieces in a "Driver hints" group:** Gas hint (W) and Brake hint (S), the W and S keycaps in the tutorial's keycap look; Straight arrow; Turn arrow (a right turn, M makes it a left turn); Circular arrow (clockwise, M makes it anticlockwise).
+- **On the ground or a roadside sign:** with a hint picked, the top bar's "On the ground" and "Roadside sign" choose how it is placed (on the ground first). The heading and mirror stay when it changes. R turns either kind through the 8 directions, clockwise on screen, starting with the run's own start direction (up the screen's right).
+- **On the ground:** painted flat on the street, 4 x 4 units (a road's width), turned to its direction. It lies under the buildings, rooftops, props, the car and the minions. The car drives over it with no crash, and the run's tyre marks go under it. Proposal: only on the street, not on a building, rooftop or ramp (like a meteor crater).
+- **A roadside sign:** a small sign on a post standing on one 2 x 2 unit cell (2 units wide, 3 tall), the icon on its board. On the board the icon points the way its direction shows on screen, so on a sign the keycaps are turned too (a proposal). It is sorted with the props in depth, and it blocks the car like a prop: the car crashes into its post (a circle of 0.5 units) and the combo is cut. The enemies go round it. Like a prop, it stands on the street or wholly on a rooftop, never in a building and never on the start.
+- **Placing, selecting, deleting:** like any other piece, through the same placement path (so T-581's free placement applies to them too). The preview under the mouse shows the piece as it will be drawn. A click selects one and Del deletes it.
+- **Saved levels:** a new `hints` list in the level file (each hint's icon, ground or sign, direction, mirror and footprint). `check_level.py` checks it. Levels saved before have none and open and play unchanged. In the practice playground, which uses the same map code, hints are drawn the same way.
+
+![The level creator: the five hints painted on a road and standing as roadside signs, the Driver hints group, a Turn arrow sign picked with its preview](../art-archive/T-576/screenshots/creator_hints.png)
+
+![A straight arrow picked to paint on the ground, its preview on the road](../art-archive/T-576/screenshots/creator_ground_preview.png)
+
+![A run on that level: the car over the painted gas hint, signs standing at the roadside](../art-archive/T-576/screenshots/run_hints.png)
+
 #### Short buildings as platforms
 
 Task T-405 (Decisions, "Short buildings become platforms"). How it works in the code: `game/docs/level/level-creator-pieces.md`, "Short buildings as platforms (T-405)". The art: Visual style, Content, "Short buildings as platforms".
@@ -2632,7 +2649,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `27f6b0da05b85d452a507ce236a38ad01a3f3eab230a76af35534f90a23953c0` |
-| `level-design.md` | `0945ce26993fd4935d3022f312a84eed1147f95de5bae96cc8df7193fe838c53` |
+| `level-design.md` | `3e82b47a7f2ac9f212f7cc5cc8729d55a0f96187019f5810089e6dd58533f17b` |
 | `enemies.md` | `391da72f65c1ee86b14bee9fc4e5eed842d02d5f4ffed3b32d4e927782e5a149` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `f9b0ff71e34322027f5a837ec8f0a84c51f58773f6fb5169314826de74482b2e` |
