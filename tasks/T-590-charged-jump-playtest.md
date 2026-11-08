@@ -1,7 +1,7 @@
 ---
 id: T-590
 title: A charged jump, for a playtest
-status: open
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/data/power_ups.json, game/data/rail_grind.json, game/scripts/driving/, tasks/T-578-rail-launch-keeps-speed.md]
 files_expected_to_change: [game/data/, game/scripts/driving/, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -43,16 +43,36 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With Jump owned, holding Space on the ground for 0, 1.5 and 3+ s gives takeoff x1, x1.25 and x1.5, jumping on release (tests). (QA: pass / fail)
-- [ ] Space in the air still tilts and grinds as before, and without Jump the ground Space is unchanged (the existing tests pass). (QA: pass / fail)
-- [ ] The charge cue shows while charging and is gone after the jump (a test or screenshot). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-590/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass / fail)
+- [ ] With Jump owned, holding Space on the ground for 0, 1.5 and 3+ s gives takeoff x1, x1.25 and x1.5, jumping on release (tests). (QA: pass)
+- [ ] Space in the air still tilts and grinds as before, and without Jump the ground Space is unchanged (the existing tests pass). (QA: pass)
+- [ ] The charge cue shows while charging and is gone after the jump (a test or screenshot). (QA: pass - met by Tweak 1 as the board asked: car tilts while charging, untilts on release; test_charging_tilts_the_car_and_the_release_untilts_it_in_the_air; screenshots tweak1_charging_tilted.png)
+- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-590/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass - tweak1_tap_then_full_charge.gif)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: the charged jump, its own playtest build.
+
+### 2026-11-08, In progress → In QA
+
+Charged jump built: hold Space on the ground up to x1.5 over 3 s, a small bar above the car. Note: catching a rail from a jump now takes a tap, then a hold in the air. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed 6/6. Ready to play on its own: C:\solid-carbide-worktrees\T-590.
+
+### 2026-11-08, Needs playtest → In progress
+
+Tweak sent to the agent: no bar; the car tilts while charging; the jump effect scales with the jump height.
+
+### 2026-11-08, In progress → In QA
+
+Tweak 1 is in: no bar; the car tilts while you charge and untilts as it jumps; the jump effect grows up to x1.5 at a full charge. Play it from C:\solid-carbide-worktrees\T-590.
 
 ## Style review
 
@@ -60,4 +80,27 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built (Driving & Drift, 2026-11-08): with Jump owned, a press of Space on the ground starts a charge; while Space stays held there the takeoff (the hop's upward speed, as the rail launch's takeoff) grows linearly x1 -> x1.5 over 3 s, then holds at x1.5; the hop comes when Space is let go. A tap (pressed and let go at once) hops at x1, now on the release (a few hundredths of a second later than before, not felt). Space in the air (tilt, grind) and the rail launch unchanged; without Jump, ground Space does nothing. Numbers in game/data/power_ups.json jump.charge (charge_seconds 3, max_multiplier 1.5, the board's; with reason): tier 1 takeoff 5 -> 7.5 at full charge (0.83 s -> about 1.25 s in the air, peak 1.0 -> 2.27 units, measured in the GIF fixture), tier 2 8 -> 12.
+
+Code: game/scripts/driving/jump_power_up.gd (charging, charge_time, multiplier_for(), charge_fraction(), reset(), step(..., held)), car.gd (passes held; the dead keys reset the charge), scripts/data/power_up_data.gd (jump_charge()), new game/scripts/driving/jump_charge_cue.gd, wired in run.gd and practice_session.gd.
+
+The cue (proposal, no text): a 20 x 4 view-px bar 26 px above the car's drawn centre, off-white filling left to right over the jump arrow's dark outline, warm yellow (255,196,64) when full; gone on the jump or a dropped charge. Numbers in power_ups.json jump.charge cue_*.
+
+Proposals (listed in docs/drifting.md, Content, 'The charged jump (task T-590)'): (1) only a press on the ground starts a charge: Space held through a landing starts none, and letting go then is no hop; (2) the car leaving the ground while charging (ramp, roof edge) drops the charge with no hop; (3) the dead keys (wreck, pause) drop the charge; (4) consequence for the board: catching a rail from a hop now takes a tap, then Space pressed again and held in the air (before, one held press did both). The tutorial text already reads 'jump, then hold Space over a rail', but the recorded tutorial clip art/tutorial/clips/rail_grind.json still shows the one-press version; left as is for the playtest (its fixture tutorial_clip_rail_grind.gd now taps then holds, so a re-recording would match).
+
+How to get Jump: god mode (N in a run) or the playtest switch, as before. Tests changed: test_run_rails.gd (two hop-and-hold tests now tap, step, then hold). New tests: game/tests/unit/test_jump_charge.gd (12 tests, 1424 asserts: x1/x1.25/x1.5 at 0/1.5/3/4.5 s for both tiers, no hop while held, air Space unchanged, held landing, without Jump, dead keys, cue shows and goes, run binds the cue). Targeted sets pass: test_jump_power_up 12/12, test_run_rails 5/5, test_grind_overhaul 16/16, test_rail_grind 38/38, test_jump_clears_obstacles 8/8, test_jump_real_run, test_rail_joints_and_heights, test_practice_session 28/28, test_power_up_offers 16/16, test_tutorial_practice_real 6/6. Full run (bash game/tools/run_tests.sh, 272 s): 275 scripts, 3146 tests, 3145 passing, 0 failing, 1 risky/pending.
+
+Docs: docs/drifting.md (Content: new 'The charged jump (task T-590)', a pointer in 'Jump (task T-461)'), game/docs/driving/tricks.md (Jump (T-461): the charge and the cue).
+
+Screenshots/GIF: art-archive/T-590/screenshots/tap_then_full_charge.gif (the car standing still: a tap hop, then a 3 s charge with the cue filling and the x1.5 hop), charge_half.png, charge_full.png. Fixture: game/tests/fixtures/t590_charged_jump_gif.tscn.
+- 2026-11-08, needs-playtest → in-progress: Board tweak 2026-11-08: no charge bar; while Space is held the car tilts as in the air; the jump effect scales with the jump height.
+
+Tweak 1 (the board, 2026-11-08, quick tuning: 'I don't want to have a loading bar ... While space is being held, the car should transition to the same kind of animation that it does when it's in the air, the tilt, and also the jump effect will be bigger depending, it scales with the jump height.'):
+- The charge bar is removed (jump_charge_cue.gd deleted, its cue_* numbers dropped from power_ups.json, unwired from run.gd and practice_session.gd).
+- While the charge grows on the ground the car tilts as it does in the air: the same 3 frames into the held pose, same art (car.gd: tilt.update also while jump.charging). On release it jumps and plays the same frames back in the air, as when Space is let go there, so it flies in its normal look; holding Space again in the air tilts it for a grind as before. A tap does not tilt; without Jump, no tilt on the ground.
+- The jump effect (the equipped cosmetic) scales with the jump's height: size = (hop height / the tier's tap height)^0.5, around the same ground point: x1 at a tap, x1.25 at half charge, x1.5 at a full charge (2.25 times as high); capped at x2; the rail launch stays x1. Proposal numbers in game/data/rail_grind.json (jump_effect_height_exponent 0.5, jump_effect_max_scale 2.0) with reason. Code: jump_effect.gd (scale_for_multiplier(), play(..., size), draw_placeholder(..., size); the Cosmetics previews are unchanged at x1).
+- Tests: test_jump_charge.gd now 15 tests (the cue tests replaced by: tilt while charging and untilt after release, a tap does not tilt, no tilt without Jump, the effect's size at 0/1.5/3 s, the clamp, the rail launch at x1), all pass; related sets pass (test_jump_power_up 12, test_grind_overhaul 16, test_jump_effect_art 3, test_cosmetics_screen 10, test_run_rails 5, test_practice_session 28, test_rail_grind 38). Full run (GUT_TIME_LIMIT=2400, 298 s): 275 scripts, 3149 tests, 3148 passing, 0 failing, 1 risky/pending.
+- Docs: docs/drifting.md Content 'The charged jump (task T-590)' (the bar replaced by the tilt and the effect's scale), game/docs/driving/tricks.md. For the Project Lead: Drifting, Decisions, 'A charged jump, for a playtest' still says a small script-drawn cue shows the charge; that line is yours to update.
+- GIF: art-archive/T-590/screenshots/tweak1_tap_then_full_charge.gif (a tap with the normal cloud, then a 3 s charge with the car tilted and the x1.5 hop with a bigger cloud); stills tweak1_charging_tilted.png, tweak1_full_charge_effect.png, tweak1_tap_vs_charge_closeup.png (enlarged: tap cloud, tilted while charging, full-charge cloud). The first build's GIF and stills are kept, renamed v1_bar_*.
+- 2026-11-08, in-progress → in-qa: Tweak 1 in; ready for the board to play (quick tuning, no QA agent).
+- 2026-11-08, needs-playtest → done: Board: happy with the charged jump; update the texts, then merge (2026-11-08)

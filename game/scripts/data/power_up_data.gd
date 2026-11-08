@@ -49,6 +49,18 @@ func at(id: String, tier: int) -> Dictionary:
 	return t
 
 
+## T-590: the charged jump's numbers (power_ups.json, jump.charge: charge_seconds,
+## max_multiplier; the same at every tier), without the notes. {} when missing.
+func jump_charge() -> Dictionary:
+	var c = _data.get("power_ups", {}).get("jump", {}).get("charge", {})
+	if not c is Dictionary:
+		return {}
+	var out: Dictionary = c.duplicate()
+	out.erase("proposal")
+	out.erase("reason")
+	return out
+
+
 ## T-586: a key of power-up `id`'s own entry, outside its tiers (Grinding Wheels' spark_colours),
 ## or `default` when it has none.
 func entry_value(id: String, key: String, default: Variant = null) -> Variant:

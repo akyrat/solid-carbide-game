@@ -18,6 +18,7 @@
     "jump": {
       "name_id": "jump",
       "icon": "res://art/power_ups/jump.png",
+      "charge": {"charge_seconds": 3.0, "max_multiplier": 1.5, "proposal": false, "reason": "The charged jump (T-590, a playtest; the board, 2026-11-08, Drifting, Decisions, 'A charged jump, for a playtest'): holding Space on the ground charges the hop, linearly from x1 to x1.5 the tier's takeoff_speed over 3 s (the board's numbers), the hop comes when Space is let go; a tap hops at x1. The same at both tiers: tier 1's 5 becomes 7.5 at full charge (about 1.25 s in the air, 2.25 times the peak), tier 2's 8 becomes 12. Tweak 1 (the board, 2026-11-08): no charge bar; while the charge grows the car tilts as it does in the air (the grind overhaul's 3 frames into the held pose), and the jump effect scales with the jump's height (rail_grind.json, jump_effect_height_exponent)."},
       "tiers": [
         {"tier": 1, "takeoff_speed": 5.0, "proposal": true, "reason": "A small hop: about 0.83 s in the air with the car's gravity (12), enough for the airtime missions. No cooldown (T-551; the board, 2026-11-07, Drifting, Decisions, \"Jump has no cooldown\"): a press on the ground always hops."},
         {"tier": 2, "takeoff_speed": 8.0, "proposal": true, "reason": "Long enough for an air 360 (about 1.33 s in the air). No cooldown at this tier either (T-551): tier 2 keeps only its higher takeoff."}

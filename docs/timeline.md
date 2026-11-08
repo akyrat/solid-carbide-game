@@ -4160,3 +4160,8 @@ Entry format:
 - Decision or change: The investigation behind T-583 closed; its findings are in Drifting.
 - Documents touched: none
 - Tasks: T-580
+
+## 2026-11-08: A charged jump
+- Decision or change: With Jump, hold Space on the ground to charge up to x1.5 over 3 s and jump on release; the car tilts while charging and the jump effect grows with the jump. The board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-590

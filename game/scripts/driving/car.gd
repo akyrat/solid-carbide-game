@@ -267,6 +267,7 @@ func physics_step() -> void:
 		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
 		rev_charge.reset()
 		polarized.reset()  # T-502: and the Polarized Steering Wheel's coast and burst
+		jump.reset()  # T-590: and a jump's charge (letting go of dead keys is no hop)
 		_jump_pressed = false
 	last_input = [w, s, steer]
 	jump_held = held
@@ -276,7 +277,8 @@ func physics_step() -> void:
 		return
 	# T-461: Jump (nothing at all when not owned). Before the model's update, so
 	# the hop's first step is already in the air (air turn rate, no driving).
-	jump.step(height_model, _jump_pressed, model.dt)
+	# T-590: Space held on the ground charges it; the hop comes when it is let go.
+	jump.step(height_model, _jump_pressed, model.dt, held)
 	_jump_pressed = false
 	var rotation_before: float = model.rotation
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
@@ -342,7 +344,9 @@ func physics_step() -> void:
 		else:
 			grind.touched_ground()
 	# T-551: tilted while Space is held in the air (or on the rail just caught); back otherwise.
-	tilt.update(held and (height_model.airborne or grind.active), model.dt)
+	# T-590 Tweak 1: and while the Jump's charge grows on the ground (the board: the same tilt as in
+	# the air). Let go, the car jumps and the frames play back in the air, as when Space is let go there.
+	tilt.update(held and (height_model.airborne or grind.active or jump.charging), model.dt)
 	if detect_tricks:
 		# Tricks (task T-079), observed after the height step so the detector
 		# knows whether this step ends in the air: the drift 360 ignores those
