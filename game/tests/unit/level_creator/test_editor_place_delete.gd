@@ -100,7 +100,7 @@ func test_the_editor_labels_come_from_the_texts() -> void:
 	assert_eq(e.delete_button.text, CreatorTexts.get_text("delete_label"))
 	assert_eq(e.back_button.text, CreatorTexts.get_text("back_button"))
 	# T-262: the reworked creator's hint (T-261's line) replaces T-251's.
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_routes"))  # T-280: the line with moving the start.
 
 
 func test_picking_in_the_panel_and_clicking_places() -> void:
@@ -111,10 +111,17 @@ func test_picking_in_the_panel_and_clicking_places() -> void:
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	click.position = e.units_to_screen(Vector2(10.5, -7.0))
+	click.shift_pressed = true  # T-581: with Shift, on the clicked tile
 	e._on_map_input(click)
 	assert_eq(e.level_data.pattern_copies.size(), 1)
 	var b: Dictionary = e.level_data.pattern_copies[0].boulders[0]
 	assert_almost_eq(Vector2(b.x, b.y), Vector2(11.5, -6.5), Vector2(0.001, 0.001), "on the clicked tile")
+	# T-581: without Shift, its corner where the mouse is (a 3-unit boulder: its centre 1.5 further).
+	click.shift_pressed = false
+	click.position = e.units_to_screen(Vector2(30.5, -7.25))
+	e._on_map_input(click)
+	var free: Dictionary = e.level_data.pattern_copies[1].boulders[0]
+	assert_almost_eq(Vector2(free.x, free.y), Vector2(30.5, -7.25) + Vector2(free.diameter, free.diameter) / 2.0, Vector2(0.001, 0.001), "where the mouse is")
 	assert_eq(b.variant, "b")
 
 

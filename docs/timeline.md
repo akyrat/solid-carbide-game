@@ -4100,3 +4100,53 @@ Entry format:
 - Decision or change: Thread-the-needle pairs grouped into routes, played in order or at random; only the active pair pays.
 - Documents touched: docs/level-design.md
 - Tasks: T-592
+
+## 2026-11-08: The full Godot test run no longer hangs: a test left the scene tree paused
+- Decision or change: A test (test_level_up_prewarm.gd) left the scene tree paused, so GUT's timed waits in every later script of the same Godot process never returned; that is what hung the shard ending in test_garage_button_pulse.gd and cost a 3600 s time-out in a merge run on 2026-11-08. The test now unpauses after each test, and a PauseGuard names and fails any test that ends with the tree paused (game/docs/setup/tests.md). Tooling, merged after QA.
+- Documents touched: game/docs/setup/tests.md
+- Tasks: T-589
+
+## 2026-11-08: Texts for Grinding Wheels
+- Decision or change: The Grinding Wheels power-up's name and description; the board approved the text.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-585
+
+## 2026-11-08: "Equip" instead of "Flex it"
+- Decision or change: The cosmetics pick button says Equip; the board asked to merge it.
+- Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
+- Tasks: T-582
+
+## 2026-11-08: The test runner records the real run time, and the PowerShell runner runs in parallel
+- Decision or change: Every full Godot run now writes game/tools/test_run_record.json (time, wall seconds, processes, counts, passed) and ends with 'TESTS PASSED (N s on P processes)'; test_times.json is labelled as single-process seconds; run_tests.ps1 runs the same 12-process split as run_tests.sh (its full run took 268 s in QA, where the old single process took about 25 minutes). Board, 2026-11-08: agents had been quoting the single-process time. Tooling, merged after QA.
+- Documents touched: tasks/README.md,game/docs/setup/tests.md
+- Tasks: T-588
+
+## 2026-11-08: Texts for needle routes
+- Decision or change: The creator texts for needle routes; the route tool is on N.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-591
+
+## 2026-11-08: Needle routes
+- Decision or change: Thread-the-needle pairs grouped into routes, in order or at random; only the active pair pays; the board played it.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-592
+
+## 2026-11-08: Free placement and moving pieces in the level creator
+- Decision or change: Pieces follow the mouse freely (Shift snaps to the grid) and placed pieces can be moved; its code came in with T-592.
+- Documents touched: none
+- Tasks: T-581
+
+## 2026-11-08: Grinding Wheels
+- Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x; the board played it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-586
+
+## 2026-11-08: Grinding Wheels icon
+- Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side (6/10, 2 of 4 generations); the board approved it.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-587
+
+## 2026-11-08: Texts for the charged jump
+- Decision or change: Every text that explains jumping now describes hold to charge, release to jump, and tap then hold to catch a rail.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-593

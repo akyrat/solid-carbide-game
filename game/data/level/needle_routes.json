@@ -1,0 +1,8 @@
+{
+  "_comment": "T-592, proposals for the playtest (Level design, Decisions, \"Needle routes\"). How a route's pairs show in a run: the dashed line of the active pair (the one that pays) is drawn bright and a little thicker, so the eye finds the next gap from a distance; the route's waiting pairs are drawn faint, still there so the player can read the route, but clearly not the target. A pair in no route keeps T-272's look (alpha 0.35, width 1). waiting_threaded \"nothing\": threading a waiting pair pays no trick, makes no flash and does not move the route on, so only the bright gap matters and a route can't be skipped by threading its pairs out of order. random_start \"random\": a random route starts at a random pair (an in-order route starts at its first), so two runs of the same level differ from the first gap.",
+  "active": {"alpha": 0.9, "width": 1.6},
+  "waiting": {"alpha": 0.12, "width": 1.0},
+  "free": {"alpha": 0.35, "width": 1.0},
+  "waiting_threaded": "nothing",
+  "random_start": "random"
+}

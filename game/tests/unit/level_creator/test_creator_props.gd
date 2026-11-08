@@ -24,6 +24,7 @@ func _editor() -> LevelCreatorEditor:
 	e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}  # T-280: out of the way of the tests' pieces
 	e.levels_dir = RunPaths.file("t253_levels")
 	add_child_autofree(e)
+	e.snap_held = true  # T-581: these tests place on the grid, as with Shift held (free placement: test_creator_free_placement.gd)
 	return e
 
 

@@ -82,3 +82,21 @@ What it does and why: Drifting, Content, "The launch keeps the grind's speed (ta
 Tests: `tests/unit/test_rail_grind.gd` (`test_the_launch_keeps_a_slow_a_middle_and_a_fast_grinds_speed`: through the car at 7, 15 and 30, where it faces, the same takeoff; `test_a_very_slow_grind_launches_at_the_floor`; the T-548 and T-551 launch tests now expect the grind's speed; the data test checks `jump_speed` is gone). The practice playground's and the tutorial's rail drives pass unchanged.
 
 Recording: `tests/fixtures/t578_launch_gif.tscn` (script `t578_launch_gif_demo.gd`), a run on the game's map with one rail of its own (north at x 5, bar at 1). The car hops onto it with Space held (Jump tier 1), the grind's speed is set to the scene's (a recording aid), D turns the nose about 30 degrees east and Space is let go; a readout shows the launch's speed and how far the car landed. `T578_SCENE` = `slow` (7, default) or `fast` (26). Recorded with `--fixed-fps 50 --write-movie`, the two runs' frames put one after the other and assembled with `make_turn_gif.py --every 2 --size 640 420 --scale 1 --ms 40`; the GIF and stills are in `art-archive/T-578/screenshots/`.
+
+## Grinding Wheels (T-586)
+
+What it does and why: Drifting, Content, "Grinding Wheels (task T-586)".
+
+| File | What it does |
+| --- | --- |
+| `scripts/driving/grinding_wheels.gd` | The power-up (tier 0 = not owned). `stacks(seconds)`: one per full `stack_seconds`, up to `max_stacks`. `launch_multiplier(seconds)`: 1 + `max_launch_boost` x stacks / max_stacks. `heat(seconds)` 0 to 2 (yellow, orange, red, fading over `colour_fade_seconds`) and `spark_colours(seconds)`, the blended shades ([] when not owned). Numbers from the tier in `power_ups.json`; colours from the power-up's own `spark_colours` (outside the tiers, so the card's number slots only see numbers; `PowerUpData.entry_value()`). |
+| `scripts/driving/rail_grind.gd` | `wheels` (the car's power-up, or null). `launch_speed()`: `maxf(speed, launch_min_speed)`, times `wheels.launch_multiplier(seconds)` when owned. `seconds` is 0 at every `start()`, so the stacks reset there. |
+| `scripts/driving/rail_sparks.gd` | `colours_for(car)`: the wheels' shades for the grind's seconds when owned, else `SPARK_COLORS`; new sparks pick from them. |
+| `scripts/driving/car.gd` | `grinding_wheels`, bound to `grind.wheels` in `_init()`. |
+| `scripts/run/run.gd` | Gives the car the owned tier with the other power-ups. |
+| `scripts/data/power_up_data.gd` | `IDS` has `grinding_wheels`; `entry_value()`. |
+| `tools/draw_power_up_icon_grinding_wheels_placeholder.py` | Draws the placeholder icon `art/power_ups/grinding_wheels.png` (T-587 replaces it). |
+
+Tests: `tests/unit/test_grinding_wheels.gd` (data and icon, the card's text, offered and taken with the cap, the run gives the tier, stacks per second, launch x1/1.33/1.67/2 through the car, more than 3 s stays 2x, the floor before the boost, stacks reset on the next rail, yellow/orange/red with the fade, sparks made in each second take that heat, and without it nothing changes); `tools/test_draw_power_up_icon_grinding_wheels_placeholder.py`. `test_four_minute_run_data.gd` and `test_power_up_offers.gd` know the sixth power-up and its single tier.
+
+Recording: `tests/fixtures/t586_grinding_wheels_gif.tscn` (script `t586_grinding_wheels_gif_demo.gd`): T-578's rail, Jump tier 1 and Grinding Wheels owned; the car grinds 3.4 s, turns a little east and lets go; a readout shows the seconds, stacks, speed and the launch. `T586_SCENE=plain` records it without the power-up. Recorded with `--fixed-fps 50 --write-movie`, every second frame cropped around the car at 2x with the readout under it; the GIF and a still sheet are in `art-archive/T-586/screenshots/`.

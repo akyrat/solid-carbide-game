@@ -240,5 +240,63 @@ class TestRampOntoSeveralRooftops(unittest.TestCase):
         self.assertEqual((level.returncode, level.stdout.strip()), (0, "OK"), level.stdout)
 
 
+class TestOffTheGrid(unittest.TestCase):
+    """T-581: the level creator places pieces off the 2 x 2 grid, on quarter units. A good level off the
+    grid passes, a ramp that misses its rooftop's side by a quarter unit, or stands half over it, is
+    still refused."""
+
+    def setUp(self):
+        self.data = {
+            "platforms": [
+                {"id": "roof-3", "x": 3.25, "y": -7.75, "w": 13.5, "h": 9.25, "height": 3},
+                {"id": "roof-6", "x": 5.75, "y": -6.5, "w": 5.25, "h": 4.75, "height": 6, "on": "roof-3"},
+            ],
+            "ramps": [
+                # 0 to 3 climbing east onto roof-3's west side (x 3.25), within its y -7.75..1.5.
+                {"id": "ramp-a", "platform": "roof-3", "side": "west", "x": -8.75, "y": -5.25, "w": 12.0, "h": 4.5,
+                 "bottom_height": 0, "top_height": 3},
+                # 3 to 6 on roof-3, climbing north onto roof-6's south side (y -1.75).
+                {"id": "ramp-b", "platform": "roof-6", "side": "south", "x": 6.25, "y": -1.75, "w": 3.5, "h": 3.0,
+                 "bottom_height": 3, "top_height": 6},
+            ],
+        }
+        self.tmp = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def run_on(self, data):
+        p = Path(self.tmp.name) / "data.json"
+        p.write_text(json.dumps(data), encoding="utf-8")
+        return run_tool(p)
+
+    def test_a_good_level_off_the_grid_passes(self):
+        self.assertEqual(c.check_data(self.data), [])
+        res = self.run_on(self.data)
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"), res.stdout)
+
+    def test_a_ramp_a_quarter_unit_short_of_its_side_is_refused(self):
+        d = copy.deepcopy(self.data)
+        d["ramps"][0]["x"] = -9.0  # its top end at x 3.0, a quarter unit short of roof-3's side
+        res = self.run_on(d)
+        self.assertEqual(res.returncode, 1, res.stdout)
+        self.assertIn("ramp-a", res.stdout)
+
+    def test_a_ramp_hanging_past_the_end_of_its_side_is_refused(self):
+        d = copy.deepcopy(self.data)
+        d["ramps"][0]["y"] = -2.75  # -2.75..1.75, past the side's end at 1.5
+        res = self.run_on(d)
+        self.assertEqual(res.returncode, 1, res.stdout)
+        self.assertIn("ramp-a", res.stdout)
+
+    def test_overlapping_rooftops_off_the_grid_are_refused(self):
+        d = copy.deepcopy(self.data)
+        d["platforms"][1].pop("on")
+        d["platforms"][1]["height"] = 3
+        d["ramps"].pop()
+        res = self.run_on(d)
+        self.assertEqual(res.returncode, 1, res.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

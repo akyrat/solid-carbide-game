@@ -43,7 +43,8 @@
       "jump": "Jump",
       "bouncy_bumpers": "Bouncy Bumpers",
       "rusty_overcoat": "Rusty Paintjob",
-      "polarized_steering_wheel": "Polarized Steering Wheel"
+      "polarized_steering_wheel": "Polarized Steering Wheel",
+      "grinding_wheels": "Grinding Wheels"
     },
     "names_comment": "Each power-up's name on its overlay card (the board's names, kept as the style loop scored them 9).",
     "descriptions": {
@@ -51,16 +52,18 @@
       "jump": "Press Space to Jump.",
       "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles.",
       "rusty_overcoat": "The car deals damage to minions it touches. Rust: now a feature.",
-      "polarized_steering_wheel": "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst."
+      "polarized_steering_wheel": "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst.",
+      "grinding_wheels": "Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered."
     },
     "descriptions_last_tier": {
       "rev_charge": "Faster charge, bigger boost.",
       "jump": "Press Space to Jump higher.",
       "bouncy_bumpers": "Bounce {bounce_multiplier}x farther off walls and obstacles.",
       "rusty_overcoat": "Deals {contact_damage} damage to kaijus now too. Tetanus is content.",
-      "polarized_steering_wheel": "+{burst_percent}% speed, shock hits and shoves minions."
+      "polarized_steering_wheel": "+{burst_percent}% speed, shock hits and shoves minions.",
+      "grinding_wheels": "Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered."
     },
-    "descriptions_last_tier_comment": "T-519 (the 4-minute run; Drifting, Decisions, 'Two tiers and three slots'): each power-up has 2 tiers, and this is the card text for tier 2, the last tier (the old tier 4's numbers), replacing its descriptions entry; the descriptions entry is the tier 1 text. power_up_screen.gd describe() uses it when the tier is the power-up's max_tier. Slots are that tier's numbers from power_ups.json. All five scored 8 or more in the style loop (T-519).",
+    "descriptions_last_tier_comment": "T-519 (the 4-minute run; Drifting, Decisions, 'Two tiers and three slots'): each power-up has 2 tiers, and this is the card text for tier 2, the last tier (the old tier 4's numbers), replacing its descriptions entry; the descriptions entry is the tier 1 text. power_up_screen.gd describe() uses it when the tier is the power-up's max_tier. Slots are that tier's numbers from power_ups.json. All five scored 8 or more in the style loop (T-519). grinding_wheels (T-586) has one tier, so tier 1 is also its last tier: its entry here is its approved tier-1 descriptions text (T-585), word for word, not a new text.",
     "descriptions_comment": "One template per power-up, shown on its card for tier 1 (and for any tier before the last); the slots are that tier's numbers from power_ups.json: charge_seconds and boost_seconds, the burst's cooldown_seconds, bounce_distance_multiplier (as bounce_multiplier), contact_damage."
   }
 }

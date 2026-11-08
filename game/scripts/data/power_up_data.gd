@@ -1,9 +1,10 @@
 class_name PowerUpData
 extends RefCounted
-## The five driving power-ups (the fifth, polarized_steering_wheel, T-502) from res://data/power_ups.json, with per-tier numbers
+## The six driving power-ups (the fifth, polarized_steering_wheel, T-502; the sixth, grinding_wheels, T-586) from res://data/power_ups.json, with per-tier numbers
 ## (all proposals for the playtest). Same style as WeaponData.
 
-const IDS := ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel"]
+const IDS := ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel",
+	"grinding_wheels"]
 
 var _data: Dictionary = {}
 var error: String = ""
@@ -58,6 +59,12 @@ func jump_charge() -> Dictionary:
 	out.erase("proposal")
 	out.erase("reason")
 	return out
+
+
+## T-586: a key of power-up `id`'s own entry, outside its tiers (Grinding Wheels' spark_colours),
+## or `default` when it has none.
+func entry_value(id: String, key: String, default: Variant = null) -> Variant:
+	return _data["power_ups"][id].get(key, default)
 
 
 ## What the overlay does when every power-up is at its last tier ("skip_gift").

@@ -157,8 +157,12 @@ func test_a_click_lays_a_default_length_rail_in_the_picked_direction() -> void:
 func test_ends_snap_to_half_units() -> void:
 	var e := _editor()
 	_pick_rail(e, "1")
+	e.snap_held = true  # T-581: with Shift, the rails' own half units, as before
 	var it: Dictionary = e.lay_rail(Vector2(1.13, 2.37), Vector2(9.74, 2.12)).item
 	assert_eq([it.x1, it.y1, it.x2, it.y2], [1.0, 2.5, 9.5, 2.0])
+	e.snap_held = false  # T-581: without Shift, free placement's quarter units
+	var free: Dictionary = e.lay_rail(Vector2(1.13, 12.37), Vector2(9.74, 12.12)).item
+	assert_eq([free.x1, free.y1, free.x2, free.y2], [1.25, 12.25, 9.75, 12.0])
 
 
 func test_a_rail_the_game_would_skip_or_outside_the_map_is_refused_with_a_message() -> void:

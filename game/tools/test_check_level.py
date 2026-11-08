@@ -83,17 +83,35 @@ class TestCheckLevel(unittest.TestCase):
         self.data["pattern_copies"][0]["boulders"][0].update(x=9.0)  # 7.5..10.5
         self.assert_rejected("boulder", "outside the map")
 
-    def test_rejects_odd_building_edge(self):
-        self.data["buildings"][0]["x"] = -7.0
-        self.assert_rejected("building", "odd unit")
+    # T-581: edges off the grid are fine on the quarter-unit step, refused off it.
+    def test_accepts_odd_and_quarter_unit_edges(self):
+        self.data["buildings"][0].update(x=-7.0, y=-7.75, w=3.5, h=4.25)
+        self.data["platforms"][0].update(x=0.25, w=5.5)
+        self.data["ramps"][0].update(x=2.75, w=2.5)
+        self.assertEqual(c.check_level(self.data), [])
+        res = run_tool(self.write(self.data))
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"))
 
-    def test_rejects_odd_rooftop_edge(self):
-        self.data["platforms"][0]["w"] = 5.0
-        self.assert_rejected("rooftop", "odd unit")
+    def test_rejects_building_edge_off_the_step(self):
+        self.data["buildings"][0]["x"] = -7.1
+        self.assert_rejected("building", "quarter-unit step")
 
-    def test_rejects_odd_ramp_edge(self):
-        self.data["ramps"][0].update(x=3.0, w=1.0)
-        self.assert_rejected("ramp", "odd unit")
+    def test_rejects_rooftop_edge_off_the_step(self):
+        self.data["platforms"][0]["w"] = 5.3
+        self.assert_rejected("rooftop", "quarter-unit step")
+
+    def test_rejects_ramp_edge_off_the_step(self):
+        self.data["ramps"][0].update(x=3.1, w=1.0)
+        self.assert_rejected("ramp", "quarter-unit step")
+
+    def test_rejects_an_off_grid_ramp_that_misses_its_rooftops_side(self):
+        # The rooftop moved a quarter unit up: its south side (y -2.25) no longer meets the ramp's top (y -2).
+        self.data["platforms"][0].update(y=-8.25)
+        self.assert_rejected("ramp")
+
+    def test_rejects_an_off_grid_ramp_wider_than_its_rooftops_side(self):
+        self.data["platforms"][0].update(x=0.25, w=3.5)  # 0.25..3.75; the ramp is 2..4
+        self.assert_rejected("ramp")
 
     def test_rejects_too_few_rows(self):
         self.data["ground_rows"].pop()
@@ -325,6 +343,59 @@ class TestCheckPairs(unittest.TestCase):
             res = run_tool(p)
         self.assertEqual(res.returncode, 1, res.stdout)
         self.assertIn("no such obstacle", res.stdout)
+
+
+class TestCheckRoutes(unittest.TestCase):
+    """T-592: needle routes {id, order, pairs}: unique ids, an order in_order or random, pair ids of the
+    level, a pair in one route at most."""
+
+    def level(self, *routes):
+        d = TestCheckPairs().level(
+            {"id": "pair-1", "a": "copy-01", "b": "prop-1"},
+            {"id": "pair-2", "a": "prop-1", "b": "prop-3"},
+            {"id": "pair-3", "a": "copy-02/0", "b": "copy-02/1"})
+        if routes:
+            d["routes"] = list(routes)
+        return d
+
+    def test_accepts_a_level_with_routes(self):
+        d = self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-2", "pair-1"]},
+                       {"id": "route-2", "order": "random", "pairs": ["pair-3"]})
+        self.assertEqual(c.check_level(d), [])
+
+    def test_a_level_without_routes_is_valid(self):
+        self.assertEqual(c.check_level(self.level()), [])
+
+    def test_the_tool_accepts_a_level_with_routes(self):
+        d = self.level({"id": "route-1", "order": "random", "pairs": ["pair-1", "pair-2", "pair-3"]})
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "level.json"
+            p.write_text(json.dumps(d), encoding="utf-8")
+            res = run_tool(p)
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"))
+
+    def test_rejects_a_missing_pair(self):
+        problems = c.check_level(self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-9"]}))
+        self.assertTrue(any("route 'route-1'" in p and "'pair-9'" in p for p in problems), problems)
+
+    def test_rejects_a_pair_in_two_routes_or_twice(self):
+        problems = c.check_level(self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-1"]},
+                                            {"id": "route-2", "order": "in_order", "pairs": ["pair-2", "pair-1"]}))
+        self.assertTrue(any("'pair-1' is already in route 'route-1'" in p for p in problems), problems)
+        problems = c.check_level(self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-1", "pair-1"]}))
+        self.assertTrue(any("already in" in p for p in problems), problems)
+
+    def test_rejects_a_bad_order_an_empty_route_a_repeated_id(self):
+        problems = c.check_level(self.level({"id": "route-1", "order": "backwards", "pairs": ["pair-1"]}))
+        self.assertTrue(any("order must be" in p for p in problems), problems)
+        problems = c.check_level(self.level({"id": "route-1", "order": "random", "pairs": []}))
+        self.assertTrue(any("at least one" in p for p in problems), problems)
+        problems = c.check_level(self.level({"id": "route-1", "order": "random", "pairs": ["pair-1"]},
+                                            {"id": "route-1", "order": "random", "pairs": ["pair-2"]}))
+        self.assertTrue(any("used twice" in p for p in problems), problems)
+        d = self.level()
+        d["routes"] = {"x": 1}
+        self.assertIn("routes: must be a list", c.check_level(d))
 
 
 class TestSpawn(unittest.TestCase):

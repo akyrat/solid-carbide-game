@@ -134,7 +134,7 @@ func test_keyboard_order_ends_on_back() -> void:
 
 func test_no_hard_coded_label_in_the_screen() -> void:
 	var src := FileAccess.get_file_as_string("res://scripts/menu/cosmetics_screen.gd")
-	for key in ["Unlock", "Flex it", "Equipped", "Not enough coins", "Dash cloud"]:
+	for key in ["Unlock", "Equip", "Equipped", "Not enough coins", "Dash cloud"]:
 		assert_false(src.contains('"%s' % key), key)
 
 
