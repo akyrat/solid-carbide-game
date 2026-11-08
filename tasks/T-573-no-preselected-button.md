@@ -1,7 +1,7 @@
 ---
 id: T-573
 title: No button looks selected when a menu opens
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The garage and the Cosmetics screen open with no button shown as selected (tests). (QA: pass / fail)
-- [ ] Every other menu or screen that selected a button on opening does the same, listed in the result notes (tests for each). (QA: pass / fail)
-- [ ] Arrows or Tab still move the selection, and the first press shows it (tests); mouse hover works as before. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content and game/docs/hud-and-menus/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-573/screenshots/ show the garage and Cosmetics screens just opened, and after one arrow press. (QA: pass / fail)
+- [ ] The garage and the Cosmetics screen open with no button shown as selected (tests). (QA: pass)
+- [ ] Every other menu or screen that selected a button on opening does the same, listed in the result notes (tests for each). (QA: pass)
+- [ ] Arrows or Tab still move the selection, and the first press shows it (tests); mouse hover works as before. (QA: pass)
+- [ ] docs/hud-and-menus.md Content and game/docs/hud-and-menus/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-573/screenshots/ show the garage and Cosmetics screens just opened, and after one arrow press. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: UI fixes the preselected buttons in every menu.
+
+### 2026-11-08, In progress → In QA
+
+Built: no menu preselects a button (shared KeyNav helper). QA now.
 
 ## Style review
 
