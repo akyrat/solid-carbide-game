@@ -3955,3 +3955,8 @@ Entry format:
 - Decision or change: Menus open with no button selected; the keyboard selection shows on the first arrow or Tab press.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-573
+
+## 2026-11-08: Quick tuning of the drift slides
+- Decision or change: The board tunes the drift tutorial slides' layout and play directly, with no QA round.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-574
