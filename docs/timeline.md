@@ -4265,3 +4265,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: the Trick popups checkbox label.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-598
+
+## 2026-11-08: A setting to turn off the trick popups
+- Decision or change: Merged after the board's playtest: a settings checkbox turns trick popups off; tricks still count.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-599

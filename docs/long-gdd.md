@@ -2499,6 +2499,10 @@ Decisions, "A Settings screen from the main menu". All three are in `game/data/p
 - **Screen title** (`settings_title`): "Settings" (10).
 - **Back button** (`settings_back`): "Back", returns to the main menu (10). Same word as `god_mode_back`, with its own key so the screens stay independent.
 
+#### The Trick popups checkbox (T-599; proposals for the playtest)
+
+Decisions, "A setting to turn off the trick popups". A checkbox labelled "Trick popups" (`trick_popups_label`, T-598) sits last in the checkbox row of the pause screen's settings and of the main menu's Settings screen (after Facing arrow; six checkboxes now). On by default, saved at once like the other checkboxes (`user://settings.cfg`, section `graphics`, key `trick_popups_enabled`), and the two screens share it. Off: `TrickPopups` shows no trick popup, in a run and in the tutorial's practice window (both use the same node); every trick still counts, still raises the combo and missions, pairs still flash and rails still advance. Turned on again, popups show from the next trick (the setting is read at each trick). Only the trick popups: the multiplier popup, "COMBO BROKEN!", the challenge and heal popups and the rest of the HUD stay as they are. How it is built: `TrickPopups.is_hidden()` (also the T-596 data list) and `GameSettings.load_trick_popups_enabled()`.
+
 #### The Settings screen (T-571; proposals for the playtest)
 
 Decisions, "A Settings screen from the main menu".
@@ -2775,4 +2779,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `5e85f7d084ccf243fa9452af962c4b403af1c44535da68a6b5d66e67fca56865` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `b19899c02f3cc1ebf79b0eb0dc3211d1dc3a1d0f5083d6fb0b69915d1fd21cbd` |
+| `hud-and-menus.md` | `c49608e00b3d1736c5219783dd68bbea901b9d04739c064c9979079e0320baf7` |

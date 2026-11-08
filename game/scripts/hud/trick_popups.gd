@@ -332,8 +332,12 @@ static func trick_text(trick_id: String, added: float) -> String:
 	return text
 
 
-## True when data/hud.json (trick_popups.hidden, T-596) says this trick shows no popup.
+## True when this trick shows no popup: the player switched the trick popups off (T-599,
+## GameSettings.load_trick_popups_enabled, read at every trick so a change shows from the next
+## one), or data/hud.json (trick_popups.hidden, T-596) lists it.
 static func is_hidden(trick_id: String) -> bool:
+	if not GameSettings.load_trick_popups_enabled():
+		return true
 	var r := GameData.load_file("hud")
 	if not r.ok:
 		return false

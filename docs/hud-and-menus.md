@@ -221,6 +221,10 @@ Decisions, "A Settings screen from the main menu". All three are in `game/data/p
 - **Screen title** (`settings_title`): "Settings" (10).
 - **Back button** (`settings_back`): "Back", returns to the main menu (10). Same word as `god_mode_back`, with its own key so the screens stay independent.
 
+### The Trick popups checkbox (T-599; proposals for the playtest)
+
+Decisions, "A setting to turn off the trick popups". A checkbox labelled "Trick popups" (`trick_popups_label`, T-598) sits last in the checkbox row of the pause screen's settings and of the main menu's Settings screen (after Facing arrow; six checkboxes now). On by default, saved at once like the other checkboxes (`user://settings.cfg`, section `graphics`, key `trick_popups_enabled`), and the two screens share it. Off: `TrickPopups` shows no trick popup, in a run and in the tutorial's practice window (both use the same node); every trick still counts, still raises the combo and missions, pairs still flash and rails still advance. Turned on again, popups show from the next trick (the setting is read at each trick). Only the trick popups: the multiplier popup, "COMBO BROKEN!", the challenge and heal popups and the rest of the HUD stay as they are. How it is built: `TrickPopups.is_hidden()` (also the T-596 data list) and `GameSettings.load_trick_popups_enabled()`.
+
 ### The Settings screen (T-571; proposals for the playtest)
 
 Decisions, "A Settings screen from the main menu".

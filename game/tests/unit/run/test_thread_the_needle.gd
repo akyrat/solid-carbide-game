@@ -231,6 +231,27 @@ func test_the_needle_popup_is_hidden_by_data_others_still_show() -> void:
 	assert_eq(run.trick_popups.popups().size(), 1, "the car's own signal shows nothing either")
 
 
+func test_the_trick_popups_setting_off_hides_every_popup_but_tricks_count() -> void:
+	var saved := GameSettings.path
+	GameSettings.path = RunPaths.file("test_settings_t599.cfg")
+	DirAccess.remove_absolute(GameSettings.path)
+	var run := _run_on(_layout())
+	run.state.combo_trick.emit("three_sixty", 0.25, 2.0)
+	assert_eq(run.trick_popups.popups().size(), 1, "on by default: a 360 pops")
+	GameSettings.save_trick_popups_enabled(false)
+	var before: float = run.state.combo
+	run.state.combo_trick.emit("alternate_drift", 0.25, 2.0)
+	run.car.trick.emit("three_sixty")
+	assert_eq(run.trick_popups.popups().size(), 1, "off: no new popup from either signal")
+	run.state.add_trick("three_sixty")
+	assert_gt(run.state.combo, before, "the trick still counts and raises the combo")
+	GameSettings.save_trick_popups_enabled(true)
+	run.state.combo_trick.emit("alternate_drift", 0.25, 2.0)
+	assert_eq(run.trick_popups.popups().size(), 2, "on again: popups return from the next trick")
+	DirAccess.remove_absolute(GameSettings.path)
+	GameSettings.path = saved
+
+
 func test_the_popup_text_word_for_word() -> void:
 	assert_eq(TrickPopups.TEXTS["thread_the_needle"], "THREAD THE NEEDLE!")
 	assert_eq(TrickPopups.trick_text("thread_the_needle", 0.5), "THREAD THE NEEDLE! +x0.5", "T-514: +x{amount}")
