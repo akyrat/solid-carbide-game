@@ -1,7 +1,7 @@
 ---
 id: T-594
 title: Texts: Replay, Skip and "your turn" for the tutorial's demos
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -66,3 +66,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Narrative Theme Agent (relayed by the Project Lead): three texts in game/data/tutorial_text.json block demo, each with _comment: demo.replay 'Replay' (trick slide button, replays the recording); demo.skip 'Skip demo' (button while the recording plays; 'demo' added so it does not clash with button.skip 'Skip', the slides' top-right control); demo.your_turn 'Your turn' (label over the practice window for 2 s when the recording ends or is skipped, then fades). Listed in docs/hud-and-menus.md Content. Commit 5989696b. The agent ran no tests: a hook refused its raw Godot --import, and it stopped. Project Lead: qa_check's one Python failure (test_text_inventory, tutorial_text.json) already fails on T-574's branch, not from these texts; T-574 tweak 12 fixes it. Screenshots come with T-574's build, where the texts first show.
+- 2026-11-08, needs-playtest → done: Board: T-574 lgtm, merge (2026-11-08); texts seen in its build
