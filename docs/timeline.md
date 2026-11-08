@@ -3975,3 +3975,8 @@ Entry format:
 - Decision or change: PixelLab icons for gas, brake and the arrows, and a roadside sign (up to 30 generations).
 - Documents touched: docs/visual-style.md, docs/level-design.md
 - Tasks: T-577
+
+## 2026-11-08: The launch keeps the grind's speed
+- Decision or change: Letting go of Space launches the car where it faces at the speed it was grinding.
+- Documents touched: docs/drifting.md
+- Tasks: T-578

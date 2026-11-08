@@ -350,6 +350,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - **Jump has no cooldown** (board, 2026-11-07; replaces the Jump power-up's cooldown in "Two tiers and three slots for the driving power-ups" above): the Jump power-up's jump from the ground can be used again as soon as the car is back on the ground, at both tiers. Tier 2 keeps only its higher takeoff. How often it is offered: Game loop architecture, Decisions, "Jump is offered first". (T-551)
 - **A jump effect around the car** (board, 2026-11-07): when the car jumps, a small effect plays around it. The default is a little dash cloud. Other versions the player can pick in the Cosmetics menu (Garage design, Decisions, "Cosmetics"): a spring pushing the car up, a jet thrust, and two the Project Lead proposed at the board's request: stunt sparks (a burst of sparks under the car) and a shockwave ring (a ring rippling out on the ground). (T-551, T-556)
 - **A grind starts when the car's drawing crosses the rail's** (board, 2026-11-07; replaces the catch reach in "The grind overhaul" above): while Space is held in the air, the car snaps onto a rail as soon as the car's sprite, as drawn on screen, crosses the rail's sprite, whatever the car's height above or below the rail. This makes a grind even easier to start. A crossing square-on to the rail catches too (the board, 2026-11-07): the grind starts in the direction the car faces along the rail, at a set speed (a proposal for the playtest). (T-566)
+- **The launch off a rail keeps the grind's speed** (board, 2026-11-08; replaces the set speed of the launch in "The grind overhaul" above): letting go of Space still launches the car where it faces, even backwards, but at the speed it was grinding at that moment instead of a set 6 units/s, so a fast grind gives a fast launch. The direction is still only where the car faces (the momentum along the rail turns into that direction); the upward takeoff is unchanged. How a very slow grind launches (a floor speed, or none) is the Driving & Drift Agent's proposal for the playtest. (T-578)
 
 ### Content
 
@@ -2581,7 +2582,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
-| `drifting.md` | `43a6c2ea9d3e99a4d58d278aeac8408ab20affe8fad90704a5ef23ef4b91f2b5` |
+| `drifting.md` | `c4ae7879e7f412eea035048dc168200012452af1d55a6df7fca9a9379d6930fe` |
 | `level-design.md` | `e1a7d459ae34830313f735f49e79a3d0fea4fe141260d3387daa8c0670acf5c3` |
 | `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
