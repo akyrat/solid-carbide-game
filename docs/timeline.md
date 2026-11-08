@@ -4145,3 +4145,8 @@ Entry format:
 - Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side (6/10, 2 of 4 generations); the board approved it.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-587
+
+## 2026-11-08: Texts for the charged jump
+- Decision or change: Every text that explains jumping now describes hold to charge, release to jump, and tap then hold to catch a rail.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-593
