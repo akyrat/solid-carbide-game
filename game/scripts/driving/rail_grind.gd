@@ -121,6 +121,9 @@ var exclude := -1
 var grinds := 0
 ## Joints crossed so far (tests, readouts).
 var joints := 0
+## T-586: the Grinding Wheels power-up (grinding_wheels.gd), or null. The car sets it; when owned,
+## launch_speed() is multiplied by its launch_multiplier(seconds). Not owned or null: no change.
+var wheels = null
 
 
 func _init() -> void:
@@ -332,9 +335,14 @@ func heading() -> float:
 
 
 ## T-578: the flat speed a launch (Space let go) leaves the rail at: the grind's speed now, or
-## launch_min_speed when that is higher (units/s).
+## launch_min_speed when that is higher (units/s). T-586: with Grinding Wheels owned, that floored
+## speed times the wheels' launch multiplier for this grind's seconds (the floor first, then the
+## boost: max(speed, launch_min_speed) x (1 + stacks / 3)).
 func launch_speed() -> float:
-	return maxf(speed, launch_min_speed)
+	var base := maxf(speed, launch_min_speed)
+	if wheels != null and wheels.is_owned():
+		return base * float(wheels.launch_multiplier(seconds))
+	return base
 
 
 ## The car's flat velocity as it leaves for `reason` (units/s): along the rail at its speed; a

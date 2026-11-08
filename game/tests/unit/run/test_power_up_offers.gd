@@ -37,7 +37,7 @@ func _max_out(id: String) -> void:
 
 func test_a_fresh_car_can_be_offered_every_power_up() -> void:
 	assert_eq(offers.available_offers(), ["rev_charge", "jump", "bouncy_bumpers", "rusty_overcoat",
-			"polarized_steering_wheel"])
+			"polarized_steering_wheel", "grinding_wheels"])
 	for id in offers.available_offers():
 		assert_eq(offers.offered_tier(id), 1, "a power-up not owned is offered at tier 1")
 
@@ -51,7 +51,8 @@ func test_an_owned_power_up_is_offered_at_its_next_tier() -> void:
 func test_a_power_up_at_its_last_tier_is_never_offered() -> void:
 	_max_out("jump")
 	_max_out("rev_charge")
-	assert_eq(offers.available_offers(), ["bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel"])
+	assert_eq(offers.available_offers(), ["bouncy_bumpers", "rusty_overcoat", "polarized_steering_wheel",
+			"grinding_wheels"])
 	for s in 40:
 		offers.rng.seed = s
 		var ids := offers.compute_offers()

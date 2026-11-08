@@ -1,5 +1,5 @@
 {
-  "_comment": "Driving power-ups (Drifting, Decisions, 'Driving power-ups', board 2026-10-31). The five are the board's (the fifth, the Polarized Steering Wheel: board 2026-11-02, Drifting, Decisions, 'Rusty Paintjob and the Polarized Steering Wheel'); every tier number is a proposal (Driving & Drift's call by the docs, written on its behalf by Game Data) for the board's playtest. Tier 1 is what the gift gives; tier 2 is the 'next tier' offer and the last. T-520 (Drifting, Decisions, 'Two tiers and three slots for the driving power-ups', board 2026-11-03, the 4-minute run): every power-up has 2 tiers, tier 2 equal to the old tier 4 (the old tiers 2 and 3 are gone). Distances in units (1 unit = the car's width), times in seconds.",
+  "_comment": "Driving power-ups (Drifting, Decisions, 'Driving power-ups', board 2026-10-31). The six are the board's (the fifth, the Polarized Steering Wheel: board 2026-11-02, Drifting, Decisions, 'Rusty Paintjob and the Polarized Steering Wheel'; the sixth, Grinding Wheels, one tier: board 2026-11-08, T-586); every tier number is a proposal (Driving & Drift's call by the docs, written on its behalf by Game Data) for the board's playtest. Tier 1 is what the gift gives; tier 2 is the 'next tier' offer and the last. T-520 (Drifting, Decisions, 'Two tiers and three slots for the driving power-ups', board 2026-11-03, the 4-minute run): every power-up has 2 tiers, tier 2 equal to the old tier 4 (the old tiers 2 and 3 are gone). Distances in units (1 unit = the car's width), times in seconds.",
   "max_tier": 2,
   "offer_when_exhausted": {
     "action": "skip_gift",
@@ -45,6 +45,22 @@
       "tiers": [
         {"tier": 1, "burst_speed_multiplier": 1.2, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "cooldown_seconds": 3.0, "shock_bricks_tier": 0, "proposal": true, "reason": "+20% for half a second: felt as a kick, small enough that the lift-steer-gas move is a skill, not a must. Shared by every tier: W pressed again with the nose at least 60 degrees from where the car moves (the board's start), at most 1.2 s after letting go of W (long enough to swing the nose round 180 degrees at the turn rate, short enough to read as one move; S held during the coast cancels it), on the ground, the car moving at least 2 units/s (a stopped car has no direction); the burst holds the forward speed at least at the multiplier x the speed carried into the press (cruise speed at the least) for 0.5 s; then a cooldown (T-527, 3 s here: after a burst the wheel gives none until it has run out, so bursts cannot be chained back to back; the speed a burst starts from has slowed back towards top speed by then)."},
         {"tier": 2, "burst_speed_multiplier": 1.45, "burst_seconds": 0.5, "min_angle_degrees": 60.0, "max_coast_seconds": 1.2, "min_speed": 2.0, "cooldown_seconds": 4.0, "shock_bricks_tier": 1, "proposal": true, "reason": "+45% (only a little more: the shock is this tier's prize) and Bricks' tier 1 wave at the car on every burst (shock_bricks_tier 1: radius 4, damage 6, minions pushed 4, the kaiju damaged and never pushed, read from weapons.json so it follows Bricks), owned or not. Cooldown 4 s (T-527): longer than tier 1's because the bigger multiplier gains more speed per burst, so it needs more time for the speed to fall back."}
+      ]
+    },
+    "grinding_wheels": {
+      "name_id": "grinding_wheels",
+      "icon": "res://art/power_ups/grinding_wheels.png",
+      "_comment": "T-586 (Drifting, Decisions, 'Grinding Wheels, a driving power-up', board 2026-11-08; how it behaves: Drifting, Content, 'Grinding Wheels (task T-586)'), read by scripts/driving/grinding_wheels.gd. One tier for now (the board: a second tier only if it asks), so its card shows the descriptions text (screen_texts.json, T-585) and it has no 'next tier' offer. spark_colours are RGB 0-255, four shades per heat, drawn at random per spark like the plain sparks; none is Greenbull's yellow (247, 208, 52; Visual style, rule 6).",
+      "spark_colours": {
+        "yellow": [[255, 250, 205], [255, 240, 140], [255, 228, 90], [250, 214, 70]],
+        "orange": [[255, 222, 160], [255, 172, 64], [246, 132, 32], [226, 104, 22]],
+        "red": [[255, 186, 160], [250, 92, 52], [226, 46, 30], [182, 24, 26]],
+        "proposal": true,
+        "reason": "The board's yellow, orange and red (Drifting, Decisions); the shades are the Driving & Drift Agent's proposal: four per heat, a pale hot core down to a deep shade, like the plain sparks' four (rail_sparks.gd). Outside the tiers so the power-up card's number slots (power_up_screen.gd) only see numbers."
+      },
+      "tiers": [
+        {"tier": 1, "stack_seconds": 1.0, "max_stacks": 3, "max_launch_boost": 1.0, "colour_fade_seconds": 0.25,
+         "proposal": true, "reason": "The board's: one stack per full second of the grind, 3 at most (3 s), +100% launch speed at 3 stacks; the per-stack +33% (1, 1.33, 1.67, 2x) is the Project Lead's proposal, written here as max_launch_boost spread over max_stacks so 3 stacks give exactly 2x. The boost multiplies the launch speed after its floor (rail_grind.json launch_min_speed 6): max(grind speed, 6) x (1 + stacks/3), so even the slowest grind held 3 s launches at 12, and the floor keeps a 0-stack launch exactly as without the power-up. No cap on top: a fast grind can launch past top speed (33) and slows back on the ground like any boost. colour_fade_seconds 0.25: each colour holds while its stack holds and fades to the next over the first quarter second of the new stack, so the colour change lands with the stack it shows (a fade spread over the whole second would read as orange-ish yellow before the stack is earned)."}
       ]
     }
   }
