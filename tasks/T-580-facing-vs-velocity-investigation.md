@@ -1,7 +1,7 @@
 ---
 id: T-580
 title: Investigate: the car points one way but moves another at some angles
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/, game/scripts/driving/car.gd, game/scripts/driving/car_tuning.gd, game/scripts/driving/car_sprite.gd]
 files_expected_to_change: [game/tests/, game/tools/, art-archive/T-580/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -108,3 +108,4 @@ Tests run: `bash game/tools/run_tests.sh -gselect=test_t580_facing_vs_travel` 4/
 
 Documents affected: docs/drifting.md (Content, "Facing versus travel (task T-580, investigation)").
 - 2026-11-08, in-progress → in-qa: Investigation finished; its findings were built as T-583 (merged).
+- 2026-11-08, in-qa → done: Board: close it (2026-11-08); the fix shipped as T-583
