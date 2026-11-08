@@ -335,7 +335,7 @@ func test_the_polarized_steering_wheel_card_texts() -> void:
 	var last := data.max_tier("polarized_steering_wheel")
 	var pct_last := roundi((float(data.at("polarized_steering_wheel", last)["burst_speed_multiplier"]) - 1.0) * 100.0)
 	assert_eq(PowerUpScreen.describe(data, "polarized_steering_wheel", last),
-			"+%d%% burst after each ALT DRIFT!, and a shock shoves minions. Brand safety." % pct_last)
+			"+%d%% burst after each ALT DRIFT!, and a shock shoves minions." % pct_last)
 	for tier in range(1, last + 1):
 		var text := PowerUpScreen.describe(data, "polarized_steering_wheel", tier)
 		assert_false(text.contains("{"), "no slot left unfilled at tier %d" % tier)
