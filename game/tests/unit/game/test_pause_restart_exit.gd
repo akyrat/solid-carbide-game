@@ -36,7 +36,7 @@ func test_buttons_are_labelled_and_focusable() -> void:
 	assert_ne(ps.restart_button.focus_mode, Control.FOCUS_NONE)
 	assert_ne(ps.exit_button.focus_mode, Control.FOCUS_NONE)
 	ps.pause()
-	assert_true(ps.resume_button.has_focus(), "keyboard focus starts on Resume (T-537)")
+	assert_false(ps.resume_button.has_focus(), "T-573: nothing is selected on opening")
 
 
 func test_restart_starts_a_fresh_run_and_cancels_the_old_one() -> void:

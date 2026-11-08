@@ -115,5 +115,5 @@ func test_buying_in_place_refreshes() -> void:
 
 func test_focus_and_chain_unchanged() -> void:
 	var m := _menu(_progress(1000000))
-	assert_eq(m.get_viewport().gui_get_focus_owner(), m.start_button)
+	assert_null(m.get_viewport().gui_get_focus_owner(), "T-573: nothing selected")
 	assert_eq(m.start_button.focus_neighbor_bottom, m.start_button.get_path_to(m.garage_button))
