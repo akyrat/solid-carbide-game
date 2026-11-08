@@ -1,7 +1,7 @@
 ---
 id: T-583
 title: The car points where it goes: frame remap and more grip outside a drift, compared
-status: in-progress
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/scripts/driving/car.gd, game/scripts/driving/car_tuning.gd, game/scripts/driving/car_sprite.gd, game/tests/unit/test_t580_facing_vs_travel.gd]
 files_expected_to_change: [game/scripts/driving/, game/data/, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,13 +43,13 @@ Read T-580's result notes first (tasks/T-580-facing-vs-velocity-investigation.md
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A is built and switchable: with it on, each heading uses the frame that points closest to it, measured (tests). (QA: pass / fail)
-- [ ] C is built and switchable: with it on, the car straightens after a turn faster outside a drift, and drifts and alt drifts behave as before (tests). (QA: pass / fail)
-- [ ] The result notes have a table of T-580's measurements for none, A, C and A+C, and a recommendation, and the data is set to it. (QA: pass / fail)
-- [ ] The drift, trick, challenge and tutorial tests pass, updated with reasons where the grip changed them. (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-583/screenshots/ shows the up-right diagonal before and after. (QA: pass / fail)
+- [ ] A is built and switchable: with it on, each heading uses the frame that points closest to it, measured (tests). (QA: pass)
+- [ ] C is built and switchable: with it on, the car straightens after a turn faster outside a drift, and drifts and alt drifts behave as before (tests). (QA: pass)
+- [ ] The result notes have a table of T-580's measurements for none, A, C and A+C, and a recommendation, and the data is set to it. (QA: pass)
+- [ ] The drift, trick, challenge and tutorial tests pass, updated with reasons where the grip changed them. (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-583/screenshots/ shows the up-right diagonal before and after. (QA: pass)
 
 ## Updates
 
@@ -58,6 +58,18 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Driving & Drift builds A and C and compares them.
+
+### 2026-11-08, In progress → In QA
+
+Built A and C, switchable; data set to A+C. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed (7/7). Play A+C: C:\solid-carbide-worktrees\T-583\game\project.godot
+
+### 2026-11-08, Needs playtest → Done
+
+Approved by the board; merging after the current batch. Redraw (T-584) starts now.
 
 ## Style review
 
@@ -102,3 +114,4 @@ Cases: world gap at W | drawn gap at W, +0.5 s, +1 s, +2 s | slide halves in s |
 **Tests run (agent):** `bash game/tools/run_tests.sh -gselect=test_t583_facing_fixes` 11/11 passed; `-gselect=test_t580_facing_vs_travel` 4/4; `-gselect=test_drift_prototype` 15/15; `-gselect=test_polarized_steering_wheel` 16/16; `-gselect=test_challenge_checker` 10/10. Full Godot set (asked by the Project Lead): 3069 passing, 0 failing, 1 pending, of 3070 (270 scripts, 275 s). `python -m unittest discover -s game/tools -p "test_*.py"`: 1057 tests, OK (4 skipped), including `test_measure_car_facing.py` (5) and `test_t583_before_after.py` (1). Nothing written in game/data/levels/.
 
 Documents affected: docs/drifting.md (Content, "The car points where it goes (task T-583)"); game/docs/driving/facing.md (new).
+- 2026-11-08, needs-playtest → done: Board: played A+C, LGTM
