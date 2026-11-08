@@ -75,6 +75,14 @@
     "skip": "Skip",
     "skip_comment": "The Skip control at the top right of every slide; jumps to the last slide (shown in capitals). Go live and Don't show again keep button.start and checkbox.dont_show."
   },
+  "demo": {
+    "replay": "Replay",
+    "replay_comment": "T-594: a trick slide's button under the practice window; plays the board's recording of the trick again (the board's word: 'replay').",
+    "skip": "Skip demo",
+    "skip_comment": "T-594: a trick slide's button shown while the recording plays; ends it and goes straight to the player's turn. The board's word is 'skip'; 'Skip demo' keeps it but stays apart from button.skip, the slides' Skip at the top right that jumps to the last slide.",
+    "your_turn": "Your turn",
+    "your_turn_comment": "T-594: the label over the practice window for 2 seconds when the recording ends or is skipped, then it fades (the board's words: 'your turn')."
+  },
   "checkbox": {
     "dont_show": "Don't show again",
     "dont_show_comment": "Slide 3, the checkbox label beside the Start button: ticked, the slides don't appear on later Starts."

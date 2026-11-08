@@ -404,6 +404,9 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 | Slide 4, headline | `slide4.title` | Survive the stream |
 | Slide 4, last-minute zone label | `slide4.kaiju` | The kaiju! |
 | Skip control, top right | `button.skip` | Skip |
+| (T-594, the tutorial's recorded demos) Replay button, plays the recording again | `demo.replay` | Replay |
+| Skip button while the recording plays; goes to the player's turn (not the slides' Skip above) | `demo.skip` | Skip demo |
+| Label over the practice window for 2 seconds when the recording ends or is skipped | `demo.your_turn` | Your turn |
 | (T-489, the trick list's rules and key recipes; keys W, A, S, D, drawn as keycaps, are not text) | | |
 | Trick list, one-line rule beside each clip | `trick_rule.<id>` | LONG DRIFT!: Hold gas and a turn key to drift, then let go to cash it in. / FULL 360!: Drift and hold the turn key one way until the car spins all the way round. / ALT DRIFT!: Drift forward, then swap gas for brake while holding the same turn key. / HANG TIME!: Hold gas off a ramp or a rooftop edge and fly. / AIR 180!: In the air, hold a turn key to spin the car half a turn before it lands. / AIR 360!: Hit a ramp at full gas and hold a turn key: one full spin before you land. / THREAD THE NEEDLE!: Drive between two paired obstacles without touching either. |
 | Trick list, recipe notes (20 characters at most, under a keycap) and badges (capitals, no keys) | `trick_recipe.<id>.stepN_note`, `stepN_badge` | LONG DRIFT!: Hold 1 s or more, [Let go] Cash in. FULL 360!: Keep holding, [Full circle] Same way round. ALT DRIFT!: 0.3 s or more, Swap fast, hold turn. HANG TIME!: Hold off a ramp, [Airborne] 0.3 s or more, [Land] Cash in. AIR 180!: Full send at a ramp, Half a turn, midair, [Land] Cash in. AIR 360!: At a ramp, Full turn in the air, [Land] Cash in. THREAD THE NEEDLE! has no recipe. Longest note: 20 characters. |
