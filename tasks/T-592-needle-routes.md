@@ -1,7 +1,7 @@
 ---
 id: T-592
 title: Needle routes: thread-the-needle pairs played in order or at random
-status: open
+status: done
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-581-creator-free-placement.md, game/scenes/level_creator/, game/scripts/level_creator/, game/scripts/run/]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/run/, game/scripts/level/, game/data/, game/tests/, game/docs/level/, docs/level-design.md, game/tools/check_level.py]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,17 +43,33 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] In the creator, clicking pair lines with the route tool makes a route in click order, the order switch and taking a pair out work, and routes save and load (tests). (QA: pass / fail)
-- [ ] Levels without routes load and play as before (the existing tests pass) and check_level.py accepts a level with routes. (QA: pass / fail)
-- [ ] In a run, only the active pair pays; in order cycles back after the last; random never repeats the same pair twice in a row when the route has more than one (tests). (QA: pass / fail)
-- [ ] Active pairs draw bright and waiting ones faint (a test or screenshot). (QA: pass / fail)
-- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-592/screenshots/ show a route in the creator and its active and waiting pairs in a run. (QA: pass / fail)
+- [ ] In the creator, clicking pair lines with the route tool makes a route in click order, the order switch and taking a pair out work, and routes save and load (tests). (QA: pass)
+- [ ] Levels without routes load and play as before (the existing tests pass) and check_level.py accepts a level with routes. (QA: pass)
+- [ ] In a run, only the active pair pays; in order cycles back after the last; random never repeats the same pair twice in a row when the route has more than one (tests). (QA: pass)
+- [ ] Active pairs draw bright and waiting ones faint (a test or screenshot). (QA: pass)
+- [ ] docs/level-design.md Content and game/docs/level/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-592/screenshots/ show a route in the creator and its active and waiting pairs in a run. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: needle routes, on top of free placement and the route texts.
+
+### 2026-11-08, In progress → In QA
+
+Needle routes built: N in the creator, click pair lines in order, In order or Random; in a run only the active pair pays, waiting pairs faint. QA next.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed 7/7. Needle routes ready to play (includes T-581).
+
+### 2026-11-08, Needs playtest
+
+Board: lgtm. Merging T-581, T-591 and T-592 together after the current merge.
 
 ## Style review
 
@@ -61,4 +77,14 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built needle routes (Level design, Content, 'Level creator: needle routes'; how it works: game/docs/level/level-creator-pieces.md, 'Needle routes (T-592)').
+- Format: level file 'routes' [{id: route-N, order: in_order|random, pairs: [pair ids in click order]}], one place game/scripts/level/needle_routes.gd (NeedleRoutes). No 'routes' key when there are none, so old levels load and save unchanged. check_level.py check_routes accepts it (unique id, order, existing pair ids, a pair in one route at most).
+- Creator (editor.gd, T-591's texts, key N): Route button/N turns the tool on (pair tool off); clicking pair lines adds them in click order (route_pair_added %d); right-click finishes the route (route_finished) and keeps the tool on, N/Esc finish it and turn it off; In order / Random switch; clicking a line of a route picks it and its route (later clicks add there), Remove from route takes it out; empty routes go; Unpair or deleting an obstacle takes its pair out of its route. Hint line now controls_hint_routes. Drawn: route lines in the route's colour (cyan, pink, amber, violet), numbered 1, 2, 3, 'Route: n pairs' above the first; route being changed thicker, picked pair thicker still.
+- Run (thread_the_needle.gd): only each route's active pair pays; paying moves the route on (in order wraps; random picks a different pair). Markers: active bright, waiting faint, free pairs as before. T-451's flash unchanged (only a paying pair flashes).
+Proposals (game/data/level/needle_routes.json, with reasons): active alpha 0.9 and 1.6x width; waiting alpha 0.12; free 0.35 (as before); threading a waiting pair does nothing (no trick, flash or advance); a random route starts at a random pair (in order at its first); a pair is in one route at most (clicking it while building another moves it); right-click keeps the tool on for the next route; editor route colours; obstacles of waiting pairs drawn as always.
+Also fixed: test_creator_hints.gd failed on this branch (T-576's hint test met T-581's free placement: placed off the grid); its editor now holds Shift (snap_held), as T-581 did for the other grid tests.
+Tests: new tests/unit/level_creator/test_creator_routes.gd (13 pass), tests/unit/run/test_needle_routes.gd (11 pass), tools/test_check_level.py TestCheckRoutes (59 pass in the file). Full Godot set (GUT_TIME_LIMIT=2400): 3190 tests, 3189 passing, 0 failing, 1 risky/pending, 251 s.
+Screenshots: art-archive/T-592/screenshots/route_in_editor.png (a 3-pair random route being edited and a 1-pair route), run_before.png (first pair bright, other two faint), run_after.png (after threading it: second bright, first faint). Fixtures: tests/fixtures/t592_routes_demo.tscn, t592_routes_run_demo.tscn.
+Documents affected: docs/level-design.md (Content), game/docs/level/level-creator-pieces.md, game/docs/level/level-creator.md.
+- 2026-11-08, in-progress → in-qa: Text nit for the playtest: the route label says '1 pairs' for one pair (T-591's route_label).
+- 2026-11-08, needs-playtest → done: Board: played T-592's build (which holds T-581 and T-591), lgtm (2026-11-08)

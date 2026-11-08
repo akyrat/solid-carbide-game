@@ -61,7 +61,7 @@ Each upgrade row begins with a small icon. The art is `game/art/garage/<upgrade 
 
 ### Cosmetics menu texts (T-550; proposals for the playtest)
 
-In `game/data/cosmetics_text.json`, all scored 8 or more in the style loop but the shockwave ring's name (7, kept for the playtest). Full list with scores: HUD and menus, Content, "Texts for the grind overhaul, the jump arrow and the Cosmetics menu". Button "Cosmetics"; title "Cosmetics"; labels "Unlock for {price} coins", "Unlock", "Flex it", "Equipped", "Not enough coins: style isn't free."; effects: Dash cloud, Engagement Spring, Jet Thrust Zero Sugar, Stunt sparks, Premium Shockwave Ring, each with a one-line description.
+In `game/data/cosmetics_text.json`, all scored 8 or more in the style loop but the shockwave ring's name (7, kept for the playtest). Full list with scores: HUD and menus, Content, "Texts for the grind overhaul, the jump arrow and the Cosmetics menu". Button "Cosmetics"; title "Cosmetics"; labels "Unlock for {price} coins", "Unlock", "Equip", "Equipped", "Not enough coins: style isn't free."; effects: Dash cloud, Engagement Spring, Jet Thrust Zero Sugar, Stunt sparks, Premium Shockwave Ring, each with a one-line description.
 
 ### Saving
 
@@ -89,4 +89,4 @@ The whole list (heading, coins, the five rows and Back) is one column, measured 
 
 ### The Cosmetics screen (T-553; proposals for the playtest)
 
-Built as described in HUD and menus, Content, "The Cosmetics submenu and the Facing arrow checkbox": a list in the garage's look, one row per jump effect (preview, name, description, price or state, an Unlock or Flex it button), the coin count and Back. Buying and picking go through the `PlayerProgress` API above; the screen holds no rule.
+Built as described in HUD and menus, Content, "The Cosmetics submenu and the Facing arrow checkbox": a list in the garage's look, one row per jump effect (preview, name, description, price or state, an Unlock or Equip button), the coin count and Back. Buying and picking go through the `PlayerProgress` API above; the screen holds no rule.

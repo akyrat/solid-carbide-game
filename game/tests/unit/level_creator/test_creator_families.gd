@@ -63,7 +63,7 @@ func test_six_groups_one_button_per_kind_with_labels_from_the_texts() -> void:
 		assert_eq(b.text, CreatorTexts.get_text(str(f.label)), fid)
 		assert_ne(b.text, "", fid)
 		assert_not_null(b.icon, fid + " shows its first look")
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_routes"))  # T-280: the line with moving the start.
 
 
 func test_picking_a_button_picks_its_first_look_and_shows_the_strip() -> void:

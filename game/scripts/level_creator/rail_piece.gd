@@ -54,8 +54,9 @@ static func length_of(item: Dictionary) -> float:
 	return end_a(item).distance_to(end_b(item))
 
 
-static func snap(v: Vector2) -> Vector2:
-	return Vector2(snappedf(v.x, SNAP), snappedf(v.y, SNAP))
+## T-581: `step` is SNAP with Shift held; without it the editor passes LevelDocument.FREE_STEP (free placement).
+static func snap(v: Vector2, step: float = SNAP) -> Vector2:
+	return Vector2(snappedf(v.x, step), snappedf(v.y, step))
 
 
 ## The direction of step `turn` (0..7), a unit vector.

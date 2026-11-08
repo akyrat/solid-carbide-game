@@ -33,3 +33,6 @@ __pycache__/
 
 # Local task board state: moves log, the board's inbox, server log (tools/taskboard/server.py)
 .board/
+
+# Record of the latest full parallel test run (T-588, game/docs/setup/tests.md)
+game/tools/test_run_record.json

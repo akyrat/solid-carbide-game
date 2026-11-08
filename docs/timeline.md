@@ -4110,3 +4110,28 @@ Entry format:
 - Decision or change: The Grinding Wheels power-up's name and description; the board approved the text.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-585
+
+## 2026-11-08: "Equip" instead of "Flex it"
+- Decision or change: The cosmetics pick button says Equip; the board asked to merge it.
+- Documents touched: `docs/garage-design.md`, `docs/hud-and-menus.md`
+- Tasks: T-582
+
+## 2026-11-08: The test runner records the real run time, and the PowerShell runner runs in parallel
+- Decision or change: Every full Godot run now writes game/tools/test_run_record.json (time, wall seconds, processes, counts, passed) and ends with 'TESTS PASSED (N s on P processes)'; test_times.json is labelled as single-process seconds; run_tests.ps1 runs the same 12-process split as run_tests.sh (its full run took 268 s in QA, where the old single process took about 25 minutes). Board, 2026-11-08: agents had been quoting the single-process time. Tooling, merged after QA.
+- Documents touched: tasks/README.md,game/docs/setup/tests.md
+- Tasks: T-588
+
+## 2026-11-08: Texts for needle routes
+- Decision or change: The creator texts for needle routes; the route tool is on N.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-591
+
+## 2026-11-08: Needle routes
+- Decision or change: Thread-the-needle pairs grouped into routes, in order or at random; only the active pair pays; the board played it.
+- Documents touched: `docs/level-design.md`
+- Tasks: T-592
+
+## 2026-11-08: Free placement and moving pieces in the level creator
+- Decision or change: Pieces follow the mouse freely (Shift snaps to the grid) and placed pieces can be moved; its code came in with T-592.
+- Documents touched: none
+- Tasks: T-581
