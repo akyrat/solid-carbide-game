@@ -4270,3 +4270,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: a settings checkbox turns trick popups off; tricks still count.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-599
+
+## 2026-11-08: The car never locks against a wall
+- Decision or change: Merged after the board's playtest: against the sides of raised areas the car slides along and turns instead of stopping, and S reverses promptly.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-601

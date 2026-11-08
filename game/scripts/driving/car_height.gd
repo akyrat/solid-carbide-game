@@ -47,6 +47,12 @@ const OUTLINE: Array[Vector2] = [
 	Vector2(-0.5, -0.5), Vector2(0.5, -0.5),                    # the left flank
 ]
 
+## T-601: how the car slides and turns off a raised area's side it touches (data/wall_contact.json,
+## _slide_off_side). Tests may set _wall_contact to compare (wall_contact_config()).
+const WALL_CONTACT_PATH := "res://data/wall_contact.json"
+const WALL_CONTACT_DEFAULTS := {"slide_on": true, "pivot_max_push": 0.15, "pivot_push_tries": 6}
+static var _wall_contact := {}
+
 ## Height above y = 0 ground, units.
 var height := 0.0
 ## Vertical speed, units/s, up positive. 0 on the ground.
@@ -188,6 +194,8 @@ func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float,
 		airborne = false
 		return {"wall": false, "rotation": rot_new}
 	var walk := _walk(prev, pos, dt, rot_prev, rot_new)
+	if walk.wall and not airborne and not is_nan(rot_prev) and not is_nan(rot_new):
+		walk = _slide_off_side(walk, pos, dt, rot_new)
 	if walk.wall:
 		pos = walk.point
 	if airborne:
@@ -319,6 +327,65 @@ func _walk(prev: Vector2, pos: Vector2, dt: float, rot_prev: float = NAN, rot_ne
 		a = b
 		g_a = g_b
 	return out
+
+
+## Task T-601 (Drifting, Decisions, "The car never locks against a wall"; game/docs/driving/collisions.md,
+## "Against a raised area's side (T-601)"): the outline met a side on the ground and the walk stopped
+## at walk.point, walk.rotation. Before T-601 the whole rest of the step was lost there: the move along
+## the side and the turn too. With the outline touching, every later step that went into the side at
+## all (W held) or swung a corner into it (A or D) stopped on its first piece, so the car stood still
+## and could not turn: the lock. Here, from where it touched, the rest of the move slides along the
+## side (its part into the side dropped) with the step's whole turn, the centre pushed straight out of
+## the side by the smallest of pivot_push_tries even pushes up to pivot_max_push that clears it
+## (data/wall_contact.json); failing that, the slide without the turn; failing that, the stop as
+## before. The result still reports the wall (wall true, the same normal and area): car.gd bounces
+## and counts the hit exactly as before; only where the car ends the step and its heading change.
+func _slide_off_side(walk: Dictionary, pos: Vector2, dt: float, rot_new: float) -> Dictionary:
+	var cfg := wall_contact_config()
+	if not bool(cfg.slide_on):
+		return walk
+	var n: Vector2 = walk.normal
+	if n == Vector2.ZERO:
+		return walk
+	var from: Vector2 = walk.point
+	var rot_from: float = walk.rotation
+	var rest := pos - from
+	var into := rest.dot(n)
+	var slide := rest - n * into if into < 0.0 else rest
+	var tries := maxi(1, int(cfg.pivot_push_tries))
+	var max_push := maxf(0.0, float(cfg.pivot_max_push))
+	var headings := [rot_new]
+	if rot_new != rot_from:
+		headings.append(rot_from)
+	for rot in headings:
+		# The turn may need a push out of the side; the slide on its own never does.
+		var pushes := tries if rot != rot_from else 0
+		for i in range(0, pushes + 1):
+			var target: Vector2 = from + slide + n * (max_push * float(i) / float(tries))
+			if target == from and rot == rot_from:
+				continue
+			var w2 := _walk(from, target, dt, rot_from, rot)
+			if not w2.wall:
+				var out := walk.duplicate()
+				out.point = target
+				out.rotation = rot
+				out.drop = bool(walk.drop) or bool(w2.drop)
+				out.drop_height = walk.drop_height if bool(walk.drop) else w2.drop_height
+				return out
+	return walk
+
+
+## data/wall_contact.json (T-601), read once.
+static func wall_contact_config() -> Dictionary:
+	if _wall_contact.is_empty():
+		_wall_contact = WALL_CONTACT_DEFAULTS.duplicate()
+		if FileAccess.file_exists(WALL_CONTACT_PATH):
+			var parsed = JSON.parse_string(FileAccess.get_file_as_string(WALL_CONTACT_PATH))
+			if typeof(parsed) == TYPE_DICTIONARY:
+				for k in WALL_CONTACT_DEFAULTS:
+					if parsed.has(k):
+						_wall_contact[k] = parsed[k]
+	return _wall_contact
 
 
 func _take_off(from_ramp: bool, vz: float, new_height: float) -> void:

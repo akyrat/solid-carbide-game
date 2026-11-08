@@ -437,6 +437,15 @@ How the car's drawn size meets the sides of raised areas (rooftops, ramps, T-405
 - **Open questions for the board** (the T-411 assessment; today's choices kept): (a) when a car crawling off a roof edge tips off: when its middle passes the edge (today), when its front wheels leave, or as soon as the nose leaves; (b) whether the drawn body should bounce off a rooftop's or ramp's side as soon as the bumper touches (built, as a proposal); (c) whether a crawling car (under 4 units/s) launches off a ramp's top too, or whether there is a minimum speed (today: under 4 it rolls off and falls); (d) whether the nose may still enter skyscrapers by 1 unit (the 1 by 1 body, today).
 - **Screenshots:** before and after, the car pressed against the platform's south, north and west sides and the ramp's side in the elevation test scene: `art-archive/T-411/screenshots/compare_before_after.png` (and the `before_*.png`, `after_*.png` frames).
 
+#### The car never locks against a wall (task T-601)
+
+The fix for Decisions, "The car never locks against a wall" (board, 2026-11-08). How it is built, with the numbers: `game/docs/driving/collisions.md`, "Against a raised area's side (T-601)".
+
+- **The cause (confirmed by a test, correcting the first reading):** the lock happened only at the sides of raised areas (the short buildings, platforms, ramps' sides), never at skyscrapers, boulders or the map's edge. The drawn car (3 by 1, "The car's footprint (task T-411)" above) stopped the whole step as soon as any point of it touched a side: the move along the side and the turn were lost too. Pressed on a side, W kept a little speed into it, and A or D swung a front corner into it, so every step stopped at once: the car neither moved nor turned. It also kept the speed W gave it while it stood still, up to the top speed, so after letting go of W, S first braked all of it (up to 2.3 s) before reversing. W's snap to cruise, the drift ending on each hit and S's braking rate are as before: they did not cause the lock.
+- **The fix (proposal for the playtest):** at a side, the rest of the step slides along it, and the turn still happens, the car pushed straight out of the side by as little as it needs (at most 0.15 units a step, under a sixth of the car's width). The bounce, the hit, the combo cut and the drift ending on a hit are unchanged. Numbers: `game/data/wall_contact.json`.
+- **What it does:** with the nose pressed on a wall, W with A or D turns the car off it in the time the turn itself takes plus at most 0.15 s (about half a second straight on); S with the nose into a wall reverses within 0.5 s.
+- **GIF:** `art-archive/T-601/screenshots/t601_steer_off_wall.gif` (the car pressed nose first on the elevation test scene's platform with W, then W and A).
+
 #### Elevation: the three layers of the sample map (task T-195)
 
 The car's height (above) checked on the elevation sample map's three layers, the street (0), the first-floor rooftops (3) and the second-floor rooftops (6) (Level design, "Elevation sample map"). It works there unchanged: the ramps whose foot is on a rooftop (3 to 6) need no special case, since the car's height always follows, leaves and lands on the ground under it, whatever that ground's height. The numbers (gravity, the takeoff speed and factor, the curb height) are unchanged. How it is tested and run: `game/docs/level/elevation-sample-map.md`, "The car's height on the three layers (T-195)".
@@ -2772,7 +2781,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
-| `drifting.md` | `906265eb45a1357c83aa88bba878f5294e3e594ba4a7664e35c45794992d9e1d` |
+| `drifting.md` | `c433b64d91ce7b539034d5c8617c01d21348a65572521b7ae3dff0f93b43dc60` |
 | `level-design.md` | `8e377a9b6f9369c8cbb087ce08cdaaccc79f5959dc1696ff407832eb06797c30` |
 | `enemies.md` | `391da72f65c1ee86b14bee9fc4e5eed842d02d5f4ffed3b32d4e927782e5a149` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
