@@ -1201,6 +1201,14 @@ Added for the car's spawn point (task T-279; same file, every earlier key unchan
 - **Message when the board tries to delete it (top bar):** "The start can't be deleted." (`spawn_no_delete`).
 - **Controls hint:** the pairs hint with "move the start" added: "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_spawn`; the older hints stay; the creator should show this one).
 
+Added for needle routes (task T-591; same file, every earlier key unchanged; Decisions, "Needle routes"; the build is T-592). Plain and short, like the pair tool's texts; not run through the style loop, as the creator's other texts were not:
+- **Route tool (top bar or Obstacles panel):** button "Route" (`route_tool`), key **N** (free: the creator uses R, V, M, H, A, B, P, T, [ ], Del, Esc and the arrows); hint while on "Route: click pair lines in order" (`route_hint`).
+- **Messages (top bar):** when a pair joins the route "Pair added to the route (%d)." (`route_pair_added`, %d the pairs so far); when the route is finished "Route finished." (`route_finished`).
+- **Order switch (top bar, route tool):** "In order" (`route_order_in_order`) and "Random" (`route_order_random`).
+- **Route label (beside its pairs):** "Route: %d pairs" (`route_label`).
+- **Taking a pair out of its route:** button "Remove from route" (`route_remove_pair`).
+- **Controls hint:** the spawn hint with "N: route." added after "P: pair." (`controls_hint_routes`; the older hints stay; the creator should show this one).
+
 #### Level creator: thread the needle
 
 Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it works: `game/docs/level/level-creator-pieces.md`, "Level creator", "Thread the needle (T-272)". The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest; the numbers are in `game/data/combo.json` (`trick_add.thread_the_needle` and `thread_the_needle`, with their reasons).
@@ -2680,7 +2688,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `649602c4c7f53afb83aa5a1b510c704cfd9df7e9ae32144058b87e875263cab7` |
-| `level-design.md` | `9976ba863b3ffb3ddd1b8b194631280fb17caf59fe8a3789d11987ccad9d3501` |
+| `level-design.md` | `cc9044c494295bdaf1d74a549a08bf75d25467ea0b99f9387cd7a9aaa97649db` |
 | `enemies.md` | `391da72f65c1ee86b14bee9fc4e5eed842d02d5f4ffed3b32d4e927782e5a149` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
