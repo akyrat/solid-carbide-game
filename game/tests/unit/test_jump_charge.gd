@@ -2,11 +2,12 @@ extends GutTest
 ## Task T-590 (a playtest; Drifting, Decisions, "A charged jump, for a playtest"): with the Jump
 ## power-up owned and the car on the ground, holding Space charges the hop linearly up to x1.5
 ## takeoff over 3 s, and the car hops when Space is let go. A tap hops at x1. Space in the air is
-## unchanged; without Jump, Space on the ground changes nothing. The cue shows while charging.
+## unchanged; without Jump, Space on the ground changes nothing. Tweak 1: no charge bar; the car
+## tilts while charging, and the jump effect scales with the jump's height.
 
 const CarScript := preload("res://scripts/driving/car.gd")
 const JumpScript := preload("res://scripts/driving/jump_power_up.gd")
-const CueScript := preload("res://scripts/driving/jump_charge_cue.gd")
+const JumpEffectScript := preload("res://scripts/driving/jump_effect.gd")
 
 var _world: Node2D
 var _data := PowerUpData.new()
@@ -180,44 +181,86 @@ func test_the_dead_keys_drop_the_charge() -> void:
 	assert_eq(car.jump.hops, 0)
 
 
-## Acceptance 3: the cue shows while charging, fills with the charge, and is gone after the jump.
-func test_the_cue_shows_while_charging_and_is_gone_after_the_jump() -> void:
+## Tweak 1 (the board): while the charge grows the car tilts as in the air (3 frames into the held
+## pose); on release it jumps and the frames play back in the air, as when Space is let go there.
+func test_charging_tilts_the_car_and_the_release_untilts_it_in_the_air() -> void:
 	var car := _car(1)
-	var cue = CueScript.new()
-	_world.add_child(cue)
-	cue.bind(car)
-	assert_false(cue.showing, "nothing before Space")
 	car.press_jump()
 	car.scripted_jump_held = true
 	car.physics_step()
-	assert_true(cue.showing, "shown from the press")
-	for i in _steps_for(1.5):
+	assert_true(car.tilt.holding, "tilting from the press")
+	for i in 30:
 		car.physics_step()
-	assert_true(cue.showing)
-	assert_almost_eq(cue.fraction, 0.5, 0.02, "half full at 1.5 s")
-	var r: Array = cue.bar_rects(Vector2.ZERO, cue.fraction)
-	assert_almost_eq(r[1].size.x, float(cue.config.cue_width_px) * 0.5, 1.0)
+	assert_false(car.airborne)
+	assert_eq(car.tilt.step, car.tilt.FRAMES, "the held pose on the ground while charging")
 	car.scripted_jump_held = false
 	car.physics_step()
 	assert_true(car.airborne)
-	assert_false(cue.showing, "gone after the jump")
-	assert_eq(cue.fraction, 0.0)
-
-
-func test_the_cue_shows_nothing_without_jump() -> void:
-	var car := _car(0)
-	var cue = CueScript.new()
-	_world.add_child(cue)
-	cue.bind(car)
-	car.press_jump()
-	car.scripted_jump_held = true
+	assert_false(car.tilt.holding, "let go: the frames play back")
 	for i in 20:
 		car.physics_step()
-	assert_false(cue.showing)
+	assert_true(car.airborne)
+	assert_eq(car.tilt.step, 0, "flies in its normal look")
+	car.scripted_jump_held = true
+	car.press_jump()
+	for i in 10:
+		car.physics_step()
+	assert_eq(car.tilt.step, car.tilt.FRAMES, "held again in the air: tilted for a grind, as before")
 
 
-func test_the_run_has_the_cue_bound_to_its_car() -> void:
-	var run: Node = preload("res://scenes/run/run.tscn").instantiate()
-	add_child_autofree(run)
-	assert_not_null(run.jump_charge_cue)
-	assert_eq(run.jump_charge_cue.car, run.car)
+## A tap does not tilt (no step is spent charging).
+func test_a_tap_does_not_tilt() -> void:
+	var car := _car(1)
+	car.press_jump()
+	car.physics_step()
+	assert_true(car.airborne)
+	assert_eq(car.tilt.step, 0)
+
+
+## Without Jump, Space held on the ground does not tilt the car.
+func test_without_jump_no_tilt_on_the_ground() -> void:
+	var car := _car(0)
+	car.press_jump()
+	car.scripted_jump_held = true
+	for i in 30:
+		car.physics_step()
+	assert_eq(car.tilt.step, 0)
+
+
+## Tweak 1: the jump effect scales with the jump's height: x1 at a tap, bigger with the charge.
+func test_the_jump_effect_scales_with_the_height() -> void:
+	var sizes: Array = []
+	for secs in [0.0, 1.5, 3.0]:
+		var car := _car(1)
+		var e = JumpEffectScript.new()
+		_world.add_child(e)
+		e.bind(car)
+		_charge_and_release(car, _steps_for(secs))
+		assert_eq(e.playing.size(), 1)
+		sizes.append(float(e.playing[0].scale))
+	var d: Dictionary = GameData.load_file("rail_grind").data
+	var ex := float(d.jump_effect_height_exponent)
+	assert_almost_eq(sizes[0], 1.0, 1e-6, "a tap: the art's own size")
+	assert_almost_eq(sizes[1], pow(1.25 * 1.25, ex), 1e-3, "half charge")
+	assert_almost_eq(sizes[2], pow(1.5 * 1.5, ex), 1e-3, "full charge")
+	assert_gt(sizes[2], sizes[1])
+	assert_gt(sizes[1], sizes[0])
+
+
+func test_the_effect_scale_is_clamped() -> void:
+	var e = JumpEffectScript.new()
+	add_child_autofree(e)
+	assert_almost_eq(e.scale_for_multiplier(1.0), 1.0, 1e-9)
+	assert_almost_eq(e.scale_for_multiplier(0.5), 1.0, 1e-9, "never smaller than the art")
+	assert_almost_eq(e.scale_for_multiplier(100.0), e.max_scale, 1e-9)
+
+
+## The launch off a rail is not charged: its effect is x1.
+func test_the_rail_launch_effect_is_x1() -> void:
+	var e = JumpEffectScript.new()
+	var car := _car(1)
+	_world.add_child(e)
+	e.bind(car)
+	car.jump.last_multiplier = 1.5  # left from an earlier charged hop
+	car.jump_started.emit("rail_launch", Vector2.ZERO, 1.0)
+	assert_almost_eq(float(e.playing[0].scale), 1.0, 1e-9)

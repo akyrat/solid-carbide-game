@@ -2,8 +2,8 @@ extends Node
 ## GIF fixture for the charged jump (task T-590): a run started from the main menu with Jump at
 ## tier 1, the car standing still, stepped once per drawn frame so frame N is physics step N:
 ## a tap at `tap_step` (pressed and let go at once: the x1 hop), then, once it has landed, Space
-## pressed at `charge_step` and held for `charge_steps` (3 s: the cue fills), then let go (the
-## x1.5 hop). With `record_dir` set (relative to the repo root), every `record_every`th frame is
+## pressed at `charge_step` and held for `charge_steps` (3 s: the car tilts, Tweak 1), then let go (the
+## x1.5 hop, with a bigger jump effect). With `record_dir` set (relative to the repo root), every `record_every`th frame is
 ## saved there as a PNG for frames_to_gif.py, until `record_frames`.
 
 @export var tap_step := 10

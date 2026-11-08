@@ -338,7 +338,9 @@ func physics_step() -> void:
 		else:
 			grind.touched_ground()
 	# T-551: tilted while Space is held in the air (or on the rail just caught); back otherwise.
-	tilt.update(held and (height_model.airborne or grind.active), model.dt)
+	# T-590 Tweak 1: and while the Jump's charge grows on the ground (the board: the same tilt as in
+	# the air). Let go, the car jumps and the frames play back in the air, as when Space is let go there.
+	tilt.update(held and (height_model.airborne or grind.active or jump.charging), model.dt)
 	if detect_tricks:
 		# Tricks (task T-079), observed after the height step so the detector
 		# knows whether this step ends in the air: the drift 360 ignores those
