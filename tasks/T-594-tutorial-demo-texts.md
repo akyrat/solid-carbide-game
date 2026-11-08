@@ -1,7 +1,7 @@
 ---
 id: T-594
 title: Texts: Replay, Skip and "your turn" for the tutorial's demos
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/data/tutorial_text.json, game/docs/hud-and-menus/tutorial-slides.md]
 files_expected_to_change: [game/data/tutorial_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,9 +43,9 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The three texts exist in tutorial_text.json with keys and _comment, listed in the result notes with where each shows. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists them. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] The three texts exist in tutorial_text.json with keys and _comment, listed in the result notes with where each shows. (QA: pass)
+- [ ] docs/hud-and-menus.md Content lists them. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
