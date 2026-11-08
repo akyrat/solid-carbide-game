@@ -4035,3 +4035,8 @@ Entry format:
 - Decision or change: Each itch.io build carries its id; the tutorial shows again on a new build.
 - Documents touched: `docs/hud-and-menus.md`, `docs/working-with-the-board.md`
 - Tasks: T-572
+
+## 2026-11-08: No button looks selected when a menu opens
+- Decision or change: Menus open with no button selected; the first arrow or Tab press shows it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-573
