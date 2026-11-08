@@ -349,16 +349,12 @@
       "colours_after": 30,
       "heading_deg": 225.0,
       "index": 20,
-      "made_by": "/generate-8-rotations-v3 image 5 (north)",
+      "made_by": "old T-102 frame 20 restored by T-584 (the redraw measured further from target)",
       "nose_screen_angle_deg": 270.0,
-      "note": "T-101's frame, copied unchanged",
-      "seen_nose_screen_angle_deg_approx": 260,
-      "shift_px": {
-        "x": -3,
-        "y": -3
-      },
-      "source": "art-archive/T-101/frames/car_rot8_v3_5.png",
-      "t101_frame": 10
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 244.8,
+      "seen_source": "measure_car_facing.py (T-584): calibrated body axis",
+      "source": "art-archive/T-584/old/frame_20.png"
     },
     {
       "body_axis_deg": 74.7,
