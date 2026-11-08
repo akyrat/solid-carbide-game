@@ -14,7 +14,8 @@ extends RefCounted
 ##      the same keys; w, s, held and hop are 0 or 1, steer -1 to 1; hop: Space pressed that step),
 ##    "resets": [step, ...] (R pressed before that step: the car back at the start),
 ##    "checkpoints": [{"step", "x", "y", "rotation", "height"}, ...],
-##    "result": {"successes", "drift_seconds"} (the count when the take was saved)}
+##    "result": {"successes", "drift_seconds"} (the count when the take was saved),
+##    "_comment": "..." (optional: a note on the take, for example that it is a stand-in; T-574 tweak 10)}
 
 const FORMAT := "solid-carbide-tutorial-take"
 const VERSION := 1
@@ -32,6 +33,9 @@ var frames: Array = []
 var resets: Array = []
 var checkpoints: Array = []
 var result := {}
+## A note kept with the take ("" for none): the stand-in takes say they are stand-ins (T-574 tweak 10,
+## step 2), so the board's own recordings (F6, F7) replace them; a take recorded in the slides has none.
+var comment := ""
 
 
 func steps() -> int:
@@ -68,9 +72,12 @@ func to_dict() -> Dictionary:
 			runs[-1][0] += 1
 		else:
 			runs.append([1] + row)
-	return {"format": FORMAT, "version": VERSION, "trick": trick, "physics_fps": physics_fps,
+	var d := {"format": FORMAT, "version": VERSION, "trick": trick, "physics_fps": physics_fps,
 		"steps": frames.size(), "start": start, "gift": gift, "inputs": runs, "resets": resets,
 		"checkpoints": checkpoints, "result": result}
+	if comment != "":
+		d["_comment"] = comment
+	return d
 
 
 static func from_dict(d: Dictionary) -> PracticeTake:
@@ -87,6 +94,7 @@ static func from_dict(d: Dictionary) -> PracticeTake:
 	t.resets = (d.get("resets", []) as Array).map(func(v) -> int: return int(v))
 	t.checkpoints = d.get("checkpoints", [])
 	t.result = d.get("result", {})
+	t.comment = String(d.get("_comment", ""))
 	return t
 
 

@@ -71,6 +71,15 @@ const CAPTION_BAND_ALPHA := 0.6
 ## on the practice session. F8 is left out: it stops a game run from the editor.
 const TAKE_KEYS := {KEY_F5: "reset_stage", KEY_F6: "start_recording", KEY_F7: "stop_and_save",
 	KEY_F9: "play_take"}
+## T-574 tweak 10, step 2 (the recorded demos): the demo's settings file (demo_enabled,
+## demo_minimise_seconds, demo_minimise_corner, demo_minimise_scale) and the driving keys that skip a
+## demo (the car's W, A, S, D, Space and R).
+const PRACTICE_SETTINGS_PATH := "res://data/tutorial_practice.json"
+const DEMO_SKIP_KEYS := [KEY_W, KEY_A, KEY_S, KEY_D, KEY_SPACE, KEY_R]
+## Where the window shrinks to, as a share of its size (its pivot).
+const DEMO_CORNERS := {"top_left": Vector2(0, 0), "top_right": Vector2(1, 0), "bottom_left": Vector2(0, 1),
+	"bottom_right": Vector2(1, 1)}
+
 ## The take tools' button labels: a temporary DEV tool the players never see (dev builds only), so
 ## these few words are not player text and are not in the texts file (the board's request, T-574).
 const TAKE_BUTTONS := [["F5 Reset", "reset_stage"], ["F6 Record", "start_recording"],
@@ -128,6 +137,19 @@ var practices: Array = [null, null, null, null]
 var dev_tools_enabled := OS.has_feature("editor")
 var take_panels: Array[Control] = []
 var take_labels: Array[Label] = []
+## T-574 tweak 10, step 2, the demo: each trick slide with a saved take plays it in its window first
+## (the real car replaying the keys), then the window minimises like a video (it shrinks toward a
+## corner and fades), the stage resets and the player drives. The values are the settings file's.
+## demo_states per trick slide: "" (not shown yet), "playing", "minimising", "done" (once each time
+## the tutorial opens). Tests set takes_dir_override to read their own takes.
+signal demo_finished(trick_index: int, skipped: bool)
+var demo_enabled := true
+var demo_minimise_seconds := 0.4
+var demo_minimise_corner := "bottom_right"
+var demo_minimise_scale := 0.1
+var takes_dir_override := ""
+var demo_states: Array = ["", "", "", ""]
+var _demo_tween: Tween
 var _dots: Array[ColorRect] = []
 var _pixel_font: FontFile
 var _missing_warned := false
@@ -137,6 +159,7 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	clip_contents = true
+	_load_demo_settings()
 
 	var background := ColorRect.new()
 	background.color = BG
@@ -182,6 +205,9 @@ func _fit() -> void:
 ## and puts the focus where it belongs.
 func show_slide(index: int) -> void:
 	current = clampi(index, 0, SLIDE_COUNT - 1)
+	for i in range(demo_states.size()):  # a window minimising on the slide we leave: done at once
+		if demo_states[i] == "minimising" and current != FIRST_TRICK_SLIDE + i:
+			_finish_demo(i, false)
 	for i in range(slides.size()):
 		slides[i].visible = i == current
 	for i in range(_dots.size()):
@@ -197,6 +223,8 @@ func show_slide(index: int) -> void:
 	if on_trick:
 		_ensure_practice(current - FIRST_TRICK_SLIDE)
 	_apply_practice_state()
+	if on_trick:
+		_maybe_start_demo(current - FIRST_TRICK_SLIDE)
 	if is_inside_tree():
 		if on_trick:
 			var owner_focus := get_viewport().gui_get_focus_owner()
@@ -240,6 +268,8 @@ func _input(event: InputEvent) -> void:
 		take_action(String(TAKE_KEYS[code]))
 		get_viewport().set_input_as_handled()
 		return
+	if is_trick_slide() and is_demo_showing() and _is_driving_key(event as InputEventKey):
+		skip_demo()  # the key goes on to the car, which now reads the keyboard
 	var letters := not is_trick_slide()
 	if code == KEY_LEFT or (letters and code == KEY_A):
 		previous_slide()
@@ -269,8 +299,12 @@ func _ensure_practice(i: int) -> void:
 	var viewport := practice_containers[i].get_child(0) as SubViewport
 	viewport.add_child(session)
 	practices[i] = session
+	if takes_dir_override != "" and "takes_dir" in session:
+		session.takes_dir = takes_dir_override
 	if session.has_method("setup"):
 		session.setup(String(TRICK_SLIDES[i][1]))
+	if session.has_signal("take_state_changed"):
+		session.take_state_changed.connect(_on_take_state.bind(i))
 
 
 ## Runs the showing slide's practice with the keyboard, and pauses every other one (and all of them
@@ -287,6 +321,110 @@ func _apply_practice_state() -> void:
 			session.start()
 		elif not on and session.has_method("pause"):
 			session.pause()
+
+
+# --- The demo (T-574 tweak 10, step 2) --------------------------------------------------------------
+
+func _load_demo_settings() -> void:
+	if not FileAccess.file_exists(PRACTICE_SETTINGS_PATH):
+		return
+	var d = JSON.parse_string(FileAccess.get_file_as_string(PRACTICE_SETTINGS_PATH))
+	if not (d is Dictionary):
+		return
+	demo_enabled = bool(d.get("demo_enabled", demo_enabled))
+	demo_minimise_seconds = maxf(0.0, float(d.get("demo_minimise_seconds", demo_minimise_seconds)))
+	demo_minimise_corner = String(d.get("demo_minimise_corner", demo_minimise_corner))
+	demo_minimise_scale = clampf(float(d.get("demo_minimise_scale", demo_minimise_scale)), 0.0, 1.0)
+
+
+## True while the showing trick slide's demo plays or its window minimises.
+func is_demo_showing() -> bool:
+	if not is_trick_slide():
+		return false
+	var st := String(demo_states[current - FIRST_TRICK_SLIDE])
+	return st == "playing" or st == "minimising"
+
+
+func _is_driving_key(e: InputEventKey) -> bool:
+	return DEMO_SKIP_KEYS.has(e.keycode) or DEMO_SKIP_KEYS.has(e.physical_keycode)
+
+
+## The first time trick slide `i` shows: its saved take, if there is one, plays as the demo.
+func _maybe_start_demo(i: int) -> void:
+	if demo_states[i] != "" or not is_visible_in_tree():
+		return
+	var session = practices[i]
+	if session == null or not is_instance_valid(session):
+		return
+	demo_states[i] = "done"  # once per slide each time the tutorial opens
+	if not demo_enabled or not session.has_method("saved_take") or not session.has_method("play_take"):
+		return
+	var t = session.saved_take()
+	if t == null or t.steps() == 0:
+		return
+	if session.play_take(t):
+		demo_states[i] = "playing"
+
+
+## The practice's take state: the demo's take played to its end starts the minimise; any other
+## state (a take tool reset, recorded or played) ends the demo where it is.
+func _on_take_state(state_name: String, i: int) -> void:
+	if demo_states[i] != "playing":
+		return
+	if state_name == "played":
+		_begin_minimise.call_deferred(i)  # after the car's step that ended the take
+	elif state_name != "playing":
+		demo_states[i] = "done"
+
+
+## The window shrinks toward the corner and fades, the last picture frozen (the session paused).
+func _begin_minimise(i: int) -> void:
+	if demo_states[i] != "playing":
+		return
+	demo_states[i] = "minimising"
+	var session = practices[i]
+	if session != null and is_instance_valid(session) and session.has_method("pause"):
+		session.pause()
+	var frame := practice_frames[i]
+	if demo_minimise_seconds <= 0.0 or not is_inside_tree():
+		_finish_demo(i, false)
+		return
+	frame.pivot_offset = frame.size * (DEMO_CORNERS.get(demo_minimise_corner, Vector2.ONE) as Vector2)
+	if _demo_tween != null:
+		_demo_tween.kill()
+	_demo_tween = create_tween().set_parallel(true)
+	_demo_tween.tween_property(frame, "scale", Vector2.ONE * demo_minimise_scale, demo_minimise_seconds) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_demo_tween.tween_property(frame, "modulate:a", 0.0, demo_minimise_seconds) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_demo_tween.chain().tween_callback(_finish_demo.bind(i, false))
+
+
+## Skips the showing slide's demo (a driving key): the stage resets and the player drives at once.
+func skip_demo() -> void:
+	if not is_trick_slide():
+		return
+	var i := current - FIRST_TRICK_SLIDE
+	if demo_states[i] == "playing" or demo_states[i] == "minimising":
+		_finish_demo(i, demo_states[i] == "playing")
+
+
+## The demo over: the window back at full size, the stage reset, the practice the player's.
+func _finish_demo(i: int, skipped: bool) -> void:
+	if demo_states[i] != "playing" and demo_states[i] != "minimising":
+		return
+	if _demo_tween != null:
+		_demo_tween.kill()
+		_demo_tween = null
+	var frame := practice_frames[i]
+	frame.scale = Vector2.ONE
+	frame.modulate.a = 1.0
+	demo_states[i] = "done"
+	var session = practices[i]
+	if session != null and is_instance_valid(session) and session.has_method("reset_stage"):
+		session.reset_stage()
+	_apply_practice_state()
+	demo_finished.emit(i, skipped)
 
 
 # --- The take tools (T-574 tweak 8; dev builds only) --------------------------------------------

@@ -74,7 +74,9 @@ func test_garage_buttons_are_shared() -> void:
 func test_tutorial_slide_buttons_are_shared() -> void:
 	var slides: TutorialSlides = load("res://scenes/menu/tutorial_slides.tscn").instantiate()
 	add_child_autofree(slides)
-	assert_eq(_all_shared(slides, "tutorial slides"), 5, "two arrows, Skip, Go live and the checkbox")
+	# T-574 tweak 8: plus the temporary take tools' buttons on each trick slide in a dev build.
+	var dev := TutorialSlides.TAKE_BUTTONS.size() * TutorialSlides.TRICK_SLIDES.size() if slides.dev_tools_enabled else 0
+	assert_eq(_all_shared(slides, "tutorial slides"), 5 + dev, "two arrows, Skip, Go live and the checkbox (and the dev take tools)")
 	assert_eq(slides.dont_show_checkbox.get_meta("hud_button"), "checkbox")
 
 

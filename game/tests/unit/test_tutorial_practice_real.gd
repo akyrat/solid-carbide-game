@@ -16,6 +16,7 @@ func before_each() -> void:
 	_old_size = get_tree().root.size
 	get_tree().root.size = Vector2i(TutorialSlides.STAGE)
 	slides = load("res://scenes/menu/tutorial_slides.tscn").instantiate()
+	slides.takes_dir_override = "user://t574_no_takes"  # no demo takes: the slides as before (T-574 tweak 10; test_tutorial_demo.gd has the demo)
 	add_child_autofree(slides)
 
 

@@ -682,6 +682,12 @@ func stop_and_save() -> Error:
 	return err
 
 
+## This trick's saved take (data/tutorial_takes/<trick>.json in takes_dir), or null when there is
+## none. The slides play it as the slide's demo first (T-574 tweak 10, step 2).
+func saved_take() -> PracticeTake:
+	return PracticeTake.load_take(trick, takes_dir)
+
+
 ## Resets the stage and plays this trick's saved take (or `the_take`) on the real car; the keyboard
 ## is off while it plays. Returns false when there is no take.
 func play_take(the_take: PracticeTake = null) -> bool:
