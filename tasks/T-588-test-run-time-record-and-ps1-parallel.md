@@ -1,7 +1,7 @@
 ---
 id: T-588
 title: The test runner records each full run's wall-clock time, and run_tests.ps1 runs the same parallel split
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Tests
@@ -58,6 +58,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: the QA/Integration Agent builds the run record and the parallel run_tests.ps1 in C:\solid-carbide-worktrees\T-588.
 
 ## Style review
 

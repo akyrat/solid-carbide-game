@@ -18,6 +18,12 @@ that script. Standard library only.
 - --timings reruns nothing: it writes a per-script time table. See measure_test_times.py's idea
   below: with --timings each shard also runs with per-script timing from GUT's own output and the
   table is merged into test_times.json (only done on request, never by a normal run).
+- The per-script values in test_times.json are SINGLE-PROCESS seconds (each script run alone in its
+  own Godot, start-up included). Their sum (about 51 minutes) is not how long a run takes; the
+  parallel wall time is.
+- After every full run (not --list, not --measure) the run is recorded in game/tools/test_run_record.json
+  (git-ignored): date and time, wall-clock seconds, processes, the five summary counts, passed or not.
+  Only the latest run is kept. The final line reads e.g. "TESTS PASSED (275 s on 12 processes)".
 """
 import argparse
 import json
@@ -33,6 +39,10 @@ HERE = Path(__file__).resolve().parent
 GAME = HERE.parent
 TESTS = GAME / "tests"
 TIMES_FILE = HERE / "test_times.json"
+RECORD_FILE = HERE / "test_run_record.json"
+
+
+TIMES_NOTE = "Per-script values are SINGLE-PROCESS seconds (each script alone in its own Godot), not the length of a parallel run. The latest real run is in test_run_record.json."
 
 
 def find_scripts():
@@ -41,9 +51,30 @@ def find_scripts():
 
 def load_times():
     try:
-        return json.loads(TIMES_FILE.read_text(encoding="utf-8"))
+        data = json.loads(TIMES_FILE.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
+    # Keys starting with "_" are comments, not scripts.
+    return {k: v for k, v in data.items() if not k.startswith("_")}
+
+
+def write_record(wall, processes, totals, passed, path=None):
+    """Writes the record of the latest full run (a sibling file, never read by the shard weights)."""
+    rec = {"time": time.strftime("%Y-%m-%d %H:%M:%S"), "wall_seconds": round(wall, 1), "processes": processes,
+           "scripts": totals["Scripts"], "tests": totals["Tests"], "passing": totals["Passing Tests"],
+           "failing": totals["Failing Tests"], "risky_pending": totals["Risky/Pending"], "passed": bool(passed)}
+    try:
+        (path or RECORD_FILE).write_text(json.dumps(rec, indent=1) + chr(10), encoding="utf-8")
+    except OSError as e:
+        print("Could not write the run record: %s" % e, file=sys.stderr)
+    return rec
+
+
+def final_line(passed, code, wall, processes):
+    detail = "%.0f s on %d processes" % (wall, processes)
+    if passed:
+        return "TESTS PASSED (%s)" % detail
+    return "TESTS FAILED (exit %d, %s)" % (code, detail)
 
 
 def weight(script, times):
@@ -146,7 +177,7 @@ def measure(scripts, godot, jobs, limit):
         t.start()
     for t in ts:
         t.join()
-    TIMES_FILE.write_text(json.dumps(dict(sorted(results.items())), indent=1) + "\n", encoding="utf-8")
+    TIMES_FILE.write_text(json.dumps({"_note": TIMES_NOTE, **dict(sorted(results.items()))}, indent=1) + "\n", encoding="utf-8")
     print("\nWrote %s (%d scripts, %.0f s of work in total)" % (TIMES_FILE, len(results), sum(results.values())))
     return 0
 
@@ -212,6 +243,9 @@ def main():
     print("Passing Tests    %d" % totals["Passing Tests"])
     print("Failing Tests    %d" % totals["Failing Tests"])
     print("Risky/Pending    %d" % totals["Risky/Pending"])
+    final = 124 if timed_out else code
+    write_record(total, len(shards), totals, final == 0)
+    print(final_line(final == 0, final, total, len(shards)), file=sys.stderr if final else sys.stdout)
     if timed_out:
         print("TIME LIMIT: the test run went past %d seconds and was stopped (set GUT_TIME_LIMIT to change the limit). Treating the run as failed." % a.limit, file=sys.stderr)
         return 124
