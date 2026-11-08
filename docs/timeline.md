@@ -4100,3 +4100,8 @@ Entry format:
 - Decision or change: Thread-the-needle pairs grouped into routes, played in order or at random; only the active pair pays.
 - Documents touched: docs/level-design.md
 - Tasks: T-592
+
+## 2026-11-08: The full Godot test run no longer hangs: a test left the scene tree paused
+- Decision or change: A test (test_level_up_prewarm.gd) left the scene tree paused, so GUT's timed waits in every later script of the same Godot process never returned; that is what hung the shard ending in test_garage_button_pulse.gd and cost a 3600 s time-out in a merge run on 2026-11-08. The test now unpauses after each test, and a PauseGuard names and fails any test that ends with the tree paused (game/docs/setup/tests.md). Tooling, merged after QA.
+- Documents touched: game/docs/setup/tests.md
+- Tasks: T-589
