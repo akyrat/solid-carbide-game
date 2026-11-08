@@ -228,7 +228,10 @@ func test_the_live_keys_show_top_right_and_light_what_the_car_used() -> void:
 	r.pressed = true
 	session._unhandled_input(r)
 	_drive([false, false, 0.0], 0.02)
-	assert_true(pad.held.contains("R"), "R lit after a reset")
+	assert_false(pad.keys.has("R"), "no R keycap (T-597)")
+	assert_eq(pad.keys.keys().size(), 4, "W, A, S, D")
+	assert_true(pad.space_bar, "and the Space bar")
+	assert_false(pad.held.contains("R"), "a reset lights no R")
 
 
 func test_a_replay_lights_the_takes_keys_step_for_step() -> void:

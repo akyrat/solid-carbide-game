@@ -1,7 +1,7 @@
 ---
 id: T-600
 title: Slide marks, and tire marks that fade in half the time
-status: open
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, game/scripts/driving/drift_marks.gd]
 files_expected_to_change: [game/scripts/driving/, game/data/, game/tests/, game/docs/driving/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,17 +43,29 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Sliding sideways without W (not drifting) leaves lighter marks from the front and back wheels; a straight coast leaves none (tests). (QA: pass / fail)
-- [ ] Drift marks are unchanged in look (the existing tests pass). (QA: pass / fail)
-- [ ] Every tire mark lasts half as long as drift marks did before (a test with the numbers). (QA: pass / fail)
-- [ ] The marks' per-second cost is no higher than before, with how it was checked in the result notes. (QA: pass / fail)
-- [ ] docs/visual-style.md Content and game/docs/driving/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots or a GIF in art-archive/T-600/screenshots/ show a drift into a slide with both kinds of marks, taken with bash game/tools/screenshot.sh. (QA: pass / fail)
+- [ ] Sliding sideways without W (not drifting) leaves lighter marks from the front and back wheels; a straight coast leaves none (tests). (QA: pass)
+- [ ] Drift marks are unchanged in look (the existing tests pass). (QA: pass)
+- [ ] Every tire mark lasts half as long as drift marks did before (a test with the numbers). (QA: pass)
+- [ ] The marks' per-second cost is no higher than before, with how it was checked in the result notes. (QA: pass)
+- [ ] docs/visual-style.md Content and game/docs/driving/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots or a GIF in art-archive/T-600/screenshots/ show a drift into a slide with both kinds of marks, taken with bash game/tools/screenshot.sh. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: lighter slide marks from all four wheels; all tire marks fade in half the time.
+
+### 2026-11-08, In progress → In QA
+
+Agent done; QA's checks passed.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed all 7 criteria. It goes into the new playtest build (playtest-b) for the board.
 
 ## Style review
 
@@ -61,4 +73,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: slide marks (drift_marks.gd, data/slide_marks.json), all tire marks fade in half the time (lifetime 3 s + fade 0.5 s, was 6 + 1). Slide = on the ground, not drifting, W not held, sideways speed >= 2.0 u/s (ends under 1.0). Four tyres (rear and front 0.9 ahead), no hype glow. Works in the run, tutorial practice window and drift prototype (same bind). PROPOSALS (data/slide_marks.json, reasons in its comment): alpha 0.6 for a whole piece (lighter on dark and light ground, no second texture); start 2.0 / stop 1.0 u/s (about 10 degrees at cruise 11; a straight coast has 0; hysteresis stops flicker); every_steps 2 and min segment 0.2 units; joins_drift true (rear marks carry on from the drift mark's last point, same mark). COST CHECK: tests/unit/test_slide_marks.gd lays 150 steps at cruise speed: drift 298 segments / 20 pieces / 598 usec, slide 296 / 20 / 557 usec, so no more per second. TESTS: new test_slide_marks.gd 8/8; full GUT run 285 scripts, 3258 tests, 3257 pass, 0 fail, 1 risky/pending (231 s, 12 processes); game/tools Python set 1193 tests OK (4 skipped). Changed test_drift_marks.gd lifetime assert to 3.0. Docs: game/docs/driving/effects.md, docs/visual-style.md Content. Screenshots in art-archive/T-600/screenshots/: slide_marks_run_100/140/190/260.png (260 shows dark drift marks then lighter slide marks); fixture game/tests/fixtures/slide_marks_demo.gd/.tscn. STALE, not deleted (the safety check protects art-archive): drift_into_slide_130.png and drift_into_slide_190.png were taken from the old drift_marks_demo fixture and show the tutorial screen, not the marks; ignore them. Note: screenshot frames are wall frames, so the slide appears only by frame 260.
+- 2026-11-08, needs-playtest → done: The board played it: looks good (2026-11-08).

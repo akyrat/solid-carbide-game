@@ -4235,3 +4235,28 @@ Entry format:
 - Decision or change: The wheel's burst comes after an alternate drift, half as strong, fading after 0.5 s, with 2 arrows on the ground.
 - Documents touched: docs/drifting.md
 - Tasks: T-603
+
+## 2026-11-08: A new practice playground and alt drift take
+- Decision or change: Quick tuning: the board edits the practice playground and re-records the alt drift take.
+- Documents touched: docs/hud-and-menus.md, docs/level-design.md
+- Tasks: T-604
+
+## 2026-11-08: The jump cloud sits behind the car
+- Decision or change: Merged after the board's playtest: the charged jump's cloud draws behind the car.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-595
+
+## 2026-11-08: No popup for thread the needle
+- Decision or change: Merged after the board's playtest: thread the needle shows no popup and still counts.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-596
+
+## 2026-11-08: No R on the tutorial keycaps
+- Decision or change: Merged after the board's playtest: the tutorial keycaps no longer show R.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-597
+
+## 2026-11-08: Slide marks, and faster fading tire marks
+- Decision or change: Merged after the board's playtest: lighter slide marks from all four wheels when sliding without W; all tire marks last half as long.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-600

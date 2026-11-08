@@ -15,17 +15,15 @@ const INK := Color("0d0d1b")
 const FONT_PATH := "res://fonts/press_start_2p/PressStart2P-Regular.ttf"
 ## The pad's keys: the letter and its cell (column, row) in the 3 x 2 grid.
 const KEYS := {"W": Vector2i(1, 0), "A": Vector2i(0, 1), "S": Vector2i(1, 1), "D": Vector2i(2, 1)}
-## T-574 tweak 9 (the practice windows' live keys): the same pad with R beside W and a Space bar
-## under the three, as on a keyboard. "R" and SPACE ("_") in `held` light them.
-const KEYS_WITH_R := {"W": Vector2i(1, 0), "R": Vector2i(2, 0), "A": Vector2i(0, 1), "S": Vector2i(1, 1),
-	"D": Vector2i(2, 1)}
+## T-574 tweak 9 (the practice windows' live keys): the same pad with a Space bar under the three,
+## as on a keyboard. SPACE ("_") in `held` lights it. No R keycap (T-597).
 const SPACE := "_"
 
 var key_size := 24.0
 var margin := 8.0
 var player: ClipPlayer
 var held := ""
-## The keys drawn (KEYS, or KEYS_WITH_R) and whether a Space bar is drawn under them (T-574).
+## The keys drawn (KEYS) and whether a Space bar is drawn under them (T-574).
 var keys: Dictionary = KEYS
 var space_bar := false
 ## A font to draw the letters in instead of the pixel font (the practice pad uses the HUD's comic
@@ -33,12 +31,11 @@ var space_bar := false
 var font_override: Font
 
 
-## A pad that is not tied to a clip (T-574): W, R, A, S, D and Space, lit by set_held().
+## A pad that is not tied to a clip (T-574): W, A, S, D and Space, lit by set_held().
 static func full(key_px := 24.0) -> KeyPad:
 	var pad := KeyPad.new()
 	pad.name = "KeyPad"
 	pad.key_size = key_px
-	pad.keys = KEYS_WITH_R
 	pad.space_bar = true
 	pad.font_override = HudStyle.comic_font()
 	pad.size = pad.pad_size()

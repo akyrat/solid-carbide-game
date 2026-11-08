@@ -1,7 +1,7 @@
 ---
 id: T-596
 title: No popup for thread the needle (the trick still counts)
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/hud/trick_popups.gd, game/scripts/run/run_state.gd]
 files_expected_to_change: [game/scripts/hud/, game/data/, game/tests/, game/docs/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,16 +43,24 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Threading the needle shows no popup (a test). (QA: pass / fail)
-- [ ] It still raises the combo, counts for missions and routes, and flashes the pair (tests). (QA: pass / fail)
-- [ ] Other tricks still show their popups (the existing tests pass). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content says so. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-596/screenshots/ shows a needle threaded with the combo up and no bubble. (QA: pass / fail)
+- [ ] Threading the needle shows no popup (a test). (QA: pass)
+- [ ] It still raises the combo, counts for missions and routes, and flashes the pair (tests). (QA: pass)
+- [ ] Other tricks still show their popups (the existing tests pass). (QA: pass)
+- [ ] docs/hud-and-menus.md Content says so. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A screenshot in art-archive/T-596/screenshots/ shows a needle threaded with the combo up and no bubble. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, In progress → In QA
+
+Needle bubble hidden by a data switch; the trick still counts and the pair flashes. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. Play it from C:\solid-carbide-worktrees\T-596: thread a pair, no bubble, combo still rises.
 
 ## Style review
 
@@ -60,4 +68,7 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Added data switch data/hud.json trick_popups.hidden=[thread_the_needle]; TrickPopups.is_hidden() checked in _on_combo_trick and _on_trick (run, practice window, prototype). Trick still counts (combo, missions, flash, routes untouched). Test updated + new test (hidden by data, other tricks still pop). Ran test_thread_the_needle, test_trick_popups, _heat, _prebuild, test_recap_screen, test_practice_session, test_bricks_perf: all pass. Screenshots: art-archive/T-596/screenshots/ (flash_030.png shows x1.48 combo, pair flashing, no bubble). Docs: docs/hud-and-menus.md Content, game/docs/hud-and-menus/popups.md.
+
+Project Lead, 2026-11-08: full Godot set on the branch (bash game/tools/run_tests.sh, GUT_TIME_LIMIT=2400): 284 scripts, 3251 tests, 3250 passing, 0 failing, 1 risky/pending, TESTS PASSED (263 s). The Python sets passed in qa_check.
+- 2026-11-08, needs-playtest → done: The board played it in playtest-fixes: works (2026-11-08).

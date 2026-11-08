@@ -199,9 +199,9 @@ func test_a_run_pays_the_trick_with_the_popup() -> void:
 	assert_eq(tricks[0][0], "thread_the_needle")
 	assert_almost_eq(float(tricks[0][1]), ComboData.new().trick_add("thread_the_needle"), 0.000001)
 	assert_almost_eq(run.state.combo, before + 0.5, 0.000001)
-	var pop = run.trick_popups.popups().back()
-	assert_eq(pop.text, TrickPopups.trick_text("thread_the_needle", 0.5), "T-271's text word for word, with T-512's +x{amount}")
-	assert_true(pop.text.begins_with("THREAD THE NEEDLE! +"))
+	# T-596: the trick pays but shows no popup (data/hud.json trick_popups.hidden).
+	for pop in run.trick_popups.popups():
+		assert_false(pop.text.begins_with("THREAD THE NEEDLE!"), "no needle popup")
 
 
 func test_a_run_crash_into_either_obstacle_pays_nothing_and_cuts_the_combo() -> void:
@@ -217,6 +217,18 @@ func test_a_run_crash_into_either_obstacle_pays_nothing_and_cuts_the_combo() -> 
 		assert_false("thread_the_needle" in tricks, "nothing paid")
 		assert_almost_eq(run.state.combo, ComboData.new().after_collision(before), 0.02, "cut as today")
 		run.queue_free()
+
+
+func test_the_needle_popup_is_hidden_by_data_others_still_show() -> void:
+	assert_true(TrickPopups.is_hidden("thread_the_needle"), "hidden in hud.json")
+	assert_false(TrickPopups.is_hidden("three_sixty"), "other tricks show")
+	var run := _run_on(_layout())
+	run.state.combo_trick.emit("thread_the_needle", 0.5, 2.0)
+	assert_eq(run.trick_popups.popups().size(), 0, "the combo signal shows nothing for the needle")
+	run.state.combo_trick.emit("three_sixty", 0.25, 2.0)
+	assert_eq(run.trick_popups.popups().size(), 1, "a 360 still pops")
+	run.car.trick.emit("thread_the_needle")
+	assert_eq(run.trick_popups.popups().size(), 1, "the car's own signal shows nothing either")
 
 
 func test_the_popup_text_word_for_word() -> void:

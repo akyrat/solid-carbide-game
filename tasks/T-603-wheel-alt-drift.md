@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-602]
+depends_on: []
 documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/drift.md, game/data/power_ups.json, tasks/T-502-polarized-steering-wheel.md, tasks/T-527-steering-wheel-cooldown.md]
 files_expected_to_change: [game/scripts/driving/, game/data/, game/tests/, game/docs/driving/, game/tools/]
