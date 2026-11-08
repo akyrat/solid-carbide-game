@@ -1,7 +1,7 @@
 ---
 id: T-592
 title: Needle routes: thread-the-needle pairs played in order or at random
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -55,10 +55,22 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: needle routes, on top of free placement and the route texts.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built needle routes (Level design, Content, 'Level creator: needle routes'; how it works: game/docs/level/level-creator-pieces.md, 'Needle routes (T-592)').
+- Format: level file 'routes' [{id: route-N, order: in_order|random, pairs: [pair ids in click order]}], one place game/scripts/level/needle_routes.gd (NeedleRoutes). No 'routes' key when there are none, so old levels load and save unchanged. check_level.py check_routes accepts it (unique id, order, existing pair ids, a pair in one route at most).
+- Creator (editor.gd, T-591's texts, key N): Route button/N turns the tool on (pair tool off); clicking pair lines adds them in click order (route_pair_added %d); right-click finishes the route (route_finished) and keeps the tool on, N/Esc finish it and turn it off; In order / Random switch; clicking a line of a route picks it and its route (later clicks add there), Remove from route takes it out; empty routes go; Unpair or deleting an obstacle takes its pair out of its route. Hint line now controls_hint_routes. Drawn: route lines in the route's colour (cyan, pink, amber, violet), numbered 1, 2, 3, 'Route: n pairs' above the first; route being changed thicker, picked pair thicker still.
+- Run (thread_the_needle.gd): only each route's active pair pays; paying moves the route on (in order wraps; random picks a different pair). Markers: active bright, waiting faint, free pairs as before. T-451's flash unchanged (only a paying pair flashes).
+Proposals (game/data/level/needle_routes.json, with reasons): active alpha 0.9 and 1.6x width; waiting alpha 0.12; free 0.35 (as before); threading a waiting pair does nothing (no trick, flash or advance); a random route starts at a random pair (in order at its first); a pair is in one route at most (clicking it while building another moves it); right-click keeps the tool on for the next route; editor route colours; obstacles of waiting pairs drawn as always.
+Also fixed: test_creator_hints.gd failed on this branch (T-576's hint test met T-581's free placement: placed off the grid); its editor now holds Shift (snap_held), as T-581 did for the other grid tests.
+Tests: new tests/unit/level_creator/test_creator_routes.gd (13 pass), tests/unit/run/test_needle_routes.gd (11 pass), tools/test_check_level.py TestCheckRoutes (59 pass in the file). Full Godot set (GUT_TIME_LIMIT=2400): 3190 tests, 3189 passing, 0 failing, 1 risky/pending, 251 s.
+Screenshots: art-archive/T-592/screenshots/route_in_editor.png (a 3-pair random route being edited and a 1-pair route), run_before.png (first pair bright, other two faint), run_after.png (after threading it: second bright, first faint). Fixtures: tests/fixtures/t592_routes_demo.tscn, t592_routes_run_demo.tscn.
+Documents affected: docs/level-design.md (Content), game/docs/level/level-creator-pieces.md, game/docs/level/level-creator.md.

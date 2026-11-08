@@ -345,6 +345,59 @@ class TestCheckPairs(unittest.TestCase):
         self.assertIn("no such obstacle", res.stdout)
 
 
+class TestCheckRoutes(unittest.TestCase):
+    """T-592: needle routes {id, order, pairs}: unique ids, an order in_order or random, pair ids of the
+    level, a pair in one route at most."""
+
+    def level(self, *routes):
+        d = TestCheckPairs().level(
+            {"id": "pair-1", "a": "copy-01", "b": "prop-1"},
+            {"id": "pair-2", "a": "prop-1", "b": "prop-3"},
+            {"id": "pair-3", "a": "copy-02/0", "b": "copy-02/1"})
+        if routes:
+            d["routes"] = list(routes)
+        return d
+
+    def test_accepts_a_level_with_routes(self):
+        d = self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-2", "pair-1"]},
+                       {"id": "route-2", "order": "random", "pairs": ["pair-3"]})
+        self.assertEqual(c.check_level(d), [])
+
+    def test_a_level_without_routes_is_valid(self):
+        self.assertEqual(c.check_level(self.level()), [])
+
+    def test_the_tool_accepts_a_level_with_routes(self):
+        d = self.level({"id": "route-1", "order": "random", "pairs": ["pair-1", "pair-2", "pair-3"]})
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "level.json"
+            p.write_text(json.dumps(d), encoding="utf-8")
+            res = run_tool(p)
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"))
+
+    def test_rejects_a_missing_pair(self):
+        problems = c.check_level(self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-9"]}))
+        self.assertTrue(any("route 'route-1'" in p and "'pair-9'" in p for p in problems), problems)
+
+    def test_rejects_a_pair_in_two_routes_or_twice(self):
+        problems = c.check_level(self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-1"]},
+                                            {"id": "route-2", "order": "in_order", "pairs": ["pair-2", "pair-1"]}))
+        self.assertTrue(any("'pair-1' is already in route 'route-1'" in p for p in problems), problems)
+        problems = c.check_level(self.level({"id": "route-1", "order": "in_order", "pairs": ["pair-1", "pair-1"]}))
+        self.assertTrue(any("already in" in p for p in problems), problems)
+
+    def test_rejects_a_bad_order_an_empty_route_a_repeated_id(self):
+        problems = c.check_level(self.level({"id": "route-1", "order": "backwards", "pairs": ["pair-1"]}))
+        self.assertTrue(any("order must be" in p for p in problems), problems)
+        problems = c.check_level(self.level({"id": "route-1", "order": "random", "pairs": []}))
+        self.assertTrue(any("at least one" in p for p in problems), problems)
+        problems = c.check_level(self.level({"id": "route-1", "order": "random", "pairs": ["pair-1"]},
+                                            {"id": "route-1", "order": "random", "pairs": ["pair-2"]}))
+        self.assertTrue(any("used twice" in p for p in problems), problems)
+        d = self.level()
+        d["routes"] = {"x": 1}
+        self.assertIn("routes: must be a list", c.check_level(d))
+
+
 class TestSpawn(unittest.TestCase):
     """T-280: every level has a spawn point a car can stand on."""
 

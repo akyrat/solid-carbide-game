@@ -92,7 +92,7 @@ func test_a_level_saved_before_t280_opens_with_it_at_the_centre() -> void:
 func test_the_label_is_t279s_and_the_hint_line_has_the_start() -> void:
 	var e := _editor()
 	assert_eq(CreatorTexts.get_text("spawn_label"), "Start")
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_routes"))
 	assert_string_contains(e.hint_label.text, "move the start")
 
 

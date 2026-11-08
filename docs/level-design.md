@@ -480,6 +480,23 @@ Task T-394 (Decisions, "A row of obstacles can be threaded gap after gap"). It c
 ![A row of five boulders paired as a chain along a road, and a second row of three obstacles picked and numbered 1, 2, 3](../art-archive/T-394/screenshots/chain_in_editor.png)
 ![The car after threading the third gap of a chained row in a run, with the popup](../art-archive/T-394/screenshots/chain_popup.png)
 
+### Level creator: needle routes
+
+Task T-592 (Decisions, "Needle routes"; the texts are T-591's, above). How it works: `game/docs/level/level-creator-pieces.md`, "Thread the needle (T-272)", "Needle routes (T-592)". The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest; the run's numbers are in `game/data/level/needle_routes.json`, with their reasons.
+
+- **Making a route:** the top bar's "Route", or **N**, turns the route tool on (it drops the picked piece and turns the pair tool off). Click pairs' dashed lines one after the other: each joins the route, "Pair added to the route (n)." on the top bar, and is numbered 1, 2, 3 on its line. A right-click finishes the route ("Route finished.") and keeps the tool on, so the next click starts another; N or Esc finish it and turn the tool off (a proposal: the texts name all three).
+- **A pair is in one route at most** (a proposal): clicking a pair of another route while building one moves it into this one.
+- **Changing a route:** with the tool on and no route being built, clicking a line of a route picks that pair and its route; later clicks add to that route. The order switch, "In order" and "Random", shows with the tool on and sets the order of the route being built or picked (chosen before the first click, the new route gets it; In order by default). "Remove from route" shows with a pair of a route picked and takes it out; the pair stays, in no route. A route left with no pairs goes.
+- **How it shows in the editor (a proposal):** a route's lines in its own colour (cyan, pink, amber, violet, in turn), numbered in the route's order, with "Route: n pairs" above its first pair; the route being changed is drawn thicker, the picked pair thicker still. Pairs in no route stay mint green.
+- **Saved:** the level file's `routes` list (id, order, and the pairs in click order). A level with no routes is saved as before, levels saved before open unchanged, and `check_level.py` accepts a level with routes (and refuses a route naming a missing pair, a pair in two routes, or an unknown order). Unpairing or deleting an obstacle takes its pair out of its route.
+- **In a run:** only each route's **active pair** pays thread the needle. In order, the route starts at its first pair and threading the active one makes the next active, back to the first after the last. Random: threading it makes a random other pair active, never the same one twice in a row; it also starts at a random pair (a proposal, so two runs differ from the first gap). A route of one pair pays like a pair in no route. Pairs in no route work as before, and so does the flash (T-451): only the pair that paid flashes.
+- **Threading a waiting pair (a proposal):** nothing: no trick, no flash, and the route does not move on, so only the bright gap counts and a route can't be skipped.
+- **Bright and faint (a proposal):** the active pair's chalk line at alpha 0.9 and 1.6 times as thick; the waiting pairs' at alpha 0.12; a pair in no route as before (0.35). The obstacles themselves are drawn as always.
+
+![A route of three pairs in the editor, numbered in click order, with a second route](../art-archive/T-592/screenshots/route_in_editor.png)
+![In a run, the route's active pair bright and the waiting pairs faint](../art-archive/T-592/screenshots/run_before.png)
+![After threading it, the next pair of the route is bright](../art-archive/T-592/screenshots/run_after.png)
+
 ### Level creator: the spawn point
 
 Built in task T-280 from Decisions, "The car's spawn point", with T-279's labels. The choices below are proposals for the playtest.

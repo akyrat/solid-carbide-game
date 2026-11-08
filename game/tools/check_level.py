@@ -23,6 +23,10 @@ also checks that:
   Obstacles group (data/level/creator_assets.json's families in group "obstacles") by its id; an
   obstacle can be in several pairs (T-394, a row paired as a chain), but the same two obstacles make
   one pair at most (scripts/level/obstacle_pairs.gd, the same rules);
+- every needle route (routes: {id, order, pairs}, T-592) has a unique id, an order "in_order" or
+  "random", and a list of at least one pair id, each naming a pair of the level, with no pair twice in
+  a route or in two routes (scripts/level/needle_routes.gd, the same format); a level without routes
+  is fine;
 - the level has a spawn point (spawn: {x, y, heading}, T-280): a heading that is a multiple of 45
   degrees, inside the map and where a car can stand (clear of every building, prop and boulder; a
   rooftop or ramp is fine), the same rules as scripts/level/level_spawn.gd;
@@ -284,6 +288,49 @@ def check_pairs(data):
     return problems
 
 
+ROUTE_ORDERS = ("in_order", "random")  # needle_routes.gd's ORDERS
+
+
+def check_routes(data):
+    """Problems with the level's needle routes (T-592): each {id, order, pairs} has a unique id, an
+    order of ROUTE_ORDERS and at least one pair id naming a pair of the level; a pair is in one route
+    at most, once."""
+    routes = data.get("routes", [])
+    if not isinstance(routes, list):
+        return ["routes: must be a list"]
+    pairs = data.get("pairs", [])
+    pair_ids = {p.get("id") for p in pairs if isinstance(p, dict)} if isinstance(pairs, list) else set()
+    problems = []
+    ids = set()
+    in_route = {}
+    for i, r in enumerate(routes):
+        name = "route %r" % r.get("id") if isinstance(r, dict) and r.get("id") else "route #%d" % i
+        if not isinstance(r, dict):
+            problems.append("%s: must be an object {id, order, pairs}" % name)
+            continue
+        rid = r.get("id")
+        if not isinstance(rid, str) or rid == "":
+            problems.append("%s: needs an id" % name)
+        elif rid in ids:
+            problems.append("%s: the id is used twice" % name)
+        else:
+            ids.add(rid)
+        if r.get("order") not in ROUTE_ORDERS:
+            problems.append("%s: order must be one of %s" % (name, ", ".join(ROUTE_ORDERS)))
+        rp = r.get("pairs")
+        if not isinstance(rp, list) or not rp:
+            problems.append("%s: pairs must be a list of at least one pair id" % name)
+            continue
+        for pid in rp:
+            if not isinstance(pid, str) or pid not in pair_ids:
+                problems.append("%s: %r is not a pair of the level" % (name, pid))
+            elif pid in in_route:
+                problems.append("%s: %r is already in %s" % (name, pid, in_route[pid]))
+            else:
+                in_route[pid] = name
+    return problems
+
+
 GAME_MAPS_DIR = Path(__file__).resolve().parent.parent / "data" / "level"  # the game's own maps
 SPAWN_CLEARANCE = 1.0 # level_spawn.gd's CLEARANCE (units)
 SPAWN_HEADING_STEP = 45  # level_spawn.gd's HEADING_STEP (degrees)
@@ -406,6 +453,7 @@ def check_level(data, require_spawn=True):
     problems.extend(check_craters(data, map_rect))
     problems.extend(check_hints(data, map_rect))
     problems.extend(check_pairs(data))
+    problems.extend(check_routes(data))
     problems.extend(check_spawn(data, map_rect, require_spawn))
     problems.extend(check_start_points(data, map_rect))
 

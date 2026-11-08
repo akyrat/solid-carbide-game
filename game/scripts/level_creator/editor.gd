@@ -47,6 +47,12 @@ extends Control
 ## on screen; Shift+click on the pick takes it out again), and Pair obstacles or P then pairs each
 ## with the next, or a plain click adds the last one and pairs the row. Unpair with a pick removes
 ## only the pairs between consecutive picked ones (one picked: all its pairs).
+## Needle routes (T-592; T-591's texts): the Route button or N turns the route tool on; clicking pairs'
+## dashed lines adds them to a route in click order (numbered on screen, in the route's colour, with
+## its label); the order switch (In order, Random) sets the route's order; clicking a line already in a
+## route selects that route (later clicks add to it) and the pair, which Remove from route takes out.
+## A right-click finishes the route and keeps the tool on for the next; N or Esc finish it and turn
+## the tool off. Saved in the level file's "routes" (LevelDocument, NeedleRoutes).
 ##
 ## Rails (T-542; Level design, Content, "Rails in the level creator"): the Rail piece (Levels group) is
 ## laid with a drag from one end to the other, or a click (a rail RailPiece.DEFAULT_LENGTH long in the picked
@@ -207,6 +213,23 @@ var unpair_button: Button
 const PAIR_COLOR := Color(0.35, 1.0, 0.75, 0.95)
 const PAIR_DASH_UNITS := 1.0
 
+## Needle routes (T-592): the route tool (the top bar's Route, key N) is on; the route being built or
+## edited ("" for none: the next click on a free pair starts one); the pair picked in it (for Remove
+## from route); the order a new route gets (the switch with no route yet); the top bar's controls.
+var route_mode := false
+var route_current := ""
+var route_pair_selected := ""
+var route_next_order := NeedleRoutes.ORDER_IN_ORDER
+var route_button: Button
+var route_order_buttons := {}
+var route_remove_button: Button
+## How a route shows in the editor (a proposal): its pairs' lines in the route's colour (one per route,
+## in turn: cyan, pink, amber, violet, none of Greenbull's colours), each numbered in the route's order,
+## and the route's label beside its first pair. The route being edited is drawn thicker.
+const ROUTE_COLORS := [Color(0.35, 0.9, 1.0, 0.95), Color(1.0, 0.45, 0.85, 0.95), Color(1.0, 0.75, 0.3, 0.95), Color(0.7, 0.55, 1.0, 0.95)]
+## How near a click must be to a pair's line to pick it (screen pixels; the route tool).
+const ROUTE_PICK_PX := 12.0
+
 
 ## A new level: an empty map with the default name.
 func open_new() -> void:
@@ -335,6 +358,26 @@ func _ready() -> void:
 	unpair_button.text = CreatorTexts.get_text("unpair_label")
 	unpair_button.pressed.connect(unpair_selected)
 	bar.add_child(unpair_button)
+	# T-592: needle routes (T-591's texts).
+	route_button = Button.new()
+	route_button.name = "RouteButton"
+	route_button.text = CreatorTexts.get_text("route_tool")
+	route_button.toggle_mode = true
+	route_button.pressed.connect(func() -> void: set_route_tool(route_button.button_pressed))
+	bar.add_child(route_button)
+	for id in NeedleRoutes.ORDERS:
+		var b := Button.new()
+		b.name = "RouteOrder_" + id
+		b.text = CreatorTexts.get_text("route_order_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_route_order.bind(id))
+		bar.add_child(b)
+		route_order_buttons[id] = b
+	route_remove_button = Button.new()
+	route_remove_button.name = "RouteRemoveButton"
+	route_remove_button.text = CreatorTexts.get_text("route_remove_pair")
+	route_remove_button.pressed.connect(remove_pair_from_route)
+	bar.add_child(route_remove_button)
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
@@ -368,8 +411,8 @@ func _ready() -> void:
 
 	hint_label = Label.new()
 	hint_label.name = "Hint"
-	# T-280: the line with moving the start added (controls_hint_spawn).
-	hint_label.text = CreatorTexts.get_text("controls_hint_spawn")
+	# T-592: the line with the route key added (controls_hint_routes; T-280's controls_hint_spawn before).
+	hint_label.text = CreatorTexts.get_text("controls_hint_routes")
 	# T-262: the longer line shrinks its font to fit a narrow window instead of running off its edge.
 	map_view.resized.connect(_fit_hint)
 	main.add_child(hint_label)
@@ -743,6 +786,8 @@ func arrows_pick() -> String:
 ## the selection; a left click then picks an obstacle (pair_click). Picking a piece, Esc or a
 ## right-click turns it off.
 func set_pair_tool(on: bool) -> void:
+	if on and route_mode:
+		set_route_tool(false)  # T-592: one tool at a time
 	pair_picks = []
 	if on:
 		pair_mode = true  # before the pick goes, so _on_asset_picked("") leaves it on
@@ -1057,6 +1102,136 @@ func place_zebra(units: Vector2) -> bool:
 	return true
 
 
+# ---- Needle routes (T-592) ---------------------------------------------------------------------
+
+## Turns the route tool on or off (the top bar's Route, key N). On, it drops the pick, the selection
+## and the pair tool; a left click on a pair's line then adds it to the route (route_click). Off, the
+## route being built is finished (route_finished on the top bar).
+func set_route_tool(on: bool) -> void:
+	if on:
+		if pair_mode:
+			set_pair_tool(false)
+		route_mode = true  # before the pick goes, so _on_asset_picked("") leaves it on
+		size_drag_start = Vector2i(-1, -1)
+		end_road_stroke()
+		if panel != null and panel.picked != "":
+			panel.pick("")
+		selected = {}
+		route_current = ""
+		route_pair_selected = ""
+		_show_message("")
+	elif route_mode:
+		finish_route()
+	route_mode = on
+	_update_pose_controls()
+	if _overlay != null:
+		_overlay.queue_redraw()
+
+
+## N: the route tool on or off (off finishes the route). Returns whether it is on now.
+func route_pick() -> bool:
+	set_route_tool(not route_mode)
+	return route_mode
+
+
+## Ends the route being built or edited: route_finished on the top bar when there was one; the next
+## click on a free pair starts a new route. Returns true when a route was finished.
+func finish_route() -> bool:
+	var had := route_current != "" and not document.route_by_id(route_current).is_empty()
+	route_current = ""
+	route_pair_selected = ""
+	if had:
+		_show_message(CreatorTexts.get_text("route_finished"))
+	_update_pose_controls()
+	if _overlay != null:
+		_overlay.queue_redraw()
+	return had
+
+
+## The order the switch shows: the route's being edited, else the one a new route gets.
+func route_order() -> String:
+	var r: Dictionary = document.route_by_id(route_current) if document != null else {}
+	return NeedleRoutes.order_of(r) if not r.is_empty() else route_next_order
+
+
+## The order switch: sets the order of the route being edited (and of the next new route).
+func set_route_order(order: String) -> void:
+	if not order in NeedleRoutes.ORDERS:
+		return
+	route_next_order = order
+	if route_current != "":
+		document.set_route_order(route_current, order)
+	_update_pose_controls()
+
+
+## The pair whose dashed line is nearest the point `local` of the map view, within ROUTE_PICK_PX
+## screen pixels; "" for none.
+func pair_at(local: Vector2) -> String:
+	var px := local_px(local)
+	var best := ""
+	var best_d := ROUTE_PICK_PX / maxf(zoom, 0.01)
+	for p in document.pairs():
+		var line := ObstaclePairs.line_of(document.data, p)
+		if line.is_empty():
+			continue
+		var a := map_px_at(line.gap_a, document.height_at(line.a))
+		var b := map_px_at(line.gap_b, document.height_at(line.b))
+		var d := px.distance_to(Geometry2D.get_closest_point_to_segment(px, a, b))
+		if d <= best_d:
+			best_d = d
+			best = str(p.get("id", ""))
+	return best
+
+
+## A point of the map (units) at height `h`, in map pixels (where the overlay draws it).
+func map_px_at(units: Vector2, h: float) -> Vector2:
+	return ISO_TRANSFORM * (units * PX_PER_UNIT) - Vector2(0.0, h * PX_PER_UNIT)
+
+
+## A click with the route tool at `local` (the map view's pixels): route_click_pair on the pair
+## under it.
+func route_click(local: Vector2) -> String:
+	return route_click_pair(pair_at(local))
+
+
+## Pair `pair_id` clicked with the route tool. A pair in no route (or in another route while one is
+## being built) joins the route being built as its last (a new route when none is, in the switch's
+## order): route_pair_added with the count. A pair already in the route being built, or (with none
+## being built) in any route, is picked, for Remove from route, and its route becomes the one being
+## edited. Returns "added", "selected" or "none" (no pair there).
+func route_click_pair(pair_id: String) -> String:
+	if pair_id == "" or document.pair_by_id(pair_id).is_empty():
+		return "none"
+	var r := document.route_of_pair(pair_id)
+	var result := "selected"
+	if not r.is_empty() and (route_current == "" or str(r.id) == route_current):
+		route_current = str(r.id)
+		_show_message("")
+	else:
+		var to := document.add_to_route(route_current, pair_id, route_next_order)
+		route_current = str(to.id)
+		_show_message(CreatorTexts.get_text("route_pair_added") % to.pairs.size())
+		result = "added"
+	route_pair_selected = pair_id
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return result
+
+
+## Remove from route: takes the picked pair out of its route (the pair stays). A route left with no
+## pairs goes; the tool then starts a new one at the next click. True when a pair was taken out.
+func remove_pair_from_route() -> bool:
+	if route_pair_selected == "" or not document.remove_from_route(route_pair_selected):
+		return false
+	route_pair_selected = ""
+	if document.route_by_id(route_current).is_empty():
+		route_current = ""
+	_show_message("")
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return true
+
+
 ## The size line on the top bar: during a drag the size it would place (size_readout: {w} the
 ## width east-west, {d} the depth north-south, units); with a resizable piece picked, size_hint.
 ## With a road brush picked (T-263): road_brush_hint.
@@ -1065,6 +1240,9 @@ func _update_size_label() -> void:
 		return
 	if pair_mode:
 		size_label.text = CreatorTexts.get_text("pair_hint")  # T-272
+		return
+	if route_mode:
+		size_label.text = CreatorTexts.get_text("route_hint")  # T-592
 		return
 	if brush_mode() == "paint":
 		size_label.text = CreatorTexts.get_text("road_brush_hint")
@@ -1193,6 +1371,8 @@ func _on_asset_picked(id: String) -> void:
 	if id != "" and pair_mode:
 		pair_mode = false  # T-272: picking a piece ends the pair tool
 		pair_picks = []
+	if id != "" and route_mode:
+		set_route_tool(false)  # T-592: and the route tool
 	if id != "" and panel != null and not panel.member.is_empty():
 		_pose_from(panel.member)
 	else:
@@ -1221,6 +1401,7 @@ const KEY_ACTIONS := {
 	KEY_A: "arrows",
 	KEY_B: "banner",
 	KEY_P: "pair",
+	KEY_N: "route",
 }
 
 
@@ -1374,6 +1555,16 @@ func _update_pose_controls() -> void:
 	if pair_button != null:
 		pair_button.set_pressed_no_signal(pair_mode)
 		unpair_button.visible = can_unpair()  # T-394: also for a pick in the pair tool
+	# T-592: Route pressed while its tool is on; the order switch with it (the route's order, or the
+	# next route's); Remove from route with a pair of a route picked.
+	if route_button != null:
+		route_button.set_pressed_no_signal(route_mode)
+		var order := route_order()
+		for o in route_order_buttons:
+			route_order_buttons[o].visible = route_mode
+			route_order_buttons[o].set_pressed_no_signal(o == order)
+		route_remove_button.visible = route_mode and route_pair_selected != "" \
+			and not document.route_of_pair(route_pair_selected).is_empty()
 	_update_size_label()
 
 
@@ -1914,7 +2105,9 @@ func _on_map_input(event: InputEvent) -> void:
 				begin_road_stroke(units, mb.button_index == MOUSE_BUTTON_RIGHT)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			var units := screen_to_units(mb.position)
-			if panel.picked == "" and not pair_mode and press_rail(mb.position):
+			if route_mode:
+				route_click(mb.position)  # T-592: a pair's line joins the route
+			elif panel.picked == "" and not pair_mode and press_rail(mb.position):
 				pass  # T-542: a rail's end or bar: select it and drag
 			elif panel.picked == "" and not pair_mode and spawn_cell_has(units):
 				begin_spawn_drag()  # T-280: drag the start
@@ -1940,6 +2133,8 @@ func _on_map_input(event: InputEvent) -> void:
 			end_spawn_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and size_drag_start.x >= 0:
 			end_size_drag(screen_to_units(mb.position))
+		elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed and route_mode:
+			finish_route()  # T-592: the route is finished, the tool stays on for the next
 		elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			panel.pick("")
 			if pair_mode:
@@ -2003,6 +2198,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				banner_pick()
 			"pair":
 				pair_pick()
+			"route":
+				route_pick()
 			var axis:
 				step_pick(axis)
 		get_viewport().set_input_as_handled()
@@ -2028,6 +2225,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			panel.pick("")
 			if pair_mode:
 				set_pair_tool(false)
+			if route_mode:
+				set_route_tool(false)  # T-592: finishes the route
 			selected = {}
 			_update_pose_controls()
 			_overlay.queue_redraw()
@@ -2267,16 +2466,48 @@ class _Overlay extends Node2D:
 	## (T-394). An obstacle in several pairs (a chain) shows a line for each.
 	func _draw_pairs(doc: LevelDocument, w: float) -> void:
 		var col: Color = editor.PAIR_COLOR
+		# T-592: a pair in a route in its route's colour, numbered; the route being edited thicker,
+		# the picked pair thicker still; the route's label above its first pair.
+		var route_at := {}
+		var routes := doc.routes()
+		for ri in routes.size():
+			var ids: Array = routes[ri].get("pairs", [])
+			for i in ids.size():
+				route_at[str(ids[i])] = [ri, i]
+		var labels: Array = []
 		for p in doc.pairs():
 			var line := ObstaclePairs.line_of(doc.data, p)
 			if line.is_empty():
 				continue
 			var ha := doc.height_at(line.a)
 			var hb := doc.height_at(line.b)
-			draw_dashed_line(_at(line.gap_a, ha), _at(line.gap_b, hb), col, w * 1.5,
+			var pid := str(p.get("id", ""))
+			var c := col
+			var lw := w * 1.5
+			if route_at.has(pid):
+				var ri: int = route_at[pid][0]
+				var idx: int = route_at[pid][1]
+				c = editor.ROUTE_COLORS[ri % editor.ROUTE_COLORS.size()]
+				if str(routes[ri].get("id", "")) == editor.route_current:
+					lw = w * 3.0
+				if pid == editor.route_pair_selected:
+					lw = w * 5.0
+				var mid := (_at(line.gap_a, ha) + _at(line.gap_b, hb)) / 2.0
+				labels.append([mid, str(idx + 1), c])
+				if idx == 0:
+					var text: String = CreatorTexts.get_text("route_label") % routes[ri].get("pairs", []).size()
+					labels.append([mid + Vector2(0.0, -2.0 * editor.PX_PER_UNIT), text, c])
+			draw_dashed_line(_at(line.gap_a, ha), _at(line.gap_b, hb), c, lw,
 				editor.PAIR_DASH_UNITS * editor.PX_PER_UNIT)
-			_ring(line.obstacle_a, ha, col, w)
-			_ring(line.obstacle_b, hb, col, w)
+			_ring(line.obstacle_a, ha, c, w)
+			_ring(line.obstacle_b, hb, c, w)
+		var lfont := ThemeDB.fallback_font
+		var lfs := int(clampf(18.0 / maxf(editor.zoom, 0.01), 18.0, 450.0))
+		for l in labels:
+			var lsize := lfont.get_string_size(l[1], HORIZONTAL_ALIGNMENT_LEFT, -1, lfs)
+			var lat: Vector2 = l[0] + Vector2(-lsize.x / 2.0, lsize.y / 3.0)
+			draw_string_outline(lfont, lat, l[1], HORIZONTAL_ALIGNMENT_LEFT, -1, lfs, maxi(lfs / 5, 2), editor.SPAWN_OUTLINE)
+			draw_string(lfont, lat, l[1], HORIZONTAL_ALIGNMENT_LEFT, -1, lfs, l[2])
 		# The pick (T-394: a row): each ringed thicker and, for a row, numbered in order.
 		var font := ThemeDB.fallback_font
 		var fs := int(clampf(24.0 / maxf(editor.zoom, 0.01), 24.0, 600.0))  # as the spawn's label, larger

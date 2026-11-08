@@ -43,6 +43,10 @@ extends RefCounted
 ##   Obstacles group's props) named by their refs (ObstaclePairs); make_pair, unpair, pair_of.
 ##   Deleting either obstacle removes its pair. An obstacle can be in several pairs (T-394: a row
 ##   paired as a chain, make_chain); the same two obstacles make one pair at most (pair_between).
+## - route (T-592, needle routes; scripts/level/needle_routes.gd, the format): {id: "route-N", order:
+##   "in_order" | "random", pairs: [pair ids in click order]} in routes; a pair is in one route at most.
+##   add_to_route, set_route_order, remove_from_route. A pair that goes (Unpair, or an obstacle deleted)
+##   leaves its route, and a route left with no pairs goes too (_prune_routes).
 ## - sidewalk (T-398): ground tiles like the roads', painted with SidewalkBrush; every write of the
 ##   cells gives each sidewalk cell the tile of its curb piece (the roads next to it).
 ## - crater (T-398; data/level/craters.json): {id, asset, x, y, w, h} in craters, a meteor crater on
@@ -1159,6 +1163,7 @@ func unpair(piece: Dictionary) -> bool:
 	var l := pairs_with(piece)
 	for p in l:
 		_erase_same(_list("pairs"), p)
+	_prune_routes()
 	return not l.is_empty()
 
 
@@ -1168,6 +1173,7 @@ func unpair_between(a: Dictionary, b: Dictionary) -> bool:
 	if p.is_empty():
 		return false
 	_erase_same(_list("pairs"), p)
+	_prune_routes()
 	return true
 
 
@@ -1213,6 +1219,7 @@ func _repair_pairs(before: Array, removed: Dictionary) -> void:
 		p["b"] = refs[1]
 		keep.append(p)
 	data["pairs"] = keep
+	_prune_routes()
 
 
 ## The ref of an obstacle item still in the level (a boulder of a copy, or a prop), "" for none.
@@ -1226,6 +1233,111 @@ func _ref_of_item(item: Dictionary) -> String:
 		if is_same(pr, item):
 			return str(pr.get("id", ""))
 	return ""
+
+
+# ---- Needle routes (T-592) ---------------------------------------------------------------------
+
+## The level's routes ([{id, order, pairs}]), [] for none.
+func routes() -> Array:
+	return NeedleRoutes.routes_of(data)
+
+
+## The route with id `route_id`, {} for none.
+func route_by_id(route_id: String) -> Dictionary:
+	for r in routes():
+		if r is Dictionary and str(r.get("id", "")) == route_id:
+			return r
+	return {}
+
+
+## The route holding pair `pair_id`, {} for none.
+func route_of_pair(pair_id: String) -> Dictionary:
+	for r in routes():
+		if r is Dictionary and pair_id in _route_pairs(r):
+			return r
+	return {}
+
+
+## The pair with id `pair_id`, {} for none.
+func pair_by_id(pair_id: String) -> Dictionary:
+	for p in pairs():
+		if str(p.get("id", "")) == pair_id:
+			return p
+	return {}
+
+
+## Adds pair `pair_id` as the last of route `route_id`; with route_id "" (or a route that is gone) a
+## new route is made, in `order`. A pair already in another route leaves it (a pair is in one route
+## at most; the other route goes when it is left empty); one already in this route stays where it
+## is. Returns the route, {} when the pair does not exist.
+func add_to_route(route_id: String, pair_id: String, order: String = NeedleRoutes.ORDER_IN_ORDER) -> Dictionary:
+	if pair_by_id(pair_id).is_empty():
+		return {}
+	var r := route_by_id(route_id)
+	if r.is_empty():
+		r = {"id": _next_id("routes", "route-"), "order": order if order in NeedleRoutes.ORDERS else NeedleRoutes.ORDER_IN_ORDER, "pairs": []}
+		_list("routes").append(r)
+	var ids := _route_pairs(r)
+	if pair_id in ids:
+		return r
+	var old := route_of_pair(pair_id)
+	if not old.is_empty():
+		_route_pairs(old).erase(pair_id)
+	ids.append(pair_id)
+	_prune_routes()
+	return r
+
+
+## Sets route `route_id`'s order (NeedleRoutes.ORDERS). Returns true when it changed.
+func set_route_order(route_id: String, order: String) -> bool:
+	var r := route_by_id(route_id)
+	if r.is_empty() or not order in NeedleRoutes.ORDERS or str(r.get("order", "")) == order:
+		return false
+	r["order"] = order
+	return true
+
+
+## Takes pair `pair_id` out of its route (the pair stays, in no route); a route left empty goes.
+## Returns true when it was in one.
+func remove_from_route(pair_id: String) -> bool:
+	var r := route_of_pair(pair_id)
+	if r.is_empty():
+		return false
+	_route_pairs(r).erase(pair_id)
+	_prune_routes()
+	return true
+
+
+## A route's pairs list (made an Array of Strings in place).
+static func _route_pairs(r: Dictionary) -> Array:
+	if not (r.get("pairs") is Array):
+		r["pairs"] = []
+	return r["pairs"]
+
+
+## Drops from every route the pairs that no longer exist, and the routes left with none. With no
+## routes left the key goes, so a level that never had any keeps its file as before.
+func _prune_routes() -> void:
+	if not data.has("routes"):
+		return
+	var have := {}
+	for p in pairs():
+		have[str(p.get("id", ""))] = true
+	var keep: Array = []
+	for r in routes():
+		if not (r is Dictionary):
+			continue
+		var ids: Array = []
+		for pid in _route_pairs(r):
+			if have.has(str(pid)) and not str(pid) in ids:
+				ids.append(str(pid))
+		r["pairs"] = ids
+		if not ids.is_empty():
+			keep.append(r)
+	if keep.is_empty():
+		data.erase("routes")
+	else:
+		data["routes"] = keep
 
 
 ## Removes the very Dictionary `item` (not an equal one) from `list`.

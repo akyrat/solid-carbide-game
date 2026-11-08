@@ -100,7 +100,7 @@ func test_the_editor_labels_come_from_the_texts() -> void:
 	assert_eq(e.delete_button.text, CreatorTexts.get_text("delete_label"))
 	assert_eq(e.back_button.text, CreatorTexts.get_text("back_button"))
 	# T-262: the reworked creator's hint (T-261's line) replaces T-251's.
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_routes"))  # T-280: the line with moving the start.
 
 
 func test_picking_in_the_panel_and_clicking_places() -> void:
