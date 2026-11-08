@@ -1,7 +1,7 @@
 ---
 id: T-590
 title: A charged jump, for a playtest
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/data/power_ups.json, game/data/rail_grind.json, game/scripts/driving/, tasks/T-578-rail-launch-keeps-speed.md]
 files_expected_to_change: [game/data/, game/scripts/driving/, game/tests/, game/docs/driving/, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With Jump owned, holding Space on the ground for 0, 1.5 and 3+ s gives takeoff x1, x1.25 and x1.5, jumping on release (tests). (QA: pass / fail)
-- [ ] Space in the air still tilts and grinds as before, and without Jump the ground Space is unchanged (the existing tests pass). (QA: pass / fail)
-- [ ] The charge cue shows while charging and is gone after the jump (a test or screenshot). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-590/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass / fail)
+- [ ] With Jump owned, holding Space on the ground for 0, 1.5 and 3+ s gives takeoff x1, x1.25 and x1.5, jumping on release (tests). (QA: pass)
+- [ ] Space in the air still tilts and grinds as before, and without Jump the ground Space is unchanged (the existing tests pass). (QA: pass)
+- [ ] The charge cue shows while charging and is gone after the jump (a test or screenshot). (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/ describe it. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-590/screenshots/ shows a tap and a full charge side by side or one after the other. (QA: pass)
 
 ## Updates
 
@@ -61,6 +61,10 @@ Started: the charged jump, its own playtest build.
 ### 2026-11-08, In progress → In QA
 
 Charged jump built: hold Space on the ground up to x1.5 over 3 s, a small bar above the car. Note: catching a rail from a jump now takes a tap, then a hold in the air. QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed 6/6. Ready to play on its own: C:\solid-carbide-worktrees\T-590.
 
 ## Style review
 
