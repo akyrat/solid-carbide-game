@@ -1,7 +1,7 @@
 ---
 id: T-584
 title: Art: redraw the car frames that point the wrong way (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md, docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/working-with-the-board.md, game/docs/art/, game/art/car/]
 files_expected_to_change: [game/art/car/, art-archive/T-584/, game/data/, docs/visual-style.md, docs/drifting.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ Read T-580's result notes first (tasks/T-580-facing-vs-velocity-investigation.md
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The seven frames are redrawn and in the car sheet; the old ones are in art-archive/T-584/. (QA: pass / fail)
-- [ ] Each scores 8 or more in the style loop, or is noted for the playtest; no more than 28 generations, counted in the result notes. (QA: pass / fail)
-- [ ] T-583's frame data is re-measured for the new sheet, and the table of none, A, C and A+C with the new art is in the result notes with the best combination. (QA: pass / fail)
-- [ ] docs/visual-style.md records the redraw. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A before and after sheet with T-580's arrows is in art-archive/T-584/screenshots/. (QA: pass / fail)
+- [ ] The seven frames are redrawn and in the car sheet; the old ones are in art-archive/T-584/. (QA: pass - 19, 22, 23 redrawn and installed; 20, 2, 3, 21 kept by the Project Lead's decision; old sheets in art-archive/T-584/old/)
+- [ ] Each scores 8 or more in the style loop, or is noted for the playtest; no more than 28 generations, counted in the result notes. (QA: pass - 13 of 28 counted; scores below 8 are noted for the playtest by design)
+- [ ] T-583's frame data is re-measured for the new sheet, and the table of none, A, C and A+C with the new art is in the result notes with the best combination. (QA: pass - table in result notes, best A+C, worst gap 13.0 vs 23.5 before)
+- [ ] docs/visual-style.md records the redraw. (QA: pass - "Redrawn car frames" entry present)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass - qa_check tests, documents, screenshots pass; counts in result notes)
+- [ ] A before and after sheet with T-580's arrows is in art-archive/T-584/screenshots/. (QA: pass - before_after_arrows.png present)
 
 ## Updates
 
@@ -65,6 +65,10 @@ Resuming the redraw: frames 19, 20, 21 next; frame 2 skipped (already near its t
 ### 2026-11-08, In progress → In QA
 
 Redraw done: frames 22 and 23 now point up-right, 19 slightly better; 13 of 28 generations. Worst straight-line gap with A+C 13 degrees (was 23.5). QA next.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. The redrawn car frames are ready to play: C:\solid-carbide-worktrees\T-584 (drive along the screen's up-right diagonal).
 
 ## Style review
 
