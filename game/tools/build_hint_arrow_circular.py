@@ -19,8 +19,12 @@ rule 2). This script does the free parts of the style loop around one PixelLab c
         arrow pixels PixelLab lost filled from the script's own, the palette cut to at most 30 colours
         (reduce_palette.py). By default the script's outline, glints and shading roles are repainted over
         PixelLab's body pixels (polish), so the outline is exactly near-black and the shading reads at 64 px.
-    python game/tools/build_hint_arrow_circular.py polish IN.png OUT.png
-        Only the repaint of the roles, on an already finished arrow.
+    python game/tools/build_hint_arrow_circular.py polish IN.png OUT.png [--bold]
+        Only the repaint of the roles, on an already finished arrow. --bold (T-577 v2, the style loop's rule 2
+        fixes at native 64 px) is the bolder pass: a 16 px stroke (the hole 22 px across), a three-step rim
+        light, two-pixel deep and shade steps, and longer highlight runs that break both rings of the outline
+        over their middle; the stroke's new pixels take PixelLab's blush. `init`, `finish` and `roles` take
+        --bold too.
     python game/tools/build_hint_arrow_circular.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -74,6 +78,20 @@ ARC_GLINT_DEGREES = [(-172.0, -150.0), (-130.0, -108.0)]
 HEAD_GLINT_COLS = range(36, 42)
 EDGE_LINE_FROM_DEGREES = 10.0   # the outer edge line starts this far past the tail's cut, so the cut stays plain
 
+# The passes. False is v1. "bold" (T-577 v2, the style loop's rule 2 fixes at native 64 px) is a 16 px stroke
+# (the hole 22 px across), a three-step rim light, two-pixel deep and shade steps so the second shade step
+# shows, and longer highlight runs that break both rings of the outline over their middle (the ends break the
+# outer ring only, so the silhouette stays closed).
+GEOM = {
+    False: {"r_in": R_IN, "light_steps": LIGHT_STEPS, "hole_light_steps": LIGHT_STEPS, "shade_steps": SHADE_STEPS,
+            "arc_glint_degrees": ARC_GLINT_DEGREES, "head_glint_cols": HEAD_GLINT_COLS, "head_run_rows": 3,
+            "inner_ring_runs": 0.0, "taper": 0.0},
+    "bold": {"r_in": 11.0, "light_steps": 3, "hole_light_steps": 1,
+             "shade_steps": (("cool", 1), ("deep", 2), ("shade", 2), ("mid", 1)),
+             "arc_glint_degrees": [(-174.0, -152.0), (-130.0, -110.0)], "head_glint_cols": range(35, 42),
+             "head_run_rows": 3, "inner_ring_runs": 0.4, "taper": 0.3},
+}
+
 
 def angle_from_start(x: float, y: float) -> float:
     """The clockwise angle in degrees from the tail's cut to the point, in [0, 360)."""
@@ -81,15 +99,16 @@ def angle_from_start(x: float, y: float) -> float:
     return (a - ARC_START) % 360.0
 
 
-def arrow_cells() -> set[tuple[int, int]]:
+def arrow_cells(bold=False) -> set[tuple[int, int]]:
     """Every pixel of the arrow's silhouette, outline included."""
+    r_in = GEOM[bold]["r_in"]
     cells = set()
     span = (ARC_END - ARC_START) % 360.0
     for y in range(SIZE):
         for x in range(SIZE):
             px_, py_ = x + 0.5, y + 0.5
             d = math.hypot(px_ - CENTRE[0], py_ - CENTRE[1])
-            if R_IN <= d <= R_OUT and angle_from_start(px_, py_) <= span:
+            if r_in <= d <= R_OUT and angle_from_start(px_, py_) <= span:
                 cells.add((x, y))
     for k in range(HEAD_COLS):
         x = HEAD_TIP_X - k
@@ -103,22 +122,121 @@ def head_upper_slope(cells: set[tuple[int, int]]) -> set[tuple[int, int]]:
     return {(x, y) for x, y in cells if x >= HEAD_TIP_X - HEAD_COLS + 1 and y <= HEAD_ROW0}
 
 
-def layers() -> dict[str, set[tuple[int, int]]]:
+LAST_DEPTHS: dict[str, dict[tuple[int, int], int]] = {}   # the last layers() call's ring depths, for `roles --depths`
+
+
+def layers(bold=False) -> dict[str, set[tuple[int, int]]]:
     """The arrow's pixels by colour role: a two-pixel outline whose outer ring carries short near-white glint
     runs, a near-white edge line and a rim light on the lit edges, stepped shade with a cool deepest step on the
-    edges away from the light, the plain body between."""
-    cells = arrow_cells()
+    edges away from the light, the plain body between. `bold` (v2) widens the stroke, the rim light and the
+    shade steps so they show at native 64 px, and lets the runs break both rings over their middle."""
+    g = GEOM[bold]
+    cells = arrow_cells(bold)
     outline1 = {p for p in cells if any(q not in cells for q in nbrs8(p))}
     inner = {p for p in cells - outline1 if any(q in outline1 for q in nbrs8(p))}
     outline = outline1 | inner
     body = cells - outline
 
-    # A body pixel next to the outline faces the way the outline pixels around it lie. The pixel circle's
-    # stair-steps would make a lone corner neighbour point the wrong way, so the normal is the sum over every
-    # outline pixel within NORMAL_REACH, which smooths the steps out.
+    r_in = g["r_in"]
+    mid_radius = (r_in + R_OUT) / 2
+    head_x0 = HEAD_TIP_X - HEAD_COLS + 1
+    span = (ARC_END - ARC_START) % 360.0
+    shade_bands = []
+    for role, n in g["shade_steps"]:
+        shade_bands.extend([role] * n)
+    roles = {"edge": set(), "light": set(), "cool": set(), "deep": set(), "shade": set(), "mid": set(),
+             "mid2": set(), "body": set()}
+
+    def polar(p):
+        x, y = p[0] + 0.5 - CENTRE[0], p[1] + 0.5 - CENTRE[1]
+        return math.hypot(x, y), math.atan2(y, x)
+
+    def edge_line_ok(p) -> bool:
+        # The near-white edge line runs along the ring's outer edge and the head only; the hole's rim and the
+        # tail's cut get the plain rim light, so no near-white specks sit inside the ring.
+        x, y = p[0] + 0.5, p[1] + 0.5
+        if p[0] >= head_x0 and p[1] <= HEAD_ROW1 + HEAD_COLS:
+            return True
+        return (math.hypot(x - CENTRE[0], y - CENTRE[1]) > mid_radius
+                and EDGE_LINE_FROM_DEGREES < angle_from_start(x, y) < span)
+
+    def distances(seed: set[tuple[int, int]], through: set[tuple[int, int]]) -> dict[tuple[int, int], int]:
+        dist = {p: 0 for p in seed}
+        queue = deque(seed)
+        while queue:
+            p = queue.popleft()
+            for q in nbrs8(p):
+                if q in through and q not in dist:
+                    dist[q] = dist[p] + 1
+                    queue.append(q)
+        return dist
+
+    # The ring's shading is radial: each body pixel has a depth from the outer outline ring and one from the
+    # hole's ring, and each ring is lit, shaded or flat at the pixel's own angle (the outward normal of the
+    # outer ring is radial; the hole's rim faces the other way). The nearer ring decides, so the bands run
+    # evenly round the ring with no spill where a shaded stretch begins. The tail's flat cut gets the plain
+    # rim light on its first rows.
+    ring = set()
+    for p in cells:
+        d, a = polar(p)
+        if r_in <= d <= R_OUT and angle_from_start(p[0] + 0.5, p[1] + 0.5) <= span:
+            ring.add(p)
+    ring_body = ring & body
+    outer_outline = {p for p in outline if polar(p)[0] > mid_radius}
+    inner_outline = {p for p in outline if polar(p)[0] <= mid_radius}
+    def nearest(seed: set[tuple[int, int]]) -> dict[tuple[int, int], int]:
+        # The Euclidean distance to the nearest pixel of the ring's outline, in whole pixels: a walk along the
+        # pixels (Chebyshev) would leak diagonally from the circle's stair-steps and undercount the depth.
+        return {p: int(min(math.hypot(p[0] - q[0], p[1] - q[1]) for q in seed) + 1e-6) for p in ring_body}
+
+    d_outer = nearest(outer_outline)
+    d_inner = nearest(inner_outline)
+    LAST_DEPTHS.clear()
+    LAST_DEPTHS.update({"outer": d_outer, "inner": d_inner})
+
+    taper = g["taper"]
+
+    def visible_of(total: int, score: float) -> int:
+        # With a taper, the rim light and the shade steps fade in over the first `taper` of the score past
+        # the flat band, so a stretch's bands grow from the outline instead of starting along a radial seam.
+        if not taper:
+            return total
+        return min(total, math.ceil(total * (abs(score) - 0.2) / taper))
+
+    def side_role(score: float, depth: int, p, steps: int) -> str | None:
+        if score > 0.2:
+            if depth == 0:
+                return "edge" if edge_line_ok(p) else "light"
+            return "light" if depth < visible_of(steps, score) else None
+        if score < -0.2:
+            # The lighter steps appear first: the stack is shifted, never cut, so no lone dark pixel.
+            index = depth + len(shade_bands) - visible_of(len(shade_bands), score)
+            return shade_bands[index] if index < len(shade_bands) else None
+        return "mid" if depth == 0 else None   # the turn between the lit and the shaded stretch
+
+    for p in ring_body:
+        d, a = polar(p)
+        if p[0] + 0.5 > CENTRE[0] and p[1] + 0.5 - CENTRE[1] < 4.0:
+            roles["light"].add(p)   # the tail's cut
+            continue
+        score_outer = math.cos(a) * LIGHT[0] + math.sin(a) * LIGHT[1]
+        sides = [(d_outer.get(p, 99) - 1, score_outer, g["light_steps"]),
+                 (d_inner.get(p, 99) - 1, -score_outer, g["hole_light_steps"])]
+        sides.sort(key=lambda s: s[0])
+        role = None
+        for depth, score, steps in sides:
+            role = side_role(score, depth, p, steps)
+            if role:
+                break
+        roles[role or "body"].add(p)
+
+    # The head (its pixels outside the ring) keeps the neighbour model: a body pixel next to the outline faces
+    # the way the outline pixels around it lie, summed within NORMAL_REACH so a lone corner neighbour cannot
+    # point it the wrong way; the rim light and the shade steps are counted from those edge pixels.
+    head_body = body - ring_body
     lit_edge, shade_edge, flat_edge = set(), set(), set()
     reach = range(-NORMAL_REACH, NORMAL_REACH + 1)
-    for p in body:
+    for p in head_body:
         if not any(q in outline for q in nbrs8(p)):
             continue
         around = [(p[0] + dx, p[1] + dy) for dx in reach for dy in reach if (p[0] + dx, p[1] + dy) in outline]
@@ -132,63 +250,39 @@ def layers() -> dict[str, set[tuple[int, int]]]:
             shade_edge.add(p)
         else:
             flat_edge.add(p)
-
-    mid_radius = (R_IN + R_OUT) / 2
-    head_x0 = HEAD_TIP_X - HEAD_COLS + 1
-    span = (ARC_END - ARC_START) % 360.0
-
-    def edge_line_ok(p) -> bool:
-        # The near-white edge line runs along the ring's outer edge and the head only; the hole's rim and the
-        # tail's cut get the plain rim light, so no near-white specks sit inside the ring.
-        x, y = p[0] + 0.5, p[1] + 0.5
-        if p[0] >= head_x0 and p[1] <= HEAD_ROW1 + HEAD_COLS:
-            return True
-        return (math.hypot(x - CENTRE[0], y - CENTRE[1]) > mid_radius
-                and EDGE_LINE_FROM_DEGREES < angle_from_start(x, y) < span)
-
-    def distances(seed: set[tuple[int, int]]) -> dict[tuple[int, int], int]:
-        dist = {p: 0 for p in seed}
-        queue = deque(seed)
-        while queue:
-            p = queue.popleft()
-            for q in ((p[0] + 1, p[1]), (p[0] - 1, p[1]), (p[0], p[1] + 1), (p[0], p[1] - 1)):
-                if q in body and q not in dist:
-                    dist[q] = dist[p] + 1
-                    queue.append(q)
-        return dist
-
-    d_lit = distances(lit_edge)
-    d_shade = distances(shade_edge)
-    shade_bands = []
-    for role, n in SHADE_STEPS:
-        shade_bands.extend([role] * n)
-    roles = {"edge": set(), "light": set(), "cool": set(), "deep": set(), "shade": set(), "mid": set(),
-             "mid2": set(), "body": set()}
-    for p in body:
+    d_lit = distances(lit_edge, head_body)
+    d_shade = distances(shade_edge, head_body)
+    for p in head_body:
         dl, ds = d_lit.get(p, 99), d_shade.get(p, 99)
         if p in lit_edge:
             roles["edge" if edge_line_ok(p) else "light"].add(p)
         elif ds < 1:
             roles[shade_bands[0]].add(p)
-        elif dl < LIGHT_STEPS and p not in flat_edge:
+        elif dl < g["light_steps"] and p not in flat_edge:
             roles["light"].add(p)
         elif p in flat_edge:
-            roles["mid"].add(p)   # the turn between the lit and the shaded edge
+            roles["mid"].add(p)
         elif ds < len(shade_bands):
             roles[shade_bands[ds]].add(p)
         else:
             roles["body"].add(p)
 
     glint = set()
-    for x, y in outline1:   # the runs sit on the outer edge only, never on the hole's outline
+    shrink = g["inner_ring_runs"]   # the inner ring breaks over this fraction of each run's middle (0: never)
+    for x, y in outline:   # the runs sit on the outer edge only, never on the hole's outline
         if math.hypot(x + 0.5 - CENTRE[0], y + 0.5 - CENTRE[1]) > mid_radius and x < head_x0:
             angle = math.degrees(math.atan2(y + 0.5 - CENTRE[1], x + 0.5 - CENTRE[0]))
-            if any(lo <= angle <= hi for lo, hi in ARC_GLINT_DEGREES):
-                glint.add((x, y))
-    for x in HEAD_GLINT_COLS:
+            for lo, hi in g["arc_glint_degrees"]:
+                if (x, y) in outline1 and lo <= angle <= hi:
+                    glint.add((x, y))
+                elif (x, y) not in outline1 and shrink:
+                    margin = (hi - lo) * (1 - shrink) / 2
+                    if lo + margin <= angle <= hi - margin:
+                        glint.add((x, y))
+    for x in g["head_glint_cols"]:
         k = HEAD_TIP_X - x
         top = HEAD_ROW0 - k
-        glint.update({(x, y) for y in range(top, top + 3)} & outline1)
+        glint.update({(x, y) for y in range(top, top + g["head_run_rows"])} & (outline if shrink else outline1))
     # The runs are wider than the outline pixel: the lit pixel just inside a run is near-white too.
     lit_inside = {p for p in roles["light"] if any(q in glint for q in nbrs8(p))}
     roles["light"] -= lit_inside
@@ -210,21 +304,21 @@ ROLE_LETTERS = {
 }
 
 
-def roles_map() -> str:
+def roles_map(bold=False) -> str:
     """The colour roles as an ASCII map, one letter per pixel (ROLE_LETTERS; a space is transparent)."""
     grid = [[" "] * SIZE for _ in range(SIZE)]
-    for role, cells in layers().items():
+    for role, cells in layers(bold).items():
         for x, y in cells:
             grid[y][x] = ROLE_LETTERS[role]
     header = "    " + "".join(str(x % 10) for x in range(SIZE))
     return "\n".join([header] + [f"{y:3d} " + "".join(row) for y, row in enumerate(grid)])
 
 
-def arrow() -> Image.Image:
+def arrow(bold=False) -> Image.Image:
     """The script-drawn circular arrow, straight from above."""
     im = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     px = im.load()
-    for role, cells in layers().items():
+    for role, cells in layers(bold).items():
         for x, y in cells:
             px[x, y] = COLOURS[role]
     return im
@@ -264,20 +358,21 @@ def request(init_png: bytes, strength: int = 500, seed: int | None = None) -> di
     return body
 
 
-def polish(im: Image.Image) -> Image.Image:
+def polish(im: Image.Image, bold=False) -> Image.Image:
     """Repaint every role but the plain body from layers(), so the outline is exactly near-black and the glints,
     rim light and shade steps are the script's; PixelLab's body pixels stay where they are opaque and blush-like.
-    Body pixels that are not take the most common body colour already there (PixelLab's blush)."""
+    Body pixels that are not (a wider stroke's new pixels, a stray dark pixel) take the most common body colour
+    already there (PixelLab's blush)."""
     im = im.convert("RGBA")
     if im.size != (SIZE, SIZE):
         im = im.resize((SIZE, SIZE), Image.NEAREST)
     px = im.load()
-    shape = arrow_cells()
+    shape = arrow_cells(bold)
     for y in range(SIZE):
         for x in range(SIZE):
             if (x, y) not in shape:
                 px[x, y] = (0, 0, 0, 0)
-    roles = layers()
+    roles = layers(bold)
 
     def blush_like(c) -> bool:
         # A plain body pixel of PixelLab's: opaque and within 24 of the spec blush (PixelLab's render sits within
@@ -299,12 +394,12 @@ def polish(im: Image.Image) -> Image.Image:
     return im
 
 
-def finish(raw: Image.Image, do_polish: bool = True, reduce: bool = True) -> Image.Image:
+def finish(raw: Image.Image, do_polish: bool = True, reduce: bool = True, bold=False) -> Image.Image:
     """The free fixes on a PixelLab result, keeping its pixels wherever they can stay."""
     im = raw.convert("RGBA")
     if im.size != (SIZE, SIZE):
         im = im.resize((SIZE, SIZE), Image.NEAREST)
-    shape = arrow()
+    shape = arrow(bold)
     spx = shape.load()
     px = im.load()
     for y in range(SIZE):
@@ -319,7 +414,7 @@ def finish(raw: Image.Image, do_polish: bool = True, reduce: bool = True) -> Ima
             if spx[x, y][3] == 255 and px[x, y][3] == 0:
                 px[x, y] = spx[x, y]          # pixels the shape has but PixelLab lost
     if do_polish:
-        im = polish(im)
+        im = polish(im, bold)
     if reduce:
         im = reduce_image(im, 30)
     return im
@@ -347,13 +442,22 @@ def main(argv=None) -> int:
     v.add_argument("src")
     v.add_argument("out")
     v.add_argument("--scale", type=int, default=6)
-    sub.add_parser("roles", help="print the colour roles as an ASCII map (one letter per pixel)")
+    m = sub.add_parser("roles", help="print the colour roles as an ASCII map (one letter per pixel)")
+    m.add_argument("--depths", type=int, metavar="ROW", help="also print the ring depths along this row")
+    for sp in (a, f, q, m):
+        sp.add_argument("--bold", action="store_true",
+                        help="the v2 pass: a 16 px stroke, wider rim light and shade steps, runs breaking both rings")
     args = p.parse_args(argv)
+    bold = "bold" if getattr(args, "bold", False) else False
 
     if args.cmd == "init":
-        save_png(arrow(), Path(args.out))
+        save_png(arrow(bold), Path(args.out))
     elif args.cmd == "roles":
-        print(roles_map())
+        print(roles_map(bold))
+        if args.depths is not None:
+            for name in ("outer", "inner"):
+                print(name, [(x, LAST_DEPTHS[name].get((x, args.depths))) for x in range(SIZE)
+                             if (x, args.depths) in LAST_DEPTHS[name]])
         return 0
     elif args.cmd == "request":
         body = request(Path(args.init).read_bytes(), args.strength, args.seed)
@@ -361,11 +465,11 @@ def main(argv=None) -> int:
         Path(args.out).write_text(json.dumps(body) + "\n", encoding="utf-8")
     elif args.cmd == "finish":
         with Image.open(args.raw) as raw:
-            im = finish(raw, not args.no_polish, not args.no_reduce)
+            im = finish(raw, not args.no_polish, not args.no_reduce, bold)
         save_png(im, Path(args.out))
     elif args.cmd == "polish":
         with Image.open(args.src) as src:
-            im = reduce_image(polish(src), 30)
+            im = reduce_image(polish(src, bold), 30)
         save_png(im, Path(args.out))
     else:
         with Image.open(args.src) as src:
