@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-598]
+depends_on: []
 documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/hud/trick_popups.gd, game/data/hud.json, tasks/T-596-no-needle-popup.md, tasks/T-571-main-menu-settings-screen.md]
 files_expected_to_change: [game/scripts/hud/, game/scripts/ui/, game/scripts/data/, game/data/, game/tests/, game/docs/]

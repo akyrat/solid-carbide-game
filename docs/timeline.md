@@ -4215,3 +4215,8 @@ Entry format:
 - Decision or change: A settings checkbox turns trick popups off; tricks still count.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-599
+
+## 2026-11-08: Slide marks, and faster fading tire marks
+- Decision or change: Lighter slide marks from all four wheels when sliding without W; all tire marks last half as long.
+- Documents touched: docs/visual-style.md
+- Tasks: T-600
