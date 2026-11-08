@@ -1,7 +1,7 @@
 ---
 id: T-586
 title: Grinding Wheels: a power-up that heats the grind sparks and boosts the launch
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: Grinding Wheels behaviour (sparks heat over 3 s, launch up to 2x).
+
+### 2026-11-08, In progress → In QA
+
+Grinding Wheels built: sparks yellow, orange, red over 3 s; launch up to 2x. QA now.
 
 ## Style review
 
