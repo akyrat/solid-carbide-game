@@ -1,7 +1,7 @@
 ---
 id: T-593
 title: Texts: describe the charged jump wherever the game explains jumping
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -72,3 +72,4 @@ Texts changed (3, nothing else). Searched game/data/*.json, game/scripts, game/t
 The studio's tools/ Python set was not run: nothing under tools/ or .claude/ changed (tasks/README.md, QA); game/tools Python set ran in full.
 
 Project Lead: the studio's tools/ Python set did finish, 643 tests OK (the agent's correction).
+- 2026-11-08, needs-playtest → done: Board asked for these texts, then a merge (2026-11-08)
