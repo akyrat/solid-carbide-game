@@ -1,7 +1,7 @@
 ---
 id: T-599
 title: A setting to turn off the trick popups
-status: in-progress
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/hud/trick_popups.gd, game/data/hud.json, tasks/T-596-no-needle-popup.md, tasks/T-571-main-menu-settings-screen.md]
 files_expected_to_change: [game/scripts/hud/, game/scripts/ui/, game/scripts/data/, game/data/, game/tests/, game/docs/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the Trick popups checkbox in both settings screens.
 
+### 2026-11-08, In progress → In QA
+
+Agent done; QA's checks passed.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed all 6 criteria. It goes into playtest-b for the board.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -67,3 +75,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Built on T-596/T-598. GameSettings.load/save_trick_popups_enabled (graphics.trick_popups_enabled, default on); TrickPopups.is_hidden() returns true when it is off (read at each trick, so on again shows from the next trick; covers run and practice window, same node; multiplier/broken/heal popups untouched). Checkbox 'Trick popups' (T-598 text) last in the pause screen's settings and the main menu Settings screen. Pause screen's checkbox row is now an HFlowContainer (6 boxes would reach the weapon icons), wraps to a second line. Tests: new in test_settings_screen.gd (both screens, default, saved) and test_thread_the_needle.gd (off hides every popup, combo still rises, on again shows); updated test_settings_screen, test_shared_button. Docs: docs/hud-and-menus.md Content 'The Trick popups checkbox', game/docs/hud-and-menus/main-menu.md. Full GUT run: 3253 tests, 3251 pass, 1 timing-only fail under load (test_bricks_perf, 7 ms vs 5 ms, passes solo 3/3; an earlier run had only the layout and count failures I then fixed). Python game/tools unittest: 1193 ok (4 skipped). Screenshots: art-archive/T-599/screenshots/ (t599_settings.png, t599_pause.png with it ticked off, t599_run.png run with it off at x1.66, no bubbles); fixture game/tests/fixtures/t599_demo.gd.
 
 Added test_the_trick_popups_setting_off_shows_no_popup_in_practice_but_the_trick_counts (game/tests/unit/run/test_practice_session.gd): the real practice session, setting off, alt drift counted (successes 1), no popup; on again, the next trick pops. test_practice_session.gd: 32/32 pass.
+- 2026-11-08, needs-playtest → done: The board played it in playtest-b: lgtm (2026-11-08).
