@@ -135,12 +135,30 @@ func test_each_trick_slide_has_its_instruction_and_window() -> void:
 	assert_eq(slides.text_labels["tutorial.grind_hint"].text, _at("tutorial.grind_hint"))
 
 
-func test_the_window_is_a_bit_bigger_than_the_old_clips() -> void:
-	var frame: Control = slides.practice_frames[0]
-	assert_gt(frame.size.x, 546.0, "wider than the redrawn slide 1's 546 x 364 clip box")
-	assert_gt(frame.size.y, 364.0)
-	assert_lt(frame.size.x, 700.0, "only a bit")
-	assert_lte(frame.position.x + frame.size.x, TutorialSlides.STAGE.x - TutorialSlides.SIDE + 0.5, "inside the padding")
+func test_the_window_spans_the_slide_at_the_same_height() -> void:
+	# T-574 (the board): side to side (the content width, between the arrows), still 400 high.
+	for i in range(4):
+		var frame: Control = slides.practice_frames[i]
+		assert_almost_eq(frame.position.x, TutorialSlides.SIDE, 0.5, "from the left padding")
+		assert_almost_eq(frame.position.x + frame.size.x, TutorialSlides.STAGE.x - TutorialSlides.SIDE, 0.5, "to the right padding")
+		assert_almost_eq(frame.size.y, 400.0, 0.5, "the same height")
+		assert_gt(frame.position.x, slides.left_arrow.position.x + slides.left_arrow.size.x, "clear of the left arrow")
+		assert_lt(frame.position.x + frame.size.x, slides.right_arrow.position.x, "clear of the right arrow")
+
+
+func test_the_tutorial_text_is_in_the_game_window() -> void:
+	# T-574 (the board): the instruction (and the grind's hint) on a band along the window's bottom.
+	await get_tree().process_frame
+	for i in range(4):
+		var frame: Control = slides.practice_frames[i]
+		var l: Label = slides.text_labels["tutorial.trick.%s.instruction" % TRICK_KEYS[i]]
+		assert_true(frame.is_ancestor_of(l), "%s: inside the window" % TRICK_KEYS[i])
+		var band: Control = frame.get_node("Instructions")
+		var r := band.get_rect()
+		assert_almost_eq(r.end.y, frame.size.y - TutorialSlides.WINDOW_BORDER, 1.0, "on the bottom edge")
+		assert_gt(r.position.y, frame.size.y / 2.0, "below the centre (clear of the success message)")
+		assert_eq(band.mouse_filter, Control.MOUSE_FILTER_IGNORE, "clicks reach the game")
+	assert_true(slides.practice_frames[3].is_ancestor_of(slides.text_labels["tutorial.grind_hint"]))
 
 
 func test_the_dots_show_six_and_follow_the_slide() -> void:

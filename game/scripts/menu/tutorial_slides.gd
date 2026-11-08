@@ -58,11 +58,16 @@ const TRICK_SLIDES: Array = [["drift", "drift"], ["altdrift", "alt_drift"], ["ai
 const FIRST_TRICK_SLIDE := 1
 ## SEAM (T-561): the practice session's scene. A missing scene leaves the window an empty frame.
 const PRACTICE_SCENE := "res://scenes/run/practice_session.tscn"
-## The practice window on the stage (a bit bigger than the redrawn slides' 546 x 364 clip box;
-## a proposal for the playtest) and its frame.
-const WINDOW_POS := Vector2(565, 214)
-const WINDOW_SIZE := Vector2(600, 400)
+## The practice window on the stage and its frame. T-574 (the board, 2026-11-08): it spans the
+## slide from side to side (the content width, between the arrows) at the same 400 height.
+const WINDOW_POS := Vector2(SIDE, 214)
+const WINDOW_SIZE := Vector2(CONTENT_W, 400)
 const WINDOW_BORDER := 4
+## T-574: the tutorial text (the instruction, and the grind's hint) is drawn in the game, along
+## the window's bottom edge on a dark band, clear of the notebook (top left) and the success
+## message (centre). Its side padding and the band's opacity (proposals for the playtest).
+const CAPTION_PAD := 16.0
+const CAPTION_BAND_ALPHA := 0.6
 ## The success message's pop when it appears (seconds; a proposal).
 const SUCCESS_POP := 0.25
 ## Art the slides draw (all the game's own files).
@@ -491,24 +496,6 @@ func _build_trick(i: int) -> Control:
 	var key := String(TRICK_SLIDES[i][0])
 	var s := _slide("Slide%d" % (FIRST_TRICK_SLIDE + i + 1), FIRST_TRICK_SLIDE + i,
 		"tutorial.trick.%s.title" % key, "")
-	var left := VBoxContainer.new()
-	left.name = "Instructions"
-	left.position = Vector2(SIDE, WINDOW_POS.y + 18)
-	left.size = Vector2(WINDOW_POS.x - SIDE - 40, WINDOW_SIZE.y - 36)
-	left.add_theme_constant_override("separation", 26)
-	s.add_child(left)
-	var instruction := _text_label("tutorial.trick.%s.instruction" % key, false, 32, INK, false)
-	instruction.name = "Instruction"
-	instruction.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	instruction.custom_minimum_size = Vector2(left.size.x, 0)
-	left.add_child(instruction)
-	if key == "grind":
-		var hint := _text_label("tutorial.grind_hint", false, 24, MUTED, false)
-		hint.name = "Hint"
-		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		hint.custom_minimum_size = Vector2(left.size.x, 0)
-		left.add_child(hint)
-
 	# The practice window: a framed box, its SubViewport (the session goes in when the slide shows).
 	var frame := Panel.new()
 	frame.name = "PracticeWindow"
@@ -529,6 +516,38 @@ func _build_trick(i: int) -> Control:
 	viewport.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
 	container.add_child(viewport)
 	practice_containers.append(container)
+
+	# T-574: the tutorial text in the game: a dark band along the window's bottom edge, the
+	# instruction (and the grind's hint) on it, outlined so it reads over the playground.
+	var inner_w := WINDOW_SIZE.x - WINDOW_BORDER * 2.0
+	var band := PanelContainer.new()
+	band.name = "Instructions"
+	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	band.add_theme_stylebox_override("panel", _box(Color(BG, CAPTION_BAND_ALPHA), 0, 0, LINE,
+		int(CAPTION_PAD), 10))
+	var col := VBoxContainer.new()
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_theme_constant_override("separation", 4)
+	band.add_child(col)
+	var text_w := inner_w - CAPTION_PAD * 2.0
+	var instruction := _caption("tutorial.trick.%s.instruction" % key, 30, INK, text_w)
+	instruction.name = "Instruction"
+	col.add_child(instruction)
+	if key == "grind":
+		var hint := _caption("tutorial.grind_hint", 22, BLUSH, text_w)
+		hint.name = "Hint"
+		col.add_child(hint)
+	# Anchored to the frame's bottom and growing upwards, so its height follows the wrapped lines.
+	band.anchor_left = 0.0
+	band.anchor_right = 1.0
+	band.anchor_top = 1.0
+	band.anchor_bottom = 1.0
+	band.offset_left = WINDOW_BORDER
+	band.offset_right = -WINDOW_BORDER
+	band.offset_top = -WINDOW_BORDER
+	band.offset_bottom = -WINDOW_BORDER
+	band.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	frame.add_child(band)
 
 	# Over the window only: the success message, after the third success.
 	var msg := _text_label("tutorial.success", false, 64, GOLD, true)
@@ -709,6 +728,18 @@ func _text_label(key: String, pixel: bool, size: int, color: Color, upper: bool)
 	var l := _label(TrickList.text(key), pixel, size, color, upper)
 	l.name = key.replace(".", "_")
 	text_labels[key] = l
+	return l
+
+
+## A centred, outlined line of the file's text for the window's caption band (T-574), wrapped
+## to `width`.
+func _caption(key: String, font_size: int, color: Color, width: float) -> Label:
+	var l := _text_label(key, false, font_size, color, false)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size = Vector2(width, 0)
+	l.add_theme_color_override("font_outline_color", HudStyle.DARK)
+	l.add_theme_constant_override("outline_size", 8)
 	return l
 
 
