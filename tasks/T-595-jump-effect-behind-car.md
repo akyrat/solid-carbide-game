@@ -1,7 +1,7 @@
 ---
 id: T-595
 title: Fix: the jump effect draws over the car
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -58,4 +58,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Cause: run.gd put the JumpEffect node after CarSprite (index+1); practice_session.gd added it after CarSprite. Fix: both move it to car_sprite.get_index() (before the car sprite), so every effect id, tap or charged, draws behind the car; position and look unchanged. New tests in test_jump_effect_art.gd (run: each id; practice session). rail-grind.md updated. Tests: changed files and touched scripts pass (test_jump_effect_art 5/5, jump_charge, grind_overhaul, cosmetics, tutorial_practice_real). Full Godot set (GUT_TIME_LIMIT=2400): first run 3252 tests, 3250 pass, 1 failing (not named in the output, not reproduced), 1 pending; rerun once: 3252 tests, 3251 pass, 0 failing, 1 pending, 262 s. Screenshots in art-archive/T-595/screenshots/: before_tap/charge.png and after_tap/charge.png (+ _closeup.png): before the cloud covers the car's wheels, after it is behind. Taken with game/tools/screenshot.sh and fixtures game/tests/fixtures/t595_jump_shot*.
