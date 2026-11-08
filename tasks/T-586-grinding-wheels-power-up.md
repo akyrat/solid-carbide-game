@@ -93,3 +93,5 @@ GIF: art-archive/T-586/screenshots/grinding_wheels_3s_grind_and_launch.gif (3.4 
 Docs: docs/drifting.md, Content, new "Grinding Wheels (task T-586)"; game/docs/driving/rail-grind.md, new "Grinding Wheels (T-586)".
 
 Documents affected: docs/drifting.md (updated).
+
+QA fix (round 1): test_four_minute_run_texts wanted a descriptions_last_tier entry for every power-up. Grinding Wheels has one tier, so tier 1 is its last tier; no other one-tier power-up exists, so game/data/screen_texts.json descriptions_last_tier.grinding_wheels is T-585's approved tier-1 text word for word, with the reason in descriptions_last_tier_comment. No new text. Python set (game/tools test_*.py): 1066 tests OK (4 skipped). Godot: test_grinding_wheels 12/12, test_power_up_screen 22/22, test_four_minute_run* 24/24, test_mission_texts 4/4, test_power_up_offers 16/16.
