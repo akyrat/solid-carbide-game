@@ -702,6 +702,34 @@ The playing side of the decision "A grind starts when the car's drawing crosses 
 - **Not in it:** the depth order. A car whose drawing crosses a bar hidden behind a building still catches it (the drawings are compared, not what covers them); none of the map's rails run behind a building at a car's height, so it is left until a playtest shows it.
 - **Checked and updated with it:** `rail_grind.json` (`reach`, `end_margin`, `catch_above`, `catch_below`, `max_angle_deg` and their comments are gone; `_catch_comment` explains the rule, `_square_comment` the square-on speed); the tests that asked for the old reach or height window; the GRIND! practice slide of the interactive tutorial (T-561, T-562) is not built yet, so it has no checks to update: it will use the rule as it is.
 
+#### Facing versus travel (task T-580, investigation)
+
+The board reported (2026-11-08) that at some angles, diagonals especially, the car points one way but moves another. An investigation only: no gameplay code changed. It **exists, with two independent causes**, measured by `game/tests/unit/test_t580_facing_vs_travel.gd` (the game's own driving model at the default tuning) and shown in `art-archive/T-580/screenshots/` (green arrow: where the body points; orange: where it moves; white: where the sprite's drawing points; drawn by the fixture `game/tests/fixtures/t580_facing_demo.gd` only).
+
+- **The car art itself, on the screen's up and up-right diagonals (matches "driving diagonally, the car sits at the wrong angle", even in a straight line).** The sprite picks one of its 32 frames from the body's heading and the frames are placed for the run's 2:1 isometric projection, but several frames are drawn pointing elsewhere than their heading projects to (T-102's own measurement in `car_iso.json`, `seen_nose_screen_angle_deg_approx`, confirmed by eye in `frames_vs_ideal_arrow.png`). Frames 20 to 23 (world headings 225 to 259) all draw the car pointing straight up the screen, while 21 to 23 should point 22 to 50 degrees to the right of up: **driving straight along the screen's up-right diagonal, the drawn car points straight up, 45 degrees off** (`straight_screen_315_step100.png`); the worst heading is 55 degrees off (world 264). Smaller: frame 19 21 degrees, frame 2 (the screen's down-right diagonal) 20 to 25, frame 3 14, frames 8, 12, 14, 20 and 24 10 to 13. Averaged over every heading the drawing is 10.5 degrees off its travel in a straight line.
+- **The slow sideways grip after any turn (matches "acceleration in a new direction added on top of the coasting speed").** Outside and inside a drift the car keeps 0.98 of its sideways speed every physics step (base grip and both drift grips are 0.98, the Unity values), so a slide halves only every 0.7 s and is a tenth after 2.3 s; W sets only the speed along the nose (snaps it to cruise, then ramps it) and never touches the sideways part. So after a turn, with or without W, the car moves at an angle to its nose for one to two seconds: a 46-degree turn while coasting, then W, leaves **42 degrees in the world (24 on screen)**, halved after 0.56 s and under 5 after 1.9 s; the same turn with W held (a short drift) 40 degrees, still over 5 after 2 s; a 65-degree turn onto the screen's up-right diagonal 47 to 52 degrees (38 to 42 on screen). Partly intended: it is the drift the game is built on (the Unity handling).
+- **They add up:** turning onto the screen's up-right diagonal, the drawn car is about 80 degrees from where it moves (`coast_turn_onto_screen_up_right.gif`).
+- **Small, not what the board sees:** the snap to 32 frames (at most 5.6 degrees in the world, 10.9 on screen, where the projection stretches angles), the velocity lagging the body by one physics step while steering (3.8 degrees, Unity's order), and the side slip out of a drift (about 14 degrees, intended, T-278). The isometric projection itself adds no error (heading and travel are projected alike) but stretches or squeezes every gap: up to 2 times near world 45 and 225, down to half near 135 and 315.
+- **Fix options (for the board; none built):** for the art, either pick each heading's frame by where its drawing actually points (code only, free: the worst gap falls from 55 to 23 degrees, the mean from 10.5 to 4.3, but frames 21 to 23 go unused, so turning looks steppier there) or redraw frames 19 to 23 (and 2, 3) through the style loop (paid generations). For the grip, raise the grip outside a drift (`drift_factor`, a slider already) so a turn's slide fades faster, or let W also bleed the sideways speed, or (drawing only) turn the sprite part way toward the travel; each changes the Unity feel, so it is for a playtest.
+
+#### The car points where it goes (task T-583)
+
+The board's decision is in Decisions ("The car points where it goes"); fixes A and C are built, each switchable in `game/data/car_facing.json` (how it is built: `game/docs/driving/facing.md`). B, the redraw, is T-584.
+
+- **A, the frame remap (`frame_remap`):** each heading is drawn with the frame whose drawing points closest, on screen, to where the heading points (each frame's measured angle, kept in `car_iso.json`); the shadowless and tilt sheets and the rail snap's outline follow the same frame. Off, frame = heading / 11.25 as before. A redrawn frame is re-measured with `game/tools/measure_car_facing.py`.
+- **C, the straight grip (`straight_grip_on`, `straight_grip` 0.9):** while W is held without A or D the car keeps 0.9 of its sideways speed per physics step instead of 0.98, so a slide halves in 0.13 s instead of 0.7 s. A held drift (its start included) and a coast (no W) keep the Unity grip exactly, so drifts, the alternate drift and the Polarized Steering Wheel's lift and steer (which needs the nose 60 degrees off the travel while coasting) are unchanged. Out of a drift with W held, the grip comes in as the drift amount falls (0.33 s). The proposal's reason: 0.95 or 0.93 still leave 0.7 to 1 s of slide after a drift; 0.85 or lower gain only about 0.1 s more and start to make W feel like rails. (A first version applied C whenever the car was not drifting, coasting included; it broke the Polarized Steering Wheel, which could no longer reach 60 degrees, so C applies only with W held.)
+- **Measured** with T-580's cases (`game/tests/unit/test_t583_facing_fixes.gd`; drawn gap = where the drawing's nose points minus where the car moves, on screen, in degrees):
+
+| | straight line, worst / mean | straight along the screen's up-right diagonal | coasting turn onto the up-right diagonal: drawn gap at W / 1 s later; under 5 in the world after | short drift onto a diagonal: under 5 in the world after |
+|---|---|---|---|---|
+| none | 55.5 / 10.5 | -45 | -81 / -59; not within 2 s | not within 2 s |
+| A | 23.5 / 4.3 | +5 | -31 / -9; not within 2 s | not within 2 s |
+| C | 55.5 / 10.5 | -45 | -79 / -43; 0.42 s | 0.54 s |
+| A+C | 23.5 / 4.3 | +5 | -29 / +7; 0.42 s | 0.54 s |
+
+- **Set to A+C** (both on), the Driving & Drift Agent's recommendation for the board's playtest: they fix independent causes, A most of the straight-line gap (the screen's up-right diagonal from 45 to 5 degrees), C the slide after a turn. What is left is the art itself: around world heading 239 (just left of the up-right diagonal) the nearest drawings are 23 degrees away, until T-584 redraws frames 19 to 23.
+- Before and after: `art-archive/T-583/screenshots/` (`straight_screen_315.gif`, `coast_turn_onto_screen_up_right.gif` and others; left no fix, right A+C).
+
 #### The launch keeps the grind's speed (task T-578)
 
 The playing side of Decisions, "The launch off a rail keeps the grind's speed". The number is the Driving & Drift Agent's proposal for the board's playtest, in `game/data/rail_grind.json` with its reason. Code: `rail_grind.gd` (`launch_speed()`, `leave_velocity("jump")`); how it is built: `game/docs/driving/rail-grind.md`, "The launch keeps the grind's speed (T-578)". GIF: `art-archive/T-578/screenshots/rail_launch_slow_then_fast.gif`.
@@ -1297,6 +1325,23 @@ Task T-441 (Decisions, "Kaiju alert signs are level creator pieces"; the labels 
 ![A run on that level: the signs and banners where the editor shows them](../art-archive/T-441/screenshots/run.png)
 
 ![A run: the car behind the skyscraper, which fades with its two banners](../art-archive/T-441/screenshots/run_behind_skyscraper.png)
+
+#### Level creator: hint pieces
+
+Task T-576 (Decisions, "Hint pieces in the level creator"; the labels are T-575's, "Level creator text" above; T-577 swaps in the PixelLab art). How it works, and the art's file names and sizes: `game/docs/level/hint-pieces.md`. The art is a placeholder drawn by script. The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
+
+- **Five pieces in a "Driver hints" group:** Gas hint (W) and Brake hint (S), the W and S keycaps in the tutorial's keycap look; Straight arrow; Turn arrow (a right turn, M makes it a left turn); Circular arrow (clockwise, M makes it anticlockwise).
+- **On the ground or a roadside sign:** with a hint picked, the top bar's "On the ground" and "Roadside sign" choose how it is placed (on the ground first). The heading and mirror stay when it changes. R turns either kind through the 8 directions, clockwise on screen, starting with the run's own start direction (up the screen's right).
+- **On the ground:** painted flat on the street, 4 x 4 units (a road's width), turned to its direction. It lies under the buildings, rooftops, props, the car and the minions. The car drives over it with no crash, and the run's tyre marks go under it. Proposal: only on the street, not on a building, rooftop or ramp (like a meteor crater).
+- **A roadside sign:** a small sign on a post standing on one 2 x 2 unit cell (2 units wide, 3 tall), the icon on its board. On the board the icon points the way its direction shows on screen, so on a sign the keycaps are turned too (a proposal). It is sorted with the props in depth, and it blocks the car like a prop: the car crashes into its post (a circle of 0.5 units) and the combo is cut. The enemies go round it. Like a prop, it stands on the street or wholly on a rooftop, never in a building and never on the start.
+- **Placing, selecting, deleting:** like any other piece, through the same placement path (so T-581's free placement applies to them too). The preview under the mouse shows the piece as it will be drawn. A click selects one and Del deletes it.
+- **Saved levels:** a new `hints` list in the level file (each hint's icon, ground or sign, direction, mirror and footprint). `check_level.py` checks it. Levels saved before have none and open and play unchanged. In the practice playground, which uses the same map code, hints are drawn the same way.
+
+![The level creator: the five hints painted on a road and standing as roadside signs, the Driver hints group, a Turn arrow sign picked with its preview](../art-archive/T-576/screenshots/creator_hints.png)
+
+![A straight arrow picked to paint on the ground, its preview on the road](../art-archive/T-576/screenshots/creator_ground_preview.png)
+
+![A run on that level: the car over the painted gas hint, signs standing at the roadside](../art-archive/T-576/screenshots/run_hints.png)
 
 #### Short buildings as platforms
 
@@ -2631,8 +2676,8 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
-| `drifting.md` | `27f6b0da05b85d452a507ce236a38ad01a3f3eab230a76af35534f90a23953c0` |
-| `level-design.md` | `0945ce26993fd4935d3022f312a84eed1147f95de5bae96cc8df7193fe838c53` |
+| `drifting.md` | `eba103a670847bf9553f73f416b4f9838413d625c39fd83a0f22bba55a32dbcb` |
+| `level-design.md` | `3e82b47a7f2ac9f212f7cc5cc8729d55a0f96187019f5810089e6dd58533f17b` |
 | `enemies.md` | `391da72f65c1ee86b14bee9fc4e5eed842d02d5f4ffed3b32d4e927782e5a149` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `f9b0ff71e34322027f5a837ec8f0a84c51f58773f6fb5169314826de74482b2e` |

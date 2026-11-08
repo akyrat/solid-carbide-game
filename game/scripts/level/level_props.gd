@@ -79,7 +79,8 @@ static func items_of(layout: Dictionary) -> Array:
 	return l if l is Array else []
 
 
-## What the props of `layout` take on the ground, for the enemies' paths and spawn spots:
+## What the props of `layout` take on the ground, for the enemies' paths and spawn spots (and the hint
+## signs, T-576, level_hints.gd):
 ## {rects: [Rect2], circles: [[centre, radius]]}.
 static func obstacles(layout: Dictionary) -> Dictionary:
 	var rects: Array = []
@@ -90,10 +91,11 @@ static func obstacles(layout: Dictionary) -> Dictionary:
 			circles.append([c.centre, c.radius])
 		else:
 			rects.append(c.rect)
+	circles.append_array(LevelHints.sign_circles(layout))  # T-576: a hint sign blocks like a prop
 	return {"rects": rects, "circles": circles}
 
 
-## True when a round thing of `radius` units at `units` would overlap a prop of `layout`.
+## True when a round thing of `radius` units at `units` would overlap a prop of `layout` (or a hint sign).
 static func blocks_spot(layout: Dictionary, units: Vector2, radius: float) -> bool:
 	for it in items_of(layout):
 		var c := collision_of(it)
@@ -105,6 +107,9 @@ static func blocks_spot(layout: Dictionary, units: Vector2, radius: float) -> bo
 			var nearest := Vector2(clampf(units.x, r.position.x, r.end.x), clampf(units.y, r.position.y, r.end.y))
 			if units.distance_to(nearest) < radius:
 				return true
+	for c in LevelHints.sign_circles(layout):  # T-576: a hint sign blocks like a prop
+		if units.distance_to(c[0]) < float(c[1]) + radius:
+			return true
 	return false
 
 

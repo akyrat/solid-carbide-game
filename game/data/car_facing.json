@@ -1,0 +1,6 @@
+{
+  "_comment": "The car points where it goes (T-583; Drifting, Decisions, 'The car points where it goes'; game/docs/driving/facing.md). Two switches, each on or off for comparing in a playtest. frame_remap (fix A): true = each heading is drawn with the frame whose drawing really points closest to where that heading points on screen (the frames' measured angles, seen_nose_screen_angle_deg_approx in art/car/car_iso.json; re-measure a redrawn sheet with game/tools/measure_car_facing.py); false = frame = heading / 11.25 as before. It covers the normal, shadowless and tilt sheets (they share the direction column) and the rail snap's outline. straight_grip_on (fix C): true = while W is held without A or D (driving straight under power, not a drift) the car keeps straight_grip of its sideways speed per physics step (50 per s) instead of drift_factor (0.98, the Unity value), so the slide left after a turn fades fast once the player accelerates; a held drift and a coast (no W, the Polarized Steering Wheel's lift and steer) keep the Unity grip, and out of a drift the grip comes in as the drift amount falls (0.33 s). straight_grip 0.9: a slide halves in 0.13 s instead of 0.7 s. false = the Unity grip everywhere.",
+  "frame_remap": true,
+  "straight_grip_on": true,
+  "straight_grip": 0.9
+}

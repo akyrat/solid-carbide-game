@@ -185,6 +185,68 @@ class TestCheckCraters(unittest.TestCase):
         self.assertIn("prop-broken-car-2", c.obstacle_props())
 
 
+class TestCheckHints(unittest.TestCase):
+    """T-576: hint pieces name a known icon, a mode and a heading, are mirrored only when their icon can
+    be, have their mode's footprint and lie inside the map; a level without hints is fine."""
+
+    def level(self, *hints):
+        d = small_level()
+        d["hints"] = list(hints)
+        return d
+
+    def hint(self, hid="hint-1", icon="gas", mode="ground", heading=270, mirror=False, x=-4.0, y=4.0, size=None):
+        w = size if size is not None else (4.0 if mode == "ground" else 2.0)
+        return {"id": hid, "icon": icon, "mode": mode, "heading": heading, "mirror": mirror,
+                "x": x, "y": y, "w": w, "h": w}
+
+    def problems(self, *hints):
+        return c.check_level(self.level(*hints))
+
+    def test_valid_hints_of_every_icon_both_ways(self):
+        hs = []
+        for i, icon in enumerate(["gas", "brake", "arrow-straight", "arrow-curved", "arrow-circular"]):
+            hs.append(self.hint("hint-g%d" % i, icon, "ground", heading=45 * i, mirror=icon.startswith("arrow-c"), x=-8.0, y=-2.0 + 0 * i))
+            hs.append(self.hint("hint-s%d" % i, icon, "sign", heading=315, x=2.0 + i, y=6.0))
+        self.assertEqual(self.problems(*hs), [])
+
+    def test_a_level_without_hints_is_valid(self):
+        self.assertEqual(c.check_level(small_level()), [])
+        self.assertEqual(c.check_hints(small_level(), (-10, -10, 10, 10)), [])
+
+    def test_the_whole_file_with_hints_passes_the_tool(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "level.json"
+            p.write_text(json.dumps(self.level(self.hint(), self.hint("hint-2", "arrow-curved", "sign", 90, True, 4.0, 4.0))), encoding="utf-8")
+            res = run_tool(p)
+            self.assertEqual(res.returncode, 0, res.stdout)
+            self.assertEqual(res.stdout.strip(), "OK")
+
+    def test_rejects_bad_hints(self):
+        cases = [
+            (self.hint(icon="horn"), "unknown icon"),
+            (self.hint(mode="flying"), "unknown mode"),
+            (self.hint(heading=30), "heading must be one of"),
+            (self.hint(heading="north"), "heading must be one of"),
+            (self.hint(mirror=True), "can't be mirrored"),
+            (self.hint(icon="arrow-curved", mirror="yes"), "mirror must be true or false"),
+            (self.hint(size=2.0), "footprint"),
+            (self.hint(mode="sign", size=4.0), "footprint"),
+            (self.hint(x=8.0), "outside the map"),
+            ({"id": "hint-1", "icon": "gas", "mode": "ground", "heading": 0}, "needs numbers"),
+            ("not an object", "must be an object"),
+        ]
+        for bad, words in cases:
+            with self.subTest(words=words, bad=bad):
+                self.assertTrue(any(words in p for p in self.problems(bad)), self.problems(bad))
+        self.assertTrue(any("used twice" in p for p in self.problems(self.hint(), self.hint(x=0.0))))
+        self.assertEqual(c.check_level(dict(small_level(), hints="x")), ["hints: must be a list"])
+
+    def test_a_hint_sign_blocks_the_spawn_a_ground_hint_does_not(self):
+        on_spawn = dict(x=-6.0, y=0.0)  # the spawn is at (-5, 1)
+        self.assertEqual(self.problems(self.hint(**on_spawn)), [])
+        self.assertTrue(any("hint sign" in p for p in self.problems(self.hint(mode="sign", **on_spawn))))
+
+
 class TestCheckPairs(unittest.TestCase):
     """T-272: every pair names two different existing obstacles; T-394: an obstacle can be in several
     pairs, the same two obstacles in one pair at most."""
