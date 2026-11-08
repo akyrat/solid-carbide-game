@@ -7,9 +7,11 @@ extends RefCounted
 
 const SessionScene := preload("res://scenes/run/practice_session.tscn")
 const STANDIN_COMMENT := "STAND-IN take (T-574 tweak 10, step 2): recorded by game/tools/make_standin_takes.gd from the practice tests' scripted drive, not by the board. Replace it with the board's own recording."
-const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-28, 19), Vector2(-26, 22.5),
-	Vector2(-12, 22.5), Vector2(4, 22.5)]
-const GRIND_ROUTE := [Vector2(0, 6), Vector2(-8, 6), Vector2(-14, 2), Vector2(-30, 2)]
+# T-604: wide to (-32, 22.5) for the new spawn (test_practice_session.gd's AIR_ROUTE).
+const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-30, 18), Vector2(-32, 22.5),
+	Vector2(-24, 22.5), Vector2(-12, 22.5), Vector2(4, 22.5)]
+# T-604: the first two points moved for the new spawn (test_practice_session.gd's GRIND_ROUTE).
+const GRIND_ROUTE := [Vector2(2, 6), Vector2(-6, 7), Vector2(-14, 2), Vector2(-30, 2)]
 
 var session: PracticeSession
 
@@ -37,7 +39,7 @@ func record(trick: String, dir: String, parent: Node) -> Dictionary:
 			_hold([false, false, 1.0], 0.2)
 			_hold([false, true, 1.0], 1.0)
 		"air_spin":
-			_route(AIR_ROUTE, 3, true)
+			_route(AIR_ROUTE, 4, true)
 		"grind":
 			_route(GRIND_ROUTE, 99, false, 2, 6.0)
 	_hold([false, false, 0.0], 1.2)  # coast a moment: the count and its popup show

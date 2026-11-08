@@ -378,7 +378,8 @@ func test_levels_without_hints_open_and_play_as_before() -> void:
 	assert_false(e.document.file_data("Old").has("hints"), "no hints key written for a level without any")
 	for path in ["res://data/level/kaiju_city_map.json", "res://data/level/practice_playground.json", "res://data/level/elevation_sample_map.json"]:
 		var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
-		assert_false(layout.has("hints"), path)
+		# T-604: the board's playground, saved again in the creator, has an empty "hints" list.
+		assert_true((layout.get("hints", []) as Array).is_empty(), path)
 		var map = MapScene.instantiate()
 		map.layout = layout
 		add_child_autofree(map)

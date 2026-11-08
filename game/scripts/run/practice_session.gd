@@ -198,6 +198,8 @@ var gift_screen: PowerUpScreen
 ## It counts toward no slide's goal (COUNTED).
 var needle: ThreadTheNeedle
 var needle_flash: NeedleFlash
+## T-604: the seed a reset stage gives the needle routes (_fix_needle_routes).
+const NEEDLE_ROUTE_SEED := 604
 ## T-574 tweak 8, the takes (the slides' recording controls were removed in tweak 12; the demos
 ## replay the takes): where the takes are saved, the take being recorded or played, and its state.
 var takes_dir := PracticeTake.TAKES_DIR
@@ -654,7 +656,20 @@ func reset_stage() -> void:
 	for p in trick_popups.popups():
 		p.queue_free()
 	needle.setup(map.layout, ComboData.new().needle_rules())
+	_fix_needle_routes()
 	_set_take_state("ready")
+
+
+## T-604: a reset stage starts the level's needle routes the same way every time (a fixed seed for
+## a route in random order), so a take records and replays with the same active pairs: threading a
+## pair pays a trick, and a different random start made a replay stray from its recording.
+func _fix_needle_routes() -> void:
+	if needle == null or needle.routes == null:
+		return
+	needle.routes.rng.seed = NEEDLE_ROUTE_SEED
+	needle.routes.setup(map.layout, needle.gates.map(func(g): return str(g.id)))
+	if needle.has_method("refresh_markers"):
+		needle.refresh_markers()
 
 
 ## Resets the stage and records the driving from now on (the grind's Jump gift is taken first).

@@ -449,18 +449,20 @@ func _route(pts: Array, slow_until: int, spin: bool, hop_at := -1, slow_speed :=
 	return out
 
 
-## From the spawn (-7, -1) to the jump ramp ramp-7 (x -2 to 2, y 20 to 28): south-west round the
-## ramp, then east along y 22.5 at full speed.
-const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-28, 19), Vector2(-26, 22.5),
-	Vector2(-12, 22.5), Vector2(4, 22.5)]
-## From the spawn to the grind corridor: round to the west, a hop at (-14, 2) onto rail-40.
-const GRIND_ROUTE := [Vector2(0, 6), Vector2(-8, 6), Vector2(-14, 2), Vector2(-30, 2)]
+## From the spawn (-4.25, 1 since T-604) to the jump ramp ramp-7 (x -2 to 2, y 20 to 28): south-west
+## round the ramp, wide to (-32, 22.5) so the car is turned east before it speeds up (T-604: from the
+## new spawn the old, tighter turn made the car circle), then east along y 22.5 at full speed.
+const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-30, 18), Vector2(-32, 22.5),
+	Vector2(-24, 22.5), Vector2(-12, 22.5), Vector2(4, 22.5)]
+## From the spawn to the grind corridor: round to the west, a hop at (-14, 2) onto rail-40 (T-604:
+## the first two points moved for the new spawn).
+const GRIND_ROUTE := [Vector2(2, 6), Vector2(-6, 7), Vector2(-14, 2), Vector2(-30, 2)]
 
 
 func test_on_the_real_playground_an_air_spin_from_the_air_spin_start_counts() -> void:
 	session.setup("air_spin")
 	session.start()
-	var r := _route(AIR_ROUTE, 3, true)
+	var r := _route(AIR_ROUTE, 4, true)
 	assert_true(r.flew, "flew off the jump ramp")
 	assert_eq(session.successes, 1, "one landing, one success: %s %s" % [r, counted])
 	assert_true(["air_one_eighty", "air_three_sixty"].has(counted[0][0]))
@@ -523,14 +525,14 @@ func test_the_board_s_pairs_are_live_and_threading_one_pays_the_trick_as_in_a_ru
 		assert_true(ids.has(p.id), "%s is a live gate" % p.id)
 	assert_not_null(session.map.view_root.find_child("NeedleMarkers", true, false), "the markers are drawn")
 	assert_not_null(session.needle_flash, "the flash, as in the run")
-	# pair-1: prop-2 (centre 15, -2.5) and prop-1 (centre 7, 5); drive south across its gap at x 11.
+	# pair-1: prop-2 (centre 15, -2.5) and prop-1 (centre 16, 11 since T-604); drive east across its gap at y 4.25.
 	session.setup("alt_drift")
 	session.start()
 	session.set_focused(true)
 	var car = session.car
 	car.use_keyboard = false
-	car.model.set_position(Vector2(11.0, -6.0))
-	car.model.rotation = PI / 2.0
+	car.model.set_position(Vector2(9.0, 4.25))
+	car.model.rotation = 0.0
 	var paid: Array = []
 	session.state.combo_trick.connect(func(id: String, _a: float, _m: float) -> void: paid.append(id))
 	car.scripted_input = [true, false, 0.0]
