@@ -1,7 +1,7 @@
 ---
 id: T-584
 title: Art: redraw the car frames that point the wrong way (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Rails
@@ -69,6 +69,10 @@ Redraw done: frames 22 and 23 now point up-right, 19 slightly better; 13 of 28 g
 ### 2026-11-08, In QA → Needs playtest
 
 QA passed. The redrawn car frames are ready to play: C:\solid-carbide-worktrees\T-584 (drive along the screen's up-right diagonal).
+
+### 2026-11-08, Needs playtest
+
+Board: lgtm. Merging.
 
 ## Style review
 
@@ -315,3 +319,4 @@ Run by `tools/style_loop/run.py` on 2026-11-08: art, brief `art-archive/T-584/br
 
 **Asset Generation Agent, resumed run, 2026-11-08. Generations used: 13 of 28** (log lines for T-584). Frame 3: 4 gens, old frame kept (measured 75.6, on target). Frame 23: 1 gen, 8/10, installed, 305.9. Frame 22: 2 gens, 5/10, installed, 289.5, noted for the playtest. Frame 19: 2 gens (v1 from 18 by +15 scored 5/10; v2 from old 20 by -20, free fixes), loop best 7/10, installed, noted for the playtest; measured 219.2 (script scale) vs 217.6 before: a small gain. Frame 20: 4 gens, loop best 7/10, but the redraw measured 232.3 (old frame 241.3, even spacing wants about 249), so it is further from target than the old frame: OLD frame 20 restored (art-archive/T-584/old/frame_20.png), redraw kept in art-archive/T-584/frames/frame20.png. Frame 21: NOT redrawn: by the script it measures 262.2, evenly between 20 (241) and 22 (292); frame 2 skipped by the board's decision (measured 55.5). 15 gens unspent. The style loop flagged the ticket (status flagged-for-review, set by the loop, not by me) after frames 19 and 20 stayed below 8. Re-measured with measure_car_facing.py --frames 19-23,2,3 --write (script scale, leave-one-out error ~3 deg): 17 205.7, 18 210.9, 19 219.2, 20 241.3, 21 262.2, 22 292.0, 23 310.6, 24 326.6. **T-580 measurement with the new art** (test_t583_facing_fixes, straight lines, drawn nose minus travel on screen: worst | mean | up-right | down-right | down-left | up-left | up): none 37.8 (heading 241.75) | 8.9 | -25.5 | +10.5 | -15.0 | -7.0 | -25.2; A 13.0 (228.25) | 3.6 | +5.0 | +2.0 | +9.0 | +0.3 | -6.8; C same as none; A+C same as A (before the redraw: none 55.5 / 10.5, A 23.5 / 4.3). Cases at +2 s (drawn gap): turn_onto_screen_up_right none -44.1, A -17.8, C -32.3, A+C -6.0 (was -22.5); coast_turn_onto_up_right none -29.9, A -13.5, C -23.2, A+C -6.8 (was +7.3); drift_turn_onto_diagonal A+C +3.7; coast_then_throttle A+C +0.5. **Best: A+C**, data unchanged. Tilt sheet (car_iso_tilt) not redrawn, shares the direction column so has the same misses; for a later decision. Before/after sheet: art-archive/T-584/screenshots/before_after_arrows.png (before_arrows.png, after_arrows.png). Docs updated: docs/visual-style.md, docs/drifting.md. Full test run: 270 scripts, 3070 tests, 3069 passing, 0 failing, 1 risky. A style-loop tool for frame 19 was run with its brief changed to say version 1 already existed (no re-spend).
 - 2026-11-08, flagged-for-review → in-progress: Loop flag from frames 19/20 below 8; kept the best (19 installed 7/10, 20 old frame restored), noted for the playtest. Goodnight approval.
+- 2026-11-08, needs-playtest → done: Board: lgtm (2026-11-08)
