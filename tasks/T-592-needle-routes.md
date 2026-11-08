@@ -1,7 +1,7 @@
 ---
 id: T-592
 title: Needle routes: thread-the-needle pairs played in order or at random
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Rails
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: needle routes, on top of free placement and the route texts.
 
+### 2026-11-08, In progress → In QA
+
+Needle routes built: N in the creator, click pair lines in order, In order or Random; in a run only the active pair pays, waiting pairs faint. QA next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -74,3 +78,4 @@ Also fixed: test_creator_hints.gd failed on this branch (T-576's hint test met T
 Tests: new tests/unit/level_creator/test_creator_routes.gd (13 pass), tests/unit/run/test_needle_routes.gd (11 pass), tools/test_check_level.py TestCheckRoutes (59 pass in the file). Full Godot set (GUT_TIME_LIMIT=2400): 3190 tests, 3189 passing, 0 failing, 1 risky/pending, 251 s.
 Screenshots: art-archive/T-592/screenshots/route_in_editor.png (a 3-pair random route being edited and a 1-pair route), run_before.png (first pair bright, other two faint), run_after.png (after threading it: second bright, first faint). Fixtures: tests/fixtures/t592_routes_demo.tscn, t592_routes_run_demo.tscn.
 Documents affected: docs/level-design.md (Content), game/docs/level/level-creator-pieces.md, game/docs/level/level-creator.md.
+- 2026-11-08, in-progress → in-qa: Text nit for the playtest: the route label says '1 pairs' for one pair (T-591's route_label).
