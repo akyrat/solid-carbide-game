@@ -1,7 +1,7 @@
 ---
 id: T-585
 title: Texts: the Grinding Wheels power-up
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -78,3 +78,4 @@ Run by `tools/style_loop/run.py` on 2026-11-08: text, kind card_desc, brief `C:/
 ## Result notes
 
 Texts written. Name (board's own, no loop): power_ups.names.grinding_wheels 'Grinding Wheels'. Description (style loop, round 1, score 8, 3 of 3 script checks pass): power_ups.descriptions.grinding_wheels 'Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered.' (82 chars, no slots, one tier so no descriptions_last_tier entry; describe() in power_up_screen.gd falls back to descriptions then). Keys for T-586: both in game/data/screen_texts.json under power_ups, same places as the other power-ups (names, descriptions; no _comment change needed). docs/hud-and-menus.md Content, 'Mission notebook and power-up texts', lists them. Screenshot: art-archive/T-585/screenshots/gift_card_grinding_wheels.png (the real overlay, with the Jump card temporarily swapped to the new texts for the shot, then restored; the icon shown is Jump's stand-in because grinding_wheels is not in power_ups.json until T-586). Tests: JSON parses; full run left to QA.
+- 2026-11-08, needs-playtest → done: Board approved the text (2026-11-08)
