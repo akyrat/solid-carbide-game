@@ -25,7 +25,7 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - **Pixel art icons for the upgrades** (board, 2026-10-29): each garage upgrade gets a small pixel art icon, shown beside its row in the garage. One art ticket per upgrade (acceleration, car health, damage bonus, pickup magnet, air turn), each icon its own PNG in `game/art/garage/<upgrade key>.png`, which the garage picks up on its own; placeholders drawn in code until then. Script-drawn first (no PixelLab go yet), in the bold comic look of the HUD's reaction icons. (T-365, T-366 to T-370)
 - **A broken save never wipes progress** (board, 2026-10-30, audit): a save file that fails to load is never overwritten; the game keeps a backup of the last good save and loads it. Each save records its version, so a renamed upgrade keeps its level. The same goes for the runs list. (T-417) Built as: a save is written to a temp file and renamed; the previous good file becomes `<file>.bak`; a file that fails to load is renamed to `<file>.broken-<time>` and kept; `version` starts at 1 (a file with none is 1), and a renamed upgrade id is mapped in `PlayerProgress.ID_RENAMES`.
 - **Cosmetics** (board, 2026-11-07): a **Cosmetics** submenu, opened from the main menu, where the player picks how the car looks in small ways. The first cosmetics are the jump effects (Drifting, Decisions, "A jump effect around the car"): the dash cloud is the default and free; the others are **unlocked with coins**, then picked there. The prices are proposals for the playtest. What is unlocked and which one is picked are saved with the player's progress. (T-552, T-553, T-556)
-- **Cosmetics the player can't afford are disabled** (board, 2026-11-07): on the Cosmetics screen, the button that unlocks a cosmetic is disabled (greyed out, not clickable) while the player has fewer coins than its price, and becomes clickable as soon as they have enough. Cosmetics already unlocked can always be picked. (T-569)
+- **Cosmetics the player can't afford are disabled** (board, 2026-11-07): on the Cosmetics screen, the button that unlocks a cosmetic is disabled (greyed out, not clickable) while the player has fewer coins than its price, and becomes clickable as soon as they have enough. Cosmetics already unlocked can always be picked. It uses the same disabled look as the garage's Buy button (`HudStyle.style_button`), and refreshes whenever the coins change. (T-569)
 
 ## Content
 
@@ -61,7 +61,7 @@ Each upgrade row begins with a small icon. The art is `game/art/garage/<upgrade 
 
 ### Cosmetics menu texts (T-550; proposals for the playtest)
 
-In `game/data/cosmetics_text.json`, all scored 8 or more in the style loop but the shockwave ring's name (7, kept for the playtest). Full list with scores: HUD and menus, Content, "Texts for the grind overhaul, the jump arrow and the Cosmetics menu". Button "Cosmetics"; title "Cosmetics"; labels "Unlock for {price} coins", "Unlock", "Flex it", "Equipped", "Not enough coins: style isn't free."; effects: Dash cloud, Engagement Spring, Jet Thrust Zero Sugar, Stunt sparks, Premium Shockwave Ring, each with a one-line description.
+In `game/data/cosmetics_text.json`, all scored 8 or more in the style loop but the shockwave ring's name (7, kept for the playtest). Full list with scores: HUD and menus, Content, "Texts for the grind overhaul, the jump arrow and the Cosmetics menu". Button "Cosmetics"; title "Cosmetics"; labels "Unlock for {price} coins", "Unlock", "Equip", "Equipped", "Not enough coins: style isn't free."; effects: Dash cloud, Engagement Spring, Jet Thrust Zero Sugar, Stunt sparks, Premium Shockwave Ring, each with a one-line description.
 
 ### Saving
 
@@ -89,4 +89,4 @@ The whole list (heading, coins, the five rows and Back) is one column, measured 
 
 ### The Cosmetics screen (T-553; proposals for the playtest)
 
-Built as described in HUD and menus, Content, "The Cosmetics submenu and the Facing arrow checkbox": a list in the garage's look, one row per jump effect (preview, name, description, price or state, an Unlock or Flex it button), the coin count and Back. Buying and picking go through the `PlayerProgress` API above; the screen holds no rule.
+Built as described in HUD and menus, Content, "The Cosmetics submenu and the Facing arrow checkbox": a list in the garage's look, one row per jump effect (preview, name, description, price or state, an Unlock or Equip button), the coin count and Back. Buying and picking go through the `PlayerProgress` API above; the screen holds no rule.

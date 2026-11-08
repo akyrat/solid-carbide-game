@@ -1,0 +1,49 @@
+{
+  "file": "raw_v1-4.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "one bold curved turn arrow road marking seen straight from above, flat top-down view, a thick shaft rising from the bottom centre that bends smoothly through a quarter circle to the right and ends in a wide triangular head pointing right at the top right, painted in pale pink, lighter highlight along the upper and left edges, dusky darker pink shade along the lower and right edges and the inside of the bend, near-black outline, slightly worn paint texture, retro night arcade look, crisp pixel art, no gradients, transparent background",
+    "negative_description": "text, letters, words, road, asphalt, background, keycap, button, box, frame, several arrows, straight arrow, left turn, u-turn, circle, drop shadow, blur, gradient, photo, 3d render, tilted, perspective",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "text_guidance_scale": 8.0,
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "view": "high top-down",
+    "init_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACPElEQVR4nO2bP0vDQBiHf3mJUIe4KaKLnVz0g7l0dXJwcnbqKA4u7oKT30F00KFEBEV0a4cKDpETL4T0LmmbN5e8vTxLoaSXPr/7f2mBjg4RRNFuUke5BM9DIAiDOwSCQJLpT+J1AJwhEATDEQJBGOPPF9YQCCtAlRAIK8KyIRAkMvlmC4EgFaYQQghd8EzjL6z3N4GoZwwhWF8LxAUQLbjK4wghRMvFx6OnzIW9hUJQ5U4mb4UhBGgQ3V83tvbs0gaUdB5TCLrcohACNER+sFJf1iZuEjaRDyEbrC2EAA0wM1IbRvR5pYtCyLcsUwiElskr8WXlFfHdfVrm9eCkdKwJ0RL5KtKaj/j97/X2/Arx6HWuz4RoigJ5LWJju78z857+zPPDYyp/fHPZni6QZGu/grzpmmXlnQ6CpgBs8kqkiP3Dg7QlVJF31gVstZ/FJFIWQlX5RseAbO2bRI4uTmemMT2y6xZQVd5ZF0hbgKHv2+QVpgD0YklNd1XlnbQA0/a0aMrT8vr4S29o8nM4h7yTALK1WLbGz1O0m+OQdzoNcsoPB2cs8o0MgmUrPlO/z6JWeVzyIo/EVNPnkhcZAKe8yAA45UUHwCEvNgAueSezQPosz7IHaFJeXAvglhcVQB3yogKoC4LnEDyH4DkEzyF4DsFzCJ5D8Byq+wbqhKfslKdJCJ5D8ByC5xA8h+A5oesbzvP83yUEzwld37Dsxw8rG8Dw/3le2wja+i+vus4A85CLm3R0dHSgpfwCY0yKVeJIiVUAAAAASUVORK5CYII="
+    },
+    "init_image_strength": 500
+  },
+  "prompt": "one bold curved turn arrow road marking seen straight from above, flat top-down view, a thick shaft rising from the bottom centre that bends smoothly through a quarter circle to the right and ends in a wide triangular head pointing right at the top right, painted in pale pink, lighter highlight along the upper and left edges, dusky darker pink shade along the lower and right edges and the inside of the bend, near-black outline, slightly worn paint texture, retro night arcade look, crisp pixel art, no gradients, transparent background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-11-08T06:53:19+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "game/docs/level/hint-pieces.md",
+    "art-archive/T-577/brief_arrow_curved.md",
+    "game/art/hints/hint_gas.png",
+    "game/art/hints/hint_arrow_straight.png",
+    "tasks/T-577-hint-pieces-art.md"
+  ],
+  "task": "T-577",
+  "job_status": null,
+  "notes": "T-577 curved turn arrow v1: the script's right-turn arrow (build_hint_arrow_curved.py init) as init_image, strength 500; 1 of this asset's 4 generations, 4 of 30 on the ticket",
+  "generator": "game/tools/pixellab_client.py"
+}

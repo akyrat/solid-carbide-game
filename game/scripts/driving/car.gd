@@ -25,6 +25,7 @@ const RevCharge := preload("res://scripts/driving/rev_charge.gd")
 const JumpPowerUp := preload("res://scripts/driving/jump_power_up.gd")
 const PolarizedWheel := preload("res://scripts/driving/polarized_steering_wheel.gd")
 const RailGrind := preload("res://scripts/driving/rail_grind.gd")
+const GrindingWheels := preload("res://scripts/driving/grinding_wheels.gd")
 const CarTilt := preload("res://scripts/driving/car_tilt.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
@@ -106,6 +107,10 @@ var polarized = PolarizedWheel.new()
 ## air that catches a rail locks on and slides along it (_grind_step); grind.grind_ended is the
 ## GRIND! trick's signal.
 var grind = RailGrind.new()
+## Grinding Wheels (task T-586, grinding_wheels.gd): stacks over a grind heat the sparks and boost
+## the launch (grind.wheels points at it, set in _init). Does nothing until
+## grinding_wheels.set_tier() gives it a tier > 0 (the run sets it from RunState).
+var grinding_wheels = GrindingWheels.new()
 ## The tilt (task T-551, car_tilt.gd): Space held in the air (or on a rail) tilts the car through 3
 ## frames; let go, or landed, it plays them back. The drawing reads tilt.step (car_sprite.gd).
 var tilt = CarTilt.new()
@@ -194,6 +199,7 @@ var _bounce_point := Vector2.ZERO
 
 
 func _init() -> void:
+	grind.wheels = grinding_wheels  # T-586: the launch boost reads the wheels' stacks
 	jump.jumped.connect(func(_vz: float) -> void:
 		jump_started.emit("hop", model.get_position(), height_model.height))
 	tricks.trick.connect(func(trick_id: String) -> void: trick.emit(trick_id))
@@ -261,6 +267,7 @@ func physics_step() -> void:
 		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
 		rev_charge.reset()
 		polarized.reset()  # T-502: and the Polarized Steering Wheel's coast and burst
+		jump.reset()  # T-590: and a jump's charge (letting go of dead keys is no hop)
 		_jump_pressed = false
 	last_input = [w, s, steer]
 	jump_held = held
@@ -270,7 +277,8 @@ func physics_step() -> void:
 		return
 	# T-461: Jump (nothing at all when not owned). Before the model's update, so
 	# the hop's first step is already in the air (air turn rate, no driving).
-	jump.step(height_model, _jump_pressed, model.dt)
+	# T-590: Space held on the ground charges it; the hop comes when it is let go.
+	jump.step(height_model, _jump_pressed, model.dt, held)
 	_jump_pressed = false
 	var rotation_before: float = model.rotation
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
@@ -336,7 +344,9 @@ func physics_step() -> void:
 		else:
 			grind.touched_ground()
 	# T-551: tilted while Space is held in the air (or on the rail just caught); back otherwise.
-	tilt.update(held and (height_model.airborne or grind.active), model.dt)
+	# T-590 Tweak 1: and while the Jump's charge grows on the ground (the board: the same tilt as in
+	# the air). Let go, the car jumps and the frames play back in the air, as when Space is let go there.
+	tilt.update(held and (height_model.airborne or grind.active or jump.charging), model.dt)
 	if detect_tricks:
 		# Tricks (task T-079), observed after the height step so the detector
 		# knows whether this step ends in the air: the drift 360 ignores those
@@ -352,7 +362,7 @@ func physics_step() -> void:
 ## T-541: one physics step on a rail. A or D spin the body at the air turn rate, as in the air
 ## (the board's tweak, 2026-11-06; the car stays on the rail). T-551 (the grind overhaul): the
 ## grind lasts while Space stays held (`held`); letting go ends it with the launch where the car
-## faces (reason "jump": RailGrind.leave_velocity, jump_speed flat, launch_takeoff_speed up), for any
+## faces (reason "jump": RailGrind.leave_velocity, the grind's speed flat (T-578), launch_takeoff_speed up), for any
 ## car, no power-up needed. Otherwise the grind slides on. Returns true while it goes on (the step
 ## is done here: no driving, no collisions, the height held on the bar, the tilt held), false when
 ## it ended: the car is then off the rail with its leaving velocity, and physics_step() carries on

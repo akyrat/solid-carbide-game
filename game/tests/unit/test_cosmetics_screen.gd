@@ -97,6 +97,34 @@ func test_refuses_without_enough_coins_with_the_text() -> void:
 	assert_eq(s.message_label.text, CosmeticsScreen.load_texts().not_enough_coins)
 
 
+func test_unlock_button_disabled_until_affordable_t569() -> void:
+	var p := _progress(0)
+	var s := _screen(p)
+	var price := p.cosmetics.price("spring")
+	assert_true(s.rows["spring"].button.disabled, "no coins: disabled")
+	p.coins = price - 1
+	p.changed.emit()
+	assert_true(s.rows["spring"].button.disabled, "one coin short: disabled")
+	p.coins = price
+	p.changed.emit()
+	assert_false(s.rows["spring"].button.disabled, "enough coins: clickable")
+	p.coins = price - 1
+	p.changed.emit()
+	assert_true(s.rows["spring"].button.disabled, "back below: disabled again")
+
+
+func test_unlocked_cosmetics_can_always_be_picked_t569() -> void:
+	var p := _progress(100000)
+	var s := _screen(p)
+	s.rows["spring"].button.pressed.emit()
+	p.coins = 0
+	p.changed.emit()
+	assert_false(s.rows["spring"].button.disabled, "unlocked, no coins: still pickable")
+	s.rows["spring"].button.pressed.emit()
+	assert_eq(p.equipped_jump_effect(), "spring")
+	assert_false(s.rows["dash_cloud"].button.disabled, "the free default can be picked back")
+
+
 func test_keyboard_order_ends_on_back() -> void:
 	var s := _screen(_progress(0))
 	var order := s.focus_order()
@@ -106,7 +134,7 @@ func test_keyboard_order_ends_on_back() -> void:
 
 func test_no_hard_coded_label_in_the_screen() -> void:
 	var src := FileAccess.get_file_as_string("res://scripts/menu/cosmetics_screen.gd")
-	for key in ["Unlock", "Flex it", "Equipped", "Not enough coins", "Dash cloud"]:
+	for key in ["Unlock", "Equip", "Equipped", "Not enough coins", "Dash cloud"]:
 		assert_false(src.contains('"%s' % key), key)
 
 

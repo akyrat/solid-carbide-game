@@ -16314,6 +16314,942 @@
      "texture": "res://art/creator_pieces/icon_rail.png"
     }
    ]
+  },
+  {
+   "id": "hint-gas-ground",
+   "kind": "hint",
+   "hint": "gas",
+   "mode": "ground",
+   "label": "piece_hint_gas",
+   "footprint_units": [
+    4.0,
+    4.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-gas-sign",
+   "kind": "hint",
+   "hint": "gas",
+   "mode": "sign",
+   "label": "piece_hint_gas",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_gas.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-brake-ground",
+   "kind": "hint",
+   "hint": "brake",
+   "mode": "ground",
+   "label": "piece_hint_brake",
+   "footprint_units": [
+    4.0,
+    4.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-brake-sign",
+   "kind": "hint",
+   "hint": "brake",
+   "mode": "sign",
+   "label": "piece_hint_brake",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_brake.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-arrow-straight-ground",
+   "kind": "hint",
+   "hint": "arrow-straight",
+   "mode": "ground",
+   "label": "piece_hint_arrow_straight",
+   "footprint_units": [
+    4.0,
+    4.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-arrow-straight-sign",
+   "kind": "hint",
+   "hint": "arrow-straight",
+   "mode": "sign",
+   "label": "piece_hint_arrow_straight",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_straight.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-arrow-curved-ground",
+   "kind": "hint",
+   "hint": "arrow-curved",
+   "mode": "ground",
+   "label": "piece_hint_arrow_curved",
+   "footprint_units": [
+    4.0,
+    4.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-arrow-curved-sign",
+   "kind": "hint",
+   "hint": "arrow-curved",
+   "mode": "sign",
+   "label": "piece_hint_arrow_curved",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    },
+    {
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_curved.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-arrow-circular-ground",
+   "kind": "hint",
+   "hint": "arrow-circular",
+   "mode": "ground",
+   "label": "piece_hint_arrow_circular",
+   "footprint_units": [
+    4.0,
+    4.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    }
+   ]
+  },
+  {
+   "id": "hint-arrow-circular-sign",
+   "kind": "hint",
+   "hint": "arrow-circular",
+   "mode": "sign",
+   "label": "piece_hint_arrow_circular",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "270",
+    "315",
+    "0",
+    "45",
+    "90",
+    "135",
+    "180",
+    "225"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    },
+    {
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "texture": "res://art/hints/hint_arrow_circular.png"
+    }
+   ]
   }
  ],
  "groups": [
@@ -16322,7 +17258,8 @@
   "levels",
   "buildings",
   "obstacles",
-  "decoration"
+  "decoration",
+  "hints"
  ],
  "families": [
   {
@@ -18290,6 +19227,1234 @@
    "hints": [
     "banner_wall_hint",
     "banner_height_hint"
+   ]
+  },
+  {
+   "id": "hint-gas",
+   "group": "hints",
+   "label": "piece_hint_gas",
+   "looks": 1,
+   "turns": 8,
+   "mirrors": [
+    false
+   ],
+   "heights": [
+    "ground",
+    "sign"
+   ],
+   "members": [
+    {
+     "asset": "hint-gas-ground",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-ground",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-ground",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-ground",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-ground",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-ground",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-ground",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-ground",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-gas-sign",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "sign"
+    }
+   ],
+   "mode_hints": {
+    "ground": "hint_ground_hint",
+    "sign": "hint_sign_hint"
+   }
+  },
+  {
+   "id": "hint-brake",
+   "group": "hints",
+   "label": "piece_hint_brake",
+   "looks": 1,
+   "turns": 8,
+   "mirrors": [
+    false
+   ],
+   "heights": [
+    "ground",
+    "sign"
+   ],
+   "members": [
+    {
+     "asset": "hint-brake-ground",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-ground",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-ground",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-ground",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-ground",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-ground",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-ground",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-ground",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-brake-sign",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "sign"
+    }
+   ],
+   "mode_hints": {
+    "ground": "hint_ground_hint",
+    "sign": "hint_sign_hint"
+   }
+  },
+  {
+   "id": "hint-arrow-straight",
+   "group": "hints",
+   "label": "piece_hint_arrow_straight",
+   "looks": 1,
+   "turns": 8,
+   "mirrors": [
+    false
+   ],
+   "heights": [
+    "ground",
+    "sign"
+   ],
+   "members": [
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-ground",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-straight-sign",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "sign"
+    }
+   ],
+   "mode_hints": {
+    "ground": "hint_ground_hint",
+    "sign": "hint_sign_hint"
+   }
+  },
+  {
+   "id": "hint-arrow-curved",
+   "group": "hints",
+   "label": "piece_hint_arrow_curved",
+   "looks": 1,
+   "turns": 8,
+   "mirrors": [
+    false,
+    true
+   ],
+   "heights": [
+    "ground",
+    "sign"
+   ],
+   "members": [
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-ground",
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-curved-sign",
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": true,
+     "height": "sign"
+    }
+   ],
+   "mode_hints": {
+    "ground": "hint_ground_hint",
+    "sign": "hint_sign_hint"
+   },
+   "hints": [
+    "hint_mirror_hint"
+   ]
+  },
+  {
+   "id": "hint-arrow-circular",
+   "group": "hints",
+   "label": "piece_hint_arrow_circular",
+   "looks": 1,
+   "turns": 8,
+   "mirrors": [
+    false,
+    true
+   ],
+   "heights": [
+    "ground",
+    "sign"
+   ],
+   "members": [
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-ground",
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": true,
+     "height": "ground"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "270",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "270",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 0,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "315",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "315",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 1,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "0",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "0",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 2,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "45",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "45",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 3,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "90",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "90",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 4,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "135",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "135",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 5,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "180",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "180",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 6,
+     "flip": true,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "225",
+     "mirror": false,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": false,
+     "height": "sign"
+    },
+    {
+     "asset": "hint-arrow-circular-sign",
+     "view": "225",
+     "mirror": true,
+     "variant": "",
+     "look": 0,
+     "turn": 7,
+     "flip": true,
+     "height": "sign"
+    }
+   ],
+   "mode_hints": {
+    "ground": "hint_ground_hint",
+    "sign": "hint_sign_hint"
+   },
+   "hints": [
+    "hint_mirror_hint"
    ]
   }
  ]

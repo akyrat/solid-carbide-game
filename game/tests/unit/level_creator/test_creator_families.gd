@@ -8,7 +8,7 @@ extends GutTest
 const EDITOR_SCENE := preload("res://scenes/level_creator/editor.tscn")
 ## A level the board saved with the creator before T-262 (its level_01.json, copied unchanged).
 const OLD_LEVEL := "res://tests/fixtures/t262_level_saved_before.json"
-const GROUPS := ["roads", "ground", "levels", "buildings", "obstacles", "decoration"]
+const GROUPS := ["roads", "ground", "levels", "buildings", "obstacles", "decoration", "hints"]  # T-576: the hint pieces
 
 var dir: String
 
@@ -55,7 +55,7 @@ func test_six_groups_one_button_per_kind_with_labels_from_the_texts() -> void:
 	assert_eq(shown[CreatorTexts.get_text("group_buildings")], ["building-small", "building-long", "lowrise", "skyscraper"])
 	assert_eq(shown[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates", "parked-car", "broken-car"])  # T-398
 	assert_eq(shown[CreatorTexts.get_text("group_decoration")], ["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign", "alert-sign", "alert-banner"])
-	assert_eq(e.panel.buttons.size(), 27, "one button per kind (T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign, alert banner; T-542: rail) (Pavement left out: no ground tile art)")
+	assert_eq(e.panel.buttons.size(), 32, "one button per kind (T-398: sidewalk, meteor crater, parked car, broken car; T-441: alert sign, alert banner; T-542: rail; T-576: five hints) (Pavement left out: no ground tile art)")
 	for fid in e.panel.buttons:
 		var f := CreatorFamilies.family(fid)
 		var b: Button = e.panel.buttons[fid]
@@ -63,7 +63,7 @@ func test_six_groups_one_button_per_kind_with_labels_from_the_texts() -> void:
 		assert_eq(b.text, CreatorTexts.get_text(str(f.label)), fid)
 		assert_ne(b.text, "", fid)
 		assert_not_null(b.icon, fid + " shows its first look")
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_routes"))  # T-280: the line with moving the start.
 
 
 func test_picking_a_button_picks_its_first_look_and_shows_the_strip() -> void:

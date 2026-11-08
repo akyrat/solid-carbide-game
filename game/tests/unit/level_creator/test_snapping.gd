@@ -1,5 +1,5 @@
 extends GutTest
-## Task T-237: in the level creator, pieces snap to the map's tile grid (edges on even units, as
+## Task T-237: in the level creator (since T-581 with Shift held), pieces snap to the map's tile grid (edges on even units, as
 ## check_level.py checks) and to close neighbours within LevelSnapping.SNAP_DISTANCE (a ramp's top
 ## end onto a rooftop's side, a 6 onto its 3's edges, a building against a road); a rooftop or ramp
 ## that would overlap in a way check_level.py refuses is not placed, and the editor shows the overlap
@@ -8,10 +8,12 @@ extends GutTest
 const EDITOR_SCENE := preload("res://scenes/level_creator/editor.tscn")
 
 
+## T-581: these are the snaps Shift gives since free placement (the editor's snap_held).
 func _editor() -> LevelCreatorEditor:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_new()
 	add_child_autofree(e)
+	e.snap_held = true
 	return e
 
 
@@ -74,7 +76,7 @@ func test_pieces_placed_from_off_grid_cursors_have_their_edges_on_even_units() -
 			for v in [r.position.x, r.position.y, r.end.x, r.end.y]:
 				assert_true(_even(v), "%s at %s: edge %s on an even unit" % [id, cursor, v])
 		var res := _run_check_level(e.level_data, "t237_grid_%s.json" % id)
-		assert_false(res[1].contains("odd unit"), "check_level.py: " + res[1])
+		assert_false(res[1].contains("quarter-unit step"), "check_level.py: " + res[1])
 		assert_false(res[1].contains("outside the map"), "check_level.py: " + res[1])
 	# Ground and road tiles: their cell's corners.
 	var g := e.place_asset("road-x_plain_g4", Vector2(13.3, -7.9))

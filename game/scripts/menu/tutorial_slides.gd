@@ -8,7 +8,7 @@ extends Control
 ## practice session in a SubViewport) until the trick is done three times, and
 ## 6 survive the stream (the 4-minute timeline, Go live, Don't show again).
 ## A left and a right arrow move between them (slide 1 has no left arrow, slide 6 no right arrow),
-## a Skip control at the top right jumps to slide 6. It only shows the screen and sends
+## a Skip control at the top right jumps to slide 6 (slide 6 itself has none, T-568). It only shows the screen and sends
 ## start_pressed(dont_show_again); starting the run is the screen flow's job, counting the tricks
 ## is the practice session's.
 ##
@@ -161,6 +161,7 @@ func _fit() -> void:
 ## Shows slide `index` (0 to 5), shows or hides the arrows, runs only the showing slide's practice
 ## and puts the focus where it belongs.
 func show_slide(index: int) -> void:
+	var had_selection := is_inside_tree() and KeyNav.has_selection(self)
 	current = clampi(index, 0, SLIDE_COUNT - 1)
 	for i in range(slides.size()):
 		slides[i].visible = i == current
@@ -169,6 +170,7 @@ func show_slide(index: int) -> void:
 		_dots[i].custom_minimum_size.x = 46 if i == current else 15
 	left_arrow.visible = current > 0
 	right_arrow.visible = current < SLIDE_COUNT - 1
+	skip_button.visible = current < SLIDE_COUNT - 1  # Go live already starts the run (T-568)
 	var on_trick := is_trick_slide()
 	for b in [left_arrow, right_arrow, skip_button]:
 		# On a trick slide the buttons are clicked only: none takes the focus, so Space never presses one.
@@ -177,14 +179,19 @@ func show_slide(index: int) -> void:
 		_ensure_practice(current - FIRST_TRICK_SLIDE)
 	_apply_practice_state()
 	if is_inside_tree():
+		# T-573: nothing is selected when the slides open. Once a key has selected a button, the
+		# selection follows the slides (Go live on the last one, the right arrow before it).
 		if on_trick:
-			var owner_focus := get_viewport().gui_get_focus_owner()
-			if owner_focus != null:
-				owner_focus.release_focus()
-		elif current == SLIDE_COUNT - 1:
-			start_button.grab_focus()
-		else:
-			right_arrow.grab_focus()
+			KeyNav.clear_selection(self)
+		elif had_selection:
+			default_button().grab_focus()
+
+
+## The button a key selects first: Go live on the last slide, the right arrow before it (null on a trick slide).
+func default_button() -> Control:
+	if is_trick_slide():
+		return null
+	return start_button if current == SLIDE_COUNT - 1 else right_arrow
 
 
 func next_slide() -> void:
@@ -222,6 +229,12 @@ func _input(event: InputEvent) -> void:
 	elif code == KEY_RIGHT or (letters and code == KEY_D):
 		next_slide()
 		get_viewport().set_input_as_handled()
+
+
+## T-573: with nothing selected, the first Up, Down, Tab, W or S selects the default button; Enter or
+## Space presses it (what they did before). Not on a trick slide, where the keys drive the practice car.
+func _unhandled_key_input(event: InputEvent) -> void:
+	KeyNav.reveal_selection(event, self, default_button(), true)
 
 
 # --- The practice windows -------------------------------------------------------------------------

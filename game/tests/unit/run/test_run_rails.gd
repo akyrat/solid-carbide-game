@@ -100,8 +100,9 @@ func test_a_jump_from_the_street_lands_on_rail_3_and_the_grind_pays_grind() -> v
 	var tricks: Array = []
 	run.state.combo_trick.connect(func(id: String, added: float, _m: float) -> void: tricks.append([id, added]))
 	var before: float = run.state.combo
-	run.car.press_jump()
-	run.car.scripted_jump_held = true  # T-551: held to catch the rail
+	run.car.press_jump()  # T-590: a tap hops (held on the ground would charge)
+	run.car.physics_step()
+	run.car.scripted_jump_held = true  # T-551: held in the air to catch the rail
 	for i in 80:
 		run.car.physics_step()
 		if run.car.grind.active:
@@ -123,8 +124,9 @@ func test_a_jump_from_the_street_lands_on_rail_3_and_the_grind_pays_grind() -> v
 func test_letting_go_with_the_nose_turned_right_launches_from_rail_3_to_rail_4() -> void:
 	run.state.set_power_up_tier("jump", 1)
 	_place(Vector2(5.0, 0.0), 11.0)
-	run.car.press_jump()
-	run.car.scripted_jump_held = true  # T-551: held to catch the rail
+	run.car.press_jump()  # T-590: a tap hops (held on the ground would charge)
+	run.car.physics_step()
+	run.car.scripted_jump_held = true  # T-551: held in the air to catch the rail
 	for i in 80:
 		run.car.physics_step()
 		if run.car.grind.active:

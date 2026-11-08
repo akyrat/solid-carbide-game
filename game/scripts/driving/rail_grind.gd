@@ -8,7 +8,8 @@ extends RefCounted
 ## T-551 (the grind overhaul; Drifting, Decisions, "The grind overhaul"): the car decides WHEN
 ## (car.gd): find() is asked only while Space is held in the air, the grind lasts only while Space
 ## stays held, and letting go ends it with stop("jump"), the launch where the car faces
-## (leave_velocity("jump"), at jump_speed flat and launch_takeoff_speed up, any car, no power-up).
+## (leave_velocity("jump"), at the grind's speed flat, T-578, and launch_takeoff_speed up, any car,
+## no power-up).
 ##
 ## The car (car.gd) owns one, `car.grind`, and the run gives it the map's rails (`rails`).
 ##  - find(pos, vel, height, vz, heading, tilt_step): after each step in the air, the rail the car
@@ -41,8 +42,9 @@ extends RefCounted
 ##  - stop(reason): ends it ("end", "slow", "jump": the launch when Space is let go), sending grind_ended with its seconds and
 ##    length, which the run pays as the GRIND! trick. leave_velocity(reason) is the car's flat
 ##    velocity as it leaves: along the rail; for a jump (T-548; the board, 2026-11-06) where the
-##    car faces, at `jump_speed`, whatever its travel along the rail (backwards too; the speed along
-##    the rail is not kept); for a slow drop with a sideways push (`drop_side_speed`) toward the
+##    car faces, whatever its travel along the rail (backwards too), at the speed it was grinding at
+##    (T-578; the board, 2026-11-08: the momentum along the rail turns into where the car faces),
+##    never under `launch_min_speed`; for a slow drop with a sideways push (`drop_side_speed`) toward the
 ##    side of the rail line the nose points to (nose_side()).
 ## The rail it left can't be caught again until the car touches the ground or another rail
 ## (`exclude`, cleared by touched_ground()), so a jump off a rail never lands back on it.
@@ -64,7 +66,7 @@ const DEFAULTS := {
 	"drop_side_speed": 2.0,
 	"land_boost": 4.0,
 	"boost_decline": 2.0,
-	"jump_speed": 6.0,
+	"launch_min_speed": 6.0,
 	"launch_takeoff_speed": 5.0,
 	"join_distance": 1.0,
 	"join_height": 0.6,
@@ -85,7 +87,9 @@ var end_speed: float = DEFAULTS.end_speed
 var drop_side_speed: float = DEFAULTS.drop_side_speed
 var land_boost: float = DEFAULTS.land_boost
 var boost_decline: float = DEFAULTS.boost_decline
-var jump_speed: float = DEFAULTS.jump_speed
+## T-578: the slowest launch off a rail (units/s, flat): a launch is at the grind's speed, but never
+## slower than this (T-548's old set speed, so a slow grind launches as it used to).
+var launch_min_speed: float = DEFAULTS.launch_min_speed
 ## T-551: the launch's vertical speed off the bar (units/s, up), for any car (car.gd _leave_grind).
 var launch_takeoff_speed: float = DEFAULTS.launch_takeoff_speed
 var join_distance: float = DEFAULTS.join_distance
@@ -117,6 +121,9 @@ var exclude := -1
 var grinds := 0
 ## Joints crossed so far (tests, readouts).
 var joints := 0
+## T-586: the Grinding Wheels power-up (grinding_wheels.gd), or null. The car sets it; when owned,
+## launch_speed() is multiplied by its launch_multiplier(seconds). Not owned or null: no change.
+var wheels = null
 
 
 func _init() -> void:
@@ -327,13 +334,25 @@ func heading() -> float:
 	return body_heading
 
 
+## T-578: the flat speed a launch (Space let go) leaves the rail at: the grind's speed now, or
+## launch_min_speed when that is higher (units/s). T-586: with Grinding Wheels owned, that floored
+## speed times the wheels' launch multiplier for this grind's seconds (the floor first, then the
+## boost: max(speed, launch_min_speed) x (1 + stacks / 3)).
+func launch_speed() -> float:
+	var base := maxf(speed, launch_min_speed)
+	if wheels != null and wheels.is_owned():
+		return base * float(wheels.launch_multiplier(seconds))
+	return base
+
+
 ## The car's flat velocity as it leaves for `reason` (units/s): along the rail at its speed; a
-## jump where the car faces at jump_speed (T-548: the travel along the rail is not kept, so a car
-## facing backwards jumps backwards); a slow drop with drop_side_speed toward nose_side().
+## jump where the car faces (T-548: a car facing backwards jumps backwards) at the speed it was
+## grinding at (T-578: the speed along the rail turns into the nose's direction), never under
+## launch_min_speed; a slow drop with drop_side_speed toward nose_side().
 func leave_velocity(reason: String) -> Vector2:
 	match reason:
 		"jump":
-			return Vector2(cos(body_heading), sin(body_heading)) * jump_speed
+			return Vector2(cos(body_heading), sin(body_heading)) * launch_speed()
 		"slow":
 			return velocity() + travel_left() * nose_side() * drop_side_speed
 	return velocity()

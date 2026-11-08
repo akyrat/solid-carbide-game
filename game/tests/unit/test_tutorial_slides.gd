@@ -260,13 +260,25 @@ func test_the_arrows_and_skip_work_by_mouse_on_a_trick_slide() -> void:
 
 
 func test_skip_jumps_to_the_last_slide_from_every_slide() -> void:
-	for i in range(6):
+	for i in range(5):
 		slides.show_slide(i)
 		assert_true(slides.skip_button.is_visible_in_tree(), "Skip on slide %d" % (i + 1))
 		slides.skip_button.pressed.emit()
 		assert_eq(_visible_slide(), 5)
-		assert_true(slides.start_button.has_focus())
+		assert_false(slides.start_button.has_focus(), "T-573: nothing selected")
 	assert_eq(slides.skip_button.text, _at("button.skip").to_upper())
+
+
+func test_the_last_slide_has_no_skip_and_going_back_brings_it_back() -> void:
+	slides.show_slide(5)
+	assert_false(slides.skip_button.is_visible_in_tree(), "no Skip on the last slide")
+	assert_true(slides.start_button.is_visible_in_tree(), "Go live stays")
+	slides.previous_slide()
+	assert_true(slides.skip_button.is_visible_in_tree(), "Skip is back on slide 5")
+	slides.show_slide(0)
+	slides.next_slide()
+	slides.skip_to_last()
+	assert_false(slides.skip_button.is_visible_in_tree(), "none after Skip either")
 
 
 func test_go_live_and_the_checkbox_only_on_the_last_slide() -> void:
@@ -310,7 +322,7 @@ func test_go_live_and_the_checkbox_by_mouse() -> void:
 func test_enter_on_the_focused_start_button() -> void:
 	slides.show_slide(5)
 	watch_signals(slides)
-	assert_true(slides.start_button.has_focus())
+	assert_false(slides.start_button.has_focus(), "T-573: nothing selected, Enter still starts")
 	_push(KEY_ENTER)
 	await wait_process_frames(2)
 	assert_signal_emitted(slides, "start_pressed")
@@ -389,9 +401,10 @@ func test_leaving_a_trick_slide_gives_the_buttons_their_focus_back() -> void:
 	slides.show_slide(1)
 	slides.show_slide(0)
 	assert_eq(slides.right_arrow.focus_mode, Control.FOCUS_ALL)
-	assert_true(slides.right_arrow.has_focus(), "the loop slide: the right arrow")
+	assert_false(slides.right_arrow.has_focus(), "T-573: nothing selected on the loop slide")
+	slides.right_arrow.grab_focus()  # a key selected it
 	slides.show_slide(5)
-	assert_true(slides.start_button.has_focus(), "the last slide: Go live")
+	assert_true(slides.start_button.has_focus(), "a selection follows to the last slide: Go live")
 
 
 # --- The practice windows ---------------------------------------------------------------------------

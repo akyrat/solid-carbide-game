@@ -58,8 +58,8 @@ func test_splash_fills_the_screen_cropped_with_nearest_filtering() -> void:
 	DirAccess.remove_absolute(path)
 
 
-func test_focus_starts_on_start() -> void:
-	assert_true(menu.start_button.has_focus())
+func test_nothing_is_selected_at_open() -> void:  # T-573
+	assert_false(menu.start_button.has_focus())
 
 
 func test_button_labels_are_the_approved_text() -> void:

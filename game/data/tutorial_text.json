@@ -252,7 +252,7 @@
     },
     "success": "Content secured!",
     "success_comment": "Shown over a practice window only (not the whole slide) after the third success, on every trick slide.",
-    "grind_hint": "One power-up on the house: Jump. Take it, jump, then hold Space over a rail.",
+    "grind_hint": "One power-up on the house: Jump. Take it, tap Space to jump, then hold Space over a rail.",
     "grind_hint_comment": "Grind slide: hint under or beside the practice window about the Jump gift offered when the practice starts."
   }
 }
