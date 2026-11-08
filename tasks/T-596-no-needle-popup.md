@@ -1,7 +1,7 @@
 ---
 id: T-596
 title: No popup for thread the needle (the trick still counts)
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Rails
@@ -53,6 +53,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, In progress → In QA
+
+Needle bubble hidden by a data switch; the trick still counts and the pair flashes. QA now.
 
 ## Style review
 
