@@ -22,7 +22,11 @@ This script does the free parts of the style loop around one PixelLab call per v
         fixes at native 64 px) is the bolder footprint: an 18 px shaft, a clearer bend of radii 5 and 22, a
         three-step rim light, three two-pixel shade steps and near-white runs three pixels wide on longer
         stretches of the shaft's left, the outer bend and the head's upper slope; the body's new pixels take
-        PixelLab's blush. `init` and `finish` take --wide too.
+        PixelLab's blush. `init` and `finish` take --wide too. --rich (T-577 v3) is the wide pass with two more
+        tones (a mid-tone #e9b8d1 and a cool plum deepest step #5e3d66 against the outline on the shade side,
+        for the night mood), a near-white edge line along every lit edge, and longer, more numerous highlight
+        runs breaking the outline on the bend's and the head's top and left edges. The `wide` argument of
+        arrow_cells(), layers(), arrow(), polish() and finish() takes False, True or "rich".
     python game/tools/build_hint_arrow_curved.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -47,7 +51,9 @@ from build_hint_arrow import (  # noqa: E402
 from reduce_palette import preview_image, reduce_image  # noqa: E402
 
 SIZE = 64
-PALETTE = (INK, GLINT, BLUSH_LIGHT, BLUSH, BLUSH_MID, BLUSH_SHADE, BLUSH_DEEP)
+BLUSH_MID2 = (0xE9, 0xB8, 0xD1, 255)   # the rich pass's extra mid-tone between the body and the mid shade
+COOL_DEEP = (0x5E, 0x3D, 0x66, 255)    # the rich pass's cool plum deepest step against the outline (night, rule 4)
+PALETTE = (INK, GLINT, BLUSH_LIGHT, BLUSH, BLUSH_MID2, BLUSH_MID, BLUSH_SHADE, BLUSH_DEEP, COOL_DEEP)
 
 # The arrow's geometry. Pixel (x, y) is centred at (x + 0.5, y + 0.5) in the continuous coordinates below.
 # v1: a 14 px shaft (columns 24..37) from the bottom centre, a quarter circle of radii 4 and 18 centred at
@@ -56,11 +62,19 @@ PALETTE = (INK, GLINT, BLUSH_LIGHT, BLUSH, BLUSH_MID, BLUSH_SHADE, BLUSH_DEEP)
 # radii 5 and 22 centred at (42, 34), the same 18-column head, 36 px tall at its base: 40 x 57 px.
 GEOM = {
     False: {"shaft": (24, 37), "centre": (42.0, 31.0), "radii": (4.0, 18.0), "head_cols": 18, "tip_rows": (19, 20),
-            "shaft_glint_rows": range(36, 48), "arc_glint_degrees": (-170.0, -122.0),
-            "head_glint_cols": range(45, 55), "light_steps": 2, "shade_steps": (1, 1, 2)},
+            "shaft_glint_rows": range(36, 48), "arc_glint_degrees": [(-170.0, -122.0)],
+            "head_glint_cols": range(45, 55), "light_steps": 2,
+            "shade_steps": (("deep", 1), ("shade", 1), ("mid", 2)), "edge_line": False},
     True: {"shaft": (20, 37), "centre": (42.0, 34.0), "radii": (5.0, 22.0), "head_cols": 18, "tip_rows": (20, 21),
-           "shaft_glint_rows": range(38, 51), "arc_glint_degrees": (-168.0, -116.0),
-           "head_glint_cols": range(45, 56), "light_steps": 3, "shade_steps": (2, 2, 2)},
+           "shaft_glint_rows": range(38, 51), "arc_glint_degrees": [(-168.0, -116.0)],
+           "head_glint_cols": range(45, 56), "light_steps": 3,
+           "shade_steps": (("deep", 2), ("shade", 2), ("mid", 2)), "edge_line": False},
+    # "rich" (v3): the wide geometry with two more tones, a near-white edge line along every lit edge and
+    # longer, more numerous highlight runs breaking the outline on the bend's and the head's top and left edges.
+    "rich": {"shaft": (20, 37), "centre": (42.0, 34.0), "radii": (5.0, 22.0), "head_cols": 18, "tip_rows": (20, 21),
+             "shaft_glint_rows": range(36, 53), "arc_glint_degrees": [(-174.0, -142.0), (-128.0, -96.0)],
+             "head_glint_cols": range(44, 55), "light_steps": 3,
+             "shade_steps": (("cool", 1), ("deep", 1), ("shade", 2), ("mid", 2), ("mid2", 2)), "edge_line": True},
 }
 SHAFT_X0, SHAFT_X1 = GEOM[False]["shaft"]
 BOTTOM = 59                        # the shaft's last row
@@ -160,32 +174,36 @@ def layers(wide: bool = False) -> dict[str, set[tuple[int, int]]]:
 
     d_lit = distances(lit_edge)
     d_shade = distances(shade_edge)
-    n_deep, n_shade, n_mid = g["shade_steps"]
-    roles = {"edge": set(), "light": set(), "deep": set(), "shade": set(), "mid": set(), "body": set()}
+    # The shade bands, from the outline inwards: (role, width) pairs; the first band is the darkest.
+    shade_bands = []
+    for role, n in g["shade_steps"]:
+        shade_bands.extend([role] * n)
+    roles = {"edge": set(), "light": set(), "cool": set(), "deep": set(), "shade": set(), "mid": set(),
+             "mid2": set(), "body": set()}
     slope = head_upper_slope(cells, wide)
     for p in body:
         dl, ds = d_lit.get(p, 99), d_shade.get(p, 99)
         if p in lit_edge:
-            roles["edge" if p in slope else "light"].add(p)
-        elif ds < n_deep:
-            roles["deep"].add(p)
+            roles["edge" if (g["edge_line"] or p in slope) else "light"].add(p)
+        elif ds < 1:
+            roles[shade_bands[0]].add(p)
         elif dl < g["light_steps"] and p not in flat_edge:
             roles["light"].add(p)
-        elif ds < n_deep + n_shade or p in flat_edge:
+        elif p in flat_edge:
             roles["shade"].add(p)
-        elif ds < n_deep + n_shade + n_mid:
-            roles["mid"].add(p)
+        elif ds < len(shade_bands):
+            roles[shade_bands[ds]].add(p)
         else:
             roles["body"].add(p)
 
     shaft_x0 = g["shaft"][0]
     row0 = g["tip_rows"][0]
     glint = {(x, y) for x, y in outline if x in (shaft_x0, shaft_x0 + 1) and y in g["shaft_glint_rows"]}
-    lo, hi = g["arc_glint_degrees"]
+    mid_radius = sum(g["radii"]) / 2   # the runs sit on the outer bend only, never on the inner arc's outline
     for x, y in outline:
-        if x < cx and y < cy:
+        if x < cx and y < cy and math.hypot(x + 0.5 - cx, y + 0.5 - cy) > mid_radius:
             angle = math.degrees(math.atan2(y + 0.5 - cy, x + 0.5 - cx))
-            if lo <= angle <= hi:
+            if any(lo <= angle <= hi for lo, hi in g["arc_glint_degrees"]):
                 glint.add((x, y))
     for x in g["head_glint_cols"]:
         k = HEAD_TIP_X - x
@@ -198,12 +216,12 @@ def layers(wide: bool = False) -> dict[str, set[tuple[int, int]]]:
         roles["edge"] |= lit_inside
     roles["outline"] = outline - glint
     roles["glint"] = glint
-    return roles
+    return {role: cells for role, cells in roles.items() if cells or role in ("outline", "glint", "body")}
 
 
 COLOURS = {
-    "outline": INK, "glint": GLINT, "edge": GLINT, "light": BLUSH_LIGHT, "mid": BLUSH_MID, "shade": BLUSH_SHADE,
-    "deep": BLUSH_DEEP, "body": BLUSH,
+    "outline": INK, "glint": GLINT, "edge": GLINT, "light": BLUSH_LIGHT, "mid2": BLUSH_MID2, "mid": BLUSH_MID,
+    "shade": BLUSH_SHADE, "deep": BLUSH_DEEP, "cool": COOL_DEEP, "body": BLUSH,
 }
 
 
@@ -320,6 +338,7 @@ def main(argv=None) -> int:
     a = sub.add_parser("init", help="draw the script arrow")
     a.add_argument("out")
     a.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands")
+    a.add_argument("--rich", action="store_true", help="the v3 pass: wide, with more tones, an edge line and more glint runs")
     r = sub.add_parser("request", help="write the pixflux request body")
     r.add_argument("out")
     r.add_argument("--init", required=True)
@@ -331,15 +350,19 @@ def main(argv=None) -> int:
     f.add_argument("--no-polish", action="store_true", help="keep PixelLab's outline and shading pixels")
     f.add_argument("--no-reduce", action="store_true")
     f.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands")
+    f.add_argument("--rich", action="store_true", help="the v3 pass: wide, with more tones, an edge line and more glint runs")
     q = sub.add_parser("polish", help="repaint the outline, glints and shading roles from the script")
     q.add_argument("src")
     q.add_argument("out")
     q.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands (T-577 v2)")
+    q.add_argument("--rich", action="store_true", help="the v3 pass: wide, with more tones, an edge line and more glint runs")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
     v.add_argument("--scale", type=int, default=6)
     args = p.parse_args(argv)
+    if getattr(args, "rich", False):
+        args.wide = "rich"
 
     if args.cmd == "init":
         save_png(arrow(args.wide), Path(args.out))

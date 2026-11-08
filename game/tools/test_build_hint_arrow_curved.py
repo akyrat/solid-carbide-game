@@ -47,8 +47,10 @@ class TestInit(unittest.TestCase):
 
     def test_has_outline_rim_light_stepped_shade_and_glints_breaking_the_outline(self):
         colours = opaque_colours(self.im)
-        for c in curved.PALETTE:
+        for c in (curved.INK, curved.GLINT, curved.BLUSH_LIGHT, curved.BLUSH, curved.BLUSH_MID, curved.BLUSH_SHADE,
+                  curved.BLUSH_DEEP):
             self.assertIn(c[:3], colours)
+        self.assertEqual(len(colours), 7)   # the rich pass's two extra tones are not in v1
         lay = curved.layers()
         cells = curved.arrow_cells()
         full_outline = {p for p in cells if any(q not in cells for q in curved.nbrs8(p))}
@@ -123,6 +125,75 @@ class TestWide(unittest.TestCase):
         # v1's outline and shade pixels that now sit inside the wider body are repainted, not kept.
         self.assertTrue(all(opx[x, y] == (243, 198, 220, 255) for x, y in body))
         self.assertLessEqual(len(opaque_colours(out)), 30)
+
+
+class TestRich(unittest.TestCase):
+    """The v3 pass: the wide geometry with more tones, an edge line and more glint runs."""
+
+    def setUp(self):
+        self.im = curved.arrow(wide="rich")
+        self.px = self.im.load()
+
+    def test_keeps_the_wide_geometry_and_adds_two_tones(self):
+        self.assertEqual(curved.arrow_cells("rich"), curved.arrow_cells(True))
+        self.assertEqual(self.im.getbbox(), (20, 3, 60, 60))
+        colours = opaque_colours(self.im)
+        self.assertEqual(len(colours), 9)
+        self.assertTrue(colours <= {c[:3] for c in curved.PALETTE})
+        self.assertIn(curved.COOL_DEEP[:3], colours)
+        self.assertIn(curved.BLUSH_MID2[:3], colours)
+        self.assertTrue(all(p[3] in (0, 255) for p in self.im.getdata()))
+        self.assertFalse(colours & GREENBULL)
+
+    def test_shaft_has_five_stepped_shade_tones_a_cool_deepest_step_and_an_edge_line(self):
+        # From the shaft's right outline inwards: cool plum, deep, two shade, two mid, two mid-tone, then body.
+        self.assertEqual(self.px[35, 48], curved.COOL_DEEP)
+        self.assertEqual(self.px[34, 48], curved.BLUSH_DEEP)
+        self.assertEqual([self.px[x, 48] for x in (33, 32)], [curved.BLUSH_SHADE] * 2)
+        self.assertEqual([self.px[x, 48] for x in (31, 30)], [curved.BLUSH_MID] * 2)
+        self.assertEqual([self.px[x, 48] for x in (29, 28)], [curved.BLUSH_MID2] * 2)
+        self.assertEqual(self.px[26, 48], curved.BLUSH)
+        # The lit edge is a near-white line everywhere, with the rim light inside it.
+        self.assertEqual(self.px[22, 55], curved.GLINT)
+        self.assertEqual([self.px[x, 55] for x in (23, 24)], [curved.BLUSH_LIGHT] * 2)
+        lay = curved.layers("rich")
+        self.assertFalse(lay.get("light", set()) & {(22, y) for y in range(36, 58)})
+        # The cool step sits only against the outline, on the shade side: never next to the lit edge line.
+        full_outline = lay["outline"] | lay["glint"]
+        self.assertTrue(all(any(q in full_outline for q in curved.nbrs8(p)) for p in lay["cool"]))
+        self.assertFalse(lay["cool"] & {(x - 1, y) for x, y in lay["edge"]} & {(x, y - 1) for x, y in lay["edge"]})
+        self.assertTrue(all(x > 30 or y > 52 for x, y in lay["cool"]))   # the right and lower edges, the inner bend
+
+    def test_more_glint_runs_break_the_outline_on_the_bend_and_the_head(self):
+        rich, wide = curved.layers("rich"), curved.layers(True)
+        self.assertGreater(len(rich["glint"]), len(wide["glint"]))
+        cx, cy = curved.GEOM["rich"]["centre"]
+
+        def on_arc(lay):
+            return {(x, y) for x, y in lay["glint"] if x < cx and y < cy and x > 21}
+
+        self.assertGreater(len(on_arc(rich)), len(on_arc(wide)))   # two runs on the bend instead of one
+        self.assertTrue({(x, y) for x, y in rich["glint"] if x >= 44 and x < 55})   # the head's upper slope
+        # Some of the outline stays near-black between the runs, and the tip keeps its dark outline.
+        self.assertTrue({(x, y) for x, y in rich["outline"] if x < cx and y < cy and y < 20})
+        self.assertFalse({(x, y) for x, y in rich["glint"] if x >= 56})
+        # The inner arc's outline never carries a run (it is in shadow), in every pass.
+        r_in, r_out = curved.GEOM["rich"]["radii"]
+        for lay in (rich, wide, curved.layers()):
+            inner = {p for p in lay["glint"] if p[0] < cx and p[1] < cy
+                     and ((p[0] + 0.5 - cx) ** 2 + (p[1] + 0.5 - cy) ** 2) ** 0.5 < (r_in + r_out) / 2}
+            self.assertEqual(inner, set())
+
+    def test_polish_rich_grows_v1_like_wide(self):
+        v1 = curved.arrow()
+        px = v1.load()
+        for x, y in curved.layers()["body"]:
+            px[x, y] = (243, 198, 220, 255)
+        out = curved.polish(v1, wide="rich")
+        opx = out.load()
+        self.assertEqual(out.getbbox(), (20, 3, 60, 60))
+        self.assertTrue(all(opx[x, y] == (243, 198, 220, 255) for x, y in curved.layers("rich")["body"]))
+        self.assertEqual(len(opaque_colours(out)), 9)
 
 
 class TestRequest(unittest.TestCase):
