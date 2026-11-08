@@ -43,13 +43,13 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test reproduces the lock before the fix (shown failing in the result notes) and passes after. (QA: pass / fail)
-- [ ] With W held and A or D, the car leaves the wall within the proposed time at the tested angles (tests). (QA: pass / fail)
-- [ ] S against a wall reverses promptly (a test with the time). (QA: pass / fail)
-- [ ] Normal driving, wall bounces, the cruise jump, drifts and wall-hit tricks are unchanged (the existing tests pass). (QA: pass / fail)
-- [ ] docs/drifting.md Content and game/docs/driving/ explain the cause and the fix. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-601/screenshots/ shows the car steering off a wall with W held, taken with bash game/tools/screenshot.sh frames. (QA: pass / fail)
+- [ ] A test reproduces the lock before the fix (shown failing in the result notes) and passes after. (QA: pass)
+- [ ] With W held and A or D, the car leaves the wall within the proposed time at the tested angles (tests). (QA: pass)
+- [ ] S against a wall reverses promptly (a test with the time). (QA: pass)
+- [ ] Normal driving, wall bounces, the cruise jump, drifts and wall-hit tricks are unchanged (the existing tests pass). (QA: pass)
+- [ ] docs/drifting.md Content and game/docs/driving/ explain the cause and the fix. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A GIF in art-archive/T-601/screenshots/ shows the car steering off a wall with W held, taken with bash game/tools/screenshot.sh frames. (QA: pass)
 
 ## Updates
 
