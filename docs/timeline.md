@@ -3996,11 +3996,6 @@ Entry format:
 - Documents touched: docs/level-design.md
 - Tasks: T-581
 
-## 2026-11-08: Texts for the hint pieces
-- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
-- Documents touched: `docs/level-design.md`
-- Tasks: T-575
-
 ## 2026-11-08: Equip instead of Flex it
 - Decision or change: The Cosmetics screen's pick button reads Equip.
 - Documents touched: docs/hud-and-menus.md
@@ -4015,6 +4010,26 @@ Entry format:
 - Decision or change: PixelLab redraw of the car frames that pointed the wrong way (up to 28 generations).
 - Documents touched: docs/visual-style.md, docs/drifting.md
 - Tasks: T-584
+
+## 2026-11-08: Texts for Grinding Wheels
+- Decision or change: The name and description of the Grinding Wheels power-up.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-585
+
+## 2026-11-08: Grinding Wheels
+- Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x.
+- Documents touched: docs/drifting.md
+- Tasks: T-586
+
+## 2026-11-08: Grinding Wheels icon
+- Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side.
+- Documents touched: docs/visual-style.md
+- Tasks: T-587
+
+## 2026-11-08: Texts for the hint pieces
+- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-575
 
 ## 2026-11-08: No Skip on the last tutorial slide
 - Decision or change: The last tutorial slide has no Skip button.
@@ -4045,23 +4060,3 @@ Entry format:
 - Decision or change: A killed minion drops a health pickup 5% of the time.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-579
-
-## 2026-11-08: The launch keeps the grind's speed
-- Decision or change: Letting go of Space launches the car where it faces at its grinding speed (floor 6).
-- Documents touched: `docs/drifting.md`
-- Tasks: T-578
-
-## 2026-11-08: Texts for Grinding Wheels
-- Decision or change: The name and description of the Grinding Wheels power-up.
-- Documents touched: docs/hud-and-menus.md
-- Tasks: T-585
-
-## 2026-11-08: Grinding Wheels
-- Decision or change: A driving power-up: grind sparks heat from yellow to red over 3 s and the launch grows to 2x.
-- Documents touched: docs/drifting.md
-- Tasks: T-586
-
-## 2026-11-08: Grinding Wheels icon
-- Decision or change: A PixelLab icon of a wheel grinding a rail, sparks to one side.
-- Documents touched: docs/visual-style.md
-- Tasks: T-587
