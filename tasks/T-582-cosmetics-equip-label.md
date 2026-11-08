@@ -1,7 +1,7 @@
 ---
 id: T-582
 title: Equip instead of Flex it on the Cosmetics screen
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -69,3 +69,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 pick is now Equip in cosmetics_text.json (with _comment), test_cosmetics_screen.gd, hud-and-menus.md (Item labels, Cosmetics submenu) and garage-design.md. No Flex it left in game/. Cosmetics tests: 20/20 pass. Equip and Equipped fit the button and sit well together. Screenshot: art-archive/T-582/screenshots/cosmetics_equip.png (spring unlocked). long-gdd not regenerated (merge step).
 - 2026-11-08, in-progress → in-qa: Equip rename done; cosmetics tests 20/20. QA next (board asked to merge it).
+- 2026-11-08, needs-playtest → done: Board: Equip, merge (2026-11-08)
