@@ -4220,3 +4220,8 @@ Entry format:
 - Decision or change: Lighter slide marks from all four wheels when sliding without W; all tire marks last half as long.
 - Documents touched: docs/visual-style.md
 - Tasks: T-600
+
+## 2026-11-08: The car never locks against a wall
+- Decision or change: Fix: W with A or D turns the car off a wall, and S reverses promptly.
+- Documents touched: docs/drifting.md
+- Tasks: T-601
