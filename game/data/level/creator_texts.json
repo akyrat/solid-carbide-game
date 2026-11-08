@@ -128,5 +128,16 @@
   "rail_direction": {"text": "Direction: {deg} degrees", "where": "Editor top bar (T-542): the direction a clicked rail is laid in, degrees from east, clockwise on the map."},
   "rail_hint": {"text": "Drag to lay a rail", "where": "Editor top bar (T-542): hint while the rail is picked."},
   "rail_selected": {"text": "Rail {id}: length {length}, height {z1} to {z2}, direction {deg}. Drag it or an end.", "where": "Editor top bar (T-542): the selected rail's readout."},
-  "rail_refused": {"text": "Can't place the rail here: it has to be at least 1 unit long and inside the map.", "where": "Editor: message shown when a rail can't be laid or changed."}
+  "rail_refused": {"text": "Can't place the rail here: it has to be at least 1 unit long and inside the map.", "where": "Editor: message shown when a rail can't be laid or changed."},
+  "group_hints": {"text": "Driver hints", "where": "Editor side panel (T-575): group of the hint pieces the board places to tell the player what to do. Fits 12 characters."},
+  "piece_hint_gas": {"text": "Gas hint (W)", "where": "Editor side panel, Driver hints (T-575): button for the gas hint, the W keycap; shows no words in the game."},
+  "piece_hint_brake": {"text": "Brake hint (S)", "where": "Editor side panel, Driver hints (T-575): button for the brake hint, the S keycap; shows no words in the game."},
+  "piece_hint_arrow_straight": {"text": "Straight arrow", "where": "Editor side panel, Driver hints (T-575): button for the straight arrow hint."},
+  "piece_hint_arrow_curved": {"text": "Turn arrow", "where": "Editor side panel, Driver hints (T-575): button for the curved arrow hint, a turn to the left or the right."},
+  "piece_hint_arrow_circular": {"text": "Circular arrow", "where": "Editor side panel, Driver hints (T-575): button for the circular arrow hint, steering round in either direction."},
+  "hint_mode_ground": {"text": "On the ground", "where": "Editor top bar, a picked hint piece (T-575): button choosing that the hint is painted flat on the ground."},
+  "hint_mode_sign": {"text": "Roadside sign", "where": "Editor top bar, a picked hint piece (T-575): button choosing that the hint is a standing sign at the roadside."},
+  "hint_ground_hint": {"text": "Click: paint. R: turn.", "where": "Editor strip under a picked hint piece set to On the ground (T-575): a click paints it, R turns it through the 8 directions (R is the same turn key as for pieces; a proposal for the creator to follow)."},
+  "hint_sign_hint": {"text": "Click: stand the sign at the roadside. R: turn.", "where": "Editor strip under a picked hint piece set to Roadside sign (T-575): a click stands the sign, R turns it (a proposal for the creator to follow)."},
+  "hint_mirror_hint": {"text": "M: mirror.", "where": "Editor strip under a picked curved or circular arrow (T-575): M flips it between left and right, or the two ways round; the same mirror key as for pieces (a proposal for the creator to follow)."}
 }

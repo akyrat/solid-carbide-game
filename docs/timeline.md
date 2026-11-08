@@ -3995,3 +3995,8 @@ Entry format:
 - Decision or change: Pieces follow the mouse freely in the creator; Shift snaps to the grid as before.
 - Documents touched: docs/level-design.md
 - Tasks: T-581
+
+## 2026-11-08: Texts for the hint pieces
+- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-575

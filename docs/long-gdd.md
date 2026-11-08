@@ -1074,6 +1074,13 @@ Added for the kaiju alert sign and banner pieces (task T-440; same file, every e
 - **Banner hints in the strip:** "R: next wall." (`banner_wall_hint`) and "H: next height." (`banner_height_hint`); the keys are the existing turn and height keys, a proposal the creator must follow.
 - Style loop: score 8/10 in round 1 (Style review, T-440). The script's complaints about one line and sentence case came from checking the six labels as one block.
 
+Added for the hint pieces (task T-575; same file, every earlier key unchanged; Decisions, "Hint pieces in the level creator"; the pieces' tickets are T-576 and T-577). These are the board's tool labels; the pieces show no words in the game. Each label scored 8 or more in the style loop (9 for all but the two strip hints, 8; Style review, T-575). The keys are the existing turn and mirror keys, a proposal the creator must follow:
+
+- **Side panel group:** "Driver hints" (`group_hints`, fits 12 characters).
+- **Side panel buttons:** "Gas hint (W)" (`piece_hint_gas`), "Brake hint (S)" (`piece_hint_brake`), "Straight arrow" (`piece_hint_arrow_straight`), "Turn arrow" (`piece_hint_arrow_curved`, left or right) and "Circular arrow" (`piece_hint_arrow_circular`, either direction).
+- **Top bar, painted or standing:** "On the ground" (`hint_mode_ground`) and "Roadside sign" (`hint_mode_sign`).
+- **Strip hints while a hint piece is picked:** "Click: paint. R: turn." (`hint_ground_hint`), "Click: stand the sign at the roadside. R: turn." (`hint_sign_hint`) and, for the curved and circular arrows, "M: mirror." (`hint_mirror_hint`).
+
 #### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
@@ -2585,7 +2592,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `c4ae7879e7f412eea035048dc168200012452af1d55a6df7fca9a9379d6930fe` |
-| `level-design.md` | `abba80c963e13a00734bac6ac03d0c547a4a4e1ddb0a239babce84941fb64e68` |
+| `level-design.md` | `0945ce26993fd4935d3022f312a84eed1147f95de5bae96cc8df7193fe838c53` |
 | `enemies.md` | `10e63fd5e6d5466ceb2c552536166353cd8b1f63f3c078540f271c2c8cfff990` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `7ef3543e0889e93278ac8b56e1e557974ee4e84545b28ea7afba46e9ef7579d1` |
