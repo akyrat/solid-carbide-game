@@ -352,7 +352,7 @@ func physics_step() -> void:
 ## T-541: one physics step on a rail. A or D spin the body at the air turn rate, as in the air
 ## (the board's tweak, 2026-11-06; the car stays on the rail). T-551 (the grind overhaul): the
 ## grind lasts while Space stays held (`held`); letting go ends it with the launch where the car
-## faces (reason "jump": RailGrind.leave_velocity, jump_speed flat, launch_takeoff_speed up), for any
+## faces (reason "jump": RailGrind.leave_velocity, the grind's speed flat (T-578), launch_takeoff_speed up), for any
 ## car, no power-up needed. Otherwise the grind slides on. Returns true while it goes on (the step
 ## is done here: no driving, no collisions, the height held on the bar, the tilt held), false when
 ## it ended: the car is then off the rail with its leaving velocity, and physics_step() carries on
