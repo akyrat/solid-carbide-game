@@ -1827,7 +1827,7 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - **Pixel art icons for the upgrades** (board, 2026-10-29): each garage upgrade gets a small pixel art icon, shown beside its row in the garage. One art ticket per upgrade (acceleration, car health, damage bonus, pickup magnet, air turn), each icon its own PNG in `game/art/garage/<upgrade key>.png`, which the garage picks up on its own; placeholders drawn in code until then. Script-drawn first (no PixelLab go yet), in the bold comic look of the HUD's reaction icons. (T-365, T-366 to T-370)
 - **A broken save never wipes progress** (board, 2026-10-30, audit): a save file that fails to load is never overwritten; the game keeps a backup of the last good save and loads it. Each save records its version, so a renamed upgrade keeps its level. The same goes for the runs list. (T-417) Built as: a save is written to a temp file and renamed; the previous good file becomes `<file>.bak`; a file that fails to load is renamed to `<file>.broken-<time>` and kept; `version` starts at 1 (a file with none is 1), and a renamed upgrade id is mapped in `PlayerProgress.ID_RENAMES`.
 - **Cosmetics** (board, 2026-11-07): a **Cosmetics** submenu, opened from the main menu, where the player picks how the car looks in small ways. The first cosmetics are the jump effects (Drifting, Decisions, "A jump effect around the car"): the dash cloud is the default and free; the others are **unlocked with coins**, then picked there. The prices are proposals for the playtest. What is unlocked and which one is picked are saved with the player's progress. (T-552, T-553, T-556)
-- **Cosmetics the player can't afford are disabled** (board, 2026-11-07): on the Cosmetics screen, the button that unlocks a cosmetic is disabled (greyed out, not clickable) while the player has fewer coins than its price, and becomes clickable as soon as they have enough. Cosmetics already unlocked can always be picked. (T-569)
+- **Cosmetics the player can't afford are disabled** (board, 2026-11-07): on the Cosmetics screen, the button that unlocks a cosmetic is disabled (greyed out, not clickable) while the player has fewer coins than its price, and becomes clickable as soon as they have enough. Cosmetics already unlocked can always be picked. It uses the same disabled look as the garage's Buy button (`HudStyle.style_button`), and refreshes whenever the coins change. (T-569)
 
 ### Content
 
@@ -2600,7 +2600,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `0945ce26993fd4935d3022f312a84eed1147f95de5bae96cc8df7193fe838c53` |
 | `enemies.md` | `10e63fd5e6d5466ceb2c552536166353cd8b1f63f3c078540f271c2c8cfff990` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
-| `garage-design.md` | `7ef3543e0889e93278ac8b56e1e557974ee4e84545b28ea7afba46e9ef7579d1` |
+| `garage-design.md` | `f9b0ff71e34322027f5a837ec8f0a84c51f58773f6fb5169314826de74482b2e` |
 | `visual-style.md` | `45b49849b67177ea2ea24d16a7e20dd4c8742657ba6255ca7b99105fec248177` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
 | `hud-and-menus.md` | `76f6e2908213059599e970c37e42d93a2bd47b54f7e58742114cac0f0817defd` |

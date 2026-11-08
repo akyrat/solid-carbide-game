@@ -4035,3 +4035,8 @@ Entry format:
 - Decision or change: The last tutorial slide has no Skip button.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-568
+
+## 2026-11-08: Unaffordable cosmetics are disabled
+- Decision or change: Unlock buttons are disabled while the player can't afford them.
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-569
