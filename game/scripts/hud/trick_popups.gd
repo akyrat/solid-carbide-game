@@ -332,8 +332,17 @@ static func trick_text(trick_id: String, added: float) -> String:
 	return text
 
 
+## True when data/hud.json (trick_popups.hidden, T-596) says this trick shows no popup.
+static func is_hidden(trick_id: String) -> bool:
+	var r := GameData.load_file("hud")
+	if not r.ok:
+		return false
+	var v := GameData.get_value(r.data, "trick_popups.hidden")
+	return v.ok and v.data is Array and trick_id in v.data
+
+
 func _on_combo_trick(trick_id: String, added: float, multiplier: float) -> void:
-	if not TEXTS.has(trick_id):
+	if not TEXTS.has(trick_id) or is_hidden(trick_id):
 		return
 	# What the trick really added (at the cap, less or nothing).
 	var gain := added
@@ -375,7 +384,7 @@ func _on_score(amount: float, _challenge_id: String) -> void:
 
 
 func _on_trick(trick_id: String) -> void:
-	if _from_combo or not TEXTS.has(trick_id):
+	if _from_combo or not TEXTS.has(trick_id) or is_hidden(trick_id):
 		return
 	show_popup(TEXTS[trick_id], _car_position.call(), SIZES[trick_id], _car_position)
 

@@ -4245,3 +4245,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: the charged jump's cloud draws behind the car.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-595
+
+## 2026-11-08: No popup for thread the needle
+- Decision or change: Merged after the board's playtest: thread the needle shows no popup and still counts.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-596
