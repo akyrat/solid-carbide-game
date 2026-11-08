@@ -62,7 +62,8 @@
       "made_by": "/rotate of frame 0 by 22",
       "nose_screen_angle_deg": 50.36,
       "note": "T-101's frame, copied unchanged",
-      "seen_nose_screen_angle_deg_approx": 70,
+      "seen_nose_screen_angle_deg_approx": 55.5,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "shift_px": {
         "x": -1,
         "y": 4
@@ -81,7 +82,8 @@
       "placed_by": "measured position",
       "position_between_neighbours": 0.58,
       "rotated_from_t101_frame": 1,
-      "seen_nose_screen_angle_deg_approx": 82,
+      "seen_nose_screen_angle_deg_approx": 75.6,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "shift_px": {
         "x": 4,
         "y": 1
@@ -335,37 +337,26 @@
       "t101_frame": 9
     },
     {
-      "body_axis_deg": 26.5,
-      "colours_after": 32,
-      "colours_before": 264,
+      "colours_after": 30,
       "heading_deg": 213.75,
       "index": 19,
-      "made_by": "/rotate of T-101 frame 9 by 16 (T-102)",
+      "made_by": "PixelLab /rotate of old frame 20 by -20 plus free fixes, style loop 7/10",
       "nose_screen_angle_deg": 248.31,
-      "placed_by": "measured position",
-      "position_between_neighbours": 0.22,
-      "rotated_from_t101_frame": 9,
-      "seen_nose_screen_angle_deg_approx": 227,
-      "shift_px": {
-        "x": -1,
-        "y": 4
-      },
-      "source": "art-archive/T-102/car_rot16_from_f09_north-west_raw.png"
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 225.3,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
+      "source": "art-archive/T-584/frames/frame19.png"
     },
     {
       "colours_after": 30,
       "heading_deg": 225.0,
       "index": 20,
-      "made_by": "/generate-8-rotations-v3 image 5 (north)",
+      "made_by": "old T-102 frame 20 restored by T-584 (the redraw measured further from target)",
       "nose_screen_angle_deg": 270.0,
-      "note": "T-101's frame, copied unchanged",
-      "seen_nose_screen_angle_deg_approx": 260,
-      "shift_px": {
-        "x": -3,
-        "y": -3
-      },
-      "source": "art-archive/T-101/frames/car_rot8_v3_5.png",
-      "t101_frame": 10
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 244.8,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
+      "source": "art-archive/T-584/old/frame_20.png"
     },
     {
       "body_axis_deg": 74.7,
@@ -378,7 +369,8 @@
       "placed_by": "measured position",
       "position_between_neighbours": 0.56,
       "rotated_from_t101_frame": 10,
-      "seen_nose_screen_angle_deg_approx": 266,
+      "seen_nose_screen_angle_deg_approx": 263.2,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
       "shift_px": {
         "x": 2,
         "y": 7
@@ -386,37 +378,26 @@
       "source": "art-archive/T-102/car_rot16_from_f10_north_raw.png"
     },
     {
-      "colours_after": 32,
+      "colours_after": 31,
       "heading_deg": 247.5,
       "index": 22,
-      "made_by": "/rotate of frame 10 by 22",
+      "made_by": "T-584: PixelLab /rotate of frame 24 by -27 (and a first try from frame 23), free outline/speck/shadow fixes; style loop best 5/10, noted for the playtest",
       "nose_screen_angle_deg": 309.64,
-      "note": "T-101's frame, copied unchanged",
-      "seen_nose_screen_angle_deg_approx": 270,
-      "shift_px": {
-        "x": 2,
-        "y": -2
-      },
-      "source": "art-archive/T-101/frames/car_rot22_from_f10_north.png",
-      "t101_frame": 11
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 289.5,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
+      "source": "art-archive/T-584/frames/frame22.png"
     },
     {
-      "body_axis_deg": 96.0,
-      "colours_after": 29,
-      "colours_before": 230,
+      "colours_after": 32,
       "heading_deg": 258.75,
       "index": 23,
-      "made_by": "/rotate of T-101 frame 11 by 16 (T-102)",
+      "made_by": "T-584: PixelLab /rotate of frame 24 by -14 (1 generation), edge cleaned by a free script, style loop score 8",
       "nose_screen_angle_deg": 323.19,
-      "placed_by": "measured position",
-      "position_between_neighbours": 0.07,
-      "rotated_from_t101_frame": 11,
-      "seen_nose_screen_angle_deg_approx": 273,
-      "shift_px": {
-        "x": 2,
-        "y": 1
-      },
-      "source": "art-archive/T-102/car_rot16_from_f11_north_raw.png"
+      "redrawn_by": "T-584",
+      "seen_nose_screen_angle_deg_approx": 305.9,
+      "seen_source": "measure_car_facing.py (T-583): calibrated body axis",
+      "source": "art-archive/T-584/frames/frame23.png"
     },
     {
       "colours_after": 31,
@@ -552,7 +533,7 @@
     }
   ],
   "noshadow_note": "made by game/tools/build_car_noshadow.py (task T-204) from car_iso.png: only drop-shadow pixels outside the car's silhouette are made transparent; used only while the car is in the air",
-  "noshadow_pixels_removed": 6817,
+  "noshadow_pixels_removed": 7154,
   "order": "clockwise on screen: frame i shows world heading i * 11.25 degrees, Godot axes (y down), the same direction Godot's rotation grows",
   "palette": [
     "#03151b",
