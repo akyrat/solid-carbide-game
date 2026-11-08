@@ -4235,3 +4235,8 @@ Entry format:
 - Decision or change: The wheel's burst comes after an alternate drift, half as strong, fading after 0.5 s, with 2 arrows on the ground.
 - Documents touched: docs/drifting.md
 - Tasks: T-603
+
+## 2026-11-08: A new practice playground and alt drift take
+- Decision or change: Quick tuning: the board edits the practice playground and re-records the alt drift take.
+- Documents touched: docs/hud-and-menus.md, docs/level-design.md
+- Tasks: T-604
