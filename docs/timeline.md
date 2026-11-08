@@ -3955,3 +3955,53 @@ Entry format:
 - Decision or change: Menus open with no button selected; the keyboard selection shows on the first arrow or Tab press.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-573
+
+## 2026-11-08: Quick tuning of the drift slides
+- Decision or change: The board tunes the drift tutorial slides' layout and play directly, with no QA round.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-574
+
+## 2026-11-08: Texts for the hint pieces
+- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces.
+- Documents touched: docs/level-design.md
+- Tasks: T-575
+
+## 2026-11-08: Hint pieces in the level creator
+- Decision or change: Gas, brake and arrow hints placed in the creator, painted on the ground or on signs, shown in runs.
+- Documents touched: docs/level-design.md
+- Tasks: T-576
+
+## 2026-11-08: Art for the hint pieces
+- Decision or change: PixelLab icons for gas, brake and the arrows, and a roadside sign (up to 30 generations).
+- Documents touched: docs/visual-style.md, docs/level-design.md
+- Tasks: T-577
+
+## 2026-11-08: The launch keeps the grind's speed
+- Decision or change: Letting go of Space launches the car where it faces at the speed it was grinding.
+- Documents touched: docs/drifting.md
+- Tasks: T-578
+
+## 2026-11-08: Health drops at 5%
+- Decision or change: A killed minion drops a health pickup 5% of the time (was 22.5%).
+- Documents touched: docs/enemies.md
+- Tasks: T-579
+
+## 2026-11-08: Investigating facing versus travel
+- Decision or change: Why the car can point one way and move another, measured and shown, with options to fix.
+- Documents touched: docs/drifting.md
+- Tasks: T-580
+
+## 2026-11-08: Free placement in the level creator
+- Decision or change: Pieces follow the mouse freely in the creator; Shift snaps to the grid as before.
+- Documents touched: docs/level-design.md
+- Tasks: T-581
+
+## 2026-11-08: Texts for the hint pieces
+- Decision or change: The level creator's labels for the gas, brake and arrow hint pieces (Driver hints).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-575
+
+## 2026-11-08: Equip instead of Flex it
+- Decision or change: The Cosmetics screen's pick button reads Equip.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-582

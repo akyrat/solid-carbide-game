@@ -86,6 +86,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **The tutorial comes back with each new itch.io build** (board, 2026-11-07): every time the board pushes a new build to itch.io, the tutorial slides show again before the first run for every player, even if they ticked "Don't show again" for an earlier build; ticking it again hides them until the next new build. The desktop game, where nothing is pushed, keeps today's behaviour. (T-572)
 - **No Skip on the last tutorial slide** (board, 2026-11-07): the last slide (the kaiju timeline, with Go live and "Don't show again") has no Skip button, since Go live already starts the run. The other slides keep theirs. (T-568)
 - **No button looks selected when a menu opens** (board, 2026-11-08): opening the garage, the Cosmetics screen or any other menu or screen shows no button as selected or highlighted. A button shows as selected only once the player uses the keyboard to move between buttons (arrows, Tab), and the mouse hover works as before. Keyboard play keeps working: the first key press shows the selection where it starts. Where today a key like Enter acts on the first button straight away, the agent proposes whether it still does. (T-573)
+- **"Equip" instead of "Flex it"** (board, 2026-11-08): the Cosmetics screen's button that picks an unlocked cosmetic reads "Equip" (the board's own word), replacing "Flex it". (T-582)
 
 ## Content
 

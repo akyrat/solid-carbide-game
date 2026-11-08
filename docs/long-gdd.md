@@ -350,6 +350,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - **Jump has no cooldown** (board, 2026-11-07; replaces the Jump power-up's cooldown in "Two tiers and three slots for the driving power-ups" above): the Jump power-up's jump from the ground can be used again as soon as the car is back on the ground, at both tiers. Tier 2 keeps only its higher takeoff. How often it is offered: Game loop architecture, Decisions, "Jump is offered first". (T-551)
 - **A jump effect around the car** (board, 2026-11-07): when the car jumps, a small effect plays around it. The default is a little dash cloud. Other versions the player can pick in the Cosmetics menu (Garage design, Decisions, "Cosmetics"): a spring pushing the car up, a jet thrust, and two the Project Lead proposed at the board's request: stunt sparks (a burst of sparks under the car) and a shockwave ring (a ring rippling out on the ground). (T-551, T-556)
 - **A grind starts when the car's drawing crosses the rail's** (board, 2026-11-07; replaces the catch reach in "The grind overhaul" above): while Space is held in the air, the car snaps onto a rail as soon as the car's sprite, as drawn on screen, crosses the rail's sprite, whatever the car's height above or below the rail. This makes a grind even easier to start. A crossing square-on to the rail catches too (the board, 2026-11-07): the grind starts in the direction the car faces along the rail, at a set speed (a proposal for the playtest). (T-566)
+- **The launch off a rail keeps the grind's speed** (board, 2026-11-08; replaces the set speed of the launch in "The grind overhaul" above): letting go of Space still launches the car where it faces, even backwards, but at the speed it was grinding at that moment instead of a set 6 units/s, so a fast grind gives a fast launch. The direction is still only where the car faces (the momentum along the rail turns into that direction); the upward takeoff is unchanged. How a very slow grind launches (a floor speed, or none) is the Driving & Drift Agent's proposal for the playtest. (T-578)
 
 ### Content
 
@@ -797,6 +798,8 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **The board's new Kaiju City is the default map** (board, 2026-11-06): the board edited its level Kaiju City in the level creator (ramps and rails added, saved as `game/data/levels/kaiju_city.json`) and made it the game's default map. The game plays a byte-for-byte copy of it, as before.
 - **A ramp may climb onto several rooftops** (board, 2026-11-06): a ramp whose top end meets two or more rooftops of the same height (side by side) is a proper ramp onto them, not an error. The level checks, the game and the level creator accept it, so a level made in the creator goes in unchanged (it came up with ramp-2 and ramp-13 of the board's Kaiju City).
 - **The practice playground** (board, 2026-11-07): a small level for the tutorial's practice windows (HUD and menus, Decisions, "Interactive tutorial slides"), on the dark purple grid ground of the drift prototype (`ground_grid.gd`), with room to drift and alt drift, a ramp to launch from for air spins, and rails to grind. The car, its effects and the HUD must stand out clearly against its colours. Its layout is the Level/Challenge Design Agent's proposal; the board may edit it in the level creator. (T-560)
+- **Hint pieces in the level creator** (board, 2026-11-08): a new kind of piece the board places to hint the player what to do: **gas** and **brake** as the W and S keycaps (the tutorial's keycap look, no words), a **straight arrow**, a **curved arrow** for a turn (left or right) and a **circular arrow** for steering round (either direction). Each can be placed **painted on the ground** (a flat decal under the car and buildings, no collision, in any of the 8 directions) or as a **standing sign** at the roadside (a small upright sign with collision, like a prop). They show in runs and in the tutorial's practice playground. The art comes from PixelLab (the board's go: up to 30 generations, one sample first); the icons are made flat and laid on the ground by the engine, and the sign is one piece the icons are put on by script. Sizes and looks are proposals for the playtest. (T-575 to T-577)
+- **Free placement in the level creator** (board, 2026-11-08; the creator felt clunky and grid-like): every piece (props and boulders, buildings, rooftops and ramps, rails, the hint pieces) follows the mouse freely, placed where it is dropped instead of on the 2 x 2 unit tile grid. Holding a key (Shift, a proposal) snaps it to the grid and to other pieces' edges as today. Rotation is unchanged: pieces keep the views their art has. Ground and road tiles stay painted on their tiles. A ramp still has to reach its rooftop to link to it, and the game (collision, the enemies' paths, the height checks) must work with pieces off the grid. (T-581)
 
 ### Content
 
@@ -1070,6 +1073,13 @@ Added for the kaiju alert sign and banner pieces (task T-440; same file, every e
 - **Looks strip, the two designs:** "Head in triangle" (`alert_design_head`) and "Body in circle" (`alert_design_body`).
 - **Banner hints in the strip:** "R: next wall." (`banner_wall_hint`) and "H: next height." (`banner_height_hint`); the keys are the existing turn and height keys, a proposal the creator must follow.
 - Style loop: score 8/10 in round 1 (Style review, T-440). The script's complaints about one line and sentence case came from checking the six labels as one block.
+
+Added for the hint pieces (task T-575; same file, every earlier key unchanged; Decisions, "Hint pieces in the level creator"; the pieces' tickets are T-576 and T-577). These are the board's tool labels; the pieces show no words in the game. Each label scored 8 or more in the style loop (9 for all but the two strip hints, 8; Style review, T-575). The keys are the existing turn and mirror keys, a proposal the creator must follow:
+
+- **Side panel group:** "Driver hints" (`group_hints`, fits 12 characters).
+- **Side panel buttons:** "Gas hint (W)" (`piece_hint_gas`), "Brake hint (S)" (`piece_hint_brake`), "Straight arrow" (`piece_hint_arrow_straight`), "Turn arrow" (`piece_hint_arrow_curved`, left or right) and "Circular arrow" (`piece_hint_arrow_circular`, either direction).
+- **Top bar, painted or standing:** "On the ground" (`hint_mode_ground`) and "Roadside sign" (`hint_mode_sign`).
+- **Strip hints while a hint piece is picked:** "Click: paint. R: turn." (`hint_ground_hint`), "Click: stand the sign at the roadside. R: turn." (`hint_sign_hint`) and, for the curved and circular arrows, "M: mirror." (`hint_mirror_hint`).
 
 #### Level creator: one button per kind of piece
 
@@ -1421,6 +1431,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Minion deaths: an animation, a green spill, corpses that can be knocked about** (board, 2026-11-03): a minion that dies plays a **death animation** instead of vanishing, and **spills a pixelated green liquid** that is **physics simulated** (it splashes out and spreads on the ground). Its **corpse stays** and can be **knocked back by the player**: by the car driving into it and by the weapons' hits (the knockback weapons: the bricks wave, the wiper, the Polarized Steering Wheel's shock; whether others push corpses is a proposal). A corpse **fades out about 2 seconds after it was last hit**; every hit restarts the 2 seconds. A corpse no longer hurts the car and is no longer a target. The death animation's art is made through PixelLab (Visual style, Decisions, "The minion's death animation and green spill"); until then a placeholder drawn in code. Proposals for the playtest, the Enemy Behavior Agent's: how far hits throw a corpse, how the liquid moves and how long it stays, and the most corpses and liquid on screen at once so big crowds don't slow the game (Decisions, "Minions spawn on a timer, and 30% slower"). (T-531, T-532)
 - **No slowdown from many minions** (board, 2026-11-05): since minions spawn on a timer however many are alive ("Minions spawn on a timer" above), a player who doesn't kill them gets frame drops. Many minions alive must not drop the frame rate: the Enemy Behavior Agent finds the cost and makes it cheaper. A cap on the number alive, if one is still needed, is a proposal for the playtest.
 - **Paired meteors hurt the kaiju** (board, 2026-11-05): the kaiju's meteors come in pairs. When the car drifts between the two meteors of a pair (through the line joining them), the kaiju is hurt, with an animation that shows the link between the drift through the meteors and the kaiju getting hit, and both meteors of that pair are destroyed at once. The damage, the pairing distance and the animation (placeholder, no generated art) are proposals for the playtest.
+- **Health drops at 5%** (board, 2026-11-08): a killed minion drops a health pickup with a chance of 5% instead of 22.5%. The coins, the heal (1 heart) and the kaiju (none) are unchanged. (T-579)
 
 ### Content
 
@@ -2223,6 +2234,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **The tutorial comes back with each new itch.io build** (board, 2026-11-07): every time the board pushes a new build to itch.io, the tutorial slides show again before the first run for every player, even if they ticked "Don't show again" for an earlier build; ticking it again hides them until the next new build. The desktop game, where nothing is pushed, keeps today's behaviour. (T-572)
 - **No Skip on the last tutorial slide** (board, 2026-11-07): the last slide (the kaiju timeline, with Go live and "Don't show again") has no Skip button, since Go live already starts the run. The other slides keep theirs. (T-568)
 - **No button looks selected when a menu opens** (board, 2026-11-08): opening the garage, the Cosmetics screen or any other menu or screen shows no button as selected or highlighted. A button shows as selected only once the player uses the keyboard to move between buttons (arrows, Tab), and the mouse hover works as before. Keyboard play keeps working: the first key press shows the selection where it starts. Where today a key like Enter acts on the first button straight away, the agent proposes whether it still does. (T-573)
+- **"Equip" instead of "Flex it"** (board, 2026-11-08): the Cosmetics screen's button that picks an unlocked cosmetic reads "Equip" (the board's own word), replacing "Flex it". (T-582)
 
 ### Content
 
@@ -2580,11 +2592,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
-| `drifting.md` | `43a6c2ea9d3e99a4d58d278aeac8408ab20affe8fad90704a5ef23ef4b91f2b5` |
-| `level-design.md` | `bc33a788ac77fef0f063f45666cf8192a502e904a2eb33f6a3bc9dfac595e986` |
-| `enemies.md` | `c29800f029c891b19003a14de79e5658373ece911b10373fc724fc3e6d539d0b` |
+| `drifting.md` | `c4ae7879e7f412eea035048dc168200012452af1d55a6df7fca9a9379d6930fe` |
+| `level-design.md` | `0945ce26993fd4935d3022f312a84eed1147f95de5bae96cc8df7193fe838c53` |
+| `enemies.md` | `10e63fd5e6d5466ceb2c552536166353cd8b1f63f3c078540f271c2c8cfff990` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `7ef3543e0889e93278ac8b56e1e557974ee4e84545b28ea7afba46e9ef7579d1` |
 | `visual-style.md` | `031f85a12316d8c5228a54217744cc0722a32afe4f8e5ce7978ae43b07aceda4` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `afb92fc116ed4c83a181b3f61f64fb7277a1e17e05b66b1c13a9f6fa707aa237` |
+| `hud-and-menus.md` | `b8a0f841e0fd19e392ca96d961cbfe60591bac2453556c023d5cb481a7a628b3` |
