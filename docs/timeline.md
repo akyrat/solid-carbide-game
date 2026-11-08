@@ -3990,3 +3990,8 @@ Entry format:
 - Decision or change: Why the car can point one way and move another, measured and shown, with options to fix.
 - Documents touched: docs/drifting.md
 - Tasks: T-580
+
+## 2026-11-08: Free placement in the level creator
+- Decision or change: Pieces follow the mouse freely in the creator; Shift snaps to the grid as before.
+- Documents touched: docs/level-design.md
+- Tasks: T-581

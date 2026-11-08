@@ -799,6 +799,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **A ramp may climb onto several rooftops** (board, 2026-11-06): a ramp whose top end meets two or more rooftops of the same height (side by side) is a proper ramp onto them, not an error. The level checks, the game and the level creator accept it, so a level made in the creator goes in unchanged (it came up with ramp-2 and ramp-13 of the board's Kaiju City).
 - **The practice playground** (board, 2026-11-07): a small level for the tutorial's practice windows (HUD and menus, Decisions, "Interactive tutorial slides"), on the dark purple grid ground of the drift prototype (`ground_grid.gd`), with room to drift and alt drift, a ramp to launch from for air spins, and rails to grind. The car, its effects and the HUD must stand out clearly against its colours. Its layout is the Level/Challenge Design Agent's proposal; the board may edit it in the level creator. (T-560)
 - **Hint pieces in the level creator** (board, 2026-11-08): a new kind of piece the board places to hint the player what to do: **gas** and **brake** as the W and S keycaps (the tutorial's keycap look, no words), a **straight arrow**, a **curved arrow** for a turn (left or right) and a **circular arrow** for steering round (either direction). Each can be placed **painted on the ground** (a flat decal under the car and buildings, no collision, in any of the 8 directions) or as a **standing sign** at the roadside (a small upright sign with collision, like a prop). They show in runs and in the tutorial's practice playground. The art comes from PixelLab (the board's go: up to 30 generations, one sample first); the icons are made flat and laid on the ground by the engine, and the sign is one piece the icons are put on by script. Sizes and looks are proposals for the playtest. (T-575 to T-577)
+- **Free placement in the level creator** (board, 2026-11-08; the creator felt clunky and grid-like): every piece (props and boulders, buildings, rooftops and ramps, rails, the hint pieces) follows the mouse freely, placed where it is dropped instead of on the 2 x 2 unit tile grid. Holding a key (Shift, a proposal) snaps it to the grid and to other pieces' edges as today. Rotation is unchanged: pieces keep the views their art has. Ground and road tiles stay painted on their tiles. A ramp still has to reach its rooftop to link to it, and the game (collision, the enemies' paths, the height checks) must work with pieces off the grid. (T-581)
 
 ### Content
 
@@ -2584,7 +2585,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `c4ae7879e7f412eea035048dc168200012452af1d55a6df7fca9a9379d6930fe` |
-| `level-design.md` | `e1a7d459ae34830313f735f49e79a3d0fea4fe141260d3387daa8c0670acf5c3` |
+| `level-design.md` | `abba80c963e13a00734bac6ac03d0c547a4a4e1ddb0a239babce84941fb64e68` |
 | `enemies.md` | `10e63fd5e6d5466ceb2c552536166353cd8b1f63f3c078540f271c2c8cfff990` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `7ef3543e0889e93278ac8b56e1e557974ee4e84545b28ea7afba46e9ef7579d1` |
