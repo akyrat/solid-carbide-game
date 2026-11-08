@@ -43,9 +43,9 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The label exists with a key and _comment next to the other settings labels, listed in the result notes with where it shows. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists it. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] The label exists with a key and _comment next to the other settings labels, listed in the result notes with where it shows. (QA: pass)
+- [ ] docs/hud-and-menus.md Content lists it. (QA: pass)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
