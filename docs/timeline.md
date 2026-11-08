@@ -4130,3 +4130,8 @@ Entry format:
 - Decision or change: Thread-the-needle pairs grouped into routes, in order or at random; only the active pair pays; the board played it.
 - Documents touched: `docs/level-design.md`
 - Tasks: T-592
+
+## 2026-11-08: Free placement and moving pieces in the level creator
+- Decision or change: Pieces follow the mouse freely (Shift snaps to the grid) and placed pieces can be moved; its code came in with T-592.
+- Documents touched: none
+- Tasks: T-581
