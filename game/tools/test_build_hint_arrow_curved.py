@@ -72,6 +72,59 @@ class TestInit(unittest.TestCase):
         self.assertEqual(self.px[24, 55], curved.INK)
 
 
+class TestWide(unittest.TestCase):
+    """The v2 pass: bolder, with shading bands and glint runs that show at native 64 px."""
+
+    def setUp(self):
+        self.im = curved.arrow(wide=True)
+        self.px = self.im.load()
+
+    def test_is_bolder_than_v1_and_still_a_right_turn_from_the_bottom(self):
+        self.assertEqual(self.im.getbbox(), (20, 3, 60, 60))   # 40 x 57: columns 20..59, rows 3..59
+        self.assertEqual({x for x in range(64) if self.px[x, 59][3] == 255}, set(range(20, 38)))   # 18 px shaft
+        self.assertEqual({y for y in range(64) if self.px[59, y][3] == 255}, {20, 21})   # the tip, pointing right
+        self.assertEqual({y for y in range(64) if self.px[42, y][3] == 255}, set(range(3, 39)))   # the head's base, 36 px
+        cells = curved.arrow_cells(wide=True)
+        self.assertGreater(len(cells), len(curved.arrow_cells()))
+        self.assertTrue(all(y < 40 for x, y in cells if x >= 50))
+        self.assertIn((20, 33), cells)    # the outer bend meets the shaft's left
+        self.assertNotIn((38, 33), cells)  # the inner bend is rounded (radius 5)
+        self.assertTrue(all(p[3] in (0, 255) for p in self.im.getdata()))
+        self.assertTrue(opaque_colours(self.im) <= {c[:3] for c in curved.PALETTE})
+
+    def test_bands_are_wider_and_glint_runs_three_pixels_wide(self):
+        lay = curved.layers(wide=True)
+        # The shaft's right: two deep, two shade, two mid; its left: the near-white run and the rim light.
+        # Row 48 is clear of the shaft's end, whose own shade band reaches up to row 52.
+        self.assertEqual([self.px[x, 48] for x in (35, 34)], [curved.BLUSH_DEEP] * 2)
+        self.assertEqual([self.px[x, 48] for x in (33, 32)], [curved.BLUSH_SHADE] * 2)
+        self.assertEqual([self.px[x, 48] for x in (31, 30)], [curved.BLUSH_MID] * 2)
+        self.assertEqual([self.px[x, 48] for x in (25, 26, 27)], [curved.BLUSH] * 3)
+        self.assertEqual([self.px[x, 55] for x in (22, 23, 24)], [curved.BLUSH_LIGHT] * 3)
+        self.assertEqual([self.px[x, 45] for x in (20, 21, 22)], [curved.GLINT] * 3)
+        self.assertEqual(self.px[20, 55], curved.INK)
+        self.assertGreater(len(lay["glint"]), len(curved.layers()["glint"]))
+        self.assertTrue(lay["edge"] & {(22, y) for y in range(38, 51)})
+        # The inner bend and the corners either side of it are in shadow: no pale specks there.
+        cx, cy = curved.GEOM[True]["centre"]
+        near = {p for p in lay["edge"] | lay["light"] if ((p[0] + 0.5 - cx) ** 2 + (p[1] + 0.5 - cy) ** 2) < 81}
+        self.assertEqual(near, set())
+        self.assertEqual(self.px[35, 38], curved.BLUSH_DEEP)
+
+    def test_polish_wide_grows_v1_and_fills_the_new_body_with_pixellabs_blush(self):
+        v1 = curved.arrow()
+        px = v1.load()
+        for x, y in curved.layers()["body"]:
+            px[x, y] = (243, 198, 220, 255)   # PixelLab's own blush on v1's body
+        out = curved.polish(v1, wide=True)
+        opx = out.load()
+        self.assertEqual(out.getbbox(), (20, 3, 60, 60))
+        body = curved.layers(wide=True)["body"]
+        # v1's outline and shade pixels that now sit inside the wider body are repainted, not kept.
+        self.assertTrue(all(opx[x, y] == (243, 198, 220, 255) for x, y in body))
+        self.assertLessEqual(len(opaque_colours(out)), 30)
+
+
 class TestRequest(unittest.TestCase):
     def test_body_carries_the_init_image_and_the_sprite_size(self):
         png = curved._png_bytes(curved.arrow())

@@ -17,8 +17,12 @@ This script does the free parts of the style loop around one PixelLab call per v
         arrow pixels PixelLab lost filled from the script's own, the palette cut to at most 30 colours
         (reduce_palette.py). By default the script's outline, glints and shading roles are repainted over
         PixelLab's body pixels (polish), so the outline is exactly near-black and the shading reads at 64 px.
-    python game/tools/build_hint_arrow_curved.py polish IN.png OUT.png
-        Only the repaint of the roles, on an already finished arrow.
+    python game/tools/build_hint_arrow_curved.py polish IN.png OUT.png [--wide]
+        Only the repaint of the roles, on an already finished arrow. --wide (T-577 v2, the style loop's rule 2
+        fixes at native 64 px) is the bolder footprint: an 18 px shaft, a clearer bend of radii 5 and 22, a
+        three-step rim light, three two-pixel shade steps and near-white runs three pixels wide on longer
+        stretches of the shaft's left, the outer bend and the head's upper slope; the body's new pixels take
+        PixelLab's blush. `init` and `finish` take --wide too.
     python game/tools/build_hint_arrow_curved.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -46,22 +50,34 @@ SIZE = 64
 PALETTE = (INK, GLINT, BLUSH_LIGHT, BLUSH, BLUSH_MID, BLUSH_SHADE, BLUSH_DEEP)
 
 # The arrow's geometry. Pixel (x, y) is centred at (x + 0.5, y + 0.5) in the continuous coordinates below.
-SHAFT_X0, SHAFT_X1 = 24, 37        # the shaft, 14 px wide, from the bottom centre
+# v1: a 14 px shaft (columns 24..37) from the bottom centre, a quarter circle of radii 4 and 18 centred at
+# (42, 31), an 18-column head pointing right with its tip at column 59 on rows 19 and 20: 36 x 58 px.
+# `wide` (v2, the style loop's rule 2 fixes at native 64 px): an 18 px shaft (columns 20..37), a clearer bend of
+# radii 5 and 22 centred at (42, 34), the same 18-column head, 36 px tall at its base: 40 x 57 px.
+GEOM = {
+    False: {"shaft": (24, 37), "centre": (42.0, 31.0), "radii": (4.0, 18.0), "head_cols": 18, "tip_rows": (19, 20),
+            "shaft_glint_rows": range(36, 48), "arc_glint_degrees": (-170.0, -122.0),
+            "head_glint_cols": range(45, 55), "light_steps": 2, "shade_steps": (1, 1, 2)},
+    True: {"shaft": (20, 37), "centre": (42.0, 34.0), "radii": (5.0, 22.0), "head_cols": 18, "tip_rows": (20, 21),
+           "shaft_glint_rows": range(38, 51), "arc_glint_degrees": (-168.0, -116.0),
+           "head_glint_cols": range(45, 56), "light_steps": 3, "shade_steps": (2, 2, 2)},
+}
+SHAFT_X0, SHAFT_X1 = GEOM[False]["shaft"]
 BOTTOM = 59                        # the shaft's last row
-CENTRE = (42.0, 31.0)              # the bend's circle centre: the shaft runs below it, the arc above and left of it
-R_IN, R_OUT = 4.0, 18.0            # the bend's inner and outer radius (the band is 14 px, like the shaft)
+CENTRE = GEOM[False]["centre"]     # the bend's circle centre: the shaft runs below it, the arc above and left of it
+R_IN, R_OUT = GEOM[False]["radii"]
 HEAD_TIP_X = 59                    # the head's tip column, pointing right
-HEAD_COLS = 18                     # the head's length; its slopes run at 45 degrees (2 px taller every column)
-HEAD_ROW0, HEAD_ROW1 = 19, 20      # the tip's two rows: the head's axis is the band's middle at the top
+HEAD_COLS = GEOM[False]["head_cols"]   # the head's length; its slopes run at 45 degrees (2 px taller every column)
+HEAD_ROW0, HEAD_ROW1 = GEOM[False]["tip_rows"]   # the tip's two rows: the head's axis is the band's middle at the top
 SHAFT_TOP = int(CENTRE[1])         # the first row of the straight shaft
 
 LIGHT = (-0.5, -1.0)   # where the light comes from: above, a little to the left
 
 # Outline pixels that become near-white highlight runs (rule 2): the shaft's left, the outer bend's upper-left
 # and the head's upper slope.
-SHAFT_GLINT_ROWS = range(36, 48)
-ARC_GLINT_DEGREES = (-170.0, -122.0)   # atan2 angles from the centre, the upper-left quadrant is (-180, -90)
-HEAD_GLINT_COLS = range(45, 55)
+SHAFT_GLINT_ROWS = GEOM[False]["shaft_glint_rows"]
+ARC_GLINT_DEGREES = GEOM[False]["arc_glint_degrees"]   # atan2 angles from the centre; the upper-left quadrant is (-180, -90)
+HEAD_GLINT_COLS = GEOM[False]["head_glint_cols"]
 
 
 def nbrs8(p):
@@ -69,40 +85,50 @@ def nbrs8(p):
     return [(x + dx, y + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if (dx, dy) != (0, 0)]
 
 
-def arrow_cells() -> set[tuple[int, int]]:
+def arrow_cells(wide: bool = False) -> set[tuple[int, int]]:
     """Every pixel of the arrow's silhouette, outline included."""
-    cx, cy = CENTRE
+    g = GEOM[wide]
+    cx, cy = g["centre"]
+    r_in, r_out = g["radii"]
+    x0, x1 = g["shaft"]
+    row0, row1 = g["tip_rows"]
     cells = set()
-    for y in range(SHAFT_TOP, BOTTOM + 1):
-        for x in range(SHAFT_X0, SHAFT_X1 + 1):
+    for y in range(int(cy), BOTTOM + 1):
+        for x in range(x0, x1 + 1):
             cells.add((x, y))
-    for y in range(0, SHAFT_TOP):
+    for y in range(0, int(cy)):
         for x in range(0, int(cx)):
             px_, py_ = x + 0.5, y + 0.5
-            if R_IN <= math.hypot(px_ - cx, py_ - cy) <= R_OUT:
+            if r_in <= math.hypot(px_ - cx, py_ - cy) <= r_out:
                 cells.add((x, y))
-    for k in range(HEAD_COLS):
+    for k in range(g["head_cols"]):
         x = HEAD_TIP_X - k
-        for y in range(HEAD_ROW0 - k, HEAD_ROW1 + k + 1):
+        for y in range(row0 - k, row1 + k + 1):
             cells.add((x, y))
     return cells
 
 
-def head_upper_slope(cells: set[tuple[int, int]]) -> set[tuple[int, int]]:
+def head_upper_slope(cells: set[tuple[int, int]], wide: bool = False) -> set[tuple[int, int]]:
     """The head's pixels above its axis, in the columns of the head."""
-    return {(x, y) for x, y in cells if x > int(CENTRE[0]) and y <= HEAD_ROW0}
+    g = GEOM[wide]
+    return {(x, y) for x, y in cells if x > int(g["centre"][0]) and y <= g["tip_rows"][0]}
 
 
-def layers() -> dict[str, set[tuple[int, int]]]:
+def layers(wide: bool = False) -> dict[str, set[tuple[int, int]]]:
     """The arrow's pixels by colour role: a two-pixel outline with near-white glint runs breaking it, a near-white
-    edge and a two-step rim light on the lit edges, three stepped shade steps on the edges away from the light,
-    the plain body between."""
-    cells = arrow_cells()
+    edge and a stepped rim light on the lit edges, three stepped shade steps on the edges away from the light,
+    the plain body between. `wide` (v2) widens every band so it shows at native 64 px: a three-step rim light,
+    three two-pixel shade steps, and near-white runs three pixels wide (the outline's two and the lit pixel
+    inside) on longer stretches."""
+    g = GEOM[wide]
+    cells = arrow_cells(wide)
     outline1 = {p for p in cells if any(q not in cells for q in nbrs8(p))}
     inner = {p for p in cells - outline1 if any(q in outline1 for q in nbrs8(p))}
     outline = outline1 | inner
     body = cells - outline
 
+    cx, cy = g["centre"]
+    inner_corner = g["radii"][0] + 4   # the inner bend and the corners either side of it are in shadow
     lit_edge, shade_edge, flat_edge = set(), set(), set()
     for p in body:
         around = [q for q in nbrs8(p) if q in outline]
@@ -112,7 +138,9 @@ def layers() -> dict[str, set[tuple[int, int]]]:
         ny = sum(q[1] - p[1] for q in around)
         norm = math.hypot(nx, ny) or 1.0
         score = (nx * LIGHT[0] + ny * LIGHT[1]) / norm
-        if score > 0.2:
+        if math.hypot(p[0] + 0.5 - cx, p[1] + 0.5 - cy) < inner_corner:
+            shade_edge.add(p)
+        elif score > 0.2:
             lit_edge.add(p)
         elif score < -0.2:
             shade_edge.add(p)
@@ -132,34 +160,42 @@ def layers() -> dict[str, set[tuple[int, int]]]:
 
     d_lit = distances(lit_edge)
     d_shade = distances(shade_edge)
+    n_deep, n_shade, n_mid = g["shade_steps"]
     roles = {"edge": set(), "light": set(), "deep": set(), "shade": set(), "mid": set(), "body": set()}
-    slope = head_upper_slope(cells)
+    slope = head_upper_slope(cells, wide)
     for p in body:
         dl, ds = d_lit.get(p, 99), d_shade.get(p, 99)
         if p in lit_edge:
             roles["edge" if p in slope else "light"].add(p)
-        elif p in shade_edge:
+        elif ds < n_deep:
             roles["deep"].add(p)
-        elif dl == 1 and p not in flat_edge:
+        elif dl < g["light_steps"] and p not in flat_edge:
             roles["light"].add(p)
-        elif ds == 1 or p in flat_edge:
+        elif ds < n_deep + n_shade or p in flat_edge:
             roles["shade"].add(p)
-        elif ds in (2, 3):
+        elif ds < n_deep + n_shade + n_mid:
             roles["mid"].add(p)
         else:
             roles["body"].add(p)
 
-    cx, cy = CENTRE
-    glint = {(x, y) for x, y in outline if x in (SHAFT_X0, SHAFT_X0 + 1) and y in SHAFT_GLINT_ROWS}
+    shaft_x0 = g["shaft"][0]
+    row0 = g["tip_rows"][0]
+    glint = {(x, y) for x, y in outline if x in (shaft_x0, shaft_x0 + 1) and y in g["shaft_glint_rows"]}
+    lo, hi = g["arc_glint_degrees"]
     for x, y in outline:
         if x < cx and y < cy:
             angle = math.degrees(math.atan2(y + 0.5 - cy, x + 0.5 - cx))
-            if ARC_GLINT_DEGREES[0] <= angle <= ARC_GLINT_DEGREES[1]:
+            if lo <= angle <= hi:
                 glint.add((x, y))
-    for x in HEAD_GLINT_COLS:
+    for x in g["head_glint_cols"]:
         k = HEAD_TIP_X - x
-        top = HEAD_ROW0 - k
+        top = row0 - k
         glint.update({(x, y) for y in range(top, top + 4)} & outline)
+    if wide:
+        # The runs are three pixels wide: the lit pixel just inside a glint run is near-white too.
+        lit_inside = {p for p in roles["light"] if any(q in glint for q in nbrs8(p))}
+        roles["light"] -= lit_inside
+        roles["edge"] |= lit_inside
     roles["outline"] = outline - glint
     roles["glint"] = glint
     return roles
@@ -171,11 +207,11 @@ COLOURS = {
 }
 
 
-def arrow() -> Image.Image:
+def arrow(wide: bool = False) -> Image.Image:
     """The script-drawn curved arrow, straight from above."""
     im = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     px = im.load()
-    for role, cells in layers().items():
+    for role, cells in layers(wide).items():
         for x, y in cells:
             px[x, y] = COLOURS[role]
     return im
@@ -215,34 +251,49 @@ def request(init_png: bytes, strength: int = 500, seed: int | None = None) -> di
     return body
 
 
-def polish(im: Image.Image) -> Image.Image:
+def polish(im: Image.Image, wide: bool = False) -> Image.Image:
     """Repaint every role but the plain body from layers(), so the outline is exactly near-black and the glints,
-    rim light and shade steps are the script's; PixelLab's body pixels stay where they are opaque."""
+    rim light and shade steps are the script's; PixelLab's body pixels stay where they are opaque. With `wide`
+    the bolder v2 footprint: body pixels the old silhouette did not have take the most common body colour already
+    there (PixelLab's blush), so the body stays one even paint."""
     im = im.convert("RGBA")
     if im.size != (SIZE, SIZE):
         im = im.resize((SIZE, SIZE), Image.NEAREST)
     px = im.load()
-    shape = arrow_cells()
+    shape = arrow_cells(wide)
     for y in range(SIZE):
         for x in range(SIZE):
             if (x, y) not in shape:
                 px[x, y] = (0, 0, 0, 0)
-    for role, cells in layers().items():
+    roles = layers(wide)
+
+    def blush_like(c) -> bool:
+        # A plain body pixel of PixelLab's: opaque and within 24 of the spec blush (PixelLab's render sits within
+        # about 5). Anything else inside the body (an outline, rim-light or shade pixel of a smaller base, a
+        # stray dark pixel) is repainted.
+        return c[3] == 255 and sum((a - b) ** 2 for a, b in zip(c[:3], BLUSH[:3])) < 24 ** 2
+
+    counts: dict[tuple[int, int, int, int], int] = {}
+    for x, y in roles["body"]:
+        if blush_like(px[x, y]):
+            counts[px[x, y]] = counts.get(px[x, y], 0) + 1
+    fill = max(counts, key=counts.get) if counts else BLUSH
+    for role, cells in roles.items():
         for x, y in cells:
             if role == "body":
-                if px[x, y][3] != 255:
-                    px[x, y] = BLUSH
+                if not blush_like(px[x, y]):
+                    px[x, y] = fill
             else:
                 px[x, y] = COLOURS[role]
     return im
 
 
-def finish(raw: Image.Image, do_polish: bool = True, reduce: bool = True) -> Image.Image:
+def finish(raw: Image.Image, do_polish: bool = True, reduce: bool = True, wide: bool = False) -> Image.Image:
     """The free fixes on a PixelLab result, keeping its pixels wherever they can stay."""
     im = raw.convert("RGBA")
     if im.size != (SIZE, SIZE):
         im = im.resize((SIZE, SIZE), Image.NEAREST)
-    shape = arrow()
+    shape = arrow(wide)
     spx = shape.load()
     px = im.load()
     for y in range(SIZE):
@@ -257,7 +308,7 @@ def finish(raw: Image.Image, do_polish: bool = True, reduce: bool = True) -> Ima
             if spx[x, y][3] == 255 and px[x, y][3] == 0:
                 px[x, y] = spx[x, y]          # pixels the shape has but PixelLab lost
     if do_polish:
-        im = polish(im)
+        im = polish(im, wide)
     if reduce:
         im = reduce_image(im, 30)
     return im
@@ -268,6 +319,7 @@ def main(argv=None) -> int:
     sub = p.add_subparsers(dest="cmd", required=True)
     a = sub.add_parser("init", help="draw the script arrow")
     a.add_argument("out")
+    a.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands")
     r = sub.add_parser("request", help="write the pixflux request body")
     r.add_argument("out")
     r.add_argument("--init", required=True)
@@ -278,9 +330,11 @@ def main(argv=None) -> int:
     f.add_argument("out")
     f.add_argument("--no-polish", action="store_true", help="keep PixelLab's outline and shading pixels")
     f.add_argument("--no-reduce", action="store_true")
+    f.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands")
     q = sub.add_parser("polish", help="repaint the outline, glints and shading roles from the script")
     q.add_argument("src")
     q.add_argument("out")
+    q.add_argument("--wide", action="store_true", help="the bolder v2 footprint with wider shading bands (T-577 v2)")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -288,18 +342,18 @@ def main(argv=None) -> int:
     args = p.parse_args(argv)
 
     if args.cmd == "init":
-        save_png(arrow(), Path(args.out))
+        save_png(arrow(args.wide), Path(args.out))
     elif args.cmd == "request":
         body = request(Path(args.init).read_bytes(), args.strength, args.seed)
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out).write_text(json.dumps(body) + "\n", encoding="utf-8")
     elif args.cmd == "finish":
         with Image.open(args.raw) as raw:
-            im = finish(raw, not args.no_polish, not args.no_reduce)
+            im = finish(raw, not args.no_polish, not args.no_reduce, args.wide)
         save_png(im, Path(args.out))
     elif args.cmd == "polish":
         with Image.open(args.src) as src:
-            im = reduce_image(polish(src), 30)
+            im = reduce_image(polish(src, args.wide), 30)
         save_png(im, Path(args.out))
     else:
         with Image.open(args.src) as src:
