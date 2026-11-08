@@ -1,7 +1,7 @@
 ---
 id: T-575
 title: Texts: the level creator's labels for the hint pieces
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/data/level/creator_texts.json, game/docs/level/level-creator.md]
 files_expected_to_change: [game/data/level/creator_texts.json, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started: Narrative writes the creator's hint labels.
 ### 2026-11-08, In progress → In QA
 
 Labels written (11). QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed (4/4); the board approved the labels.
 
 ## Style review
 
@@ -219,3 +223,4 @@ Run by `tools/style_loop/run.py` on 2026-11-08: text, kind label, brief `C:/User
 ## Result notes
 
 Eleven labels added to game/data/level/creator_texts.json (each with text and where note), all through the style loop, kept at round 1: group_hints 'Driver hints' (9), piece_hint_gas 'Gas hint (W)' (9), piece_hint_brake 'Brake hint (S)' (9), piece_hint_arrow_straight 'Straight arrow' (9), piece_hint_arrow_curved 'Turn arrow' (9), piece_hint_arrow_circular 'Circular arrow' (9), hint_mode_ground 'On the ground' (9), hint_mode_sign 'Roadside sign' (9), hint_ground_hint 'Click: paint. R: turn.' (8), hint_sign_hint 'Click: stand the sign at the roadside. R: turn.' (8), hint_mirror_hint 'M: mirror.' (9). For T-576: keys R turn and M mirror (mirror only for curved and circular arrows) are proposals the creator must follow; the script's sentence-case note on 'R:' in the two strip hints is the same as the existing hints. docs/level-design.md, Level creator text, lists them. Tests: bash game/tools/run_tests.sh -gselect=test_creator_texts_only passed (59 asserts); JSON parses. Screenshot: art-archive/T-575/screenshots/labels.png (mock of side panel, top bar and strip with the real texts).
+- 2026-11-08, needs-playtest → done: Board: labels lgtm
