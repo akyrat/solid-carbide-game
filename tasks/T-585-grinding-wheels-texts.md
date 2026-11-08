@@ -1,7 +1,7 @@
 ---
 id: T-585
 title: Texts: the Grinding Wheels power-up
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -53,10 +53,24 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: Narrative writes the Grinding Wheels texts.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Run by `tools/style_loop/run.py` on 2026-11-08: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/ac041598-2b19-4839-9304-391fb93c4750/scratchpad/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+### Round 1
+
+- Version 1: "Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered."
+- Script checks: 3 of 3 pass
+- Score: 8/10
+- Reason: No rule is broken. Rule 4 passes: it is 81 characters, under the 90 limit. It states what the card does first ("Grind a rail: sparks heat up; a longer grind, a faster launch"), then adds one short aside, as the card format requires. The aside "Burns not covered." is a deadpan corporate liability disclaimer, which fits rule 1 (mocking soulless corporate language, slightly unethical, never sincere). It does not make fun of the city's people. The text has no "Greenbull says" line (rule 3), no banned words and no real brands (rules 2 and 3). It matches the length and voice of the other power-up texts. The only weakness is that the plain part is terse. It never mentions releasing Space to launch, and "a longer grind, a faster launch" is a bit clipped. That is minor and not a rule break. If the agent wants to tighten it, "Grind a rail, release Space: longer grinds launch faster" would still leave room for the aside.
+- Rules broken: none
+
+**Kept:** version 1, score 8/10 ("Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered."): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Texts written. Name (board's own, no loop): power_ups.names.grinding_wheels 'Grinding Wheels'. Description (style loop, round 1, score 8, 3 of 3 script checks pass): power_ups.descriptions.grinding_wheels 'Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered.' (82 chars, no slots, one tier so no descriptions_last_tier entry; describe() in power_up_screen.gd falls back to descriptions then). Keys for T-586: both in game/data/screen_texts.json under power_ups, same places as the other power-ups (names, descriptions; no _comment change needed). docs/hud-and-menus.md Content, 'Mission notebook and power-up texts', lists them. Screenshot: art-archive/T-585/screenshots/gift_card_grinding_wheels.png (the real overlay, with the Jump card temporarily swapped to the new texts for the shot, then restored; the icon shown is Jump's stand-in because grinding_wheels is not in power_ups.json until T-586). Tests: JSON parses; full run left to QA.
