@@ -4165,3 +4165,8 @@ Entry format:
 - Decision or change: With Jump, hold Space on the ground to charge up to x1.5 over 3 s and jump on release; the car tilts while charging and the jump effect grows with the jump. The board played it.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-590
+
+## 2026-11-08: Texts for the charged jump
+- Decision or change: The Jump card's two tiers and the tutorial's grind hint describe hold to charge and tap then hold to catch a rail.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-593

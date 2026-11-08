@@ -2534,7 +2534,17 @@ Written through the style loop (Extended narrative, Text rules). Keys for T-553,
 - **Item labels:** locked (`locked`, slot `{price}` in coins): "Unlock for {price} coins" (8); buy button (`buy`): "Unlock" (8); pick button (`pick`): "Equip" (the board's own word, T-582; was "Flex it", 8); the picked one (`equipped`): "Equipped" (8); too poor (`not_enough_coins`): "Not enough coins: style isn't free." (8).
 - **Jump effects** (`effects.<id>.name` and `.description`): dash_cloud "Dash cloud" (8), "A little puff of dust under every jump. Free, which Greenbull finds awkward." (9); spring "Engagement Spring" (8), "A spring pops the car into the air. Gravity's contract is under review." (9); jet_thrust "Jet Thrust Zero Sugar" (9), "A jet flame blasts under your car on every jump. Safety review pending." (9); stunt_sparks "Stunt sparks" (8), "Sparks burst under the car on every jump. Greenbull calls it content." (9); shockwave_ring "Premium Shockwave Ring" (7, below 8 after 3 refines: kept for the playtest), "A ring ripples out on the ground when you jump. Disruptive, like the brand." (8).
 - **Jump arrow checkbox** (`game/data/pause_text.json`, `jump_arrow_label`): "Facing arrow" (9), in the Drift Guide checkbox's voice (no on/off words).
-- **Changed texts** (`game/data/tutorial_text.json`): `trick_rule.rail_grind`, `trick_recipe.rail_grind.step1_badge` ("Hold space", shown in capitals) and `step1_note` ("Touch a rail mid-air"), above. The Jump card ("Press Space to Jump.", "Press Space to Jump higher.") stays true and is unchanged; no mission or gift text mentions grinding or a Jump cooldown.
+- **Changed texts** (`game/data/tutorial_text.json`): `trick_rule.rail_grind`, `trick_recipe.rail_grind.step1_badge` ("Hold space", shown in capitals) and `step1_note` ("Touch a rail mid-air"), above. The Jump card's two lines are rewritten for the charged jump by T-593 (see "Texts for the charged jump (T-593)"); no mission or gift text mentions grinding or a Jump cooldown.
+
+#### Texts for the charged jump (T-593)
+
+The board approved T-590's charged jump (2026-11-08) and asked that every text that explains jumping match it. Searched: `game/data/` (all JSON), `game/scripts/` and the docs for jump, hop, Space and "to jump"; the pause screen's controls, the trick list, popups and missions have no jump wording (the rail grind lines say "In the air, hold Space", which stays true). Changed, and nothing else:
+
+| Key | Old | New | Shows |
+|---|---|---|---|
+| `power_ups.descriptions.jump` (`screen_texts.json`) | Press Space to Jump. | Hold Space to charge a Jump, release to go. A tap hops. | Jump card, tier 1, power-up overlay |
+| `power_ups.descriptions_last_tier.jump` (`screen_texts.json`) | Press Space to Jump higher. | Hold Space to charge a higher Jump. | Jump card, tier 2, power-up overlay |
+| `tutorial.grind_hint` (`tutorial_text.json`) | One power-up on the house: Jump. Take it, jump, then hold Space over a rail. | One power-up on the house: Jump. Take it, tap Space to jump, then hold Space over a rail. | Grind slide of the tutorial, hint beside the practice window |
 
 #### Mission notebook and power-up texts
 
@@ -2545,7 +2555,7 @@ Task T-456 (goal G-009; Game loop architecture, Decisions, "Mission packs"; Drif
 - **Power-up overlay header** (`power_ups.overlay_header`), opened when a mission completes: "Mission done: pimp your ride" (T-526; was "soup up the car"). It talks about the car and a mission, not Greenbull or a gift pack, so it reads differently from the weapons gift screen.
 - **Take button** (`power_ups.take_button`): "Take power-up". Not shown since T-475 (the cards have no button); the text stays in the data.
 - **Power-up names** (`power_ups.names.<id>`), on each card, the board's names unchanged (the style loop scored them 9): Rev Charge, Jump, Bouncy Bumpers, Rusty Paintjob (Rusty Overcoat until the board renamed it, 2026-11-02, T-501), Polarized Steering Wheel (T-501).
-- **Power-up descriptions** (`power_ups.descriptions.<id>`, tier 1; `descriptions_last_tier.<id>`, tier 2), the board's own words (T-526, 2026-11-03). A text keeps a `{slot}` only where the board left one, filled from `game/data/power_ups.json`; a text without slots shows as written. Tier 1: Rev Charge "Hold Gas+Brake then release the Brake: speed boost."; Jump "Press Space to Jump."; Bouncy Bumpers "Bounce {bounce_multiplier}x farther off walls and obstacles." (`bounce_distance_multiplier`); Rusty Paintjob "The car deals damage to minions it touches. Rust: now a feature."; Polarized Steering Wheel "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst." Tier 2: Rev Charge "Faster charge, bigger boost."; Jump "Press Space to Jump higher."; Bouncy Bumpers "Bounce {bounce_multiplier}x farther off walls and obstacles."; Rusty Paintjob "Deals {contact_damage} damage to kaijus now too. Tetanus is content."; Polarized Steering Wheel "+{burst_percent}% speed, shock hits and shoves minions." None uses "Greenbull says ...".
+- **Power-up descriptions** (`power_ups.descriptions.<id>`, tier 1; `descriptions_last_tier.<id>`, tier 2), the board's own words (T-526, 2026-11-03). A text keeps a `{slot}` only where the board left one, filled from `game/data/power_ups.json`; a text without slots shows as written. Tier 1: Rev Charge "Hold Gas+Brake then release the Brake: speed boost."; Jump "Hold Space to charge a Jump, release to go. A tap hops." (T-593; was "Press Space to Jump."); Bouncy Bumpers "Bounce {bounce_multiplier}x farther off walls and obstacles." (`bounce_distance_multiplier`); Rusty Paintjob "The car deals damage to minions it touches. Rust: now a feature."; Polarized Steering Wheel "(while coasting) Steer, then Accelerate: +{burst_percent}% speed burst." Tier 2: Rev Charge "Faster charge, bigger boost."; Jump "Hold Space to charge a higher Jump." (T-593; was "Press Space to Jump higher."); Bouncy Bumpers "Bounce {bounce_multiplier}x farther off walls and obstacles."; Rusty Paintjob "Deals {contact_damage} damage to kaijus now too. Tetanus is content."; Polarized Steering Wheel "+{burst_percent}% speed, shock hits and shoves minions." None uses "Greenbull says ...".
 - **Grinding Wheels** (T-585, board's name, 2026-11-08; Drifting, Decisions, "Grinding Wheels, a driving power-up"): `power_ups.names.grinding_wheels` "Grinding Wheels"; `power_ups.descriptions.grinding_wheels` (tier 1, its only tier, so no `descriptions_last_tier` entry) "Grind a rail: sparks heat up; a longer grind, a faster launch. Burns not covered." (style loop score 8). No slots.
 
 #### Power-up overlay
@@ -2691,7 +2701,7 @@ Decisions, "Interactive tutorial slides" and "A trick falls into the notebook". 
 | Grind slide | `tutorial.trick.grind.title`, `.instruction` | Grind style / In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. |
 | Notebook goal lines (3 successes) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drift seconds {done}/{total} (T-564, seconds with one decimal; was "Drifts {done}/{total}") / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
 | Success message over a practice window | `tutorial.success` | Content secured! |
-| Grind slide, hint about the Jump gift | `tutorial.grind_hint` | One power-up on the house: Jump. Take it, jump, then hold Space over a rail. |
+| Grind slide, hint about the Jump gift | `tutorial.grind_hint` | One power-up on the house: Jump. Take it, tap Space to jump, then hold Space over a rail. (T-593; was "Take it, jump, then hold Space over a rail.") |
 
 #### The interactive slides (T-562; proposals for the playtest)
 
@@ -2753,4 +2763,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `2c4d65ddb6b57b117600919ea5605cf33261ad9c3e0448af272f865d0788508d` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `16e31f4f6f08abcf6914c5e3bcdf56444f72937e5bf13723a6749b64a9f9ec1b` |
+| `hud-and-menus.md` | `ce5868063114d3013596859fc072d8083b719375bdc7c5f61c10a453c313a71a` |

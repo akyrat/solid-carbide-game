@@ -1,7 +1,7 @@
 ---
 id: T-593
 title: Texts: describe the charged jump wherever the game explains jumping
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, tasks/T-590-charged-jump-playtest.md, game/data/screen_texts.json, game/data/tutorial_text.json]
 files_expected_to_change: [game/data/, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,15 +43,23 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every player-facing text about jumping or catching a rail from a jump matches the charged jump; the result notes list each one changed with its key, old and new text and where it shows, and say where the search looked. (QA: pass / fail)
-- [ ] No other text changed. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists the changed texts. (QA: pass / fail)
-- [ ] Tests that pin the wording are updated; QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A screenshot in art-archive/T-593/screenshots/ shows at least the Jump power-up card and the tutorial text with the new wording. (QA: pass / fail)
+- [ ] Every player-facing text about jumping or catching a rail from a jump matches the charged jump; the result notes list each one changed with its key, old and new text and where it shows, and say where the search looked. (QA: pass)
+- [ ] No other text changed. (QA: pass)
+- [ ] docs/hud-and-menus.md Content lists the changed texts. (QA: pass)
+- [ ] Tests that pin the wording are updated; QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A screenshot in art-archive/T-593/screenshots/ shows at least the Jump power-up card and the tutorial text with the new wording. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, Open → In progress
+
+Started: updating every text that explains the jump.
+
+### 2026-11-08, In progress → In QA
+
+Three texts updated (Jump card tiers 1 and 2, the tutorial's grind hint). QA, then merge with T-590.
 
 ## Style review
 
@@ -59,4 +67,9 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Texts changed (3, nothing else). Searched game/data/*.json, game/scripts, game/tests and docs for jump, hop, Space, 'to jump'; the pause screen's controls, trick list, popups, missions and cosmetics have no wording that is now wrong (rail grind lines say 'In the air, hold Space', still true). 1) power_ups.descriptions.jump (screen_texts.json), Jump card tier 1 in the power-up overlay: old 'Press Space to Jump.' new 'Hold Space to charge a Jump, release to go. A tap hops.' 2) power_ups.descriptions_last_tier.jump (screen_texts.json), Jump card tier 2: old 'Press Space to Jump higher.' new 'Hold Space to charge a higher Jump.' 3) tutorial.grind_hint (tutorial_text.json), hint on the tutorial's grind slide: old 'One power-up on the house: Jump. Take it, jump, then hold Space over a rail.' new 'One power-up on the house: Jump. Take it, tap Space to jump, then hold Space over a rail.' Not run through the style loop (the board asked for these texts directly; voice and length kept). Test updated: test_power_up_screen.gd (2 pinned strings). docs/hud-and-menus.md: new section 'Texts for the charged jump (T-593)' plus old lines at the power-up descriptions, T-550 note and tutorial table updated. Tests: GUT test_power_up_screen, test_tutorial_slides, test_trick_list_recipes, test_cosmetics_text pass; full Godot set 3219/3220 passing, 0 failing, 1 risky/pending (281 scripts, GUT_TIME_LIMIT=2400); game/tools Python 1092 OK (4 skipped). Screenshots: art-archive/T-593/screenshots/jump_card_power_up_overlay.png and tutorial_grind_slide.png.
+
+The studio's tools/ Python set was not run: nothing under tools/ or .claude/ changed (tasks/README.md, QA); game/tools Python set ran in full.
+
+Project Lead: the studio's tools/ Python set did finish, 643 tests OK (the agent's correction).
+- 2026-11-08, needs-playtest → done: Board asked for these texts, then a merge (2026-11-08)
