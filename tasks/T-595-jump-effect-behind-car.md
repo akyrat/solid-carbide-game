@@ -1,7 +1,7 @@
 ---
 id: T-595
 title: Fix: the jump effect draws over the car
-status: open
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/scripts/driving/jump_effect.gd, art-archive/T-590/screenshots/tweak1_tap_vs_charge_closeup.png]
 files_expected_to_change: [game/scripts/driving/, game/tests/, game/docs/driving/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,14 +43,22 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every jump effect draws behind the car (a test on draw order or z, for each effect). (QA: pass / fail)
-- [ ] Its position and look are otherwise unchanged (the existing jump effect tests pass). (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-595/screenshots/ show a tap and a full charge with the cloud behind the car, before and after. (QA: pass / fail)
+- [ ] Every jump effect draws behind the car (a test on draw order or z, for each effect). (QA: pass)
+- [ ] Its position and look are otherwise unchanged (the existing jump effect tests pass). (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Screenshots in art-archive/T-595/screenshots/ show a tap and a full charge with the cloud behind the car, before and after. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-08, In progress → In QA
+
+The jump effect now draws behind the car (the bumper and wheels are no longer covered). QA now.
+
+### 2026-11-08, In QA → Needs playtest
+
+QA passed. Play it from C:\solid-carbide-worktrees\T-595: tap and charge jumps, the cloud stays behind the car.
 
 ## Style review
 
@@ -58,4 +66,7 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Cause: run.gd put the JumpEffect node after CarSprite (index+1); practice_session.gd added it after CarSprite. Fix: both move it to car_sprite.get_index() (before the car sprite), so every effect id, tap or charged, draws behind the car; position and look unchanged. New tests in test_jump_effect_art.gd (run: each id; practice session). rail-grind.md updated. Tests: changed files and touched scripts pass (test_jump_effect_art 5/5, jump_charge, grind_overhaul, cosmetics, tutorial_practice_real). Full Godot set (GUT_TIME_LIMIT=2400): first run 3252 tests, 3250 pass, 1 failing (not named in the output, not reproduced), 1 pending; rerun once: 3252 tests, 3251 pass, 0 failing, 1 pending, 262 s. Screenshots in art-archive/T-595/screenshots/: before_tap/charge.png and after_tap/charge.png (+ _closeup.png): before the cloud covers the car's wheels, after it is behind. Taken with game/tools/screenshot.sh and fixtures game/tests/fixtures/t595_jump_shot*.
+
+Docs: docs/visual-style.md, Content, 'The five jump effects', now says all five draw behind the car (T-595). Full-set counts: 3252 tests, 3251 passing, 0 failing, 1 pending.
+- 2026-11-08, needs-playtest → done: The board played it in playtest-fixes: works (2026-11-08).

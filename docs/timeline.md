@@ -4240,3 +4240,8 @@ Entry format:
 - Decision or change: Quick tuning: the board edits the practice playground and re-records the alt drift take.
 - Documents touched: docs/hud-and-menus.md, docs/level-design.md
 - Tasks: T-604
+
+## 2026-11-08: The jump cloud sits behind the car
+- Decision or change: Merged after the board's playtest: the charged jump's cloud draws behind the car.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-595
