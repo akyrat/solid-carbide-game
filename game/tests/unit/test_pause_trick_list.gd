@@ -74,7 +74,7 @@ func test_back_returns_with_controls_unchanged_and_stays_paused() -> void:
 	assert_eq(ps.music_slider.value, 77.0)
 	assert_true(ps.smoothing_check.button_pressed)
 	assert_true(ps.dynamic_check.button_pressed)
-	assert_true(ps.trick_list_button.has_focus())
+	assert_null(ps.get_viewport().gui_get_focus_owner(), "T-573: nothing selected on return")
 
 
 func test_escape_goes_back_instead_of_resuming() -> void:
@@ -91,7 +91,7 @@ func test_keyboard_focus_moves_to_back_and_returns() -> void:
 	ps.trick_list_button.grab_focus()
 	assert_true(ps.trick_list_button.has_focus())
 	ps.trick_list_button.pressed.emit()
-	assert_true(ps.trick_back_button.has_focus(), "Enter or Space on Back closes it")
+	assert_null(ps.get_viewport().gui_get_focus_owner(), "T-573: nothing selected until a key moves")
 
 
 func test_panel_fits_and_clears_the_hud_timer() -> void:

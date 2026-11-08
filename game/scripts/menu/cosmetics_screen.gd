@@ -76,7 +76,6 @@ func _ready() -> void:
 	resized.connect(func(): fit())
 	refresh()
 	fit()
-	_first_focus()
 
 
 ## The texts file (data/cosmetics_text.json) as a Dictionary.
@@ -176,8 +175,9 @@ func _on_action(id: String) -> void:
 	refresh()
 
 
-func _first_focus() -> void:
-	focus_order()[0].grab_focus()
+## T-573: nothing is selected on opening; the first arrow or Tab selects this button (the first one shown).
+func start_button() -> Control:
+	return focus_order()[0]
 
 
 ## The buttons the arrow keys walk, top to bottom: every action button that is shown, then Back.
@@ -226,7 +226,7 @@ func refresh() -> void:
 
 ## W, A, S, D move the selection like the arrow keys (T-492).
 func _unhandled_key_input(event: InputEvent) -> void:
-	KeyNav.handle_wasd(event, self)
+	KeyNav.handle_keys(event, self, start_button())
 
 
 ## The animated preview of one effect: the jump effect's own placeholder drawing (T-551; T-556's art

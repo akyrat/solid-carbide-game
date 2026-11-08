@@ -120,7 +120,6 @@ func _ready() -> void:
 	settings_button.pressed.connect(func(): settings_pressed.emit())
 	exit_button.pressed.connect(func(): exit_pressed.emit())
 	KeyNav.chain_column([start_button, garage_button, cosmetics_button, settings_button, exit_button])  # T-492, T-571
-	start_button.grab_focus()
 	refresh_garage_pulse()
 
 
@@ -195,6 +194,7 @@ func _make_button(node_name: String, text: String, parent: Node) -> Button:
 	return button
 
 
-## W, A, S, D move the selection like the arrow keys (T-492).
+## W, A, S, D move the selection like the arrow keys (T-492). T-573: nothing is selected on opening;
+## the first arrow or Tab selects Start, and Enter or Space with nothing selected starts the run (as before).
 func _unhandled_key_input(event: InputEvent) -> void:
-	KeyNav.handle_wasd(event, self)
+	KeyNav.handle_keys(event, self, start_button, true)

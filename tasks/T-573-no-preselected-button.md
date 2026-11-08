@@ -1,7 +1,7 @@
 ---
 id: T-573
 title: No button looks selected when a menu opens
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -54,10 +54,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-08, Open → In progress
+
+Started: UI fixes the preselected buttons in every menu.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. No button is selected when a screen opens; one shared way in KeyNav (game/scripts/ui/key_nav.gd): clear_selection (replaces grab_focus on open and on coming back), reveal_selection / handle_keys (first fresh arrow, Tab, W, A, S or D selects the screen's start button and nothing else; later presses move as before; echo ignored; hidden start ignored). Mouse hover and clicks untouched.
+Per screen (start button / Enter or Space with nothing selected, a proposal): Main menu: Start / starts the run (as before). Garage: first Buy shown (Back if none) / selects it, buys nothing. Cosmetics: first action shown (Back) / selects it. Settings: Back / selects it. Tutorial slides: right arrow, Go live on the last slide, none on trick slides / presses it (as before); once a key selected a button the selection follows the slides, a trick slide clears it. Pause screen: Resume / selects it, never resumes. Trick list: Back / selects it. God mode page: Back / selects it. HUD layout editor: Done / selects it. Returning to the pause strip from the trick list, god mode or HUD editor selects nothing (arrows then select Resume). Level-up, power-up, recap and the trick list rows never grabbed focus: unchanged (a test greps for it).
+Kept: garage and Cosmetics hand the selection on when the selected button hides (maxed Buy, picked effect); only happens if the player had selected it.
+Tests: new game/tests/unit/test_no_preselected_button.gd (21 tests: every screen opens with none; first key selects start; Enter rules; held key; hidden menu). Updated 11 old tests that expected the preselection (menu arrow keys, main menu, garage pulse, settings, tutorial, pause, trick list, god mode). Full run: 3103 tests, 3102 passing, 0 failing, 1 risky (was 3082 before).
+Docs: docs/hud-and-menus.md (Content, "Nothing is selected when a screen opens"; Settings keyboard line), new game/docs/hud-and-menus/keyboard-selection.md.
+Screenshots (art-archive/T-573/screenshots/): t573_garage.png, t573_garage_key.png, t573_cosmetics.png, t573_cosmetics_key.png (just opened, then after one Down press). Fixtures game/tests/fixtures/t573_*.
+Documents affected: docs/hud-and-menus.md, game/docs/hud-and-menus/keyboard-selection.md. Long GDD not regenerated (Project Lead's merge step).

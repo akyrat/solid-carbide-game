@@ -232,7 +232,7 @@ func test_a_pause_screen_change_shows_on_the_settings_screen() -> void:
 func test_keyboard_reaches_every_checkbox_and_back() -> void:
 	var s := _screen()
 	await wait_process_frames(1)
-	assert_eq(get_viewport().gui_get_focus_owner(), s.back_button, "Back has the focus at open")
+	assert_null(get_viewport().gui_get_focus_owner(), "T-573: nothing has the focus at open")
 	var first: CheckBox = s.checkboxes()[0]
 	assert_eq(s.back_button.get_node(s.back_button.focus_neighbor_top), first)
 	var c: Control = first
