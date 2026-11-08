@@ -96,9 +96,12 @@ func _check_counts(trick: String, counts: Array, others: Array) -> void:
 		assert_eq(session.successes, i + 1, "%s: success %d" % [trick, i + 1])
 		assert_eq(completions, 1 if i == 2 else 0, "%s: completed only on the third" % trick)
 	_do(counts[0])
-	assert_eq(session.successes, 3, "%s: the count stays at 3" % trick)
-	assert_eq(completions, 1)
-	assert_eq(counted.size(), 3)
+	_do(counts[0])
+	assert_eq(session.successes, 5, "%s: the count overfills past 3 (T-574)" % trick)
+	assert_eq(completions, 1, "completed once")
+	assert_eq(counted.size(), 5)
+	session.notebook.finish_falls()
+	assert_true(session.notebook.rows[0].label.text.contains("5/3"), "%s: the notebook shows 5/3: %s" % [trick, session.notebook.rows[0].label.text])
 
 
 ## T-565: the drift slide counts seconds of drifting, not tricks: no trick counts, LONG DRIFT! either.
@@ -125,13 +128,15 @@ func test_the_drift_practice_adds_drift_seconds_up_and_completes_at_3_s() -> voi
 	session.add_drift_seconds(1.3)
 	assert_eq(completions, 0, "2.9 s is not 3 s")
 	session.add_drift_seconds(0.5)
-	assert_eq(session.drift_seconds, 3.0, "the total stops at 3 s")
+	assert_almost_eq(session.drift_seconds, 3.4, 0.0001, "the total runs on past 3 s (T-574)")
 	assert_eq(completions, 1, "completed when the total reaches 3 s")
 	assert_true(session.is_completed())
 	session.add_drift_seconds(1.0)
 	assert_eq(completions, 1, "completed once")
-	assert_eq(totals.size(), 4)
-	assert_eq(totals[3], [3.0, 3.0])
+	assert_eq(totals.size(), 5)
+	assert_almost_eq(float(totals[4][0]), 4.4, 0.0001)
+	session.notebook.finish_falls()
+	assert_true(session.notebook.rows[0].label.text.contains("4.4/3"), "the notebook overfills: %s" % session.notebook.rows[0].label.text)
 
 
 func test_the_other_slides_still_count_3_tricks() -> void:
@@ -211,7 +216,7 @@ func test_real_drifts_add_up_live_and_complete_at_3_s_in_total() -> void:
 		car.physics_step()
 		guard += 1
 	assert_eq(completions, 1, "the second drift tops the total up to 3 s")
-	assert_eq(session.drift_seconds, 3.0)
+	assert_gte(session.drift_seconds, 3.0 - RunMissions.EPSILON)
 	assert_eq(counted.size(), 0, "no trick counted")
 	session.notebook.finish_falls()
 	assert_true(session.notebook.rows[0].ticked)
@@ -258,7 +263,8 @@ func test_the_drift_notebook_line_shows_the_running_total_live() -> void:
 	session.add_drift_seconds(1.0)
 	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "1.4").replace("{total}", "3.0"))
 	session.add_drift_seconds(2.0)
-	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "3.0").replace("{total}", "3.0"))
+	# T-574: the total overfills past 3 s (3.46 shows 3.4, cut to one decimal as before).
+	assert_eq(session.notebook.rows[0].label.text, drift.replace("{done}", "3.4").replace("{total}", "3.0"))
 	assert_true(session.notebook.rows[0].ticked, "ticked at 3 s")
 
 
@@ -491,3 +497,18 @@ func test_the_goal_done_stamps_a_green_check_on_the_notebook_and_restart_clears_
 	session.setup("drift")
 	session.add_drift_seconds(3.0)
 	assert_true(session.is_stamped(), "the drift slide too, at 3 s")
+
+
+func test_tricks_past_the_goal_drop_their_name_box_onto_the_notebook() -> void:
+	# T-574: the falling name boxes go on landing for tricks past the goal.
+	session.setup("grind")
+	for i in 3:
+		_do("rail_grind")
+	session.notebook.finish_falls()
+	assert_false(session.notebook.is_falling())
+	_do("rail_grind")
+	assert_true(session.notebook.is_falling(), "the fourth grind's box falls")
+	assert_true(session.notebook.rows[0].label.text.contains("3/3"), "its count arrives when the box lands")
+	session.notebook.finish_falls()
+	assert_true(session.notebook.rows[0].label.text.contains("4/3"))
+	assert_true(session.is_stamped(), "the stamp stays")

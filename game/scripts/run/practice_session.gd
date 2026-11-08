@@ -37,7 +37,8 @@ extends Node2D
 ## - air spin: AIR 180! or AIR 360! ("air_one_eighty", "air_three_sixty"); one landing counts
 ##   once, also a 540 that pays both;
 ## - grind: GRIND! ("rail_grind"), a grind long enough to pay (combo.json rail_grind.min_seconds).
-## Nothing else counts. After the third success the count stays at 3 (the drift's total at 3 s) and
+## Nothing else counts. T-574 (the board): the count overfills, it goes on past the goal (5/3, the
+## drift's total past 3 s, 4.7/3.0) in the notebook too; completed() is sent once, at the goal, and
 ## the car can go on driving.
 ##
 ## The car resets to its start point when it leaves the playground (the map's rectangle and
@@ -147,9 +148,9 @@ signal gift_taken(id: String)
 var trick := "drift"
 ## The level file; set before the session enters the tree to use another.
 var layout_path := PLAYGROUND_PATH
-## Successes so far (0 to GOAL); the drift's stays 0 (it counts drift_seconds).
+## Successes so far (0 and up, past GOAL too, T-574); the drift's stays 0 (it counts drift_seconds).
 var successes := 0
-## The drift's seconds of drifting so far, over all drifts (0 to DRIFT_SECONDS, T-565).
+## The drift's seconds of drifting so far, over all drifts (0 and up, past DRIFT_SECONDS too, T-574; T-565).
 var drift_seconds := 0.0
 ## Whether the window has focus (the car reads the keyboard).
 var focused := false
@@ -553,29 +554,39 @@ func _draw_stamp() -> void:
 
 ## A trick paid into the combo: one more success when it is this practice's trick.
 func _on_combo_trick(trick_id: String, _added: float, _multiplier: float) -> void:
-	if is_completed() or not COUNTED[trick].has(trick_id):
+	if not COUNTED[trick].has(trick_id):
 		return
 	if trick == "air_spin":
 		if _air_counted_step == _steps:
 			return  # the other spin of the same landing (a 540)
 		_air_counted_step = _steps
 	successes += 1
-	missions.on_trick(GOAL_TRICK[trick])
+	if successes <= GOAL:
+		missions.on_trick(GOAL_TRICK[trick])
+	else:
+		# T-574: past the goal the count goes on (5/3); the tracker stops at the goal, so the
+		# notebook is told here, as the tracker would: the name box falls, the line counts on.
+		notebook.drop_trick(0, GOAL_TRICK[trick])
+		notebook.show_progress(0, float(successes))
 	trick_counted.emit(trick_id, successes)
 	progress.emit(successes, GOAL)
-	if is_completed():
+	if successes == GOAL:
 		completed.emit()
 
 
 ## The drift slide (T-565): `seconds` more of drifting, added to the total; the notebook follows it
 ## and the goal is done at DRIFT_SECONDS. Nothing after that, or on another slide.
 func add_drift_seconds(seconds: float) -> void:
-	if trick != "drift" or is_completed() or seconds <= 0.0:
+	if trick != "drift" or seconds <= 0.0:
 		return
-	drift_seconds = minf(drift_seconds + seconds, DRIFT_SECONDS)
-	missions.add_seconds(GOAL_TRICK[trick], seconds)
+	var was_done := is_completed()
+	drift_seconds += seconds  # T-574: no cap, the total runs on past the goal (4.7/3.0)
+	if not was_done:
+		missions.add_seconds(GOAL_TRICK[trick], seconds)  # the tracker stops at the goal
+	if is_completed() and drift_seconds > DRIFT_SECONDS:
+		notebook.show_progress(0, drift_seconds)
 	seconds_progress.emit(drift_seconds, DRIFT_SECONDS)
-	if is_completed():
+	if is_completed() and not was_done:
 		completed.emit()
 
 

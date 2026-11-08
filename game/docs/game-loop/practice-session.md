@@ -46,3 +46,8 @@ session.pause()                  # when the slide is left
 
 - `tests/unit/run/test_practice_session.gd`: the scene (no enemies, clock or damage), every slide on the spawn, counting for each trick and no other (and the third), on the real playground a drift, an alt drift, an air spin and a grind each driven from the spawn (the air spin and grind along scripted routes, T-574) and counted, the notebook's line and count, the Jump gift, pause, focus, R and leaving the playground.
 - `tests/fixtures/practice_session_demo.tscn`: the session in a 704 x 440 window on a dark page; `PRACTICE_SHOT` = `drift`, `alt_drift`, `air_spin`, `grind_gift`, `grind` or `done`. `PRACTICE_SHOT=grind_gift bash game/tools/screenshot.sh res://tests/fixtures/practice_session_demo.tscn out.png 60`.
+
+## The count overfills (T-574; the board, 2026-11-08: "i want the counter to be able to overfill (i.e. 5/3 alt drifts)")
+
+- Past the goal the count goes on: `successes` and `drift_seconds` have no cap, and the notebook's line follows (5/3, 4.7/3.0). `completed()` is still sent once, at the goal, and the green check stamp stays.
+- The tracker (`RunMissions`) stops at the goal and completes the mission, so past it the session tells the notebook itself, in the tracker's order: `MissionPage.drop_trick(goal, trick_id)` drops the trick's name box (it still falls and lands), then `MissionPage.show_progress(goal, done)` updates the line once the boxes in flight have landed. The run's notebook doesn't use them.
