@@ -15,6 +15,11 @@ parts of the style loop around one PixelLab call per version, like build_hint_ke
         The free fixes on PixelLab's output: alpha snapped to 0 or 255, the canvas outside the arrow cleared,
         arrow pixels PixelLab lost filled from the script's own, the palette cut to at most 30 colours
         (reduce_palette.py), or with --snap every pixel mapped to the script's six colours. 8-bit RGBA PNG.
+    python game/tools/build_hint_arrow.py polish IN.png OUT.png
+        The style loop's free fixes for rule 2 and rule 4 (T-577 v2) on a finished arrow: the outline snapped to
+        exact near-black with longer highlight runs breaking it, a two-pixel rim light with a near-white edge on
+        the upper-left, two-step shade bands on the lower-right, worn-paint specks, and a two-ring stepped glow
+        halo outside the outline (rule 5). PixelLab's plain body pixels stay.
     python game/tools/build_hint_arrow.py preview IN.png OUT.png [--scale 6]
         An enlarged preview (nearest-neighbour) on a dark and a light background, for the board.
 
@@ -113,6 +118,81 @@ def arrow() -> Image.Image:
     return im
 
 
+GLOW_1 = (0x7A, 0x42, 0x68, 255)   # the drawn glow's first ring outside the outline (rule 5, stepped)
+GLOW_2 = (0x42, 0x28, 0x42, 255)   # its second ring, fading into the asphalt
+
+# Worn-paint specks on the plain body, for a little retro road-marking detail (rule 2, rule 4).
+WEAR = ((33, 14), (29, 18), (30, 18), (36, 20), (28, 34), (29, 34), (36, 30), (35, 41), (27, 40),
+        (30, 47), (31, 47), (34, 52))
+STRONG_GLINT_ROWS = range(HEAD_TOP + 3, HEAD_TOP + 11)
+STRONG_SHAFT_GLINT_ROWS = range(HEAD_TOP + HEAD_ROWS + 2, HEAD_TOP + HEAD_ROWS + 12)
+
+
+def strong_layers() -> dict[str, set[tuple[int, int]]]:
+    """The polished arrow's pixels by role (T-577 v2, the style loop's rule 2 fixes): the outline with longer
+    glint runs breaking it, a two-pixel rim light with a near-white edge on the upper-left, two-step shade bands
+    on the lower-right, and a two-ring glow halo outside the outline."""
+    cells = arrow_cells()
+
+    def nbrs8(p):
+        x, y = p
+        return [(x + dx, y + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if (dx, dy) != (0, 0)]
+
+    outline = {p for p in cells if any(q not in cells for q in nbrs8(p))}
+    body = cells - outline
+    light1 = {(x, y) for x, y in body
+              if (x - 1, y) in outline or ((x, y - 1) in outline and (x + 1, y) not in outline)}
+    light2 = {(x, y) for x, y in body - light1
+              if ((x - 1, y) in light1 or (x, y - 1) in light1) and (x + 1, y) not in outline}
+    rest = body - light1 - light2
+    shade1 = {(x, y) for x, y in rest if (x + 1, y) in outline or (x, y + 1) in outline}
+    shade2 = {(x, y) for x, y in rest - shade1 if (x + 1, y) in shade1 or (x, y + 1) in shade1}
+    rest -= shade1 | shade2
+    mid1 = {(x, y) for x, y in rest if (x + 1, y) in shade2 or (x, y + 1) in shade2}
+    mid2 = {(x, y) for x, y in rest - mid1 if (x + 1, y) in mid1 or (x, y + 1) in mid1}
+    rest -= mid1 | mid2
+    # The near-white edge: the first lit pixel along the head's left slope.
+    edge = {(x, y) for x, y in light1 if y < HEAD_TOP + HEAD_ROWS and (x - 1, y) in outline}
+    glint = set()
+    for y in STRONG_GLINT_ROWS:
+        k = y - HEAD_TOP
+        glint.update({(31 - k, y), (32 - k, y)} & outline)
+    shaft_glint = {(SHAFT_X0, y) for y in STRONG_SHAFT_GLINT_ROWS} & outline
+    ring1 = {q for p in cells for q in nbrs8(p) if q not in cells and 0 <= q[0] < SIZE and 0 <= q[1] < SIZE}
+    ring2 = {q for p in ring1 for q in nbrs8(p)
+             if q not in cells and q not in ring1 and 0 <= q[0] < SIZE and 0 <= q[1] < SIZE}
+    wear = {p for p in WEAR if p in rest}
+    return {
+        "outline": outline - glint - shaft_glint, "glint": glint, "shaft_glint": shaft_glint,
+        "edge": edge, "light": (light1 | light2) - edge, "mid": mid1 | mid2, "shade": shade1 | shade2,
+        "wear": wear, "body": rest - wear, "glow1": ring1, "glow2": ring2,
+    }
+
+
+STRONG_COLOURS = {
+    "outline": INK, "glint": GLINT, "shaft_glint": BLUSH_LIGHT, "edge": GLINT, "light": BLUSH_LIGHT,
+    "mid": BLUSH_MID, "shade": BLUSH_SHADE, "wear": BLUSH_MID, "glow1": GLOW_1, "glow2": GLOW_2,
+}
+
+
+def polish(im: Image.Image) -> Image.Image:
+    """The free fixes on a finished arrow (T-577 v2): every role but the plain body is repainted from
+    strong_layers(), so PixelLab's body pixels stay where they can and the outline is exactly near-black."""
+    im = im.convert("RGBA")
+    if im.size != (SIZE, SIZE):
+        im = im.resize((SIZE, SIZE), Image.NEAREST)
+    px = im.load()
+    for role, cells in strong_layers().items():
+        if role == "body":
+            for x, y in cells:
+                if px[x, y][3] != 255:
+                    px[x, y] = BLUSH
+            continue
+        for x, y in cells:
+            px[x, y] = STRONG_COLOURS[role]
+    return im
+
+
 def _png_bytes(im: Image.Image) -> bytes:
     b = io.BytesIO()
     im.convert("RGBA").save(b, format="PNG")
@@ -204,6 +284,9 @@ def main(argv=None) -> int:
     f.add_argument("out")
     f.add_argument("--snap", action="store_true", help="map every pixel to the script's six colours")
     f.add_argument("--no-reduce", action="store_true")
+    q = sub.add_parser("polish", help="rule 2 fixes: stepped shade, rim light, glints breaking the outline, glow halo")
+    q.add_argument("src")
+    q.add_argument("out")
     v = sub.add_parser("preview", help="enlarged preview on dark and light")
     v.add_argument("src")
     v.add_argument("out")
@@ -219,6 +302,10 @@ def main(argv=None) -> int:
     elif args.cmd == "finish":
         with Image.open(args.raw) as raw:
             im = finish(raw, args.snap, not args.no_reduce)
+        save_png(im, Path(args.out))
+    elif args.cmd == "polish":
+        with Image.open(args.src) as src:
+            im = reduce_image(polish(src), 30)
         save_png(im, Path(args.out))
     else:
         with Image.open(args.src) as src:

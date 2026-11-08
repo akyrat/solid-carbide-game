@@ -99,6 +99,51 @@ class TestFinish(unittest.TestCase):
         self.assertEqual(arrow.finish(big).size, (64, 64))
 
 
+class TestPolish(unittest.TestCase):
+    def setUp(self):
+        raw = arrow.arrow()
+        px = raw.load()
+        for y in range(64):            # a purple-tinted outline, as PixelLab rendered it
+            for x in range(64):
+                if px[x, y] == arrow.INK:
+                    px[x, y] = (0x17, 0x14, 0x20, 255)
+        px[31, 40] = (245, 198, 224, 255)   # a body pixel a few units off: PixelLab's, it stays
+        self.out = arrow.polish(raw)
+        self.px = self.out.load()
+        self.lay = arrow.strong_layers()
+
+    def test_outline_is_exact_near_black_broken_by_longer_glint_runs(self):
+        self.assertTrue(all(self.px[p] == arrow.INK for p in self.lay["outline"]))
+        self.assertGreater(len(self.lay["glint"]) + len(self.lay["shaft_glint"]), 20)
+        self.assertTrue(all(self.px[p] == arrow.GLINT for p in self.lay["glint"]))
+        self.assertTrue(all(self.px[p] == arrow.BLUSH_LIGHT for p in self.lay["shaft_glint"]))
+
+    def test_shade_and_light_are_stepped_bands_two_pixels_wide(self):
+        # The shaft's right side: two shade columns then two mid columns; its left: near-white edge is head only.
+        self.assertEqual([self.px[x, 45] for x in (38, 37, 36, 35)],
+                         [arrow.BLUSH_SHADE, arrow.BLUSH_SHADE, arrow.BLUSH_MID, arrow.BLUSH_MID])
+        self.assertEqual([self.px[x, 45] for x in (25, 26)], [arrow.BLUSH_LIGHT, arrow.BLUSH_LIGHT])
+        self.assertEqual(self.px[33 - 12, 4 + 12], arrow.GLINT)          # the head's left slope edge
+        self.assertEqual(self.px[34 - 12, 4 + 12], arrow.BLUSH_LIGHT)
+        self.assertEqual([self.px[31, y] for y in (58, 57, 56, 55)],
+                         [arrow.BLUSH_SHADE, arrow.BLUSH_SHADE, arrow.BLUSH_MID, arrow.BLUSH_MID])
+
+    def test_glow_halo_is_two_stepped_rings_outside_the_outline_inside_the_sprite(self):
+        self.assertEqual(self.px[30, 3], arrow.GLOW_1)
+        self.assertEqual(self.px[31, 2], arrow.GLOW_2)
+        self.assertEqual(self.px[23, 40], arrow.GLOW_1)
+        self.assertEqual(self.px[22, 40], arrow.GLOW_2)
+        self.assertEqual(self.out.getbbox(), (10, 2, 54, 62))
+        self.assertTrue(all(p[3] in (0, 255) for p in self.out.getdata()))
+
+    def test_keeps_pixellab_body_pixels_and_adds_wear_specks(self):
+        self.assertEqual(self.px[31, 40], (245, 198, 224, 255))
+        self.assertTrue(self.lay["wear"])
+        self.assertTrue(all(self.px[p] == arrow.BLUSH_MID for p in self.lay["wear"]))
+        self.assertLessEqual(len(opaque_colours(self.out)), 30)
+        self.assertFalse(opaque_colours(self.out) & GREENBULL)
+
+
 class TestCli(unittest.TestCase):
     def test_init_request_finish_and_preview_write_files(self):
         import tempfile
