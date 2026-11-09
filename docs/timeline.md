@@ -4345,3 +4345,8 @@ Entry format:
 - Decision or change: The board gave its go for PixelLab for the kaiju's walk, windup and death in all five directions, with no sample review; judged in the playtest. At most 60 generations (15 animations, up to 4 each through the style loop). The art task waits for T-612's frame format.
 - Documents touched: docs/visual-style.md, docs/enemies.md
 - Tasks: T-613
+
+## 2026-11-09: The kaiju's art starts now, without waiting for the placeholder playtest
+- Decision or change: The board said to start the art now and not wait for the placeholder playtest. T-613 no longer depends on T-612: it generates the 15 animations from the current sprites straight away, and fits them to T-612's frame format and swaps them in once T-612 is ready. T-613 still merges after T-612.
+- Documents touched: none
+- Tasks: T-613, T-612
