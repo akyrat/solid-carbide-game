@@ -14,6 +14,8 @@
 	"god_mode_tier_format": "Tier {tier} / {max}",
 	"god_mode_not_owned": "Not owned",
 	"god_mode_back": "Back",
+	"god_mode_spawn_boss": "Call the kaiju",
+	"god_mode_spawn_boss_used": "Kaiju is here",
 	"god_mode_minus": "−",
 	"god_mode_plus": "+",
 	"rain_label": "Rain",
