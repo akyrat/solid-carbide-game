@@ -1,7 +1,7 @@
 ---
 id: T-614
 title: Text for God mode's spawn the boss button
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Polish
@@ -48,12 +48,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/data/pause_text.json` holds `god_mode_spawn_boss` and `god_mode_spawn_boss_used`, each 16 characters or fewer, and the file still parses (the text tests pass, the text inventory test included). (QA: pass / fail)
-- [ ] Each of the two texts has an entry in the ticket's Style review with a score of 8 or more, or is listed in the result notes as below 8 after its refines. (QA: pass / fail)
-- [ ] HUD and menus, Content, lists both texts with what each is for and where it shows. (QA: pass / fail)
-- [ ] Nothing to picture: the result notes say so in one line (the texts are shown in T-612's screenshots). (QA: pass / fail)
-- [ ] The tests for the changed files pass (the agent) and QA's run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Every document in documents_affected is updated. (QA: pass / fail)
+- [ ] `game/data/pause_text.json` holds `god_mode_spawn_boss` and `god_mode_spawn_boss_used`, each 16 characters or fewer, and the file still parses (the text tests pass, the text inventory test included). (QA: pass: both keys present, 14 and 13 chars, JSON parses, qa_check tests passed)
+- [ ] Each of the two texts has an entry in the ticket's Style review with a score of 8 or more, or is listed in the result notes as below 8 after its refines. (QA: pass: Run 1 and Run 2 each 9/10)
+- [ ] HUD and menus, Content, lists both texts with what each is for and where it shows. (QA: pass: Content section lists both with purpose and place)
+- [ ] Nothing to picture: the result notes say so in one line (the texts are shown in T-612's screenshots). (QA: pass: result notes say nothing to picture (qa_check screenshots line is red only because user_facing_text is yes; the criterion accepts the note))
+- [ ] The tests for the changed files pass (the agent) and QA's run passes, with the counts in the result notes. (QA: pass: qa_check test sets passed (2 run, tools set skipped); agent reported 8 passed)
+- [ ] Every document in documents_affected is updated. (QA: pass: docs/hud-and-menus.md updated)
 
 ## Updates
 
@@ -62,6 +62,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-09, Open → In progress
 
 Started: the Narrative Theme Agent is writing the spawn the boss button's two texts; T-612 builds the button with them.
+
+### 2026-11-09, In progress → In QA
+
+The texts are written: "Call the kaiju" (the button) and "Kaiju is here" (once used), both scored 9. QA is checking the ticket now.
 
 ## Style review
 
