@@ -4275,3 +4275,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: against the sides of raised areas the car slides along and turns instead of stopping, and S reverses promptly.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-601
+
+## 2026-11-09: Godot's generated files stop showing as changes
+- Decision or change: A rule for Godot's .import and .uid files so they stop cluttering the main checkout.
+- Documents touched: tasks/README.md
+- Tasks: T-605
