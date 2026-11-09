@@ -1,7 +1,7 @@
 ---
 id: T-613
 title: Art for the kaiju's walk, windup and death animations
-status: open
+status: blocked
 from: project-lead
 to: asset-generation
 lead: Polish
@@ -11,7 +11,7 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: [T-612]
+depends_on: []
 documents_affected: [docs/visual-style.md, docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/enemies.md, game/docs/enemies/kaiju.md, tasks/T-612-kaiju-animations.md, tasks/T-544-minion-death-art-full-set.md]
 files_expected_to_change: [game/art/kaiju/, game/art/pixellab-generation-log.jsonl, art-archive/T-613/, game/data/enemies.json, game/tests/, game/docs/, docs/visual-style.md, docs/enemies.md]
@@ -37,6 +37,8 @@ Make the final art for Visual style, Decisions, "The kaiju's animations" (board,
 
 Three animations (walk cycle, meteor windup, death), each in the kaiju's five drawn directions (e, n, ne, s, se; the others are mirrored by the game): 15 animations. Generate them through PixelLab from the kaiju's current sprites (`game/art/kaiju/`) so it stays the same monster, in the frame format T-612 wrote in `game/docs/enemies/kaiju.md` (files, frame size, anchor); frame counts and speeds are numbers in `game/data/enemies.json` that you may change to fit the art.
 
+Start now, in two steps (board, 2026-11-09: "start the art now, don't wait for the placeholder playtest"; the dependency on T-612 was removed for this). Step 1, now: generate the 15 animations from the current sprites, at the sprites' own frame size and anchor, through the style loop, and keep the game-ready frames and the contact sheets on this branch; T-612's code and frame format are not on this branch yet (T-612 is still being built in C:\solid-carbide-worktrees\T-612, which you may read but never change). Then hand back, saying step 1 is done. Step 2, when the Project Lead resumes you after T-612 is ready: bring T-612's work into this branch, fit the frames to its frame format with free script work (no new generations for that), swap them in for the placeholders, and take the in-game recordings. This ticket merges after T-612.
+
 PixelLab: the board gave its go for the full set, with no sample review (2026-11-09). Every animation goes through the style loop (tasks/README.md, "The style loop"): at most 3 refines each, so at most 4 generations per animation and at most 60 for the ticket. Nothing beyond that without the board's say-so. Write your planned calls and their cost in the result notes before the first call. Free script fixes (cropping, aligning, palette, mirroring) come before paid generations. Use a 600 s HTTP timeout: timed-out calls are still charged. An animation that stays below 8 after its refines keeps its best version and is listed in the result notes for the board.
 
 Never delete art: the game-ready frames go in `game/art/kaiju/`, every raw generation in `art-archive/T-613/`, and T-612's placeholder frames move to `art-archive/T-613/` when yours replace them. The five still sprites stay. Add a section to Visual style, Content, on the set, and point Enemies, Content, "The kaiju", Look, at it.
@@ -61,6 +63,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-09, Open → Blocked
+
+Waiting for T-612: the art is made in the frame format T-612 defines, then swapped in. The board's go for the full set (up to 60 generations) is recorded on the ticket.
 
 ## Style review
 

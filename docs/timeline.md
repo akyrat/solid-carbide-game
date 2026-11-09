@@ -4345,3 +4345,28 @@ Entry format:
 - Decision or change: The board gave its go for PixelLab for the kaiju's walk, windup and death in all five directions, with no sample review; judged in the playtest. At most 60 generations (15 animations, up to 4 each through the style loop). The art task waits for T-612's frame format.
 - Documents touched: docs/visual-style.md, docs/enemies.md
 - Tasks: T-613
+
+## 2026-11-09: The kaiju's art starts now, without waiting for the placeholder playtest
+- Decision or change: The board said to start the art now and not wait for the placeholder playtest. T-613 no longer depends on T-612: it generates the 15 animations from the current sprites straight away, and fits them to T-612's frame format and swaps them in once T-612 is ready. T-613 still merges after T-612.
+- Documents touched: none
+- Tasks: T-613, T-612
+
+## 2026-11-09: The kaiju's art: sample first, 20 units
+- Decision or change: T-613 stopped after walk east (2 calls, 10 units, best 7/10, the look drifted): an animation call at the kaiju's size costs 5 PixelLab units, not 1. The board chose: keep all three animations in scope (a new walk too), but sample first: the windup facing east through the style loop, at most 20 units, for its review before anything else is generated. This replaces the go for the full set.
+- Documents touched: docs/visual-style.md
+- Tasks: T-613
+
+## 2026-11-09: God mode gets a button that spawns the boss
+- Decision or change: The board asked for a button on the God mode page that spawns the boss, pressable only once, built into T-612 so the kaiju's animations and the button are playtested together. The Narrative Theme Agent writes the button's text first (T-614); T-612 goes back to the Enemy Behavior Agent for the button.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-614
+
+## 2026-11-09: The timer is at the top centre and the notebook can be moved (merged)
+- Decision or change: T-611 merged on the board's word: the run timer's default place is the top centre (16 px margin), and the mission notebook is a movable piece in Edit HUD layout. Proposals kept: the coins counter stays where it was; a hidden notebook shows as a faintly filled frame in the editor.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-611
+
+## 2026-11-09: Text for God mode's spawn the boss button (merged)
+- Decision or change: T-614 merged after QA: the button reads "Call the kaiju" and, once it can no longer be pressed, "Kaiju is here" (pause_text.json, both scored 9). The board sees them in T-612's playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-614

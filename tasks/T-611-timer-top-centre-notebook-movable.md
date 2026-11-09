@@ -1,7 +1,7 @@
 ---
 id: T-611
 title: Timer at the top centre, notebook movable in the HUD editor
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Polish
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/hud_layout.gd, game/scripts/hud/timer_clock.gd, game/scripts/hud/mission_page.gd, game/tests/unit/hud/test_hud_layout_editor.gd]
 files_expected_to_change: [game/scripts/hud/, game/scripts/ui/, game/data/, game/tests/, game/docs/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -49,19 +49,31 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With no saved layout, at 1152 x 648 the timer clock's centre is on the screen's vertical centre line (within 2 pixels) at the top margin written in the result notes; a test checks it there and at one other window size and one other HUD size, fully on screen each time. (QA: pass / fail)
-- [ ] A test checks that at 1152 x 648 no HUD piece at its default place overlaps the timer at its new place, and the result notes list what else was checked near the top centre and what was moved. (QA: pass / fail)
-- [ ] A test checks that a saved layout holding a place for the timer still puts the timer at that place, and that Reset layout puts it at the top centre. (QA: pass / fail)
-- [ ] A test checks that the notebook page is a movable piece in the editor: it is framed, a drag moves it with the same snapping and on-screen rule as the other pieces, Done writes its entry in the `hud_layout` section, a new run reads it back, and Reset layout returns it to its default place (x 12, y 304 at the 1152 x 648 layout). (QA: pass / fail)
-- [ ] A test checks that with the notebook moved, the pulse (T-606) scales the page about its centre at the moved place and the falling trick box (T-563) lands in the page at the moved place. (QA: pass / fail)
-- [ ] A test checks that the notebook in a tutorial practice window is at the same place with and without a saved layout that moves the notebook. (QA: pass / fail)
-- [ ] Screenshots in art-archive/T-611/screenshots/: the HUD at the start of a run with the timer at the top centre; the layout editor with the notebook framed; the HUD with the notebook moved to another place. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Every document in documents_affected is updated, and the proposals made for the playtest are listed in the result notes. (QA: pass / fail)
+- [ ] With no saved layout, at 1152 x 648 the timer clock's centre is on the screen's vertical centre line (within 2 pixels) at the top margin written in the result notes; a test checks it there and at one other window size and one other HUD size, fully on screen each time. (QA: pass)
+- [ ] A test checks that at 1152 x 648 no HUD piece at its default place overlaps the timer at its new place, and the result notes list what else was checked near the top centre and what was moved. (QA: pass)
+- [ ] A test checks that a saved layout holding a place for the timer still puts the timer at that place, and that Reset layout puts it at the top centre. (QA: pass)
+- [ ] A test checks that the notebook page is a movable piece in the editor: it is framed, a drag moves it with the same snapping and on-screen rule as the other pieces, Done writes its entry in the `hud_layout` section, a new run reads it back, and Reset layout returns it to its default place (x 12, y 304 at the 1152 x 648 layout). (QA: pass)
+- [ ] A test checks that with the notebook moved, the pulse (T-606) scales the page about its centre at the moved place and the falling trick box (T-563) lands in the page at the moved place. (QA: pass)
+- [ ] A test checks that the notebook in a tutorial practice window is at the same place with and without a saved layout that moves the notebook. (QA: pass)
+- [ ] Screenshots in art-archive/T-611/screenshots/: the HUD at the start of a run with the timer at the top centre; the layout editor with the notebook framed; the HUD with the notebook moved to another place. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Every document in documents_affected is updated, and the proposals made for the playtest are listed in the result notes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-09, Open → In progress
+
+Started: the UI Agent is moving the timer to the top centre and making the notebook a movable piece in Edit HUD layout.
+
+### 2026-11-09, In progress → In QA
+
+The UI Agent finished: the timer is at the top centre (16 px margin) and the notebook is a movable piece in Edit HUD layout. QA is checking it now.
+
+### 2026-11-09, In QA → Needs playtest
+
+QA passed, all 9 criteria. Ready for the board to play: C:\solid-carbide-worktrees\T-611\game\project.godot. Timer at the top centre (16 px margin); the notebook is movable in Edit HUD layout.
 
 ## Style review
 
@@ -69,4 +81,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. Timer: TimerClock now anchored top centre (offsets -100..100, top margin 16, hud.json timer_clock.layout.top), centred within 2 px at 1152x648, 1920x1080, 960x540, 2560x1080 and HUD sizes min/100/max. Saved layout entry for the clock is kept; Reset puts it at top centre. Checked near the top centre: all HUD pieces, airtime/drift counters, trick popups (top limit y162, clock ends y88), pause strip and trick list panel (start y92), gift pack/Time's up screens and practice windows (full screens / own layers), kaiju health bar (world). Nothing moved; coins stay at x16 y496 (the spot under them is now empty). Notebook: new piece id notebook in HudLayout.PIECES (Hud.piece maps it to mission_page); default x12 y304 and size unchanged; saved/reset like the others. Hidden page (no mission): editor frames it and fills the frame (HudLayoutEditor.is_ghost, GHOST_FILL). Pulse and falling box travel with the page (tests). Practice-window notebook is its own MissionPage, ignores layout (test). Proposals for playtest: top margin 16; ghost fill alpha 0.16; coins left where they were. New tests: tests/unit/hud/test_hud_timer_top_centre.gd (6), test_hud_notebook_layout.gd (8). Updated test_hud_timer_clock, test_hud_coins_position, test_hud_mission_page, test_hud_scaling. Ran test_hud_ (224 pass), test_pause (61), test_mission_page (26), test_practice (47), test_screen_flow (28), test_tutorial_flow (9), test_four_minute (24), test_gift_drops (56), all green. Docs updated: docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md. Screenshots in art-archive/T-611/screenshots/: start.png, editor_notebook.png, notebook_moved.png (fixtures game/tests/fixtures/t611_*.tscn).
+- 2026-11-09, needs-playtest → done: The board said to merge it (2026-11-09).

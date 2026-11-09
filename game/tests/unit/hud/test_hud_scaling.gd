@@ -11,10 +11,10 @@ var TEST_SETTINGS := RunPaths.file("test_settings_t431_hud.cfg")
 const SIZES: Array[Vector2i] = [
 	Vector2i(1152, 648), Vector2i(1920, 1080), Vector2i(2560, 1440),
 	Vector2i(3440, 1440), Vector2i(960, 540)]
-## Which corner or edge each piece keeps: "tl", "bl", "br", or "r" (the right edge at a share
+## Which corner or edge each piece keeps: "tl", "tc" (the top edge, centred: the clock since T-611), "bl", "br", or "r" (the right edge at a share
 ## of the height, the sub goal).
 const ANCHORS := {
-	"hearts": "tl", "weapon icons": "tl", "coins": "bl", "clock": "bl",
+	"hearts": "tl", "weapon icons": "tl", "coins": "bl", "clock": "tc",
 	"sub goal": "r"}
 ## Screen pixels of slack (the pieces round to whole pixels).
 const EPS := 1.5
@@ -91,6 +91,9 @@ func test_every_piece_keeps_its_corner_and_proportion() -> void:
 			match ANCHORS[n]:
 				"tl":
 					assert_almost_eq(b.position, a.position * s, Vector2(EPS, EPS), "%s: %s top left" % [where, n])
+				"tc":
+					assert_almost_eq(b.get_center().x, view.x / 2.0, EPS, "%s: %s centred" % [where, n])
+					assert_almost_eq(b.position.y, a.position.y * s, EPS, "%s: %s top" % [where, n])
 				"bl":
 					assert_almost_eq(b.position.x, a.position.x * s, EPS, "%s: %s left" % [where, n])
 					assert_almost_eq(view.y - b.end.y, (648.0 - a.end.y) * s, EPS, "%s: %s bottom" % [where, n])
