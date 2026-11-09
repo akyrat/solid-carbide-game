@@ -145,7 +145,7 @@ func test_page_does_not_overlap_hearts_coins_clock_at_two_sizes() -> void:
 		var s: float = Hud.scale_for(size, 100.0)
 		var area: Vector2 = size / s
 		var coins := Rect2(Hud.COINS_POS, Hud.COINS_SIZE)
-		var clock := Rect2(hud.timer_clock.offset_left, area.y + hud.timer_clock.offset_top,
+		var clock := Rect2(area.x / 2.0 + hud.timer_clock.offset_left, hud.timer_clock.offset_top,
 			hud.timer_clock.offset_right - hud.timer_clock.offset_left,
 			hud.timer_clock.offset_bottom - hud.timer_clock.offset_top)
 		var hearts := Rect2(Hud.HEART_ROW_POS, HeartRow.size_for(30))

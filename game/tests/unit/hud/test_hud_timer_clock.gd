@@ -1,5 +1,5 @@
 extends GutTest
-## Task T-335: the timer is a digital clock at the bottom left whose digits go
+## Task T-335 (moved to the top centre by T-611): the timer is a digital clock whose digits go
 ## green, yellow, orange and red at the switch points in res://data/hud.json.
 
 const RUN := preload("res://scenes/run/run.tscn")
@@ -11,30 +11,30 @@ func _hud() -> Hud:
 	return r.hud
 
 
-func test_clock_sits_at_the_boards_layout_at_1152_x_648() -> void:
+func test_clock_sits_at_the_top_centre_at_1152_x_648() -> void:
 	var hud := _hud()
 	var c := hud.timer_clock
-	assert_eq(c.anchor_left, 0.0)
-	assert_eq(c.anchor_top, 1.0, "anchored to the bottom-left corner")
-	assert_eq(c.anchor_bottom, 1.0)
-	# Offsets from the corner give the page's x16 y560 w200 h72 at 648 tall.
-	assert_eq(c.offset_left, 16.0)
-	assert_eq(c.offset_right, 216.0)
-	assert_eq(648.0 + c.offset_top, 560.0)
-	assert_eq(648.0 + c.offset_bottom, 632.0)
+	assert_eq(c.anchor_left, 0.5, "anchored to the top centre (T-611)")
+	assert_eq(c.anchor_right, 0.5)
+	assert_eq(c.anchor_top, 0.0)
+	assert_eq(c.anchor_bottom, 0.0)
+	assert_eq(c.offset_left, -100.0)
+	assert_eq(c.offset_right, 100.0)
+	assert_eq(c.offset_top, 16.0, "16 px below the top edge")
+	assert_eq(c.offset_bottom, 88.0)
 
 
-func test_clock_keeps_its_corner_margins_at_other_sizes() -> void:
+func test_clock_keeps_its_top_margin_and_size_at_other_sizes() -> void:
+	var c := _hud().timer_clock
+	assert_eq(c.offset_top, 16.0, "the same margin at any height")
+	assert_eq(c.offset_right - c.offset_left, 200.0)
+	assert_eq(c.offset_bottom - c.offset_top, 72.0)
+
+
+func test_clock_is_not_at_the_bottom_left_any_more() -> void:
 	var hud := _hud()
-	var c := hud.timer_clock
-	assert_eq(1000.0 + c.offset_bottom, 1000.0 - 16.0, "16 px above the bottom edge at any height")
-	assert_eq(c.offset_left, 16.0)
-
-
-func test_clock_is_not_at_the_top_centre() -> void:
-	var hud := _hud()
-	assert_ne(hud.timer_clock.anchor_top, 0.0)
-	assert_ne(hud.timer_clock.anchor_left, 0.5)
+	assert_eq(hud.timer_clock.anchor_top, 0.0)
+	assert_eq(hud.timer_clock.anchor_left, 0.5)
 	assert_true(hud.timer_clock.label == hud.timer_label)
 	assert_eq(hud.timer_label.get_parent(), hud.timer_clock)
 
