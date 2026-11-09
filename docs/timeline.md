@@ -4295,3 +4295,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: the wheel's cards say it bursts after an ALT DRIFT.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-602
+
+## 2026-11-09: The Polarized Steering Wheel bursts after an alternate drift
+- Decision or change: Merged after the board's playtest: the burst comes after each alternate drift (+10% / +22.5%, 0.5 s then a 0.25 s fade), two ground arrows, no cooldown at tier 2, the tier 2 blast in the arrows' colours.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-603

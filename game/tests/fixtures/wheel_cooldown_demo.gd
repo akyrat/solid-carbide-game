@@ -1,8 +1,9 @@
 extends Node
 ## Video fixture (task T-528): the real run, the real car and HUD, with the Polarized Steering
-## Wheel at tier 1 for 10 s then tier 2 for 10 s. A bot coasts, steers until the nose is 62+
-## degrees off, and presses W to fire a burst as soon as the wheel's cooldown allows (the same
-## input logic as game/tools/speed_bot.gd), so the power-up slot icon is seen going dark and
+## Wheel at tier 1 for 10 s then tier 2 for 10 s. A bot (T-603: the new trigger) drifts forward,
+## then switches to a backward drift on the same side as soon as the wheel's cooldown allows,
+## so the trick detector pays an ALT DRIFT! and the wheel bursts (the same input logic as
+## game/tools/speed_bot.gd), so the power-up slot icon is seen going dark and
 ## filling back up, with the ready flash. A few minions stand around; the car's health is topped
 ## up and it is put back near the start when it drifts far. Record it with
 ## record_wheel_cooldown_video.sh.
@@ -26,7 +27,7 @@ func _ready() -> void:
 	run.minions.enabled = false
 	var car: CharacterBody2D = run.car
 	car.use_keyboard = false
-	car.detect_tricks = false
+	car.detect_tricks = true
 	run.state.set_power_up_tier(WHEEL, 1)
 	car.polarized.set_tier(1)
 	_home()
@@ -65,28 +66,28 @@ func _on_stepped() -> void:
 		_n = 0
 		_phase = "HOLD"
 	var w := true
+	var s := false
 	var steer := 0.0
 	match _phase:
 		"HOLD":
 			_n += 1
 			if _n >= 20 and wheel.is_ready():
-				_phase = "COAST"
+				_phase = "FWD"
 				_n = 0
 				_dir = -_dir
-		"COAST":
-			w = false
+		"FWD":
 			steer = _dir
 			_n += 1
-			var ang: float = wheel.angle_between(car.model.rotation, car.model.get_velocity())
-			if ang >= 62.0 or _n > 58:
-				_phase = "PRESS"
-		"PRESS":
-			_phase = "AFTER"
-			_n = 0
-		"AFTER":
+			if _n >= 20:
+				_phase = "BACK"
+				_n = 0
+		"BACK":
+			w = false
+			s = true
+			steer = _dir
 			_n += 1
-			if _n >= 2:
+			if not wheel.is_ready() or _n > 30:
 				_phase = "HOLD"
 				_n = 0
-	car.scripted_input = [w, false, steer]
+	car.scripted_input = [w, s, steer]
 	run.minions.update_drawing()

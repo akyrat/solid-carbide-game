@@ -97,9 +97,9 @@ var rev_charge = RevCharge.new()
 ## small hop through height_model.hop(). Does nothing until jump.set_tier()
 ## gives it a tier > 0 (the run sets it from RunState.power_up_tier("jump")).
 var jump = JumpPowerUp.new()
-## The Polarized Steering Wheel (task T-502, polarized_steering_wheel.gd): let go of
-## W, steer, press W again with the nose turned away from the travel: a speed burst
-## (tier 4: a shock, which the run turns into Bricks' wave). Does nothing until
+## The Polarized Steering Wheel (task T-502, polarized_steering_wheel.gd; T-603): each
+## alternate drift the trick detector pays gives a speed burst along the travel
+## (tier 2: a shock, which the run turns into Bricks' wave). Does nothing until
 ## polarized.set_tier() gives it a tier > 0 (the run sets it from RunState).
 var polarized = PolarizedWheel.new()
 ## Rail grinding (task T-541, rail_grind.gd; Drifting, Content, "Rail grinding (task T-541)"):
@@ -205,7 +205,12 @@ func _init() -> void:
 	grind.wheels = grinding_wheels  # T-586: the launch boost reads the wheels' stacks
 	jump.jumped.connect(func(_vz: float) -> void:
 		jump_started.emit("hop", model.get_position(), height_model.height))
-	tricks.trick.connect(func(trick_id: String) -> void: trick.emit(trick_id))
+	tricks.trick.connect(func(trick_id: String) -> void:
+		# T-603: the Polarized Steering Wheel bursts on each ALT DRIFT! (before the
+		# trick's listeners, so they see the burst's speed).
+		if trick_id == TrickDetector.TRICK_ALTERNATE_DRIFT:
+			polarized.on_alternate_drift(model, height_model.airborne, model.get_position())
+		trick.emit(trick_id))
 	tricks.airtime_trick.connect(func(seconds: float) -> void: airtime_trick.emit(seconds))
 
 
@@ -269,7 +274,7 @@ func physics_step() -> void:
 		held = false
 		# T-460: the wreck drops a Rev Charge and its boost (no boost from the dead keys).
 		rev_charge.reset()
-		polarized.reset()  # T-502: and the Polarized Steering Wheel's coast and burst
+		polarized.reset()  # T-502: and the Polarized Steering Wheel's burst
 		jump.reset()  # T-590: and a jump's charge (letting go of dead keys is no hop)
 		_jump_pressed = false
 	last_input = [w, s, steer]
@@ -292,8 +297,8 @@ func physics_step() -> void:
 	model.update_velocity(w, s, steer)
 	# T-460: Rev Charge (nothing at all when not owned).
 	rev_charge.step(model, w, s, rotation_before, height_model.airborne, model.dt)
-	# T-502: the Polarized Steering Wheel (nothing at all when not owned).
-	polarized.step(model, w, s, rotation_before, height_model.airborne, model.dt, model.get_position())
+	# T-502 / T-603: the Polarized Steering Wheel's burst back into the velocity (nothing when not bursting).
+	polarized.step(model, model.dt)
 	if _pending_knockback != Vector2.ZERO:
 		model.vx += _pending_knockback.x
 		model.vy += _pending_knockback.y
@@ -343,6 +348,7 @@ func physics_step() -> void:
 				var info: Dictionary = grind.find(model.get_position(), model.get_velocity(),
 					height_model.height, height_model.vertical_speed, model.rotation, tilt.step)
 				if not info.is_empty():
+					polarized.end_burst()  # T-603 (proposal): the rail takes the speed as it is
 					grind.start(info, model.rotation)
 					_place_on_grind()
 		else:
