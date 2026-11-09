@@ -67,6 +67,9 @@ extends Control
 ## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
 ## levels folder is saved over its own file; a new level, or a file opened from elsewhere (the
 ## game's own map), gets a new file there named after the level (save_path).
+## T-604: a file opened with save_in_place (the creator's --open=<path> launch argument, used for
+## the tutorial's practice playground, data/level/practice_playground.json) is saved over its own
+## file wherever it is.
 
 signal back_pressed
 ## After a successful save, with the file written.
@@ -100,6 +103,8 @@ var level_data: Dictionary = {}
 var level_path: String = ""
 ## The levels folder a level is saved into (the creator's; tests set a temporary one).
 var levels_dir: String = LevelStore.LEVELS_DIR
+## T-604: true when Save writes back to the opened file itself (level_path), wherever it is.
+var save_in_place: bool = false
 ## The level name field and its label, and the Save button.
 var name_field: LineEdit
 var name_label: Label
@@ -481,6 +486,8 @@ func level_name() -> String:
 ## there before), else a new file in the levels folder named after the level
 ## (LevelDocument.file_stem), with "-2", "-3"... when that name is taken.
 func save_path() -> String:
+	if level_path != "" and save_in_place:
+		return level_path
 	if level_path != "" and _same_dir(level_path.get_base_dir(), levels_dir):
 		return level_path
 	var stem := LevelDocument.file_stem(level_name())

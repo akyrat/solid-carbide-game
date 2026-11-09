@@ -441,7 +441,7 @@ Decisions, "Interactive tutorial slides" and "A trick falls into the notebook". 
 | Alt drift slide | `tutorial.trick.altdrift.title`, `.instruction` | Alt drift / Drift forward, then swap W for S while holding the same turn key. |
 | Air spins slide | `tutorial.trick.airspin.title`, `.instruction` | Air spins / Hit a ramp holding W, then hold A or D in the air: AIR 180! or AIR 360! both count. |
 | Grind slide | `tutorial.trick.grind.title`, `.instruction` | Grind style / In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. |
-| Notebook goal lines (3 successes) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drift seconds {done}/{total} (T-564, seconds with one decimal; was "Drifts {done}/{total}") / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
+| Notebook goal lines (3 successes; the air spin 1, T-604) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drift seconds {done}/{total} (T-564, seconds with one decimal; was "Drifts {done}/{total}") / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
 | Success message over a practice window | `tutorial.success` | Content secured! |
 | Grind slide, hint about the Jump gift | `tutorial.grind_hint` | One power-up on the house: Jump. Take it, tap Space to jump, then hold Space over a rail. (T-593; was "Take it, jump, then hold Space over a rail.") |
 
@@ -454,6 +454,14 @@ Decisions, "Interactive tutorial slides"; the texts are T-559's (above). Six sli
 - **6, Survive the stream:** the last slide as before (the 4-minute timeline with the kaiju, **Go live**, **Don't show again**), with no **Skip** (T-568; Decisions, "No Skip on the last tutorial slide"); going back to slide 5 brings Skip back.
 - **Keys:** the **Left and Right arrow keys** change slides on every slide. **A and D** change slides only on slides 1 and 6. On the trick slides, W, A, S, D, Space (and the practice's R reset) belong to the practice window, which has the keyboard as soon as its slide shows (no click needed). The arrows and Skip can't take the focus there and are clicked with the mouse, so no key presses a button: not Space, not Enter, not Tab. On slides 1 and 6, Enter or Space presses the focused button as before (the right arrow on slide 1, Go live on slide 6).
 - How it is built: `game/docs/hud-and-menus/tutorial-slides.md`.
+
+### The recorded demos' takes (T-574, T-604)
+
+Decisions, "The tutorial's recorded demos". Each trick slide's demo replays a take, `game/data/tutorial_takes/<trick>.json` (the keys of every physics step, played on the real car from the practice playground's spawn), with the take before it kept as `<trick>.prev.json`. All four are the board's own recordings: drift and air spin from T-574; **alt drift re-recorded by the board on 2026-11-08 (T-604)** on its new playground (Level design, Content, "The practice playground"), 5.4 s, three ALT DRIFT!s, following its path exactly; **grind re-recorded by the board on 2026-11-09 (T-604)**, 11.8 s, three grinds, following its path exactly. The recording controls were brought back only for those re-recordings and removed again; none are in the game.
+
+**The air spin slide's goal is one spin** (Decisions, "The air spin slide asks for one spin"; T-604): `PracticeSession.GOAL_BY_TRICK` `{"air_spin": 1}` (`goal_count()`); the other trick slides still ask 3 (`GOAL`; the drift 3 s). AIR 180! and AIR 360! both still count. The notebook reads "Air spins 0/1" and stamps on the first spin.
+
+**Checking the takes:** `"<godot>" --headless --path game -s res://tools/check_takes.gd` replays every take on the playground as it is and prints, per trick, the successes, whether the slide's goal is done, and how far the replay strays from the take's own checkpoints (exit 1 if a take misses its trick). A take recorded on an older playground can stray once the layout or spawn changes; a big stray means the demo no longer shows what the board recorded and should be re-recorded. On T-604's playground (spawn moved from (-7, -1) to (-4.25, 1)), the final check (2026-11-09): drift completes its goal (3.4 units off its path), alt drift 3 of 3 (0.00 off), air spin 1 of 1, so its goal is done (33.8 units off: the board judged its demo fine as it is), grind 3 of 3 (0.00 off). Every take does its trick.
 
 ### The tutorial comes back with each new build (T-572; proposals for the playtest)
 

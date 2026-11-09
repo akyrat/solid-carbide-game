@@ -4,7 +4,7 @@ extends Node2D
 ## tutorial slides"; Game loop architecture, Content, "The practice session"). The tutorial slide
 ## (T-562) embeds this scene (scenes/run/practice_session.tscn) in a SubViewport: the real car,
 ## with the real driving, combo and trick signals, on the practice playground, counting one trick
-## until it has been done GOAL (3) times (the drift: DRIFT_SECONDS, 3 seconds of drifting in total,
+## until it has been done GOAL (3) times (the air spin once, GOAL_BY_TRICK, T-604) (the drift: DRIFT_SECONDS, 3 seconds of drifting in total,
 ## T-565). No enemies, kaiju, clock, damage, gift packs, weapons,
 ## sounds or HUD, only the real mission notebook (MissionPage) in the window with the goal, and,
 ## for the grind, the real power-up gift overlay (PowerUpScreen) offering Jump.
@@ -111,6 +111,9 @@ const GOAL_TEXT_KEYS := {
 const DRIFT_SECONDS_TEXT_KEYS := ["tutorial", "goal", "drift"]
 ## How many successes the goal asks (HUD and menus, Decisions, "Interactive tutorial slides").
 const GOAL := 3
+## T-604 (board, 2026-11-09; HUD and menus, Decisions, "The air spin slide asks for one spin"): slides
+## whose goal asks a different number of successes than GOAL. goal_count() reads it.
+const GOAL_BY_TRICK := {"air_spin": 1}
 ## The drift slide's goal: seconds of drifting in total (HUD and menus, Decisions, "The drift slide
 ## counts drift seconds", T-565).
 const DRIFT_SECONDS := 3.0
@@ -198,6 +201,8 @@ var gift_screen: PowerUpScreen
 ## It counts toward no slide's goal (COUNTED).
 var needle: ThreadTheNeedle
 var needle_flash: NeedleFlash
+## T-604: the seed a reset stage gives the needle routes (_fix_needle_routes).
+const NEEDLE_ROUTE_SEED := 604
 ## T-574 tweak 8, the takes (the slides' recording controls were removed in tweak 12; the demos
 ## replay the takes): where the takes are saved, the take being recorded or played, and its state.
 var takes_dir := PracticeTake.TAKES_DIR
@@ -256,7 +261,7 @@ func restart() -> void:
 	if trick == "drift":
 		missions.start_with([[{"trick": GOAL_TRICK[trick], "kind": RunMissions.KIND_SECONDS, "amount": DRIFT_SECONDS}]])
 	else:
-		missions.start_with([[{"trick": GOAL_TRICK[trick], "kind": RunMissions.KIND_COUNT, "amount": GOAL}]])
+		missions.start_with([[{"trick": GOAL_TRICK[trick], "kind": RunMissions.KIND_COUNT, "amount": goal_count()}]])
 	notebook.goal_templates = {GOAL_TRICK[trick]: goal_template(trick)}
 	notebook.show_current()
 	if stamp != null:
@@ -268,7 +273,7 @@ func restart() -> void:
 	if trick == "drift":
 		seconds_progress.emit(drift_seconds, DRIFT_SECONDS)
 	else:
-		progress.emit(successes, GOAL)
+		progress.emit(successes, goal_count())
 
 
 ## Runs the practice (and opens the grind's gift the first time).
@@ -289,10 +294,15 @@ func is_running() -> bool:
 	return not _paused and not _gift_paused
 
 
+## How many successes this slide's goal asks: GOAL, or the slide's own (GOAL_BY_TRICK, T-604).
+func goal_count() -> int:
+	return int(GOAL_BY_TRICK.get(trick, GOAL))
+
+
 func is_completed() -> bool:
 	if trick == "drift":
 		return drift_seconds >= DRIFT_SECONDS - RunMissions.EPSILON
-	return successes >= GOAL
+	return successes >= goal_count()
 
 
 ## The car reads the keyboard only while the window has focus.
@@ -653,7 +663,20 @@ func reset_stage() -> void:
 	for p in trick_popups.popups():
 		p.queue_free()
 	needle.setup(map.layout, ComboData.new().needle_rules())
+	_fix_needle_routes()
 	_set_take_state("ready")
+
+
+## T-604: a reset stage starts the level's needle routes the same way every time (a fixed seed for
+## a route in random order), so a take records and replays with the same active pairs: threading a
+## pair pays a trick, and a different random start made a replay stray from its recording.
+func _fix_needle_routes() -> void:
+	if needle == null or needle.routes == null:
+		return
+	needle.routes.rng.seed = NEEDLE_ROUTE_SEED
+	needle.routes.setup(map.layout, needle.gates.map(func(g): return str(g.id)))
+	if needle.has_method("refresh_markers"):
+		needle.refresh_markers()
 
 
 ## Resets the stage and records the driving from now on (the grind's Jump gift is taken first).
@@ -822,7 +845,7 @@ func _on_combo_trick(trick_id: String, _added: float, _multiplier: float) -> voi
 			return  # the other spin of the same landing (a 540)
 		_air_counted_step = _steps
 	successes += 1
-	if successes <= GOAL:
+	if successes <= goal_count():
 		missions.on_trick(GOAL_TRICK[trick])
 	else:
 		# T-574: past the goal the count goes on (5/3); the tracker stops at the goal, so the
@@ -830,8 +853,8 @@ func _on_combo_trick(trick_id: String, _added: float, _multiplier: float) -> voi
 		notebook.drop_trick(0, GOAL_TRICK[trick])
 		notebook.show_progress(0, float(successes))
 	trick_counted.emit(trick_id, successes)
-	progress.emit(successes, GOAL)
-	if successes == GOAL:
+	progress.emit(successes, goal_count())
+	if successes == goal_count():
 		completed.emit()
 
 

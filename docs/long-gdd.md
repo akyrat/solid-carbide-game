@@ -895,6 +895,8 @@ How the run loads it: `game/docs/level/game-map.md`.
 
 The level the tutorial's practice windows load (Decisions, "The practice playground"; HUD and menus, Decisions, "Interactive tutorial slides"): **`game/data/level/practice_playground.json`**, made by `python game/tools/build_practice_playground.py` in the level creator's file format, so the board can open and edit it there. It has no buildings: one open plain, a ramp and rails. Every number is a proposal for the board's playtest.
 
+**Now the board's own layout (T-574, T-604, 2026-11-08):** the board redrew the playground in the level creator (T-574) and edited it again for T-604, so the file is kept by hand and `build_practice_playground.py` is retired (it refuses to run, so it can never overwrite the board's layout). The list below is T-560's first layout, kept as a record. As of T-604: still 120 by 72 units on the grid ground (`ground_style`), no buildings, 2 platforms, 8 ramps, 40 rails, 23 props, 7 obstacle pairs and one needle route (`route-1`: pairs 1, 6 and 7 in random order), and the spawn at (-4.25, 1) heading east, where every practice slide starts (no per-slide start points since T-574). **Editing it:** open it straight in the level creator with `"<godot>" --path game res://scenes/level_creator/level_creator.tscn -- --open=res://data/level/practice_playground.json`; Save writes back to that file, never into the levels folder (T-604; `game/docs/level/level-creator.md`). The tutorial's demo takes are recorded from the spawn, so moving the spawn or what is near a take's path can make a take miss (HUD and menus, Content, "The recorded demos' takes").
+
 - **Size:** 120 by 72 units, a hard stop at the edges, to load fast. One rooftop, two ramps, three rails, no props.
 - **The ground:** the drift prototype's purple grid, lightened a little so the dark tyre marks show, drawn instead of road tiles through a new optional level key, `ground_style` (`{"kind": "grid", ...}`; ground 59/54/94, thin lines 76/71/122 every unit, strong lines 115/105/173 every 5; the prototype's own are 18/18/36, 43/43/76 and 84/76/132, `ground_grid.gd`). A level without it keeps its ground tiles (Kaiju City is unchanged).
 - **Open area:** the whole west half (x -60 to -16, all of y): room for drifts and alt drifts, away from the runway and the ramp.
@@ -2728,7 +2730,7 @@ Decisions, "Interactive tutorial slides" and "A trick falls into the notebook". 
 | Alt drift slide | `tutorial.trick.altdrift.title`, `.instruction` | Alt drift / Drift forward, then swap W for S while holding the same turn key. |
 | Air spins slide | `tutorial.trick.airspin.title`, `.instruction` | Air spins / Hit a ramp holding W, then hold A or D in the air: AIR 180! or AIR 360! both count. |
 | Grind slide | `tutorial.trick.grind.title`, `.instruction` | Grind style / In the air, hold Space and touch a rail to grind it. Let go to launch the way you face. |
-| Notebook goal lines (3 successes) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drift seconds {done}/{total} (T-564, seconds with one decimal; was "Drifts {done}/{total}") / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
+| Notebook goal lines (3 successes; the air spin 1, T-604) | `tutorial.goal.drift`, `.altdrift`, `.airspin`, `.grind` | Drift seconds {done}/{total} (T-564, seconds with one decimal; was "Drifts {done}/{total}") / Alt drifts {done}/{total} / Air spins {done}/{total} / Rail grinds {done}/{total} |
 | Success message over a practice window | `tutorial.success` | Content secured! |
 | Grind slide, hint about the Jump gift | `tutorial.grind_hint` | One power-up on the house: Jump. Take it, tap Space to jump, then hold Space over a rail. (T-593; was "Take it, jump, then hold Space over a rail.") |
 
@@ -2741,6 +2743,14 @@ Decisions, "Interactive tutorial slides"; the texts are T-559's (above). Six sli
 - **6, Survive the stream:** the last slide as before (the 4-minute timeline with the kaiju, **Go live**, **Don't show again**), with no **Skip** (T-568; Decisions, "No Skip on the last tutorial slide"); going back to slide 5 brings Skip back.
 - **Keys:** the **Left and Right arrow keys** change slides on every slide. **A and D** change slides only on slides 1 and 6. On the trick slides, W, A, S, D, Space (and the practice's R reset) belong to the practice window, which has the keyboard as soon as its slide shows (no click needed). The arrows and Skip can't take the focus there and are clicked with the mouse, so no key presses a button: not Space, not Enter, not Tab. On slides 1 and 6, Enter or Space presses the focused button as before (the right arrow on slide 1, Go live on slide 6).
 - How it is built: `game/docs/hud-and-menus/tutorial-slides.md`.
+
+#### The recorded demos' takes (T-574, T-604)
+
+Decisions, "The tutorial's recorded demos". Each trick slide's demo replays a take, `game/data/tutorial_takes/<trick>.json` (the keys of every physics step, played on the real car from the practice playground's spawn), with the take before it kept as `<trick>.prev.json`. All four are the board's own recordings: drift and air spin from T-574; **alt drift re-recorded by the board on 2026-11-08 (T-604)** on its new playground (Level design, Content, "The practice playground"), 5.4 s, three ALT DRIFT!s, following its path exactly; **grind re-recorded by the board on 2026-11-09 (T-604)**, 11.8 s, three grinds, following its path exactly. The recording controls were brought back only for those re-recordings and removed again; none are in the game.
+
+**The air spin slide's goal is one spin** (Decisions, "The air spin slide asks for one spin"; T-604): `PracticeSession.GOAL_BY_TRICK` `{"air_spin": 1}` (`goal_count()`); the other trick slides still ask 3 (`GOAL`; the drift 3 s). AIR 180! and AIR 360! both still count. The notebook reads "Air spins 0/1" and stamps on the first spin.
+
+**Checking the takes:** `"<godot>" --headless --path game -s res://tools/check_takes.gd` replays every take on the playground as it is and prints, per trick, the successes, whether the slide's goal is done, and how far the replay strays from the take's own checkpoints (exit 1 if a take misses its trick). A take recorded on an older playground can stray once the layout or spawn changes; a big stray means the demo no longer shows what the board recorded and should be re-recorded. On T-604's playground (spawn moved from (-7, -1) to (-4.25, 1)), the final check (2026-11-09): drift completes its goal (3.4 units off its path), alt drift 3 of 3 (0.00 off), air spin 1 of 1, so its goal is done (33.8 units off: the board judged its demo fine as it is), grind 3 of 3 (0.00 off). Every take does its trick.
 
 #### The tutorial comes back with each new build (T-572; proposals for the playtest)
 
@@ -2786,10 +2796,10 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `0bc781c5deffe9ad966eda436be719aa2ab3020ab218a47cb136038f3753d5da` |
-| `level-design.md` | `8e377a9b6f9369c8cbb087ce08cdaaccc79f5959dc1696ff407832eb06797c30` |
+| `level-design.md` | `a3a7509c35a3df527dd409d5faf141e75609cca61b53754668c245019c5a9e17` |
 | `enemies.md` | `391da72f65c1ee86b14bee9fc4e5eed842d02d5f4ffed3b32d4e927782e5a149` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `5e85f7d084ccf243fa9452af962c4b403af1c44535da68a6b5d66e67fca56865` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `5e7c294dd33842a133b80c5d01b8502851d25d622996bff58dd6958f82e1c1e2` |
+| `hud-and-menus.md` | `9d14a16e51580342da42da340cfa66dade5cb41e111bb201d2651e964b03ab10` |

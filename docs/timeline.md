@@ -4300,3 +4300,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: the burst comes after each alternate drift (+10% / +22.5%, 0.5 s then a 0.25 s fade), two ground arrows, no cooldown at tier 2, the tier 2 blast in the arrows' colours.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-603
+
+## 2026-11-09: A new practice playground and tutorial demos
+- Decision or change: Merged after the board's playtest: the board's new practice playground, re-recorded alt drift and grind demos, and one spin for the air spin slide.
+- Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`
+- Tasks: T-604
