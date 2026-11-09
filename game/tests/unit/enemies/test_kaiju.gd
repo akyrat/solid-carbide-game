@@ -55,6 +55,12 @@ func _to_boss_time() -> void:
 	run.state.advance(RunState.RUN_SECONDS - RunState.BOSS_TIME_LEFT - run.state.time_elapsed() + 0.01)
 
 
+## T-612: steps the boss until the killed kaiju's death has played (its length and a step more).
+func _play_death() -> void:
+	for i in int(ceil(data.kaiju_death_seconds() / DT)) + 2:
+		boss.step(DT)
+
+
 ## A free spot `distance` units from the car, for placing the kaiju by hand.
 func _free_spot_near(distance: float) -> Vector2:
 	for i in 64:
@@ -196,6 +202,10 @@ func test_killing_the_kaiju_adds_its_coins_and_calls_kaiju_killed_once() -> void
 	k.take_damage(1.0)
 	assert_true(k.is_dead(), "dead at 0")
 	assert_eq(died.size(), 1, "died once")
+	# T-612: the death plays first; the coins and the win come when it has played.
+	assert_eq(calls.killed, 0, "not defeated while the death plays")
+	assert_true(boss.is_kaiju_dying())
+	_play_death()
 	assert_eq(calls.killed, 1, "defeated once")
 	assert_eq(calls.ended, ["win"], "kaiju_killed ended the run once, as a win")
 	assert_eq(run.state.result, "win")
@@ -219,6 +229,8 @@ func test_kaiju_killed_called_exactly_once_on_the_state() -> void:
 	var k: Node = boss.appear_at(_free_spot_near(10.0))
 	k.take_damage(1e9)
 	k.take_damage(1e9)
+	_play_death()
+	_play_death()
 	assert_eq(counter.killed_calls, 1, "kaiju_killed() called once")
 	assert_eq(counter.coins_before_killed, data.kaiju_coins_on_defeat(), "coins added before it")
 
@@ -413,6 +425,7 @@ func test_killing_the_kaiju_with_the_gun_wins_the_run() -> void:
 		rack.step(DT)
 		t += DT
 	assert_true(k.is_dead(), "the gun killed it")
+	_play_death()
 	assert_eq(run.state.result, "win", "the run is won")
 	assert_eq(run.state.coins, data.kaiju_coins_on_defeat(), "with the kaiju's coins")
 

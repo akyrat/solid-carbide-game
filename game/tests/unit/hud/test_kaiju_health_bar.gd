@@ -59,6 +59,8 @@ func test_shows_health_after_appearing_and_follows_signal() -> void:
 func test_hides_when_the_kaiju_dies() -> void:
 	var k := _appear()
 	k.take_damage(k.max_health)
+	# T-612 (a proposal): it goes at the killing blow (on the next step), before the death animation plays.
+	await wait_physics_frames(2)
 	assert_false(bar.visible)
 
 

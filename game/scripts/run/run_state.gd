@@ -197,6 +197,12 @@ var wreck_seconds := 3.0
 ## start_run(); tests may change it (0 ends the run at once, as before T-317).
 var timed_out := false
 var time_up_left := 0.0
+## T-612 (Enemies, Decisions, "The kaiju is animated"; Game loop architecture,
+## Content): true from the kaiju's kill until its death animation has played
+## and kaiju_killed() ends the run as a win. Meanwhile the run goes on, but the
+## win stands: the clock holds at 0:00 instead of running out, and a wreck
+## waits at its end instead of losing.
+var kaiju_win_due := false
 var time_up_seconds := 3.0
 ## The physics and process frame the clock reached 0:00 on (T-413, "A tie goes to
 ## the player"): a kaiju kill in that same step still wins.
@@ -273,6 +279,7 @@ func start_run() -> void:
 	loss_reason = ""
 	wrecked = false
 	wreck_left = 0.0
+	kaiju_win_due = false
 	wreck_seconds = _run_data.wreck_seconds()
 	if timed_out:  # a new run during the time's up screen: unfreeze first
 		process_mode = Node.PROCESS_MODE_INHERIT
@@ -346,7 +353,8 @@ func advance(seconds: float) -> void:
 	if not boss_time_sent and time_left <= BOSS_TIME_LEFT + EPSILON:
 		boss_time_sent = true
 		boss_time.emit()
-	if time_left <= 0.0 and running:
+	if time_left <= 0.0 and running and not kaiju_win_due:
+		# T-612: not while the killed kaiju's death plays (the win is due).
 		# The clock ran out: the kaiju is still alive, or the run would have
 		# ended already when it was killed. The time's up screen plays first (T-317).
 		_time_up()
@@ -467,6 +475,26 @@ func _counts_pickups() -> bool:
 ## up hold has started (T-413, "A tie goes to the player").
 func _in_tie_step() -> bool:
 	return timed_out and Engine.get_physics_frames() == _time_up_physics_frame and Engine.get_process_frames() == _time_up_process_frame
+
+
+## T-612: the kaiju was killed and plays its death; kaiju_killed() follows when
+## it has played. From now the win stands: the clock holds at 0:00 rather than
+## running out, a wreck waits at its end rather than losing. Killed on the step
+## the clock reached 0:00 (T-413, "A tie goes to the player"), the time's up is
+## called off and the run goes on, at 0:00, until the death has played.
+## Ignored once the run's result is decided.
+func kaiju_dying() -> void:
+	if wrecked:
+		pass
+	elif _in_tie_step():
+		_call_off_time_up()
+		running = true
+		result = ""
+		loss_reason = ""
+		_final_recap = {}
+	elif not running:
+		return
+	kaiju_win_due = true
 
 
 ## Calls off the time's up hold (a tie won by a kaiju kill): the tree runs again.
@@ -868,6 +896,7 @@ func _end(r: String, reason := "") -> void:
 ## recap's summary is taken now.
 func _decide(r: String, reason := "") -> void:
 	running = false
+	kaiju_win_due = false
 	result = r
 	loss_reason = reason if r == RESULT_LOSS else ""
 	_final_recap = _build_recap()
@@ -931,6 +960,8 @@ func _advance_wreck(seconds: float) -> void:
 func _finish_wreck() -> void:
 	if not wrecked:
 		return
+	if kaiju_win_due:
+		return  # T-612: the kaiju is dying; kaiju_killed() ends the wreck as a win
 	wrecked = false
 	wreck_left = 0.0
 	_end(RESULT_LOSS, LOSS_HEALTH)

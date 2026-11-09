@@ -27,6 +27,17 @@ extends Node2D
 ## FALL_FPS. Until they exist the placeholder is made by script from the walk
 ## frames: the stomp at FLAIL_SPEED times its speed and the body tipping back
 ## and forth about its feet (FALL_TILT radians).
+##
+## Animations (task T-612; Enemies, Decisions, "The kaiju is animated"): walk,
+## windup and death, each one sheet per drawn direction, read from
+## res://data/enemies.json, "kaiju_animations" (sheet path, frames, fps, loop;
+## frame size, feet and head top shared). The walk loops while it walks; the
+## windup plays once while the meteor attack winds up (set_winding_up, from the
+## boss controller) and holds its last frame; the death plays once (set_dying)
+## and its ground shadow fades with it. Which one plays: death, else the fall,
+## else the windup, else the walk (with the landing squash). Everything moves on
+## in _process, so the frames stop while the game is paused. The frame format
+## for the final art (T-613): game/docs/enemies/kaiju.md, "The kaiju's animations".
 
 const BODY_COLOR := Color(0.20, 0.30, 0.28)
 const BELLY_COLOR := Color(0.38, 0.47, 0.40)
@@ -63,6 +74,15 @@ const LAND_SECONDS := 0.25
 const LAND_SQUASH := Vector2(1.2, 0.8)
 
 static var _textures := {}
+## T-612: the animations' data (EnemyData.kaiju_animations()), read once. Tests
+## set config_override (a dictionary in the same format) to use other numbers.
+static var config_override := {}
+static var _config := {}
+## The animations as T-069 drew the walk, for when the data is missing.
+const DEFAULT_CONFIG := {
+	"frame_size": FRAME_SIZE, "feet": [112, 203], "head_top_y": 17,
+	"walk": {"sheet": "res://art/kaiju/kaiju_%s.png", "frames": FRAME_COUNT, "fps": 5.4, "loop": true},
+}
 
 ## Screen direction it faces (normalized), set by face().
 var facing := Vector2.RIGHT
@@ -78,6 +98,13 @@ var land_left := 0.0
 ## T-454: how high the feet are above the ground under it, units (0 standing;
 ## the boss controller sets it from the fall).
 var air_height := 0.0
+## T-612: seconds of walking (the walk's frame), true during the meteor
+## attack's windup with its seconds, true from the kill with the death's seconds.
+var walk_seconds := 0.0
+var winding_up := false
+var windup_seconds := 0.0
+var dying := false
+var death_seconds := 0.0
 
 
 func _ready() -> void:
@@ -91,12 +118,117 @@ func _process(delta: float) -> void:
 	Perf.end(&"kaiju.sprite_anim")
 
 
-## Moves the animation on `delta` seconds (the stomp, the fall, the squash).
+## Moves the animation on `delta` seconds (the walk, the windup, the death, the
+## stomp, the fall, the squash).
 func advance(delta: float) -> void:
+	if dying:
+		death_seconds += delta
+		return
 	_walk = fmod(_walk + delta * 0.9 * (FLAIL_SPEED if falling else 1.0), 1.0)
+	walk_seconds += delta
+	if winding_up:
+		windup_seconds += delta
 	if falling:
 		fall_seconds += delta
 	land_left = maxf(land_left - delta, 0.0)
+
+
+## T-612: the meteor attack's windup starts (true) or ends (false); the windup
+## plays from its first frame each time.
+func set_winding_up(on: bool) -> void:
+	if on and not winding_up:
+		windup_seconds = 0.0
+	winding_up = on
+
+
+## T-612: the kaiju was killed: the death plays once from its first frame.
+func set_dying() -> void:
+	if dying:
+		return
+	dying = true
+	death_seconds = 0.0
+	winding_up = false
+
+
+## T-612: the animations' data (see the top): config_override when set, else
+## res://data/enemies.json's "kaiju_animations", else DEFAULT_CONFIG.
+static func config() -> Dictionary:
+	if not config_override.is_empty():
+		return config_override
+	if _config.is_empty():
+		var c := EnemyData.new().kaiju_animations()
+		_config = c if c.has("walk") else DEFAULT_CONFIG
+	return _config
+
+
+## One animation's data ({sheet, frames, fps, loop}), empty when it has none.
+static func anim_data(anim_name: String) -> Dictionary:
+	var a = config().get(anim_name, {})
+	return a if a is Dictionary else {}
+
+
+static func frame_size() -> int:
+	return int(config().get("frame_size", FRAME_SIZE))
+
+
+static func feet() -> Vector2:
+	var f = config().get("feet", [112, ART_FEET_Y])
+	return Vector2(float(f[0]), float(f[1]))
+
+
+## The sheet of an animation for a drawn direction ("e", "se", "s", "ne", "n"),
+## or null when the file is missing.
+static func anim_sheet(anim_name: String, dir_name: String) -> Texture2D:
+	var a := anim_data(anim_name)
+	if not a.has("sheet"):
+		return null
+	return _sheet_at(String(a.sheet) % dir_name)
+
+
+## How many frames of `tex` an animation plays: the data's count, at most as
+## many as the sheet holds, at least 1.
+static func frames_in(anim_name: String, tex: Texture2D) -> int:
+	var n := int(anim_data(anim_name).get("frames", 1))
+	if tex != null:
+		n = mini(n, tex.get_width() / maxi(frame_size(), 1))
+	return maxi(n, 1)
+
+
+## The frame of an animation `seconds` in, out of `count`: looping or held on
+## the last one, at the data's fps.
+static func frame_at(anim_name: String, seconds: float, count: int) -> int:
+	var a := anim_data(anim_name)
+	var i := int(floor(maxf(seconds, 0.0) * float(a.get("fps", 1.0)) + 0.0001))
+	if bool(a.get("loop", false)):
+		return posmod(i, maxi(count, 1))
+	return clampi(i, 0, maxi(count, 1) - 1)
+
+
+## T-612: how long the death plays, seconds (frames / fps).
+static func death_length() -> float:
+	return EnemyData.animation_seconds(anim_data("death"))
+
+
+## T-612: what is drawn now: {anim, texture, frame, mirrored}; the texture is
+## null when the animation's sheet is missing (the placeholder shape is drawn,
+## or for the windup and death, the walk).
+func current_frame() -> Dictionary:
+	var entry: Array = SHEETS[compass_index(facing)]
+	var anim := "walk"
+	var seconds := walk_seconds
+	if dying:
+		anim = "death"
+		seconds = death_seconds
+	elif winding_up and not falling:
+		anim = "windup"
+		seconds = windup_seconds
+	var tex := anim_sheet(anim, entry[0])
+	if tex == null and anim != "walk":
+		anim = "walk"
+		seconds = walk_seconds
+		tex = anim_sheet(anim, entry[0])
+	var n := frames_in(anim, tex)
+	return {"anim": anim, "texture": tex, "frame": frame_at(anim, seconds, n), "mirrored": entry[1]}
 
 
 ## T-226: the kaiju falls (true) or stands (false), as the minion's sprite.
@@ -109,10 +241,15 @@ func set_falling(on: bool) -> void:
 	falling = on
 
 
-## What it plays now: "fall", "land" (the squash) or "walk".
+## What it plays now: "death" (T-612), "fall", "windup" (T-612), "land" (the
+## squash) or "walk".
 func animation() -> String:
+	if dying:
+		return "death"
 	if falling:
 		return "fall"
+	if winding_up:
+		return "windup"
 	return "land" if land_left > 0.0 else "walk"
 
 
@@ -152,8 +289,9 @@ static func frame_for(walk: float) -> int:
 	return clampi(int(walk * FRAME_COUNT), 0, FRAME_COUNT - 1)
 
 
+## The walk's sheet for a drawn direction (the data's path, T-612).
 static func _sheet(sheet_name: String) -> Texture2D:
-	return _sheet_at(SHEET_DIR % sheet_name)
+	return anim_sheet("walk", sheet_name)
 
 
 static func _sheet_at(path: String) -> Texture2D:
@@ -170,7 +308,7 @@ static func has_art() -> bool:
 ## The drawing's height above its feet, in screen pixels.
 static func drawn_height_px() -> float:
 	if has_art():
-		return (ART_FEET_Y - ART_TOP_Y) * ART_SCALE
+		return (feet().y - float(config().get("head_top_y", ART_TOP_Y))) * ART_SCALE
 	return HEIGHT_UNITS * PX
 
 
@@ -209,20 +347,26 @@ func _draw() -> void:
 	if Perf.on: Perf.each_begin(&"draw.kaiju")
 	_ground_shadow(RADIUS_UNITS * PX * sqrt(2.0))
 	var entry: Array = SHEETS[compass_index(facing)]
-	if falling:
+	if falling and not dying:
 		var fall_tex := fall_sheet(entry[0])
 		if fall_tex != null:
 			# T-227's frames, as they are.
-			var n := maxi(1, fall_tex.get_width() / FRAME_SIZE)
+			var n := maxi(1, fall_tex.get_width() / frame_size())
 			_draw_art(fall_tex, entry[1], int(fall_seconds * FALL_FPS) % n)
 			if Perf.on: Perf.each_end(&"draw.kaiju")
 			return
 	var anim := anim_transform()
-	var tex := _sheet(entry[0])
-	if tex != null:
-		draw_set_transform_matrix(anim)
-		_draw_art(tex, entry[1], frame_for(_walk))
+	var cur := current_frame()
+	if cur.texture != null:
+		# T-612: the walk, windup or death frame; the fall's placeholder tilt and
+		# the landing squash only over the walk.
+		draw_set_transform_matrix(anim if cur.anim == "walk" or falling else Transform2D.IDENTITY)
+		_draw_art(cur.texture, cur.mirrored, cur.frame)
 		draw_set_transform_matrix(Transform2D.IDENTITY)
+		if Perf.on: Perf.each_end(&"draw.kaiju")
+		return
+	if dying:
+		# No art at all: the code-drawn placeholder simply goes when it dies.
 		if Perf.on: Perf.each_end(&"draw.kaiju")
 		return
 	var sc := HEIGHT_UNITS * PX / DESIGN_HEIGHT_PX
@@ -260,17 +404,32 @@ func _draw() -> void:
 
 
 func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
-	var src := Rect2(frame * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
-	var size := FRAME_SIZE * ART_SCALE
+	var fs := frame_size()
+	var src := Rect2(frame * fs, 0, fs, fs)
+	var size := fs * ART_SCALE
 	var w := -size if mirrored else size
 	# A negative width flips the frame in place: Godot draws it from the
-	# rect's x to x + size, so x is -size / 2 both ways (T-226 fix: it was
-	# -w / 2, which put every mirrored frame one frame width to the right).
-	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -ART_FEET_Y * ART_SCALE), Vector2(w, size)), src)
+	# rect's x to x + size (T-226 fix). The feet (T-612: from the data) land on
+	# the ground point: mirrored, they are fs - feet.x from the frame's left.
+	var f := feet()
+	var fx := (fs - f.x) if mirrored else f.x
+	draw_texture_rect_region(tex, Rect2(Vector2(-fx * ART_SCALE, -f.y * ART_SCALE), Vector2(w, size)), src)
+
+
+## T-612: the shadow's alpha: full, fading out with the death.
+func shadow_alpha() -> float:
+	if not dying:
+		return 1.0
+	var length := death_length()
+	return 0.0 if length <= 0.0 else clampf(1.0 - death_seconds / length, 0.0, 1.0)
 
 
 func _ground_shadow(full_rx: float) -> void:
-	draw_colored_polygon(shadow_outline(full_rx), SHADOW_COLOR)
+	var c := SHADOW_COLOR
+	c.a *= shadow_alpha()
+	if c.a <= 0.0:
+		return
+	draw_colored_polygon(shadow_outline(full_rx), c)
 
 
 ## T-454: the ground shadow's outline in the sprite's pixels, for a full
