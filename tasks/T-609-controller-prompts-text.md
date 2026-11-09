@@ -1,7 +1,7 @@
 ---
 id: T-609
 title: Text for the controller's button prompts
-status: in-qa
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Controller-support
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/drifting.md, game/data/tutorial_text.json, game/data/trick_recipes.json, game/data/tutorial_practice.json]
 files_expected_to_change: [game/data/controller_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Started: the Narrative Theme Agent writes the controller texts in C:\solid-carbi
 ### 2026-11-09, In progress → In QA
 
 Texts written: 10 button labels and 16 controller lines, every one scored 8 or more. Now in QA.
+
+### 2026-11-09, In QA → In progress
+
+QA round 1 failed: the game's text list test is red because the new controller_text.json isn't listed in game/tools/text_inventory.py. Sent back to the Narrative Theme Agent.
 
 ## Style review
 
@@ -459,3 +463,5 @@ Keycap recipes and live pads (names of keys, handled by the glyph mapping, no te
 No change needed: tutorial_text.json slide1/controls, slide1/drift_rule, slide1/key_w, key_a, key_s, key_d (all UNUSED since T-559/T-484); trick_recipe/*/stepN_note (Hold 1 s or more, Swap fast hold turn, Hold off a ramp: no key named); missions.json generator/goals ("Hold one drift for..."); pause_text.json jump_arrow_label ("Facing arrow"); designer notes with keys in `reason` and `_comment` fields (power_ups.json jump and others, combo.json, tutorial_practice.json): not player-facing. No Enter, Escape, Tab or arrow-key lines exist in game/data/; menu prompts naming those are in code (T-610).
 Searched with a script over every string in game/data/**/*.json (levels/ and the creator's level/creator_assets.json skipped).
 Open points for the board: Xbox labels for every controller; "LS" for the stick (a keycap-sized name; "Stick" is the alternative); the shared "gas" and "brake" words stay in lines where they are not a key name.
+
+QA round 1 fix: registered controller_text.json in game/tools/text_inventory.py (SCREEN_BY_PREFIX "controller_text:": Controller prompts). test_text_inventory: 8 tests OK.
