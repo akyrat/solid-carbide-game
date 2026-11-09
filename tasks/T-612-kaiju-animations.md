@@ -1,7 +1,7 @@
 ---
 id: T-612
 title: The kaiju plays its walk, windup and death animations (placeholder frames)
-status: in-qa
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Polish
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md, docs/game-loop-architecture.md, docs/hud-a
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/docs/enemies/kaiju.md, game/scripts/enemies/kaiju.gd, game/scripts/enemies/kaiju_sprite.gd, game/scripts/enemies/kaiju_boss.gd, game/scripts/enemies/kaiju_meteors.gd, game/data/enemies.json]
 files_expected_to_change: [game/scripts/enemies/, game/scripts/game/, game/data/, game/art/placeholders/, game/tests/, game/docs/, docs/enemies.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -93,6 +93,14 @@ Back in progress on the board's word: a spawn the boss button on the God mode pa
 ### 2026-11-09, In progress → In QA
 
 The button is built: "Call the kaiju" on God mode's last row, left of Back, once per run, the timer left as it is. QA is checking the whole ticket again.
+
+### 2026-11-09, In QA → Needs playtest
+
+QA passed again, all 14 criteria. Ready for the board to play: C:\solid-carbide-worktrees\T-612\game\project.godot. Press N in a run, pause, God mode, "Call the kaiju" (once per run), then watch the kaiju walk, wind up and die.
+
+### 2026-11-09, Needs playtest → In progress
+
+The board played it: working great. Quick tuning now: a longer, more dramatic death (full fall, neon green cracks, a big explosion). The Enemy Behavior Agent is on it; I'll move it to the QA column when the tweak is in.
 
 ## Style review
 
@@ -181,3 +189,53 @@ The recording script is `bash game/tools/record_kaiju_anim_gif.sh <walk|windup|d
 **Documents:**
 - docs/hud-and-menus.md, Content, "God mode's spawn the boss button": a "Built in T-612" paragraph.
 - game/docs/enemies/kaiju.md, Arrival: `spawn_now()`.
+- 2026-11-09, needs-playtest → in-progress: The board (2026-11-09), after playing: "its working great, but i want to make the death animation more dramatic, and longer": fall down completely, hold the last frame, neon green cracks consume it over about a second, then a big explosion in the kaiju theme's colours. Quick tuning.
+
+### Quick tuning 1 (the board, 2026-11-09): a longer, more dramatic death
+
+**The board's words:** "its working great, but i want to make the death animation more dramatic, and longer. perhaps something like this: the kaiju after it does the current animation, we prolong the animation so that it completely falls down (laying down or coiled down or something; how does a kaiju fall) and then we hold it in the last frame and it starts cracking with some bright neon green energy, which over the course of the next second it gradually consumes it and the whole thing ends up in a cool big explosion with the colous of the kaiju theme". The decision is Enemies, Decisions, "The kaiju's death is longer and more dramatic".
+
+**What changed.** The whole death now lasts 4.4 s, in four phases: fall, hold, crack, explode. Then the kaiju is gone, and only then come the coins and the win, through the same win flow as before.
+
+1. **The fall (2 s: 16 frames at 8 a second, placeholder).** The kaiju buckles (the first 4 frames, as before) and sinks to its knees (4 frames). It then falls forward, flattening onto the ground in a heavy slump that overshoots a little and settles (8 frames), and ends lying on the ground line in the last frame.
+   - The old sink-and-fade could not stay: the kaiju has to remain visible to fall and lie there.
+   - I tried a true 90-degree topple first, but on a side-view sprite it read as a nose-dive. The placeholder therefore lies down by flattening.
+   - Proposal for the final art (T-613): a heavy topple onto its side with the tail settling.
+   - The frames are made by `game/tools/build_kaiju_anim_placeholders.py`, for free, from the walk art. They stay swappable through enemies.json.
+2. **The hold (0.4 s):** it lies still in that last frame.
+3. **The cracks (1 s, drawn in code).** Neon green cracks spread over the body's own pixels from 9 scattered points, while a green glow fills its silhouette until the green has consumed it.
+   - Glow: the minions' spill green (140, 224, 26).
+   - Cracks: the spill's light green (204, 250, 89), with a near-white green core (232, 255, 176).
+   - None is Greenbull's: all are over 40 (RGB, 0 to 255) from (104, 220, 96), (247, 208, 52) and (12, 76, 44). This is tested.
+4. **The explosion (1 s, 150 screen pixels across at its widest, from the lying body's middle, drawn in code).** The body flashes white and is gone. Then come:
+   - a white (235, 255, 255) and pale cyan (140, 235, 235, its plates) flash;
+   - a neon purple shock ring (184, 46, 255, the HUD's kaiju purple) and a magenta one (217, 77, 230, the meteors') on the ground;
+   - purple, magenta and cyan fireballs;
+   - chunks of its dark teal hide (51, 77, 71) and the meteors' navy (51, 36, 82), thrown up and falling;
+   - cyan and white sparks, and navy smoke.
+
+All the numbers are in `game/data/enemies.json`, "kaiju_animations": death frames and fps, and `death_end`: hold_seconds 0.4, crack_seconds 1.0, explosion_seconds 1.0, explosion_radius_px 150. The effects are in the new `game/scripts/enemies/kaiju_death_fx.gd`. The sprite's phases come from `death_phase_at()`. The boss's length is `EnemyData.kaiju_death_seconds()`, which is now 4.4 s.
+
+**Still holding for the whole death:** no movement, no contact damage and not a weapon target. Pause stops it. The timer reaching 0:00, a wreck, or a kill on the step the clock runs out all keep the win. The health bar goes at the killing blow. The shadow stays while the kaiju lies there and fades with the explosion.
+
+**Proposals for the playtest:**
+14. The fall is a forward slump that flattens it onto the ground (placeholder); the final art should be a topple onto its side.
+15. The fall takes 2 s, then a 0.4 s hold, 1 s of cracks and a 1 s explosion: 4.4 s in all.
+16. The greens and the explosion's colour mix are as listed above.
+17. The explosion is 150 px across.
+18. There is no camera shake (the game has no camera shake to reuse) and no damage from the explosion.
+
+**Tests (foreground):**
+- `test_kaiju_animations.gd` is updated and now has 18 tests. The old shadow test became "stays while it lies, fades with the explosion". New tests cover: the phases' order and lengths; lying in the last frame; the cracks on the body and the green consuming it; the colours not being Greenbull's and following the theme; every phase drawing. The win test now checks that it is still exploding just before the win.
+- `-gselect=test_kaiju`: 102/102 passed (test_kaiju 26, test_kaiju_animations 18, test_kaiju_meteors 28, test_kaiju_path_size 8, test_kaiju_sprite 6, test_kaiju_health_bar 9, test_kaiju_signs 7).
+- `test_enemy_data`: 10/10 passed.
+- Python `test_build_kaiju_anim_placeholders`: 4/4 OK. Its stand-in is now kaiju-proportioned, and its death test checks buckle, kneel and lying.
+
+**Recording.** `art-archive/T-612/screenshots/kaiju_death.gif` now shows the whole new death, then the win screen. The old one is kept as `kaiju_death_round1_1.5s.gif`.
+- **A hook refused one command:** inline Python run from the worktree root, to move the kaiju nearer the middle of the screen for the recording only. I did not retry it any other way.
+- As a result, in the recording the kaiju dies on the left, partly behind the weapon slots. The fall, cracks and explosion are all visible.
+
+**Documents:**
+- docs/enemies.md, Content, "The kaiju": Look and Death.
+- game/docs/enemies/kaiju.md: the table, "The death's end", the format, the placeholders and the tests.
+- docs/game-loop-architecture.md: the flowchart and the win's timing, now 4.4 s.
