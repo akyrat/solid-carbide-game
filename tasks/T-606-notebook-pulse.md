@@ -43,13 +43,13 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The notebook pulses on each progress of a count goal and on a goal being ticked (tests). (QA: pass (tests for count after landing, no box, tick))
-- [ ] A running total goal pulses within the proposed limit, not every frame (a test). (QA: pass (rate-limit test, 1.2 s gap))
-- [ ] The HUD layout does not move: the notebook piece keeps its position and size outside the pulse (a test). (QA: pass (test_the_pulse_never_moves_or_resizes_the_page))
-- [ ] Works in a run and in the tutorial's practice window (tests). (QA: pass (tutorial practice window test, same class))
-- [ ] docs/hud-and-menus.md Content describes it, with the numbers. (QA: pass (docs/hud-and-menus.md Content, 5%, 0.35 s, 1.2 s))
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass (10 new tests; result notes give 3287 tests, 3286 passing, 0 failing))
-- [ ] A GIF in art-archive/T-606/screenshots/ shows a pulse, taken with bash game/tools/screenshot.sh frames. (QA: pass (notebook_pulse.gif and still present in art-archive/T-606/screenshots/))
+- [ ] The notebook pulses on each progress of a count goal and on a goal being ticked (tests). (QA: pass) tests for count after landing, no box, tick
+- [ ] A running total goal pulses within the proposed limit, not every frame (a test). (QA: pass) rate-limit test, 1.2 s gap
+- [ ] The HUD layout does not move: the notebook piece keeps its position and size outside the pulse (a test). (QA: pass) test_the_pulse_never_moves_or_resizes_the_page
+- [ ] Works in a run and in the tutorial's practice window (tests). (QA: pass) tutorial practice window test, same class
+- [ ] docs/hud-and-menus.md Content describes it, with the numbers. (QA: pass) docs/hud-and-menus.md Content, 5%, 0.35 s, 1.2 s
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass) 10 new tests; result notes give 3287 tests, 3286 passing, 0 failing
+- [ ] A GIF in art-archive/T-606/screenshots/ shows a pulse, taken with bash game/tools/screenshot.sh frames. (QA: pass) notebook_pulse.gif and still present in art-archive/T-606/screenshots/
 
 ## Updates
 
