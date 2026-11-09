@@ -149,3 +149,31 @@ The recording script is `bash game/tools/record_kaiju_anim_gif.sh <walk|windup|d
 - docs/game-loop-architecture.md, Content: One run flowchart and "The run scene", the win's new timing.
 - Also updated: game/docs/enemies/kaiju.md (Death, and the new "The kaiju's animations" section) and game/docs/enemies/meteors.md (the rings are gone).
 - 2026-11-09, needs-playtest → in-progress: The board (2026-11-09): add a button on the God mode page that spawns the boss, pressable only once, into this ticket so both are playtested together.
+
+### Enemy Behavior Agent, 2026-11-09, round 2: God mode's spawn the boss button, done
+
+**Built.** HUD and menus, Decisions, "God mode can spawn the boss": a new shared small button on the God mode page, labelled with T-614's texts word for word. Its label is `god_mode_spawn_boss`, "Call the kaiju", and once it can no longer be pressed it reads `god_mode_spawn_boss_used`, "Kaiju is here". No other text was added.
+- Pressing it calls `GodMode.spawn_boss()`, which calls `KaijuBoss.spawn_now()`. That uses the boss time's own arrival (`arrival_due` and then `try_appear()`: just off-screen, free spot, same rules). The kaiju arrives at once, even while the game is paused behind the page. The run's time left and `boss_time_sent` are untouched.
+- It works once per run. `can_spawn_now()` is false once the kaiju has arrived or is due. After that the button is disabled and reads "Kaiju is here", and a second press does nothing. The same happens when the kaiju arrived on its own. The page refreshes when it opens.
+- A new run enables it again: the boss's `clear()` on `world_rebuilt` resets it.
+- When the boss time comes later, it brings no second kaiju (the existing once-per-run guard).
+- Keys: left and right swap between this button and Back. Up and down from it go to the rows' - buttons (Back's go to the + buttons), and the first and last - buttons lead back to it. Mouse and the controller's accept press it like any button. Nothing is selected when the page opens (T-573, checked).
+
+**Proposals for the playtest:**
+10. The button sits on the page's last row, left of Back, and the two are centred together. The page is no taller and still fits 1152 x 648 with all 12 rows (see the screenshots).
+11. "Once" means once per run.
+12. The timer is left as it is.
+13. The kaiju's meteor attacks follow their usual clock, counted from its arrival.
+
+**Tests (foreground, all passing):**
+- New: `game/tests/unit/game/test_god_mode_spawn_boss.gd`, 5 tests. They cover the round 2 criteria 1 to 3, plus keys and T-573.
+- Updated: `test_shared_button.gd`, because the God mode page now has one more shared button (count 1 + 2 x rows becomes 2 + 2 x rows).
+- `-gselect=god_mode`: 22/22 passed (test_god_mode_page 8, test_god_mode_spawn_boss 5, test_god_mode 9).
+- Also passed: test_no_preselected 21, test_shared_button 12, test_pause_resume_stack 6, test_four_minute_run_data 6.
+- After the master merge, `-gselect=test_kaiju` still passes 97/97.
+
+**Screenshots** in `art-archive/T-612/screenshots/`: `god_mode_spawn_boss_before.png` (enabled, "Call the kaiju") and `god_mode_spawn_boss_after.png` (disabled, "Kaiju is here"). They come from the fixture `game/tests/fixtures/t612_spawn_boss_shot.tscn` (`T612_PRESS=1` presses the button).
+
+**Documents:**
+- docs/hud-and-menus.md, Content, "God mode's spawn the boss button": a "Built in T-612" paragraph.
+- game/docs/enemies/kaiju.md, Arrival: `spawn_now()`.
