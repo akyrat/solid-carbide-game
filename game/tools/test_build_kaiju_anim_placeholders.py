@@ -6,10 +6,11 @@ import build_kaiju_anim_placeholders as b
 
 
 def _walk_sheet():
-    """A stand-in walk sheet: a 20 x 100 block standing on the feet's line in frame 0."""
+    """A stand-in walk sheet: a 100 x 160 block (about the kaiju's build) standing on the feet's
+    line in frame 0."""
     s = Image.new("RGBA", (b.FRAME * 2, b.FRAME), (0, 0, 0, 0))
-    block = Image.new("RGBA", (20, 100), (40, 80, 70, 255))
-    s.paste(block, (b.FEET_X - 10, b.FEET_Y - 100))
+    block = Image.new("RGBA", (100, 160), (40, 80, 70, 255))
+    s.paste(block, (b.FEET_X - 50, b.FEET_Y - 160))
     return s
 
 
@@ -26,14 +27,17 @@ class BuildKaijuAnimPlaceholdersTest(unittest.TestCase):
         self.assertLess(last[1], first[1], "taller at the peak")
         self.assertEqual(last[3], first[3], "feet stay on their line")
 
-    def test_death_sinks_fades_and_ends_empty(self):
+    def test_death_buckles_kneels_and_topples_to_lie_on_the_ground(self):
         _, death = b.build(_walk_sheet())
         frames = [death.crop((i * b.FRAME, 0, (i + 1) * b.FRAME, b.FRAME)) for i in range(b.DEATH_FRAMES)]
-        self.assertIsNotNone(frames[0].getbbox())
-        self.assertIsNone(frames[-1].getbbox(), "the last frame is empty: it has gone")
-        mid = frames[b.DEATH_FRAMES // 2]
-        self.assertLess(max(mid.getchannel("A").getdata()), 255, "fading")
-        self.assertLessEqual(mid.getbbox()[3], b.FEET_Y + 2, "nothing below the ground line")
+        for f in frames:
+            self.assertIsNotNone(f.getbbox(), "never empty: it stays to fall")
+            self.assertLessEqual(f.getbbox()[3], b.FEET_Y + 2, "nothing below the ground line")
+        first, last = frames[0].getbbox(), frames[-1].getbbox()
+        self.assertGreater(last[2] - last[0], last[3] - last[1], "lying: wider than tall")
+        self.assertLess(first[2] - first[0], first[3] - first[1], "standing at first")
+        self.assertEqual(last[3], b.FEET_Y + 2, "resting on the ground line")
+        self.assertEqual(b.DEATH_FRAMES, 16)
 
     def test_no_new_colours(self):
         src = _walk_sheet()

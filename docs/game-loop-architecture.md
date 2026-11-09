@@ -86,7 +86,7 @@ flowchart TD
     drive --> boss{3:00 reached?}
     boss -- yes --> kaiju[Kaiju spawns: weapons can damage it at any time]
     kaiju --> win{Kaiju defeated before 4:00?}
-    win -- yes --> death[Kaiju's death animation, 1.5 s; the win stands] --> won([Win])
+    win -- yes --> death[Kaiju's death: falls, cracks, explodes, 4.4 s; the win stands] --> won([Win])
     win -- no --> lost([Loss])
     drive -- Last heart gone --> wreck[Wrecked: controls dead, the car slides on, smoking and burning, 3 s] --> lost
     won --> recap[Recap screen: the run's stats with pictures; Continue or X]
@@ -109,7 +109,7 @@ The run owns its state: the clock (4:00 counting down, Decisions, "A 4-minute ru
 
 - At 1:00 left the run sends "boss time"; the kaiju spawns on it (Enemies).
 - Enemies damage the car and add coins through the run; the kaiju's death ends the run as a win.
-- **The win waits for the kaiju's death animation** (task T-612; Enemies, Decisions, "The kaiju is animated"): the kill decides the win, but the run ends only when the kaiju's death animation has played (its length is in `game/data/enemies.json`, "kaiju_animations", death: frames / fps, 1.5 s now, a proposal). Then its coins are added and the run ends as a win, with them in the coins saved. While it plays the run goes on as usual (the car drives, minions still come, coins, likes and damage count), and the win stands whatever happens meanwhile (proposals for the playtest): if the clock reaches 0:00 it holds there, with no time's up screen, since the kaiju was killed in time; if the last heart goes, the wreck plays and waits at its end for the death, then the run is won; a kill on the very step the clock reaches 0:00 calls the time's up off (as in "A tie goes to the player") and the death plays. How it is built: [game/docs/enemies/kaiju.md](../game/docs/enemies/kaiju.md), "The kaiju", Death (`RunState.kaiju_dying()`, then `kaiju_killed()`).
+- **The win waits for the kaiju's death animation** (task T-612; Enemies, Decisions, "The kaiju is animated"): the kill decides the win, but the run ends only when the kaiju's death animation has played (its length is in `game/data/enemies.json`, "kaiju_animations", death: frames / fps, then the hold, the green cracks and the explosion of "death_end", 4.4 s now, a proposal; quick tuning 1). Then its coins are added and the run ends as a win, with them in the coins saved. While it plays the run goes on as usual (the car drives, minions still come, coins, likes and damage count), and the win stands whatever happens meanwhile (proposals for the playtest): if the clock reaches 0:00 it holds there, with no time's up screen, since the kaiju was killed in time; if the last heart goes, the wreck plays and waits at its end for the death, then the run is won; a kill on the very step the clock reaches 0:00 calls the time's up off (as in "A tie goes to the player") and the death plays. How it is built: [game/docs/enemies/kaiju.md](../game/docs/enemies/kaiju.md), "The kaiju", Death (`RunState.kaiju_dying()`, then `kaiju_killed()`).
 - The car reaching 0 hearts, or the clock reaching 0:00, ends the run as a loss. At 0 hearts the car is wrecked first, for 3 seconds (Wrecked, below).
 - Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
 - The HUD reads the time left, the health and the coins from the run (HUD and menus).

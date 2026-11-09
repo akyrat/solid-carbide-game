@@ -11,6 +11,7 @@ const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
 const SpriteScript := preload("res://scripts/enemies/kaiju_sprite.gd")
 const MeteorsScript := preload("res://scripts/enemies/kaiju_meteors.gd")
 const FlameScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
+const DeathFx := preload("res://scripts/enemies/kaiju_death_fx.gd")
 const DT := 0.02
 
 var run: Node2D
@@ -83,8 +84,13 @@ func test_the_data_names_three_animations_with_sheets_counts_and_speeds() -> voi
 	assert_true(bool(anims.walk.loop), "the walk loops")
 	assert_false(bool(anims.windup.loop), "the windup plays once")
 	assert_false(bool(anims.death.loop), "the death plays once")
-	assert_almost_eq(data.kaiju_death_seconds(), float(anims.death.frames) / float(anims.death.fps), 0.0001,
-		"the death lasts frames / fps")
+	var end: Dictionary = anims.death_end
+	var whole := float(anims.death.frames) / float(anims.death.fps) + float(end.hold_seconds) \
+			+ float(end.crack_seconds) + float(end.explosion_seconds)
+	assert_almost_eq(data.kaiju_death_seconds(), whole, 0.0001,
+		"quick tuning 1: the death lasts frames / fps, then the hold, the cracks and the explosion")
+	assert_almost_eq(SpriteScript.death_length(), whole, 0.0001, "the sprite reads the same")
+	assert_gt(float(end.explosion_radius_px), 0.0)
 
 
 func test_the_frame_format_is_written_for_the_art_task() -> void:
@@ -225,13 +231,99 @@ func test_the_death_plays_once_with_the_kaiju_still_harmless_and_untargeted() ->
 	assert_false(is_instance_valid(k), "then it disappears")
 
 
-func test_the_shadow_fades_with_the_death() -> void:
+func test_the_shadow_stays_while_it_lies_and_fades_with_the_explosion() -> void:
 	var k := _kaiju_near(12.0)
 	var s: Node2D = k.sprite
 	assert_eq(s.shadow_alpha(), 1.0)
 	k.take_damage(1e9)
-	s.advance(SpriteScript.death_length() * 0.5)
-	assert_almost_eq(s.shadow_alpha(), 0.5, 0.01)
+	var end: Dictionary = anims.death_end
+	var before_explosion := SpriteScript.death_fall_length() + float(end.hold_seconds) + float(end.crack_seconds)
+	s.advance(before_explosion - 0.05)
+	assert_eq(s.shadow_alpha(), 1.0, "full while it lies there and cracks")
+	s.advance(0.05 + float(end.explosion_seconds) * 0.5)
+	assert_almost_eq(s.shadow_alpha(), 0.5, 0.02, "fading with the explosion")
+	s.advance(float(end.explosion_seconds))
+	assert_eq(s.shadow_alpha(), 0.0, "gone with it")
+
+
+# ---- Quick tuning 1: the longer death ---------------------------------------------------------
+
+func test_the_death_goes_fall_hold_crack_explode_then_gone_in_that_order() -> void:
+	var end: Dictionary = anims.death_end
+	var fall := SpriteScript.death_fall_length()
+	assert_almost_eq(fall, float(anims.death.frames) / float(anims.death.fps), 0.0001)
+	var edges := [0.0, fall, fall + float(end.hold_seconds), fall + float(end.hold_seconds) + float(end.crack_seconds),
+			SpriteScript.death_length()]
+	var names := ["fall", "hold", "crack", "explode"]
+	for i in names.size():
+		var mid: float = (edges[i] + edges[i + 1]) * 0.5
+		var ph: Dictionary = SpriteScript.death_phase_at(mid)
+		assert_eq(ph.phase, names[i], "at %.2f s" % mid)
+		assert_almost_eq(ph.progress, 0.5, 0.001, names[i])
+	assert_eq(SpriteScript.death_phase_at(SpriteScript.death_length() + 0.01).phase, "gone")
+	# On the kaiju: the death animation's last frame holds through the hold and the cracks.
+	var k := _kaiju_near(12.0)
+	var s: Node2D = k.sprite
+	k.take_damage(1e9)
+	s.advance(fall + float(end.hold_seconds) + float(end.crack_seconds) * 0.5)
+	assert_eq(s.death_phase().phase, "crack")
+	assert_eq(s.current_frame().frame, int(anims.death.frames) - 1, "lying in the last frame")
+
+
+func test_the_kaiju_lies_on_the_ground_in_the_last_death_frame() -> void:
+	for d in ["e", "s"]:
+		var tex := SpriteScript.anim_sheet("death", d)
+		var img := tex.get_image()
+		var fs := int(anims.frame_size)
+		var first := img.get_region(Rect2i(0, 0, fs, fs)).get_used_rect()
+		var last := img.get_region(Rect2i((int(anims.death.frames) - 1) * fs, 0, fs, fs)).get_used_rect()
+		assert_gt(last.size.x, 0, d)
+		assert_lt(last.size.y, first.size.y * 0.75, "%s: flat on the ground, much lower than standing" % d)
+		assert_almost_eq(float(last.end.y), float(anims.feet[1]) + 2.0, 3.0, "%s: resting on the ground line" % d)
+
+
+func test_the_cracks_follow_the_body_and_the_green_consumes_it() -> void:
+	var tex := SpriteScript.anim_sheet("death", "e")
+	var info: Dictionary = DeathFx.frame_info(tex, int(anims.death.frames) - 1, int(anims.frame_size))
+	assert_false(info.is_empty())
+	assert_gt(info.cracks.size(), 3, "several cracks")
+	var img := tex.get_image()
+	var off := (int(anims.death.frames) - 1) * int(anims.frame_size)
+	for pts in info.cracks:
+		for q in pts:
+			assert_gt(img.get_pixel(off + int(q.x), int(q.y)).a, 0.5, "every crack point is on the body")
+	assert_eq(DeathFx.consume_alpha(0.0), 0.0)
+	assert_lt(DeathFx.consume_alpha(0.5), DeathFx.consume_alpha(0.9), "the green grows")
+	assert_eq(DeathFx.consume_alpha(1.0), 1.0, "consumed at the end")
+	assert_eq(DeathFx.crack_reveal(0, 9, 0.0), 0.0)
+	assert_eq(DeathFx.crack_reveal(8, 9, 1.0), 1.0, "every crack has spread by the end")
+
+
+func test_the_greens_and_the_explosion_are_not_greenbulls_and_follow_the_theme() -> void:
+	var greenbull := [Color8(104, 220, 96), Color8(247, 208, 52), Color8(12, 76, 44)]
+	for c in DeathFx.CRACK_COLOURS + DeathFx.EXPLOSION_COLOURS:
+		for g in greenbull:
+			var d := Vector3(c.r - g.r, c.g - g.g, c.b - g.b).length() * 255.0
+			assert_gt(d, 40.0, "%s is not Greenbull's %s (rule 6)" % [c, g])
+	assert_eq(DeathFx.CRACK_GREEN, Color8(140, 224, 26), "the minions' spill green")
+	assert_true(DeathFx.EXPLOSION_COLOURS.has(Color8(184, 46, 255)), "the HUD's neon purple for the kaiju")
+
+
+func test_every_phase_draws_without_errors() -> void:
+	var k := _kaiju_near(12.0)
+	boss.enabled = false
+	var s: Node2D = k.sprite
+	k.take_damage(1e9)
+	var end: Dictionary = anims.death_end
+	var fall := SpriteScript.death_fall_length()
+	for t in [0.1, fall + 0.1, fall + float(end.hold_seconds) + 0.5,
+			fall + float(end.hold_seconds) + float(end.crack_seconds) + 0.05,
+			fall + float(end.hold_seconds) + float(end.crack_seconds) + 0.6]:
+		s.death_seconds = t
+		s.queue_redraw()
+		await wait_process_frames(1)
+	assert_true(true, "drawn through every phase")
+	assert_almost_eq(s.explosion_radius_px(), float(end.explosion_radius_px), 0.0001)
 
 
 func test_the_coins_and_the_win_come_only_when_the_death_has_played() -> void:
@@ -245,6 +337,9 @@ func test_the_coins_and_the_win_come_only_when_the_death_has_played() -> void:
 	k.take_damage(1e9)
 	var length := data.kaiju_death_seconds()
 	_boss_steps(length - 3 * DT)
+	assert_true(boss.is_kaiju_dying())
+	assert_eq(SpriteScript.death_phase_at(length - boss.death_left).phase, "explode",
+		"quick tuning 1: the win waits for the explosion's end")
 	assert_eq(run.state.coins, 2, "no coins yet")
 	assert_eq(run.state.result, "", "no win yet")
 	assert_true(run.state.is_running())
@@ -326,7 +421,9 @@ func test_the_frames_come_from_the_files_and_counts_in_the_data() -> void:
 	assert_eq_deep(seen, [0, 1, 0])
 	# The death's length follows its count too.
 	other.death = {"sheet": String(anims.death.sheet), "frames": 4, "fps": 8.0, "loop": false}
-	assert_almost_eq(SpriteScript.death_length(), 0.5, 0.0001)
+	assert_almost_eq(SpriteScript.death_fall_length(), 0.5, 0.0001)
+	other.death_end = {"hold_seconds": 0.0, "crack_seconds": 0.0, "explosion_seconds": 0.0}
+	assert_almost_eq(SpriteScript.death_length(), 0.5, 0.0001, "and its end's numbers too")
 	assert_almost_eq(EnemyData.animation_seconds(other.death), 0.5, 0.0001)
 	# A missing windup sheet falls back to the walk.
 	other.windup = {"sheet": "res://art/kaiju/missing_%s.png", "frames": 6, "fps": 6.0, "loop": false}

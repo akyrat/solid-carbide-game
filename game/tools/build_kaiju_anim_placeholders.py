@@ -8,8 +8,12 @@ colour taken from the walk sheet (alpha aside):
 
 - windup: WINDUP_FRAMES frames, the kaiju rearing up: stretched taller and a little narrower
   about its feet, rising to the peak and holding it.
-- death: DEATH_FRAMES frames, the kaiju buckling (squashed), then sinking into the ground
-  while it fades out; the last frame is empty.
+- death: DEATH_FRAMES frames (quick tuning 1, the board 2026-11-09: longer and more dramatic):
+  the kaiju buckling (squashed, as before), sinking to its knees (no fade any more: it stays to
+  fall), then falling forward: leaning over while it flattens onto the ground, a heavy slump
+  that overshoots a little and settles, lying on the ground in the last frame (turned about its
+  feet, lifted so it rests on the ground line and slid so it stays inside the frame). The game then holds the last frame for
+  the cracks and the explosion, which are drawn in code (kaiju_sprite.gd).
 
 One PNG per animation and drawn direction in game/art/placeholders/kaiju/:
 kaiju_windup_<dir>.png and kaiju_death_<dir>.png, frames of FRAME x FRAME side by side, feet at
@@ -26,7 +30,15 @@ FEET_X = 112
 FEET_Y = 203
 DIRECTIONS = ["s", "se", "e", "ne", "n"]
 WINDUP_FRAMES = 6
-DEATH_FRAMES = 12
+BUCKLE_FRAMES = 4
+KNEEL_FRAMES = 4
+# The fall, per frame: (lean forward in degrees, height squash, width stretch). A heavy slump
+# forward that flattens it onto the ground, overshooting a little and settling: a side view turned
+# a full 90 degrees reads as a nose-dive, so the placeholder lies down by flattening.
+TOPPLE = [(4, 0.85, 1.10), (9, 0.79, 1.13), (15, 0.71, 1.16), (20, 0.61, 1.19),
+          (24, 0.51, 1.22), (26, 0.43, 1.26), (25, 0.48, 1.24), (24, 0.46, 1.25)]
+DEATH_FRAMES = BUCKLE_FRAMES + KNEEL_FRAMES + len(TOPPLE)
+KNEEL_SINK = 0.22  # how far it sinks, as a share of the feet's height
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -62,18 +74,41 @@ def windup_poses(n=WINDUP_FRAMES):
     return out
 
 
-def death_poses(n=DEATH_FRAMES):
-    """(sx, sy, sink, alpha) per death frame: a third buckling, then sinking and fading out."""
-    buckle = max(1, n // 3)
+def death_poses():
+    """(sx, sy, sink, angle) per death frame: buckling, sinking to its knees, then toppling."""
     out = []
-    for i in range(n):
-        if i < buckle:
-            t = (i + 1) / buckle
-            out.append((1.0 + 0.08 * t, 1.0 - 0.12 * t, 0, 1.0))
-        else:
-            t = (i - buckle + 1) / (n - buckle)
-            out.append((1.08, 0.88, round(FEET_Y * 0.9 * t), 1.0 - t))
+    for i in range(BUCKLE_FRAMES):
+        t = (i + 1) / BUCKLE_FRAMES
+        out.append((1.0 + 0.08 * t, 1.0 - 0.12 * t, 0, 0.0))
+    for i in range(KNEEL_FRAMES):
+        t = (i + 1) / KNEEL_FRAMES
+        out.append((1.08, 0.88, round(FEET_Y * KNEEL_SINK * t), 0.0))
+    for ang, sy, sx in TOPPLE:
+        # The knees' sink eases out as it flattens, so it ends lying on the ground, not sunk in it.
+        ease = max(0.0, min(1.0, (sy - 0.4) / 0.48))
+        out.append((sx, sy, round(FEET_Y * KNEEL_SINK * ease), float(ang)))
     return out
+
+
+def topple(img, angle):
+    """`img` turned `angle` degrees clockwise about its feet, then lifted so its lowest pixel rests
+    on the ground line (FEET_Y + 2) and slid sideways so its middle stays at FEET_X (it fits the
+    frame). Nearest neighbour; nothing below the ground line."""
+    if angle == 0.0:
+        return img
+    big = Image.new("RGBA", (FRAME * 3, FRAME * 3), (0, 0, 0, 0))
+    big.paste(img, (FRAME, FRAME), img)
+    turned = big.rotate(-angle, resample=Image.NEAREST, center=(FRAME + FEET_X, FRAME + FEET_Y))
+    box = turned.getbbox()
+    if box is None:
+        return Image.new("RGBA", (FRAME, FRAME), (0, 0, 0, 0))
+    lift = box[3] - (FRAME + FEET_Y + 2)
+    lift = max(lift, 0)
+    mid = (box[0] + box[2]) // 2
+    shift = mid - (FRAME + FEET_X)
+    left = FRAME + shift
+    top = FRAME + lift
+    return turned.crop((left, top, left + FRAME, top + FRAME))
 
 
 def sheet(frames):
@@ -87,7 +122,7 @@ def build(walk_sheet):
     """(windup sheet, death sheet) from one walk sheet."""
     base = first_frame(walk_sheet)
     windup = sheet([pose(base, sx, sy) for sx, sy in windup_poses()])
-    death = sheet([pose(base, sx, sy, sink, a) for sx, sy, sink, a in death_poses()])
+    death = sheet([topple(pose(base, sx, sy, sink), ang) for sx, sy, sink, ang in death_poses()])
     return windup, death
 
 

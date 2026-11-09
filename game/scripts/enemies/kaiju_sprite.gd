@@ -34,7 +34,10 @@ extends Node2D
 ## frame size, feet and head top shared). The walk loops while it walks; the
 ## windup plays once while the meteor attack winds up (set_winding_up, from the
 ## boss controller) and holds its last frame; the death plays once (set_dying)
-## and its ground shadow fades with it. Which one plays: death, else the fall,
+## and holds its last frame, the kaiju lying on the ground; then (quick tuning 1,
+## data "death_end") it lies still, green cracks consume it and it explodes
+## (kaiju_death_fx.gd, drawn in code), its shadow fading with the explosion.
+## Which one plays: death, else the fall,
 ## else the windup, else the walk (with the landing squash). Everything moves on
 ## in _process, so the frames stop while the game is paused. The frame format
 ## for the final art (T-613): game/docs/enemies/kaiju.md, "The kaiju's animations".
@@ -46,6 +49,7 @@ const OUTLINE_COLOR := Color(0.05, 0.07, 0.12)
 const EYE_COLOR := Color(1.0, 0.88, 0.30)
 const SHADOW_COLOR := Color(0.02, 0.02, 0.05, 0.55)
 const ShadowSizeScript := preload("res://scripts/driving/shadow_size.gd")
+const DeathFxScript := preload("res://scripts/enemies/kaiju_death_fx.gd")
 
 ## Body radius and height in units (kaiju.gd's RADIUS_UNITS and HEIGHT_UNITS).
 const RADIUS_UNITS := 2.0
@@ -204,9 +208,41 @@ static func frame_at(anim_name: String, seconds: float, count: int) -> int:
 	return clampi(i, 0, maxi(count, 1) - 1)
 
 
-## T-612: how long the death plays, seconds (frames / fps).
+## T-612: how long the whole death plays, seconds: the death animation (frames / fps), then,
+## quick tuning 1, its "death_end" (hold, cracks, explosion).
 static func death_length() -> float:
+	return death_fall_length() + EnemyData.death_end_seconds(anim_data("death_end"))
+
+
+## T-612, quick tuning 1: the death animation's own length (it buckles, kneels and falls).
+static func death_fall_length() -> float:
 	return EnemyData.animation_seconds(anim_data("death"))
+
+
+## T-612, quick tuning 1: where the death is `seconds` in, as {phase, progress}: "fall" (the
+## death animation), "hold" (lying still on its last frame), "crack" (the green consuming it),
+## "explode", then "gone"; progress 0 to 1 within the phase.
+static func death_phase_at(seconds: float) -> Dictionary:
+	var end := anim_data("death_end")
+	var t := maxf(seconds, 0.0)
+	var parts := [["fall", death_fall_length()], ["hold", float(end.get("hold_seconds", 0.0))],
+			["crack", float(end.get("crack_seconds", 0.0))], ["explode", float(end.get("explosion_seconds", 0.0))]]
+	for part in parts:
+		var length: float = maxf(part[1], 0.0)
+		if t < length:
+			return {"phase": part[0], "progress": t / length}
+		t -= length
+	return {"phase": "gone", "progress": 1.0}
+
+
+## The death's phase now (see death_phase_at); "" while it is not dying.
+func death_phase() -> Dictionary:
+	return death_phase_at(death_seconds) if dying else {"phase": "", "progress": 0.0}
+
+
+## The explosion's radius, screen pixels (data "death_end", explosion_radius_px).
+static func explosion_radius_px() -> float:
+	return float(anim_data("death_end").get("explosion_radius_px", 150.0))
 
 
 ## T-612: what is drawn now: {anim, texture, frame, mirrored}; the texture is
@@ -357,6 +393,10 @@ func _draw() -> void:
 			return
 	var anim := anim_transform()
 	var cur := current_frame()
+	if dying and cur.texture != null and cur.anim == "death":
+		_draw_death(cur)
+		if Perf.on: Perf.each_end(&"draw.kaiju")
+		return
 	if cur.texture != null:
 		# T-612: the walk, windup or death frame; the fall's placeholder tilt and
 		# the landing squash only over the walk.
@@ -416,12 +456,40 @@ func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
 	draw_texture_rect_region(tex, Rect2(Vector2(-fx * ART_SCALE, -f.y * ART_SCALE), Vector2(w, size)), src)
 
 
-## T-612: the shadow's alpha: full, fading out with the death.
+## T-612, quick tuning 1: the death after its frames: lying still, the green cracks consuming
+## it, then the explosion (kaiju_death_fx.gd), and nothing once it is over.
+func _draw_death(cur: Dictionary) -> void:
+	var ph := death_phase()
+	var fs := frame_size()
+	if ph.phase == "fall" or ph.phase == "hold":
+		_draw_art(cur.texture, cur.mirrored, cur.frame)
+		return
+	var info := DeathFxScript.frame_info(cur.texture, cur.frame, fs)
+	if ph.phase == "crack":
+		_draw_art(cur.texture, cur.mirrored, cur.frame)
+		DeathFxScript.draw_cracks(self, info, ph.progress, feet(), cur.mirrored, fs, death_seconds)
+	elif ph.phase == "explode":
+		DeathFxScript.draw_flash_body(self, info, ph.progress, feet(), cur.mirrored, fs)
+		DeathFxScript.draw_explosion(self, explosion_centre(info, cur.mirrored), ph.progress, explosion_radius_px())
+
+
+## Where the explosion starts: the lying body's middle in the drawing (a little above the feet
+## when the frame's pixels cannot be read).
+func explosion_centre(info: Dictionary, mirrored: bool) -> Vector2:
+	if info.has("centre"):
+		return DeathFxScript.to_draw(info.centre, feet(), mirrored).round()
+	return Vector2(0.0, -16.0)
+
+
+## T-612: the shadow's alpha: full while it dies and lies there (quick tuning 1), fading out
+## with the explosion, none once it is gone.
 func shadow_alpha() -> float:
 	if not dying:
 		return 1.0
-	var length := death_length()
-	return 0.0 if length <= 0.0 else clampf(1.0 - death_seconds / length, 0.0, 1.0)
+	var ph := death_phase()
+	if ph.phase == "explode":
+		return clampf(1.0 - ph.progress, 0.0, 1.0)
+	return 0.0 if ph.phase == "gone" else 1.0
 
 
 func _ground_shadow(full_rx: float) -> void:

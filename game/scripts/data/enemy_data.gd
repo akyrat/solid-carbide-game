@@ -107,9 +107,19 @@ static func animation_seconds(anim: Dictionary) -> float:
 
 
 ## T-612: how long the kaiju's death plays before it disappears (0 when the data is missing:
-## the old instant death).
+## the old instant death): the death animation (frames / fps), then, quick tuning 1, its
+## "death_end" (hold, cracks, explosion).
 func kaiju_death_seconds() -> float:
-	return animation_seconds(kaiju_animations().get("death", {}))
+	var a := kaiju_animations()
+	return animation_seconds(a.get("death", {})) + death_end_seconds(a.get("death_end", {}))
+
+
+## T-612, quick tuning 1: the seconds after the death animation: hold + crack + explosion.
+static func death_end_seconds(end: Dictionary) -> float:
+	var t := 0.0
+	for k in ["hold_seconds", "crack_seconds", "explosion_seconds"]:
+		t += maxf(float(end.get(k, 0.0)), 0.0)
+	return t
 
 
 ## first_attack_after_seconds, seconds_between_attacks, windup_seconds, meteors_per_attack,
