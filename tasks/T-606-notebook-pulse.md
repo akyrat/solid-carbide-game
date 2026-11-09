@@ -1,7 +1,7 @@
 ---
 id: T-606
 title: The notebook pulses on mission progress
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/scripts/hud/mission_page.gd, tasks/T-563-notebook-trick-splash.md]
 files_expected_to_change: [game/scripts/hud/, game/data/, game/tests/, game/docs/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,17 +43,29 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The notebook pulses on each progress of a count goal and on a goal being ticked (tests). (QA: pass / fail)
-- [ ] A running total goal pulses within the proposed limit, not every frame (a test). (QA: pass / fail)
-- [ ] The HUD layout does not move: the notebook piece keeps its position and size outside the pulse (a test). (QA: pass / fail)
-- [ ] Works in a run and in the tutorial's practice window (tests). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content describes it, with the numbers. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A GIF in art-archive/T-606/screenshots/ shows a pulse, taken with bash game/tools/screenshot.sh frames. (QA: pass / fail)
+- [ ] The notebook pulses on each progress of a count goal and on a goal being ticked (tests). (QA: pass) tests for count after landing, no box, tick
+- [ ] A running total goal pulses within the proposed limit, not every frame (a test). (QA: pass) rate-limit test, 1.2 s gap
+- [ ] The HUD layout does not move: the notebook piece keeps its position and size outside the pulse (a test). (QA: pass) test_the_pulse_never_moves_or_resizes_the_page
+- [ ] Works in a run and in the tutorial's practice window (tests). (QA: pass) tutorial practice window test, same class
+- [ ] docs/hud-and-menus.md Content describes it, with the numbers. (QA: pass) docs/hud-and-menus.md Content, 5%, 0.35 s, 1.2 s
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass) 10 new tests; result notes give 3287 tests, 3286 passing, 0 failing
+- [ ] A GIF in art-archive/T-606/screenshots/ shows a pulse, taken with bash game/tools/screenshot.sh frames. (QA: pass) notebook_pulse.gif and still present in art-archive/T-606/screenshots/
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-11-09, Open → In progress
+
+Started: a discreet pulse of the notebook page on any mission progress.
+
+### 2026-11-09, In progress → In QA
+
+Agent done; QA's checks passed.
+
+### 2026-11-09, In QA → Needs playtest
+
+QA passed all 7 criteria. Play it from C:\solid-carbide-worktrees\T-606\game.
 
 ## Style review
 
@@ -61,4 +73,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: MissionPage pulses (scale about its centre, position/size untouched) on a count going up, a goal ticked, a running total growing. Numbers in game/data/hud.json notebook_pulse with reasons (proposals): 5% peak, 0.35 s half-sine, running totals at most every 1.2 s and only when the shown text changes; a pulse before its peak is left to finish, past it restarts. With a falling box the pulse comes when the box lands; goals without a box pulse at once. Same class in run and tutorial practice window. Page now always processes (rate-limit clock). Tests: new tests/unit/hud/test_mission_page_pulse.gd (10); full run 3287 tests, 3286 passing, 0 failing, 1 risky/pending (existing). Docs: docs/hud-and-menus.md Content, game/docs/hud-and-menus/hud.md. GIF: art-archive/T-606/screenshots/notebook_pulse.gif (+ notebook_pulse_still.png), game/tools/record_notebook_pulse_gif.sh. Screenshot.sh takes single stills, so the GIF came from the --write-movie recorder script.
+- 2026-11-09, needs-playtest → done: The board played it: lgtm (2026-11-09).

@@ -4285,3 +4285,8 @@ Entry format:
 - Decision or change: The notebook page pulses discreetly whenever a mission goal makes progress.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-606
+
+## 2026-11-09: The notebook pulses on mission progress
+- Decision or change: Merged after the board's playtest: the notebook page pulses discreetly (5%, 0.35 s; running totals at most every 1.2 s) on any mission progress.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-606

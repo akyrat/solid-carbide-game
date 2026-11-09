@@ -62,6 +62,10 @@ What it does: `docs/hud-and-menus.md`, Content, "The HUD". `scripts/hud/mission_
 - **Movable HUD:** T-453 was not on the branch, so the page is fixed. When it lands, the page is a piece to register with it.
 - Tests: `tests/unit/hud/test_hud_mission_page.gd`. Screenshots: fixtures `tests/fixtures/mission_page_demo*.tscn` (half, ticked, next), in `art-archive/T-458/screenshots/`.
 
+### The notebook pulse (T-606)
+
+What it does: `docs/hud-and-menus.md`, Content, "The notebook pulses on mission progress". `MissionPage` sets `pivot_offset` to the page's centre and animates only its `scale` (never `position` or `size`), by `advance(delta)`, which `_process` calls every frame now (the page always processes, so the rate limit's clock runs while idle). `_on_goal_progress` pulses when the shown text changed, `_on_goal_completed` always, both inside the deferred call, so with a falling box the pulse comes when the box lands. `_pulse_for(row, ticked)` rate limits running totals (`RunMissions.is_running_total`) to one pulse per `total_gap`. `pulse()` ignores a call while the pulse is before its peak, restarts one past it; `pulse_factor()` is `1 + scale * sin(pi * age / seconds)`. Numbers: `data/hud.json` `notebook_pulse` (`scale`, `seconds`, `total_gap`), read by `_load_pulse_numbers`, constants as fallback. The tutorial's practice windows use the same class (`show_progress`). Tests: `tests/unit/hud/test_mission_page_pulse.gd`. Recording: `game/tools/record_notebook_pulse_gif.sh`, fixture `tests/fixtures/notebook_pulse_demo.tscn`.
+
 ## The text layout capture (T-524)
 
 The data for the board's text editor page (every in-game text on its real screen, new words typed and drawn in place). One command, run from the repo root with `GODOT_BIN` set (needs a real window, about 15 seconds):
