@@ -1,7 +1,7 @@
 ---
 id: T-611
 title: Timer at the top centre, notebook movable in the HUD editor
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Polish
@@ -63,10 +63,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-09, Open → In progress
+
+Started: the UI Agent is moving the timer to the top centre and making the notebook a movable piece in Edit HUD layout.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. Timer: TimerClock now anchored top centre (offsets -100..100, top margin 16, hud.json timer_clock.layout.top), centred within 2 px at 1152x648, 1920x1080, 960x540, 2560x1080 and HUD sizes min/100/max. Saved layout entry for the clock is kept; Reset puts it at top centre. Checked near the top centre: all HUD pieces, airtime/drift counters, trick popups (top limit y162, clock ends y88), pause strip and trick list panel (start y92), gift pack/Time's up screens and practice windows (full screens / own layers), kaiju health bar (world). Nothing moved; coins stay at x16 y496 (the spot under them is now empty). Notebook: new piece id notebook in HudLayout.PIECES (Hud.piece maps it to mission_page); default x12 y304 and size unchanged; saved/reset like the others. Hidden page (no mission): editor frames it and fills the frame (HudLayoutEditor.is_ghost, GHOST_FILL). Pulse and falling box travel with the page (tests). Practice-window notebook is its own MissionPage, ignores layout (test). Proposals for playtest: top margin 16; ghost fill alpha 0.16; coins left where they were. New tests: tests/unit/hud/test_hud_timer_top_centre.gd (6), test_hud_notebook_layout.gd (8). Updated test_hud_timer_clock, test_hud_coins_position, test_hud_mission_page, test_hud_scaling. Ran test_hud_ (224 pass), test_pause (61), test_mission_page (26), test_practice (47), test_screen_flow (28), test_tutorial_flow (9), test_four_minute (24), test_gift_drops (56), all green. Docs updated: docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md. Screenshots in art-archive/T-611/screenshots/: start.png, editor_notebook.png, notebook_moved.png (fixtures game/tests/fixtures/t611_*.tscn).
