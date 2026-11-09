@@ -20,9 +20,14 @@ extends Node2D
 ## (`strong_offsets_units`), the side ones out of step with the middle one, looping
 ## their frames for as long as the burst lasts. The art is never scaled, so its
 ## pixels stay the car's size.
+##
+## T-603: the wheel's burst also draws two arrows on the ground at the car's sides
+## (polarized_arrows.gd, the child `arrows`, made here so it is under the car and lifted
+## with these lines wherever the boost effect is placed).
 
 const PX_PER_UNIT := 16.0
 const SHEET := preload("res://art/effects/boost_lines.png")
+const PolarizedArrowsScript := preload("res://scripts/driving/polarized_arrows.gd")
 const RECORD_PATH := "res://art/effects/boost_lines.json"
 ## Texels per unit of the art, drawn at 0.5 (like the car).
 const ART_SCALE := 0.5
@@ -42,7 +47,11 @@ var strong_offsets_units: Array = [-0.45, 0.0, 0.45]
 var view_transform := Transform2D.IDENTITY:
 	set(value):
 		view_transform = value
+		if arrows != null:
+			arrows.view_transform = value
 		queue_redraw()
+## T-603: the Polarized Steering Wheel's ground arrows (polarized_arrows.gd), a child.
+var arrows: Node2D = null
 ## Seconds since this node started (only advances while not paused).
 var time := 0.0
 ## How many bursts have been made.
@@ -60,6 +69,10 @@ var _bursts: Array = []
 
 func _init() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	arrows = PolarizedArrowsScript.new()
+	arrows.name = "PolarizedArrows"
+	arrows.view_transform = view_transform
+	add_child(arrows)
 	var f := FileAccess.open(RECORD_PATH, FileAccess.READ)
 	if f:
 		var rec: Variant = JSON.parse_string(f.get_as_text())
@@ -84,9 +97,10 @@ func bind(car: Node) -> void:
 	# T-502: the Polarized Steering Wheel's burst, a stronger burst for its length.
 	var wheel = car.get("polarized")
 	if wheel != null:
-		wheel.fired.connect(func(_speed: float, seconds: float, _angle: float) -> void:
+		wheel.fired.connect(func(_speed: float, seconds: float, _direction: Vector2) -> void:
 			play_strong(car.model.get_position(), car.model.rotation, seconds)
 			_bursts[-1]["car"] = car)
+		arrows.bind(car)  # T-603: and the ground arrows
 
 
 ## The Polarized Steering Wheel's burst (T-502): the stronger lines, looping their
@@ -130,6 +144,7 @@ func burst_count() -> int:
 
 func clear() -> void:
 	_bursts.clear()
+	arrows.clear()
 	queue_redraw()
 
 
