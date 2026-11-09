@@ -1,7 +1,7 @@
 ---
 id: T-604
 title: Quick tuning: a new practice playground and alt drift take, with the board
-status: in-progress
+status: done
 from: project-lead
 to: ui
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md, docs/level-design.md]
 files_to_read_first: [tasks/README.md, tasks/T-574-drift-slides-quick-tuning.md, docs/hud-and-menus.md, docs/level-design.md, game/docs/hud-and-menus/tutorial-slides.md, game/scripts/run/practice_session.gd, game/tools/build_practice_playground.py]
 files_expected_to_change: [game/data/level/practice_playground.json, game/data/tutorial_takes/, game/tools/, game/tests/, game/docs/, docs/hud-and-menus.md, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,14 @@ Started: the playground editable in the creator and the recording controls back,
 ### 2026-11-09, In progress
 
 The board's playground and alt drift take are in. The take tools are removed again, and the tests pass. The air 360 and grind demos stray on the new map, and the grind demo no longer completes its goal. Held for the board to re-record those two in the morning.
+
+### 2026-11-09, In progress → In QA
+
+Agent done: the board's playground and takes are in, every demo lands its trick, recording removed; QA's checks passed.
+
+### 2026-11-09, In QA → Needs playtest
+
+QA passed all 6 criteria. Play the tutorial from C:\solid-carbide-worktrees\T-604\game.
 
 ## Style review
 
@@ -119,3 +127,4 @@ Final steps (UI Agent, 2026-11-09; the board: "I finished re-recording the grind
 4. Tests: full Godot set (GUT_TIME_LIMIT=3600): 3258 of 3259 passed, 1 pending (the one that was pending before T-604), 0 failing (234 s). game/tools Python set: 1193 tests OK (4 skipped).
 5. Screenshot: art-archive/T-604/screenshots/grind_new_take.png (the grind slide playing the board's new take, no recording row).
 Note: a hook refused one combined command (git status plus Godot -s check_takes.gd) as a possible ticket write. I ran the read-only check_takes.gd on its own, as the hook's message said to, and it passed the hook.
+- 2026-11-09, needs-playtest → done: The board played it: lgtm (2026-11-09).
