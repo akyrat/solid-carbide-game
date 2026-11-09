@@ -499,6 +499,13 @@ Decisions, "Controller support in the menus and prompts". The texts shown instea
 - Lines that need no change (no key named, or unused): the other `trick_recipe/*` notes, `missions.json` goals, `pause_text.json` labels, and `tutorial_text.json` `slide1.*` (unused since T-559). The full list, with every line searched, is in T-609's result notes.
 - No screenshots: text only.
 
+### God mode's spawn the boss button (T-614; proposals for the playtest)
+
+The two texts for the button in Decisions, "God mode can spawn the boss". Both are in `game/data/pause_text.json` beside the other `god_mode_*` keys, 16 characters at most, and T-612 builds the button with them. Style loop scores: 9 and 9.
+
+- **Spawn the boss** (`god_mode_spawn_boss`): "Call the kaiju". The label of a shared small button on the God mode page, like "Back". Pressing it makes the kaiju arrive straight away.
+- **Boss already here** (`god_mode_spawn_boss_used`): "Kaiju is here". What the same button reads once it can no longer be pressed (it was pressed, or the kaiju arrived on its own).
+
 ## Open questions
 
 - (After MVP) The visual style of the HUD, the level-up screen, the main menu and the pause menu.

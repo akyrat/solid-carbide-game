@@ -2791,6 +2791,13 @@ Decisions, "Controller support in the menus and prompts". The texts shown instea
 - Lines that need no change (no key named, or unused): the other `trick_recipe/*` notes, `missions.json` goals, `pause_text.json` labels, and `tutorial_text.json` `slide1.*` (unused since T-559). The full list, with every line searched, is in T-609's result notes.
 - No screenshots: text only.
 
+#### God mode's spawn the boss button (T-614; proposals for the playtest)
+
+The two texts for the button in Decisions, "God mode can spawn the boss". Both are in `game/data/pause_text.json` beside the other `god_mode_*` keys, 16 characters at most, and T-612 builds the button with them. Style loop scores: 9 and 9.
+
+- **Spawn the boss** (`god_mode_spawn_boss`): "Call the kaiju". The label of a shared small button on the God mode page, like "Back". Pressing it makes the kaiju arrive straight away.
+- **Boss already here** (`god_mode_spawn_boss_used`): "Kaiju is here". What the same button reads once it can no longer be pressed (it was pressed, or the kaiju arrived on its own).
+
 ### References
 
 - The screens and how they connect (main menu, run, garage): Game loop architecture, Decisions.
@@ -2818,4 +2825,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `5c5d7ad1238891a0fe47af7e9b948946e8d0f4cb642421be15e3da1098752c84` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `3423443bd8682961ad3470427d959577df5123bc54441f9929ecdf1598443974` |
+| `hud-and-menus.md` | `f3cce456d848c29a2eb151b7313da79413bf1cccfe7d41af40c86bd75b5ae452` |

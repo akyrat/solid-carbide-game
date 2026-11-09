@@ -4365,3 +4365,8 @@ Entry format:
 - Decision or change: T-611 merged on the board's word: the run timer's default place is the top centre (16 px margin), and the mission notebook is a movable piece in Edit HUD layout. Proposals kept: the coins counter stays where it was; a hidden notebook shows as a faintly filled frame in the editor.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-611
+
+## 2026-11-09: Text for God mode's spawn the boss button (merged)
+- Decision or change: T-614 merged after QA: the button reads "Call the kaiju" and, once it can no longer be pressed, "Kaiju is here" (pause_text.json, both scored 9). The board sees them in T-612's playtest.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-614
