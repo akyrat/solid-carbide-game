@@ -1,7 +1,7 @@
 ---
 id: T-613
 title: Art for the kaiju's walk, windup and death animations
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Polish
@@ -68,10 +68,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Waiting for T-612: the art is made in the frame format T-612 defines, then swapped in. The board's go for the full set (up to 60 generations) is recorded on the ticket.
 
+### 2026-11-09, Blocked → In progress
+
+Started on the board's word: the Asset Generation Agent is generating the kaiju's walk, windup and death art now (up to 60 generations), without waiting for T-612's placeholder playtest. The swap into the game follows once T-612 is ready.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Step 1, planned PixelLab calls (written before the first call): 15 animations (walk 6 frames, windup 6, death 8; each in e, n, ne, s, se), each from frame 0 of the still sprite (224 x 224) with /animate-with-text-v3, through tools/style_loop/run.py art, one at a time. Minimum 15 calls (1 per animation), at most 4 per animation (1 + 3 refines), at most 60 calls in all; refines only for scores below 8, free script fixes first (game/tools/build_kaiju_anim_sheet.py: palette snap, alpha, feet alignment, hold). Cost: the T-069 kaiju walk calls at this size cost 5.0 PixelLab generation units each (a 6-frame 224 x 224 call), against 1.0 for T-544's 48 x 48 minion; I count the board's 'generation' as one call (4 per animation, 60 in all, as the ticket's 15 x 4) and record the units used. If a call costs 5 units, 15 calls = 75 units and 60 calls = 300 units (balance before: 4882 of 5000). Briefs, action texts and reference frames: art-archive/T-613/.
