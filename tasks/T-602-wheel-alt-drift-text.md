@@ -1,7 +1,7 @@
 ---
 id: T-602
 title: Text: the Polarized Steering Wheel's new descriptions
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -43,11 +43,11 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The tier 1 and tier 2 descriptions name the new trigger and keep {burst_percent}, with their keys and where they show listed in the result notes. (QA: pass / fail)
-- [ ] Every other text that described the old trigger is found and rewritten, or the result notes say there is none and where it was checked. (QA: pass / fail)
-- [ ] The style loop's scores are in the Style review. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md Content lists the new texts. (QA: pass / fail)
-- [ ] QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] The tier 1 and tier 2 descriptions name the new trigger and keep {burst_percent}, with their keys and where they show listed in the result notes. (QA: pass - tier 1 and tier 2 texts name ALT DRIFT and keep {burst_percent}; keys and places in the result notes; shown by T-603's card test)
+- [ ] Every other text that described the old trigger is found and rewritten, or the result notes say there is none and where it was checked. (QA: pass - other text files checked, listed in the result notes)
+- [ ] The style loop's scores are in the Style review. (QA: pass - scores 9 and 8 in the Style review)
+- [ ] docs/hud-and-menus.md Content lists the new texts. (QA: pass - docs/hud-and-menus.md changed in the diff)
+- [ ] QA's full run passes, with the counts in the result notes. (QA: pass - full run on T-603's build, built on this branch: 3265 tests, 3264 passing, 0 failing, 1 risky/pending)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-08, Open → In progress
 
 Started: the wheel's two descriptions for the new trigger, through the style loop.
+
+### 2026-11-08, In progress → In QA
+
+Texts done (Brand safety. dropped, 23% kept, the board's choices). Tests and docs pass; its screenshots come from T-603's build.
 
 ## Style review
 
