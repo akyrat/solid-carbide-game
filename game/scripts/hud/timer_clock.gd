@@ -1,7 +1,7 @@
 class_name TimerClock
 extends PanelContainer
-## The run timer as a digital clock (T-335): a dark panel at the bottom left with
-## glowing digits that go green, yellow, orange and red as the time nears 0:00.
+## The run timer as a digital clock (T-335): a dark panel at the top centre (T-611; it was
+## at the bottom left) with glowing digits that go green, yellow, orange and red as the time nears 0:00.
 ## The switch points and the layout come from res://data/hud.json (timer_clock).
 ## It only shows: `label` holds the M:SS text, set by the HUD; `set_time_left()`
 ## picks the colour.
@@ -28,20 +28,21 @@ var _layout: Dictionary = {}
 func _init() -> void:
 	var r := GameData.load_file("hud")
 	var cfg: Dictionary = r.data["timer_clock"] if r.ok else {}
-	_layout = cfg.get("layout", {"x": 16, "y": 560, "w": 200, "h": 72, "reference_w": 1152, "reference_h": 648})
+	_layout = cfg.get("layout", {"top": 16, "w": 200, "h": 72})
 	_steps = cfg.get("steps", [])
 	name = "TimerClock"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_theme_stylebox_override("panel", HudStyle.clock_panel_box())
-	# Anchored to the bottom-left corner, keeping its margins at other window sizes.
-	set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	var ref_h: float = float(_layout["reference_h"])
-	offset_left = float(_layout["x"])
-	offset_right = offset_left + float(_layout["w"])
-	offset_top = float(_layout["y"]) - ref_h
+	# T-611: anchored to the top centre, so it stays centred at any window size and HUD size;
+	# `top` is its margin from the top edge (a proposal for the playtest: the HUD's usual 16).
+	set_anchors_preset(Control.PRESET_CENTER_TOP)
+	grow_horizontal = Control.GROW_DIRECTION_BOTH
+	var w := float(_layout["w"])
+	offset_left = -w / 2.0
+	offset_right = w / 2.0
+	offset_top = float(_layout["top"])
 	offset_bottom = offset_top + float(_layout["h"])
-	grow_vertical = Control.GROW_DIRECTION_BEGIN
 	label = Label.new()
 	label.name = "Timer"
 	label.text = "%d:%02d" % [int(RunState.RUN_SECONDS) / 60, int(RunState.RUN_SECONDS) % 60]

@@ -1,6 +1,6 @@
 class_name Hud
 extends CanvasLayer
-## The run's HUD (tasks T-090, T-049 and T-113): the timer as a digital clock at the bottom left (T-335),
+## The run's HUD (tasks T-090, T-049 and T-113): the timer as a digital clock at the top centre (T-335, moved by T-611),
 ## the car's health bar upright at the top left (T-276: 72 x 320, the heart
 ## under it, the weapon icons beside it), the coins
 ## at the top right, the sub goal square on the right edge (T-337, SubGoal: it
@@ -60,7 +60,7 @@ var root: Control
 ## The HUD size slider's value in percent (GameSettings.DEFAULT_HUD_SIZE until set).
 var hud_size := 100.0
 var timer_label: Label
-## The digital clock panel holding timer_label (T-335), bottom left.
+## The digital clock panel holding timer_label (T-335), top centre (T-611).
 var timer_clock: TimerClock
 ## The sub goal square (T-337): fills as subs come in, the gift lights up at the goal.
 var sub_goal: SubGoal
@@ -178,6 +178,7 @@ func piece(id: String) -> Control:
 	match id:
 		"hearts": return heart_row
 		"weapon_icons": return weapon_icons
+		"notebook": return mission_page  # T-611
 		"coins": return coins_label.get_parent() as Control if coins_label != null else null
 		"clock": return timer_clock
 		"sub_goal": return sub_goal
@@ -357,7 +358,7 @@ func _build_left() -> void:
 
 
 ## The mission notebook page on the left (T-458), between the weapon icons and the coins.
-## Not one of the movable pieces: T-453's movable HUD is not on this branch.
+## A movable piece since T-611 ("notebook"); its default place and size are MissionPage's own.
 func _build_mission_page() -> void:
 	mission_page = MissionPage.new()
 	root.add_child(mission_page)
@@ -413,7 +414,7 @@ func _build_coins() -> void:
 	var box := HBoxContainer.new()
 	box.name = "Coins"
 	box.add_theme_constant_override("separation", 10)
-	# T-341: bottom left, just above the clock (board's layout at 1152 x 648:
+	# T-341: bottom left (it sat just above the clock until T-611 moved the clock to the top centre; board's layout at 1152 x 648:
 	# x16 y496, 108 x 36), anchored to the corner so it keeps its margins.
 	box.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	box.grow_vertical = Control.GROW_DIRECTION_BEGIN
