@@ -1,7 +1,7 @@
 ---
 id: T-613
 title: Art for the kaiju's walk, windup and death animations
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Polish
@@ -78,6 +78,10 @@ Started on the board's word: the Asset Generation Agent is generating the kaiju'
 
 Stopped on a cost question for the board: a 224 px animation call costs 5 PixelLab units, not 1. 10 units spent on walk east (best 7/10, look drifts). Waiting for the board's budget and scope before any further call.
 
+### 2026-11-09, Flagged for review → In progress
+
+The board's answer: all three animations stay in scope, but sample first: the windup facing east, at most 20 units, for the board's review before anything else. The agent is making the sample now.
+
 ## Style review
 
 Run by `tools/style_loop/run.py` on 2026-11-09: art, brief `art-archive/T-613/brief_walk_e.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
@@ -153,3 +157,5 @@ Step 1, planned PixelLab calls (written before the first call): 15 animations (w
 - 2026-11-09, in-progress → flagged-for-review: the style loop kept version 2 (score 7/10), still below 8 after 3 refines; every version is in its Style review
 
 Step 1 STOPPED after 1 of 15 animations (walk, east), for a cost question. Calls made: 2 (walk_e v1 and v2, 5.0 generation units each = 10 units; balance 4882 -> 4872), both logged. Style loop: 4 rounds, scores 6, 7, 6, 7; kept v2 (7/10, a free ping-pong pick of v1 frames) in art-archive/T-613/final/kaiju_walk_e.png; below 8, so the loop moved the ticket to flagged-for-review (not a goal run). Findings: a 224 x 224 animate-with-text-v3 call costs 5 units, not 1; at that rate the 15 animations need at least 75 units and up to 300, against the ticket's 60. I read 'generation' as one call, but a board that meant units would be over budget already after one animation. Also each loop run takes about 7 minutes and PixelLab drifts the kaiju's identity (teal hide, lost belly and eyes, blob legs), so more animations will likely end near 7 too. Not done: the other 14 animations, contact sheets, GIFs, docs. Tools committed: game/tools/build_kaiju_anim_sheet.py (+ test), make_kaiju_anim_briefs.py; briefs in art-archive/T-613/. Need from the Project Lead: confirm the unit budget (calls vs units), and move the ticket back to in-progress.
+
+Sample (board's new budget), planned calls, written before the first call: the windup facing east only, through tools/style_loop/run.py art (brief art-archive/T-613/brief_windup_e.md), /animate-with-text-v3 from frame 0 of game/art/kaiju/kaiju_e.png, 6 frames at 224 x 224. 1 call first (5 units); refines only if below 8, free fixes first (palette map to the still, pick, align, hold), at most 3 more calls: at most 4 calls and 20 units in all. No other PixelLab call. Then contact sheets (windup e and the walk e already made, beside the still, dark and light) and a GIF, and hand back for the board's review.
