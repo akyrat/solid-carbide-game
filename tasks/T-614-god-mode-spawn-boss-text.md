@@ -1,7 +1,7 @@
 ---
 id: T-614
 title: Text for God mode's spawn the boss button
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Polish
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/extended-narrative.md, game/data/pause_text.json, tasks/T-609-controller-prompts-text.md]
 files_expected_to_change: [game/data/pause_text.json, game/tests/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -100,3 +100,4 @@ Run by `tools/style_loop/run.py` on 2026-11-09: text, kind label, brief `C:/User
 ## Result notes
 
 Wrote god_mode_spawn_boss = 'Call the kaiju' (14 chars) and god_mode_spawn_boss_used = 'Kaiju is here' (13 chars) in game/data/pause_text.json; style loop scored 9/10 and 9/10 in round 1 (no refines). Listed in docs/hud-and-menus.md Content, 'God mode's spawn the boss button'. The text inventory is by file prefix, so no key list to extend; game/tools/test_text_inventory.py 8 passed. Nothing to picture: the texts are shown in T-612's screenshots.
+- 2026-11-09, in-qa → done: QA passed; the texts are shown in T-612's playtest.
