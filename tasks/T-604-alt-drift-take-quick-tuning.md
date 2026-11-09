@@ -43,12 +43,12 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The new playground and alt drift take are committed; the alt drift demo pays ALT DRIFT! on the new playground (a test or the recorder's EXPECT check). (QA: pass / fail)
-- [ ] The recording controls are gone again (the T-574 tests that check they are gone pass). (QA: pass / fail)
-- [ ] The other tutorial takes are checked on the new playground, with the result in the result notes. (QA: pass / fail)
-- [ ] docs/level-design.md and docs/hud-and-menus.md Content describe the change. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] A screenshot or GIF in art-archive/T-604/screenshots/ shows the alt drift slide with the new take, taken with bash game/tools/screenshot.sh. (QA: pass / fail)
+- [ ] The new playground and alt drift take are committed; the alt drift demo pays ALT DRIFT! on the new playground (a test or the recorder's EXPECT check). (QA: pass)
+- [ ] The recording controls are gone again (the T-574 tests that check they are gone pass). (QA: pass)
+- [ ] The other tutorial takes are checked on the new playground, with the result in the result notes. (QA: pass)
+- [ ] docs/level-design.md and docs/hud-and-menus.md Content describe the change. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] A screenshot or GIF in art-archive/T-604/screenshots/ shows the alt drift slide with the new take, taken with bash game/tools/screenshot.sh. (QA: pass)
 
 ## Updates
 
