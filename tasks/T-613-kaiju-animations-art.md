@@ -1,7 +1,7 @@
 ---
 id: T-613
 title: Art for the kaiju's walk, windup and death animations
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Polish
@@ -81,6 +81,14 @@ Stopped on a cost question for the board: a 224 px animation call costs 5 PixelL
 ### 2026-11-09, Flagged for review → In progress
 
 The board's answer: all three animations stay in scope, but sample first: the windup facing east, at most 20 units, for the board's review before anything else. The agent is making the sample now.
+
+### 2026-11-09, Flagged for review
+
+The windup east sample is made but weak: best 5/10 after 3 calls (15 units; 25 spent on the ticket). Arms stay low, no head throw, a white blob on the shoulder in frames 5-6. Walk east is 7/10. No more calls; waiting for the board's review of the sample.
+
+### 2026-11-09, Flagged for review → In progress
+
+The board likes walk east version 3 except its 5th frame (the left leg is missing). The Asset Generation Agent is fixing that frame by hand, free: no PixelLab generation.
 
 ## Style review
 
@@ -216,3 +224,6 @@ Sample (board's new budget), planned calls, written before the first call: the w
 - 2026-11-09, in-progress → flagged-for-review: the style loop kept version 3 (score 5/10), still below 8 after 3 refines; every version is in its Style review
 
 Sample done: windup east, through the style loop. Calls made: 3 (15 units, of the 4 calls / 20 units allowed; all logged), 4 rounds, scores 4, 3, 5, 4; kept v3 (5/10) in art-archive/T-613/final/kaiju_windup_e.png, below 8, so the loop flagged the ticket again (the Project Lead should set it back). Weak points: the stance and mouth open and the arms rise, but the arms stay low and mostly thin, it never throws the head back, frames 5-6 carry a pale white blob on the shoulder (a PixelLab artifact), and the stride-like leg shapes shift. The still east sprite is itself a teal hide (the palette map to its 30 colours kept that look); the belly band is a thin tan strip in the still too, so what the loop called drift is partly the still's own look. Looks: art-archive/T-613/screenshots/contact_windup_e_dark.png and _light.png, windup_e.gif; and for walk east (7/10, 2 calls, 10 units) contact_walk_e_dark.png and _light.png, walk_e.gif; each sheet is the still east sprite then the animation frames, 2x nearest. Total PixelLab spent on this ticket: 5 calls, 25 units. No further call made; waiting for the board's go.
+- 2026-11-09, flagged-for-review → in-progress: The board (2026-11-09): walk east version 3 (walk_e_v3a) is pretty good; only its 5th frame is wrong, the left leg is missing. Fix that frame by hand, free, no PixelLab generation.
+
+Walk east hand fix (free, no PixelLab call, no loop run). Kept version is now v3 (kaiju_walk_e_v3a.png, six distinct frames) with its 5th frame fixed: art-archive/T-613/kaiju_walk_e_v5_handfix.png, copied to final/kaiju_walk_e.png (the earlier ping-pong pick kept as final/kaiju_walk_e_pingpong_v2.png; v3a untouched). Frame confirmed: the 5th (index 4). What was missing: frames 1 to 4 and 6 show the far leg, in shadow, as a near-black silhouette with two cyan claws beside the planted leg; frame 5 had none, so it stood on one leg with an empty gap (if the board meant the other leg, the near one, say so: that one is present in all six frames). Drawn: the silhouette and claws of frame 4 (box 155,150 to 170,173), moved 1 px left, behind frame 5's own pixels, so colours, outline and the ground point are the sheet's own (30 colours, alpha 0 or 255, 1344 x 224). Honest limit: the far leg is mostly hidden behind the hanging near calf, so only the dark silhouette under the knee and both claws show; the claws hardly move from frame 4 to 5, then jump to frame 6's place. Script: game/tools/fix_kaiju_walk_e_frame5.py (test test_fix_kaiju_walk_e_frame5.py, passes); a first try with a 6 px shift (claws hidden) and a 3 px shift are kept in art-archive/T-613/. For review: art-archive/T-613/screenshots/walk_e_v5_handfix/ (walk_e_v5_x3_dark.png and _light.png, frame5_before_after_dark.png and _light.png, walk_e_v5.gif at 120 ms).
