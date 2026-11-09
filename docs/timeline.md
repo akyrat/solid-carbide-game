@@ -4375,3 +4375,8 @@ Entry format:
 - Decision or change: The board played T-612 ("its working great") and asked for a longer, more dramatic death: after the current animation the kaiju falls down completely and holds its last frame, cracks with bright neon green energy that consumes it over about a second, and ends in a big explosion in the kaiju theme's colours. Done as quick tuning on T-612 with the Enemy Behavior Agent, in the ticket's own folder; one QA round before merging.
 - Documents touched: docs/enemies.md
 - Tasks: T-612
+
+## 2026-11-09: The kaiju's death is made with real generations
+- Decision or change: The board played T-612's longer death (placeholder fall, code-drawn cracks and explosion) and said: "its ugly. use actual generations to do the death". T-613 generates the death through PixelLab, sample first: the death facing east (the fall onto the ground, with the green cracks) and the explosion, each through the style loop (at most 4 calls each, 40 units in all), swapped into the game on T-613's branch for the board's review before any other direction.
+- Documents touched: docs/visual-style.md
+- Tasks: T-613, T-612
