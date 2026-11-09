@@ -186,6 +186,25 @@ func clear() -> void:
 	_appeared_this_run = false
 
 
+## T-612 (HUD and menus, Decisions, "God mode can spawn the boss"): God mode's
+## button makes the kaiju arrive now, by the boss time's own arrival (just
+## off-screen, the same placing rules; if no spot is free now, on the next step
+## it can), the run's timer untouched. Once per run: false, and nothing happens,
+## when the kaiju has already arrived or is due. The boss time coming later then
+## brings no second kaiju (once per run, as always).
+func spawn_now() -> bool:
+	if not can_spawn_now():
+		return false
+	arrival_due = true
+	try_appear()
+	return true
+
+
+## T-612: true while the kaiju has neither arrived this run nor is due to.
+func can_spawn_now() -> bool:
+	return not _appeared_this_run and not arrival_due
+
+
 ## The run's "boss time": the kaiju appears (on the next step it can, just
 ## off-screen). Once per run.
 func _on_boss_time() -> void:

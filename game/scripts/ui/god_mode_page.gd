@@ -8,6 +8,8 @@ extends PanelContainer
 ## new power-up appears on its own. It only displays and collects input; the tiers are changed
 ## by GodMode. Texts come from data/pause_text.json (T-501); names from the recap and power-up
 ## texts. Mouse, arrows/WASD and Enter/Space work (T-492's KeyNav); Escape or Back closes it.
+## T-612: the last row also has "Call the kaiju" (GodMode.spawn_boss(), once per run), left of
+## Back; disabled and reading "Kaiju is here" once the kaiju was called or has arrived.
 
 signal closed
 
@@ -18,6 +20,9 @@ const TEXT_POWER_UPS_KEY := "god_mode_power_ups_heading"
 const TEXT_TIER_KEY := "god_mode_tier_format"
 const TEXT_NOT_OWNED_KEY := "god_mode_not_owned"
 const TEXT_BACK_KEY := "god_mode_back"
+## T-612 (HUD and menus, Decisions, "God mode can spawn the boss"; texts T-614).
+const TEXT_SPAWN_BOSS_KEY := "god_mode_spawn_boss"
+const TEXT_SPAWN_BOSS_USED_KEY := "god_mode_spawn_boss_used"
 ## Where the page starts: higher than the pause strip (92), with tight rows,, so a fifth power-up still fits 648.
 const PAGE_TOP := 24.0
 const SYMBOL_SIZE := 34
@@ -28,6 +33,8 @@ const TIER_WIDTH := 110.0
 
 var god: Node = null
 var back_button: Button
+## T-612: "Call the kaiju", left of Back on the page's last row; disabled once used.
+var spawn_boss_button: Button
 ## One per entry: {kind, id, name_label, tier_label, minus, plus}.
 var rows: Array = []
 var _box: VBoxContainer
@@ -54,6 +61,8 @@ func setup(the_god: Node) -> void:
 	_build()
 	if god.has_signal("tier_set"):
 		god.tier_set.connect(func(_k, _i, _t): refresh())
+	if god.has_signal("boss_spawned"):
+		god.boss_spawned.connect(refresh)
 
 
 func _label(text: String, role := "pause_text") -> Label:
@@ -81,10 +90,20 @@ func _build() -> void:
 			h.name = "Heading_%s" % shown_kind
 			_box.add_child(h)
 		_add_row(e)
+	# T-612 (a proposal): the last row holds the spawn the boss button, then Back, centred,
+	# so the page is no taller.
+	var last_row := HBoxContainer.new()
+	last_row.name = "BottomRow"
+	last_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	last_row.add_theme_constant_override("separation", 12)
+	_box.add_child(last_row)
+	spawn_boss_button = _button("SpawnBossButton", pause_text(TEXT_SPAWN_BOSS_KEY))
+	spawn_boss_button.pressed.connect(_on_spawn_boss)
+	last_row.add_child(spawn_boss_button)
 	back_button = _button("BackButton", pause_text(TEXT_BACK_KEY))
 	back_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	back_button.pressed.connect(close)
-	_box.add_child(back_button)
+	last_row.add_child(back_button)
 	_chain()
 	refresh()
 
@@ -179,6 +198,23 @@ func refresh() -> void:
 		# lost at an end: a press there just does nothing.
 		r.minus.set_meta("at_end", tier <= low)
 		r.plus.set_meta("at_end", tier >= last)
+	_refresh_spawn_boss()
+
+
+## T-612: the spawn the boss button is enabled with its label while the kaiju can still be
+## called this run; disabled, reading the "used" text, once it was called or has arrived.
+func _refresh_spawn_boss() -> void:
+	if spawn_boss_button == null:
+		return
+	var can: bool = god != null and god.has_method("can_spawn_boss") and god.can_spawn_boss()
+	spawn_boss_button.disabled = not can
+	spawn_boss_button.text = pause_text(TEXT_SPAWN_BOSS_KEY if can else TEXT_SPAWN_BOSS_USED_KEY)
+
+
+func _on_spawn_boss() -> void:
+	if god != null and god.has_method("spawn_boss"):
+		god.spawn_boss()
+	refresh()
 
 
 ## Up and down walk the rows on the same side (- or +) then Back, wrapping; left and right swap
@@ -205,6 +241,27 @@ func _chain() -> void:
 		back_button.focus_neighbor_right = back_button.get_path_to(back_button)
 		back_button.focus_next = back_button.focus_neighbor_bottom
 		back_button.focus_previous = back_button.focus_neighbor_top
+	# T-612: left and right swap between the spawn the boss button and Back; up and down
+	# from it go to the rows' - side, as Back's go to the + side.
+	if spawn_boss_button != null:
+		var s := spawn_boss_button
+		back_button.focus_neighbor_left = back_button.get_path_to(s)
+		back_button.focus_neighbor_right = back_button.get_path_to(s)
+		s.focus_neighbor_left = s.get_path_to(back_button)
+		s.focus_neighbor_right = s.get_path_to(back_button)
+		var up: Control = rows[n - 1]["minus"] if n > 0 else back_button
+		var down: Control = rows[0]["minus"] if n > 0 else back_button
+		s.focus_neighbor_top = s.get_path_to(up)
+		s.focus_neighbor_bottom = s.get_path_to(down)
+		s.focus_next = s.focus_neighbor_bottom
+		s.focus_previous = s.focus_neighbor_top
+		if n > 0:
+			var last_minus: Button = rows[n - 1]["minus"]
+			var first_minus: Button = rows[0]["minus"]
+			last_minus.focus_neighbor_bottom = last_minus.get_path_to(s)
+			last_minus.focus_next = last_minus.focus_neighbor_bottom
+			first_minus.focus_neighbor_top = first_minus.get_path_to(s)
+			first_minus.focus_previous = first_minus.focus_neighbor_top
 
 
 func is_open() -> bool:

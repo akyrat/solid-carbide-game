@@ -14,6 +14,10 @@ extends Node
 ##   set_tier(kind, id, tier)   sets it at once, as if levelled up; returns the tier now
 ##                              (clamped to min_tier..last_tier), -1 for an unknown id
 ##   step(kind, id, delta)      set_tier(current + delta), for the - and + buttons
+##   spawn_boss()               T-612: the kaiju arrives now, by the boss time's own
+##                              arrival (run.kaiju_boss.spawn_now()); once per run, true
+##                              when it did something
+##   can_spawn_boss()           T-612: false once the kaiju has arrived or is due this run
 ## The weapons come from the rack (run.weapons.weapons) and the power-ups from
 ## PowerUpData.ids(), so a new power-up needs no change here. The gun's min_tier is 1,
 ## everything else 0. Setting a weapon replays its tiers: reset, then upgrade() once per
@@ -22,6 +26,8 @@ extends Node
 ## and the gifts read the live tiers, so they then offer only what is left. A new run
 ## starts as usual (the chosen tiers are not kept).
 
+## T-612: the kaiju was called by spawn_boss().
+signal boss_spawned
 ## Sent when God mode is unlocked (not when N is pressed again).
 signal unlocked_changed
 ## A weapon or power-up tier was set by set_tier().
@@ -138,3 +144,19 @@ func step(kind: String, id: String, delta: int) -> int:
 	if now < 0:
 		return -1
 	return set_tier(kind, id, now + delta)
+
+
+## T-612 (HUD and menus, Decisions, "God mode can spawn the boss"): the kaiju arrives now,
+## once per run; the run's timer is left as it is. True when it was called.
+func spawn_boss() -> bool:
+	var boss = run.get("kaiju_boss") if run != null else null
+	if boss == null or not boss.spawn_now():
+		return false
+	boss_spawned.emit()
+	return true
+
+
+## T-612: true while the kaiju can still be called this run (it has not arrived and is not due).
+func can_spawn_boss() -> bool:
+	var boss = run.get("kaiju_boss") if run != null else null
+	return boss != null and boss.can_spawn_now()
