@@ -4305,3 +4305,23 @@ Entry format:
 - Decision or change: Merged after the board's playtest: the board's new practice playground, re-recorded alt drift and grind demos, and one spin for the air spin slide.
 - Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`
 - Tasks: T-604
+
+## 2026-11-09: Controller support: driving
+- Decision or change: The board asked for controller support that works on itch.io too, with the Project Lead's default Xbox layout: stick or D-pad steer, right trigger accelerates, left trigger reverses, A jumps, Start pauses, Y resets the practice car. Step 1 of 3.
+- Documents touched: docs/drifting.md
+- Tasks: T-607
+
+## 2026-11-09: Controller support: menus
+- Decision or change: Every menu and screen a run passes through works with a controller: stick or D-pad move, A presses, B goes back, Start pauses; LB/RB turn the tutorial slides. Step 2 of 3.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-608
+
+## 2026-11-09: Controller support: prompt texts
+- Decision or change: The controller's button labels and the controller version of every line that names a key. Text for step 3.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-609
+
+## 2026-11-09: Controller support: prompts follow the device
+- Decision or change: Key prompts switch to controller buttons, drawn in code, while the player uses a controller. Step 3 of 3.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-610
