@@ -2379,6 +2379,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **No R on the tutorial's keycaps** (board, 2026-11-08): the keycaps in the practice window's corner show W, A, S, D and Space only; R is gone from them. Pressing R does what it did before. (T-597)
 - **A setting to turn off the trick popups** (board, 2026-11-08): a checkbox in the settings (the pause screen's and the main menu's Settings screen) turns the trick popups (the bubbles that name each trick) on or off. On by default, saved like the other settings. Off: no trick popups show, but every trick still counts and still raises the combo, and pairs still flash. The Project Lead read the board's "combo popups" as the trick popups; anything else (the multiplier popup) stays as it is unless the board says so. The text: T-598; the build: T-599, on T-596.
 - **The air spin slide asks for one spin** (board, 2026-11-09, T-604): the tutorial's air spin slide's practice goal is one AIR 360!, so the board's recorded demo, which lands one, completes it. (T-604)
+- **The notebook pulses on mission progress** (board, 2026-11-09): whenever the player makes any progress on any mission goal in the notebook (a count going up, a running total growing, a goal ticked), the notebook page **pulses discreetly**: it grows a little and shrinks back. How much, how long, and how often it may pulse while progress keeps coming (for example during a drift's running seconds) are proposals for the playtest. It goes with "A trick falls into the notebook" above, not in place of it. (T-606)
 
 ### Content
 
@@ -2789,4 +2790,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `5e85f7d084ccf243fa9452af962c4b403af1c44535da68a6b5d66e67fca56865` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `c9c01575660533bfa8b030f211cfc1bb26ace4421deb62581f4a94b42a12553a` |
+| `hud-and-menus.md` | `27da35adc84f9ab43da87049230b55c4b58abe2b1982baeb65ff4eb469f7dd22` |

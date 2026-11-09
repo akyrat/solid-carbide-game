@@ -4280,3 +4280,8 @@ Entry format:
 - Decision or change: A rule for Godot's .import and .uid files so they stop cluttering the main checkout.
 - Documents touched: tasks/README.md
 - Tasks: T-605
+
+## 2026-11-09: The notebook pulses on mission progress
+- Decision or change: The notebook page pulses discreetly whenever a mission goal makes progress.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-606
