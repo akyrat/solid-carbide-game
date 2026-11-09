@@ -1,7 +1,7 @@
 ---
 id: T-602
 title: Text: the Polarized Steering Wheel's new descriptions
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, game/data/power_ups.json]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Started: the wheel's two descriptions for the new trigger, through the style loo
 
 Texts done (Brand safety. dropped, 23% kept, the board's choices). Tests and docs pass; its screenshots come from T-603's build.
 
+### 2026-11-09, In QA → Needs playtest
+
+QA passed all 5 criteria. The texts show in T-603's build: playtest/2026-11-09-morning.
+
 ## Style review
 
 ### Run 1
@@ -96,3 +100,4 @@ Run by `tools/style_loop/run.py` on 2026-11-08: text, kind card_desc, brief `C:/
 Texts (game/data/screen_texts.json): tier 1 power_ups.descriptions.polarized_steering_wheel = 'Pull an ALT DRIFT: +{burst_percent}% speed burst.' (style 9); tier 2 power_ups.descriptions_last_tier.polarized_steering_wheel = '+{burst_percent}% burst after each ALT DRIFT!, and a shock shoves minions. Brand safety.' (style 8). Both show on the Polarized Steering Wheel's gift/level-up card (tier 1 when offered, tier 2 as the next-tier offer). 22.5: power_up_screen.gd rounds with roundi, so tier 2 reads 23% (tier 1 reads 10%); recommend leaving the data as is (a 23% label for a 22.5% burst is fine), or set 1.225 -> 1.23 in T-603 if exact wanted. In this branch the data is still 1.2/1.45 (20/45) until T-603 halves it. Other texts: checked tutorial_text.json, screen_texts.json, garage.json, missions.json, recap_text.json; no other text describes the lift-steer-gas trigger (only the tutorial's generic 'Gas' labels and the alt drift slide, which describe the trick, not the wheel). Test updated: game/tests/unit/test_power_up_screen.gd now expects the new texts with the percent read from data. docs/hud-and-menus.md Content updated. Tests: Godot 3250 run, 3249 pass, 0 fail, 1 risky (pre-existing); Python tools 643 OK, game/tools 1193 OK (4 skipped).
 
 Board's choice: tier 2 drops 'Brand safety.' and now reads '+{burst_percent}% burst after each ALT DRIFT!, and a shock shoves minions.'; 23% for the rounded 22.5 is fine, no data change. Data, hud-and-menus.md Content and test updated.
+- 2026-11-09, needs-playtest → done: The board played it in playtest-morning: lgtm (2026-11-09).
