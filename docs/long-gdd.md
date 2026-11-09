@@ -1566,6 +1566,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **No slowdown from many minions** (board, 2026-11-05): since minions spawn on a timer however many are alive ("Minions spawn on a timer" above), a player who doesn't kill them gets frame drops. Many minions alive must not drop the frame rate: the Enemy Behavior Agent finds the cost and makes it cheaper. A cap on the number alive, if one is still needed, is a proposal for the playtest.
 - **Paired meteors hurt the kaiju** (board, 2026-11-05): the kaiju's meteors come in pairs. When the car drifts between the two meteors of a pair (through the line joining them), the kaiju is hurt, with an animation that shows the link between the drift through the meteors and the kaiju getting hit, and both meteors of that pair are destroyed at once. The damage, the pairing distance and the animation (placeholder, no generated art) are proposals for the playtest.
 - **The kaiju is animated** (board, 2026-11-09): the kaiju has three animations: a walk cycle while it walks, a windup in the 1 second before its meteors fall (in place of the placeholder yellow rings), and a death animation when its health reaches zero, played before the run ends as a win. The art is made through PixelLab (Visual style, Decisions, "The kaiju's animations"); until it is in, placeholder frames. The frame counts, the speeds and how long the death plays before the win are proposals for the playtest.
+- **The kaiju's death is longer and more dramatic** (board, 2026-11-09, after playing T-612; adds to "The kaiju is animated" above): after the death animation it had, the kaiju goes on to fall down completely and stays in its last frame, lying on the ground. It then starts cracking with bright neon green energy, which over about the next second gradually consumes it, and it all ends in a big explosion in the colours of the kaiju's theme. The coins and the win come after the explosion. How the kaiju falls (lying or coiled), the timings, the green (the minions' spill green, never Greenbull's light green: Visual style, Content, "Rules", rule 6) and the explosion's colours and size are proposals for the playtest. Placeholder frames and code-drawn effects until the art is made. (T-612)
 - **Health drops at 5%** (board, 2026-11-08): a killed minion drops a health pickup with a chance of 5% instead of 22.5%. The coins, the heal (1 heart) and the kaiju (none) are unchanged. (T-579)
 
 ### Content
@@ -2820,7 +2821,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `06475f7c89d8cfdb19b3c1a31d71eeac1da26c3e2f7e1e29d2dfa8a5f21cace1` |
 | `drifting.md` | `0fb8ae2373f8e0fc2b400cf0641cb25445fe94a49f1e69301cb0225c217cabe1` |
 | `level-design.md` | `a3a7509c35a3df527dd409d5faf141e75609cca61b53754668c245019c5a9e17` |
-| `enemies.md` | `e22bb9066fa55e35f0699a0a745a5f507d987f1b2f80c46030ef35bb9fcf9f4a` |
+| `enemies.md` | `098026a0d3a970dfce720f5ec255ba48a577ac04a08b9a8a4fdc20b052630294` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `5c5d7ad1238891a0fe47af7e9b948946e8d0f4cb642421be15e3da1098752c84` |
