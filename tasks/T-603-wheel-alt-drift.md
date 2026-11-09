@@ -43,14 +43,14 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A completed alternate drift with the wheel owned gives the burst at x1.1 (tier 1) and x1.225 (tier 2) for 0.5 s, then fades in the proposed time (tests with the numbers). (QA: pass / fail)
-- [ ] Lift, steer and W again gives no burst; the cooldown still blocks a burst and the tier 2 shock still fires (tests). (QA: pass / fail)
-- [ ] The arrows show on the ground on each side of the car, under it, pointing along the travel at the payout, and fade out (a test of their direction and life). (QA: pass / fail)
-- [ ] T-602's descriptions show on the cards (a test or screenshot). (QA: pass / fail)
-- [ ] The speed bot's peak and average speeds are in the result notes. (QA: pass / fail)
-- [ ] docs/drifting.md Content (The Polarized Steering Wheel section) and game/docs/driving/ describe the new trigger, numbers and arrows. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Screenshots or a GIF in art-archive/T-603/screenshots/ show the arrows around the car after an alternate drift, taken with bash game/tools/screenshot.sh. (QA: pass / fail)
+- [ ] A completed alternate drift with the wheel owned gives the burst at x1.1 (tier 1) and x1.225 (tier 2) for 0.5 s, then fades in the proposed time (tests with the numbers). (QA: pass - test_an_alt_drift_gives_the_tiers_burst_held_half_a_second_then_faded_in_a_quarter; 0.25 s linear fade proposed with reason)
+- [ ] Lift, steer and W again gives no burst; the cooldown still blocks a burst and the tier 2 shock still fires (tests). (QA: pass - test_lift_steer_and_w_again_gives_no_burst, cooldown and tier 2 shock tests present and green)
+- [ ] The arrows show on the ground on each side of the car, under it, pointing along the travel at the payout, and fade out (a test of their direction and life). (QA: pass - test_the_arrows_show_at_both_sides_along_the_travel_and_fade_out, plus under-the-car test; screenshots)
+- [ ] T-602's descriptions show on the cards (a test or screenshot). (QA: pass - test_the_cards_show_t602s_texts_with_10_and_23_percent and test_power_up_screen)
+- [ ] The speed bot's peak and average speeds are in the result notes. (QA: pass - peak and average speeds listed per tier in the result notes)
+- [ ] docs/drifting.md Content (The Polarized Steering Wheel section) and game/docs/driving/ describe the new trigger, numbers and arrows. (QA: pass - docs/drifting.md and game/docs/driving/drift.md changed in the diff)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass - full run 3265 tests, 3264 passing, 0 failing, 1 risky/pending, in the result notes)
+- [ ] Screenshots or a GIF in art-archive/T-603/screenshots/ show the arrows around the car after an alternate drift, taken with bash game/tools/screenshot.sh. (QA: pass - 3 screenshots in art-archive/T-603/screenshots/)
 
 ## Updates
 
