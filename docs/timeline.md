@@ -4290,3 +4290,8 @@ Entry format:
 - Decision or change: Merged after the board's playtest: the notebook page pulses discreetly (5%, 0.35 s; running totals at most every 1.2 s) on any mission progress.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-606
+
+## 2026-11-09: Text for the wheel's new trigger
+- Decision or change: Merged after the board's playtest: the wheel's cards say it bursts after an ALT DRIFT.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-602
