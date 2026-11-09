@@ -1,7 +1,7 @@
 ---
 id: T-612
 title: The kaiju plays its walk, windup and death animations (placeholder frames)
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Polish
@@ -53,16 +53,16 @@ Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test checks that while the kaiju walks its drawn frame advances through the walk animation of its facing direction and loops, and that the frame does not advance while the game is paused. (QA: pass / fail)
-- [ ] A test checks that during a meteor attack's windup the windup animation of the facing direction plays, the yellow rings are no longer drawn, and the walk animation plays again after the windup. (QA: pass / fail)
-- [ ] A test checks that at zero health the death animation plays once for the length in `game/data/enemies.json`, and that until it ends the kaiju does not move, deals no contact damage and is not returned as a weapon target. (QA: pass / fail)
-- [ ] A test checks that the kaiju's coins are added and the run ends as a win only when the death animation has finished, and that the case of the timer reaching zero during the death behaves as the result notes say. (QA: pass / fail)
-- [ ] A test checks that the frames are read from the files and the numbers named in `game/data/enemies.json` (replacing a frame file or a frame count there changes what is drawn, with no code change), and `game/docs/enemies/kaiju.md` describes the frame format (files, frame size, anchor, counts, speeds) for T-613. (QA: pass / fail)
-- [ ] The existing tests of the kaiju's red flash, depth order, height and ground shadow pass on the animated kaiju. (QA: pass / fail)
-- [ ] No PixelLab call was made: `game/art/pixellab-generation-log.jsonl` has no new line from this ticket. (QA: pass / fail)
-- [ ] Recordings in art-archive/T-612/screenshots/: one GIF each of the walk, the windup and the death in the game, plus a still of the kaiju walking. (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
-- [ ] Every document in documents_affected is updated, and the proposals made for the playtest are listed in the result notes. (QA: pass / fail)
+- [ ] A test checks that while the kaiju walks its drawn frame advances through the walk animation of its facing direction and loops, and that the frame does not advance while the game is paused. (QA: pass)
+- [ ] A test checks that during a meteor attack's windup the windup animation of the facing direction plays, the yellow rings are no longer drawn, and the walk animation plays again after the windup. (QA: pass)
+- [ ] A test checks that at zero health the death animation plays once for the length in `game/data/enemies.json`, and that until it ends the kaiju does not move, deals no contact damage and is not returned as a weapon target. (QA: pass)
+- [ ] A test checks that the kaiju's coins are added and the run ends as a win only when the death animation has finished, and that the case of the timer reaching zero during the death behaves as the result notes say. (QA: pass)
+- [ ] A test checks that the frames are read from the files and the numbers named in `game/data/enemies.json` (replacing a frame file or a frame count there changes what is drawn, with no code change), and `game/docs/enemies/kaiju.md` describes the frame format (files, frame size, anchor, counts, speeds) for T-613. (QA: pass)
+- [ ] The existing tests of the kaiju's red flash, depth order, height and ground shadow pass on the animated kaiju. (QA: pass)
+- [ ] No PixelLab call was made: `game/art/pixellab-generation-log.jsonl` has no new line from this ticket. (QA: pass)
+- [ ] Recordings in art-archive/T-612/screenshots/: one GIF each of the walk, the windup and the death in the game, plus a still of the kaiju walking. (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
+- [ ] Every document in documents_affected is updated, and the proposals made for the playtest are listed in the result notes. (QA: pass)
 
 ## Updates
 
@@ -71,6 +71,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-09, Open → In progress
 
 Started: the Enemy Behavior Agent is building the kaiju's walk, windup and death animations with placeholder frames; the art (T-613) follows.
+
+### 2026-11-09, In progress → In QA
+
+The Enemy Behavior Agent finished: the kaiju plays walk, windup and death from placeholder frames; the coins and the win come after the 1.5 s death. QA is checking it now.
 
 ## Style review
 
