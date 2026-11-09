@@ -130,13 +130,14 @@ func test_every_trick_slide_counts_to_three_and_stamps_its_notebook() -> void:
 			assert_true(session.notebook.rows[0].label.text.contains("3.0/3"), "the notebook shows 3.0/3")
 			assert_true(session.is_stamped(), "slide 2: the stamp at 3 s in total")
 			continue
-		for n in range(3):
+		var goal: int = session.goal_count()  # T-604: the air spin slide asks for one
+		for n in range(goal):
 			assert_false(session.is_stamped(), "slide %d: no stamp after %d" % [i + 2, n])
 			_do(session, tricks[i])
 			assert_eq(session.successes, n + 1)
 		session.notebook.finish_falls()  # T-563: the count arrives when the name box has landed
-		assert_true(session.notebook.rows[0].label.text.contains("3/3"), "the notebook shows 3/3")
-		assert_true(session.is_stamped(), "slide %d: the stamp after the third" % (i + 2))
+		assert_true(session.notebook.rows[0].label.text.contains("%d/%d" % [goal, goal]), "the notebook shows %d/%d" % [goal, goal])
+		assert_true(session.is_stamped(), "slide %d: the stamp at the goal" % (i + 2))
 
 
 func _hold(code: Key, on: bool) -> void:

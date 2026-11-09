@@ -91,17 +91,18 @@ func _check_counts(trick: String, counts: Array, others: Array) -> void:
 	for o in others:
 		_do(o)
 	assert_eq(session.successes, 0, "%s: the other tricks don't count" % trick)
+	var goal := session.goal_count()  # T-604: 1 for the air spin, 3 for the others
 	for i in 3:
 		_do(counts[i % counts.size()])
 		assert_eq(session.successes, i + 1, "%s: success %d" % [trick, i + 1])
-		assert_eq(completions, 1 if i == 2 else 0, "%s: completed only on the third" % trick)
+		assert_eq(completions, 1 if i >= goal - 1 else 0, "%s: completed at the goal (%d), once" % [trick, goal])
 	_do(counts[0])
 	_do(counts[0])
 	assert_eq(session.successes, 5, "%s: the count overfills past 3 (T-574)" % trick)
 	assert_eq(completions, 1, "completed once")
 	assert_eq(counted.size(), 5)
 	session.notebook.finish_falls()
-	assert_true(session.notebook.rows[0].label.text.contains("5/3"), "%s: the notebook shows 5/3: %s" % [trick, session.notebook.rows[0].label.text])
+	assert_true(session.notebook.rows[0].label.text.contains("5/%d" % goal), "%s: the notebook shows 5/%d: %s" % [trick, goal, session.notebook.rows[0].label.text])
 
 
 ## T-565: the drift slide counts seconds of drifting, not tricks: no trick counts, LONG DRIFT! either.
@@ -146,7 +147,7 @@ func test_the_other_slides_still_count_3_tricks() -> void:
 		assert_eq(session.drift_seconds, 0.0, "%s: drift seconds count only on the drift slide" % t)
 		assert_false(session.is_completed(), t)
 		assert_eq(session.missions.current_goals()[0]["kind"], RunMissions.KIND_COUNT, t)
-		assert_eq(session.missions.current_goals()[0]["amount"], 3, t)
+		assert_eq(session.missions.current_goals()[0]["amount"], 1 if t == "air_spin" else 3, t)  # T-604
 
 
 func test_the_alt_drift_practice_counts_alt_drifts_only() -> void:
@@ -239,8 +240,8 @@ func test_the_notebook_shows_the_goal_and_its_count() -> void:
 		assert_true(session.notebook.visible, t)
 		assert_eq(session.notebook.rows.size(), 1, "%s: one goal" % t)
 		var template := PracticeSession.goal_template(t)
+		var goal := "3.0" if t == "drift" else str(session.goal_count())  # T-604: the air spin asks 1
 		var zero := "0.0" if t == "drift" else "0"  # T-565: the drift's seconds, one decimal
-		var goal := "3.0" if t == "drift" else "3"
 		assert_eq(_goal_line(), template.replace("{done}", zero).replace("{total}", goal), t)
 	session.setup("alt_drift")
 	var alt := PracticeSession.goal_template("alt_drift")
@@ -457,6 +458,22 @@ const AIR_ROUTE := [Vector2(-10, 8), Vector2(-20, 14), Vector2(-30, 18), Vector2
 ## From the spawn to the grind corridor: round to the west, a hop at (-14, 2) onto rail-40 (T-604:
 ## the first two points moved for the new spawn).
 const GRIND_ROUTE := [Vector2(2, 6), Vector2(-6, 7), Vector2(-14, 2), Vector2(-30, 2)]
+
+
+func test_the_air_spin_goal_is_one_spin_and_the_others_three() -> void:
+	# T-604 (board, 2026-11-09: "make that be one spin for the mission for that one").
+	for t in ["drift", "alt_drift", "air_spin", "grind"]:
+		session.setup(t)
+		assert_eq(session.goal_count(), 1 if t == "air_spin" else 3, t)
+	session.setup("air_spin")
+	session.start()
+	var got: Array = []
+	session.progress.connect(func(d: int, g: int) -> void: got.append([d, g]))
+	assert_false(session.is_completed())
+	_do("air_three_sixty")
+	assert_true(session.is_completed(), "one AIR 360! completes the air spin slide")
+	assert_true(session.is_stamped(), "and stamps it")
+	assert_eq(got.back(), [1, 1], "the notebook counts to 1")
 
 
 func test_on_the_real_playground_an_air_spin_from_the_air_spin_start_counts() -> void:

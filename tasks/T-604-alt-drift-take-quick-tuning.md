@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the playground editable in the creator and the recording controls back, in this folder only.
 
+### 2026-11-09, In progress
+
+The board's playground and alt drift take are in. The take tools are removed again, and the tests pass. The air 360 and grind demos stray on the new map, and the grind demo no longer completes its goal. Held for the board to re-record those two in the morning.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -93,3 +97,14 @@ Tests changed for the new playground (the scripted routes and the spawn were the
 Fix found by the full run (code: game/scripts/run/practice_session.gd): the board's new needle route (route-1, random order) made take replays inexact. reset_stage() rebuilt the routes with a fresh random start each time, so whether a pass between pair-1's props paid THREAD THE NEEDLE! (and nudged the car) differed between a recording and its replay; test_a_charged_jump_replays_charged failed about half the time (0.018 units off). Now a reset stage seeds the routes with a fixed seed (NEEDLE_ROUTE_SEED 604, _fix_needle_routes), so every recording and replay start with the same active pairs. The demos still replay as checked above (the same results after the fix).
 
 5. Tests: full Godot set (GUT_TIME_LIMIT=2400): 3257 of 3258 passed, 1 pending, 0 failing (231 s). game/tools Python set: 1193 tests OK (4 skipped). New tests: test_check_takes.gd 3/3; test_creator_open_in_place.gd 5/5.
+
+Tweak (board, 2026-11-09): "I'm gonna need you to add back the recording buttons because the grind tutorial is really bad and I need to fix that. Everything else looks okay though, even the air spins, even though I don't complete the goal, it's okay. We just we should just make that be one spin for the mission for that one."
+
+1. Take tools back (TEMPORARY, the same as step 2 before): the row above each trick slide's practice window, dev runs only, F5 Reset, F6 Record, F7 Stop + save, F9 Play take (keys and buttons). The grind take is recorded on slide 5/6 (Grind style): F6 to start, F7 to stop and save game/data/tutorial_takes/grind.json (the old one kept as grind.prev.json). T-574's "take tools are gone" test is pending again while they are back; the dev-build take tools test is back; test_shared_button counts the take buttons.
+
+2. The air spin slide's goal is one (HUD and menus, Decisions, "The air spin slide asks for one spin"). Where it lives: game/scripts/run/practice_session.gd. GOAL (3) is still the default; new GOAL_BY_TRICK {"air_spin": 1} and goal_count(), used for the notebook mission's amount, progress, the completion, the stamp and the falling boxes. The notebook now reads "Air spins 0/1" and stamps on the first spin. The board's air spin take now completes the slide on replay (check_takes.gd: 1 success, completed true). Tests: new test_the_air_spin_goal_is_one_spin_and_the_others_three; _check_counts, the notebook-line test and the mission-amount test in test_practice_session.gd, and test_tutorial_practice_real.gd, read goal_count() instead of 3. test_practice* 46/46, test_tutorial* 86 + 1 pending of 87, test_shared_button 12/12, test_check_takes 3/3, test_standin_takes 4/4.
+
+Text the Project Lead should look at (I wrote none):
+- tutorial.airspin.instruction (the air spin slide's instruction band) says "AIR 180! or AIR 360! both count.", and the slide still counts AIR 180! (PracticeSession.COUNTED air_spin: air_one_eighty and air_three_sixty). The decision says "one AIR 360!". Either AIR 180! should stop counting (code) or the text and decision should allow both.
+- tutorial.goal.airspin "Air spins {done}/{total}" shows "Air spins 0/1", plural with a goal of one. Could be fine; for Narrative Theme if not.
+- Only _comment fields say "3 successes" (tutorial.goal.airspin_comment, tutorial.success_comment "after the third success"); they are not shown to players.
