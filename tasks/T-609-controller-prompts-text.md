@@ -1,7 +1,7 @@
 ---
 id: T-609
 title: Text for the controller's button prompts
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Controller-support
@@ -39,12 +39,12 @@ Text for step 3 of controller support (HUD and menus, Decisions, "Controller sup
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/controller_text.json exists, parses, and has a glyph label for each button in the description and a controller version for every line the result notes list as naming a keyboard key. (QA: pass / fail)
-- [ ] The result notes list every line in game/data/ (outside the level creator's texts) that names a keyboard key, with its file and key, and say which got a controller version. (QA: pass / fail)
-- [ ] No controller line is longer than the keyboard line it replaces (QA compares lengths with a short script). (QA: pass / fail)
-- [ ] The Style review records the style loop, with every line scored 8 or more. (QA: pass / fail)
-- [ ] HUD and menus, Content, has a subsection with the texts; the result notes say screenshots are not applicable (text only). (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] game/data/controller_text.json exists, parses, and has a glyph label for each button in the description and a controller version for every line the result notes list as naming a keyboard key. (QA: pass)
+- [ ] The result notes list every line in game/data/ (outside the level creator's texts) that names a keyboard key, with its file and key, and say which got a controller version. (QA: pass)
+- [ ] No controller line is longer than the keyboard line it replaces (QA compares lengths with a short script). (QA: pass)
+- [ ] The Style review records the style loop, with every line scored 8 or more. (QA: pass)
+- [ ] HUD and menus, Content, has a subsection with the texts; the result notes say screenshots are not applicable (text only). (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: fail: code - game/tools test_text_inventory.test_the_real_game_has_text_in_both_lists_and_every_screen_is_listed is red, rerun alone and still red: data/controller_text.json is not listed in the text inventory (game/tools/text_inventory.py); the other 1192 tests pass)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-09, Open → In progress
 
 Started: the Narrative Theme Agent writes the controller texts in C:\solid-carbide-worktrees\T-609.
+
+### 2026-11-09, In progress → In QA
+
+Texts written: 10 button labels and 16 controller lines, every one scored 8 or more. Now in QA.
 
 ## Style review
 
