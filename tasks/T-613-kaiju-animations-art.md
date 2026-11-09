@@ -1,7 +1,7 @@
 ---
 id: T-613
 title: Art for the kaiju's walk, windup and death animations
-status: in-qa
+status: flagged-for-review
 from: project-lead
 to: asset-generation
 lead: Polish
@@ -97,6 +97,10 @@ Ready for the board's look, no QA agent: walk east version 3 with its 5th frame 
 ### 2026-11-09, In QA
 
 The board (2026-11-09), after playing T-612's placeholder death: "its ugly. use actual generations to do the death". The Asset Generation Agent is generating it now, sample first: the death facing east and the explosion, at most 4 calls each, 40 units in all, swapped into the game on this branch. The ticket is still in the QA column because only the board's drag can take it out with unmarked criteria: please drag it to In progress.
+
+### 2026-11-09, In progress
+
+Seen: the board moved it to In progress. The Asset Generation Agent is already generating the death sample (death east and the explosion, at most 40 units); I'll move it to the QA column for the board's look when the sample is in the game.
 
 ## Style review
 
@@ -221,6 +225,236 @@ Feet and ground position look stable, and there are no effects and no Greenbull 
 
 **Kept:** version 3, score 5/10 (`art-archive/T-613/style-loop/v3-2.png`, copied to `art-archive/T-613/final/kaiju_windup_e.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
 
+### Run 3
+
+Run by `tools/style_loop/run.py` on 2026-11-09: art, brief `art-archive/T-613/brief_death_e.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-613/style-loop/v1-3.png`
+- Script checks: 61 of 61 pass
+- Score: 4/10
+- Reason: Rule 10 (the kaiju keeps its look and the brief): the sequence never reaches "lying flat on its side". Frames 4-11 show the kaiju as a crouching, four-legged crawler with its head up and its jaw open, back plates up and tail curled over. It is not fallen or dead. The brief wants a flat lying body, a readable silhouette and identical last frames, and the end frames are not identical: frame 10 and 11 differ slightly from 9, and frames 10-11 are shifted and shrunk compared with 4-9. Frames 0-3 barely differ from standing, and the jump from frame 3 to 4 (upright to crawl) is abrupt. The body also changes from the still: the belly is mostly hidden and the back plates now look like a long row of cyan spikes. The plates are paler and the proportions look more like a different lizard. Rule 2: shading is flatter and muddier in the lower frames, and outlines get thick and clumpy around the limbs. Rules 1, 3, 6 and 9 pass (script facts, no brands). To fix: re-run part 2 with an action that ends with the body lying on its side, with the head down and the legs out, and make the last 3-4 frames identical. The still's pale cyan plates and grey-green belly should stay.
+- Rules broken: 10, 2
+- Refused: {"tool_input": {"command": "python -c \"\nimport json;d=json.load(open('art-archive/T-613/req_death_e_p1_v1.json'));print({k:(v if k!='first_frame' else '...') for k,v in d.items()})\nfrom PIL import Image\nfor i in range(1,7):\n    im=Image.open(f'art-archive/T-613/raw_death_e_p1_v1/death_e_p1_{i}.png');print(i,im.getbbox())\n\"; sed -n 1,60p game/tools/pixellab_animate_req.py", "description": "Show request fields and frame bounding boxes"}, "tool_name": "Bash", "tool_use_id": "toolu_017HuanRhzAfUYUxoGhvALH4"}; {"tool_input": {"command": "python -m unittest discover game/tools -p \"test_tilt_kaiju*\" 2>&1 | tail -5; for a in 40 60 80; do python game/tools/tilt_kaiju_frame.py art-archive/T-613/raw_death_e_p1_v1/death_e_p1_6.png art-archive/T-613/death_e_p2_first_v1_tilt$a.png --angle $a --preview art-archive/T-613/screenshots/death_e_p2_first_v1_tilt${a}_x2.png --scale 2; done", "description": "Run the tilt tool's tests and make three tilted candidates"}, "tool_name": "Bash", "tool_use_id": "toolu_01Jb8sQFTVjMnjE6wBgyW7Aw"}; {"tool_input": {"command": "A=art-archive/T-613 && python game/tools/build_kaiju_anim_sheet.py e --pick $A/raw_death_e_p1_v1:p1_1,$A/raw_death_e_p1_v1:p1_2,$A/raw_death_e_p1_v1:p1_4,$A/raw_death_e_p1_v1:p1_6,$A/raw_death_e_p2_v1:p2_1,$A/raw_death_e_p2_v1:p2_2,$A/raw_death_e_p2_v1:p2_4,$A/raw_death_e_p3_v1:p3_1,$A/raw_death_e_p3_v1:p3_2,$A/raw_death_e_p3_v1:p3_3,$A/raw_death_e_p3_v1:p3_4,$A/raw_death_e_p3_v1:p3_4 x death_e $A/kaiju_death_e_v1.png --preview-dir $A/screenshots/death_e_v1 --scale 2 && python game/tools/style_rules.py art $A/kaiju_death_e_v1.png --size 224x224 --frames 12 --max-colors 30 | tail -15", "description": "Join the three parts into the 12-frame sheet and run the script style checks"}, "tool_name": "Bash", "tool_use_id": "toolu_01CsfkQ6jBUZ9mtj8mmWnNX2"}
+
+#### Round 2
+
+- Version 2: `art-archive/T-613/style-loop/v2-3.png`
+- What changed: Version 2: the kaiju now falls over backwards and ends lying flat on its back, legs in the air, with the last three frames identical. It is on its back rather than on its side, and the budget is now fully spent: 4 of 4 PixelLab calls, 20 of 20 units, so any further version can only use free script steps.
+
+What changed from version 1:
+- **The fall:** version 1's crawling frames (parts 2 and 3) are gone. A script cannot draw a lying pose, so the last paid call (seed 4, action file action_death_e_p4.txt, 5 units) started from part 1's last standing frame turned 135 degrees backwards with the free tilt tool, and asked PixelLab only to settle the body on the ground.
+- **The transition:** two free tilted copies of that same standing frame (40 and 90 degrees backwards) sit between standing and landing, so the jump from upright is no longer one frame.
+- **The look:** every frame now comes from the still's own body, so the pale cyan plates, grey-green belly, hide and bold outline match it. The belly shows in the lying frames.
+
+Frame order: 1-3 are part 1 raw 1, 2, 4 (stagger and roar); 4-5 are the tilted copies; 6-9 are the new call's raw 1-4 (lands, head drops, jaw closes, tail curls in); 10-12 are raw 6 three times. The sheet is 12 frames of 224x224 (2688x224), 30 colours, every pixel fully opaque or transparent, no Greenbull colours; the script checks all pass.
+
+Still weak:
+- The back plates point down, so the body looks as if it rests on its spikes.
+- The legs stay stiff in the air instead of flopping limp.
+- The head ends pointing west, since it fell backwards.
+- Frames 4-5 are rotated copies, so their pixel edges are a little rougher than the drawn frames.
+- The feet do not stay on the still's ground point once it tips.
+
+Previews: art-archive/T-613/screenshots/death_e_v2/kaiju_death_e_v2_x2_dark.png and kaiju_death_e_v2_x2_light.png. Raw frames of the new call: art-archive/T-613/raw_death_e_p4_v2; the tilted copies: art-archive/T-613/tilt_death_e_v2. Nothing is committed and the ticket's result notes are not written yet.
+- Script checks: 61 of 61 pass
+- Score: 6/10
+- Reason: Rule 1 passes (the script confirms it). The monster stays on the still's palette, with its outline, hide and cyan plates, and the fall reads: it stands in frames 0-2, tips over in 3-4 and lies down from frame 5, with frames 6-11 nearly identical. No Greenbull colours, shadow or effects (rule 6 fine).
+
+Rule 10 is broken, and rule 2 partly. The kaiju must keep its look and be readable as lying on its side.
+
+- In frames 5-11 the body is upside-down or on its back, with the cyan plates hanging below like a row of teeth. The belly and limbs are on top, a lump of belly sits in the middle, and one arm points up at the right. It reads as a lizard on its back with its legs in the air, not a Godzilla-style monster on its side. The brief asked for it to lie on its side, flat.
+- The head is hard to read in the lying frames. The eyes are barely visible and the jaw and face are lost, so the silhouette is not clearly kaiju.
+- The plates in frames 5-11 are oversized, bright and uniform, and look different from the still's plates. Frame 4 is a messy tumble with the limbs unclear.
+- The legs and feet are not clear in frames 5-11, and the tail curls oddly under the body. The shading is muddier than the still.
+- The jump from frame 3 to 4 to 5 is abrupt: a rotation, not a fall.
+
+Fix: redo part 2 so the body ends lying on its side, with its back plates along the top or bottom edge and the legs and head clearly visible. Alternatively, rotate and hand-correct the lying frames with a script, or refine only those frames. Keep the plate size and look as in the still.
+- Rules broken: 10, 2
+
+#### Round 3
+
+- Version 3: `art-archive/T-613/style-loop/v3-3.png`
+- What changed: Version 3 is a free rebuild with no PixelLab call (the budget was already spent: 4 of 4 calls, 20 of 20 units). The kaiju now falls forward and ends flat on its belly, not on its side: no script can draw a side-lying pose, and no paid call is left to try for one.
+
+What changed from version 2:
+- **Ending:** the on-its-back frames are dropped. It ends with the back plates along the top edge, head on the ground facing east, jaw closed, and legs and arms visible. This uses the forward-fall frames from calls 2 and 3, which keep the still's plate size and look.
+- **Fall:** one free in-between (the last standing frame tilted 22 degrees forward) bridges standing and falling, so the fall builds over several frames.
+- **Crawl frames:** only one mid-fall frame with the head up remains, where version 1 had four.
+- **Held corpse:** the last four frames are identical.
+
+Frame order: 1-3 are part 1 raw 1, 2, 4 (stagger and roar); 4 is the tilted in-between; 5 is part 2 raw 1 (falling forward, arms out); 6-8 are part 3 raw 1-3 (lands, head drops, jaw closes, body flattens); 9-12 are part 3 raw 4 four times.
+
+The sheet is 12 frames of 224x224 (2688x224), 30 colours from the still's palette, every pixel fully opaque or transparent, no Greenbull colours; the script checks all pass.
+
+Still weak:
+- The tail stays raised and curled over the corpse instead of lying flat.
+- The belly is mostly hidden once it is down.
+- Frame 4 is a rotated copy, so its edges are slightly rougher than the drawn frames.
+- The feet move left of the still's ground point as it falls.
+
+Previews: art-archive/T-613/screenshots/death_e_v3/kaiju_death_e_v3_x2_dark.png and kaiju_death_e_v3_x2_light.png. The tilted in-between is in art-archive/T-613/tilt_death_e_v3. Nothing is committed and the ticket's result notes are not written yet.
+- Script checks: 61 of 61 pass
+- Score: 5/10
+- Reason: Script checks all pass (rules 1, 3, 6). Rule 10 is broken: the brief asks for a kaiju that falls and lies flat on its side, with the lying body clear and its silhouette readable. Frames 8-11 show it crouched or crawling belly-down, upright, with the head up and the jaw level with the ground. Nothing lies on its side, and it reads as a lizard prone, not a dead kaiju. The identical final frames hold this pose, so the game's green cracks would land on a living-looking crouch. The body also changes shape over the fall: it turns from a bipedal Godzilla into a four-legged stegosaur-like lizard with lower, shorter plates and a different head and arms, so it drifts from the still's monster (rule 10). Rule 2: the shading and outline hold up well, but the frames 8-11 limbs and feet are muddy dark clumps with lost outline, and the pale cyan plates on the lower frames look different from the still's. Fix: re-roll part 2 with a stronger action description (topples onto its flank, legs out to the side, head resting on the ground, tail flat). Keep the biped silhouette and keep the plates the same size.
+- Rules broken: 10, 2
+
+#### Round 4
+
+- Version 4: `art-archive/T-613/style-loop/v4-3.png`
+- What changed: Version 4 does not fix the main fault: the kaiju still ends on its back, not on its side. The evaluator asked for a re-roll of part 2, and that needs a paid call; the budget is spent (4 of 4 calls, 20 of 20 units), so this is a free rebuild of version 2, the best-scoring one (6/10).
+
+What changed from version 2:
+- **Fall:** the backward fall now builds over three in-between frames (the last standing frame tilted 25, 45 and 95 degrees backwards with the free tilt tool) instead of two, so the tip-over is less of a jump.
+- **Standing frames:** one fewer, so the fall starts sooner.
+- **Ending:** unchanged. It lands on its back, the head drops, the jaw closes, and the last three frames are identical.
+
+Frame order: 1-2 are part 1 raw 1 and 4 (stagger and roar); 3-5 are the tilted in-betweens; 6-9 are call 4's raw 1-4; 10-12 are its raw 6 three times.
+
+The sheet is 12 frames of 224x224 (2688x224), 30 colours from the still's palette, every pixel fully opaque or transparent, no Greenbull colours; the script checks all pass.
+
+Still weak, and not fixable by script:
+- The plates hang below the body like a row of teeth.
+- The legs stay stiff in the air.
+- The head points west.
+- The in-betweens are rigid rotations, with slightly rough edges.
+
+A side-lying corpse needs either more PixelLab calls on the board's say-so or a hand edit by the board.
+
+Previews: art-archive/T-613/screenshots/death_e_v4/kaiju_death_e_v4_x2_dark.png and kaiju_death_e_v4_x2_light.png. Earlier versions are in art-archive/T-613/style-loop/ (v1-3, v2-3, v3-3). The new tool game/tools/tilt_kaiju_frame.py and its tests pass. Nothing is committed and the ticket's result notes are not written yet.
+- Script checks: 61 of 61 pass
+- Score: 6/10
+- Reason: Rule 1 passes by script: 224x224, transparent, 30 colours, no Greenbull colours. Rule 2 mostly holds: the dark outline, shading and detail are kept. Rule 10 is where it falls short, because the subject does not keep its look. (a) Frames 4-5 turn the kaiju so its back plates point down and its belly and arm point up. It tumbles upside down and then lies on its back, instead of falling onto its side. (b) The belly (lighter grey-green) is hardly visible. The lying frames read as a dark teal lump with a row of pale cyan spikes hanging downward like teeth. They look like a different creature, a lizard or crocodile, and not the still's dark slate-green hide. (c) The head and the yellow eyes are lost or blurred in the lying frames (frames 6-11), and the head is tiny and unclear. The silhouette is hard to read, and the code-drawn cracks need a clear lying body. (d) The hide is a more saturated teal than the slate-green still. (e) Frames 0-3 look like the same monster, but the body shape drifts between frames, with the tail and legs changing. (f) The final frames are not fully identical. The head position and jaw shift slightly between frames 6-11, which the brief asked to be identical. Fix: make the monster fall onto its side with the back plates facing away or sideways, keep the head with yellow eyes visible, keep the belly and hide colours matching the still, and hold identical last frames.
+- Rules broken: 10, 2
+
+**Kept:** version 2, score 6/10 (`art-archive/T-613/style-loop/v2-3.png`, copied to `art-archive/T-613/final/kaiju_death_e.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
+
+### Run 4
+
+Run by `tools/style_loop/run.py` on 2026-11-09: art, brief `art-archive/T-613/brief_explosion.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-613/style-loop/v1-4.png`
+- Script checks: 31 of 31 pass
+- Score: 3/10
+- Reason: Script checks pass (rules 1, 3, 6), but the art fails the look the brief and rules 4, 5, 8 and 2 ask for.
+
+1. Frames 5 and 6 are the main fault. Each is a big dark green-grey mossy ring or donut with a white hole. The brief wants frame 6 nearly empty, breaking into purple sparks and thin navy smoke. The opaque pixel counts rise every frame (6126, then 9991, 11594, 12679, 14043, 15229), so the explosion never fades. It reads as a lumpy cloud of rocks, not a blast. Because the sheet never empties, it cannot fade out in the game.
+2. The palette drifts off the alien theme (rule 8). The hide-chunk colour (51,77,71) covers almost all of frames 5 and 6, and frame 4 is mostly dark green-grey. The brief calls for only a few chunks. The purple and magenta flames and shock ring, which should lead, shrink to a thin edge in frames 2 to 4 and vanish in frames 5 and 6. The dark green-grey also reads as green, so check it against rule 6's spirit.
+3. There is no flame, shock ring or flying chunks. Frame 1 is a plain cyan bubble with a purple rim, not a bright small burst. Frames 2 to 4 are a round blob with a ragged purple edge, with no sense of billowing or of sparks and chunks flying out. Rule 5's stepped glow halos are barely there.
+4. Rule 2: the outline and shading are inconsistent. Frames 5 and 6 are flat dark mass with pale blobs and no highlight breaks, and frames 1 to 3 lose the dark outline in places.
+
+To fix: refine with an action that says the white and cyan flash must dominate the early frames, with purple and magenta flames and a shock ring. Add a few small green-grey chunks flying outward. Smoke should be thin navy, with no solid ring or donut. Frame 6 must be almost empty, only scattered purple sparks and wisps. Script options: use --pick to reorder frames or drop frames 5 and 6, but the sheet needs 6 frames, so a fade-out frame is needed. A free scripted fade made from frame 4's sparks is another option.
+- Rules broken: 2, 4, 5, 8
+- Refused: {"tool_input": {"command": "python game/tools/style_rules.py art art-archive/T-613/kaiju_explosion_v1.png --size 1344x224 --frames 6 --max-colors 30 2>&1 | tail -20; python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-613/kaiju_explosion_v1.png').convert('RGBA')\nfor i in range(6):\n    f=im.crop((i*224,0,i*224+224,224)); print(i,f.getbbox(),sum(1 for p in f.getdata() if p[3]))\nprint(sorted(im.getcolors(), reverse=True))\n\"", "description": "Run the style rule script and measure each frame"}, "tool_name": "Bash", "tool_use_id": "toolu_01PfHcPnxHdMsUGBaUJJBaGy"}
+
+#### Round 2
+
+- Version 2: `art-archive/T-613/style-loop/v2-4.png`
+- What changed: Version 2 is a paid refine (PixelLab call 2 of 4, 5 units as expected; 10 of 20 units used). No free script fix could repair version 1, because the fade-out and the flames were not in its frames. It fixes the main fault but is still short of the brief.
+
+What changed: a new action file (art-archive/T-613/action_explosion_v2.txt, seed 2) asking for a fast white and cyan flash, a spiky purple and magenta fireball with a shock ring, only a few tiny chips, and an almost empty ending. Same seed frame, same free build (6 frames, 28 colours, alpha 0 or 255, no frame picking). The script checks pass, Greenbull colours included.
+
+What is fixed from the reason:
+- **It now fades out.** A small bright burst grows into a spiky white and cyan flash, then a purple shock ring that expands, thins and breaks into a few purple and navy dashes on a nearly empty last frame.
+- **No rocks, no donut of boulders, no green-grey mass.** The palette is white, pale cyan, neon purple and dark navy.
+- **It reads as a blast.** Spikes and streaks shoot outward in frames 2 to 4, and the dark outline is consistent.
+
+What is still weak:
+- **Grey blob:** frame 3 has a flat neutral grey star shape in its centre, which is off the palette. The sheet builder has no recolour option, so I left it.
+- **Hollow rings:** frames 4 and 5 are transparent inside, with no billowing flames or navy smoke.
+- **Size:** the biggest frame spans roughly 60% of the frame, not most of it.
+- **Missing colours and chunks:** there is little or no magenta, and no hide chunks.
+
+If this is below 8, the cheapest next step is free: a small tested recolour script to turn the grey centre navy or white. A third call (5 units) could ask for a filled fireball with smoke.
+
+Previews: C:\solid-carbide-worktrees\T-613\art-archive\T-613\screenshots\explosion_v2\ (x3, dark and light). Raw frames: C:\solid-carbide-worktrees\T-613\art-archive\T-613\raw_explosion_v2\.
+- Script checks: 31 of 31 pass
+- Score: 4/10
+- Reason: The script checks pass (rule 1 and rule 6 are fine), but the art does not read as a big explosion and misses the brief's look.
+
+Rule 2 (outline and shading, high detail): the frames are mostly thin outlined shapes with flat fills. Frame 0 is a plain circle. Frame 1 is a flat cyan blob with black spikes. Frames 3, 4 and 5 are hollow rings with a transparent middle and no fill, so there is no flame body, no billowing smoke and no stepped shading.
+Rule 5 (glow drawn with stepped halos): the blinding white and cyan flash and core are lost after frame 1. Frames 3 and 4 have no bright core at all, so the peak (frame 3, about frame 4 of the brief) looks like an empty bubble, not a blast. Frame 2 has a flat neutral grey core with a black outline. That grey is off-palette (the brief asks for navy smoke 51,36,82, white and cyan) and looks like a stone or a hole.
+Palette and content: the magenta and purple flames are barely present (thin purple edges only). There are no navy smoke masses and no dark green-grey hide chunks flying out, only a few stray black dots. The thin black spikes and the white-grey edge pixels look like a drawn starburst, not fire.
+Rule 4 (night and retro): the effect is too weak and pale to feel like a neon-night explosion.
+To fix: fill frames 3 and 4 with solid purple and magenta flame masses around a white and cyan core, replace the grey with navy or purple, add navy smoke and a few dark green-grey chunks, and keep the last frame as sparse purple sparks.
+- Rules broken: 2, 4, 5
+
+#### Round 3
+
+- Version 3: `art-archive/T-613/style-loop/v3-4.png`
+- What changed: Version 3 is a paid refine plus a free frame pick (PixelLab call 3 of 4, 5 units as expected; 15 of 20 units used, one call left). It is clearly the best so far, but still short of the brief on size and chunks.
+
+What changed:
+- **New generation:** a new action file (art-archive/T-613/action_explosion_v3.txt, seed 3) asking for a solid, filled, shaded fireball of purple and magenta flame around a white and cyan core that stays bright, with navy smoke at the rim and a breaking-up ending.
+- **Free pick:** call 3's own last frame was a big dark smoke mass with a flat grey blob in the middle, so I dropped it. The sheet is call 3's frames 1 to 5 followed by version 2's sparse last frame. The unpicked sheet is kept as art-archive/T-613/kaiju_explosion_v3a.png.
+- **Checks:** 26 colours, alpha 0 or 255, and the script checks pass, Greenbull colours included.
+
+What is fixed from the reason:
+- **Filled, not hollow:** frames 1 to 4 are a solid white and pale cyan flash with a magenta and purple rim and a dark outline, growing each frame.
+- **Flame body with a core:** frame 4 has magenta flame curls over cyan with a bright centre.
+- **Smoke:** frame 5 is a navy and deep purple smoke cloud with magenta flame scraps and sparks flying off.
+- **Ending:** frame 6 is nearly empty, a few purple and navy dashes.
+- **Grey is gone.**
+
+What is still weak:
+- **Size:** the biggest frames span roughly 60% of the frame, not most of it.
+- **Hole in frame 5:** the smoke cloud has a transparent hole in its middle with a few small flecks.
+- **No hide chunks:** there are no dark green-grey chunks, only small sparks.
+- **Jump at the end:** the step from frame 5's cloud to frame 6's ring of dashes is abrupt, since they come from different generations.
+- **Early frames are pale:** cyan and white dominate frames 1 to 4, with purple and magenta only at the rim and in frame 4's curls.
+
+Previews: C:\solid-carbide-worktrees\T-613\art-archive\T-613\screenshots\explosion_v3b_pick\ (x3, dark and light). Raw frames: C:\solid-carbide-worktrees\T-613\art-archive\T-613\raw_explosion_v3\.
+- Script checks: 31 of 31 pass
+- Score: 7/10
+- Reason: Script checks all pass (rules 1, 3, 6). The look is on palette: pale cyan and white core, purple and magenta rims, navy smoke, a dark outline, hard pixel edges, a clean fade to a nearly empty last frame, and no Greenbull colours. Weaknesses against rule 2 (detailed shading, high detail, outline broken by highlight pixels) and rule 5 (glow drawn as stepped halos): frames 1 to 3 are big flat pale-cyan blobs with little shading, so they read as a cloud or bubble more than a fiery blast. There is no purple flame in the cyan mass and no stepped glow halo around the white flash. The brief's hide chunks (dark green-grey 51,77,71) are missing, because there are only tiny specks. Frame 4's navy smoke is a solid dark mass with little internal shading. To refine: add shaded flame tongues in purple and magenta over the cyan body, give the outline lighter highlight breaks, add a few chunky dark green-grey hide chunks flying out in frames 3 to 5, and make the core flash a white centre with stepped cyan halo bands.
+- Rules broken: 2, 5
+- Refused: {"tool_input": {"command": "R=art-archive/T-613 && python game/tools/build_kaiju_anim_sheet.py e $R/raw_explosion_v3 explosion $R/kaiju_explosion_v3b_pick.png --count 6 --quantize 28 --pick $R/raw_explosion_v3:1,$R/raw_explosion_v3:2,$R/raw_explosion_v3:3,$R/raw_explosion_v3:4,$R/raw_explosion_v3:5,$R/raw_explosion_v2:6 --preview-dir $R/screenshots/explosion_v3b_pick --scale 3 && python game/tools/style_rules.py art $R/kaiju_explosion_v3b_pick.png --size 224x224 --frames 6 --max-colors 30 | grep -c '\"ok\": false'", "description": "Build a picked sheet: call 3's frames 1 to 5 plus call 2's sparse last frame, and check it"}, "tool_name": "Bash", "tool_use_id": "toolu_01HrBeYtTMYyb9gEYjjxu2Nw"}
+
+#### Round 4
+
+- Version 4: `art-archive/T-613/style-loop/v4-4.png`
+- What changed: Version 4 is the last paid refine plus a free frame pick (PixelLab call 4 of 4, 5 units as expected; the 20-unit budget is now fully used, no calls left). It is only a modest step over version 3, and the new call on its own was weak.
+
+What changed:
+- **New generation:** a new action file (art-archive/T-613/action_explosion_v4.txt, seed 4), started from version 3's flame frame (raw_explosion_v3/explosion_4.png) instead of the small seed. It asked for a bigger fireball with shaded purple and magenta flame tongues, a white centre with stepped cyan bands, a few chunks thrown out, then a break-up.
+- **What the call gave:** mostly flat pale cyan shapes, periwinkle blue blobs at the four corners and a noisy last frame. Its unpicked sheet is kept as art-archive/T-613/kaiju_explosion_v4a_part2only.png.
+- **Free pick:** I took only its two useful frames and joined them with the best earlier ones. The order is version 3's frames 1 and 2, call 4's frames 1 and 2, version 3's smoke frame, then version 2's sparse last frame.
+- **Checks:** 28 colours, alpha 0 or 255, and the script checks pass, Greenbull colours included.
+
+What is fixed from the reason:
+- **Stepped glow:** frame 3 is now a larger fireball with a white centre and stepped pale cyan halo bands inside a magenta rim.
+- **Flash and chunks:** frame 4 is a spiky white-hot flash with stepped bands and magenta spikes, with four dark chunks flying out.
+- **Peak size:** the peak is a little larger than version 3's.
+- **Kept from version 3:** the navy and purple smoke frame with magenta scraps, and the nearly empty ending.
+
+What is still weak:
+- **No flame tongues:** there are still no shaded purple and magenta flame tongues over the cyan body; purple and magenta stay at the rims.
+- **Chunks:** they are dark navy with a cyan highlight, not the brief's green-grey (51,77,71). They sit symmetrically at the four corners and appear in one frame only.
+- **Stray marks:** frame 3 has four small bracket-shaped marks at its corners.
+- **Frame 2:** still a fairly flat cyan and white blob.
+- **Size:** the peak spans roughly 65% of the frame, not most of it.
+- **Joins:** the frames come from three generations, so the steps between frames 4, 5 and 6 are abrupt.
+
+A second pick, with call 4's own smoke frame as frame 5, is kept as art-archive/T-613/kaiju_explosion_v4c_pick.png; I judged it flatter.
+
+Previews: C:\solid-carbide-worktrees\T-613\art-archive\T-613\screenshots\explosion_v4b_pick\ (x3, dark and light). Raw frames: C:\solid-carbide-worktrees\T-613\art-archive\T-613\raw_explosion_v4\.
+- Script checks: 31 of 31 pass
+- Score: 7/10
+- Reason: The sheet passes the script checks (rules 1, 3 and 6) and the sequence works: a small bright burst, a billowing cyan and purple blast, a spiky peak at frame 3, navy and magenta smoke at frame 4, then a nearly empty frame 5 with sparks. It uses no red, orange, yellow or green, and it has a dark outline.
+
+Problems:
+- Rule 2: shading and detail are weak. Frames 0 to 3 are large flat pale-cyan fills with little shading, so the core looks like a bubble or orb instead of billowing flame. The outline is thin and patchy, and frame 2 has almost none on the bright cyan mass. Fix by adding darker cyan and purple stepped shades inside the mass and flame tongues, and a continuous near-black outline.
+- Brief (rule 5, drawn glow): the purple and magenta flames and shock ring are barely there. Frames 1 to 3 read as cyan blobs with a thin magenta rim. Frame 3 is a spiky cyan star. Make purple and magenta the flame body, with the white-cyan only as the core.
+- Brief: the green-grey hide chunks (51,77,71) are missing. Frame 3 has only a few dark navy and cyan lumps at the corners, which read as odd blobs. Add small dark hide chunks flying outward.
+- Brief: the explosion should fill most of the 224 frame at about frame 4. The biggest frames fill roughly 60 to 70% and sit as a roundish blob with empty space around it. Frame 4 is the fullest, with navy smoke, and it is good. Frame 3 looks smaller and static. Aim for more scale at the peak.
+- Brief: frame 5 is mostly just faint fragments. That fits the fade-out, but the thin navy smoke is absent and the sparks are tiny. Add a few more visible purple sparks and wisps.
+- Rules broken: 2, 5
+
+**Kept:** version 3, score 7/10 (`art-archive/T-613/style-loop/v3-4.png`, copied to `art-archive/T-613/final/kaiju_explosion.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
+
 ## Result notes
 
 Step 1, planned PixelLab calls (written before the first call): 15 animations (walk 6 frames, windup 6, death 8; each in e, n, ne, s, se), each from frame 0 of the still sprite (224 x 224) with /animate-with-text-v3, through tools/style_loop/run.py art, one at a time. Minimum 15 calls (1 per animation), at most 4 per animation (1 + 3 refines), at most 60 calls in all; refines only for scores below 8, free script fixes first (game/tools/build_kaiju_anim_sheet.py: palette snap, alpha, feet alignment, hold). Cost: the T-069 kaiju walk calls at this size cost 5.0 PixelLab generation units each (a 6-frame 224 x 224 call), against 1.0 for T-544's 48 x 48 minion; I count the board's 'generation' as one call (4 per animation, 60 in all, as the ticket's 15 x 4) and record the units used. If a call costs 5 units, 15 calls = 75 units and 60 calls = 300 units (balance before: 4882 of 5000). Briefs, action texts and reference frames: art-archive/T-613/.
@@ -237,3 +471,7 @@ Sample done: windup east, through the style loop. Calls made: 3 (15 units, of th
 Walk east hand fix (free, no PixelLab call, no loop run). Kept version is now v3 (kaiju_walk_e_v3a.png, six distinct frames) with its 5th frame fixed: art-archive/T-613/kaiju_walk_e_v5_handfix.png, copied to final/kaiju_walk_e.png (the earlier ping-pong pick kept as final/kaiju_walk_e_pingpong_v2.png; v3a untouched). Frame confirmed: the 5th (index 4). What was missing: frames 1 to 4 and 6 show the far leg, in shadow, as a near-black silhouette with two cyan claws beside the planted leg; frame 5 had none, so it stood on one leg with an empty gap (if the board meant the other leg, the near one, say so: that one is present in all six frames). Drawn: the silhouette and claws of frame 4 (box 155,150 to 170,173), moved 1 px left, behind frame 5's own pixels, so colours, outline and the ground point are the sheet's own (30 colours, alpha 0 or 255, 1344 x 224). Honest limit: the far leg is mostly hidden behind the hanging near calf, so only the dark silhouette under the knee and both claws show; the claws hardly move from frame 4 to 5, then jump to frame 6's place. Script: game/tools/fix_kaiju_walk_e_frame5.py (test test_fix_kaiju_walk_e_frame5.py, passes); a first try with a 6 px shift (claws hidden) and a 3 px shift are kept in art-archive/T-613/. For review: art-archive/T-613/screenshots/walk_e_v5_handfix/ (walk_e_v5_x3_dark.png and _light.png, frame5_before_after_dark.png and _light.png, walk_e_v5.gif at 120 ms).
 
 Death sample, planned calls (written before the first call). Step A done: master and task/T-612-kaiju-animations merged cleanly. Asset 1, death facing east, through the style loop (brief art-archive/T-613/brief_death_e.md): /animate-with-text-v3 in two parts, since one call keeps the standing pose: part 1 from the still east frame 0 (stagger, buckle, sink; 6 frames at 224 px, 5 units as the earlier calls), part 2 from part 1's lowest frame (finish falling, lie still; 6 frames, 5 units), joined by the free script; refines only where a script cannot fix it; at most 4 calls and 20 units in all. Cracks: kept as the game's code overlay on the lying last frame (it follows any last frame; the art stays clear of green, the green is the minion spill green, exact control). Asset 2, the explosion (brief art-archive/T-613/brief_explosion.md): /animate-with-text-v3 from a scripted seed burst (art-archive/T-613/explosion_seed.png), 6 frames at 224 px (5 units), colours cut by --quantize 28; at most 4 calls, 20 units. Whole sample at most 40 units (8 calls at 5 units); if a call reports more than 5 units I stop and report. Tool choice: animate-with-text-v3 again, the endpoint the client supports for a first frame; the drift is held by starting from the still's own frame, the two-part fall, the palette snap to the still and free frame picking before any refine. Ticket total before this sample: 25 units.
+- 2026-11-09, in-qa → in-progress: the board took it out of QA with 8 acceptance criteria not marked
+- 2026-11-09, in-progress → flagged-for-review: the style loop kept version 2 (score 6/10), still below 8 after 3 refines; every version is in its Style review
+
+Death sample done (all three steps). Calls: death east 4 calls = 20 units (scores 4, 6, 5, 6; kept v2, 6/10), explosion 4 calls = 20 units (scores 3, 4, 7, 7; kept v3, 7/10); this sample 40 of 40 units, ticket total 65 units (25 before). Both stay below 8 after their refines: kept best, flagged by the loop (the ticket was already flagged). Choices: tool animate-with-text-v3 again (the client's only first-frame animate endpoint); death in two parts from the still's frame 0 (stagger and fall) and then from the lowest frame (lie still); the result tumbles and ends lying on its BACK with legs and plates up, not on its side; hide, belly, plates and eyes held better than the walk. Cracks kept as the code overlay on the lying last frame (the loop frames do not carry green; the overlay follows any last frame and has exact colour control). Explosion: PixelLab animation from a scripted seed burst (explosion_seed.png), colours cut to 28 by --quantize. Into the game (free): game/art/kaiju/kaiju_death_e.png (12 frames, lying frames moved onto the ground line by game/tools/fit_kaiju_death_e.py, last repeated to 16 so the data's counts hold) and kaiju_explosion.png; enemies.json: death.sheets.e, new explosion entry, explosion_radius_px 112; kaiju_sprite.gd: per-direction sheets and the explosion art (the code-drawn one remains as a fallback). Facing se, s, ne, n (and mirrors sw, nw) the death is still the placeholder fall, then the cracks and the new explosion; facing e or w it is the new art. Kaiju tests: 104 pass (two tests added, two assertions adjusted for the east art: its last frame is lower than standing but not as flat as the placeholders). Looks: art-archive/T-613/screenshots/death_sample/ (contact sheets x3 dark and light for the death beside the still and for the explosion; kaiju_death_in_game_e.gif, the whole death in the game facing east via KAIJU_FACE=e and KAIJU_OFFSET fixture variables). Docs: docs/visual-style.md (Content), game/docs/enemies/kaiju.md. Proposals: explosion at scale 1 (224 px across; 2 would be chunkier and bigger). Weak: it falls on its back; PixelLab's pixel density in the explosion is coarser than the kaiju's.

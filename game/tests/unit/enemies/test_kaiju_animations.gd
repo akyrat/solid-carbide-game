@@ -93,6 +93,28 @@ func test_the_data_names_three_animations_with_sheets_counts_and_speeds() -> voi
 	assert_gt(float(end.explosion_radius_px), 0.0)
 
 
+# ---- T-613: the final death art for east and the explosion's art ---------------------------------
+
+func test_the_east_death_is_the_final_art_and_the_other_directions_keep_the_placeholders() -> void:
+	var east := SpriteScript.anim_sheet("death", "e")
+	assert_eq(east.resource_path, String(anims.death.sheets.e), "east is the final art")
+	assert_eq(east.get_width(), 16 * int(anims.frame_size), "16 frames, the data's count")
+	for d in ["se", "s", "ne", "n"]:
+		assert_eq(SpriteScript.anim_sheet("death", d).resource_path, String(anims.death.sheet) % d, d)
+	assert_eq(SpriteScript.anim_sheet("walk", "e").resource_path, String(anims.walk.sheet) % "e", "the walk is unchanged")
+
+
+func test_the_explosion_is_one_sheet_of_art_used_by_every_direction() -> void:
+	var tex := SpriteScript.explosion_sheet()
+	assert_not_null(tex)
+	assert_eq(tex.get_height(), int(anims.frame_size))
+	assert_eq(tex.get_width() / int(anims.frame_size), int(anims.explosion.frames))
+	var n := int(anims.explosion.frames)
+	assert_eq(SpriteScript.explosion_frame_at(0.0, n), 0)
+	assert_eq(SpriteScript.explosion_frame_at(0.5, n), n / 2)
+	assert_eq(SpriteScript.explosion_frame_at(1.0, n), n - 1, "never past the last frame")
+
+
 func test_the_frame_format_is_written_for_the_art_task() -> void:
 	var doc := FileAccess.get_file_as_string("res://docs/enemies/kaiju.md")
 	assert_true(doc.contains("The kaiju's animations"), "a section on the format")
@@ -200,7 +222,7 @@ func test_the_death_plays_once_with_the_kaiju_still_harmless_and_untargeted() ->
 	var cur: Dictionary = s.current_frame()
 	assert_eq(cur.anim, "death")
 	var dir: String = SpriteScript.SHEETS[SpriteScript.compass_index(s.facing)][0]
-	assert_eq(cur.texture, load(String(anims.death.sheet) % dir))
+	assert_eq(cur.texture, SpriteScript.anim_sheet("death", dir))
 	assert_eq(cur.frame, 0)
 	assert_false(k.is_in_group("enemies"), "no weapon finds it in the group")
 	assert_false(get_tree().get_nodes_in_group("enemies").has(k))
@@ -278,7 +300,9 @@ func test_the_kaiju_lies_on_the_ground_in_the_last_death_frame() -> void:
 		var first := img.get_region(Rect2i(0, 0, fs, fs)).get_used_rect()
 		var last := img.get_region(Rect2i((int(anims.death.frames) - 1) * fs, 0, fs, fs)).get_used_rect()
 		assert_gt(last.size.x, 0, d)
-		assert_lt(last.size.y, first.size.y * 0.75, "%s: flat on the ground, much lower than standing" % d)
+		# T-613: east is the PixelLab art, which topples onto its back with its legs and plates up, so it is
+		# lower than standing but not as flat as the placeholders.
+		assert_lt(last.size.y, first.size.y * (0.9 if d == "e" else 0.75), "%s: flat on the ground, lower than standing" % d)
 		assert_almost_eq(float(last.end.y), float(anims.feet[1]) + 2.0, 3.0, "%s: resting on the ground line" % d)
 
 
