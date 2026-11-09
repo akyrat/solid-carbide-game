@@ -1,7 +1,7 @@
 ---
 id: T-613
 title: Art for the kaiju's walk, windup and death animations
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Polish
@@ -89,6 +89,10 @@ The windup east sample is made but weak: best 5/10 after 3 calls (15 units; 25 s
 ### 2026-11-09, Flagged for review → In progress
 
 The board likes walk east version 3 except its 5th frame (the left leg is missing). The Asset Generation Agent is fixing that frame by hand, free: no PixelLab generation.
+
+### 2026-11-09, In progress → In QA
+
+Ready for the board's look, no QA agent: walk east version 3 with its 5th frame fixed by hand (the far leg drawn back in), free. Files: art-archive/T-613/screenshots/walk_e_v5_handfix/.
 
 ## Style review
 
