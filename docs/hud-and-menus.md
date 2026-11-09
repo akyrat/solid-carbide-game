@@ -91,6 +91,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - **No popup for thread the needle** (board, 2026-11-08): threading the needle no longer shows its trick popup (the bubble); the trick still counts and still raises the combo as before, and the pair still flashes (Level design, Decisions, "Threading the needle flashes the pair"). (T-596)
 - **No R on the tutorial's keycaps** (board, 2026-11-08): the keycaps in the practice window's corner show W, A, S, D and Space only; R is gone from them. Pressing R does what it did before. (T-597)
 - **A setting to turn off the trick popups** (board, 2026-11-08): a checkbox in the settings (the pause screen's and the main menu's Settings screen) turns the trick popups (the bubbles that name each trick) on or off. On by default, saved like the other settings. Off: no trick popups show, but every trick still counts and still raises the combo, and pairs still flash. The Project Lead read the board's "combo popups" as the trick popups; anything else (the multiplier popup) stays as it is unless the board says so. The text: T-598; the build: T-599, on T-596.
+- **The air spin slide asks for one spin** (board, 2026-11-09, T-604): the tutorial's air spin slide's practice goal is one AIR 360!, so the board's recorded demo, which lands one, completes it. (T-604)
 
 ## Content
 
