@@ -4330,3 +4330,18 @@ Entry format:
 - Decision or change: The controller's button labels (Xbox names for every controller, LS for the stick) and the controller version of the 16 lines that name a key, in game/data/controller_text.json; T-610 will show them.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-609
+
+## 2026-11-09: The timer goes to the top centre; the notebook can be moved in the HUD editor
+- Decision or change: The board asked for the run timer to sit at the top centre by default, and for the mission notebook to be a piece the player can move with Edit HUD layout (it was fixed). One ticket for the UI Agent.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-611
+
+## 2026-11-09: The kaiju gets a walk cycle, a meteor windup and a death animation
+- Decision or change: The board asked for an animation for the boss and chose three: the walk cycle, the windup before the meteors (in place of the yellow rings) and the death, played before the win. The Enemy Behavior Agent builds them with placeholder frames; the art is T-613.
+- Documents touched: docs/enemies.md, docs/visual-style.md
+- Tasks: T-612
+
+## 2026-11-09: Art for the kaiju's animations, the full set on the board's go
+- Decision or change: The board gave its go for PixelLab for the kaiju's walk, windup and death in all five directions, with no sample review; judged in the playtest. At most 60 generations (15 animations, up to 4 each through the style loop). The art task waits for T-612's frame format.
+- Documents touched: docs/visual-style.md, docs/enemies.md
+- Tasks: T-613
