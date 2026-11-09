@@ -1,7 +1,7 @@
 ---
 id: T-606
 title: The notebook pulses on mission progress
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Rails
@@ -55,10 +55,14 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-09, Open → In progress
+
+Started: a discreet pulse of the notebook page on any mission progress.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built: MissionPage pulses (scale about its centre, position/size untouched) on a count going up, a goal ticked, a running total growing. Numbers in game/data/hud.json notebook_pulse with reasons (proposals): 5% peak, 0.35 s half-sine, running totals at most every 1.2 s and only when the shown text changes; a pulse before its peak is left to finish, past it restarts. With a falling box the pulse comes when the box lands; goals without a box pulse at once. Same class in run and tutorial practice window. Page now always processes (rate-limit clock). Tests: new tests/unit/hud/test_mission_page_pulse.gd (10); full run 3287 tests, 3286 passing, 0 failing, 1 risky/pending (existing). Docs: docs/hud-and-menus.md Content, game/docs/hud-and-menus/hud.md. GIF: art-archive/T-606/screenshots/notebook_pulse.gif (+ notebook_pulse_still.png), game/tools/record_notebook_pulse_gif.sh. Screenshot.sh takes single stills, so the GIF came from the --write-movie recorder script.

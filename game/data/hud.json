@@ -78,6 +78,12 @@
     "max_per_frame": 3,
     "max_alive": 12
   },
+  "notebook_pulse": {
+    "_comment": "T-606 (HUD and menus, Decisions, 'The notebook pulses on mission progress'). Proposals for the playtest. The notebook page grows around its own centre and settles back, on any mission progress; only its scale changes, never its position or size. scale: the share it grows at the peak (0.05 = 5 percent: a few percent reads as a nudge, more would look like a pop-up and cover the weapon icons above). seconds: one pulse, up and back, a smooth half sine (0.35 s is about the length of a trick box's fall plus a beat, and short enough to finish before the next trick). total_gap: a running total (airtime, the drift slide's drift seconds) grows every frame, so it pulses when it starts growing and then at most this often (1.2 s: a held 3 s drift pulses about three times instead of buzzing). A count going up or a goal ticked always pulses; one still growing is left to finish, one past its peak restarts. With a falling name box the pulse comes when the box lands (the count changes then); with no box it comes at once.",
+    "scale": 0.05,
+    "seconds": 0.35,
+    "total_gap": 1.2
+  },
   "sub_goal": {
     "_comment": "T-337, the sub goal square (HUD and menus, Decisions, 'The HUD looks like a livestream'): game pixels at 1152 x 648 from the board's layout page, the 128 x 128 square with its label under it; anchored to the right edge, at the same share of the height.",
     "layout": { "x": 988, "y": 340, "w": 128, "h": 180, "reference_w": 1152, "reference_h": 648 }

@@ -54,6 +54,14 @@ const BOX_H := 24.0
 const BOX_FONT_SIZE := 16
 const DROPLETS := 7
 
+## The page pulses on mission progress (T-606): it grows a little around its own centre and
+## settles back, without moving (position and size never change, only `scale`). The numbers are
+## data/hud.json, notebook_pulse (with their reasons); these are the fallbacks.
+const HUD_PATH := "res://data/hud.json"
+const PULSE_SCALE := 0.05  ## the page grows by this share at the peak
+const PULSE_SECONDS := 0.35  ## one pulse, up and back
+const PULSE_TOTAL_GAP := 1.2  ## a running total pulses at most this often while it grows
+
 static var _texts: Dictionary = {}
 static var _art_cache: Dictionary = {}
 
@@ -80,6 +88,11 @@ var _fall_seq := 0
 var _clock := 0.0
 var _last_start := -100.0
 var _overlay: Control
+var _pulse_scale := PULSE_SCALE
+var _pulse_seconds := PULSE_SECONDS
+var _pulse_total_gap := PULSE_TOTAL_GAP
+var _pulse_age := -1.0  ## seconds into the pulse playing, or -1 when none
+var _last_total_pulse := -100.0
 
 
 ## One goal's line: a checkbox, the text, and the stroke across it when done.
@@ -161,6 +174,8 @@ func _init() -> void:
 	position = PAGE_POS
 	size = PAGE_SIZE
 	custom_minimum_size = PAGE_SIZE
+	pivot_offset = PAGE_SIZE * 0.5
+	_load_pulse_numbers()
 	header_label = Label.new()
 	header_label.name = "Header"
 	header_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -176,7 +191,7 @@ func _init() -> void:
 	_overlay.draw.connect(_draw_falls)
 	add_child(_overlay)
 	visible = false
-	set_process(false)
+	set_process(true)
 
 
 ## The notebook page's texts (screen_texts.json, missions), read once.
@@ -317,8 +332,12 @@ func _on_goal_progress(_mission: int, goal: int, done: float, _total: float) -> 
 		if goal >= rows.size():
 			return
 		var row: Row = rows[goal]
-		row.label.text = line_text(row.trick, row.kind, done, row.amount)
-		row.queue_redraw())
+		var text := line_text(row.trick, row.kind, done, row.amount)
+		var changed := text != row.label.text
+		row.label.text = text
+		row.queue_redraw()
+		if changed:
+			_pulse_for(row))
 
 
 func _on_goal_completed(_mission: int, goal: int) -> void:
@@ -328,7 +347,8 @@ func _on_goal_completed(_mission: int, goal: int) -> void:
 		var row: Row = rows[goal]
 		row.ticked = true
 		row.crossed = true
-		row.queue_redraw())
+		row.queue_redraw()
+		_pulse_for(row, true))
 
 
 func _on_mission_started(_index: int) -> void:
@@ -375,12 +395,17 @@ func _on_trick_counted(_mission: int, goal: int, trick_id: String) -> void:
 		"x": clampf(row.position.x + row.label.position.x, 4.0, PAGE_SIZE.x - w - 4.0),
 		"land_y": row.position.y + 2.0 - BOX_H * 0.5,
 		"landed_at": -1.0})
-	set_process(true)
 
 
 ## Moves the boxes on by `delta` seconds (also called by the tests).
 func advance(delta: float) -> void:
 	_clock += delta
+	if _pulse_age >= 0.0:
+		_pulse_age += delta
+		if _pulse_age >= _pulse_seconds:
+			_pulse_age = -1.0
+		scale = Vector2.ONE * pulse_factor()
+	var had_falls := not _falls.is_empty()
 	for f in _falls:
 		if f["landed_at"] < 0.0 and _clock >= f["start"] + FALL_TIME:
 			f["landed_at"] = f["start"] + FALL_TIME
@@ -391,13 +416,55 @@ func advance(delta: float) -> void:
 			kept.append(f)
 	_falls = kept
 	if _falls.is_empty():
-		set_process(false)
 		_deferred.clear()
-	_overlay.queue_redraw()
+	if had_falls:
+		_overlay.queue_redraw()
 
 
 func _process(delta: float) -> void:
 	advance(delta)
+
+
+func _load_pulse_numbers() -> void:
+	var f := FileAccess.open(HUD_PATH, FileAccess.READ)
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if not (parsed is Dictionary) or not (parsed as Dictionary).has("notebook_pulse"):
+		return
+	var d: Dictionary = parsed["notebook_pulse"]
+	_pulse_scale = float(d.get("scale", _pulse_scale))
+	_pulse_seconds = maxf(0.05, float(d.get("seconds", _pulse_seconds)))
+	_pulse_total_gap = float(d.get("total_gap", _pulse_total_gap))
+
+
+## Progress on a goal's row, shown now (after its box landed, if it had one). A count or a tick
+## always pulses; a running total that grows a little at a time pulses when it starts growing and
+## then at most every `total_gap` seconds. A tick (`ticked`) always pulses.
+func _pulse_for(row: Row, ticked := false) -> void:
+	if RunMissions.is_running_total(row.trick, row.kind) and not ticked:
+		if _clock - _last_total_pulse < _pulse_total_gap:
+			return
+		_last_total_pulse = _clock
+	pulse()
+
+
+## Plays one pulse. A pulse already past its peak is restarted; one still growing is left to finish.
+func pulse() -> void:
+	if _pulse_age >= 0.0 and _pulse_age < _pulse_seconds * 0.5:
+		return
+	_pulse_age = 0.0
+
+
+## The page's scale factor now (1.0 at rest).
+func pulse_factor() -> float:
+	if _pulse_age < 0.0:
+		return 1.0
+	return 1.0 + _pulse_scale * sin(PI * clampf(_pulse_age / _pulse_seconds, 0.0, 1.0))
+
+
+func is_pulsing() -> bool:
+	return _pulse_age >= 0.0
 
 
 func _run_deferred(fall_id: int) -> void:
@@ -417,7 +484,6 @@ func _clear_falls() -> void:
 			(d["call"] as Callable).call()
 	if _overlay != null:
 		_overlay.queue_redraw()
-	set_process(false)
 
 
 ## Plays every box out at once (a tick of the clock each), so the page shows its final state.
