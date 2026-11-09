@@ -110,3 +110,12 @@ Text the Project Lead should look at (I wrote none):
 - Only _comment fields say "3 successes" (tutorial.goal.airspin_comment, tutorial.success_comment "after the third success"); they are not shown to players.
 
 Settled (Project Lead, 2026-11-09): the board said "one spin", so AIR 180! and AIR 360! both still count, with the goal at 1. The instruction text stays true, and no text or code changes. The "Air spins 0/1" plural goes to the board through the Project Lead. Waiting for the board's grind take.
+
+Final steps (UI Agent, 2026-11-09; the board: "I finished re-recording the grind demo."):
+
+1. The board's new grind take (game/data/tutorial_takes/grind.json, 11.78 s; the previous one kept as grind.prev.json) completes its slide's goal on the new playground: 3 grinds of 3, following its path exactly (0.00 units off). check_takes.gd on every take: drift completes (3.4 off), alt_drift 3/3 (0.00 off), air_spin 1/1, so its goal is done (33.84 off, judged fine by the board), grind 3/3 (0.00 off). Every take does its trick and completes its slide's goal.
+2. The recording controls are removed again: tutorial_slides.gd, test_tutorial_slides.gd and test_shared_button.gd are back to their versions without the tools (e313c88b). T-574's test_the_take_tools_and_f_keys_are_gone passes (not pending).
+3. Docs: HUD and menus, Content, "The recorded demos' takes" (the grind re-recording, the air spin goal of 1 with AIR 180! and AIR 360! both counting, the final check) and the goal lines row (the air spin 1); game/docs/hud-and-menus/tutorial-slides.md (the 2026-11-09 entry); game/docs/game-loop/practice-session.md (completed() at the goal). HUD and menus, Decisions, "Interactive tutorial slides" still says "The goal on each is the trick 3 times". That is Decisions, so I left it for the Project Lead (the new decision line covers the air spin).
+4. Tests: full Godot set (GUT_TIME_LIMIT=3600): 3258 of 3259 passed, 1 pending (the one that was pending before T-604), 0 failing (234 s). game/tools Python set: 1193 tests OK (4 skipped).
+5. Screenshot: art-archive/T-604/screenshots/grind_new_take.png (the grind slide playing the board's new take, no recording row).
+Note: a hook refused one combined command (git status plus Godot -s check_takes.gd) as a possible ticket write. I ran the read-only check_takes.gd on its own, as the hook's message said to, and it passed the hook.
