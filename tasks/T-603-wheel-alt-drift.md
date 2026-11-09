@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/drift.md, game/data/power_ups.json, tasks/T-502-polarized-steering-wheel.md, tasks/T-527-steering-wheel-cooldown.md]
 files_expected_to_change: [game/scripts/driving/, game/data/, game/tests/, game/docs/driving/, game/tools/]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -71,6 +71,18 @@ QA passed all 8 criteria. Play it in C:\solid-carbide-worktrees\playtest-morning
 ### 2026-11-09, Needs playtest → In progress
 
 Quick tuning: the board removes tier 2's cooldown entirely. The agent is making the change and rerunning the speed bot.
+
+### 2026-11-09, In progress → In QA
+
+Tier 2's cooldown is gone (every alt drift bursts). Speed bot: no runaway, peak 30.3 without Rev Charge. Ready to play in playtest-morning.
+
+### 2026-11-09, In QA → Needs playtest
+
+The board played the tier 2 tweak and likes it.
+
+### 2026-11-09, Needs playtest → In progress
+
+Quick tuning: the tier 2 shock's blast in the arrows' cyan and magenta.
 
 ## Style review
 
@@ -142,3 +154,28 @@ The board's words: "the second tier of the power-up should remove the cooldown i
 **Docs updated:**
 - docs/drifting.md, Content, "The Polarized Steering Wheel (tasks T-502, T-603)": the cooldown and speed bot bullets.
 - game/docs/driving/drift.md: the cooldown bullet.
+- 2026-11-09, in-progress → in-qa: Ready for the board to play the tier 2 tweak in playtest-morning; one QA round after the board's happy.
+- 2026-11-09, needs-playtest → in-progress: The board (2026-11-09): I like it, can you make the impact kind of blast be the same color as the arrows that we display for that?
+
+### Quick tuning, 2026-11-09: the shock wave in the arrows' colours
+
+The board's words: "I like it, can you make the impact kind of blast be the same color as the arrows that we display for that?"
+
+**How**
+- New shader `game/scripts/driving/polarized_wave.gdshader`. It recolours the wave drawing by brightness into four flat steps, so the pixel art stays hard-edged: the icon's near-black outline, the dark shade, the colour, and a pale tint (55% white). The left half of the wave (screen x left of the landing spot) is cyan and the right half magenta, the same as the arrows (cyan left of the travel, magenta right).
+- The colours are the arrows' own constants (`polarized_arrows.gd`: CYAN, CYAN_DARK, MAGENTA, MAGENTA_DARK), passed in as shader parameters.
+- `polarized_shock.gd` `send()` puts the shared `wave_material()` on each wave its own Bricks node draws. `bricks.gd` is not changed, and the rack's Bricks wave gets no material, so Bricks' wave is exactly as it was. Hits, damage, pushes and the sheet are unchanged.
+
+**Tests**
+- `test_tier_2_burst_sends_one_bricks_tier_1_wave_without_bricks` now also checks the material and its 4 colours.
+- New: `test_bricks_own_wave_is_unchanged_by_the_wheels_colours`. With both the wheel's shock and the rack's Bricks owned, Bricks' wave has no material, no modulate, its own sheet, and its palette constants unchanged.
+- Runs: test_polarized_steering_wheel 22/22 (295 asserts); the Bricks tests (-gselect=bricks) 32/32.
+
+**Screenshots**
+- art-archive/T-603/screenshots/t603_shock_wave_coloured.png: the wave just starting.
+- art-archive/T-603/screenshots/t603_shock_wave_coloured_wide.png: the ring wide, cyan left and magenta right. Its fixture is game/tests/fixtures/t603_shock_wave_wide.tscn, freeze 12 steps.
+- Both taken with `bash game/tools/screenshot.sh <scene> <out> 480`.
+
+**Docs updated:**
+- docs/drifting.md, Content, the "Tier 2, the shock" bullet.
+- game/docs/driving/drift.md, the shock bullet.

@@ -1,5 +1,5 @@
 extends Node
-## The Polarized Steering Wheel's tier 4 shock (task T-502; Drifting, Decisions,
+## The Polarized Steering Wheel's tier 2 (T-502's tier 4) shock (task T-502; Drifting, Decisions,
 ## "Rusty Paintjob and the Polarized Steering Wheel"). Each burst at tier 4 sets off
 ## Bricks' normal wave where the car is: the wave of Bricks' tier `shock_bricks_tier`
 ## (1: radius 4, damage 6, minions pushed 4, the kaiju damaged and never pushed),
@@ -14,8 +14,16 @@ extends Node
 ## "polarized_steering_wheel" (the recap's weapon kills stay Bricks' own).
 ##
 ## The run makes it (child "PolarizedShock") and calls bind(rack, car).
+##
+## T-603 quick tuning (the board, 2026-11-09: "make the impact kind of blast be the same
+## color as the arrows"): each wave this node sends gets `wave_material()`, a shader
+## (polarized_wave.gdshader) that recolours Bricks' wave drawing into the arrows' cyan (left
+## half) and magenta (right half), in flat brightness steps. Only this node's waves get it:
+## bricks.gd and the rack's own Bricks are not touched, so Bricks' wave looks as it did.
 
 const BricksScript := preload("res://scripts/weapons/bricks.gd")
+const ArrowsScript := preload("res://scripts/driving/polarized_arrows.gd")
+const WAVE_SHADER := preload("res://scripts/driving/polarized_wave.gdshader")
 const SOURCE := "polarized_steering_wheel"
 
 ## A shock went out at `centre` (flat world, units) and hit `hit_count` enemies.
@@ -27,6 +35,21 @@ var rack: Node = null
 var car: Node = null
 ## Shocks sent (tests).
 var shocks := 0
+
+## The shared material for the wheel's waves (made once).
+static var _wave_material: ShaderMaterial = null
+
+
+## The wheel's wave colours (T-603): the shader with the arrows' colours (polarized_arrows.gd).
+static func wave_material() -> ShaderMaterial:
+	if _wave_material == null:
+		_wave_material = ShaderMaterial.new()
+		_wave_material.shader = WAVE_SHADER
+		_wave_material.set_shader_parameter("left_dark", ArrowsScript.CYAN_DARK)
+		_wave_material.set_shader_parameter("left_colour", ArrowsScript.CYAN)
+		_wave_material.set_shader_parameter("right_dark", ArrowsScript.MAGENTA_DARK)
+		_wave_material.set_shader_parameter("right_colour", ArrowsScript.MAGENTA)
+	return _wave_material
 
 
 func _init() -> void:
@@ -59,7 +82,11 @@ func send(centre: Vector2, bricks_tier: int = -1) -> Array:
 	var stats: Dictionary = bricks.data.bricks_at(t)
 	stats["damage"] = bricks.boosted_damage(float(stats["damage"]))
 	bricks.stats = stats
+	var drawn_before: int = bricks.waves
 	var hit: Array = bricks.send_wave(centre)
+	var wave = bricks.last_wave
+	if bricks.waves > drawn_before and wave != null and is_instance_valid(wave):
+		wave.material = wave_material()  # T-603: the arrows' cyan and magenta
 	shocks += 1
 	shock_sent.emit(centre, hit.size())
 	return hit

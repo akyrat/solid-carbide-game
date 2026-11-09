@@ -17,6 +17,7 @@ const PowerUpScreen := preload("res://scripts/ui/power_up_screen.gd")
 const RunScene := preload("res://scenes/run/run.tscn")
 const FakeMinion := preload("res://tests/fixtures/weapons/fake_minion.gd")
 const Bricks := preload("res://scripts/weapons/bricks.gd")
+const PolarizedShock := preload("res://scripts/driving/polarized_shock.gd")
 const ID := "polarized_steering_wheel"
 ## The forward drift's length before the switch (steps; at least 0.3 s = 15 steps).
 const FWD_STEPS := 25
@@ -487,6 +488,43 @@ func test_tier_2_burst_sends_one_bricks_tier_1_wave_without_bricks() -> void:
 	assert_eq(run.weapons.bricks.waves, 0, "the rack's Bricks sent nothing")
 	assert_not_null(run.polarized_shock.last_wave(), "the wave is drawn")
 	assert_eq(run.polarized_shock.last_wave().get_parent(), run.weapons.draw_root, "as a rack projectile")
+	# T-603 quick tuning: drawn in the arrows' cyan and magenta.
+	var mat: ShaderMaterial = run.polarized_shock.last_wave().material
+	assert_not_null(mat, "the wheel's wave has its colours")
+	assert_eq(mat, PolarizedShock.wave_material())
+	assert_eq(mat.shader.resource_path, "res://scripts/driving/polarized_wave.gdshader")
+	assert_eq(mat.get_shader_parameter("left_colour"), ArrowsScript.CYAN, "the arrows' cyan")
+	assert_eq(mat.get_shader_parameter("left_dark"), ArrowsScript.CYAN_DARK)
+	assert_eq(mat.get_shader_parameter("right_colour"), ArrowsScript.MAGENTA, "and magenta")
+	assert_eq(mat.get_shader_parameter("right_dark"), ArrowsScript.MAGENTA_DARK)
+
+
+## T-603 quick tuning: only the wheel's wave is recoloured; Bricks' own wave looks as it did.
+func test_bricks_own_wave_is_unchanged_by_the_wheels_colours() -> void:
+	var run := _run()
+	run.weapons.upgrade("bricks")
+	assert_true(run.weapons.bricks.is_owned())
+	_give(run, 2)
+	# The wheel's shock first, then the rack's own Bricks wave.
+	_burst_with_enemies(run)
+	assert_not_null(run.polarized_shock.last_wave().material)
+	run.weapons.bricks.send_wave(run.car.model.get_position())
+	var w: Node2D = run.weapons.bricks.last_wave
+	assert_not_null(w, "Bricks drew its wave")
+	assert_ne(w, run.polarized_shock.last_wave(), "its own wave, not the wheel's")
+	assert_null(w.material, "no recolouring on Bricks' wave")
+	assert_false(w.use_parent_material)
+	assert_eq(w.modulate, Color.WHITE, "and no tint")
+	assert_eq(w.self_modulate, Color.WHITE)
+	# Bricks' wave art and colours are what they were.
+	var BW = Bricks.BricksWave
+	assert_eq(BW.ART, "res://art/weapons/bricks_wave_r%s.png")
+	assert_eq(BW.OUTLINE, Color8(20, 24, 40))
+	assert_eq(BW.RING_OUTER, Color8(96, 112, 140))
+	assert_eq(BW.RING_INNER, Color8(176, 200, 224))
+	assert_eq(BW.RING_CORE, Color8(240, 246, 255))
+	assert_eq(BW.CHIP, Color8(160, 124, 104))
+	assert_eq(w.sheet, BW.sheet_for(run.weapons.bricks.radius()), "its own sheet")
 
 
 func test_tier_2_shock_is_the_tier_1_wave_even_with_bricks_owned_at_its_top_tier() -> void:
