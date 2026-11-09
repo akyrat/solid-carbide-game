@@ -108,3 +108,5 @@ Text the Project Lead should look at (I wrote none):
 - tutorial.airspin.instruction (the air spin slide's instruction band) says "AIR 180! or AIR 360! both count.", and the slide still counts AIR 180! (PracticeSession.COUNTED air_spin: air_one_eighty and air_three_sixty). The decision says "one AIR 360!". Either AIR 180! should stop counting (code) or the text and decision should allow both.
 - tutorial.goal.airspin "Air spins {done}/{total}" shows "Air spins 0/1", plural with a goal of one. Could be fine; for Narrative Theme if not.
 - Only _comment fields say "3 successes" (tutorial.goal.airspin_comment, tutorial.success_comment "after the third success"); they are not shown to players.
+
+Settled (Project Lead, 2026-11-09): the board said "one spin", so AIR 180! and AIR 360! both still count, with the goal at 1. The instruction text stays true, and no text or code changes. The "Air spins 0/1" plural goes to the board through the Project Lead. Waiting for the board's grind take.
