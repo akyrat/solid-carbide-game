@@ -4370,3 +4370,8 @@ Entry format:
 - Decision or change: T-614 merged after QA: the button reads "Call the kaiju" and, once it can no longer be pressed, "Kaiju is here" (pause_text.json, both scored 9). The board sees them in T-612's playtest.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-614
+
+## 2026-11-09: The kaiju's death becomes longer and more dramatic
+- Decision or change: The board played T-612 ("its working great") and asked for a longer, more dramatic death: after the current animation the kaiju falls down completely and holds its last frame, cracks with bright neon green energy that consumes it over about a second, and ends in a big explosion in the kaiju theme's colours. Done as quick tuning on T-612 with the Enemy Behavior Agent, in the ticket's own folder; one QA round before merging.
+- Documents touched: docs/enemies.md
+- Tasks: T-612
