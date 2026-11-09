@@ -4355,3 +4355,8 @@ Entry format:
 - Decision or change: T-613 stopped after walk east (2 calls, 10 units, best 7/10, the look drifted): an animation call at the kaiju's size costs 5 PixelLab units, not 1. The board chose: keep all three animations in scope (a new walk too), but sample first: the windup facing east through the style loop, at most 20 units, for its review before anything else is generated. This replaces the go for the full set.
 - Documents touched: docs/visual-style.md
 - Tasks: T-613
+
+## 2026-11-09: God mode gets a button that spawns the boss
+- Decision or change: The board asked for a button on the God mode page that spawns the boss, pressable only once, built into T-612 so the kaiju's animations and the button are playtested together. The Narrative Theme Agent writes the button's text first (T-614); T-612 goes back to the Enemy Behavior Agent for the button.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-614
