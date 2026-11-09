@@ -4350,3 +4350,8 @@ Entry format:
 - Decision or change: The board said to start the art now and not wait for the placeholder playtest. T-613 no longer depends on T-612: it generates the 15 animations from the current sprites straight away, and fits them to T-612's frame format and swaps them in once T-612 is ready. T-613 still merges after T-612.
 - Documents touched: none
 - Tasks: T-613, T-612
+
+## 2026-11-09: The kaiju's art: sample first, 20 units
+- Decision or change: T-613 stopped after walk east (2 calls, 10 units, best 7/10, the look drifted): an animation call at the kaiju's size costs 5 PixelLab units, not 1. The board chose: keep all three animations in scope (a new walk too), but sample first: the windup facing east through the style loop, at most 20 units, for its review before anything else is generated. This replaces the go for the full set.
+- Documents touched: docs/visual-style.md
+- Tasks: T-613
