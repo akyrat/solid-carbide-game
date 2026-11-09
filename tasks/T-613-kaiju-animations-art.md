@@ -94,6 +94,10 @@ The board likes walk east version 3 except its 5th frame (the left leg is missin
 
 Ready for the board's look, no QA agent: walk east version 3 with its 5th frame fixed by hand (the far leg drawn back in), free. Files: art-archive/T-613/screenshots/walk_e_v5_handfix/.
 
+### 2026-11-09, In QA
+
+The board (2026-11-09), after playing T-612's placeholder death: "its ugly. use actual generations to do the death". The Asset Generation Agent is generating it now, sample first: the death facing east and the explosion, at most 4 calls each, 40 units in all, swapped into the game on this branch. The ticket is still in the QA column because only the board's drag can take it out with unmarked criteria: please drag it to In progress.
+
 ## Style review
 
 ### Run 1
