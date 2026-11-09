@@ -16,6 +16,9 @@ const FRAME_COLOR := Color(1, 1, 1, 0.9)
 const FRAME_HOVER_FILL := Color(1, 1, 1, 0.12)
 const FRAME_DRAG_FILL := Color(1, 1, 1, 0.22)
 const FRAME_WIDTH := 2.0
+## T-611: the notebook page is hidden when the run has no mission on it; the editor then fills its
+## frame a little so the player still sees where it is (a proposal for the playtest).
+const GHOST_FILL := Color(1, 1, 1, 0.16)
 
 var hud: Hud
 var bar: PanelContainer
@@ -97,6 +100,12 @@ func finish() -> void:
 	dragging = ""
 	visible = false
 	done.emit()
+
+
+## Whether the piece is hidden in the run now, so the editor fills its frame (only the notebook).
+func is_ghost(id: String) -> bool:
+	var c := hud.piece(id)
+	return c != null and not c.visible
 
 
 ## A piece's frame in this editor's (screen) pixels.
@@ -185,6 +194,8 @@ func _draw() -> void:
 	for id in HudLayout.PIECES:
 		var sr := screen_rect(id)
 		var r := Rect2(to_local * sr.position, to_local.basis_xform(sr.size))
+		if is_ghost(id):
+			draw_rect(r, GHOST_FILL, true)
 		if id == dragging:
 			draw_rect(r, FRAME_DRAG_FILL, true)
 		elif id == _hover:

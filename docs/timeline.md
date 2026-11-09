@@ -4360,3 +4360,8 @@ Entry format:
 - Decision or change: The board asked for a button on the God mode page that spawns the boss, pressable only once, built into T-612 so the kaiju's animations and the button are playtested together. The Narrative Theme Agent writes the button's text first (T-614); T-612 goes back to the Enemy Behavior Agent for the button.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-614
+
+## 2026-11-09: The timer is at the top centre and the notebook can be moved (merged)
+- Decision or change: T-611 merged on the board's word: the run timer's default place is the top centre (16 px margin), and the mission notebook is a movable piece in Edit HUD layout. Proposals kept: the coins counter stays where it was; a hidden notebook shows as a faintly filled frame in the editor.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-611
