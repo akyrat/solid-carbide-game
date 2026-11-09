@@ -1,7 +1,7 @@
 ---
 id: T-609
 title: Text for the controller's button prompts
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Controller-support
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/drifting.md, game/data/tutorial_text.json, game/data/trick_recipes.json, game/data/tutorial_practice.json]
 files_expected_to_change: [game/data/controller_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -65,6 +65,10 @@ QA round 1 failed: the game's text list test is red because the new controller_t
 ### 2026-11-09, In progress → In QA
 
 Fixed: controller_text.json is now in the game's text list and its test passes. Back in QA, round 2.
+
+### 2026-11-09, In QA
+
+QA round 2 passed, all 6 criteria. Text only, so it merges now.
 
 ## Style review
 
