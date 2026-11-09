@@ -1,7 +1,7 @@
 ---
 id: T-612
 title: The kaiju plays its walk, windup and death animations (placeholder frames)
-status: in-qa
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Polish
@@ -11,12 +11,12 @@ goal:
 user_facing_text: no
 changes_visuals: yes
 board_approved_art: no
-depends_on: []
-documents_affected: [docs/enemies.md, docs/game-loop-architecture.md]
+depends_on: [T-614]
+documents_affected: [docs/enemies.md, docs/game-loop-architecture.md, docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/docs/enemies/kaiju.md, game/scripts/enemies/kaiju.gd, game/scripts/enemies/kaiju_sprite.gd, game/scripts/enemies/kaiju_boss.gd, game/scripts/enemies/kaiju_meteors.gd, game/data/enemies.json]
 files_expected_to_change: [game/scripts/enemies/, game/scripts/game/, game/data/, game/art/placeholders/, game/tests/, game/docs/, docs/enemies.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,7 +45,9 @@ The frames must be swappable without touching code: define one frame format (fil
 
 Propose the frame counts and speeds. Update Enemies, Content: "The kaiju" (Look, Death) and "The kaiju's meteor attack" (Windup).
 
-The board's review: play it from C:\solid-carbide-worktrees\T-612\game\project.godot: reach the kaiju, watch it walk, wind up before its meteors, and kill it to see the death before the win screen (placeholder frames; the final art is T-613).
+**Added by the board, 2026-11-09 (round 2 of this ticket): God mode's spawn the boss button.** Build HUD and menus, Decisions, "God mode can spawn the boss" in this ticket, so the board playtests the animations and the button together. The God mode page (the pause screen's hidden page, T-505) gets one more shared small button. Pressing it makes the kaiju arrive straight away, by the same arrival the boss time uses (same placing rules, one kaiju per run), without changing the run's timer. It can be pressed only once: after the press, or when the kaiju has already arrived on its own, the button is disabled and reads the "used" text; a new run has it enabled again. Its texts come from T-614, word for word: `god_mode_spawn_boss` (the label) and `god_mode_spawn_boss_used` (once it can no longer be pressed), in `game/data/pause_text.json`; never a placeholder text. The page keeps working with mouse, keyboard and controller, and nothing is selected differently when the page opens (T-573). Propose the button's place on the page. Master (with T-611 and T-614) is merged into this branch before you start. Update HUD and menus, Content, where the God mode page is described, and take a screenshot of the page with the button, before and after the press.
+
+The board's review: play it from C:\solid-carbide-worktrees\T-612\game\project.godot: start a run, press N, pause, open God mode, press the spawn the boss button (it then can't be pressed again), resume, and watch the kaiju walk, wind up before its meteors, and kill it to see the death before the win screen (placeholder frames; the final art is T-613).
 
 Write result notes with `python C:/solid-carbide-game/tools/task_notes.py T-NNN --text "..."` and hand back in one short line (tasks/README.md, "Handing back"). Never write, move or change anything in game/data/levels/. Run tests in the foreground only, one command at a time, and leave no background job running. If a hook or the permission system refuses an action, stop and tell the Project Lead; never get around it.
 
@@ -61,6 +63,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] The existing tests of the kaiju's red flash, depth order, height and ground shadow pass on the animated kaiju. (QA: pass)
 - [ ] No PixelLab call was made: `game/art/pixellab-generation-log.jsonl` has no new line from this ticket. (QA: pass)
 - [ ] Recordings in art-archive/T-612/screenshots/: one GIF each of the walk, the windup and the death in the game, plus a still of the kaiju walking. (QA: pass)
+- [ ] (Round 2) A test checks that the God mode page has the spawn the boss button with T-614's text from `god_mode_spawn_boss`, and that pressing it in a run before the boss time makes the kaiju arrive at once, by the boss time's own arrival, with the run's time left unchanged.
+- [ ] (Round 2) A test checks that the button can be pressed only once: after the press it is disabled and reads `god_mode_spawn_boss_used`, a second press does nothing and there is still one kaiju; it is also disabled when the kaiju arrived on its own; and in a new run it is enabled again.
+- [ ] (Round 2) A test checks that when the boss time comes after the button was used, no second kaiju arrives.
+- [ ] (Round 2) Screenshots in art-archive/T-612/screenshots/: the God mode page with the button before the press and after it.
 - [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 - [ ] Every document in documents_affected is updated, and the proposals made for the playtest are listed in the result notes. (QA: pass)
 
@@ -75,6 +81,14 @@ Started: the Enemy Behavior Agent is building the kaiju's walk, windup and death
 ### 2026-11-09, In progress → In QA
 
 The Enemy Behavior Agent finished: the kaiju plays walk, windup and death from placeholder frames; the coins and the win come after the 1.5 s death. QA is checking it now.
+
+### 2026-11-09, In QA → Needs playtest
+
+QA passed, all 10 criteria. Ready for the board to play: C:\solid-carbide-worktrees\T-612\game\project.godot. The kaiju walks, winds up before its meteors and dies over 1.5 s before the win (windup and death are placeholder frames; the art is T-613). Open question: should it stand still during the windup?
+
+### 2026-11-09, Needs playtest → In progress
+
+Back in progress on the board's word: a spawn the boss button on the God mode page is added to this ticket (text: T-614). T-611 is being merged and will be pulled into this branch.
 
 ## Style review
 
@@ -134,3 +148,4 @@ The recording script is `bash game/tools/record_kaiju_anim_gif.sh <walk|windup|d
 - docs/enemies.md, Content: "The kaiju" (Look, Death) and "The kaiju's meteor attack" (Windup). The old Look line still described the T-045 code-drawn placeholder; it now describes the T-069 art and the animations.
 - docs/game-loop-architecture.md, Content: One run flowchart and "The run scene", the win's new timing.
 - Also updated: game/docs/enemies/kaiju.md (Death, and the new "The kaiju's animations" section) and game/docs/enemies/meteors.md (the rings are gone).
+- 2026-11-09, needs-playtest → in-progress: The board (2026-11-09): add a button on the God mode page that spawns the boss, pressable only once, into this ticket so both are playtested together.
