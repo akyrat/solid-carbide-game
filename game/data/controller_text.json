@@ -1,0 +1,97 @@
+{
+ "_comment": "T-609 (HUD and menus, Content, 'Controller texts'; Decisions, 'Controller support in the menus and prompts'): the texts shown instead of keyboard ones when the player last used a controller (T-610 reads this file). 'glyphs' are the short labels drawn on the button glyphs (Xbox names for every controller, a proposal for the playtest). 'key_to_glyph' maps the keyboard keys of keycap recipes and live key pads (trick_recipes.json keys, tutorial_practice.json pads) to a glyph. 'lines' has one controller version per keyboard line, keyed '<file> <key path>' like the source; '_comment_<n>' lines say where each shows. A controller line is never longer than the keyboard line it replaces. Style loop: every line scored 8 or more (T-609's Style review).",
+ "glyphs": {
+  "left_stick": "LS",
+  "dpad": "D-pad",
+  "lt": "LT",
+  "rt": "RT",
+  "a": "A",
+  "b": "B",
+  "y": "Y",
+  "lb": "LB",
+  "rb": "RB",
+  "start": "Start",
+  "_comment": "Short labels drawn on the glyphs, in the keycaps' style: left stick, D-pad, left and right triggers, A, B, Y, left and right bumpers, Start."
+ },
+ "key_to_glyph": {
+  "_comment": "Keys of recipes and live pads -> glyph name. W is gas (right trigger), S brake and reverse (left trigger), A and D are the one steering glyph (so the recipes' '/D' either-tag is not drawn), Space the jump (A), R the practice reset (Y), Enter selects (A), Escape goes back (B), Tab/arrows have no controller line.",
+  "W": "rt",
+  "S": "lt",
+  "A": "left_stick",
+  "D": "left_stick",
+  "Space": "a",
+  "R": "y",
+  "Enter": "a",
+  "Escape": "b"
+ },
+ "lines": {
+  "screen_texts.json power_ups/descriptions/jump": {
+   "text": "Hold A to charge a Jump, release to go. A tap hops.",
+   "_comment": "The Jump card of the driving power-up overlay."
+  },
+  "screen_texts.json power_ups/descriptions_last_tier/jump": {
+   "text": "Hold A to charge a higher Jump.",
+   "_comment": "The Jump card at its last tier."
+  },
+  "screen_texts.json power_ups/descriptions/rev_charge": {
+   "text": "Hold RT+LT then release LT: speed boost.",
+   "_comment": "The Rev Charge card of the driving power-up overlay."
+  },
+  "tutorial_text.json trick_rule/extended_drift": {
+   "text": "Hold gas and steer to drift, then let go to cash it in.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json trick_rule/extended_drift."
+  },
+  "tutorial_text.json trick_rule/three_sixty": {
+   "text": "Drift and hold the stick one way until the car spins all the way round.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json trick_rule/three_sixty."
+  },
+  "tutorial_text.json trick_rule/alternate_drift": {
+   "text": "Drift forward, then swap gas for brake while steering the same way.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json trick_rule/alternate_drift."
+  },
+  "tutorial_text.json trick_rule/airtime": {
+   "text": "Hold gas off a ramp or a rooftop edge and fly.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json trick_rule/airtime."
+  },
+  "tutorial_text.json trick_rule/air_one_eighty": {
+   "text": "In the air, steer one way to spin the car half a turn before it lands.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json trick_rule/air_one_eighty."
+  },
+  "tutorial_text.json trick_rule/air_three_sixty": {
+   "text": "Hit a ramp at full gas and hold the stick: one full spin before you land.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json trick_rule/air_three_sixty."
+  },
+  "tutorial_text.json trick_rule/reverse_drift": {
+   "text": "Hold reverse and steer to drift while moving backwards.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json trick_rule/reverse_drift."
+  },
+  "tutorial_text.json trick_rule/rail_grind": {
+   "text": "In the air, hold A and touch a rail to grind it. Let go to launch the way you face.",
+   "_comment": "The pause screen's trick list, under GRIND!"
+  },
+  "tutorial_text.json tutorial/trick/drift/instruction": {
+   "text": "Hold RT and steer to drift. Drift seconds add up, so short drifts count.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json tutorial/trick/drift/instruction."
+  },
+  "tutorial_text.json tutorial/trick/altdrift/instruction": {
+   "text": "Drift forward, then swap RT for LT while holding the same turn.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json tutorial/trick/altdrift/instruction."
+  },
+  "tutorial_text.json tutorial/trick/airspin/instruction": {
+   "text": "Hit a ramp holding RT, then steer in the air: AIR 180! or AIR 360! both count.",
+   "_comment": "Shows where the keyboard line shows: tutorial_text.json tutorial/trick/airspin/instruction."
+  },
+  "tutorial_text.json tutorial/trick/grind/instruction": {
+   "text": "In the air, hold A and touch a rail to grind it. Let go to launch the way you face.",
+   "_comment": "The interactive tutorial's grind slide."
+  },
+  "tutorial_text.json tutorial/grind_hint": {
+   "text": "One power-up on the house: Jump. Take it, tap A to jump, then hold A over a rail.",
+   "_comment": "The interactive tutorial's grind slide, the line about the free Jump."
+  },
+  "tutorial_text.json trick_recipe/rail_grind/step1_badge": {
+   "text": "Hold A",
+   "_comment": "The trick list's rail grind recipe: the badge word that stands in for a keycap."
+  }
+ }
+}

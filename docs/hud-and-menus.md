@@ -487,6 +487,15 @@ Decisions, "The tutorial slides are redrawn, with clips of the real car". Four l
 
 **Re-recording:** from the repo root, `python game/tools/record_tutorial_clips.py` (needs a real window, not headless; Godot's movie maker, about 15 seconds a clip; `--only NAME ...` records some, `--no-archive` skips copying the take to `art-archive/T-483/takes/`). The fixture scenes are `game/tests/fixtures/tutorial_clip_<name>.tscn` (script `tutorial_clip_demo.gd`: the inputs, the zoom, the camera and the start are exported values in each scene).
 
+### Controller texts (T-609; proposals for the playtest)
+
+Decisions, "Controller support in the menus and prompts". The texts shown instead of keyboard ones when the player last used a controller are in `game/data/controller_text.json` (T-610 reads it); each scored 8 or more in the style loop (T-609's Style review). Xbox names are shown for every controller (a proposal). Controller lines are never longer than the keyboard line they replace.
+
+- **Glyph labels** (drawn on the button glyphs in the keycaps' style): left stick **LS**, D-pad **D-pad**, **LT**, **RT**, **A**, **B**, **Y**, **LB**, **RB**, **Start**. Keys map to glyphs as W to RT (gas), S to LT (brake, reverse), A and D to the one stick glyph (so a recipe's "/D" tag is not drawn), Space to A, R to Y, Enter to A, Escape to B.
+- **Lines** (file and key in `game/data/`, then the controller text): `screen_texts.json` `power_ups/descriptions/jump` "Hold A to charge a Jump, release to go. A tap hops."; `power_ups/descriptions_last_tier/jump` "Hold A to charge a higher Jump."; `power_ups/descriptions/rev_charge` "Hold RT+LT then release LT: speed boost."; `tutorial_text.json` `trick_rule/*` (extended drift, 360, alternate drift, airtime, air 180, air 360, reverse drift, rail grind: "gas" stays, "a turn key" becomes "steer" or "the stick"; the rail grind says "hold A"); `tutorial/trick/drift`, `altdrift`, `airspin` and `grind` instructions (W and S become RT and LT, "A or D" becomes "steer"); `tutorial/grind_hint` ("tap A to jump, then hold A over a rail"); `trick_recipe/rail_grind/step1_badge` "Hold A".
+- Lines that need no change (no key named, or unused): the other `trick_recipe/*` notes, `missions.json` goals, `pause_text.json` labels, and `tutorial_text.json` `slide1.*` (unused since T-559). The full list, with every line searched, is in T-609's result notes.
+- No screenshots: text only.
+
 ## Open questions
 
 - (After MVP) The visual style of the HUD, the level-up screen, the main menu and the pause menu.

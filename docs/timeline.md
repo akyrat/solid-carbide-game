@@ -4325,3 +4325,8 @@ Entry format:
 - Decision or change: Key prompts switch to controller buttons, drawn in code, while the player uses a controller. Step 3 of 3.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-610
+
+## 2026-11-09: Text for the controller's button prompts
+- Decision or change: The controller's button labels (Xbox names for every controller, LS for the stick) and the controller version of the 16 lines that name a key, in game/data/controller_text.json; T-610 will show them.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-609
