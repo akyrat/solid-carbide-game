@@ -38,6 +38,17 @@ def palette_of(direction, kaiju_dir=KAIJU):
     return sorted({p[:3] for p in still_sheet(direction, kaiju_dir).getdata() if p[3] > 0})
 
 
+def quantized_palette(frames, n):
+    """n colours of the frames' own opaque pixels (median cut), for art that has no still to match."""
+    px = [p[:3] for f in frames for p in f.convert("RGBA").getdata() if p[3] >= 128]
+    strip = Image.new("RGB", (len(px), 1))
+    strip.putdata(px)
+    q = strip.quantize(colors=n, method=Image.MEDIANCUT)
+    pal = q.getpalette()[:3 * n]
+    used = sorted({q.getpixel((i, 0)) for i in range(len(px))})
+    return sorted({tuple(pal[3 * i:3 * i + 3]) for i in used})
+
+
 def snap_frame(img, palette):
     """Alpha to 0/255 (cut at 128) and each opaque colour to its nearest palette colour."""
     img = img.convert("RGBA")
@@ -124,6 +135,8 @@ def main(argv=None):
     ap.add_argument("--count", type=int, default=6)
     ap.add_argument("--hold", type=int, default=0)
     ap.add_argument("--align", action="store_true")
+    ap.add_argument("--quantize", type=int, default=0,
+                    help="instead of the still's palette, cut the whole sheet to this many colours of its own (the explosion)")
     ap.add_argument("--pick", help="DIR:INDEX,DIR:INDEX,... frames joined from several raw folders (raw_dir unused)")
     ap.add_argument("--preview-dir")
     ap.add_argument("--scale", type=int, default=3)
@@ -142,8 +155,12 @@ def main(argv=None):
         paths = [Path(s.rsplit(":", 1)[0]) / f"{a.prefix}_{s.rsplit(':', 1)[1]}.png" for s in a.pick.split(",")]
     else:
         paths = [Path(a.raw_dir) / f"{a.prefix}_{i}.png" for i in range(a.first, a.first + a.count)]
-    sheet = build_sheet([Image.open(p) for p in paths], palette_of(a.dir), a.hold,
-                        still_frame0(a.dir) if a.align else None)
+    imgs = [Image.open(p) for p in paths]
+    if a.quantize:
+        pal = quantized_palette(imgs, a.quantize)
+    else:
+        pal = palette_of(a.dir)
+    sheet = build_sheet(imgs, pal, a.hold, still_frame0(a.dir) if a.align else None)
     out.parent.mkdir(parents=True, exist_ok=True)
     sheet.save(out)
     colours = {p[:3] for p in sheet.getdata() if p[3]}

@@ -50,5 +50,13 @@ class SheetTest(unittest.TestCase):
             self.assertEqual(b.still_frame0(d).size, (224, 224))
 
 
+class QuantizeTest(unittest.TestCase):
+    def test_quantized_palette_has_at_most_n_colours(self):
+        fs = [frame(x, 10, (x * 5 % 256, 100, 200 - x)) for x in range(1, 40)]
+        pal = b.quantized_palette(fs, 8)
+        self.assertLessEqual(len(pal), 8)
+        self.assertGreater(len(pal), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
