@@ -231,27 +231,59 @@ func test_end_burst_keeps_the_velocity_and_stops_scaling() -> void:
 
 # --- The cooldown (T-527) -----------------------------------------------------------------
 
-func test_every_wheel_tier_has_a_cooldown_the_wheel_reads() -> void:
-	for tier in range(1, 3):
-		var car := _car(tier)
-		var secs := float(_data.at(ID, tier).get("cooldown_seconds", 0.0))
-		assert_gt(secs, 0.0, "tier %d has cooldown_seconds" % tier)
-		assert_eq(car.polarized.cooldown_seconds, secs)
+func test_tier_1_has_a_cooldown_and_tier_2_none() -> void:
+	# T-603 quick tuning (the board, 2026-11-09): "the second tier of the power-up should
+	# remove the cooldown it has entirely".
+	var c1 := float(_data.at(ID, 1).get("cooldown_seconds", -1.0))
+	assert_gt(c1, 0.0, "tier 1 keeps its cooldown")
+	assert_eq(_car(1).polarized.cooldown_seconds, c1)
+	assert_eq(float(_data.at(ID, 2).get("cooldown_seconds", -1.0)), 0.0, "tier 2: none")
+	assert_eq(_car(2).polarized.cooldown_seconds, 0.0)
 	assert_eq(_car(0).polarized.cooldown_seconds, 0.0, "not owned: none")
 
 
-func test_an_alt_drift_during_the_cooldown_gives_no_burst_and_the_next_one_after_does() -> void:
+func test_at_tier_2_every_alt_drift_bursts_with_its_shock_and_bursts_never_stack() -> void:
 	var car := _car(2)
+	var twin := _car(0)
+	var wheel = car.polarized
+	watch_signals(wheel)
+	var slot := SlotCooldown.new()
+	add_child_autofree(slot)
+	slot.bind_source(wheel)
+	_alt_drift([car, twin])
+	assert_eq(wheel.bursts_fired, 1)
+	assert_true(wheel.is_ready(), "no cooldown after the burst")
+	assert_eq(wheel.cooldown_fraction_left(), 0.0)
+	slot._poll()
+	assert_eq(slot.fraction_left, 0.0, "the HUD slot shows it ready, no fill")
+	assert_eq(slot.veil_rect().size.y, 0.0, "nothing veiled")
+	# Straight back into a forward drift on the same side, during the burst's hold: a second
+	# ALT DRIFT!, a second burst and a second shock.
+	_steps([car, twin], 20, true, false, 1.0)
+	assert_eq(int(car.tricks.counts.get("alternate_drift", 0)), 2, "the second switch pays")
+	assert_eq(wheel.bursts_fired, 2, "it bursts again at once")
+	assert_eq(wheel.shocks_sent, 2, "and shocks again")
+	# The new burst restarts the hold from the speed the car would have had: x1.225, never x1.225^2.
+	assert_almost_eq(car.model.get_velocity().distance_to(twin.model.get_velocity() * 1.225), 0.0, 1e-4,
+			"no stacking")
+	_steps([car, twin], 20, false, true, 1.0)
+	assert_eq(wheel.bursts_fired, 3, "and a third")
+	assert_almost_eq(car.model.get_velocity().distance_to(twin.model.get_velocity() * 1.225), 0.0, 1e-4)
+	slot._poll()
+	assert_eq(slot.fraction_left, 0.0)
+	assert_signal_not_emitted(wheel, "ready_again", "never reloading, so no ready flash")
+
+
+func test_at_tier_1_an_alt_drift_during_the_cooldown_gives_no_burst_and_the_next_one_after_does() -> void:
+	var car := _car(1)
 	_alt_drift([car])
 	assert_eq(car.polarized.bursts_fired, 1)
-	assert_eq(car.polarized.shocks_sent, 1, "tier 2's shock")
 	assert_false(car.polarized.is_ready())
 	# Straight back into a forward drift on the same side: a second ALT DRIFT!.
 	_steps([car], 20, true, false, 1.0)
 	assert_eq(int(car.tricks.counts.get("alternate_drift", 0)), 2, "the second switch pays")
 	assert_eq(car.polarized.alternate_drifts, 2)
 	assert_eq(car.polarized.bursts_fired, 1, "during the cooldown: no second burst")
-	assert_eq(car.polarized.shocks_sent, 1, "and no second shock")
 	var guard := 0
 	while not car.polarized.is_ready() and guard < 2000:
 		_steps([car], 1, true, false)
@@ -259,7 +291,6 @@ func test_an_alt_drift_during_the_cooldown_gives_no_burst_and_the_next_one_after
 	assert_true(car.polarized.is_ready())
 	_alt_drift([car])
 	assert_eq(car.polarized.bursts_fired, 2, "after the cooldown: a burst")
-	assert_eq(car.polarized.shocks_sent, 2)
 
 
 func test_cooldown_fraction_goes_from_1_to_0_and_ready_again_fires_once() -> void:
@@ -282,7 +313,8 @@ func test_cooldown_fraction_goes_from_1_to_0_and_ready_again_fires_once() -> voi
 
 
 ## The bot's idea in small (game/tools/speed_bot.gd): chain alternate drifts for 40 s.
-## With the cooldown and the fade the speed does not keep growing burst after burst.
+## The speed does not keep growing burst after burst: at tier 1 the cooldown, and at tier 2
+## (no cooldown) the factor, which restarts from the speed the car would have had.
 func test_chained_alt_drift_bursts_do_not_keep_growing() -> void:
 	for tier in range(1, 3):
 		var car := _car(tier)

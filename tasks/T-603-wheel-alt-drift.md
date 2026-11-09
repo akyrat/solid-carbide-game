@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/drift.md, game/data/power_ups.json, tasks/T-502-polarized-steering-wheel.md, tasks/T-527-steering-wheel-cooldown.md]
 files_expected_to_change: [game/scripts/driving/, game/data/, game/tests/, game/docs/driving/, game/tools/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,18 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started on T-602's branch (its texts show in this build): the burst after an alt drift, half as strong, fading after 0.5 s, with the ground arrows.
 
+### 2026-11-09, In progress → In QA
+
+Agent done; QA's checks passed.
+
+### 2026-11-09, In QA → Needs playtest
+
+QA passed all 8 criteria. Play it in C:\solid-carbide-worktrees\playtest-morning.
+
+### 2026-11-09, Needs playtest → In progress
+
+Quick tuning: the board removes tier 2's cooldown entirely. The agent is making the change and rerunning the speed bot.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -102,3 +114,31 @@ They were taken with `bash game/tools/screenshot.sh res://tests/fixtures/t603_ar
 **Documents affected:** docs/drifting.md (Content, "The Polarized Steering Wheel (tasks T-502, T-603)", and the two tier lines), game/docs/driving/drift.md ("Polarized Steering Wheel (T-502, T-603)"). The long GDD is not regenerated (the Project Lead's merge step).
 
 **Not merged:** master is not merged in, as the Project Lead asked (T-601's wall fix comes at merge time).
+- 2026-11-09, needs-playtest → in-progress: The board (2026-11-09): the second tier of the power-up should remove the cooldown it has entirely.
+
+### Quick tuning, 2026-11-09: tier 2 has no cooldown
+
+The board's words: "the second tier of the power-up should remove the cooldown it has entirely."
+
+**Changes**
+- Data: `power_ups.json` tier 2 `cooldown_seconds` changes from 4.0 to 0.0, with the reason. Tier 1 keeps its 3 s.
+- Code: none needed. With a 0 cooldown, `cooldown_left` stays 0, so `is_ready()` is always true and `cooldown_fraction_left()` is 0. The HUD slot (SlotCooldown) therefore never veils, never fills and never flashes at tier 2.
+- Bursts do not stack. A burst paid during a running one restarts the hold from the speed the car would have had (`velocity / factor`), so the car is never above x1.225.
+
+**Tests**
+- New: `test_tier_1_has_a_cooldown_and_tier_2_none`.
+- New: `test_at_tier_2_every_alt_drift_bursts_with_its_shock_and_bursts_never_stack`. It covers 3 back-to-back ALT DRIFT!s: 3 bursts and 3 shocks, velocity = twin x1.225 each time, the HUD SlotCooldown at fraction 0 with an empty veil, and no `ready_again`.
+- The cooldown-blocks-a-burst test now runs at tier 1.
+- Runs: test_polarized_steering_wheel 21/21 (271 asserts), test_hud_slot_cooldown 7/7, test_four_minute_run_data 6/6, test_power_up_screen 22/22.
+
+**Speed bot, tier 2 with no cooldown (60 s)**
+- Best peak is 31.4 u/s, set by Rev Charge. The best average is 26.7 with Rev Charge; it was 24.5 with the 4 s cooldown.
+- Without Rev Charge: best peak 30.3 (was 26.2), best average 23.4 (was 17.6), 88 bursts in 60 s.
+- **Chaining alternate drifts does not run away.** The speed never passes 10x top speed, and every 10 s window has the same peak.
+- 30.3 is exactly the drift's own top (24.7, tier 0) x1.225. Chaining keeps the car up to +22.5% faster for as long as the player chains, but it never builds on itself.
+- Not covered by the bot: an alt drift during a Rev Charge boost. At tier 2 it can now keep 31.35 x 1.225, about 38.4 u/s, for as long as the boost lasts.
+- CSV: art-archive/T-603/speed_bot_tier2_no_cooldown.csv
+
+**Docs updated:**
+- docs/drifting.md, Content, "The Polarized Steering Wheel (tasks T-502, T-603)": the cooldown and speed bot bullets.
+- game/docs/driving/drift.md: the cooldown bullet.
