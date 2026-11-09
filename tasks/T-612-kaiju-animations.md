@@ -1,7 +1,7 @@
 ---
 id: T-612
 title: The kaiju plays its walk, windup and death animations (placeholder frames)
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Polish
@@ -63,10 +63,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] The existing tests of the kaiju's red flash, depth order, height and ground shadow pass on the animated kaiju. (QA: pass)
 - [ ] No PixelLab call was made: `game/art/pixellab-generation-log.jsonl` has no new line from this ticket. (QA: pass)
 - [ ] Recordings in art-archive/T-612/screenshots/: one GIF each of the walk, the windup and the death in the game, plus a still of the kaiju walking. (QA: pass)
-- [ ] (Round 2) A test checks that the God mode page has the spawn the boss button with T-614's text from `god_mode_spawn_boss`, and that pressing it in a run before the boss time makes the kaiju arrive at once, by the boss time's own arrival, with the run's time left unchanged.
-- [ ] (Round 2) A test checks that the button can be pressed only once: after the press it is disabled and reads `god_mode_spawn_boss_used`, a second press does nothing and there is still one kaiju; it is also disabled when the kaiju arrived on its own; and in a new run it is enabled again.
-- [ ] (Round 2) A test checks that when the boss time comes after the button was used, no second kaiju arrives.
-- [ ] (Round 2) Screenshots in art-archive/T-612/screenshots/: the God mode page with the button before the press and after it.
+- [ ] (Round 2) A test checks that the God mode page has the spawn the boss button with T-614's text from `god_mode_spawn_boss`, and that pressing it in a run before the boss time makes the kaiju arrive at once, by the boss time's own arrival, with the run's time left unchanged. (QA: pass)
+- [ ] (Round 2) A test checks that the button can be pressed only once: after the press it is disabled and reads `god_mode_spawn_boss_used`, a second press does nothing and there is still one kaiju; it is also disabled when the kaiju arrived on its own; and in a new run it is enabled again. (QA: pass)
+- [ ] (Round 2) A test checks that when the boss time comes after the button was used, no second kaiju arrives. (QA: pass)
+- [ ] (Round 2) Screenshots in art-archive/T-612/screenshots/: the God mode page with the button before the press and after it. (QA: pass)
 - [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 - [ ] Every document in documents_affected is updated, and the proposals made for the playtest are listed in the result notes. (QA: pass)
 
@@ -89,6 +89,10 @@ QA passed, all 10 criteria. Ready for the board to play: C:\solid-carbide-worktr
 ### 2026-11-09, Needs playtest → In progress
 
 Back in progress on the board's word: a spawn the boss button on the God mode page is added to this ticket (text: T-614). T-611 is being merged and will be pulled into this branch.
+
+### 2026-11-09, In progress → In QA
+
+The button is built: "Call the kaiju" on God mode's last row, left of Back, once per run, the timer left as it is. QA is checking the whole ticket again.
 
 ## Style review
 
