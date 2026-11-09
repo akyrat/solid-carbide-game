@@ -1,7 +1,7 @@
 ---
 id: T-603
 title: The Polarized Steering Wheel bursts after an alternate drift
-status: in-progress
+status: done
 from: project-lead
 to: driving-drift
 lead: Rails
@@ -16,7 +16,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/docs/driving/drift.md, game/data/power_ups.json, tasks/T-502-polarized-steering-wheel.md, tasks/T-527-steering-wheel-cooldown.md]
 files_expected_to_change: [game/scripts/driving/, game/data/, game/tests/, game/docs/driving/, game/tools/]
 model: opus
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -83,6 +83,14 @@ The board played the tier 2 tweak and likes it.
 ### 2026-11-09, Needs playtest → In progress
 
 Quick tuning: the tier 2 shock's blast in the arrows' cyan and magenta.
+
+### 2026-11-09, In progress → In QA
+
+The tier 2 blast is now cyan and magenta like the arrows; Bricks' wave unchanged. Ready to play in playtest-morning.
+
+### 2026-11-09, In QA → Needs playtest
+
+The board played the colour tweak: lgtm.
 
 ## Style review
 
@@ -179,3 +187,5 @@ The board's words: "I like it, can you make the impact kind of blast be the same
 **Docs updated:**
 - docs/drifting.md, Content, the "Tier 2, the shock" bullet.
 - game/docs/driving/drift.md, the shock bullet.
+- 2026-11-09, in-progress → in-qa: The colour tweak is in; ready for the board to play in playtest-morning.
+- 2026-11-09, needs-playtest → done: The board played it in playtest-morning, with the tier 2 tweaks: lgtm (2026-11-09).
