@@ -39,7 +39,9 @@ Three animations (walk cycle, meteor windup, death), each in the kaiju's five dr
 
 Start now, in two steps (board, 2026-11-09: "start the art now, don't wait for the placeholder playtest"; the dependency on T-612 was removed for this). Step 1, now: generate the 15 animations from the current sprites, at the sprites' own frame size and anchor, through the style loop, and keep the game-ready frames and the contact sheets on this branch; T-612's code and frame format are not on this branch yet (T-612 is still being built in C:\solid-carbide-worktrees\T-612, which you may read but never change). Then hand back, saying step 1 is done. Step 2, when the Project Lead resumes you after T-612 is ready: bring T-612's work into this branch, fit the frames to its frame format with free script work (no new generations for that), swap them in for the placeholders, and take the in-game recordings. This ticket merges after T-612.
 
-PixelLab: the board gave its go for the full set, with no sample review (2026-11-09). Every animation goes through the style loop (tasks/README.md, "The style loop"): at most 3 refines each, so at most 4 generations per animation and at most 60 for the ticket. Nothing beyond that without the board's say-so. Write your planned calls and their cost in the result notes before the first call. Free script fixes (cropping, aligning, palette, mirroring) come before paid generations. Use a 600 s HTTP timeout: timed-out calls are still charged. An animation that stays below 8 after its refines keeps its best version and is listed in the result notes for the board.
+New budget (board, 2026-11-09, after the agent stopped: an animation call at 224 px costs 5 PixelLab units, 10 units spent on walk east). This replaces the PixelLab paragraph below and the "60 generations" in the criteria. Sample first: one animation, the windup facing east, through the style loop, at most 4 calls and 20 units. Then stop and hand back for the board's review of the sample; no other call until the board's go. The scope stays all three animations (a new walk too, replacing the one the kaiju has), but the rest of the set and its budget wait for that go. Hold the kaiju's look (dark slate hide, lighter belly, eyes, back plates): try free fixes (palette mapping to the still sprite's colours) before paying for a refine.
+
+PixelLab (replaced by the paragraph above): the board gave its go for the full set, with no sample review (2026-11-09). Every animation goes through the style loop (tasks/README.md, "The style loop"): at most 3 refines each, so at most 4 generations per animation and at most 60 for the ticket. Nothing beyond that without the board's say-so. Write your planned calls and their cost in the result notes before the first call. Free script fixes (cropping, aligning, palette, mirroring) come before paid generations. Use a 600 s HTTP timeout: timed-out calls are still charged. An animation that stays below 8 after its refines keeps its best version and is listed in the result notes for the board.
 
 Never delete art: the game-ready frames go in `game/art/kaiju/`, every raw generation in `art-archive/T-613/`, and T-612's placeholder frames move to `art-archive/T-613/` when yours replace them. The five still sprites stay. Add a section to Visual style, Content, on the set, and point Enemies, Content, "The kaiju", Look, at it.
 
@@ -71,6 +73,10 @@ Waiting for T-612: the art is made in the frame format T-612 defines, then swapp
 ### 2026-11-09, Blocked → In progress
 
 Started on the board's word: the Asset Generation Agent is generating the kaiju's walk, windup and death art now (up to 60 generations), without waiting for T-612's placeholder playtest. The swap into the game follows once T-612 is ready.
+
+### 2026-11-09, Flagged for review
+
+Stopped on a cost question for the board: a 224 px animation call costs 5 PixelLab units, not 1. 10 units spent on walk east (best 7/10, look drifts). Waiting for the board's budget and scope before any further call.
 
 ## Style review
 
