@@ -1,7 +1,7 @@
 ---
 id: T-612
 title: The kaiju plays its walk, windup and death animations (placeholder frames)
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Polish
@@ -16,7 +16,7 @@ documents_affected: [docs/enemies.md, docs/game-loop-architecture.md, docs/hud-a
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/docs/enemies/kaiju.md, game/scripts/enemies/kaiju.gd, game/scripts/enemies/kaiju_sprite.gd, game/scripts/enemies/kaiju_boss.gd, game/scripts/enemies/kaiju_meteors.gd, game/data/enemies.json]
 files_expected_to_change: [game/scripts/enemies/, game/scripts/game/, game/data/, game/art/placeholders/, game/tests/, game/docs/, docs/enemies.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -101,6 +101,14 @@ QA passed again, all 14 criteria. Ready for the board to play: C:\solid-carbide-
 ### 2026-11-09, Needs playtest → In progress
 
 The board played it: working great. Quick tuning now: a longer, more dramatic death (full fall, neon green cracks, a big explosion). The Enemy Behavior Agent is on it; I'll move it to the QA column when the tweak is in.
+
+### 2026-11-09, In progress → In QA
+
+Ready for the board to play, no QA agent (quick tuning 1): the kaiju's death is now 4.4 s: it falls flat, holds, cracks green and explodes, then the win. C:\solid-carbide-worktrees\T-612\game\project.godot
+
+### 2026-11-10, In QA → Needs playtest
+
+The board played it ("its working great") and said to merge. Merging now, together with T-613's generated death.
 
 ## Style review
 
