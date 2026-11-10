@@ -2,8 +2,9 @@ extends CharacterBody2D
 ## The kaiju, Crash City's final boss (task T-045; Enemies, Decisions): a body
 ## several times the car's size that walks slowly towards the car, damages and
 ## knocks back the car while touching it, and can be damaged at any time (no
-## shield, no vulnerability windows). At 0 health it dies; the boss controller
-## (kaiju_boss.gd) then adds its coins and ends the run as a win. Its numbers
+## shield, no vulnerability windows). At 0 health it dies and plays its death
+## (T-612); once that has played, the boss controller (kaiju_boss.gd) adds its
+## coins and ends the run as a win. Its numbers
 ## come from res://data/enemies.json's "kaiju" (EnemyData.kaiju()) and never
 ## change over a run.
 ##
@@ -50,8 +51,9 @@ const ENEMY_TYPE := "kaiju"
 ## The id of the weapon that hit it last (take_damage's `source`), "" if none told.
 var last_hit_by := ""
 
-## Emitted once, when health reaches 0. `kaiju` is this node (freed at the end
-## of the frame), `position_units` where it died (flat world, units).
+## Emitted once, when health reaches 0. `kaiju` is this node (T-612: it stays
+## while its death plays; the boss controller frees it after), `position_units`
+## where it died (flat world, units).
 signal died(kaiju: Node, position_units: Vector2)
 
 var max_health := 1.0
@@ -219,16 +221,21 @@ func is_dead() -> bool:
 	return _dead
 
 
+## At 0 health (T-612: the death animation, Enemies, Decisions, "The kaiju is
+## animated"): it is dead at once for everything else (it leaves the groups
+## "enemies" and "kaiju", its body leaves the enemies' layer, so no weapon finds
+## it, it walks no more and hurts nothing), its sprite plays the death, and the
+## boss controller frees it when the death has played (kaiju_boss.gd).
 func _die() -> void:
 	_dead = true
 	remove_from_group("enemies")
 	remove_from_group("kaiju")
-	if sprite != null and is_instance_valid(sprite):
-		sprite.queue_free()
-	sprite = null
+	# Deferred: a weapon's physics callback can kill it.
+	set_deferred("collision_layer", 0)
+	velocity = Vector2.ZERO
+	if sprite != null and is_instance_valid(sprite) and sprite.has_method("set_dying"):
+		sprite.set_dying()
 	died.emit(self, position_units())
-	# Freed at the end of the frame, so a weapon's physics callback can kill it.
-	queue_free()
 
 
 ## One physics step of walking towards `target_units` (the car's centre), `dt`

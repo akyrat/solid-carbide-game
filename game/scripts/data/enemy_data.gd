@@ -84,6 +84,44 @@ func kaiju_coins_on_defeat() -> int:
 	return roundi(c["drop_chance"] * c["coins_per_drop"])
 
 
+## T-612: the kaiju's frames (enemies.json, "kaiju_animations"), as written there without its
+## "_comment": frame_size, feet [x, y], head_top_y, and walk / windup / death, each
+## {sheet, frames, fps, loop}. Empty when the section is missing. The format:
+## game/docs/enemies/kaiju.md, "The kaiju's animations".
+func kaiju_animations() -> Dictionary:
+	var sec = _data.get("kaiju_animations", {})
+	var out := {}
+	if sec is Dictionary:
+		for k in sec:
+			if not String(k).begins_with("_"):
+				out[k] = sec[k].duplicate(true) if (sec[k] is Dictionary or sec[k] is Array) else sec[k]
+	return out
+
+
+## T-612: how long an animation plays once, seconds: its frames / fps (0 without a speed).
+static func animation_seconds(anim: Dictionary) -> float:
+	var fps := float(anim.get("fps", 0.0))
+	if fps <= 0.0:
+		return 0.0
+	return float(anim.get("frames", 0)) / fps
+
+
+## T-612: how long the kaiju's death plays before it disappears (0 when the data is missing:
+## the old instant death): the death animation (frames / fps), then, quick tuning 1, its
+## "death_end" (hold, cracks, explosion).
+func kaiju_death_seconds() -> float:
+	var a := kaiju_animations()
+	return animation_seconds(a.get("death", {})) + death_end_seconds(a.get("death_end", {}))
+
+
+## T-612, quick tuning 1: the seconds after the death animation: hold + crack + explosion.
+static func death_end_seconds(end: Dictionary) -> float:
+	var t := 0.0
+	for k in ["hold_seconds", "crack_seconds", "explosion_seconds"]:
+		t += maxf(float(end.get(k, 0.0)), 0.0)
+	return t
+
+
 ## first_attack_after_seconds, seconds_between_attacks, windup_seconds, meteors_per_attack,
 ## warning_seconds, land_within_units_of_car, impact_radius_units, impact_damage (hearts, 1), minion_damage (a minion's health points lost, T-418), knockback.
 ## T-539: pair_distance_units, pair_damage_to_kaiju (the paired meteors).

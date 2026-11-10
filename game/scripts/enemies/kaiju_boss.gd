@@ -99,6 +99,11 @@ var navigation: RefCounted = null
 ## The kaiju's meteor attack (task T-046, kaiju_meteors.gd): child "Meteors".
 var meteors: Node = null
 
+## T-612: the killed kaiju while its death plays (null otherwise), and the
+## seconds of it left. Its coins and the win come when they are over.
+var dying_kaiju: Node = null
+var death_left := 0.0
+
 var _stats: Dictionary
 var _appeared_this_run := false
 var _run: Node = null
@@ -173,8 +178,31 @@ func clear() -> void:
 	if kaiju != null and is_instance_valid(kaiju):
 		kaiju.queue_free()
 	kaiju = null
+	if dying_kaiju != null and is_instance_valid(dying_kaiju):
+		dying_kaiju.queue_free()
+	dying_kaiju = null
+	death_left = 0.0
 	arrival_due = false
 	_appeared_this_run = false
+
+
+## T-612 (HUD and menus, Decisions, "God mode can spawn the boss"): God mode's
+## button makes the kaiju arrive now, by the boss time's own arrival (just
+## off-screen, the same placing rules; if no spot is free now, on the next step
+## it can), the run's timer untouched. Once per run: false, and nothing happens,
+## when the kaiju has already arrived or is due. The boss time coming later then
+## brings no second kaiju (once per run, as always).
+func spawn_now() -> bool:
+	if not can_spawn_now():
+		return false
+	arrival_due = true
+	try_appear()
+	return true
+
+
+## T-612: true while the kaiju has neither arrived this run nor is due to.
+func can_spawn_now() -> bool:
+	return not _appeared_this_run and not arrival_due
 
 
 ## The run's "boss time": the kaiju appears (on the next step it can, just
@@ -214,6 +242,8 @@ func _live() -> bool:
 ## board's quick tuning, 2026-10-29): a kaiju already there keeps walking to
 ## the wrecked car, with no contact (no damage, no knockback).
 func step(dt: float) -> void:
+	if dying_kaiju != null:
+		_death_step(dt)
 	if not enabled or car == null or not is_instance_valid(car):
 		return
 	var swarming: bool = state != null and state.has_method("is_wrecked") and state.is_wrecked()
@@ -292,13 +322,53 @@ func _on_kaiju_health_changed(health: float, max_health: float) -> void:
 	kaiju_health_changed.emit(health, max_health)
 
 
-## The kaiju died: its coins go into the run's coins first (the run ends at
-## once, and the coins must count in the coins saved), then the run's
-## kaiju_killed() ends the run as a win.
-func _on_kaiju_died(_k: Node, _at_units: Vector2) -> void:
+## The kaiju was killed (T-612): it plays its death for EnemyData.
+## kaiju_death_seconds() (the death animation's frames / fps), standing still,
+## harmless and no longer a target; the run is told the win is due
+## (RunState.kaiju_dying(): the timer reaching 0:00 or a wreck meanwhile no
+## longer loses it). The kill counts in the recap now. With no death length the
+## death ends at once, as before T-612.
+func _on_kaiju_died(k: Node, _at_units: Vector2) -> void:
 	kaiju = null
-	if state != null:
-		state.enemy_slain(_k.ENEMY_TYPE, _k.last_hit_by)  # recap (T-319)
+	dying_kaiju = k
+	death_left = data.kaiju_death_seconds()
+	if state != null and state.has_method("kaiju_dying"):
+		state.kaiju_dying()
+	if state != null and state.has_method("enemy_slain"):
+		state.enemy_slain(k.ENEMY_TYPE, k.last_hit_by)  # recap (T-319)
+	if death_left <= 0.0:
+		_finish_death()
+
+
+## True while the killed kaiju's death plays.
+func is_kaiju_dying() -> bool:
+	return dying_kaiju != null
+
+
+## One physics step of the death: the kaiju stays where it died (a fall in
+## progress still comes down), drawn in its place and depth, until the death's
+## seconds are over.
+func _death_step(dt: float) -> void:
+	if not is_instance_valid(dying_kaiju):
+		dying_kaiju = null
+		return
+	var h0: float = dying_kaiju.body_height()
+	dying_kaiju._fall_step(dt, h0)
+	_place_sprite(dying_kaiju)
+	death_left -= dt
+	if death_left <= 0.000001:
+		_finish_death()
+
+
+## The death has played: the kaiju goes, its coins go into the run's coins
+## first (the run ends now, and the coins must count in the coins saved), then
+## the run's kaiju_killed() ends the run as a win.
+func _finish_death() -> void:
+	var k := dying_kaiju
+	dying_kaiju = null
+	death_left = 0.0
+	if k != null and is_instance_valid(k):
+		k.queue_free()
 	var n := data.kaiju_coins_on_defeat()
 	if state != null:
 		state.add_coins(n)
@@ -384,13 +454,21 @@ func update_drawing() -> void:
 	_place_sprite()
 
 
-func _place_sprite() -> void:
-	if not _live() or kaiju.sprite == null:
+## Places the live kaiju's sprite, or `k`'s (the dying one, T-612).
+func _place_sprite(k: Node = null) -> void:
+	if k == null:
+		if not _live():
+			return
+		k = kaiju
+	if k.sprite == null or not is_instance_valid(k.sprite):
 		return
-	var s: Node2D = kaiju.sprite
-	var h: float = kaiju.body_height()
-	s.position = ISO_TRANSFORM * kaiju.position + Vector2(0.0, -h * PX_PER_UNIT)
-	s.face(kaiju.heading)
-	s.set_falling(kaiju.is_falling())
-	s.air_height = h - kaiju.ground_height()  # T-454: its shadow stays on the ground under it
-	s.z_index = depth.z_index_for(kaiju.position_units(), KaijuScript.RADIUS_UNITS, KaijuScript.HEIGHT_UNITS, h)
+	var s: Node2D = k.sprite
+	var h: float = k.body_height()
+	s.position = ISO_TRANSFORM * k.position + Vector2(0.0, -h * PX_PER_UNIT)
+	s.face(k.heading)
+	s.set_falling(k.is_falling())
+	# T-612: the windup animation plays while the meteor attack winds up.
+	if s.has_method("set_winding_up"):
+		s.set_winding_up(not k.is_dead() and meteors != null and meteors.is_winding_up())
+	s.air_height = h - k.ground_height()  # T-454: its shadow stays on the ground under it
+	s.z_index = depth.z_index_for(k.position_units(), KaijuScript.RADIUS_UNITS, KaijuScript.HEIGHT_UNITS, h)

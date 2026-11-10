@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/t612_spawn_boss_shot.gd" id="1"]
+
+[node name="T612SpawnBossShot" type="Node"]
+script = ExtResource("1")

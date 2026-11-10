@@ -1,8 +1,8 @@
 extends Node
 ## The kaiju's meteor attack (task T-046; Enemies, Decisions): while the kaiju
 ## is on the map it attacks first_attack_after_seconds after it appeared, then
-## every seconds_between_attacks. Each attack: a short windup (a placeholder
-## flash above the kaiju) for windup_seconds, then meteors_per_attack warning
+## every seconds_between_attacks. Each attack: a short windup (the kaiju's
+## windup animation, T-612) for windup_seconds, then meteors_per_attack warning
 ## circles appear at once on the ground near the car, and warning_seconds later
 ## a meteor lands on each. A meteor landing with the car's centre within
 ## impact_radius_units damages the car (RunState.damage_car(impact_damage)) and
@@ -32,7 +32,7 @@ extends Node
 ## Drawings are placeholders (Visual style, Decisions: a warning circle, a
 ## falling meteor, a burst of dust): the warning circles lie on the ground in
 ## the map's drawing, just over the ground tiles (under buildings, boulders and
-## the car); the falling meteors, the dust and the windup flash are drawn over
+## the car); the falling meteors and the dust are drawn over
 ## everything.
 ##
 ## Paired meteors (T-539; Enemies, Decisions, "Paired meteors hurt the kaiju"):
@@ -70,8 +70,6 @@ const METEOR_GLOW := Color(0.85, 0.30, 0.90)
 const METEOR_OUTLINE := Color(0.05, 0.04, 0.10)
 ## The placeholder dust: warm grey.
 const DUST_COLOR := Color(0.62, 0.58, 0.52)
-## The windup flash above the kaiju: pale yellow.
-const WINDUP_COLOR := Color(1.0, 0.92, 0.55)
 ## How long the meteor is seen falling (the last part of the warning), the
 ## height it falls from (screen pixels) and how long the dust lasts. Rules of
 ## the placeholder drawing.
@@ -628,8 +626,8 @@ class _GroundDraw extends Node2D:
 		if Perf.on: Perf.each_end(&"draw.meteors")
 
 
-## Over everything: the windup flash above the kaiju, the falling meteors and
-## the dust bursts.
+## Over everything: the falling meteors and the dust bursts (T-612: the windup
+## is the kaiju's own animation, no longer a flash above it).
 class _SkyDraw extends Node2D:
 	var owner_attack: Node
 	var _t := 0.0
@@ -638,19 +636,15 @@ class _SkyDraw extends Node2D:
 		if Perf.on: Perf.each_begin(&"meteors.fx_process")
 		_t += delta
 		var a = owner_attack
-		if a.is_winding_up() or not a.warnings.is_empty() or not a.dust.is_empty() or not a.links.is_empty() or not a.breakups.is_empty():
+		if not a.warnings.is_empty() or not a.dust.is_empty() or not a.links.is_empty() or not a.breakups.is_empty():
 			queue_redraw()
 		if Perf.on: Perf.each_end(&"meteors.fx_process")
 
 	func _draw() -> void:
 		if Perf.on: Perf.each_begin(&"draw.meteors")
 		var a = owner_attack
-		var k = a._kaiju()
-		if a.is_winding_up() and k != null:
-			var head: Vector2 = ISO_TRANSFORM * k.position - Vector2(0, KaijuScript.HEIGHT_UNITS * PX_PER_UNIT * 0.85)
-			for i in 3:
-				var f := fmod(_t * 2.5 + i / 3.0, 1.0)
-				draw_arc(head, 8.0 + f * 30.0, 0.0, TAU, 24, WINDUP_COLOR, 3.0 * (1.0 - f) + 1.0)
+		# T-612: the windup is the kaiju's own animation now (kaiju_sprite.gd); the
+		# placeholder yellow rings above its head are gone.
 		for w in a.warnings:
 			if w.time_left > FALL_SECONDS:
 				continue

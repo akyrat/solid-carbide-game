@@ -4380,3 +4380,8 @@ Entry format:
 - Decision or change: The board played T-612's longer death (placeholder fall, code-drawn cracks and explosion) and said: "its ugly. use actual generations to do the death". T-613 generates the death through PixelLab, sample first: the death facing east (the fall onto the ground, with the green cracks) and the explosion, each through the style loop (at most 4 calls each, 40 units in all), swapped into the game on T-613's branch for the board's review before any other direction.
 - Documents touched: docs/visual-style.md
 - Tasks: T-613, T-612
+
+## 2026-11-10: The kaiju's animations and God mode's Call the kaiju button (merged)
+- Decision or change: T-612 merged on the board's word: the kaiju plays a walk, a windup before its meteors and a longer death (fall, hold, green cracks, explosion; the coins and the win come after it), and God mode has a once-per-run "Call the kaiju" button. The death's quick tuning had no separate QA round (the ticket had used its rounds); the merge's full test run covers it.
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-612
