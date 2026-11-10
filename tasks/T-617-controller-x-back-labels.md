@@ -1,7 +1,7 @@
 ---
 id: T-617
 title: Controller labels for the X and Back buttons
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Controller-support
@@ -48,10 +48,40 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-11-10, Open → In progress
+
+Started: two button labels (X, Back) for the tutorial's Replay and Skip demo on a controller.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+### Run 1
+
+Run by `tools/style_loop/run.py` on 2026-11-10: text, kind label, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/2d4aa27f-e3cb-4440-9afa-8744c8559e6f/scratchpad/brief_X.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "X"
+- Script checks: 4 of 4 pass
+- Score: 10/10
+- Reason: "X" is the standard Xbox name for that button, one character, within the 5-character limit and matching the style of the existing glyph labels (A, B, Y, LB). It is short and plain, a single line, and the script checks for rules 2, 3 and 4 pass. It has no tone, brand or voice problem: rule 1 (tone) doesn't apply to a bare glyph letter, and nothing speaks as Greenbull or the city (rule 3). No rule is broken.
+- Rules broken: none
+
+**Kept:** version 1, score 10/10 ("X", copied to `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/2d4aa27f-e3cb-4440-9afa-8744c8559e6f/scratchpad/out_X.txt`): it reached 8 or more.
+
+### Run 2
+
+Run by `tools/style_loop/run.py` on 2026-11-10: text, kind label, brief `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/2d4aa27f-e3cb-4440-9afa-8744c8559e6f/scratchpad/brief_Back.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "View"
+- Script checks: 4 of 4 pass
+- Score: 9/10
+- Reason: The label "View" is Xbox's own name for the Back/View button. It is 4 characters, under the 5-character limit, and one line. It is in sentence case, like "Start". It has no banned words and no "Greenbull says" line, as the script checks confirm. It matches the existing glyph labels in style and length. No rule is broken. The one point off is that "Back" is the older name, which the brief allows but does not require.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("View", copied to `C:/Users/andre/AppData/Local/Temp/claude/4933a5c551de0266/2d4aa27f-e3cb-4440-9afa-8744c8559e6f/scratchpad/out_Back.txt`): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Style loop (text, label): X scored 10, "View" (Back/View button, Xbox name) scored 9, both in round 1, no refines. Added `x` and `back` to the glyph block of game/data/controller_text.json (JSON parses; longest label still 5 characters), with the block's _comment extended to name them; listed both in HUD and menus, Content, Controller texts. Screenshots not applicable (text only). No code changed; no test covers this data file (grep found none), so no tests run. Documents affected: docs/hud-and-menus.md.

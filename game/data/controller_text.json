@@ -8,10 +8,12 @@
   "a": "A",
   "b": "B",
   "y": "Y",
+  "x": "X",
   "lb": "LB",
   "rb": "RB",
   "start": "Start",
-  "_comment": "Short labels drawn on the glyphs, in the keycaps' style: left stick, D-pad, left and right triggers, A, B, Y, left and right bumpers, Start."
+  "back": "View",
+  "_comment": "Short labels drawn on the glyphs, in the keycaps' style: left stick, D-pad, left and right triggers, A, B, Y, left and right bumpers, Start, plus X (the tutorial's Replay) and View (the Back button, the tutorial's Skip demo), T-617."
  },
  "key_to_glyph": {
   "_comment": "Keys of recipes and live pads -> glyph name. W is gas (right trigger), S brake and reverse (left trigger), A and D are the one steering glyph (so the recipes' '/D' either-tag is not drawn), Space the jump (A), R the practice reset (Y), Enter selects (A), Escape goes back (B), Tab/arrows have no controller line.",
