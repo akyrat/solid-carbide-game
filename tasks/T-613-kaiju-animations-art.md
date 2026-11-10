@@ -102,6 +102,10 @@ The board (2026-11-09), after playing T-612's placeholder death: "its ugly. use 
 
 Seen: the board moved it to In progress. The Asset Generation Agent is already generating the death sample (death east and the explosion, at most 40 units); I'll move it to the QA column for the board's look when the sample is in the game.
 
+### 2026-11-09, Flagged for review
+
+The death sample is in the game: death east 6/10, the explosion 7/10, 40 units spent (65 on the ticket). Weak; flagged for the board's playtest. Play C:\solid-carbide-worktrees\T-613\game\project.godot; files in art-archive/T-613/screenshots/death_sample/.
+
 ## Style review
 
 ### Run 1
