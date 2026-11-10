@@ -1,7 +1,7 @@
 ---
 id: T-617
 title: Controller labels for the X and Back buttons
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Controller-support
@@ -16,7 +16,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/data/controller_text.json]
 files_expected_to_change: [game/data/controller_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
