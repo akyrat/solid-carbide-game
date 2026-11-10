@@ -1,7 +1,7 @@
 ---
 id: T-617
 title: Controller labels for the X and Back buttons
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Controller-support
@@ -39,10 +39,10 @@ HUD and menus, Decisions, "The tutorial shows its controller buttons" (board, 20
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] game/data/controller_text.json parses and its glyph block has a label for X and for the Back/View button, each with a _comment, no longer than the longest existing glyph label. (QA: pass / fail)
-- [ ] The Style review records the style loop, with both labels scored 8 or more. (QA: pass / fail)
-- [ ] HUD and menus, Content, Controller texts, lists both labels; the result notes say screenshots are not applicable (text only). (QA: pass / fail)
-- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass / fail)
+- [ ] game/data/controller_text.json parses and its glyph block has a label for X and for the Back/View button, each with a _comment, no longer than the longest existing glyph label. (QA: pass)
+- [ ] The Style review records the style loop, with both labels scored 8 or more. (QA: pass)
+- [ ] HUD and menus, Content, Controller texts, lists both labels; the result notes say screenshots are not applicable (text only). (QA: pass)
+- [ ] The tests for the changed code pass (the agent) and QA's full run passes, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-11-10, Open → In progress
 
 Started: two button labels (X, Back) for the tutorial's Replay and Skip demo on a controller.
+
+### 2026-11-10, In progress → In QA
+
+Labels written: X (10) and View (9). Now in QA.
 
 ## Style review
 
@@ -85,3 +89,5 @@ Run by `tools/style_loop/run.py` on 2026-11-10: text, kind label, brief `C:/User
 ## Result notes
 
 Style loop (text, label): X scored 10, "View" (Back/View button, Xbox name) scored 9, both in round 1, no refines. Added `x` and `back` to the glyph block of game/data/controller_text.json (JSON parses; longest label still 5 characters), with the block's _comment extended to name them; listed both in HUD and menus, Content, Controller texts. Screenshots not applicable (text only). No code changed; no test covers this data file (grep found none), so no tests run. Documents affected: docs/hud-and-menus.md.
+
+QA round 1: criteria 1 to 3 pass (x and back labels, 1 and 4 characters, in the glyph block with its _comment; Style review scores 10 and 9; docs/hud-and-menus.md lists both). Criterion 4: no test covers the data file, so the agent ran none; QA's full run: game/tools set passed; the Godot set failed once (1 failing test, unrelated to a data-only change), then passed on the single rerun: 293 scripts, 3341 tests, 3340 passing, 0 failing, 1 risky/pending. Screenshots not applicable (text only), so qa_check's screenshots line is expected to read FAIL and is not a criterion failure.
