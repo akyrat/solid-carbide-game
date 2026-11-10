@@ -1,0 +1,83 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80 submitted, polling every 5 s
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (0 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (5 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (10 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (15 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (20 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (25 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (30 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (35 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (40 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (46 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (51 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (56 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (61 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (66 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (71 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (76 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (81 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (86 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (91 s)
+  job d88d2310-28b4-4c1d-987f-302aad5eca80: processing (97 s)
+  saved 7 images in art-archive\T-613\raw_explosion_v3: explosion_0.png, explosion_1.png, explosion_2.png, explosion_3.png, explosion_4.png, explosion_5.png, explosion_6.png; usage {"type": "generations", "generations": 5.0}
+{
+  "file": [
+    "explosion_0.png",
+    "explosion_1.png",
+    "explosion_2.png",
+    "explosion_3.png",
+    "explosion_4.png",
+    "explosion_5.png",
+    "explosion_6.png"
+  ],
+  "job_id": "d88d2310-28b4-4c1d-987f-302aad5eca80",
+  "usage": {
+    "type": "generations",
+    "generations": 5.0
+  },
+  "image": [
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}

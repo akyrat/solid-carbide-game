@@ -184,9 +184,25 @@ static func feet() -> Vector2:
 ## or null when the file is missing.
 static func anim_sheet(anim_name: String, dir_name: String) -> Texture2D:
 	var a := anim_data(anim_name)
+	# T-613: "sheets" names the final art of drawn directions that have it; the others keep "sheet".
+	var per = a.get("sheets", {})
+	if per is Dictionary and per.has(dir_name):
+		return _sheet_at(String(per[dir_name]))
 	if not a.has("sheet"):
 		return null
 	return _sheet_at(String(a.sheet) % dir_name)
+
+
+## T-613: the explosion's art (data "explosion": sheet, frames, scale), or null: then the
+## code-drawn explosion (kaiju_death_fx.gd) is drawn.
+static func explosion_sheet() -> Texture2D:
+	var a := anim_data("explosion")
+	return _sheet_at(String(a.sheet)) if a.has("sheet") else null
+
+
+## The explosion's frame at `progress` (0 to 1) of its phase.
+static func explosion_frame_at(progress: float, frames: int) -> int:
+	return clampi(int(floorf(progress * frames)), 0, maxi(frames - 1, 0))
 
 
 ## How many frames of `tex` an animation plays: the data's count, at most as
@@ -470,7 +486,21 @@ func _draw_death(cur: Dictionary) -> void:
 		DeathFxScript.draw_cracks(self, info, ph.progress, feet(), cur.mirrored, fs, death_seconds)
 	elif ph.phase == "explode":
 		DeathFxScript.draw_flash_body(self, info, ph.progress, feet(), cur.mirrored, fs)
-		DeathFxScript.draw_explosion(self, explosion_centre(info, cur.mirrored), ph.progress, explosion_radius_px())
+		var centre := explosion_centre(info, cur.mirrored)
+		var tex := explosion_sheet()
+		if tex == null:
+			DeathFxScript.draw_explosion(self, centre, ph.progress, explosion_radius_px())
+		else:
+			_draw_explosion_art(tex, centre, ph.progress)
+
+
+## T-613: one frame of the explosion's art, centred on `centre`, never mirrored.
+func _draw_explosion_art(tex: Texture2D, centre: Vector2, progress: float) -> void:
+	var fs := frame_size()
+	var n := frames_in("explosion", tex)
+	var size := fs * float(anim_data("explosion").get("scale", 1.0))
+	var src := Rect2(explosion_frame_at(progress, n) * fs, 0, fs, fs)
+	draw_texture_rect_region(tex, Rect2(centre - Vector2(size, size) * 0.5, Vector2(size, size)), src)
 
 
 ## Where the explosion starts: the lying body's middle in the drawing (a little above the feet

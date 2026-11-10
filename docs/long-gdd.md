@@ -2225,6 +2225,10 @@ Task T-556 made the art for Drifting, Decisions, "A jump effect around the car" 
 
 The minion's death animation is drawn for five directions, in `game/art/minion/`: `minion_death_e.png`, `_se`, `_s`, `_ne` and `_n` (8 frames of 48 x 48 in a row, 384 x 48, transparent, the last frame the lying corpse); south-west, west and north-west are the south-east, east and north-east sheets mirrored by the game, as for the walk. The south-east sheet is the board's approved sample (T-532, 6/10 after 4 generations); the others were made from each direction's walk frame 0 through the style loop (T-544): east 7/10 (4 generations), south 6/10 (4), north-east 7/10 (4), north 7/10 (3, the kept version a free script rebuild of generation 1). None reached 8, so each keeps its best version for the board's playtest. No blood in any frame; the green spill is code. Every generation and strip is in `art-archive/T-544/`.
 
+#### The kaiju's death sample (T-613, the board's go 2026-11-09: "its ugly. use actual generations to do the death")
+
+A sample, judged in the board's playtest: the death facing east (`game/art/kaiju/kaiju_death_e.png`, 12 PixelLab frames at 224 x 224 made from the still east sprite in two `/animate-with-text-v3` parts, the lying frames moved onto the ground line and the last frame repeated to the data's 16; the kaiju reels, tumbles and ends lying on its back, legs and plates up) and one explosion for every direction (`game/art/kaiju/kaiju_explosion.png`, 6 frames at 224 x 224: a white and pale cyan core, neon purple and magenta flames, navy smoke, nothing red, orange, yellow or green; drawn at scale 1). The green cracks stay a code overlay on the lying last frame (`kaiju_death_fx.gd`), in the minions' spill green, never Greenbull's. Kept below 8 in the style loop (death 6, explosion 7), so the board's playtest decides. Made by `game/tools/build_kaiju_anim_sheet.py`, `fit_kaiju_death_e.py` and `make_kaiju_explosion_seed.py`; how and what it cost: T-613's result notes. The other directions keep the placeholder death for now.
+
 ### References
 
 - **Car look, colour:** a dark-green 1967 Ford Mustang fastback (inspiration only; no real badges).
@@ -2832,6 +2836,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `d58802ffe221d978e921bd383168f30879dc4a56aa0891efe95f44e7a228e9f9` |
 | `weapons.md` | `ff29fe85ef6b29102820a9e586b9ae9a593b5c9f732dddb6773288d345340100` |
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
-| `visual-style.md` | `20dc0e8a10fe00ec2ab36a46a2653e4237b9162b5743fc363924947bbd003b28` |
+| `visual-style.md` | `90fc3afebc51a3d3b1f37c4577139735b28701e1030c07de452bea21416a9536` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
 | `hud-and-menus.md` | `35aed2c5921541c1a12016840073b9f1f1ff1171f406d6a0c68664aa421f37a7` |

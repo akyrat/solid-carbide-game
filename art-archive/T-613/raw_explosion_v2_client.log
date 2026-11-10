@@ -1,0 +1,82 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4 submitted, polling every 5 s
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (0 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (5 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (10 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (15 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (20 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (25 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (30 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (35 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (40 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (45 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (51 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (56 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (61 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (66 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (71 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (76 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (81 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (86 s)
+  job 463eb869-ae85-464d-9ee8-170e63782dc4: processing (91 s)
+  saved 7 images in art-archive\T-613\raw_explosion_v2: explosion_0.png, explosion_1.png, explosion_2.png, explosion_3.png, explosion_4.png, explosion_5.png, explosion_6.png; usage {"type": "generations", "generations": 5.0}
+{
+  "file": [
+    "explosion_0.png",
+    "explosion_1.png",
+    "explosion_2.png",
+    "explosion_3.png",
+    "explosion_4.png",
+    "explosion_5.png",
+    "explosion_6.png"
+  ],
+  "job_id": "463eb869-ae85-464d-9ee8-170e63782dc4",
+  "usage": {
+    "type": "generations",
+    "generations": 5.0
+  },
+  "image": [
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}

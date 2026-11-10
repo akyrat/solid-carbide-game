@@ -1,0 +1,116 @@
+{
+  "file": "explosion_6.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAOAAAADgCAYAAAAaLWrhAAACu0lEQVR4nO3dO27bQBQFUCV1SheuUyVAdpGF2EuzF5JdBEiq1ClUprfhQgAhczic4ec9RueUBjkWNLh88xHJ0wkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLTuP315if4M9Puw4FySB+3vv9/6N7mP0R+AevCmwvf0+Vf3ucRzhUxqLDhTYbv2+Ofru7+piPnokOTBawnd3DAKYh6GoAcP388f5+ox1+0YlubhSpjEMBSl4M0J28W373fVaqgSxtMBBwhfS/DmBFEI8/DlJw7fkuDVgiiEOZgDJrFl+MbaW2Nxh+UEMFBpMWTt8NXatSgTRwATGFaj1vA93I0vtpQM21cF4xn7B7lUndah55zAPZ/PXfNBc8H9qYCJrBG+OcdtNcSlnQAG6JlztQ41W49/Yy64PwE8wNyvJ0y188wFcxDA5HrDt9b5bEsAIZAAQiABhEACmGD/r7QAs9b8rdTO2EKMldB9CeDOLpvdwx9Dl24dqm2oz1VqZ/h/bcbHEEAIJIAQSAAhkAAmt3QeuNY8km0IYKA5CzFLQjR13tgCDPsTwAA9K42tIewJrRXQ/QlgIlNVsCVUrfcDEscV7yCb8lOb7K3Vzv5fHirggeaCY9YIH3EEMFCp6mw1RCy1q/rFEcAkrqvR2iGcei4ocVz5EvBk7Nvly0/CuyFukw74D96ONGe46hVlOemEZLwf8LboiKS8Ifc26JDkaneov4WytqIpeHnpmIPoeVSE4MHGPMMFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgNO0V6/yB+8KlKsBAAAAAElFTkSuQmCC",
+      "format": "png"
+    },
+    "action": "a violent energy explosion, fast: the burst flashes blinding white and pale cyan and bursts outward into a huge spiky fireball of neon purple and magenta flames with a wide magenta shock ring, far bigger than the start, reaching the edges of the picture, with streaks and sparks shooting outward in all directions and only three or four tiny dark rock chips flying away; then the fireball tears apart and vanishes, leaving empty space with only a few small scattered neon purple sparks and two thin dark navy smoke wisps at the very end. Mostly purple, magenta, white and cyan. Pixel art fire and energy with hard edges and dark outlines; no green, no red, no orange, no yellow, no ground, no creature",
+    "frame_count": 6,
+    "no_background": true,
+    "seed": 2
+  },
+  "prompt": "",
+  "job_id": "463eb869-ae85-464d-9ee8-170e63782dc4",
+  "usage": {
+    "type": "generations",
+    "generations": 5.0
+  },
+  "generated_at": "2026-11-09T23:38:52+00:00",
+  "image": {
+    "width": 224,
+    "height": 224,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-613",
+  "job_status": "completed",
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 6,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "explosion_0.png",
+    "explosion_1.png",
+    "explosion_2.png",
+    "explosion_3.png",
+    "explosion_4.png",
+    "explosion_5.png",
+    "explosion_6.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 5.0
+    },
+    "id": "463eb869-ae85-464d-9ee8-170e63782dc4",
+    "status": "completed",
+    "created_at": "2026-11-09T23:37:15.528160+00:00",
+    "last_response": {
+      "seed": 2,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 5,
+        "cost_if_paid": 0.025297503921720716
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1004 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<4684 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<8448 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<16272 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<13348 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<3496 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<4192 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.8461538461538461,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 5.0
+      },
+      "generation_id": "84a345d2-b5a4-4c12-ba6e-a352fc44a424",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-11-09T23:37:30.353956+00:00",
+      "estimated_wait_seconds": 0
+    }
+  }
+}
