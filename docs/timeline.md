@@ -4390,3 +4390,8 @@ Entry format:
 - Decision or change: T-613 merged on the board's word, though the board finds the animation poor ("good enough"): the generated death facing east and west (6/10) and the generated explosion (7/10) are in the game. Not made: the death in the other directions (placeholder fall), a generated windup (the sample scored 5/10), a new walk (walk east, 7/10, stays in the archive). 65 PixelLab units spent in all. No QA round: the board's call from flagged-for-review; the merge's full test run is the check.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-613
+
+## 2026-11-10: Controller support: browser last, built for mobile later
+- Decision or change: The board wants the controller experience fully right locally first and the browser (itch.io) check as the last step. Mobile touch support is planned later, so prompts follow one current input method with a per-method set, and the game reads input actions only.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-615
