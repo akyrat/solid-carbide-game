@@ -4400,3 +4400,8 @@ Entry format:
 - Decision or change: The board reported a bug: "the molotov fires are not showing correctly on any raised platform". A fire is now to be drawn on the surface its bottle landed on (rooftop, short building, ramp), at its height, with the bottle and its shadow landing there too; the street and the damage are unchanged. T-616 goes to the Weapon Behavior Agent.
 - Documents touched: docs/weapons.md
 - Tasks: T-616
+
+## 2026-11-10: Controller playtest notes: point-to-steer and the tutorial's buttons
+- Decision or change: After playing the controller build the board asked that the left stick point where the car should go (it turns the shortest way round), and that the tutorial show how to change slides and replay the demo on a controller.
+- Documents touched: docs/drifting.md, docs/hud-and-menus.md
+- Tasks: T-617
