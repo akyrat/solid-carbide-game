@@ -1,7 +1,7 @@
 ---
 id: T-612
 title: The kaiju plays its walk, windup and death animations (placeholder frames)
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Polish
@@ -247,3 +247,4 @@ All the numbers are in `game/data/enemies.json`, "kaiju_animations": death frame
 - docs/enemies.md, Content, "The kaiju": Look and Death.
 - game/docs/enemies/kaiju.md: the table, "The death's end", the format, the placeholders and the tests.
 - docs/game-loop-architecture.md: the flowchart and the win's timing, now 4.4 s.
+- 2026-11-10, needs-playtest → done: The board played it: "its working great"; the death made longer by quick tuning; merge on the board's word (2026-11-10).
