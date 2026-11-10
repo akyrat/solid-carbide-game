@@ -4395,3 +4395,8 @@ Entry format:
 - Decision or change: The board wants the controller experience fully right locally first and the browser (itch.io) check as the last step. Mobile touch support is planned later, so prompts follow one current input method with a per-method set, and the game reads input actions only.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-615
+
+## 2026-11-10: Molotov fires show on raised ground
+- Decision or change: The board reported a bug: "the molotov fires are not showing correctly on any raised platform". A fire is now to be drawn on the surface its bottle landed on (rooftop, short building, ramp), at its height, with the bottle and its shadow landing there too; the street and the damage are unchanged. T-616 goes to the Weapon Behavior Agent.
+- Documents touched: docs/weapons.md
+- Tasks: T-616
