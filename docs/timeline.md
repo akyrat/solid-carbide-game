@@ -4405,3 +4405,8 @@ Entry format:
 - Decision or change: After playing the controller build the board asked that the left stick point where the car should go (it turns the shortest way round), and that the tutorial show how to change slides and replay the demo on a controller.
 - Documents touched: docs/drifting.md, docs/hud-and-menus.md
 - Tasks: T-617
+
+## 2026-11-10: Controller labels for the X and Back buttons
+- Decision or change: The glyph labels X and View for the tutorial's Replay and Skip demo buttons on a controller, in game/data/controller_text.json.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-617

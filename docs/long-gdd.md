@@ -2801,7 +2801,7 @@ Decisions, "The tutorial slides are redrawn, with clips of the real car". Four l
 
 Decisions, "Controller support in the menus and prompts". The texts shown instead of keyboard ones when the player last used a controller are in `game/data/controller_text.json` (T-610 reads it); each scored 8 or more in the style loop (T-609's Style review). Xbox names are shown for every controller (a proposal). Controller lines are never longer than the keyboard line they replace.
 
-- **Glyph labels** (drawn on the button glyphs in the keycaps' style): left stick **LS**, D-pad **D-pad**, **LT**, **RT**, **A**, **B**, **Y**, **LB**, **RB**, **Start**. Keys map to glyphs as W to RT (gas), S to LT (brake, reverse), A and D to the one stick glyph (so a recipe's "/D" tag is not drawn), Space to A, R to Y, Enter to A, Escape to B.
+- **Glyph labels** (drawn on the button glyphs in the keycaps' style): left stick **LS**, D-pad **D-pad**, **LT**, **RT**, **A**, **B**, **Y**, **LB**, **RB**, **Start**, plus (T-617, style loop scores 10 and 9) **X** (the tutorial's Replay button) and **View** (the Back/View button, the tutorial's Skip demo button). Keys map to glyphs as W to RT (gas), S to LT (brake, reverse), A and D to the one stick glyph (so a recipe's "/D" tag is not drawn), Space to A, R to Y, Enter to A, Escape to B.
 - **Lines** (file and key in `game/data/`, then the controller text): `screen_texts.json` `power_ups/descriptions/jump` "Hold A to charge a Jump, release to go. A tap hops."; `power_ups/descriptions_last_tier/jump` "Hold A to charge a higher Jump."; `power_ups/descriptions/rev_charge` "Hold RT+LT then release LT: speed boost."; `tutorial_text.json` `trick_rule/*` (extended drift, 360, alternate drift, airtime, air 180, air 360, reverse drift, rail grind: "gas" stays, "a turn key" becomes "steer" or "the stick"; the rail grind says "hold A"); `tutorial/trick/drift`, `altdrift`, `airspin` and `grind` instructions (W and S become RT and LT, "A or D" becomes "steer"); `tutorial/grind_hint` ("tap A to jump, then hold A over a rail"); `trick_recipe/rail_grind/step1_badge` "Hold A".
 - Lines that need no change (no key named, or unused): the other `trick_recipe/*` notes, `missions.json` goals, `pause_text.json` labels, and `tutorial_text.json` `slide1.*` (unused since T-559). The full list, with every line searched, is in T-609's result notes.
 - No screenshots: text only.
@@ -2842,4 +2842,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `3442473beb60e8c0df477168b0744f059cb82c08ecb54fb028700f316955fab8` |
 | `visual-style.md` | `90fc3afebc51a3d3b1f37c4577139735b28701e1030c07de452bea21416a9536` |
 | `extended-narrative.md` | `29e8d0d6d6414b9b5978dbcb35a22f2b9786b3f1afcac166d10b6733b33087fb` |
-| `hud-and-menus.md` | `044c23a978c95fdf48420c5112b055cfbf34f5be244ca3c78424e80af6b81e20` |
+| `hud-and-menus.md` | `ff0f1e96b0bd77931d52c9acd95710a471bd0ab7c5ed492dc9203b7393419d98` |
