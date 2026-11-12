@@ -4410,3 +4410,8 @@ Entry format:
 - Decision or change: The glyph labels X and View for the tutorial's Replay and Skip demo buttons on a controller, in game/data/controller_text.json.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-617
+
+## 2026-11-12: The README shows the cover art and the board's clips
+- Decision or change: The board replaced the README's four GIFs with seven clips it recorded while playing (`docs/readme/clips/`, with the board's titles), and the section's text is in the board's own voice, and the car at the top right with a wide cover made from the main menu's splash (`docs/readme/cover.png`, by `tools/make_readme_cover.py`). GitHub does not play repository videos inside a README, so each clip shows as a looping animated preview (`tools/make_readme_clip_previews.py`) that links to the full clip.
+- Documents touched: `README.md`, `docs/readme/cover.md`
+- Tasks: none

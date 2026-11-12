@@ -1,4 +1,4 @@
-<img src="docs/readme/car.png" align="right" width="256" alt="The Solid Carbide car">
+<p align="center"><img src="docs/readme/cover.png" width="100%" alt="Solid Carbide cover art: the car drifting through a neon city street while the kaiju, a helicopter and falling meteors close in"></p>
 
 # Solid Carbide
 
@@ -6,15 +6,33 @@ A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju atta
 
 ## Current state of the game
 
-Four short recordings of the real game as it is today (2026-10-22): a run on the elevation map, with the final car, the kaiju, the flames and the meteor effects, the tricks and the HUD. Scripted by `game/tests/fixtures/readme_gif_demo.gd`, recorded with `bash game/tools/record_readme_gif.sh` (tasks T-217 and T-229).
+Right now you can start a run, drift through the city, grind rails, obliterate waves of enemies and take on the kaiju before it takes you out. Here are a few clips of how it plays today (12 November 2026).
 
-![The car drifting on a street with minions chasing it, the drift counter counting and LONG DRIFT! paying when the drift ends](art-archive/T-229/screenshots/drift_chasers_long_drift.gif)
+### Start
 
-![The car drifting off a height-6 rooftop and landing in the street, the camera following its height](art-archive/T-229/screenshots/drift_off_rooftop.gif)
+[![Start](docs/readme/clips/SolidCarbide-Start.webp)](docs/readme/clips/SolidCarbide-Start.mp4)
 
-![An air 360 off a rooftop with its AIR 360! popup, the airtime counter counting and HANG TIME! on landing](art-archive/T-229/screenshots/air_360_hang_time.gif)
+### Alt Drift
 
-![The kaiju chases the car; warning circles, falling meteors and impacts](art-archive/T-229/screenshots/kaiju_meteors.gif)
+[![Alt Drift](docs/readme/clips/SolidCarbide-AltDrift.webp)](docs/readme/clips/SolidCarbide-AltDrift.mp4)
+
+### Grinds
+
+[![Grind](docs/readme/clips/SolidCarbide-Grind.webp)](docs/readme/clips/SolidCarbide-Grind.mp4)
+
+[![Long Grind](docs/readme/clips/SolidCarbide-LongGrind.webp)](docs/readme/clips/SolidCarbide-LongGrind.mp4)
+
+### Obliterate Enemies
+
+[![Obliterate Enemies](docs/readme/clips/SolidCarbide-MassiveBricksWave.webp)](docs/readme/clips/SolidCarbide-MassiveBricksWave.mp4)
+
+### Boss
+
+[![Boss](docs/readme/clips/SolidCarbide-Boss.webp)](docs/readme/clips/SolidCarbide-Boss.mp4)
+
+### Death
+
+[![Death](docs/readme/clips/SolidCarbide-Death.webp)](docs/readme/clips/SolidCarbide-Death.mp4)
 
 ## Layout
 
